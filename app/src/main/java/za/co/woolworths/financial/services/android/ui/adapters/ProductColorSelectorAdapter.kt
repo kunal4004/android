@@ -57,6 +57,11 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
             }
         }
     }
+
+    fun setSelect(selectedColor: String?) {
+        this.selectedColor = selectedColor
+        notifyDataSetChanged()
+    }
 }
 
 private fun setSelectedColorIcon(mImSelectedColor: WrapContentDraweeView, imageUrl: String?) {

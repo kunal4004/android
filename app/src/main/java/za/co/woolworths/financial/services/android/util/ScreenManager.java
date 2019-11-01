@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -226,5 +227,11 @@ public class ScreenManager {
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
 		presentProductDetails(activity, bundle);
+	}
+
+	public static void presentDeliveryLocationActivity(Activity activity, int requestCode) {
+		Intent openDeliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
+		activity.startActivityForResult(openDeliveryLocationSelectionActivity, requestCode);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 }

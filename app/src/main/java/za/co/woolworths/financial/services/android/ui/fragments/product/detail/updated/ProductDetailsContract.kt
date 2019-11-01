@@ -14,7 +14,7 @@ interface ProductDetailsContract {
         fun onProductDetailsSuccess(productDetails: ProductDetails)
         fun onProductDetailedFailed(response: Response)
         fun onFailureResponse(error: String)
-        fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse)
+        fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean)
         fun getImageByWidth(imageUrl: String, context: Context): String
         fun updateDefaultUI()
         fun updateAuxiliaryImages(imagesList: List<String>)
@@ -23,14 +23,21 @@ interface ProductDetailsContract {
         fun onColorSelection(selectedColor: String?)
         fun setSelectedSku(selectedSku: OtherSkus?)
         fun getSelectedSku(): OtherSkus?
+        fun setSelectedQuantity(selectedQuantity: Int?)
+        fun getSelectedQuantity(): Int?
+        fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse)
+        fun responseFailureHandler(response: Response)
+        fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse)
 
     }
 
     interface ProductDetailsPresenter {
 
         fun onDestroy()
-        fun loadStockAvailability(storeID: String, multiSKU: String)
+        fun loadStockAvailability(storeID: String, multiSKU: String, isDefaultRequest: Boolean)
         fun loadProductDetails(productRequest: ProductRequest)
+        fun loadCartSummary()
+        fun postAddItemToCart(addItemToCart: List<AddItemToCart>)
     }
 
     interface ProductDetailsInteractor {
@@ -38,9 +45,9 @@ interface ProductDetailsContract {
         interface OnFinishListener : RequestListener<Any>
 
         fun getProductDetails(productRequest: ProductRequest, onFinishListener: OnFinishListener)
-        fun getCartSummary()
+        fun getCartSummary(onFinishListener: OnFinishListener)
         fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: OnFinishListener)
-        fun postAddItemToCart()
+        fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: OnFinishListener)
         fun getLocationItems()
     }
 

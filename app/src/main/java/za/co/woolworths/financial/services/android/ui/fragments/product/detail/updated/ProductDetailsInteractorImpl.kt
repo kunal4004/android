@@ -2,9 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.util.GetCartSummary
+import za.co.woolworths.financial.services.android.util.PostItemToCart
 
 class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInteractor {
 
@@ -12,14 +17,20 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
         request(OneAppService.productDetail(productRequest.productId, productRequest.skuId), onFinishListener)
     }
 
-    override fun getCartSummary() {
-    }
-
     override fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         request(OneAppService.getInventorySkuForStore(storeID, multiSKU), onFinishListener)
     }
 
-    override fun postAddItemToCart() {
+    override fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
+        PostItemToCart().make(addItemToCart as MutableList<AddItemToCart>, object : RequestListener<AddItemToCartResponse> {
+            override fun onSuccess(cartSummaryResponse: AddItemToCartResponse?) {
+                onFinishListener?.onSuccess(cartSummaryResponse)
+            }
+
+            override fun onFailure(error: Throwable) {
+                onFinishListener?.onFailure(error)
+            }
+        })
     }
 
     override fun getLocationItems() {
@@ -37,4 +48,19 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
             }
         }, classType))
     }
+
+    override fun getCartSummary(requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
+         GetCartSummary().getCartSummary(object : RequestListener<CartSummaryResponse> {
+            override fun onSuccess(cartSummaryResponse: CartSummaryResponse?) {
+                requestListener?.onSuccess(cartSummaryResponse)
+            }
+
+            override fun onFailure(error: Throwable) {
+                //getNavigator().onTokenFailure(error.toString())
+                requestListener?.onFailure(error)
+            }
+        })
+    }
+
+
 }

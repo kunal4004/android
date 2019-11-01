@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
 import android.text.TextUtils
@@ -23,12 +25,16 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelec
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener {
 
 
     private var productDetails: ProductDetails? = null
@@ -47,6 +53,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var selectedGroupKey: String? = null
     private var productSizeSelectorAdapter: ProductSizeSelectorAdapter? = null
     private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
+    private var selectedQuantity: Int? = null
+    private val SSO_REQUEST_ADD_TO_CART = 1010
+    private val REQUEST_SUBURB_CHANGE = 153
 
 
     companion object {
@@ -70,6 +79,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun initViews() {
+        addToCartAction.setOnClickListener { addItemToCart() }
         quantitySelector.setOnClickListener { onQuantitySelector() }
         configureDefaultUI()
     }
@@ -109,6 +119,44 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
+    fun addItemToCart() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
+            return
+        }
+
+        val deliveryLocation = Utils.getPreferredDeliveryLocation()
+        if (deliveryLocation == null) {
+            productDetailsPresenter?.loadCartSummary()
+        }
+
+        val storeId = Utils.retrieveStoreId(productDetails?.fulfillmentType)
+        if (!storeId.equals(storeIdForInventory, ignoreCase = true)) {
+            updateStockAvailability(storeId)
+            return
+        }
+
+        if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
+            //setSelectedSku(null)
+            val message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+            return
+        }
+        //finally add to cart after all checks
+        getSelectedSku()?.apply {
+            addToCartForSelectedSKU()
+        }
+
+    }
+
+    private fun addToCartForSelectedSKU() {
+        val item = getSelectedQuantity()?.let { AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, it) }
+        val listOfItems = ArrayList<AddItemToCart>()
+        item?.let { listOfItems.add(it) }
+        if (listOfItems.isNotEmpty())
+            productDetailsPresenter?.postAddItemToCart(listOfItems)
+    }
+
     override fun showProgressBar() {
     }
 
@@ -124,7 +172,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)?.apply {
                 val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
-                productDetailsPresenter?.loadStockAvailability(this, multiSKUs)
+                productDetailsPresenter?.loadStockAvailability(this, multiSKUs, true)
             }
 
 
@@ -143,7 +191,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onFailureResponse(error: String) {
     }
 
-    override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
+    override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean) {
 
         productDetails?.otherSkus?.forEach { otherSku ->
             skusInventoryForStoreResponse.skuInventory.forEach { skuInventory ->
@@ -153,9 +201,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
         }
-
-        otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
-        updateDefaultUI()
+        if (isDefaultRequest) {
+            otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
+            updateDefaultUI()
+        } else {
+            getSelectedSku()?.let { selectedSku ->
+                productDetails?.otherSkus?.forEach {
+                    if (it.sku.equals(selectedSku.sku, ignoreCase = true)) {
+                        selectedSku.quantity = it.quantity
+                        return@forEach
+                    }
+                }
+            }
+            addItemToCart()
+        }
     }
 
     override fun getImageByWidth(imageUrl: String, context: Context): String {
@@ -186,14 +245,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
          layoutManager.flexDirection = FlexDirection.ROW
          layoutManager.justifyContent = JustifyContent.FLEX_START
          colorSelectorRecycleView.layoutManager = layoutManager*/
-        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this)
-        colorSelectorRecycleView.adapter = productColorSelectorAdapter
+        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this).apply {
+            colorSelectorRecycleView.adapter = this
+            setSelect(getSelectedGroupKey())
+        }
+        //productColorSelectorAdapter?
         /*val layoutManager1 = FlexboxLayoutManager(activity)
         layoutManager1.flexDirection = FlexDirection.ROW
         layoutManager1.justifyContent = JustifyContent.FLEX_START*/
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
-        productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this)
-        sizeSelectorRecycleView.adapter = productSizeSelectorAdapter
+        productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
+            sizeSelectorRecycleView.adapter = this
+        }
 
     }
 
@@ -237,7 +300,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    fun configureActionItems() {
+    private fun configureActionItems() {
 
     }
 
@@ -375,10 +438,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onQuantitySelection(quantity: Int) {
-
+        setSelectedQuantity(quantity)
     }
 
-    fun getAuxiliaryImagesByGroupKey(): List<String> {
+    override fun setSelectedQuantity(selectedQuantity: Int?) {
+        this.selectedQuantity = selectedQuantity
+    }
+
+    override fun getSelectedQuantity(): Int? {
+        return this.selectedQuantity
+    }
+
+    private fun getAuxiliaryImagesByGroupKey(): List<String> {
 
         if (getSelectedGroupKey().isNullOrEmpty())
             return auxiliaryImages
@@ -418,6 +489,59 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         return imageCode
+    }
+
+    override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {
+        if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
+            activity?.apply {
+                ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+            }
+        } else confirmDeliveryLocation()
+    }
+
+    override fun responseFailureHandler(response: Response) {
+
+    }
+
+    private fun confirmDeliveryLocation() {
+        this.childFragmentManager.apply {
+            ConfirmDeliveryLocationFragment.newInstance().show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
+        }
+    }
+
+    override fun onConfirmLocation() {
+        //continue add to cart request
+        addItemToCart()
+    }
+
+    override fun onConfirmLocationDialogDismiss() {
+        //cancel add to cart request
+    }
+
+    override fun onSetNewLocation() {
+        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+    }
+
+    private fun updateStockAvailability(storeId: String?) {
+        storeIdForInventory = storeId
+        productDetails?.apply {
+            otherSkus?.let {
+                val multiSKUs = it.joinToString(separator = "-") { it.sku }
+                productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, false)
+            }
+        }
+
+    }
+
+    override fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {
+        activity?.apply {
+            addItemToCartResponse.data?.let {
+                if (it.size > 0) {
+                    setResult(RESULT_OK, Intent().putExtra("addedToCartMessage", it[0].message))
+                    onBackPressed()
+                }
+            }
+        }
     }
 
 }
