@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableString
@@ -18,6 +20,7 @@ import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
@@ -26,16 +29,21 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     private var shouldDisableKeyboardOnOTPCall: Boolean = false
     private var mResendOTPFragment: ResendOTPFragment? = null
     private var mOtpSentTo: String? = null
+    private var isUnblockVirtualCard = false
 
     companion object {
         const val OTP_SENT_TO = "OTP_SENT_TO"
+        const val IS_UNBLOCK_VIRTUAL_CARD = "IS_UNBLOCK_VIRTUAL_CARD"
         fun newInstance() = EnterOtpFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        arguments?.let { bundle -> mOtpSentTo = bundle.getString(OTP_SENT_TO, "") }
+        arguments?.let { bundle ->
+            mOtpSentTo = bundle.getString(OTP_SENT_TO, "")
+            isUnblockVirtualCard = bundle.getBoolean(IS_UNBLOCK_VIRTUAL_CARD, false)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,12 +77,13 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun clickEvent() {
-        imNextProcessLinkCard?.setOnClickListener { navigateToLinkStoreCard() }
+        imNextProcessLinkCard?.setOnClickListener {
+            if (isUnblockVirtualCard) sendOTBack() else navigateToLinkStoreCard()
+        }
         didNotReceiveEditTextOTP?.setOnClickListener {
             if (shouldDisableKeyboardOnOTPCall) return@setOnClickListener
-            val defaultOtp = (activity as? MyCardActivityExtension)?.mDefaultOtpSentTo
             (activity as? AppCompatActivity)?.apply {
-                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, defaultOtp)
+                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mOtpSentTo)
                 mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
@@ -97,6 +106,14 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 popEnterAnimation = R.anim.slide_from_left,
                 popExitAnimation = R.anim.slide_to_right
         )
+    }
+
+    private fun sendOTBack() {
+        val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
+        activity?.apply {
+            setResult(Activity.RESULT_OK, Intent().putExtra(RequestOTPActivity.OTP_VALUE, otpNumber))
+            (this as RequestOTPActivity).finishActivity()
+        }
     }
 
     override fun onResume() {

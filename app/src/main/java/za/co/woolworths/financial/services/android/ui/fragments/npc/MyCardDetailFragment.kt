@@ -146,7 +146,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun initPayWithCard() {
         when (mStoreCardsResponse?.oneTimePinRequired?.unblockStoreCard) {
             true -> {
-                requestGetOTP()
+                navigateToOTPActivity(OTPMethodType.SMS.name)
             }
             else -> {
                 requestUnblockCard()
@@ -181,31 +181,13 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-    private fun requestGetOTP() {
-        showPayWithCardProgressBar(VISIBLE)
-        StoreCardAPIRequest().getOTP(OTPMethodType.SMS, object : RequestListener<LinkNewCardOTP> {
-            override fun onSuccess(response: LinkNewCardOTP?) {
-                showPayWithCardProgressBar(GONE)
-                when (response?.httpCode) {
-                    200 -> navigateToOTPActivity(response.otpSentTo)
-                    440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
-                    else -> showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                showPayWithCardProgressBar(GONE)
-                showErrorDialog(getString(R.string.general_error_desc))
-            }
-        })
-    }
-
     private fun navigateToOTPActivity(otpSentTo: String?) {
         otpSentTo?.let { otpSentTo ->
             activity?.apply {
                 val intent = Intent(this, RequestOTPActivity::class.java)
                 intent.putExtra(OTP_SENT_TO, otpSentTo)
                 startActivityForResult(intent, OTP_REQUEST_CODE)
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
             }
         }
     }

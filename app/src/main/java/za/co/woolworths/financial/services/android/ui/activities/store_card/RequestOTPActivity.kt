@@ -2,14 +2,14 @@ package za.co.woolworths.financial.services.android.ui.activities.store_card
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.RequestOTPFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class RequestOTPActivity : AppCompatActivity() {
+class RequestOTPActivity : MyCardActivityExtension() {
 
     companion object {
         const val OTP_SENT_TO = "OTP_SENT_TO"
@@ -32,13 +32,17 @@ class RequestOTPActivity : AppCompatActivity() {
 
 
     private fun addRequestOTPFragment() {
-        mOtpSentTo?.apply {
-            addFragment(
-                    fragment = RequestOTPFragment.newInstance(this),
-                    tag = RequestOTPFragment::class.java.simpleName,
-                    containerViewId = R.id.fragmentContainer)
-        }
+        Bundle().let { bundle ->
+            bundle.putBoolean(EnterOtpFragment.IS_UNBLOCK_VIRTUAL_CARD, true)
+            EnterOtpFragment.newInstance().let {
+                it.arguments = bundle
+                addFragment(
+                        fragment = it,
+                        tag = EnterOtpFragment::class.java.simpleName,
+                        containerViewId = R.id.fragmentContainer)
+            }
 
+        }
     }
 
     private fun actionBar() {
