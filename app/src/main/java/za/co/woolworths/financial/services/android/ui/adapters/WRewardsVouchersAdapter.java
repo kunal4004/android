@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.zxing.BarcodeFormat;
@@ -64,8 +65,8 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
             holder.validFromDate=(WTextView)convertView.findViewById(R.id.validFrom);
             holder.validUntilDate=(WTextView)convertView.findViewById(R.id.validUntil);
-            holder.voucherValue = (WTextView) convertView.findViewById(R.id.voucherValue);
-            holder.message = (WTextView) convertView.findViewById(R.id.message);
+            holder.voucherValue = convertView.findViewById(R.id.voucherValue);
+            holder.message = convertView.findViewById(R.id.message);
             holder.voucherNumber = (WTextView) convertView.findViewById(R.id.voucherNumber);
             holder.minimumSpend = (WTextView) convertView.findViewById(R.id.minSpend);
             holder.barCode = (ImageView) convertView.findViewById(R.id.barcode);
@@ -101,8 +102,8 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
     public class ViewHolder {
         WTextView validFromDate;
         WTextView validUntilDate;
-        WTextView voucherValue;
-        WTextView message;
+        TextView voucherValue;
+        TextView message;
         WTextView voucherNumber;
         WTextView minimumSpend;
         ImageView barCode;
