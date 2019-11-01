@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -120,6 +121,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         when (v?.id) {
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO)
                 activity?.apply {
                     Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
                         it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_LEFT)
@@ -129,6 +131,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 }
             }
             R.id.payWithCard -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY)
                 initPayWithCard()
             }
             R.id.expireInfo -> {

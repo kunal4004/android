@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.get_temp_store_card_popup_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
@@ -70,6 +71,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.getTempStoreCardButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_GET)
                 when (mStoreCardsResponse?.oneTimePinRequired?.linkVirtualStoreCard) {
                     true -> navigateToOTPFragment()
                     else -> navigateToLinkCardFragment()
