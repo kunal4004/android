@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -59,45 +60,42 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         val wasPrice: String? = productList?.wasPrice?.toString() ?: ""
         val price: String? = productList?.price?.toString() ?: ""
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
-
-
+        val priceType = productList?.priceType
         with(itemView) {
+            fromPriceLabelTextView?.text = ""
             if (wasPrice.isNullOrEmpty()) {
                 if (price!!.isEmpty()) {
-                    tvPrice.text = ""
+                    tvPrice?.text = ""
                 } else {
-                    val priceType = productList?.priceType
-                    tvPrice.text = getMassPrice(price, priceType, kilogramPrice)
-                    showFromPriceLabel(priceType)
+                    tvPrice?.text = getMassPrice(price, priceType, kilogramPrice)
                 }
                 tvPrice.setTextColor(Color.BLACK)
-                tvWasPrice.text = ""
+                tvWasPrice?.text = ""
+                fromPriceLabelTextView?.visibility = GONE
                 fromPriceStrikeThrough.visibility = GONE
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
                     if (price!!.isEmpty()) {
-                        tvPrice.text = WFormatter.formatAmount(wasPrice)
+                        tvPrice?.text = WFormatter.formatAmount(wasPrice)
                     } else {
-                        val priceType = productList?.priceType
-                        tvPrice.text = getMassPrice(price, priceType, kilogramPrice)
-                        showFromPriceLabel(priceType)
+                        tvPrice?.text = getMassPrice(price, priceType, kilogramPrice)
                     }
                     tvPrice.setTextColor(Color.BLACK)
+                    fromPriceLabelTextView?.visibility = GONE
                     fromPriceStrikeThrough.visibility = GONE
                     tvWasPrice.text = ""
                 } else {
                     tvPrice.text = WFormatter.formatAmount(price)
                     tvPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
-                    wasPrice?.let {
-                        val priceType = productList?.priceType
+                    wasPrice.let {
                         tvWasPrice.text = getMassPrice(it, priceType, kilogramPrice)
-                        showFromPriceLabel(priceType)
+                        fromPriceLabelTextView?.visibility = GONE
                         fromPriceStrikeThrough.visibility = VISIBLE
                         tvWasPrice.setTextColor(Color.BLACK)
-                        fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
                     }
                 }
             }
+            showFromPriceLabel(priceType)
         }
     }
 
@@ -131,6 +129,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         return defaultStoreId
     }
 
+    @SuppressLint("DefaultLocale")
     private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String): String {
         return with(priceType) {
             when {
@@ -142,12 +141,16 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun View.showFromPriceLabel(priceType: String?) {
         priceType?.let {
             if (it.toLowerCase().contains("from", true)) {
                 fromPriceLabelTextView?.visibility = VISIBLE
-            }else {
+                fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
+            } else {
                 fromPriceLabelTextView?.visibility = GONE
+                fromPriceLabelTextView?.text = ""
+
             }
         }
     }
