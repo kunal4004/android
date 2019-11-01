@@ -52,7 +52,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             val jwtDecoded: JWTDecodedModel? = SessionUtilities.getInstance().jwt
             val name = jwtDecoded?.name?.get(0) ?: ""
             val familyName = jwtDecoded?.family_name?.get(0) ?: ""
-            return "$familyName $name"
+            return "$name $familyName"
         }
     }
 
