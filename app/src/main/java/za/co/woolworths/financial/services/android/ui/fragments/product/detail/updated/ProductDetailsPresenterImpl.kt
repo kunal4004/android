@@ -97,5 +97,9 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     override fun onFailure(error: Throwable?) {
     }
 
+    override fun findStoresForSelectedSku(otherSkus: OtherSkus?) {
+
+    }
+
 
 }

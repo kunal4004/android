@@ -38,6 +38,7 @@ interface ProductDetailsContract {
         fun loadProductDetails(productRequest: ProductRequest)
         fun loadCartSummary()
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>)
+        fun findStoresForSelectedSku(otherSkus: OtherSkus?)
     }
 
     interface ProductDetailsInteractor {

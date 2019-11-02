@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+import android.Manifest
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
+import android.location.Location
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -17,25 +20,28 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
+import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener {
-
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -56,6 +62,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var selectedQuantity: Int? = null
     private val SSO_REQUEST_ADD_TO_CART = 1010
     private val REQUEST_SUBURB_CHANGE = 153
+    private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
+    private var permissionUtils: PermissionUtils? = null
+    private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
 
 
     companion object {
@@ -75,12 +84,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
     }
 
     private fun initViews() {
         addToCartAction.setOnClickListener { addItemToCart() }
         quantitySelector.setOnClickListener { onQuantitySelector() }
+        addToShoppingList.setOnClickListener { addItemToShoppingList() }
+        checkInStoreAvailability.setOnClickListener { findItemInStore() }
         configureDefaultUI()
     }
 
@@ -542,6 +554,160 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
         }
+    }
+
+    private fun addItemToShoppingList() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST)
+        } else if (getSelectedSku() != null) {
+            activity?.apply {
+                val item = AddToListRequest()
+                getSelectedSku()?.let {
+                    item.apply {
+                        quantity = "1"
+                        catalogRefId = it.sku
+                        giftListId = it.sku
+                        skuID = it.sku
+                    }
+                }
+                val listOfItems = ArrayList<AddToListRequest>()
+                item.let {
+                    listOfItems.add(it)
+                }
+                NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+            }
+
+        } else {
+            // Select size to contine
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            RESULT_OK -> {
+                when (requestCode) {
+                    REQUEST_SUBURB_CHANGE -> {
+                        addItemToCart()
+                    }
+                    ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
+                        /*int listSize = data.getIntExtra("sizeOfList", 0);
+                        boolean isSessionExpired = data.getBooleanExtra("sessionExpired", false);
+                        if (isSessionExpired) {
+                            onSessionTokenExpired();
+                            return;
+                        }
+                        showToastMessage(getActivity(), listSize);*/
+                    }
+                    SET_DELIVERY_LOCATION_REQUEST_CODE -> {
+                        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+                    }
+                    FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
+                        // findItemInStore()
+                    }
+                }
+            }
+            SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
+                when (requestCode) {
+                    SSO_REQUEST_ADD_TO_CART -> {
+                        addItemToCart()
+                    }
+                    SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
+                        addItemToShoppingList()
+                        //One time biometricsWalkthrough
+                        activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
+                    }
+                }
+            }
+            RESULT_CANCELED -> {
+                when (requestCode) {
+                    SET_DELIVERY_LOCATION_REQUEST_CODE -> {
+                        //dismissFindInStoreProgress()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun findItemInStore() {
+        activity?.apply {
+            when (Utils.isLocationEnabled(this)) {
+                true -> {
+                    if (!checkRunTimePermissionForLocation()) {
+                        return
+                    }
+                }
+                else -> {
+                    Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
+                    return
+                }
+            }
+        }
+        getSelectedSku()?.let {
+            startLocationUpdates()
+        }
+
+    }
+
+
+    private fun checkRunTimePermissionForLocation(): Boolean {
+        permissionUtils = PermissionUtils(activity, this)
+        permissionUtils?.apply {
+            val permissions = ArrayList<String>()
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            return checkAndRequestPermissions(permissions, 1)
+        }
+        return false
+    }
+
+    override fun PermissionGranted(request_code: Int) {
+    }
+
+    override fun PartialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
+    }
+
+    override fun PermissionDenied(request_code: Int) {
+    }
+
+    override fun NeverAskAgain(request_code: Int) {
+    }
+
+    override fun onLocationChange(location: Location?) {
+        activity?.apply {
+            Utils.saveLastLocation(location, this)
+            stopLocationUpdate()
+            getSelectedSku()?.apply {
+                productDetailsPresenter?.findStoresForSelectedSku(this)
+                return
+            }
+        }
+
+    }
+
+    override fun onPopUpLocationDialogMethod() {
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun startLocationUpdates() {
+        activity?.apply {
+            mFuseLocationAPISingleton?.apply {
+                addLocationChangeListener(this@ProductDetailsFragment)
+                startLocationUpdate()
+            }
+        }
+    }
+
+    fun stopLocationUpdate() {
+        // stop location updates
+        mFuseLocationAPISingleton?.apply {
+            stopLocationUpdate()
+        }
+
     }
 
 }
