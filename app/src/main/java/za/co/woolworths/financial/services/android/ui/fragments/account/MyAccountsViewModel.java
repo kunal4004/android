@@ -38,19 +38,4 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 		return messageRequestCall;
 	}
 
-	public Call<StoreCardsResponse> getStoreCards(Account account) {
-		Call<StoreCardsResponse> getStoreCardsRequest = OneAppService.INSTANCE.getStoreCards(new StoreCardsRequestBody(account.accountNumber, account.productOfferingId));
-		getStoreCardsRequest.enqueue(new CompletionHandler<>(new RequestListener<StoreCardsResponse>() {
-			@Override
-			public void onSuccess(StoreCardsResponse storeCardsResponse) {
-				getNavigator().onGetStoreCardsResponse(storeCardsResponse);
-			}
-
-			@Override
-			public void onFailure(Throwable error) {
-
-			}
-		}, StoreCardsResponse.class));
-		return getStoreCardsRequest;
-	}
 }
