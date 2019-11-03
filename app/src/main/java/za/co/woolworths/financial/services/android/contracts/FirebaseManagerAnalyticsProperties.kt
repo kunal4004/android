@@ -68,6 +68,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MY_ACCOUNTS_CHAT_OFFLINE = "MYACCOUNTS_CHAT_OFFLINE"
         const val MY_ACCOUNTS_CHAT_BREAK = "MYACCOUNTS_CHAT_BREAK"
         const val MY_ACCOUNTS_CHAT_END = "MYACCOUNTS_CHAT_END"
+
+        const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
+        const val MY_ACCOUNTS_VTC_PAY = "MYACCOUNTS_VTC_PAY"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "MYACCOUNTS_VTC_HOWTO"
     }
 
     class PropertyNames {

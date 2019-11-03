@@ -44,14 +44,12 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
@@ -327,8 +325,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Account account = item.getValue();
 			switch (account.productGroupCode) {
 				case "SC":
-					if (!Utils.isVirtualTemporaryStoreCardPopupShown())
-						getStoreCards(account);
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
@@ -1025,29 +1021,4 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		isActivityInForeground = false;
 	}
 
-	private void getStoreCards(Account account) {
-		getViewModel().getStoreCards(account);
-	}
-
-	@Override
-	public void onGetStoreCardsResponse(StoreCardsResponse storeCardsResponse) {
-		if(storeCardsResponse!=null){
-			switch (storeCardsResponse.getHttpCode()){
-				case 200:
-					//displayTemporaryStoreCardPopup(storeCardsResponse);
-					break;
-			}
-		}
-	}
-
-	private void displayTemporaryStoreCardPopup(StoreCardsResponse storeCardsResponse) {
-		if (storeCardsResponse.getStoreCardsData() != null && storeCardsResponse.getStoreCardsData().getGenerateVirtualCard()) {
-			Activity activity = getActivity();
-			if (activity == null) return;
-			if (getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-				activity.startActivity(new Intent(getActivity(), GetTemporaryStoreCardPopupActivity.class));
-				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-			}
-		}
-	}
 }
