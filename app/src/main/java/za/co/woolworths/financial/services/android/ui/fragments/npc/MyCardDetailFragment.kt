@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -51,7 +52,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             val jwtDecoded: JWTDecodedModel? = SessionUtilities.getInstance().jwt
             val name = jwtDecoded?.name?.get(0) ?: ""
             val familyName = jwtDecoded?.family_name?.get(0) ?: ""
-            return "$familyName $name"
+            return "$name $familyName"
         }
     }
 
@@ -120,6 +121,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         when (v?.id) {
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO)
                 activity?.apply {
                     Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
                         it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_LEFT)
@@ -129,6 +131,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 }
             }
             R.id.payWithCard -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY)
                 initPayWithCard()
             }
             R.id.expireInfo -> {
@@ -143,7 +146,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun initPayWithCard() {
         when (mStoreCardsResponse?.oneTimePinRequired?.unblockStoreCard) {
             true -> {
-                requestGetOTP()
+                navigateToOTPActivity(OTPMethodType.SMS.name)
             }
             else -> {
                 requestUnblockCard()
@@ -178,31 +181,13 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-    private fun requestGetOTP() {
-        showPayWithCardProgressBar(VISIBLE)
-        StoreCardAPIRequest().getOTP(OTPMethodType.SMS, object : RequestListener<LinkNewCardOTP> {
-            override fun onSuccess(response: LinkNewCardOTP?) {
-                showPayWithCardProgressBar(GONE)
-                when (response?.httpCode) {
-                    200 -> navigateToOTPActivity(response.otpSentTo)
-                    440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
-                    else -> showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                showPayWithCardProgressBar(GONE)
-                showErrorDialog(getString(R.string.general_error_desc))
-            }
-        })
-    }
-
     private fun navigateToOTPActivity(otpSentTo: String?) {
         otpSentTo?.let { otpSentTo ->
             activity?.apply {
                 val intent = Intent(this, RequestOTPActivity::class.java)
                 intent.putExtra(OTP_SENT_TO, otpSentTo)
                 startActivityForResult(intent, OTP_REQUEST_CODE)
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
             }
         }
     }
