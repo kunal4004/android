@@ -40,6 +40,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
+import android.animation.ObjectAnimator
+import android.graphics.Color
+import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.product_color_row.view.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+
 
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider {
 
@@ -59,7 +66,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var selectedGroupKey: String? = null
     private var productSizeSelectorAdapter: ProductSizeSelectorAdapter? = null
     private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
-    private var selectedQuantity: Int? = null
+    private var selectedQuantity: Int? = 1
     private val SSO_REQUEST_ADD_TO_CART = 1010
     private val REQUEST_SUBURB_CHANGE = 153
     private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
@@ -132,6 +139,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     fun addItemToCart() {
+
+        if (getSelectedSku() == null) {
+            requestSelectSize()
+            return
+        }
+
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
             return
@@ -140,6 +153,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val deliveryLocation = Utils.getPreferredDeliveryLocation()
         if (deliveryLocation == null) {
             productDetailsPresenter?.loadCartSummary()
+            return
         }
 
         val storeId = Utils.retrieveStoreId(productDetails?.fulfillmentType)
@@ -517,7 +531,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun confirmDeliveryLocation() {
         this.childFragmentManager.apply {
-            ConfirmDeliveryLocationFragment.newInstance().show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
+            ConfirmDeliveryLocationFragment.newInstance()?.let {
+                it.isCancelable = false
+                it.show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
+            }
         }
     }
 
@@ -557,6 +574,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addItemToShoppingList() {
+
+        if (getSelectedSku() == null) {
+            requestSelectSize()
+            return
+        }
+
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_SHOPPING_LIST)
         } else if (getSelectedSku() != null) {
@@ -603,7 +626,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
                     }
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
-                        // findItemInStore()
+                        findItemInStore()
                     }
                 }
             }
@@ -630,6 +653,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun findItemInStore() {
+
+        if (getSelectedSku() == null) {
+            requestSelectSize()
+            return
+        }
+
         activity?.apply {
             when (Utils.isLocationEnabled(this)) {
                 true -> {
@@ -707,6 +736,39 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         mFuseLocationAPISingleton?.apply {
             stopLocationUpdate()
         }
+
+    }
+
+    private fun requestSelectSize() {
+        activity?.apply {
+            resources.displayMetrics?.let {
+                val mid: Int = it.heightPixels / 2 - selectedSizePlaceholder.height
+                ObjectAnimator.ofInt(scrollView, "scrollY", mid).setDuration(500).start()
+            }
+            selectedSizePlaceholder?.let {
+                it.setTextColor(Color.RED)
+                it.postDelayed({
+                    it.setTextColor(ContextCompat.getColor(this, R.color.black))
+                }, 5000)
+            }
+        }
+    }
+
+    override fun onFindStoresSuccess(location: List<StoreDetails>) {
+        activity?.apply {
+            WoolworthsApplication.getInstance().wGlobalState.storeDetailsArrayList = location
+            val intentInStoreFinder = Intent(activity, WStockFinderActivity::class.java)
+            intentInStoreFinder.putExtra("PRODUCT_NAME", subCategoryTitle)
+            startActivity(intentInStoreFinder)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
+    }
+
+    override fun showOutOfStockInStores() {
+
+    }
+
+    override fun dismissFindInStoreProgress() {
 
     }
 

@@ -28,6 +28,9 @@ interface ProductDetailsContract {
         fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse)
         fun responseFailureHandler(response: Response)
         fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse)
+        fun showOutOfStockInStores()
+        fun onFindStoresSuccess(location: List<StoreDetails>)
+        fun dismissFindInStoreProgress()
 
     }
 
@@ -49,7 +52,7 @@ interface ProductDetailsContract {
         fun getCartSummary(onFinishListener: OnFinishListener)
         fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: OnFinishListener)
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: OnFinishListener)
-        fun getLocationItems()
+        fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: OnFinishListener)
     }
 
 }

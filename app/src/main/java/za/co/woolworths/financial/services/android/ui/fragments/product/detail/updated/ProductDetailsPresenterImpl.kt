@@ -8,7 +8,7 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     var isDefaultRequest: Boolean = true
 
     override fun loadCartSummary() {
-
+        getInteractor.getCartSummary(this)
     }
 
     override fun onDestroy() {
@@ -83,11 +83,25 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                                 if (this.response != null)
                                     mainView?.onSessionTokenExpired()
                             }
-                            else -> mainView?.responseFailureHandler(this.response)
+                            else -> mainView?.dismissFindInStoreProgress()
                         }
 
                     }
 
+                }
+                is LocationResponse -> {
+                    when (this.httpCode) {
+                        200 -> {
+                            val location = this.Locations
+                            if (location != null && location.size > 0) {
+                                mainView?.onFindStoresSuccess(location)
+                            } else {
+                                mainView?.showOutOfStockInStores()
+                            }
+
+                        }
+                        else -> mainView?.responseFailureHandler(this.response)
+                    }
                 }
             }
         }

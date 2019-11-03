@@ -36,9 +36,18 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        imCloseIcon.setOnClickListener { listener?.onConfirmLocationDialogDismiss() }
-        btnDefaultLocation.setOnClickListener { listener?.onConfirmLocation() }
-        btnSetNewLocation.setOnClickListener { listener?.onSetNewLocation() }
+        imCloseIcon.setOnClickListener {
+            listener?.onConfirmLocationDialogDismiss()
+            dismissAllowingStateLoss()
+        }
+        btnDefaultLocation.setOnClickListener {
+            listener?.onConfirmLocation()
+            dismissAllowingStateLoss()
+        }
+        btnSetNewLocation.setOnClickListener {
+            listener?.onSetNewLocation()
+            dismissAllowingStateLoss()
+        }
         configureUI()
     }
 
@@ -50,9 +59,4 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
         }
     }
 
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        listener?.onConfirmLocationDialogDismiss()
-    }
 }

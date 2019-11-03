@@ -2,10 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
-import za.co.woolworths.financial.services.android.models.dto.ProductRequest
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.util.GetCartSummary
@@ -33,7 +31,10 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
         })
     }
 
-    override fun getLocationItems() {
+    override fun getLocationItems(otherSkus: OtherSkus?, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
+        WoolworthsApplication.getInstance().wGlobalState?.let {mWGlobalState->
+            otherSkus?.let { OneAppService.getLocationsItem(it.sku, mWGlobalState.startRadius.toString(), mWGlobalState.endRadius.toString()) }?.let { request(it,onFinishListener) }
+        }
     }
 
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
