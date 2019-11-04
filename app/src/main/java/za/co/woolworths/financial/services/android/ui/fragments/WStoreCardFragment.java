@@ -23,6 +23,7 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 
+import java.net.SocketTimeoutException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -687,7 +688,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         @Override
                         public void run() {
                             showGetCreditCardTokenProgressBar(GONE);
-                            Utils.showGeneralErrorDialog(getFragmentManager(), getString(R.string.general_error_desc));
+                            if (!(error instanceof SocketTimeoutException))
+                                Utils.showGeneralErrorDialog(getFragmentManager(), getString(R.string.general_error_desc));
                         }
                     });
                 }

@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import java.net.SocketTimeoutException
 
 class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
 
@@ -181,7 +182,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
                 override fun onFailure(error: Throwable?) {
                     showPayWithCardProgressBar(GONE)
-                    showErrorDialog(getString(R.string.general_error_desc))
+                    if (error !is SocketTimeoutException)
+                        showErrorDialog(getString(R.string.general_error_desc))
                 }
             })
         }
