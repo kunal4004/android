@@ -48,7 +48,7 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension(), IStoreCard
         super.navigateToPreviousFragment(errorDescription)
         showBackIcon()
         replaceFragmentSafely(
-                fragment = EnterOtpFragment.newInstance(mStoreCardDetail),
+                fragment = EnterOtpFragment.newInstance(mStoreCardDetail, mOtpSentTo),
                 tag = EnterOtpFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowBackStack = false)

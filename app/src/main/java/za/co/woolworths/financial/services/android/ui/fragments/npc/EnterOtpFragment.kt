@@ -31,7 +31,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     private var mOTPError: String = ""
     private var shouldDisableKeyboardOnOTPCall: Boolean = false
     private var mResendOTPFragment: ResendOTPFragment? = null
-    private var mPhoneNumberOTP: String? = null
     private var isUnblockVirtualCard = false
 
     companion object {
@@ -39,8 +38,9 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         const val IS_UNBLOCK_VIRTUAL_CARD = "IS_UNBLOCK_VIRTUAL_CARD"
         const val OTP_ERROR = "OTP_ERROR"
         fun newInstance() = EnterOtpFragment()
-        fun newInstance(OTPError: String?) = EnterOtpFragment().withArgs {
+        fun newInstance(OTPError: String?,otpToSent: String?) = EnterOtpFragment().withArgs {
             putString(OTP_ERROR, OTPError)
+            putString(OTP_SENT_TO, otpToSent)
         }
     }
 
@@ -63,7 +63,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MyCardActivityExtension)?.apply {
-            startSMSListener()
+            //startSMSListener()
             showBackIcon()
             setupInputListeners()
             configureUI()
@@ -103,7 +103,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         didNotReceiveEditTextOTP?.setOnClickListener {
             if (shouldDisableKeyboardOnOTPCall) return@setOnClickListener
             (activity as? AppCompatActivity)?.apply {
-                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mPhoneNumberOTP)
+                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, getSavedNumber())
                 mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
@@ -189,9 +189,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
                     override fun onSuccessHandler(response: LinkNewCardOTP) {
                         super.onSuccessHandler(response)
+                        saveOTP(response.otpSentTo)
                         if ((activity as? MyCardActivityExtension)?.getOTPMethodType() == OTPMethodType.SMS) {
-                            mPhoneNumberOTP = response.otpSentTo
-                            setOTPDescription(mPhoneNumberOTP)
+                            saveNumber(response.otpSentTo)
+                            setOTPDescription(getSavedOTP())
                         } else {
                             setOTPDescription(response.otpSentTo?.toLowerCase(Locale.getDefault()))
                         }
@@ -241,7 +242,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun onDestroy() {
         super.onDestroy()
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
-        cancelSMSListener()
+        //cancelSMSListener()
     }
 
     fun onOTPReceived(otp: String?) {
@@ -250,7 +251,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         displayRetrievedOTP(edtVerificationCode3, otp, 2)
         displayRetrievedOTP(edtVerificationCode4, otp, 3)
         displayRetrievedOTP(edtVerificationCode5, otp, 4)
-        cancelSMSListener()
+        //cancelSMSListener()
     }
 
     private fun cancelSMSListener() = (activity as? MyCardActivityExtension)?.cancelSMSRetriever()
@@ -287,4 +288,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     fun getSavedOTP() = (activity as? MyCardActivityExtension)?.mOtpSentTo
+
+    private fun saveNumber(otpSendTo: String?) {
+        (activity as? MyCardActivityExtension)?.mPhoneNumberOTP = otpSendTo
+    }
+
+    fun getSavedNumber() = (activity as? MyCardActivityExtension)?.mPhoneNumberOTP
 }
