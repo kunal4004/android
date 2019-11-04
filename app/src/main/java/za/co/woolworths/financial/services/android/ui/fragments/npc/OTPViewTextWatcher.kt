@@ -33,8 +33,6 @@ class OTPViewTextWatcher(private val previousEditText: EditText?, private val cu
             }
             nextEditText?.requestFocus()
             nextEditText?.setSelection(nextEditText.length(), nextEditText.length())
-            method()
-
             currentEditText.isCursorVisible = !(currentEditText.id == R.id.edtVerificationCode5 && currentEditText.text.isNotEmpty())
         }
     }
@@ -43,5 +41,6 @@ class OTPViewTextWatcher(private val previousEditText: EditText?, private val cu
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        method()
     }
 }
