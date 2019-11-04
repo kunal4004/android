@@ -108,7 +108,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 blockCardViews.visibility = GONE
                 tvCardNumberHeader.visibility = INVISIBLE
                 cardStatus.text = getString(R.string.store_card_status_temporay)
-                cardExpireDate.text = WFormatter.formatDateTOddMMMMYYYY(mStoreCard?.expiryDate)
+                cardExpireDate.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
             }
             false -> {
                 virtualCardViews.visibility = GONE
