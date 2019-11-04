@@ -34,15 +34,13 @@
         android:gravity="center|start"
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.40"
-        android:text="@string/enter_otp_desc"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="15sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle"
-        tools:text="@string/enter_otp_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
 
 
     <View
@@ -222,18 +220,18 @@
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
         android:layout_marginEnd="8dp"
-        android:fontFamily="@font/futura_medium_ttf"
+        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="start|center"
-        android:letterSpacing="0.15"
+        android:letterSpacing="0.015"
         android:text="@string/did_not_receive_title"
-        android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
         app:layout_constraintEnd_toStartOf="@+id/imNextProcessLinkCard"
         app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
         app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
-        tools:text="@string/did_not_receive_title" />
+        tools:text="@string/did_not_receive_title"
+        tools:ignore="UnusedAttribute" />
 
 
     <View
