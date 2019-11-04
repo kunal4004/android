@@ -156,6 +156,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
 
     private fun requestUnblockCard(otp: String = "") {
+        if (payWithCardTokenProgressBar.visibility == VISIBLE)
+            return
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
             UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
@@ -182,6 +184,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun navigateToOTPActivity(otpSentTo: String?) {
+        if (payWithCardTokenProgressBar.visibility == VISIBLE)
+            return
         otpSentTo?.let { otpSentTo ->
             activity?.apply {
                 val intent = Intent(this, RequestOTPActivity::class.java)
