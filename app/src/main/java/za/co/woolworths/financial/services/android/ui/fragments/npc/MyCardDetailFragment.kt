@@ -122,7 +122,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         when (v?.id) {
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
-                if (payWithCardTokenProgressBar.visibility == VISIBLE)
+                if (isApiCallInProgress())
                     return
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO)
                 activity?.apply {
@@ -138,7 +138,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 initPayWithCard()
             }
             R.id.expireInfo -> {
-                if (payWithCardTokenProgressBar.visibility == VISIBLE)
+                if (isApiCallInProgress())
                     return
                 activity?.supportFragmentManager?.apply {
                     TemporaryStoreCardExpireInfoDialog.newInstance().show((this), TemporaryStoreCardExpireInfoDialog::class.java.simpleName)
@@ -161,7 +161,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
 
     private fun requestUnblockCard(otp: String = "") {
-        if (payWithCardTokenProgressBar.visibility == VISIBLE)
+        if (isApiCallInProgress())
             return
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
@@ -190,7 +190,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun navigateToOTPActivity(otpSentTo: String?) {
-        if (payWithCardTokenProgressBar.visibility == VISIBLE)
+        if (isApiCallInProgress())
             return
         otpSentTo?.let { otpSentTo ->
             activity?.apply {
@@ -253,5 +253,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     fun showErrorDialog(errorMessage: String) {
             val dialog = ErrorDialogFragment.newInstance(errorMessage)
             (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
+    }
+
+    private fun isApiCallInProgress(): Boolean {
+        return payWithCardTokenProgressBar.visibility == VISIBLE
     }
 }
