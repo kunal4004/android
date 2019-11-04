@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import com.awfs.coordination.R
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
@@ -14,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
-    var bottomSheet: FrameLayout? = null
+    private var bottomSheet: FrameLayout? = null
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation

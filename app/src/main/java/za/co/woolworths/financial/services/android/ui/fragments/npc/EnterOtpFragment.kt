@@ -24,11 +24,13 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
+
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private var shouldDisableKeyboardOnOTPCall: Boolean = false
     private var mResendOTPFragment: ResendOTPFragment? = null
     private var mOtpSentTo: String? = null
+    private var mPhoneNumberOTP: String? = null
     private var isUnblockVirtualCard = false
 
     companion object {
@@ -82,8 +84,9 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
         didNotReceiveEditTextOTP?.setOnClickListener {
             if (shouldDisableKeyboardOnOTPCall) return@setOnClickListener
+            hideKeyboard()
             (activity as? AppCompatActivity)?.apply {
-                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mOtpSentTo)
+                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mPhoneNumberOTP)
                 mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
@@ -118,6 +121,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onResume() {
         super.onResume()
+        activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         requestEditTextFocus()
     }
 
@@ -141,6 +145,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun requestOTPApi(otpMethodType: OTPMethodType) {
         super.requestOTPApi(otpMethodType)
         saveSelectedOTP(otpMethodType)
+        clearOTP()
         requestEditTextFocus()
         activity?.let { activity ->
             if (NetworkManager().isConnectedToNetwork(activity)) {
@@ -173,7 +178,12 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
                     override fun onSuccessHandler(response: LinkNewCardOTP) {
                         super.onSuccessHandler(response)
-                        setOTPDescription(response.otpSentTo?.toLowerCase(Locale.getDefault()))
+                        if ((activity as? MyCardActivityExtension)?.getOTPMethodType() == OTPMethodType.SMS) {
+                            mPhoneNumberOTP = response.otpSentTo
+                            setOTPDescription(mPhoneNumberOTP)
+                        } else {
+                            setOTPDescription(response.otpSentTo?.toLowerCase(Locale.getDefault()))
+                        }
                     }
 
                     override fun onFailureHandler() {
@@ -188,6 +198,13 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
     }
 
+    private fun clearOTP() {
+        edtVerificationCode1?.text?.clear()
+        edtVerificationCode2?.text?.clear()
+        edtVerificationCode3?.text?.clear()
+        edtVerificationCode4?.text?.clear()
+        edtVerificationCode5?.text?.clear()
+    }
 
     private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? MyCardActivityExtension)?.setOTPType(otpMethodType)
 
