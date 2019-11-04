@@ -87,13 +87,7 @@ open class OTPInputListener : MyCardExtension() {
             }
             false
         })
-
-        // Disable touch event on EditText
-        edtVerificationCode1?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode2?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode3?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode4?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode5?.setOnTouchListener { _, _ -> true }
+        
     }
 
     private fun validateVerificationCode() {

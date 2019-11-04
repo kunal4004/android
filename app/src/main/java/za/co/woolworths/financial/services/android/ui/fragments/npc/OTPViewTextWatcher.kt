@@ -7,10 +7,20 @@ import com.awfs.coordination.R
 
 class OTPViewTextWatcher(private val previousEditText: EditText?, private val currentEditText: EditText,
                          private val nextEditText: EditText?, private val method: () -> Unit) : TextWatcher {
+
+    var isEmptyFirstTime: Boolean = false
     override fun afterTextChanged(s: Editable?) {
+
         if (s.isNullOrEmpty()) {
-            previousEditText?.requestFocus()
+            if (isEmptyFirstTime) {
+                isEmptyFirstTime = false
+                previousEditText?.requestFocus()
+            } else {
+                isEmptyFirstTime = true
+                currentEditText.requestFocus()
+            }
         } else {
+            isEmptyFirstTime = false
             if (s.length > 1) {
                 if (currentEditText.selectionEnd > 1) {
                     // If stand on second position of EditText and enter new symbol,
