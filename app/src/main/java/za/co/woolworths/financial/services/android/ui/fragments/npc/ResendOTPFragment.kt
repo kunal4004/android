@@ -5,7 +5,6 @@ import android.view.*
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.npc_resend_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
@@ -33,12 +32,9 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         arguments?.let { bundle -> mOtpSentTo = bundle.getString(OTP_SENT_TO, "") }
     }
 
@@ -92,5 +88,5 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    
+
 }

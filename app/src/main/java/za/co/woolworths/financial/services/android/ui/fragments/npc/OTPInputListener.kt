@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.FOCUS_DOWN
+import android.view.View.GONE
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 
 open class OTPInputListener : MyCardExtension() {
@@ -107,5 +108,6 @@ open class OTPInputListener : MyCardExtension() {
                 imNextProcessLinkCard?.isFocusable = true
             }
         }
+        otpErrorTextView?.visibility = GONE
     }
 }

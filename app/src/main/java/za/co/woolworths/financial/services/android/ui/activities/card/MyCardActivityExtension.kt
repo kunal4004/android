@@ -23,6 +23,7 @@ open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener {
     private var cardNumber: String? = null
     private var oTPNumber: String? = null
     var mDefaultOtpSentTo: String? = null // required to save default phone number
+    var mOtpSentTo: String? = null
     private var mSmsReceiver: SMSReceiver? = null
 
     fun getOTPMethodType(): OTPMethodType = this.otpType

@@ -23,32 +23,40 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActi
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
-
+import android.view.WindowManager
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
+    private var mOTPError: String = ""
     private var shouldDisableKeyboardOnOTPCall: Boolean = false
     private var mResendOTPFragment: ResendOTPFragment? = null
-    private var mOtpSentTo: String? = null
     private var mPhoneNumberOTP: String? = null
     private var isUnblockVirtualCard = false
 
     companion object {
         const val OTP_SENT_TO = "OTP_SENT_TO"
         const val IS_UNBLOCK_VIRTUAL_CARD = "IS_UNBLOCK_VIRTUAL_CARD"
+        const val OTP_ERROR = "OTP_ERROR"
         fun newInstance() = EnterOtpFragment()
+        fun newInstance(OTPError: String?) = EnterOtpFragment().withArgs {
+            putString(OTP_ERROR, OTPError)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.let { bundle ->
-            mOtpSentTo = bundle.getString(OTP_SENT_TO, "")
+            saveOTP(bundle.getString(OTP_SENT_TO, ""))
+            mOTPError = bundle.getString(OTP_ERROR, "")
             isUnblockVirtualCard = bundle.getBoolean(IS_UNBLOCK_VIRTUAL_CARD, false)
+
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         return inflater.inflate(R.layout.enter_otp_fragment, container, false)
     }
 
@@ -57,21 +65,31 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         (activity as? MyCardActivityExtension)?.apply {
             startSMSListener()
             showBackIcon()
-
             setupInputListeners()
             configureUI()
             clickEvent()
-            setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
             imNextProcessLinkCard?.isEnabled = false
-
-            requestOTPApi(getOTPMethodType())
+            if (mOTPError.isEmpty()) {
+                setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
+                requestOTPApi(getOTPMethodType())
+            } else {
+                setOTPDescription(getSavedOTP())
+                showOTPErrorOnOTPFragment()
+            }
         }
     }
 
     private fun setOTPDescription(otpType: String?) {
-        mOtpSentTo = otpType
-        val desc = activity?.resources?.getString(R.string.enter_otp_desc, otpType)
-        activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(desc), type, enterOTPDescriptionScreen, false) } }
+        (activity as? MyCardActivityExtension)?.apply {
+            mOtpSentTo = otpType
+            val otpDescriptionLabel = when (getOTPMethodType()) {
+                OTPMethodType.SMS -> activity?.resources?.getString(R.string.enter_otp_phone_desc, otpType)
+                OTPMethodType.EMAIL -> activity?.resources?.getString(R.string.enter_otp_email_desc, otpType)
+                else -> return
+            }
+            activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, enterOTPDescriptionScreen, false) } }
+
+        }
     }
 
     private fun configureUI() {
@@ -84,7 +102,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
         didNotReceiveEditTextOTP?.setOnClickListener {
             if (shouldDisableKeyboardOnOTPCall) return@setOnClickListener
-            hideKeyboard()
             (activity as? AppCompatActivity)?.apply {
                 mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mPhoneNumberOTP)
                 mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
@@ -121,7 +138,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onResume() {
         super.onResume()
-        activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        (activity as? AppCompatActivity)?.supportActionBar?.show()
         requestEditTextFocus()
     }
 
@@ -134,12 +151,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 showSoftKeyboard(activity, this)
             }
         }
-    }
-
-
-    override fun navigateToEnterOTPScreen(data: LinkNewCardOTP) {
-        super.navigateToEnterOTPScreen(data)
-        setOTPDescription(data.otpSentTo?.toLowerCase(Locale.getDefault()))
     }
 
     override fun requestOTPApi(otpMethodType: OTPMethodType) {
@@ -188,7 +199,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
                     override fun onFailureHandler() {
                         super.onFailureHandler()
-                        setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
+                        setOTPDescription(getSavedOTP())
                     }
                 })
             } else {
@@ -229,6 +240,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onDestroy() {
         super.onDestroy()
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         cancelSMSListener()
     }
 
@@ -260,5 +272,19 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         editText?.isFocusable = false
         editText?.isEnabled = false
         editText?.inputType = 0
+        otpErrorTextView?.visibility = GONE
     }
+
+    private fun showOTPErrorOnOTPFragment() {
+        otpErrorTextView?.visibility = VISIBLE
+        clearOTP()
+        edtVerificationCode1?.requestFocus()
+        requestEditTextFocus()
+    }
+
+    private fun saveOTP(otpSendTo: String?) {
+        (activity as? MyCardActivityExtension)?.mOtpSentTo = otpSendTo
+    }
+
+    fun getSavedOTP() = (activity as? MyCardActivityExtension)?.mOtpSentTo
 }
