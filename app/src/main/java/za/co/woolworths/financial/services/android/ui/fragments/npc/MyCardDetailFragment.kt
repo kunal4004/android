@@ -121,6 +121,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         when (v?.id) {
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
+                if (payWithCardTokenProgressBar.visibility == VISIBLE)
+                    return
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO)
                 activity?.apply {
                     Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
@@ -135,6 +137,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 initPayWithCard()
             }
             R.id.expireInfo -> {
+                if (payWithCardTokenProgressBar.visibility == VISIBLE)
+                    return
                 activity?.supportFragmentManager?.apply {
                     TemporaryStoreCardExpireInfoDialog.newInstance().show((this), TemporaryStoreCardExpireInfoDialog::class.java.simpleName)
                 }
