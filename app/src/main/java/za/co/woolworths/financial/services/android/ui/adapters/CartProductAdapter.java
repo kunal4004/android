@@ -41,6 +41,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
+    private final float DISABLE_VIEW_VALUE = 0.5f;
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipe;
@@ -162,15 +163,20 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 }
                 // Set Color and Size END
 
-                productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : 0.5f);
-
+                productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : DISABLE_VIEW_VALUE);
                 if (commerceItem.isStockChecked) {
                     productHolder.llQuantity.setAlpha((commerceItem.quantityInStock == 0) ? 0.0f : 1.0f);
                     productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
                     Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
                     productHolder.price.setVisibility((commerceItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-                    if (commerceItem.quantityInStock == 0)
+                    if (commerceItem.quantityInStock == 0) {
                         productHolder.llPromotionalText.setVisibility(View.GONE);
+                    } else if (commerceItem.quantityInStock == -1){
+                        productHolder.llQuantity.setAlpha(DISABLE_VIEW_VALUE);
+                        productHolder.llQuantity.setEnabled(false);
+                        productHolder.quantity.setAlpha(DISABLE_VIEW_VALUE);
+                        productHolder.imPrice.setAlpha(DISABLE_VIEW_VALUE);
+                    }else {}
                 } else {
                     productHolder.llQuantity.setVisibility(View.VISIBLE);
                     productHolder.tvProductAvailability.setVisibility(View.GONE);
