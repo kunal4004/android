@@ -12,4 +12,5 @@ public class Configs {
     public PresenceInAppChat presenceInAppChat;
     public QuickShopDefaultValues quickShopDefaultValues;
     public InstantCardReplacement instantCardReplacement;
+    public VirtualTempCard virtualTempCard;
 }

@@ -45,6 +45,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -93,6 +94,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static PresenceInAppChat presenceInAppChat;
 	private static QuickShopDefaultValues quickShopDefaultValues;
 	private static InstantCardReplacement instantCardReplacement;
+	private static VirtualTempCard virtualTempCard;
 
 	private Activity mCurrentActivity = null;
 
@@ -487,5 +489,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static InstantCardReplacement getInstantCardReplacement() {
 		return instantCardReplacement;
+	}
+
+	public static VirtualTempCard getVirtualTempCard() {
+		return virtualTempCard != null ? virtualTempCard : new VirtualTempCard();
+	}
+
+	public static void setVirtualTempCard(VirtualTempCard virtualTempCard) {
+		WoolworthsApplication.virtualTempCard = virtualTempCard;
 	}
 }
