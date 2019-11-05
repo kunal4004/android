@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.FOCUS_DOWN
+import android.view.View.GONE
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 
 open class OTPInputListener : MyCardExtension() {
@@ -87,13 +88,7 @@ open class OTPInputListener : MyCardExtension() {
             }
             false
         })
-
-        // Disable touch event on EditText
-        edtVerificationCode1?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode2?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode3?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode4?.setOnTouchListener { _, _ -> true }
-        edtVerificationCode5?.setOnTouchListener { _, _ -> true }
+        
     }
 
     private fun validateVerificationCode() {
@@ -113,5 +108,6 @@ open class OTPInputListener : MyCardExtension() {
                 imNextProcessLinkCard?.isFocusable = true
             }
         }
+        otpErrorTextView?.visibility = GONE
     }
 }

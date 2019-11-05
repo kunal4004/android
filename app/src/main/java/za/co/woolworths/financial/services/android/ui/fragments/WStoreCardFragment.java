@@ -23,6 +23,7 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 
+import java.net.SocketTimeoutException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -687,7 +688,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         @Override
                         public void run() {
                             showGetCreditCardTokenProgressBar(GONE);
-                            Utils.showGeneralErrorDialog(getFragmentManager(), getString(R.string.general_error_desc));
+                            if (!(error instanceof SocketTimeoutException))
+                                Utils.showGeneralErrorDialog(getFragmentManager(), getString(R.string.general_error_desc));
                         }
                     });
                 }
@@ -703,7 +705,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
         storeCardsResponse.getStoreCardsData().setProductOfferingId(productOfferingId);
         storeCardsResponse.getStoreCardsData().setVisionAccountNumber(account.accountNumber);
-        if(storeCardsData.getGenerateVirtualCard() ) {
+        if(storeCardsData.getGenerateVirtualCard() && WoolworthsApplication.getVirtualTempCard().isEnabled() ) {
             Intent intent = new Intent(activity, GetTemporaryStoreCardPopupActivity.class);
             intent.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
             activity.startActivity(intent);

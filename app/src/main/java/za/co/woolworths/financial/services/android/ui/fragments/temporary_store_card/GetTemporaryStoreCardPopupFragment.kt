@@ -104,16 +104,16 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     }
 
     fun navigateToOTPFragment() {
-            replaceFragment(
-                    fragment = EnterOtpFragment.newInstance(),
-                    tag = EnterOtpFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard,
-                    allowStateLoss = true,
-                    enterAnimation = R.anim.slide_in_from_right,
-                    exitAnimation = R.anim.slide_to_left,
-                    popEnterAnimation = R.anim.slide_from_left,
-                    popExitAnimation = R.anim.slide_to_right
-            )
+        replaceFragment(
+                fragment = EnterOtpFragment.newInstance(),
+                tag = EnterOtpFragment::class.java.simpleName,
+                containerViewId = R.id.flMyCard,
+                allowStateLoss = true,
+                enterAnimation = R.anim.slide_in_from_right,
+                exitAnimation = R.anim.slide_to_left,
+                popEnterAnimation = R.anim.slide_from_left,
+                popExitAnimation = R.anim.slide_to_right
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
