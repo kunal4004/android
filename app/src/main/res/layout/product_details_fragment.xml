@@ -160,6 +160,19 @@
 
         </androidx.core.widget.NestedScrollView>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/fifty_dp"
+            android:layout_height="@dimen/fifty_dp"
+            android:elevation="@dimen/two_dp"
+            android:layout_above="@+id/toCartAndFindInStoreLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/twenty_four_dp"
+            android:indeterminateTint="@color/black"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible" />
+
         <include
             android:id="@+id/toCartAndFindInStoreLayout"
             layout="@layout/product_details_add_to_cart_and_find_in_store_button_layout"
