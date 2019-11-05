@@ -17,14 +17,12 @@ import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem;
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
@@ -240,21 +238,8 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 
 		private void setPrice(ProductList productItem) {
-			ArrayList<Double> priceList = new ArrayList<>();
-			for (OtherSkus os : productItem.otherSkus) {
-				if (!TextUtils.isEmpty(os.wasPrice)) {
-					priceList.add(Double.valueOf(os.wasPrice));
-				}
-			}
-
-			String wasPrice = "";
-			if (priceList.size() > 0) {
-				wasPrice = String.valueOf(Collections.max(priceList));
-			}
-
-			String fromPrice = String.valueOf(productItem.fromPrice);
-			ProductUtils.displayPrice(tvPrice, tvWasPrice,
-					fromPrice, wasPrice);
+			PriceItem priceItem =new  PriceItem();
+			priceItem.setPrice(productItem, itemView);
 		}
 
 		private void setSaveText(ProductList productItem) {
