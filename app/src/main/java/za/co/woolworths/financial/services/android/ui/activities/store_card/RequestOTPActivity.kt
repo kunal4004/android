@@ -16,8 +16,7 @@ class RequestOTPActivity : MyCardActivityExtension() {
         const val OTP_VALUE = "OTP_VALUE"
         const val OTP_REQUEST_CODE = 1983
     }
-
-    var mOtpSentTo: String? = null
+    var otpSentTo: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_otp)
@@ -25,7 +24,7 @@ class RequestOTPActivity : MyCardActivityExtension() {
         actionBar()
 
         intent?.extras?.apply {
-            mOtpSentTo = getString(OTP_SENT_TO, "")
+            otpSentTo = getString(OTP_SENT_TO, "")
         }
         addRequestOTPFragment()
     }

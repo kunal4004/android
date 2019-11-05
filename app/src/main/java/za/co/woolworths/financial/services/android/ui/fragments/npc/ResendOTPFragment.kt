@@ -1,29 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.npc_resend_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.adapters.ResendOTPAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment.Companion.OTP_SENT_TO
-import za.co.woolworths.financial.services.android.ui.views.ProgressBarDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class ResendOTPFragment : WBottomSheetDialogFragment() {
 

@@ -8,14 +8,14 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.block_my_card_activity.*
 import kotlinx.android.synthetic.main.my_card_activity.tbMyCard
 import kotlinx.android.synthetic.main.my_card_activity.toolbarText
-import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
+import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
+class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
 
     companion object {
         const val REQUEST_CODE_BLOCK_MY_CARD = 8073

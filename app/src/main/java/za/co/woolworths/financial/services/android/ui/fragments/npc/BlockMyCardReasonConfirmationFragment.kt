@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.npc_permanent_card_block_layout.*
-import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
+import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import android.content.Context
@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
 
-    private var mPermanentCardBlockCallback: IPermanentCardBlock? = null
+    private var mStoreCardListenerCallback: IStoreCardListener? = null
 
 
     companion object {
@@ -29,7 +29,7 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
         super.onAttach(context)
         activity?.apply {
             try {
-                mPermanentCardBlockCallback = this as? IPermanentCardBlock
+                mStoreCardListenerCallback = this as? IStoreCardListener
             } catch (e: ClassCastException) {
                 throw ClassCastException("$this must implement MyInterface ")
             }
@@ -49,7 +49,7 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
         }
         btnBlockPermanentCard?.setOnClickListener {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM)
-            mPermanentCardBlockCallback?.onBlockPermanentCardPermissionGranted()
+            mStoreCardListenerCallback?.onBlockPermanentCardPermissionGranted()
             dismiss()
         }
     }

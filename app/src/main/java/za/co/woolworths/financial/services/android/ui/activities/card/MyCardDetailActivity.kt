@@ -13,6 +13,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -22,7 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetail
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class MyCardDetailActivity : AppCompatActivity() {
+class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"

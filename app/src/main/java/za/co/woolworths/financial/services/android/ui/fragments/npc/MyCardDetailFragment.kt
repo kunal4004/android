@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import java.net.SocketTimeoutException
 
 class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
 
@@ -104,7 +105,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 blockCardViews.visibility = GONE
                 tvCardNumberHeader.visibility = INVISIBLE
                 cardStatus.text = getString(R.string.store_card_status_temporay)
-                cardExpireDate.text = WFormatter.formatDateTOddMMMMYYYY(mStoreCard?.expiryDate)
+                cardExpireDate.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
             }
             false -> {
                 virtualCardViews.visibility = GONE
@@ -118,6 +119,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         when (v?.id) {
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
+                if (isApiCallInProgress())
+                    return
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO)
                 activity?.apply {
                     Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
@@ -132,6 +135,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 initPayWithCard()
             }
             R.id.expireInfo -> {
+                if (isApiCallInProgress())
+                    return
                 activity?.supportFragmentManager?.apply {
                     TemporaryStoreCardExpireInfoDialog.newInstance().show((this), TemporaryStoreCardExpireInfoDialog::class.java.simpleName)
                 }
@@ -153,6 +158,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
 
     private fun requestUnblockCard(otp: String = "") {
+        if (isApiCallInProgress())
+            return
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
             UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
@@ -172,13 +179,16 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
                 override fun onFailure(error: Throwable?) {
                     showPayWithCardProgressBar(GONE)
-                    showErrorDialog(getString(R.string.general_error_desc))
+                    if (error !is SocketTimeoutException)
+                        showErrorDialog(getString(R.string.general_error_desc))
                 }
             })
         }
     }
 
     private fun navigateToOTPActivity(otpSentTo: String?) {
+        if (isApiCallInProgress())
+            return
         otpSentTo?.let { otpSentTo ->
             activity?.apply {
                 val intent = Intent(this, RequestOTPActivity::class.java)
@@ -242,7 +252,11 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
     }
 
-    private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean{
+    private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean {
         return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+    }
+
+    private fun isApiCallInProgress(): Boolean {
+        return payWithCardTokenProgressBar.visibility == VISIBLE
     }
 }
