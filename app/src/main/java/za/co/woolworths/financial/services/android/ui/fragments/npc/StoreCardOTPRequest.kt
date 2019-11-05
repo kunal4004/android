@@ -93,8 +93,8 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                     }
                     else -> {
                         linkStoreCardHasFailed = true
-                        requestListener?.hideProgress()
-                        requestListener?.onFailureHandler()
+                       // requestListener?.hideProgress()
+                        requestListener?.onFailureHandler(response?.response)
                     }
                 }
             }
