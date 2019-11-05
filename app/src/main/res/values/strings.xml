@@ -1163,5 +1163,6 @@
     <string name="update_password_layout">Update Password</string>
     <string name="mypreferences_layout">MyPreferences</string>
     <string name="sign_out_layout">Sign Out</string>
-
+    <string name="product_placeholder_selected_size">Selected Size</string>
+    <string name="product_placeholder_select_size">Select Size</string>
 </resources>

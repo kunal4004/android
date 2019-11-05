@@ -30,8 +30,8 @@ interface ProductDetailsContract {
         fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse)
         fun showOutOfStockInStores()
         fun onFindStoresSuccess(location: List<StoreDetails>)
-        fun dismissFindInStoreProgress()
-
+        fun showProductDetailsLoading()
+        fun hideProductDetailsLoading()
     }
 
     interface ProductDetailsPresenter {

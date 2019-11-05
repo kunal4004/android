@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.Quantity
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.product_color_row.view.*
@@ -48,7 +49,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider ,View.OnClickListener{
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -72,6 +73,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
     private var permissionUtils: PermissionUtils? = null
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
+    private var isApiCallInProgress: Boolean = false
 
 
     companion object {
@@ -96,11 +98,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun initViews() {
-        addToCartAction.setOnClickListener { addItemToCart() }
-        quantitySelector.setOnClickListener { onQuantitySelector() }
-        addToShoppingList.setOnClickListener { addItemToShoppingList() }
-        checkInStoreAvailability.setOnClickListener { findItemInStore() }
+        addToCartAction.setOnClickListener(this)
+        quantitySelector.setOnClickListener(this)
+        addToShoppingList.setOnClickListener(this)
+        checkInStoreAvailability.setOnClickListener(this)
         configureDefaultUI()
+    }
+
+    override fun onClick(v: View?) {
+        if (isApiCallInProgress)
+            return
+        when (v?.id) {
+            R.id.addToCartAction -> addItemToCart()
+            R.id.quantitySelector -> onQuantitySelector()
+            R.id.addToShoppingList -> addItemToShoppingList()
+            R.id.checkInStoreAvailability -> findItemInStore()
+        }
     }
 
     private fun onQuantitySelector() {
@@ -164,6 +177,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
             //setSelectedSku(null)
+            hideProgressBar()
             val message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
             Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
             return
@@ -179,14 +193,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val item = getSelectedQuantity()?.let { AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, it) }
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
-        if (listOfItems.isNotEmpty())
+        if (listOfItems.isNotEmpty()) {
             productDetailsPresenter?.postAddItemToCart(listOfItems)
-    }
-
-    override fun showProgressBar() {
-    }
-
-    override fun hideProgressBar() {
+        }
     }
 
     override fun onSessionTokenExpired() {
@@ -197,21 +206,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
 
             storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)?.apply {
+                showProductDetailsLoading()
                 val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
                 productDetailsPresenter?.loadStockAvailability(this, multiSKUs, true)
             }
 
 
         } else {
-            // getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE)
-            // getViewDataBinding().loadingInfoView.setVisibility(View.GONE)
-
-            if (isAdded)
-                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc))
+            showErrorWhileLoadingProductDetails()
         }
     }
 
     override fun onProductDetailedFailed(response: Response) {
+        showErrorWhileLoadingProductDetails()
     }
 
     override fun onFailureResponse(error: String) {
@@ -230,6 +237,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (isDefaultRequest) {
             otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
             updateDefaultUI()
+            hideProductDetailsLoading()
         } else {
             getSelectedSku()?.let { selectedSku ->
                 productDetails?.otherSkus?.forEach {
@@ -274,6 +282,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this).apply {
             colorSelectorRecycleView.adapter = this
             setSelect(getSelectedGroupKey())
+            showSelectedColor()
         }
         //productColorSelectorAdapter?
         /*val layoutManager1 = FlexboxLayoutManager(activity)
@@ -366,11 +375,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
         setSelectedSku(selectedSku)
+        showSelectedSize()
         updateUIForSelectedSKU(getSelectedSku())
     }
 
     override fun onColorSelection(selectedColor: String?) {
         setSelectedGroupKey(selectedColor)
+        showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
     }
@@ -408,6 +419,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     updateUIForSelectedSKU(getSelectedSku())
                 }
             }
+            showSelectedSize()
 
         }
 
@@ -518,6 +530,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {
+
         if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
             activity?.apply {
                 ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
@@ -768,8 +781,54 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-    override fun dismissFindInStoreProgress() {
+    override fun showProductDetailsLoading() {
+        activity?.apply {
+            showProgressBar()
+            viewsToHideOnProductLoading.visibility = View.GONE
+            toCartAndFindInStoreLayout.visibility = View.GONE
+        }
+    }
 
+    override fun hideProductDetailsLoading() {
+        activity?.apply {
+            hideProgressBar()
+            viewsToHideOnProductLoading.visibility = View.VISIBLE
+            toCartAndFindInStoreLayout.visibility = View.VISIBLE
+        }
+    }
+
+    override fun showProgressBar() {
+        activity?.apply {
+            isApiCallInProgress = true
+            progressBar.visibility = View.VISIBLE
+        }
+    }
+
+    override fun hideProgressBar() {
+        activity?.apply {
+            isApiCallInProgress = false
+            progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun showErrorWhileLoadingProductDetails() {
+        activity?.apply {
+            hideProgressBar()
+            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc))
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showSelectedColor() {
+            selectedColor.text = " - ${getSelectedGroupKey()}"
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showSelectedSize() {
+        getSelectedSku().let {
+            selectedSizePlaceholder.text = getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
+            selectedSize.text = if (it != null) " - ${it.size}" else ""
+        }
     }
 
 }

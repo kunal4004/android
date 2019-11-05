@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
-import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.*
 
 class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, ProductDetailsContract.ProductDetailsInteractor.OnFinishListener {
@@ -8,6 +7,7 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     var isDefaultRequest: Boolean = true
 
     override fun loadCartSummary() {
+        mainView?.showProgressBar()
         getInteractor.getCartSummary(this)
     }
 
@@ -24,10 +24,12 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     }
 
     override fun loadProductDetails(productRequest: ProductRequest) {
+        mainView?.showProductDetailsLoading()
         getInteractor.getProductDetails(productRequest, this)
     }
 
     override fun postAddItemToCart(addItemToCart: List<AddItemToCart>) {
+        mainView?.showProgressBar()
         getInteractor.postAddItemToCart(addItemToCart, this)
     }
 
@@ -38,7 +40,12 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                     (this).apply {
                         when (this.httpCode) {
                             200 -> mainView?.onProductDetailsSuccess(this.product)
-                            else -> this.response?.let { mainView?.onProductDetailedFailed(it) }
+                            else -> this.response?.let {
+                                mainView?.apply {
+                                    onProductDetailedFailed(it)
+                                    hideProgressBar()
+                                }
+                            }
                         }
                     }
                 }
@@ -46,7 +53,12 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                     (this).apply {
                         when (this.httpCode) {
                             200 -> mainView?.onStockAvailabilitySuccess(this, isDefaultRequest)
-                            else -> this.response?.let { mainView?.onProductDetailedFailed(it) }
+                            else -> this.response?.let {
+                                mainView?.apply {
+                                    onProductDetailedFailed(it)
+                                    hideProgressBar()
+                                }
+                            }
                         }
                     }
                 }
@@ -60,11 +72,12 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                             }
                             else -> mainView?.responseFailureHandler(this.response)
                         }
-
+                        mainView?.hideProgressBar()
                     }
                 }
                 is AddItemToCartResponse -> {
                     this.apply {
+                        mainView?.hideProgressBar()
                         when (this.httpCode) {
                             200 -> {
                                 this.data?.let { data ->
@@ -83,13 +96,14 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                                 if (this.response != null)
                                     mainView?.onSessionTokenExpired()
                             }
-                            else -> mainView?.dismissFindInStoreProgress()
+                            else -> mainView?.responseFailureHandler(this.response)
                         }
 
                     }
 
                 }
                 is LocationResponse -> {
+                    mainView?.hideProgressBar()
                     when (this.httpCode) {
                         200 -> {
                             val location = this.Locations

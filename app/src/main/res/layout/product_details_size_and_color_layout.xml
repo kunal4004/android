@@ -21,7 +21,7 @@
         style="@style/futura_medium_black_12_text_style"
         android:layout_marginTop="@dimen/twelve_dp"
         android:letterSpacing="0.05"
-        android:text="Colour"
+        android:text="@string/product_colour"
         android:textAllCaps="true"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,6 @@
         android:id="@+id/selectedColor"
         style="@style/futura_semi_bold_black_12_text_style"
         android:letterSpacing="0.05"
-        android:text=" -  charcoal"
         android:textAllCaps="true"
         app:layout_constraintLeft_toRightOf="@+id/colorPlaceholder"
         app:layout_constraintTop_toTopOf="@id/colorPlaceholder" />
@@ -69,7 +68,7 @@
         style="@style/futura_medium_black_12_text_style"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:letterSpacing="0.05"
-        android:text="Selected Size"
+        android:text="@string/product_placeholder_select_size"
         android:textAllCaps="true"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +78,6 @@
         android:id="@+id/selectedSize"
         style="@style/futura_semi_bold_black_12_text_style"
         android:letterSpacing="0.05"
-        android:text=" - extra small"
         android:textAllCaps="true"
         app:layout_constraintLeft_toRightOf="@+id/selectedSizePlaceholder"
         app:layout_constraintTop_toTopOf="@id/selectedSizePlaceholder" />
