@@ -703,7 +703,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
         storeCardsResponse.getStoreCardsData().setProductOfferingId(productOfferingId);
         storeCardsResponse.getStoreCardsData().setVisionAccountNumber(account.accountNumber);
-        if(storeCardsData.getGenerateVirtualCard() ) {
+        if(storeCardsData.getGenerateVirtualCard() && WoolworthsApplication.getVirtualTempCard().isEnabled() ) {
             Intent intent = new Intent(activity, GetTemporaryStoreCardPopupActivity.class);
             intent.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
             activity.startActivity(intent);

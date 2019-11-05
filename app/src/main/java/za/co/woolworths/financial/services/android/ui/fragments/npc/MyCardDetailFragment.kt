@@ -15,12 +15,10 @@ import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.*
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.*
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_REQUEST_CODE
@@ -31,7 +29,6 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -66,7 +63,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 mStoreCardDetail?.let { cardValue ->
                     mStoreCardsResponse = Gson().fromJson(cardValue, StoreCardsResponse::class.java)
                     mStoreCard = mStoreCardsResponse?.storeCardsData?.let { it ->
-                        it.virtualCard ?: it.primaryCards?.get(0)
+                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(0)
                     }
                 }
             }
@@ -102,7 +99,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 textViewCardHolderName?.text = it
             }
         }
-        when (mStoreCardsResponse?.storeCardsData?.let { it -> it.virtualCard != null }) {
+        when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
             true -> {
                 blockCardViews.visibility = GONE
                 tvCardNumberHeader.visibility = INVISIBLE
@@ -243,5 +240,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     fun showErrorDialog(errorMessage: String) {
             val dialog = ErrorDialogFragment.newInstance(errorMessage)
             (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
+    }
+
+    private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean{
+        return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
     }
 }
