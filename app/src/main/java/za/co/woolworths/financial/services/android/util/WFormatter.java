@@ -142,12 +142,12 @@ public class WFormatter {
         return new SimpleDateFormat("dd/MM/yy").format(m_ISO8601Local.parse(validFromDate));
     }
 
-    public static String formatDateTOddMMMMYYYY(String validFromDate) throws ParseException {
+    public static String formatDateTOddMMMYYYY(String validFromDate) throws ParseException {
         if (validFromDate == null) {
             return "N/A";
         }
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
-        return new SimpleDateFormat("dd MMMM yyyy").format(m_ISO8601Local.parse(validFromDate));
+        return new SimpleDateFormat("dd MMM yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
 
     public static String formatMessagingDate(Date validDate) throws ParseException {

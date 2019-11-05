@@ -1070,7 +1070,7 @@
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
     <string name="card_holder">Cardholder</string>
-    <string name="temp_card_expires">Temp Card Expires:</string>
+    <string name="temp_card_expires">Temp Card Expires</string>
     <string name="pay_with_card">Pay with Card</string>
     <string name="how_it_works">How it Works</string>
     <string name="how_to_use">how to use</string>
