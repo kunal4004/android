@@ -2040,4 +2040,8 @@
         <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
     </style>
 
+    <style name="enter_otp_edit_text_style">
+        <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
+    </style>
+
 </resources>

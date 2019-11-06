@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.link_store_card_process_fragment.*
@@ -18,7 +20,9 @@ import kotlinx.android.synthetic.main.process_block_card_fragment.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.incLinkCardSuccessFulView
 import kotlinx.android.synthetic.main.process_block_card_fragment.incProcessingTextLayout
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
+import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkCardType
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
@@ -35,11 +39,13 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
 
+    private var mStoreCardRequest: StoreCardOTPRequest? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
     private var storeDetails: StoreCardsData? = null
     private var otpMethodType: OTPMethodType? = null
     private var linkStoreCard: LinkStoreCard? = null
     private var mLinkCardType: String? = null
+    private var mStoreCardListener: IStoreCardListener? = null
 
     companion object {
         fun newInstance() = LinkStoreCardFragment()
@@ -61,19 +67,32 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         okGotItButton?.setOnClickListener(this)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.apply {
+            try {
+                mStoreCardListener = this as? IStoreCardListener
+            } catch (e: ClassCastException) {
+                throw ClassCastException("$this must implement MyInterface ")
+            }
+        }
+    }
+
+
     private fun linkStoreCardRequest() {
 
         val mCurrentActivity = getCurrentActivity()
 
         mCurrentActivity?.apply {
 
-            var sequenceNumber = getSequenceNumber()
+            val sequenceNumber: Int?
             storeDetails = getStoreCardDetail().storeCardsData
 
             if (activity is InstantStoreCardReplacementActivity) {
                 mLinkCardType = LinkCardType.LINK_NEW_CARD.type
+                sequenceNumber = 1
             } else {
-                sequenceNumber = storeDetails?.primaryCards?.get(0)?.sequence?.toInt() ?: 0
+                sequenceNumber = null
                 mLinkCardType = LinkCardType.VIRTUAL_TEMP_CARD.type
             }
 
@@ -83,10 +102,10 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                     ?: 0, storeDetails?.visionAccountNumber
                     ?: "", getCardNumber(), sequenceNumber, getOtpNumber(), getOTPMethodType(), mLinkCardType!!)
             linkStoreCard?.let { request ->
-                val storeCardOTPRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
-                storeCardOTPRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
-                    override fun startLoading() {
-                        super.startLoading()
+                mStoreCardRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
+                mStoreCardRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
+                    override fun showProgress() {
+                        super.showProgress()
                         linkStoreCardProgress()
                     }
 
@@ -99,12 +118,13 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         account.productOfferingId = storeDetails?.productOfferingId?.toInt() ?: 0
 
                         // Make store card call
-                        storeCardOTPRequest.getStoreCards(object : IOTPLinkStoreCard<StoreCardsResponse> {
+                        mStoreCardRequest?.getStoreCards(object : IOTPLinkStoreCard<StoreCardsResponse> {
 
                             override fun onSuccessHandler(response: StoreCardsResponse) {
                                 if (!isAdded) return
                                 super.onSuccessHandler(response)
-                                mCurrentActivity?.clearFlag()
+                                mStoreCardsResponse = response
+                                clearFlag()
                                 object : CountDownTimer(1500, 100) {
                                     override fun onTick(millisUntilFinished: Long) {
                                     }
@@ -121,13 +141,13 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                                                 Handler().postDelayed({
                                                     handleStoreCardResponse(response)
                                                 }, 1000)
-
                                             }
                                         }
                                     }
                                 }.start()
                             }
 
+                            // get card failure
                             override fun onFailureHandler() {
                                 super.onFailureHandler()
                                 onFailure()
@@ -135,10 +155,27 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         }, account)
                     }
 
+                    // link card failure
                     override fun onFailureHandler() {
                         super.onFailureHandler()
                         onFailure()
                     }
+
+                    // OTP Failure View
+                    override fun onFailureHandler(response: Response?) {
+                        super.onFailureHandler(response)
+                        when (response?.code) {
+                            "1037" -> {
+                                mStoreCardListener?.navigateToPreviousFragment(response.desc)
+                                activity?.supportFragmentManager?.apply {
+                                        findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
+                                }
+                             }
+                            else -> onFailure()
+                        }
+                    }
+
+
                 }, request)
             }
         }
@@ -201,22 +238,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
             when (view?.id) {
                 R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
 
-                R.id.btnRetryOnFailure -> {
-                    val storeCardResponse = getCurrentActivity()?.getStoreCardDetail()
-                    when (mLinkCardType) {
-                        LinkCardType.LINK_NEW_CARD.type -> {
-                            (this as? AppCompatActivity)?.let { activity -> navigateToLinkNewCardActivity(activity, Gson().toJson(storeCardResponse)) }
-                        }
-                        LinkCardType.VIRTUAL_TEMP_CARD.type -> {
-                            val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
-                            intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(mStoreCardsResponse?.storeCardsData))
-                            startActivity(intent)
-                            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                            finish()
-                            overridePendingTransition(0, 0)
-                        }
-                    }
-                }
+                R.id.btnRetryOnFailure -> onAPIFailureRetry()
 
                 R.id.ibBack -> onBackPressed()
                 R.id.okGotItButton -> {
@@ -249,14 +271,16 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         if (!isAdded) return
         activity?.let { activity ->
 
-            val storeCardsData = mStoreCardsResponse?.storeCardsData
-            val visionAccountNumber = storeCardsData?.visionAccountNumber ?: ""
-            val productOfferingId: String? = storeCardsData?.productOfferingId
+            val storeCardData = storeCardsResponse.storeCardsData
 
-            storeCardsResponse.storeCardsData?.visionAccountNumber = visionAccountNumber
-            storeCardsResponse.storeCardsData?.productOfferingId = productOfferingId ?: ""
+            val tempStoreCardData = (activity as? MyCardActivityExtension)?.getStoreCardDetail()?.storeCardsData
+            val tempProductOfferingId = tempStoreCardData?.productOfferingId
+            val tempVisionAccountNumber = tempStoreCardData?.visionAccountNumber
 
-            storeCardsResponse.storeCardsData?.apply {
+            storeCardData?.visionAccountNumber = tempVisionAccountNumber ?: ""
+            storeCardData?.productOfferingId = tempProductOfferingId ?: ""
+
+            storeCardData?.apply {
                 if (generateVirtualCard) {
                     val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
                     intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
@@ -276,5 +300,75 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
     }
 
+    private fun onAPIFailureRetry() {
+        (activity as? MyCardActivityExtension)?.apply {
+            when (mLinkCardType) {
+                LinkCardType.LINK_NEW_CARD.type -> {
+                    handleStoreCardFailureResponse(getStoreCardDetail())
+                }
+                LinkCardType.VIRTUAL_TEMP_CARD.type -> {
+                    handleStoreCardFailureResponse(getStoreCardDetail())
+                }
+            }
+        }
+    }
+
+    /**
+     * when link card fails show an error and its back to the store card container page
+     * if link passes, and getcards fails, go back to the main account page.
+     * From there use can tap "my cards" to redo the getcards call
+     */
+
+    private fun handleStoreCardFailureResponse(storeCardsResponse: StoreCardsResponse) {
+        if (!isAdded) return
+        activity?.let { activity ->
+
+            val storeCardData = storeCardsResponse.storeCardsData
+
+            val tempStoreCardData = (activity as? MyCardActivityExtension)?.getStoreCardDetail()?.storeCardsData
+            val tempProductOfferingId = tempStoreCardData?.productOfferingId
+            val tempVisionAccountNumber = tempStoreCardData?.visionAccountNumber
+
+            storeCardData?.visionAccountNumber = tempVisionAccountNumber ?: ""
+            storeCardData?.productOfferingId = tempProductOfferingId ?: ""
+
+            val linkStoreCardHasFailed = mStoreCardRequest?.linkStoreCardHasFailed
+            val getCardCallHasFailed = mStoreCardRequest?.getCardCallHasFailed
+
+            when (mLinkCardType) {
+                LinkCardType.LINK_NEW_CARD.type -> {
+                    if (linkStoreCardHasFailed!!) {
+                        val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)
+                        displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
+                        activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
+                        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                        activity.finish()
+                    }
+
+                    if (getCardCallHasFailed!!) {
+                        finishActivity(activity)
+                    }
+                }
+                LinkCardType.VIRTUAL_TEMP_CARD.type -> {
+                    if (linkStoreCardHasFailed!!) {
+                        val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
+                        intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
+                        activity.startActivity(intent)
+                        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                        activity.finish()
+                    }
+
+                    if (getCardCallHasFailed!!) {
+                        finishActivity(activity)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun finishActivity(activity: FragmentActivity) {
+        activity.finish()
+        activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
 
 }

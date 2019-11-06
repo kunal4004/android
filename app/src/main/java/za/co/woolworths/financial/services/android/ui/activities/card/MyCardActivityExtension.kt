@@ -1,22 +1,31 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.IntentFilter
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.contracts.IOTPReceiveListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment
+import za.co.woolworths.financial.services.android.util.SMSReceiver
 
-open class MyCardActivityExtension : AppCompatActivity() {
+@SuppressLint("Registered")
+open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener {
 
     var mStoreCardDetail: String? = null
     private var otpType: OTPMethodType = OTPMethodType.SMS
     private var cardNumber: String? = null
     private var oTPNumber: String? = null
-    private var sequenceNumber: String? = null
     var mDefaultOtpSentTo: String? = null // required to save default phone number
+    var mOtpSentTo: String? = null
+    private var mSmsReceiver: SMSReceiver? = null
+    var mPhoneNumberOTP: String? = null
 
     fun getOTPMethodType(): OTPMethodType = this.otpType
 
@@ -35,12 +44,6 @@ open class MyCardActivityExtension : AppCompatActivity() {
     }
 
     fun getOtpNumber(): String = oTPNumber ?: ""
-
-    fun setSequenceNumber(sequenceNumber: String) {
-        this.sequenceNumber = sequenceNumber
-    }
-
-    fun getSequenceNumber() = sequenceNumber?.toInt() ?: 0
 
     fun clearFlag() {
         window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -64,4 +67,43 @@ open class MyCardActivityExtension : AppCompatActivity() {
     }
 
     fun getStoreCardDetail(): StoreCardsResponse = Gson().fromJson(mStoreCardDetail, StoreCardsResponse::class.java)
+
+    fun startSMSListener() {
+        try {
+            mSmsReceiver = SMSReceiver()
+            mSmsReceiver?.apply {
+                setOTPListener(this@MyCardActivityExtension)
+
+                val intentFilter = IntentFilter()
+                intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
+                this@MyCardActivityExtension.registerReceiver(mSmsReceiver, intentFilter)
+
+                val client = SmsRetriever.getClient(this@MyCardActivityExtension)
+
+                val task = client.startSmsRetriever()
+                task.addOnSuccessListener {
+                    // API successfully started
+                }
+
+                task.addOnFailureListener {
+                    // Fail to start API
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun cancelSMSRetriever() = mSmsReceiver?.let { smsReceiver -> unregisterReceiver(smsReceiver) }
+
+    override fun onOTPReceived(otp: String) {
+        runOnUiThread {
+            val fragment = supportFragmentManager.findFragmentById(R.id.flMyCard)
+            (fragment as? EnterOtpFragment)?.onOTPReceived(otp)
+        }
+    }
+
+    override fun onOTPTimeOut() {}
+
+    override fun onOTPReceivedError(error: String) {}
 }

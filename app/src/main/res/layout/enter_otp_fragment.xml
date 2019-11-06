@@ -24,7 +24,7 @@
         tools:text="@string/enter_otp_title" />
 
     <TextView
-        android:id="@+id/tvEnterOtpDesc"
+        android:id="@+id/enterOTPDescriptionScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -34,14 +34,14 @@
         android:gravity="center|start"
         android:lineSpacingExtra="1.dp"
         android:lineSpacingMultiplier="1.40"
-        android:text="@string/enter_otp_desc"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="15sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle"
-        tools:text="@string/enter_otp_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
+
 
     <View
         android:id="@+id/viewOTPBackground"
@@ -53,20 +53,54 @@
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpDesc" />
+        app:layout_constraintTop_toBottomOf="@+id/enterOTPDescriptionScreen" />
+
+
+    <TextView
+        android:id="@+id/loadingDotsText"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center|start"
+        android:lineSpacingExtra="1.dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/sending_otp_text"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
+
+    <za.co.woolworths.financial.services.android.ui.views.LoadingDots
+        android:id="@+id/loadingDotsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="5dp"
+        app:LoadingDots_dots_color="@color/black_desc_opacity"
+        app:LoadingDots_dots_count="3"
+        app:LoadingDots_dots_size="3dp"
+        app:LoadingDots_dots_space="3dp"
+        app:LoadingDots_jump_height="3dp"
+        app:LoadingDots_loop_start_delay="50"
+        app:layout_constraintBottom_toBottomOf="@+id/loadingDotsText"
+        app:layout_constraintStart_toEndOf="@+id/loadingDotsText"
+        app:layout_constraintTop_toTopOf="@+id/loadingDotsText" />
 
     <EditText
         android:id="@+id/edtVerificationCode2"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"
         android:editable="false"
         android:ems="10"
+        android:maxLength="2"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:imeOptions="actionNext"
         android:inputType="textNoSuggestions|textVisiblePassword"
-        android:maxLength="1"
         android:nextFocusForward="@+id/edtVerificationCode3"
         android:singleLine="true"
         android:textSize="14sp"
@@ -78,17 +112,18 @@
 
     <EditText
         android:id="@+id/edtVerificationCode3"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"
         android:clickable="false"
         android:editable="false"
         android:ems="10"
+        android:maxLength="2"
         android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:gravity="center"
         android:imeOptions="actionNext"
         android:inputType="textVisiblePassword|textNoSuggestions"
-        android:maxLength="1"
         android:nextFocusForward="@+id/edtVerificationCode4"
         android:singleLine="true"
         android:textSize="14sp"
@@ -100,17 +135,18 @@
 
     <EditText
         android:id="@+id/edtVerificationCode4"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"
         android:clickable="false"
         android:editable="false"
         android:ems="10"
+        android:maxLength="2"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:imeOptions="actionNext"
         android:inputType="textVisiblePassword|textNoSuggestions"
-        android:maxLength="1"
         android:nextFocusForward="@+id/edtVerificationCode5"
         android:singleLine="true"
         android:textSize="14sp"
@@ -122,6 +158,7 @@
 
     <EditText
         android:id="@+id/edtVerificationCode5"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
@@ -129,11 +166,11 @@
         android:clickable="false"
         android:editable="false"
         android:ems="10"
+        android:maxLength="2"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:imeOptions="actionDone"
         android:inputType="textVisiblePassword|textNoSuggestions"
-        android:maxLength="1"
         android:singleLine="true"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
@@ -145,15 +182,16 @@
         android:id="@+id/edtVerificationCode1"
         android:layout_width="46dp"
         android:layout_height="50dp"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:background="@drawable/edit_text_bg_selector_bg"
         android:clickable="false"
         android:editable="false"
         android:ems="10"
+        android:maxLength="2"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:imeOptions="actionNext"
         android:inputType="textVisiblePassword|textNoSuggestions"
-        android:maxLength="1"
         android:nextFocusForward="@+id/edtVerificationCode2"
         android:singleLine="true"
         android:textSize="14sp"
@@ -176,24 +214,24 @@
         app:srcCompat="@drawable/next_button_icon" />
 
     <TextView
-        android:id="@+id/tvDidNotReceivedOTP"
+        android:id="@+id/didNotReceiveEditTextOTP"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
         android:layout_marginEnd="8dp"
-        android:fontFamily="@font/futura_medium_ttf"
+        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="start|center"
-        android:letterSpacing="0.15"
+        android:letterSpacing="0.015"
         android:text="@string/did_not_receive_title"
-        android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
         app:layout_constraintEnd_toStartOf="@+id/imNextProcessLinkCard"
         app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
         app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
-        tools:text="@string/did_not_receive_title" />
+        tools:text="@string/did_not_receive_title"
+        tools:ignore="UnusedAttribute" />
 
 
     <View
@@ -206,5 +244,28 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/loadingProgressIndicatorViewGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="loadingDotsView,loadingDotsText" />
+
+    <TextView
+        android:id="@+id/otpErrorTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:text="@string/wrong_otp_desc"
+        android:textColor="#D0021B"
+        android:visibility="gone"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewOTPBackground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

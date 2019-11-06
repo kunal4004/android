@@ -1,101 +1,94 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.text.Editable
+import android.view.KeyEvent
 import android.view.View
+import android.view.View.FOCUS_DOWN
+import android.view.View.GONE
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
-import za.co.woolworths.financial.services.android.ui.views.TextWatcherExtended
 
 open class OTPInputListener : MyCardExtension() {
 
     fun setupInputListeners() {
-        edtVerificationCode1?.addTextChangedListener(object : TextWatcherExtended() {
-            override fun afterTextChanged(s: Editable, backSpace: Boolean) {
-                if (backSpace) {
-                    edtVerificationCode1?.text?.clear()
-                    edtVerificationCode1?.requestFocus(View.FOCUS_DOWN)
+
+        edtVerificationCode1?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode1, edtVerificationCode2) { validateVerificationCode() })
+        edtVerificationCode2?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode2, edtVerificationCode3) { validateVerificationCode() })
+        edtVerificationCode3?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode2, edtVerificationCode3, edtVerificationCode4) { validateVerificationCode() })
+        edtVerificationCode4?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode3, edtVerificationCode4, edtVerificationCode5) { validateVerificationCode() })
+        edtVerificationCode5?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode4, edtVerificationCode5, edtVerificationCode5) { validateVerificationCode() })
+
+        edtVerificationCode1.setOnKeyListener(View.OnKeyListener
+        { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                if (edtVerificationCode1?.text?.isEmpty() == true) {
+                    edtVerificationCode1?.setSelection(edtVerificationCode1?.text?.length ?: 0)
+                    edtVerificationCode1?.requestFocus(FOCUS_DOWN)
                 }
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when (s.count()) {
-                    0 -> edtVerificationCode1?.requestFocus(View.FOCUS_DOWN)
-                    1 -> edtVerificationCode2?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-        })
-
-        edtVerificationCode2?.addTextChangedListener(object : TextWatcherExtended() {
-
-            override fun afterTextChanged(s: Editable, backSpace: Boolean) {
-                if (backSpace) {
-                    edtVerificationCode2?.text?.clear()
-                    edtVerificationCode1?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when (s.count()) {
-                    0 -> edtVerificationCode1?.requestFocus(View.FOCUS_DOWN)
-                    1 -> edtVerificationCode3?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-
-        })
-
-        edtVerificationCode3?.addTextChangedListener(object : TextWatcherExtended() {
-
-            override fun afterTextChanged(s: Editable, backSpace: Boolean) {
-                if (backSpace) {
-                    edtVerificationCode3?.text?.clear()
-                    edtVerificationCode2?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when (s.count()) {
-                    0 -> edtVerificationCode2?.requestFocus(View.FOCUS_DOWN)
-                    1 -> edtVerificationCode4?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-        })
-
-        edtVerificationCode4?.addTextChangedListener(object : TextWatcherExtended() {
-
-            override fun afterTextChanged(s: Editable, backSpace: Boolean) {
-                if (backSpace) {
-                    edtVerificationCode4?.text?.clear()
-                    edtVerificationCode3?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when (s.count()) {
-                    0 -> edtVerificationCode3?.requestFocus(View.FOCUS_DOWN)
-                    1 -> edtVerificationCode5?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-        })
-
-        edtVerificationCode5?.addTextChangedListener(object : TextWatcherExtended() {
-
-            override fun afterTextChanged(s: Editable, backSpace: Boolean) {
-                if (backSpace) {
-                    edtVerificationCode5?.text?.clear()
-                    edtVerificationCode4?.requestFocus(View.FOCUS_DOWN)
-                }
-
+                edtVerificationCode1?.text?.clear()
                 validateVerificationCode()
+                return@OnKeyListener true
             }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when (s.count()) {
-                    0 -> edtVerificationCode4?.requestFocus(View.FOCUS_DOWN)
-                    1 -> edtVerificationCode5?.requestFocus(View.FOCUS_DOWN)
-                }
-                edtVerificationCode5?.isCursorVisible = false
-
-            }
+            false
         })
+
+        edtVerificationCode2.setOnKeyListener(View.OnKeyListener
+        { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+
+                if (edtVerificationCode2?.text?.isEmpty() == true) {
+                    edtVerificationCode1?.setSelection(edtVerificationCode1?.text?.length ?: 0)
+                    edtVerificationCode1?.requestFocus(FOCUS_DOWN)
+                }
+
+                edtVerificationCode2?.text?.clear()
+                validateVerificationCode()
+                return@OnKeyListener true
+            }
+            false
+        })
+
+        edtVerificationCode3.setOnKeyListener(View.OnKeyListener
+        { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+
+                if (edtVerificationCode3?.text?.isEmpty() == true) {
+                    edtVerificationCode2?.setSelection(edtVerificationCode2?.text?.length ?: 0)
+                    edtVerificationCode2?.requestFocus(FOCUS_DOWN)
+                }
+                edtVerificationCode3?.text?.clear()
+                validateVerificationCode()
+                return@OnKeyListener true
+            }
+            false
+        })
+
+        edtVerificationCode4.setOnKeyListener(View.OnKeyListener
+        { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                if (edtVerificationCode4?.text?.isEmpty() == true) {
+                    edtVerificationCode3?.setSelection(edtVerificationCode3?.text?.length ?: 0)
+                    edtVerificationCode3?.requestFocus(FOCUS_DOWN)
+                }
+                edtVerificationCode4?.text?.clear()
+                validateVerificationCode()
+                return@OnKeyListener true
+            }
+            false
+        })
+
+        edtVerificationCode5.setOnKeyListener(View.OnKeyListener
+        { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
+                if (edtVerificationCode5?.text?.isEmpty() == true) {
+                    edtVerificationCode4?.setSelection(edtVerificationCode4?.text?.length ?: 0)
+                    edtVerificationCode4?.requestFocus(FOCUS_DOWN)
+                }
+                edtVerificationCode5?.text?.clear()
+                validateVerificationCode()
+                return@OnKeyListener true
+            }
+            false
+        })
+        
     }
 
     private fun validateVerificationCode() {
@@ -115,5 +108,6 @@ open class OTPInputListener : MyCardExtension() {
                 imNextProcessLinkCard?.isFocusable = true
             }
         }
+        otpErrorTextView?.visibility = GONE
     }
 }

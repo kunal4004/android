@@ -118,6 +118,7 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -1568,13 +1569,20 @@ public class Utils {
 	}
 
 	public static Boolean isCartSummarySuburbIDEmpty(CartSummaryResponse cartSummaryResponse) {
-		if (cartSummaryResponse.data != null) {
-			List<CartSummary> cartSummaryList = cartSummaryResponse.data;
-			if (cartSummaryList.get(0) != null) {
-				CartSummary cartSummary = cartSummaryList.get(0);
-				return TextUtils.isEmpty(cartSummary.suburbId);
-			}
+        if (cartSummaryResponse.data != null) {
+            List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+            if (cartSummaryList.get(0) != null) {
+                CartSummary cartSummary = cartSummaryList.get(0);
+                return TextUtils.isEmpty(cartSummary.suburbId);
+            }
+        }
+        return true;
+    }
+
+	public static void showGeneralErrorDialog(FragmentManager fragmentManager,String message){
+		ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
+		if (fragmentManager != null) {
+			minAmountDialog.show(fragmentManager, ErrorDialogFragment.class.getSimpleName());
 		}
-		return true;
 	}
 }

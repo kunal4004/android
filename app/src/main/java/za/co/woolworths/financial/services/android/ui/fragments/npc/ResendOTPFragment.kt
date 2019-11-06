@@ -1,11 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-
+import android.view.*
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -19,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment.Companion.OTP_SENT_TO
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class ResendOTPFragment : WBottomSheetDialogFragment() {
 

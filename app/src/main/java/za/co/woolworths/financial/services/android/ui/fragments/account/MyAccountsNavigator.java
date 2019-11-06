@@ -7,6 +7,4 @@ public interface MyAccountsNavigator {
 	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
 
 	void onMessageResponse(int unreadCount);
-
-	void onGetStoreCardsResponse(StoreCardsResponse storeCardsResponse);
 }
