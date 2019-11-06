@@ -197,6 +197,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 						WoolworthsApplication.setQuickShopDefaultValues(configResponse.configs.quickShopDefaultValues);
+						WoolworthsApplication.setWhitelistedDomainsForQRScanner(configResponse.configs.whitelistedDomainsForQRScanner);
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
 						if (absaBankingOpenApiServices == null) {
