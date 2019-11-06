@@ -25,9 +25,12 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import android.view.WindowManager
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import java.net.ConnectException
+import java.net.UnknownHostException
 
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
+    private var mStoreCardRequest: StoreCardOTPRequest? = null
     private var mOTPError: String = ""
     private var shouldDisableKeyboardOnOTPCall: Boolean = false
     private var mResendOTPFragment: ResendOTPFragment? = null
@@ -38,7 +41,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         const val IS_UNBLOCK_VIRTUAL_CARD = "IS_UNBLOCK_VIRTUAL_CARD"
         const val OTP_ERROR = "OTP_ERROR"
         fun newInstance() = EnterOtpFragment()
-        fun newInstance(OTPError: String?,otpToSent: String?) = EnterOtpFragment().withArgs {
+        fun newInstance(OTPError: String?, otpToSent: String?) = EnterOtpFragment().withArgs {
             putString(OTP_ERROR, OTPError)
             putString(OTP_SENT_TO, otpToSent)
         }
@@ -158,9 +161,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         saveSelectedOTP(otpMethodType)
         clearOTP()
         requestEditTextFocus()
+        mStoreCardRequest = StoreCardOTPRequest(activity, otpMethodType)
         activity?.let { activity ->
             if (NetworkManager().isConnectedToNetwork(activity)) {
-                StoreCardOTPRequest(activity, otpMethodType).make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
+                mStoreCardRequest?.make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
 
                     override fun showProgress() {
                         shouldDisableKeyboardOnOTPCall = true
@@ -201,6 +205,13 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     override fun onFailureHandler() {
                         super.onFailureHandler()
                         setOTPDescription(getSavedOTP())
+                    }
+
+                    override fun onFailureHandler(error: Throwable?) {
+                        super.onFailureHandler(error)
+                        if (error is ConnectException || error is UnknownHostException) {
+                            activity.resources?.let { resources -> enterOTPDescriptionScreen?.text = resources.getString(R.string.check_connection_status) }
+                        }
                     }
                 })
             } else {
