@@ -32,6 +32,8 @@ interface ProductDetailsContract {
         fun onFindStoresSuccess(location: List<StoreDetails>)
         fun showProductDetailsLoading()
         fun hideProductDetailsLoading()
+        fun updateStockAvailabilityLocation()
+        fun updateDeliveryLocation()
     }
 
     interface ProductDetailsPresenter {

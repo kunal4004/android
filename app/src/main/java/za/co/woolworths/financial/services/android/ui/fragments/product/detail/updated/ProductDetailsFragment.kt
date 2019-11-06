@@ -45,11 +45,14 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.product_color_row.view.*
+import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider ,View.OnClickListener{
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -70,7 +73,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var selectedQuantity: Int? = 1
     private val SSO_REQUEST_ADD_TO_CART = 1010
     private val REQUEST_SUBURB_CHANGE = 153
+    private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
     private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
+    private val SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK = 1012
     private var permissionUtils: PermissionUtils? = null
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
@@ -102,6 +107,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         quantitySelector.setOnClickListener(this)
         addToShoppingList.setOnClickListener(this)
         checkInStoreAvailability.setOnClickListener(this)
+        editDeliveryLocation.setOnClickListener(this)
+        findInStoreAction.setOnClickListener(this)
+        closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
     }
 
@@ -112,7 +120,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability -> findItemInStore()
+            R.id.checkInStoreAvailability,R.id.findInStoreAction -> findItemInStore()
+            R.id.editDeliveryLocation-> updateDeliveryLocation()
         }
     }
 
@@ -131,6 +140,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun configureDefaultUI() {
 
+        updateStockAvailabilityLocation()
+
         productDetails?.let {
             productName.text = it.productName
             BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
@@ -140,6 +151,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
 
+        if (!TextUtils.isEmpty(this.productDetails?.ingredients))
+            ingredients.visibility = View.VISIBLE
 
         if (mFetchFromJson) {
             val productDetails = Utils.stringToJson(activity, defaultProductResponse)!!.product
@@ -148,6 +161,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             //loadProductDetails.
             productDetailsPresenter?.loadProductDetails(ProductRequest(productDetails?.productId, productDetails?.sku))
         }
+
 
     }
 
@@ -169,9 +183,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
-        val storeId = Utils.retrieveStoreId(productDetails?.fulfillmentType)
-        if (!storeId.equals(storeIdForInventory, ignoreCase = true)) {
-            updateStockAvailability(storeId)
+        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
+            updateStockAvailability()
             return
         }
 
@@ -268,11 +281,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetailsPresenter?.onDestroy()
     }
 
-    override fun SelectedImage(otherSkus: String?) {
-
+    override fun SelectedImage(image: String?) {
+        activity?.apply {
+            val openMultipleImage = Intent(this, MultipleImageActivity::class.java)
+            openMultipleImage.putExtra("auxiliaryImages", image)
+            startActivity(openMultipleImage)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
     }
 
     private fun loadSizeAndColor() {
+        if (hasColor)
+            showColors()
+        if (hasSize)
+            showSize()
+
+    }
+
+    private fun showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
         /* val layoutManager = FlexboxLayoutManager(activity)
@@ -284,6 +310,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelect(getSelectedGroupKey())
             showSelectedColor()
         }
+        colorSelectorLayout.visibility = View.VISIBLE
+    }
+
+    private fun showSize() {
         //productColorSelectorAdapter?
         /*val layoutManager1 = FlexboxLayoutManager(activity)
         layoutManager1.flexDirection = FlexDirection.ROW
@@ -292,7 +322,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
             sizeSelectorRecycleView.adapter = this
         }
-
+        sizeSelectorLayout.visibility = View.VISIBLE
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
@@ -564,8 +594,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
     }
 
-    private fun updateStockAvailability(storeId: String?) {
-        storeIdForInventory = storeId
+    private fun updateStockAvailability() {
+        val storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
         productDetails?.apply {
             otherSkus?.let {
                 val multiSKUs = it.joinToString(separator = "-") { it.sku }
@@ -624,6 +654,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             RESULT_OK -> {
                 when (requestCode) {
                     REQUEST_SUBURB_CHANGE -> {
+                        updateStockAvailabilityLocation()
                         addItemToCart()
                     }
                     ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
@@ -641,9 +672,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
                     }
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK->{
+
+                        updateStockAvailabilityLocation()
+
+                        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
+                            updateStockAvailability()
+                        }
+                    }
                 }
             }
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
+                updateStockAvailabilityLocation()
                 when (requestCode) {
                     SSO_REQUEST_ADD_TO_CART -> {
                         addItemToCart()
@@ -652,6 +692,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         addItemToShoppingList()
                         //One time biometricsWalkthrough
                         activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
+                    }
+                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK->{
+                        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE_FOR_STOCK)
                     }
                 }
             }
@@ -680,7 +723,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                 }
                 else -> {
-                    Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
+                    Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
                     return
                 }
             }
@@ -703,6 +746,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun PermissionGranted(request_code: Int) {
+        findItemInStore()
     }
 
     override fun PartialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
@@ -737,6 +781,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun startLocationUpdates() {
         activity?.apply {
+            showProgressBar()
             mFuseLocationAPISingleton?.apply {
                 addLocationChangeListener(this@ProductDetailsFragment)
                 startLocationUpdate()
@@ -778,7 +823,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun showOutOfStockInStores() {
-
+        activity?.apply {
+            Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "")
+        }
     }
 
     override fun showProductDetailsLoading() {
@@ -820,7 +867,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     @SuppressLint("SetTextI18n")
     private fun showSelectedColor() {
-            selectedColor.text = " - ${getSelectedGroupKey()}"
+        selectedColor.text = " - ${getSelectedGroupKey()}"
     }
 
     @SuppressLint("SetTextI18n")
@@ -829,6 +876,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             selectedSizePlaceholder.text = getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
             selectedSize.text = if (it != null) " - ${it.size}" else ""
         }
+    }
+
+    override fun updateDeliveryLocation() {
+        activity?.apply {
+            when (SessionUtilities.getInstance().isUserAuthenticated) {
+                true -> ScreenManager.presentDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK)
+                false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
+            }
+
+        }
+    }
+
+    override fun updateStockAvailabilityLocation() {
+        activity?.apply {
+            val userLocation = Utils.getPreferredDeliveryLocation()
+            val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
+            currentDeliveryLocation.text = if (userLocation != null) userLocation.suburb?.name else defaultLocation?.suburb?.name
+        }
+
     }
 
 }

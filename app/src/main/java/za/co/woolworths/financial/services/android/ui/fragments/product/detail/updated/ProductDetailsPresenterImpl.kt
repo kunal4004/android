@@ -65,7 +65,12 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                 is CartSummaryResponse -> {
                     this.apply {
                         when (this.httpCode) {
-                            200 -> mainView?.onCartSummarySuccess(this)
+                            200 -> {
+                            mainView?.let {
+                                it.onCartSummarySuccess(this)
+                                it.updateStockAvailabilityLocation()
+                            }
+                        }
                             440 -> {
                                 if (this.response != null)
                                     mainView?.onSessionTokenExpired()
@@ -126,7 +131,7 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     }
 
     override fun findStoresForSelectedSku(otherSkus: OtherSkus?) {
-
+        getInteractor?.getLocationItems(otherSkus,this)
     }
 
 

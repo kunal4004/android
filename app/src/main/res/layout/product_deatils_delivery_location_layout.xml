@@ -37,7 +37,6 @@
     <TextView
         android:id="@+id/currentDeliveryLocation"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
-        android:text="Sandton, Gauteng"
         app:layout_constraintLeft_toRightOf="@id/defaultLocationPlaceholder"
         app:layout_constraintTop_toTopOf="@+id/defaultLocationPlaceholder" />
 
