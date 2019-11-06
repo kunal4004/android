@@ -97,6 +97,9 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
                         changeToolbarBackground(R.color.grey_bg)
                         showToolbarTitle()
                     }
+                    is MyCardBlockedFragment -> {
+                        finishActivity()
+                    }
                 }
             } else
                 finishActivity()
