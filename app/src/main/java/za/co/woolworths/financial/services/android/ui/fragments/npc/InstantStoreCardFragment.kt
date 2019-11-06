@@ -13,10 +13,11 @@ import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Parcelable
+import android.text.Editable
 import cards.pay.paycardsrecognizer.sdk.Card
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 
 class InstantStoreCardFragment : MyCardExtension() {
     private var shouldDisableUINavigation = false
@@ -38,7 +39,7 @@ class InstantStoreCardFragment : MyCardExtension() {
         navigateToEnterOTPFragmentImageView?.setOnClickListener {
             if (shouldDisableUINavigation) return@setOnClickListener
             val cardNumber = cardNumberEditText?.text?.toString()?.replace(" ", "") ?: ""
-            when (KotlinUtils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
+            when (Utils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
                 true -> {
                     validCardNumberUI()
                     (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
@@ -68,11 +69,14 @@ class InstantStoreCardFragment : MyCardExtension() {
 
     private fun inputTextWatcher() = cardNumberEditText?.apply {
         addTextChangedListener(object : CreditCardTextWatcher(this) {
+            override fun afterTextChanged(s: Editable) {
+                super.afterTextChanged(s)
+                navigateToOTPScreenValidator()
+            }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 super.onTextChanged(s, start, before, count)
                 validCardNumberUI()
-                navigateToOTPScreenValidator()
             }
         })
 
@@ -89,10 +93,10 @@ class InstantStoreCardFragment : MyCardExtension() {
     }
 
     private fun navigateToOTPScreenValidator() {
-        val cardNumber = cardNumberEditText?.text?.toString() ?: ""
-        if (cardNumberEditText?.length() == 19) {
+        val cardNumber = cardNumberEditText?.text?.toString()?.replace(" ", "") ?: ""
+        if (cardNumber.isNotEmpty() && cardNumberEditText?.length() == 19) {
             // Lunch algorithm to check card number validity
-            if (KotlinUtils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
+            if (Utils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
                 navigateToEnterOTPFragmentImageView?.alpha = 1.0f
                 validCardNumberUI()
             }else {
