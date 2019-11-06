@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
+class InstantStoreCardReplacementActivity : MyCardActivityExtension(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,6 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     private fun navigateBack() {
         with(supportFragmentManager) {
             if (backStackEntryCount > 0) {
-                fragments[backStackEntryCount - 1]?.onResume()
                 popBackStack()
 
             } else {

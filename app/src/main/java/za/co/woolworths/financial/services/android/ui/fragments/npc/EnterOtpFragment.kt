@@ -91,7 +91,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 else -> return
             }
             activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, enterOTPDescriptionScreen, false) } }
-
+            enterOTPDescriptionScreen?.visibility = VISIBLE
         }
     }
 
@@ -304,5 +304,5 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         (activity as? MyCardActivityExtension)?.mPhoneNumberOTP = otpSendTo
     }
 
-    fun getSavedNumber() = (activity as? MyCardActivityExtension)?.mPhoneNumberOTP
+    private fun getSavedNumber() = (activity as? MyCardActivityExtension)?.mPhoneNumberOTP
 }

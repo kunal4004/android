@@ -9,20 +9,21 @@ import com.awfs.coordination.R
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.IOTPReceiveListener
+import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment
 import za.co.woolworths.financial.services.android.util.SMSReceiver
 
 @SuppressLint("Registered")
-open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener {
+open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener, IStoreCardListener {
 
     var mStoreCardDetail: String? = null
     private var otpType: OTPMethodType = OTPMethodType.SMS
     private var cardNumber: String? = null
     private var oTPNumber: String? = null
-    var mDefaultOtpSentTo: String? = null // required to save default phone number
     var mOtpSentTo: String? = null
     private var mSmsReceiver: SMSReceiver? = null
     var mPhoneNumberOTP: String? = null
@@ -106,4 +107,13 @@ open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener {
     override fun onOTPTimeOut() {}
 
     override fun onOTPReceivedError(error: String) {}
+
+    override fun navigateToPreviousFragment(errorDescription: String?) {
+        super.navigateToPreviousFragment(errorDescription)
+        replaceFragmentSafely(
+                fragment = EnterOtpFragment.newInstance(mStoreCardDetail, mOtpSentTo),
+                tag = EnterOtpFragment::class.java.simpleName,
+                containerViewId = R.id.flMyCard,
+                allowBackStack = false)
+    }
 }
