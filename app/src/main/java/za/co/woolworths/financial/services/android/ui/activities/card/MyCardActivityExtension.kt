@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFrag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment
 import za.co.woolworths.financial.services.android.util.SMSReceiver
 
+
 @SuppressLint("Registered")
 open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener, IStoreCardListener {
 
