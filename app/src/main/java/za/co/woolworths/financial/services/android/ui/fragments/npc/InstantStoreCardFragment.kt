@@ -21,9 +21,12 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class InstantStoreCardFragment : MyCardExtension() {
     private var shouldDisableUINavigation = false
+    private var shouldClearCardNumber = false
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
+        private const val STORE_CARD_BIN_NUMBER: String = "600785"
+        private val ICR_LOGO_TYPE_DIGITS = intArrayOf(70, 71, 72)
         fun newInstance() = InstantStoreCardFragment()
     }
 
@@ -39,13 +42,17 @@ class InstantStoreCardFragment : MyCardExtension() {
         navigateToEnterOTPFragmentImageView?.setOnClickListener {
             if (shouldDisableUINavigation) return@setOnClickListener
             val cardNumber = cardNumberEditText?.text?.toString()?.replace(" ", "") ?: ""
-            when (Utils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
+            when (cardNumberValidation(cardNumber)) {
                 true -> {
+                    shouldClearCardNumber = false
                     validCardNumberUI()
                     (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
                     navigateToOTPScreen()
                 }
-                false -> invalidCardNumberUI()
+                false -> {
+                    shouldClearCardNumber = true
+                    invalidCardNumberUI()
+                }
             }
         }
     }
@@ -87,25 +94,42 @@ class InstantStoreCardFragment : MyCardExtension() {
             false
         }
 
-        cardNumberEditText?.setOnFocusChangeListener { v, hasFocus ->
-            cardNumberEditText?.isCursorVisible = hasFocus
+        cardNumberEditText?.setOnFocusChangeListener { v, hasFocus -> cardNumberEditText?.isCursorVisible = hasFocus }
+
+        cardNumberEditText?.setOnTouchListener { v, event ->
+            if (shouldClearCardNumber) {
+                cardNumberEditText?.text?.clear()
+                shouldClearCardNumber = false
+            }
+
+            false
         }
+
     }
 
     private fun navigateToOTPScreenValidator() {
         val cardNumber = cardNumberEditText?.text?.toString()?.replace(" ", "") ?: ""
         if (cardNumber.isNotEmpty() && cardNumberEditText?.length() == 19) {
             // Lunch algorithm to check card number validity
-            if (Utils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
+            if (cardNumberValidation(cardNumber)) {
                 navigateToEnterOTPFragmentImageView?.alpha = 1.0f
+                shouldClearCardNumber = false
                 validCardNumberUI()
-            }else {
+            } else {
+                shouldClearCardNumber = true
                 invalidCardNumberUI()
+
             }
+            hideKeyboard()
         } else {
             navigateToEnterOTPFragmentImageView?.alpha = 0.5f
         }
     }
+
+    private fun cardNumberValidation(cardNumber: String) = cardNumber.startsWith(STORE_CARD_BIN_NUMBER, true)
+            && Utils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)
+//            && ICR_LOGO_TYPE_DIGITS.contains(cardNumber.substring(7,9).toInt()) // TODO:: Enable ICR LOGO TYPE DIGITS CHECK before going to production
+
 
     override fun onResume() {
         super.onResume()

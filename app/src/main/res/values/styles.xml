@@ -1984,6 +1984,7 @@
 
     <style name="enter_otp_edit_text_style">
         <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
+        <item name="android:inputType">textFilter</item>
     </style>
 
 </resources>
