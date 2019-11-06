@@ -89,7 +89,18 @@ class InstantStoreCardFragment : MyCardExtension() {
     }
 
     private fun navigateToOTPScreenValidator() {
-        navigateToEnterOTPFragmentImageView?.alpha = if (cardNumberEditText?.length() == 19) 1.0f else 0.5f
+        val cardNumber = cardNumberEditText?.text?.toString() ?: ""
+        if (cardNumberEditText?.length() == 19) {
+            // Lunch algorithm to check card number validity
+            if (KotlinUtils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)) {
+                navigateToEnterOTPFragmentImageView?.alpha = 1.0f
+                validCardNumberUI()
+            }else {
+                invalidCardNumberUI()
+            }
+        } else {
+            navigateToEnterOTPFragmentImageView?.alpha = 0.5f
+        }
     }
 
     override fun onResume() {
