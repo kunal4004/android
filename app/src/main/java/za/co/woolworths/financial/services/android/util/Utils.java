@@ -1564,7 +1564,7 @@ public class Utils {
 		}
 	}
 
-	public static boolean validateCardNumberWithLuhnCheckAlgorithm(String ccNumber) {
+	public static boolean isValidLuhnNumber(String ccNumber) {
 		int sum = 0;
 		boolean alternate = false;
 		for (int i = ccNumber.length() - 1; i >= 0; i--) {
