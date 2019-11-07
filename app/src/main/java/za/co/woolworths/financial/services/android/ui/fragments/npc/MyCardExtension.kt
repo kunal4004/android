@@ -125,6 +125,7 @@ open class MyCardExtension : Fragment() {
             navigateToEnterOTPFragmentImageView?.alpha = 0.5f
             cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_error_bg)
             invalidCardNumberLabel?.visibility = View.VISIBLE
+            navigateToEnterOTPFragmentImageView?.isEnabled = false
         }
     }
 
@@ -132,6 +133,7 @@ open class MyCardExtension : Fragment() {
         activity?.apply {
             cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_inactive_bg)
             invalidCardNumberLabel?.visibility = View.GONE
+            navigateToEnterOTPFragmentImageView?.isEnabled = true
         }
     }
 }
