@@ -25,8 +25,6 @@ class InstantStoreCardFragment : MyCardExtension() {
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
-        private const val STORE_CARD_BIN_NUMBER: String = "600785"
-        // private val ICR_LOGO_TYPE_DIGITS = intArrayOf(70, 71, 72)
         fun newInstance() = InstantStoreCardFragment()
     }
 
@@ -93,9 +91,7 @@ class InstantStoreCardFragment : MyCardExtension() {
 
     private fun setupCardNumberField(cardNumber: String) {
         if (cardNumber.length == 16) {
-            // TODO:: Enable ICR LOGO TYPE DIGITS CHECK before going to production
-            // && ICR_LOGO_TYPE_DIGITS.contains(cardNumber.substring(7,9).toInt())
-            if (Utils.isValidLuhnNumber(cardNumber) || cardNumber.startsWith(STORE_CARD_BIN_NUMBER, true)) {
+            if (Utils.isValidLuhnNumber(cardNumber)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
                 navigateToEnterOTPFragmentImageView?.isEnabled = true
                 shouldClearCardNumber = false
