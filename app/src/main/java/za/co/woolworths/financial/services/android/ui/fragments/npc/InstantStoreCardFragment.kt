@@ -26,7 +26,7 @@ class InstantStoreCardFragment : MyCardExtension() {
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
         private const val STORE_CARD_BIN_NUMBER: String = "600785"
-        private val ICR_LOGO_TYPE_DIGITS = intArrayOf(70, 71, 72)
+        // private val ICR_LOGO_TYPE_DIGITS = intArrayOf(70, 71, 72)
         fun newInstance() = InstantStoreCardFragment()
     }
 
@@ -35,31 +35,16 @@ class InstantStoreCardFragment : MyCardExtension() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         inputTextWatcher()
-        tappedEvent()
-    }
 
-    private fun tappedEvent() {
         navigateToEnterOTPFragmentImageView?.setOnClickListener {
             if (shouldDisableUINavigation) return@setOnClickListener
-            val cardNumber = cardNumberEditText?.text?.toString()?.replace(" ", "") ?: ""
-            when (cardNumberValidation(cardNumber)) {
-                true -> {
-                    shouldClearCardNumber = false
-                    validCardNumberUI()
-                    (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
-                    navigateToOTPScreen()
-                }
-                false -> {
-                    shouldClearCardNumber = true
-                    invalidCardNumberUI()
-                }
-            }
+            navigateToOTPScreen()
         }
     }
 
     private fun navigateToOTPScreen() {
         if (shouldDisableUINavigation) return
-        if (navigateToEnterOTPFragmentImageView?.alpha == 1.0f) {
+        if (navigateToEnterOTPFragmentImageView?.isEnabled == true) {
             (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)
             replaceFragment(
                     fragment = EnterOtpFragment.newInstance(),
@@ -78,7 +63,7 @@ class InstantStoreCardFragment : MyCardExtension() {
         addTextChangedListener(object : CreditCardTextWatcher(this) {
             override fun afterTextChanged(s: Editable) {
                 super.afterTextChanged(s)
-                navigateToOTPScreenValidator()
+                cardNumberEditText?.text?.toString()?.replace(" ", "")?.let { cardNumber -> setupCardNumberField(cardNumber) }
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -104,32 +89,26 @@ class InstantStoreCardFragment : MyCardExtension() {
 
             false
         }
-
     }
 
-    private fun navigateToOTPScreenValidator() {
-        val cardNumber = cardNumberEditText?.text?.toString()?.replace(" ", "") ?: ""
-        if (cardNumber.isNotEmpty() && cardNumberEditText?.length() == 19) {
-            // Lunch algorithm to check card number validity
-            if (cardNumberValidation(cardNumber)) {
-                navigateToEnterOTPFragmentImageView?.alpha = 1.0f
+    private fun setupCardNumberField(cardNumber: String) {
+        if (cardNumber.length == 16) {
+            // TODO:: Enable ICR LOGO TYPE DIGITS CHECK before going to production
+            // && ICR_LOGO_TYPE_DIGITS.contains(cardNumber.substring(7,9).toInt())
+            if (Utils.isValidLuhnNumber(cardNumber) || cardNumber.startsWith(STORE_CARD_BIN_NUMBER, true)) {
+                (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
+                navigateToEnterOTPFragmentImageView?.isEnabled = true
                 shouldClearCardNumber = false
                 validCardNumberUI()
             } else {
                 shouldClearCardNumber = true
                 invalidCardNumberUI()
-
             }
             hideKeyboard()
         } else {
-            navigateToEnterOTPFragmentImageView?.alpha = 0.5f
+            navigateToEnterOTPFragmentImageView?.isEnabled = false
         }
     }
-
-    private fun cardNumberValidation(cardNumber: String) = cardNumber.startsWith(STORE_CARD_BIN_NUMBER, true)
-            && Utils.validateCardNumberWithLuhnCheckAlgorithm(cardNumber)
-//            && ICR_LOGO_TYPE_DIGITS.contains(cardNumber.substring(7,9).toInt()) // TODO:: Enable ICR LOGO TYPE DIGITS CHECK before going to production
-
 
     override fun onResume() {
         super.onResume()
@@ -146,11 +125,7 @@ class InstantStoreCardFragment : MyCardExtension() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SCAN_CARD) {
             when (resultCode) {
-                RESULT_OK -> {
-                    val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber
-                            ?: ""
-                    cardNumberEditText?.setText(cardNumber)
-                }
+                RESULT_OK -> (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber?.let { cardNumber -> cardNumberEditText?.setText(cardNumber) }
                 else -> return
             }
         }
