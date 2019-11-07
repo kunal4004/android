@@ -128,7 +128,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/productDetails"
+        android:id="@+id/productDetailsInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
         android:layout_marginTop="0dp"
@@ -159,7 +159,7 @@
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productDetails">
+        app:layout_constraintTop_toBottomOf="@+id/productDetailsInformation">
 
         <View
             android:layout_width="match_parent"
@@ -175,7 +175,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/ingredients"
+        android:id="@+id/productIngredientsInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
         android:layout_marginTop="0dp"

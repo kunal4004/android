@@ -49,6 +49,7 @@ import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
 
 
@@ -109,6 +110,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         checkInStoreAvailability.setOnClickListener(this)
         editDeliveryLocation.setOnClickListener(this)
         findInStoreAction.setOnClickListener(this)
+        productDetailsInformation.setOnClickListener(this)
+        productIngredientsInformation.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
     }
@@ -120,8 +123,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.addToCartAction -> addItemToCart()
             R.id.quantitySelector -> onQuantitySelector()
             R.id.addToShoppingList -> addItemToShoppingList()
-            R.id.checkInStoreAvailability,R.id.findInStoreAction -> findItemInStore()
-            R.id.editDeliveryLocation-> updateDeliveryLocation()
+            R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
+            R.id.editDeliveryLocation -> updateDeliveryLocation()
+            R.id.productDetailsInformation -> showProductDetailsInformation()
+            R.id.productIngredientsInformation -> showProductIngredientsInformation()
         }
     }
 
@@ -150,9 +155,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             it.saveText?.apply { setPromotionalText(this) }
         }
 
-
-        if (!TextUtils.isEmpty(this.productDetails?.ingredients))
-            ingredients.visibility = View.VISIBLE
 
         if (mFetchFromJson) {
             val productDetails = Utils.stringToJson(activity, defaultProductResponse)!!.product
@@ -354,12 +356,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
         if (!hasSize)
             setSelectedSku(this.defaultSku)
-        /*getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
-        getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
-        this.configureButtonsAndSelectors();*/
         /*if (hasColor)
             this.setSelectedColorIcon()*/
         loadSizeAndColor()
+
+        if (!TextUtils.isEmpty(this.productDetails?.ingredients))
+            productIngredientsInformation.visibility = View.VISIBLE
+
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
@@ -671,7 +674,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
                     }
-                    REQUEST_SUBURB_CHANGE_FOR_STOCK->{
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK -> {
 
                         updateStockAvailabilityLocation()
 
@@ -692,7 +695,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         //One time biometricsWalkthrough
                         activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
                     }
-                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK->{
+                    SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
                         ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE_FOR_STOCK)
                     }
                 }
@@ -894,6 +897,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             currentDeliveryLocation.text = if (userLocation != null) userLocation.suburb?.name else defaultLocation?.suburb?.name
         }
 
+    }
+
+    override fun showProductDetailsInformation() {
+        activity?.apply {
+            val intent = Intent(this, ProductInformationActivity::class.java)
+            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
+            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.DETAILS)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
+    }
+
+    override fun showProductIngredientsInformation() {
+        activity?.apply {
+            val intent = Intent(this, ProductInformationActivity::class.java)
+            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
+            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.INGREDIENTS)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
     }
 
 }
