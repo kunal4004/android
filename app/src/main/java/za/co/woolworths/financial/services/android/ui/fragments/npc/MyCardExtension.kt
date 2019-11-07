@@ -122,6 +122,7 @@ open class MyCardExtension : Fragment() {
 
     fun invalidCardNumberUI() {
         activity?.apply {
+            navigateToEnterOTPFragmentImageView?.alpha = 0.5f
             cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_error_bg)
             invalidCardNumberLabel?.visibility = View.VISIBLE
         }
@@ -133,5 +134,4 @@ open class MyCardExtension : Fragment() {
             invalidCardNumberLabel?.visibility = View.GONE
         }
     }
-
 }
