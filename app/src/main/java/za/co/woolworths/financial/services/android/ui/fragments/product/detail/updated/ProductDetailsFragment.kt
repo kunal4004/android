@@ -192,7 +192,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             //setSelectedSku(null)
             hideProgressBar()
             val message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
-            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+            activity?.apply {
+                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+            }
             return
         }
         //finally add to cart after all checks
@@ -307,7 +309,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
          colorSelectorRecycleView.layoutManager = layoutManager*/
         productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this).apply {
             colorSelectorRecycleView.adapter = this
-            setSelect(getSelectedGroupKey())
+            updateColorSelection(getSelectedGroupKey())
             showSelectedColor()
         }
         colorSelectorLayout.visibility = View.VISIBLE
@@ -358,15 +360,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         /*if (hasColor)
             this.setSelectedColorIcon()*/
         loadSizeAndColor()
-        configureActionItems()
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
         }
-    }
-
-    private fun configureActionItems() {
-
     }
 
     private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
@@ -569,7 +566,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun responseFailureHandler(response: Response) {
-
+        activity?.apply {
+            Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc)
+        }
     }
 
     private fun confirmDeliveryLocation() {

@@ -58,7 +58,7 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
         }
     }
 
-    fun setSelect(selectedColor: String?) {
+    fun updateColorSelection(selectedColor: String?) {
         this.selectedColor = selectedColor
         notifyDataSetChanged()
     }
