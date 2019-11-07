@@ -38,6 +38,8 @@ class InstantStoreCardFragment : MyCardExtension() {
             if (shouldDisableUINavigation) return@setOnClickListener
             navigateToOTPScreen()
         }
+
+        navigateToEnterOTPFragmentImageView?.isEnabled = false
     }
 
     private fun navigateToOTPScreen() {
@@ -93,7 +95,6 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (cardNumber.length == 16) {
             if (Utils.isValidLuhnNumber(cardNumber)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
-                navigateToEnterOTPFragmentImageView?.isEnabled = true
                 shouldClearCardNumber = false
                 validCardNumberUI()
             } else {
