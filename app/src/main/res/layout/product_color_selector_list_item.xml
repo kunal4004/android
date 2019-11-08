@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/four_dp"
+    android:paddingBottom="@dimen/four_dp">
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/color"
+        android:layout_width="@dimen/fourty_dp"
+        android:layout_height="@dimen/fourty_dp"
+        fresco:roundedCornerRadius="11.5dp"
+        />
+
+    <FrameLayout
+        android:id="@+id/border"
+        android:layout_width="@dimen/fourty_dp"
+        android:layout_height="@dimen/fourty_dp"
+        />
+
+</FrameLayout>

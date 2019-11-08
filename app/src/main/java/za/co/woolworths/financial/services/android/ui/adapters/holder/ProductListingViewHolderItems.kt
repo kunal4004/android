@@ -62,23 +62,24 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
     }
 
+companion object {
     // Extracting the fulfilmentStoreId from user location or default MC config
-    fun getFulFillmentStoreId(): String? {
+    fun getFulFillmentStoreId(fulfilmentTypeId: String): String? {
         val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
         val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
-        val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId?.toString()
         var defaultStoreId = ""
         if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
             quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
-                if (fulfillmentType.fulfilmentTypeId.toString().equals(foodFulfilmentTypeId, ignoreCase = true)) {
+                if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfilmentTypeId, ignoreCase = true)) {
                     defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
                     return@forEach
                 }
             }
         } else {
-            Utils.retrieveStoreId(foodFulfilmentTypeId)?.let { defaultStoreId = it }
+            Utils.retrieveStoreId(fulfilmentTypeId)?.let { defaultStoreId = it }
         }
 
         return defaultStoreId
     }
+}
 }

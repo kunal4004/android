@@ -580,8 +580,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 dismissProgressBar()
                 oneTimeInventoryErrorDialogDisplay = false
                 with(activity.supportFragmentManager.beginTransaction()) {
-                    skusInventoryForStoreResponse.httpCode = 540
-                    skusInventoryForStoreResponse.response = skusInventoryForStoreResponse.response
                     when (skusInventoryForStoreResponse.httpCode) {
                         200 -> {
                             val skuInventoryList = skusInventoryForStoreResponse.skuInventory

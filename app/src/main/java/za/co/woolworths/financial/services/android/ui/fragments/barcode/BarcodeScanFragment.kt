@@ -30,8 +30,8 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
     companion object {
         fun newInstance() = BarcodeScanFragment()
         private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 10
-        const val HOST_WOOLWORTHS = "www.woolworths.co.za"
-        const val HOST_YOUTUBE = "www.youtube.com"
+        const val DOMAIN_WOOLWORTHS = "woolworths.co.za"
+        const val WHITE_LISTED_DOMAIN = "WHITE_LISTED_DOMAIN"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +68,7 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
                                                                         isEmpty() -> {
                                                                             ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code),this@BarcodeScanFragment)
                                                                         }
-                                                                        contains(HOST_YOUTUBE) -> {
+                                                                        contains(WHITE_LISTED_DOMAIN) -> {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
                                                                             finish()
                                                                             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

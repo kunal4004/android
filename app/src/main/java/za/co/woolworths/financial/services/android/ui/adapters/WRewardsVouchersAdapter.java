@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.awfs.coordination.R;
 import com.google.zxing.BarcodeFormat;
@@ -20,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -62,12 +64,12 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
-            holder.validFromDate=(WTextView)convertView.findViewById(R.id.validFrom);
-            holder.validUntilDate=(WTextView)convertView.findViewById(R.id.validUntil);
-            holder.voucherValue = (WTextView) convertView.findViewById(R.id.voucherValue);
-            holder.message = (WTextView) convertView.findViewById(R.id.message);
-            holder.voucherNumber = (WTextView) convertView.findViewById(R.id.voucherNumber);
-            holder.minimumSpend = (WTextView) convertView.findViewById(R.id.minSpend);
+            holder.validFromDate = (TextView) convertView.findViewById(R.id.validFrom);
+            holder.validUntilDate = (TextView) convertView.findViewById(R.id.validUntil);
+            holder.voucherValue = (TextView) convertView.findViewById(R.id.voucherValue);
+            holder.message = (TextView) convertView.findViewById(R.id.message);
+            holder.voucherNumber = (TextView) convertView.findViewById(R.id.voucherNumber);
+            holder.minimumSpend = (TextView) convertView.findViewById(R.id.minSpend);
             holder.barCode = (ImageView) convertView.findViewById(R.id.barcode);
             convertView.setTag(holder);
 
@@ -98,13 +100,14 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         }
         return convertView;
     }
+
     public class ViewHolder {
-        WTextView validFromDate;
-        WTextView validUntilDate;
-        WTextView voucherValue;
-        WTextView message;
-        WTextView voucherNumber;
-        WTextView minimumSpend;
+        TextView validFromDate;
+        TextView validUntilDate;
+        TextView voucherValue;
+        TextView message;
+        TextView voucherNumber;
+        TextView minimumSpend;
         ImageView barCode;
     }
 }
