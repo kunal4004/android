@@ -88,8 +88,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
-import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
@@ -1564,5 +1562,22 @@ public class Utils {
 		if (fragmentManager != null) {
 			minAmountDialog.show(fragmentManager, ErrorDialogFragment.class.getSimpleName());
 		}
+	}
+
+	public static boolean isValidLuhnNumber(String ccNumber) {
+		int sum = 0;
+		boolean alternate = false;
+		for (int i = ccNumber.length() - 1; i >= 0; i--) {
+			int n = Integer.parseInt(ccNumber.substring(i, i + 1));
+			if (alternate) {
+				n *= 2;
+				if (n > 9) {
+					n = (n % 10) + 1;
+				}
+			}
+			sum += n;
+			alternate = !alternate;
+		}
+		return (sum % 10 == 0);
 	}
 }

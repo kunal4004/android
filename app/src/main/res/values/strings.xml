@@ -939,7 +939,7 @@
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below</string>
-    <string name="invalid_card_number">Invalid card number.</string>
+    <string name="invalid_card_number">Invalid card number</string>
     <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
