@@ -35,6 +35,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonElement;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.fabric.sdk.android.Fabric;
@@ -95,6 +96,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static QuickShopDefaultValues quickShopDefaultValues;
 	private static InstantCardReplacement instantCardReplacement;
 	private static VirtualTempCard virtualTempCard;
+	private static ArrayList<String> whitelistedDomainsForQRScanner;
 
 	private Activity mCurrentActivity = null;
 
@@ -497,5 +499,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setVirtualTempCard(VirtualTempCard virtualTempCard) {
 		WoolworthsApplication.virtualTempCard = virtualTempCard;
+	}
+
+	public static ArrayList<String> getWhitelistedDomainsForQRScanner() {
+		return whitelistedDomainsForQRScanner;
+	}
+
+	public static void setWhitelistedDomainsForQRScanner(ArrayList<String> whitelistedDomainsForQRScanner) {
+		WoolworthsApplication.whitelistedDomainsForQRScanner = whitelistedDomainsForQRScanner;
 	}
 }

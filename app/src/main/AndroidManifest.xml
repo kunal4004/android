@@ -144,7 +144,7 @@
 
                 <data
                     android:host="www.woolworths.co.za"
-                    android:pathPrefix="/"
+                    android:pathPrefix="/cat"
                     android:scheme="https" />
             </intent-filter>
         </activity>
