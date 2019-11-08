@@ -44,9 +44,9 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.product_color_row.view.*
 import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
@@ -186,7 +186,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
-            updateStockAvailability()
+            updateStockAvailability(false)
             return
         }
 
@@ -216,18 +216,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSessionTokenExpired() {
+        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+        activity?.runOnUiThread { ScreenManager.presentSSOSignin(activity) }
     }
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         this.productDetails = productDetails
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
 
-            storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)?.apply {
-                showProductDetailsLoading()
-                val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
-                productDetailsPresenter?.loadStockAvailability(this, multiSKUs, true)
+            storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+            when (storeIdForInventory.isNullOrEmpty()) {
+                true -> showProductUnavailable()
+                false -> {
+                    showProductDetailsLoading()
+                    val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
+                    productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, true)
+                }
             }
-
 
         } else {
             showErrorWhileLoadingProductDetails()
@@ -256,6 +261,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             updateDefaultUI()
             hideProductDetailsLoading()
         } else {
+            hideProgressBar()
             getSelectedSku()?.let { selectedSku ->
                 productDetails?.otherSkus?.forEach {
                     if (it.sku.equals(selectedSku.sku, ignoreCase = true)) {
@@ -354,8 +360,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateDefaultUI() {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
-        if (!hasSize)
+        if (!hasSize) {
             setSelectedSku(this.defaultSku)
+            updateAddToCartButtonForSelectedSKU()
+        }
         /*if (hasColor)
             this.setSelectedColorIcon()*/
         loadSizeAndColor()
@@ -596,12 +604,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
     }
 
-    private fun updateStockAvailability() {
-        val storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
-        productDetails?.apply {
-            otherSkus?.let {
-                val multiSKUs = it.joinToString(separator = "-") { it.sku }
-                productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, false)
+    private fun updateStockAvailability(isDefaultRequest: Boolean) {
+        storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
+        when(storeIdForInventory.isNullOrEmpty()){
+            true->showProductUnavailable()
+            false ->{
+                productDetails?.apply {
+                    otherSkus?.let {
+                        val multiSKUs = it.joinToString(separator = "-") { it.sku }
+                        productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, isDefaultRequest)
+                    }
+                }
             }
         }
 
@@ -679,7 +692,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         updateStockAvailabilityLocation()
 
                         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
-                            updateStockAvailability()
+                            updateStockAvailability(true)
                         }
                     }
                 }
@@ -918,5 +931,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
+
+    private fun showProductUnavailable(){
+        /*setSelectedSku(this.defaultSku)
+        hideProductDetailsLoading()
+        toCartAndFindInStoreLayout.visibility = View.GONE*/
+        hideProgressBar()
+    }
+
 
 }
