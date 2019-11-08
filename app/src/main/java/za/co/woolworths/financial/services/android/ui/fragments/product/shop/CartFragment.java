@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -594,7 +595,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			@Override
 			public void onFailure(Throwable error) {
 				Activity activity = getActivity();
-				if (activity != null) {
+				if (activity != null && isAdded()) {
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -602,7 +603,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 								rvCartList.setVisibility(View.GONE);
 								rlCheckOut.setVisibility(View.GONE);
+								if (pBar != null)
+									pBar.setVisibility(View.GONE);
 								mErrorHandlerView.showErrorHandler();
+
 							}
 						}
 					});
@@ -1011,10 +1015,34 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 			@Override
 			public void onFailure(Throwable error) {
-
+				Activity activity = getActivity();
+				disableQuantitySelector(error, activity);
 			}
 		},SkusInventoryForStoreResponse.class));
 		return skusInventoryForStoreResponseCall;
+	}
+
+	private void disableQuantitySelector(Throwable error, Activity activity) {
+		if (activity == null || !isAdded()) return;
+		activity.runOnUiThread(() -> {
+			if (error instanceof SocketTimeoutException){
+				if (cartProductAdapter != null && btnCheckOut != null) {
+					ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+					for (CartItemGroup cartItemGroup : cartItems) {
+						for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+							if (!commerceItem.isStockChecked) {
+								commerceItem.quantityInStock = -1;
+								commerceItem.isStockChecked = true;
+							}
+						}
+					}
+					cartProductAdapter.updateStockAvailability(cartItems);
+				}
+			}
+			enableEditCart(true);
+			btnCheckOut.setEnabled(false);
+			rlCheckOut.setEnabled(false);
+		});
 	}
 
 	public void updateCartListWithAvailableStock(List<SkuInventory> inventories, String storeID) {

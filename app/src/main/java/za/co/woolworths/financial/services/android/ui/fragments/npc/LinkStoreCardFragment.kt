@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -19,7 +20,9 @@ import kotlinx.android.synthetic.main.process_block_card_fragment.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.incLinkCardSuccessFulView
 import kotlinx.android.synthetic.main.process_block_card_fragment.incProcessingTextLayout
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
+import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkCardType
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
@@ -42,6 +45,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     private var otpMethodType: OTPMethodType? = null
     private var linkStoreCard: LinkStoreCard? = null
     private var mLinkCardType: String? = null
+    private var mStoreCardListener: IStoreCardListener? = null
 
     companion object {
         fun newInstance() = LinkStoreCardFragment()
@@ -62,6 +66,18 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         ibBack?.setOnClickListener(this)
         okGotItButton?.setOnClickListener(this)
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.apply {
+            try {
+                mStoreCardListener = this as? IStoreCardListener
+            } catch (e: ClassCastException) {
+                throw ClassCastException("$this must implement MyInterface ")
+            }
+        }
+    }
+
 
     private fun linkStoreCardRequest() {
 
@@ -131,6 +147,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                                 }.start()
                             }
 
+                            // get card failure
                             override fun onFailureHandler() {
                                 super.onFailureHandler()
                                 onFailure()
@@ -138,10 +155,27 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         }, account)
                     }
 
+                    // link card failure
                     override fun onFailureHandler() {
                         super.onFailureHandler()
                         onFailure()
                     }
+
+                    // OTP Failure View
+                    override fun onFailureHandler(response: Response?) {
+                        super.onFailureHandler(response)
+                        when (response?.code) {
+                            "1037" -> {
+                                mStoreCardListener?.navigateToPreviousFragment(response.desc)
+                                activity?.supportFragmentManager?.apply {
+                                        findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
+                                }
+                             }
+                            else -> onFailure()
+                        }
+                    }
+
+
                 }, request)
             }
         }
@@ -336,4 +370,5 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         activity.finish()
         activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
+
 }

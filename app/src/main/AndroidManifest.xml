@@ -144,7 +144,7 @@
 
                 <data
                     android:host="www.woolworths.co.za"
-                    android:pathPrefix="/"
+                    android:pathPrefix="/cat"
                     android:scheme="https" />
             </intent-filter>
         </activity>
@@ -471,6 +471,12 @@
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle" />
+
     </application>
 
 </manifest>

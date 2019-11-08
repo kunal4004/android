@@ -109,25 +109,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
     }
 
-    // Extracting the fulfilmentStoreId from user location or default MC config
-    fun getFulFillmentStoreId(): String? {
-        val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
-        val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
-        val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId?.toString()
-        var defaultStoreId = ""
-        if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
-            quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
-                if (fulfillmentType.fulfilmentTypeId.toString().equals(foodFulfilmentTypeId, ignoreCase = true)) {
-                    defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
-                    return@forEach
-                }
-            }
-        } else {
-            Utils.retrieveStoreId(foodFulfilmentTypeId)?.let { defaultStoreId = it }
-        }
 
-        return defaultStoreId
-    }
 
     @SuppressLint("DefaultLocale")
     private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String): String {
@@ -138,6 +120,27 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
                 this.contains("Kilogram", true) -> WFormatter.formatAmount(price) + " (" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
                 else -> WFormatter.formatAmount(price)
             }
+        }
+    }
+
+    companion object {
+        // Extracting the fulfilmentStoreId from user location or default MC config
+        fun getFulFillmentStoreId(fulfilmentTypeId: String): String? {
+            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
+            val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
+            var defaultStoreId = ""
+            if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
+                quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
+                    if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfilmentTypeId, ignoreCase = true)) {
+                        defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
+                        return@forEach
+                    }
+                }
+            } else {
+                Utils.retrieveStoreId(fulfilmentTypeId)?.let { defaultStoreId = it }
+            }
+
+            return defaultStoreId
         }
     }
 
@@ -152,6 +155,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
                 fromPriceLabelTextView?.text = ""
 
             }
+
         }
     }
 

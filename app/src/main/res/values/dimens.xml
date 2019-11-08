@@ -22,8 +22,8 @@
     <dimen name="acc_thirteen_sp">13sp</dimen>
     <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
     <dimen name="voucher_message_layout_height">191dp</dimen>
-    <dimen name="voucher_barcode_margin">16dp</dimen>
-    <dimen name="voucher_barcode_number_margintop">18dp</dimen>
+    <dimen name="voucher_barcode_margin">15dp</dimen>
+    <dimen name="voucher_barcode_number_margintop">16dp</dimen>
     <dimen name="voucher_min_spend_margintop">18dp</dimen>
     <dimen name="voucher_min_spend_padding">16dp</dimen>
     <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
@@ -148,5 +148,6 @@
     <dimen name="chat_bubble_text_size">16sp</dimen>
     <dimen name="sixty_four_dp">64dp</dimen>
     <dimen name="one_dp">1dp</dimen>
+    <dimen name="twenty_four_sp">24sp</dimen>
 </resources>
 

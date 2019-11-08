@@ -56,7 +56,7 @@ public interface ProductDetailNavigatorNew {
 
 	void onSessionTokenExpired();
 
-	void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse);
+	void onUpdatedInventoryResponse(SkusInventoryForStoreResponse inventoryResponse);
 
 	void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse);
 
