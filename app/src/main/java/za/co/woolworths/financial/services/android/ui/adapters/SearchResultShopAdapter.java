@@ -17,6 +17,8 @@ import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -72,7 +74,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	@NonNull
 	private SimpleViewHolder getSimpleViewHolder(ViewGroup parent) {
 		return new SimpleViewHolder(LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.shopping_list_commerce_item, parent, false));
+				.inflate(R.layout.shop_search_product_item, parent, false));
 	}
 
 	@NonNull
@@ -197,8 +199,8 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	private class SimpleViewHolder extends RecyclerView.ViewHolder {
 
 		private WTextView tvTitle;
-		private WTextView tvPrice;
-		private WTextView tvWasPrice;
+		private TextView tvPrice;
+		private TextView tvWasPrice;
 		private WTextView tvSaveText;
 		private WTextView tvQuantity;
 		private WTextView tvColorSize;
@@ -239,7 +241,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 
 		private void setPrice(ProductList productItem) {
 			PriceItem priceItem =new  PriceItem();
-			priceItem.setPrice(productItem, itemView);
+			priceItem.setPrice(productItem, itemView, true);
 		}
 
 		private void setSaveText(ProductList productItem) {
