@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.my_card_blocked_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.appcompat.app.AppCompatActivity
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -64,6 +65,7 @@ class MyCardBlockedFragment : MyCardExtension() {
     }
 
     private fun navigateToReplacementCard() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD)
         replaceFragment(
                 fragment = GetReplacementCardFragment.newInstance(),
                 tag = GetReplacementCardFragment::class.java.simpleName,
