@@ -7,6 +7,7 @@ import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -45,14 +46,15 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     }
 
     private fun navigateBack() {
-        with(supportFragmentManager) {
-            if (backStackEntryCount > 0) {
-                fragments[backStackEntryCount - 1]?.onResume()
-                popBackStack()
-
-            } else {
-                finishActivity()
+        when (supportFragmentManager.findFragmentById(R.id.flMyCard)) {
+            is EnterOtpFragment -> {
+                val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
+                openLinkNewCardActivity.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, mStoreCardDetail)
+                startActivity(openLinkNewCardActivity)
+                overridePendingTransition(0, 0)
+                finish()
             }
+            else -> finishActivity()
         }
     }
 

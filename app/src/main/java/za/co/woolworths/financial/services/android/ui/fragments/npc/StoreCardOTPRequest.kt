@@ -58,6 +58,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                                 requestListener.hideProgress()
                                 if (error is ConnectException || error is UnknownHostException) {
                                     ErrorHandlerView(this).showToast()
+                                    requestListener.onFailureHandler(error)
                                 }
                             }
                         }
@@ -93,7 +94,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                     }
                     else -> {
                         linkStoreCardHasFailed = true
-                       // requestListener?.hideProgress()
+                        // requestListener?.hideProgress()
                         requestListener?.onFailureHandler(response?.response)
                     }
                 }
