@@ -10,10 +10,14 @@
     <TextView
         android:id="@+id/tvLinkNewCardTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:autoSizeMaxTextSize="20sp"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
         android:contentDescription="@string/label_linkICR"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
@@ -29,10 +33,14 @@
     <TextView
         android:id="@+id/tvLinkNewCardDesc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="41dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="32dp"
+        android:autoSizeMaxTextSize="15sp"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
         android:contentDescription="@string/label_linkICRCardDescription"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
@@ -52,13 +60,14 @@
         android:id="@+id/cardNumberEditText"
         style="@style/instantStoreCardReplacementEditTextStyle"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:contentDescription="@string/text_carddetails"
         android:digits="0123456789"
         android:hint="@string/enter_new_card_number"
         android:imeOptions="actionDone"
         android:textColorHint="@color/unavailable"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLinkNewCardDesc" />
@@ -73,17 +82,31 @@
         app:srcCompat="@drawable/camera_image_bg" />
 
 
-    <ImageView
-        android:id="@+id/navigateToEnterOTPFragmentImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
-        android:contentDescription="@string/button_next"
-        android:enabled="false"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/next_button_state" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/invalidCardNumberLabel">
+
+        <ImageView
+            android:id="@+id/navigateToEnterOTPFragmentImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="24dp"
+            android:alpha="0.5"
+            android:contentDescription="@string/button_next"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/next_button_state" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/invalidCardNumberLabel"
