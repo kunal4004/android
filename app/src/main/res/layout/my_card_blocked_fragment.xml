@@ -155,7 +155,7 @@
         android:lineSpacingExtra="4dp"
         android:text="@string/npc_already_have_your_card_link"
         android:textAllCaps="true"
-        android:textColor="#000000"
+        android:textColor="#06000000"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
