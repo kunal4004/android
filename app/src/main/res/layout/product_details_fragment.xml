@@ -134,7 +134,7 @@
                     android:layout_marginLeft="@dimen/twenty_four_dp"
                     android:layout_marginRight="@dimen/twenty_four_dp"
                     android:visibility="visible"
-                    app:layout_constraintTop_toBottomOf="@id/priceLayout" />
+                    app:layout_constraintTop_toBottomOf="@id/promotionText" />
 
                 <include
                     android:id="@+id/deliveryLocationLayout"

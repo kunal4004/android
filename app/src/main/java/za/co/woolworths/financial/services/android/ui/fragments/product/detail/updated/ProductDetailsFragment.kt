@@ -112,6 +112,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         findInStoreAction.setOnClickListener(this)
         productDetailsInformation.setOnClickListener(this)
         productIngredientsInformation.setOnClickListener(this)
+        moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
     }
@@ -127,6 +128,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.editDeliveryLocation -> updateDeliveryLocation()
             R.id.productDetailsInformation -> showProductDetailsInformation()
             R.id.productIngredientsInformation -> showProductIngredientsInformation()
+            R.id.moreColor -> showMoreColors()
         }
     }
 
@@ -311,15 +313,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
-        /* val layoutManager = FlexboxLayoutManager(activity)
-         layoutManager.flexDirection = FlexDirection.ROW
-         layoutManager.justifyContent = JustifyContent.FLEX_START
-         colorSelectorRecycleView.layoutManager = layoutManager*/
-        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this).apply {
+        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this, spanCount, getSelectedGroupKey()).apply {
             colorSelectorRecycleView.adapter = this
-            updateColorSelection(getSelectedGroupKey())
             showSelectedColor()
         }
+
+        otherSKUsByGroupKey.size.let {
+            if (it > spanCount) {
+                moreColor.text = "+ " + (it - spanCount) + " More"
+                moreColor.visibility = View.VISIBLE
+            }
+        }
+
         colorSelectorLayout.visibility = View.VISIBLE
     }
 
@@ -939,5 +944,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         hideProgressBar()
     }
 
+    fun showMoreColors() {
+        productColorSelectorAdapter?.apply {
+            showMoreColors()
+            moreColor.visibility = View.INVISIBLE
+        }
+    }
 
 }

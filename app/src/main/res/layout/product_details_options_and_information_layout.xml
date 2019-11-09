@@ -45,6 +45,7 @@
         <ImageView
             android:id="@+id/logoCheckInStore"
             style="@style/card_item_start_icon_style"
+            android:alpha="1"
             app:srcCompat="@drawable/ic_store_locator" />
 
         <TextView
@@ -85,6 +86,7 @@
         <ImageView
             android:id="@+id/logoAddToShoppingList"
             style="@style/card_item_start_icon_style"
+            android:alpha="1"
             app:srcCompat="@drawable/shopping_list_icon" />
 
         <TextView

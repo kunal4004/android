@@ -15,13 +15,25 @@ import za.co.woolworths.financial.services.android.util.DrawImage
 import java.util.*
 
 
-class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
+class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView, spanCount: Int, selectedGroupKey: String?) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
 
     private var selectedColor: String? = null
     private var colorsList: List<String> = arrayListOf()
+    private var groupKeys: List<String> = arrayListOf()
 
     init {
-        colorsList = otherSKUsByGroupKey.keys.toList()
+        groupKeys = otherSKUsByGroupKey.keys.toList()
+
+        selectedGroupKey?.apply {
+            if (groupKeys.size > 1) {
+                (0..groupKeys.indexOf(selectedGroupKey)).forEach {
+                    Collections.swap(groupKeys, 0, it)
+                }
+            }
+            selectedColor = selectedGroupKey
+        }
+
+        colorsList = groupKeys.take(spanCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -58,8 +70,8 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
         }
     }
 
-    fun updateColorSelection(selectedColor: String?) {
-        this.selectedColor = selectedColor
+    fun showMoreColors() {
+        colorsList = groupKeys
         notifyDataSetChanged()
     }
 }
