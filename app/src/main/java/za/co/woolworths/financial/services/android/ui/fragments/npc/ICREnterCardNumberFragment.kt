@@ -19,13 +19,13 @@ import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
-class InstantStoreCardFragment : MyCardExtension() {
+class ICREnterCardNumberFragment : MyCardExtension() {
     private var shouldDisableUINavigation = false
     private var shouldClearCardNumber = false
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
-        fun newInstance() = InstantStoreCardFragment()
+        fun newInstance() = ICREnterCardNumberFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
@@ -78,8 +78,6 @@ class InstantStoreCardFragment : MyCardExtension() {
             }
             false
         }
-
-        cardNumberEditText?.setOnFocusChangeListener { v, hasFocus -> cardNumberEditText?.isCursorVisible = hasFocus }
 
         cardNumberEditText?.setOnTouchListener { v, event ->
             if (shouldClearCardNumber) {

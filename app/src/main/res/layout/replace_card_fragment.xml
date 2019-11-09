@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnParticipatingStores"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
         android:contentDescription="@string/label_getICRCardDescription"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
@@ -22,9 +22,9 @@
         android:text="@string/replacement_desc_part_one"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvPermanentBlockDescPart2"
-        app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvReplacementCardTitle" />
 
     <TextView
         android:id="@+id/tvPermanentBlockDescPart2"
@@ -32,8 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnParticipatingStores"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="28dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
         android:lineSpacingExtra="1.dp"
@@ -41,9 +41,9 @@
         android:text="@string/replacement_desc_part_two"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnParticipatingStores"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPermanentBlockDescPart1" />
 
     <Button
         android:id="@+id/btnParticipatingStores"
@@ -51,6 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/black_button_drawable_state"
         android:contentDescription="@string/button_getParticipantsStores"
@@ -60,15 +61,18 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvAlreadyHaveCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPermanentBlockDescPart2"
         tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/tvAlreadyHaveCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
         android:contentDescription="@string/replacement_card_link_alreadyHaveCard"
         android:fontFamily="@font/futura_medium_ttf"
         android:gravity="center"
@@ -78,9 +82,9 @@
         android:text="@string/already_have_a_card_title"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnParticipatingStores"
         tools:targetApi="lollipop" />
 
     <TextView
@@ -88,8 +92,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="11dp"
         android:contentDescription="@string/label_getICR"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
@@ -97,9 +101,9 @@
         android:text="@string/get_a_replacement_card"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvPermanentBlockDescPart1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imReplacementCard"
         tools:text="@string/get_a_replacement_card" />
 
     <ImageView
@@ -109,12 +113,11 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:contentDescription="@string/replacement_card_image"
-        app:layout_constraintBottom_toTopOf="@+id/tvReplacementCardTitle"
+        app:layout_constraintDimensionRatio="H,3:2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/card_npc_isometric" />
 
     <ProgressBar

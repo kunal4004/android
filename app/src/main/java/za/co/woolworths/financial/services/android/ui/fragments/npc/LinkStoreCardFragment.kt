@@ -62,7 +62,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
         tvCallCenterNumber?.setOnClickListener(this)
         btnRetryOnFailure?.setOnClickListener(this)
-        ibClose?.setOnClickListener(this)
+        closeIconImageView?.setOnClickListener(this)
         ibBack?.setOnClickListener(this)
         okGotItButton?.setOnClickListener(this)
     }
@@ -103,7 +103,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                     ?: "", getCardNumber(), sequenceNumber, getOtpNumber(), getOTPMethodType(), mLinkCardType!!)
             linkStoreCard?.let { request ->
                 mStoreCardRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
-                mStoreCardRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
+                mStoreCardRequest?.linkStoreCardRequest(object : IOTPLinkStoreCard<LinkNewCardResponse> {
                     override fun showProgress() {
                         super.showProgress()
                         linkStoreCardProgress()
@@ -168,9 +168,9 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                             "1037" -> {
                                 mStoreCardListener?.navigateToPreviousFragment(response.desc)
                                 activity?.supportFragmentManager?.apply {
-                                        findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
+                                    findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
                                 }
-                             }
+                            }
                             else -> onFailure()
                         }
                     }
@@ -193,7 +193,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     private fun virtualStoreCardSuccess() {
         progressState()?.animateSuccessEnd(true)
         ibBack?.visibility = GONE
-        ibClose?.visibility = VISIBLE
+        closeIconImageView?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
         includeVirtualTempCardLayout?.visibility = VISIBLE
     }
@@ -214,21 +214,21 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     private fun linkStoreCardSuccess() {
         progressState()?.animateSuccessEnd(true)
         ibBack?.visibility = GONE
-        ibClose?.visibility = VISIBLE
+        closeIconImageView?.visibility = GONE
         incLinkCardSuccessFulView?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
     }
 
     private fun linkStoreCardProgress() {
         ibBack?.visibility = GONE
-        ibClose?.visibility = GONE
+        closeIconImageView?.visibility = GONE
         incLinkCardSuccessFulView?.visibility = GONE
         incProcessingTextLayout?.visibility = VISIBLE
     }
 
     private fun linkStoreCardFailure() {
         ibBack?.visibility = GONE
-        ibClose?.visibility = VISIBLE
+        closeIconImageView?.visibility = VISIBLE
         incLinkCardFailure?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
     }
@@ -244,7 +244,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 R.id.okGotItButton -> {
                     mStoreCardsResponse?.let { handleStoreCardResponse(it) }
                 }
-                R.id.ibClose -> {
+                R.id.closeIconImageView -> {
                     finish()
                     overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                 }
@@ -338,10 +338,10 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
             when (mLinkCardType) {
                 LinkCardType.LINK_NEW_CARD.type -> {
                     if (linkStoreCardHasFailed!!) {
-                        val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)
-                        displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
-                        activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
-                        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                        val openLinkNewCardActivity = Intent(activity, InstantStoreCardReplacementActivity::class.java)
+                        openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
+                        activity.startActivity(openLinkNewCardActivity)
+                        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         activity.finish()
                     }
 

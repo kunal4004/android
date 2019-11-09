@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.net.ConnectException
 import java.net.UnknownHostException
 
+
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private var mStoreCardRequest: StoreCardOTPRequest? = null
@@ -146,13 +147,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun requestEditTextFocus() {
-        activity?.let { activity ->
-            edtVerificationCode1?.apply {
-                requestFocus()
-                isFocusable = true
-                isCursorVisible = true
-                showSoftKeyboard(activity, this)
-            }
+        activity?.let {
+            edtVerificationCode1?.requestFocus()
+            edtVerificationCode1?.isFocusable = true
+            edtVerificationCode1?.isCursorVisible = true
         }
     }
 
@@ -305,4 +303,5 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun getSavedNumber() = (activity as? MyCardActivityExtension)?.mPhoneNumberOTP
+
 }

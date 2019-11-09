@@ -77,7 +77,7 @@ open class MyCardExtension : Fragment() {
         }
     }
 
-    fun hideKeyboard() {
+    open fun hideKeyboard() {
         activity?.apply { KeyboardUtil.hideSoftKeyboard(this) }
     }
 
@@ -122,7 +122,6 @@ open class MyCardExtension : Fragment() {
 
     fun invalidCardNumberUI() {
         activity?.apply {
-            navigateToEnterOTPFragmentImageView?.alpha = 0.5f
             cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_error_bg)
             invalidCardNumberLabel?.visibility = View.VISIBLE
             navigateToEnterOTPFragmentImageView?.isEnabled = false

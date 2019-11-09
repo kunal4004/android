@@ -90,16 +90,16 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     private fun navigateBack() {
         supportFragmentManager?.apply {
             if (backStackEntryCount > 0) {
-                popBackStack()
                 when (getCurrentFragment()) {
                     // back pressed from replacement card
                     is GetReplacementCardFragment -> {
                         changeToolbarBackground(R.color.grey_bg)
                         showToolbarTitle()
                     }
-                    is MyCardBlockedFragment -> {
+                    is MyCardBlockedFragment, is MyCardDetailFragment -> {
                         finishActivity()
                     }
+                    else -> popBackStack()
                 }
             } else
                 finishActivity()
