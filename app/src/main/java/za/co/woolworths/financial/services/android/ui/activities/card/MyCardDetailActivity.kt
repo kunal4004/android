@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -61,7 +63,6 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
                         containerViewId = R.id.flMyCard)
             }
         }
-
     }
 
     private fun actionBar() {
@@ -90,19 +91,26 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     private fun navigateBack() {
         supportFragmentManager?.apply {
             if (backStackEntryCount > 0) {
-                when (getCurrentFragment()) {
-                    // back pressed from replacement card
-                    is GetReplacementCardFragment -> {
-                        changeToolbarBackground(R.color.grey_bg)
-                        showToolbarTitle()
-                    }
-                    is MyCardBlockedFragment, is MyCardDetailFragment -> {
-                        finishActivity()
-                    }
-                    else -> popBackStack()
-                }
+                popBackStack()
+                fragmentStack()
             } else
+                fragmentStack()
+        }
+    }
+
+    private fun fragmentStack() {
+        when (getCurrentFragment()) {
+            // back pressed from replacement card
+            is GetReplacementCardFragment -> {
+                changeToolbarBackground(R.color.grey_bg)
+                showToolbarTitle()
+            }
+            is MyCardBlockedFragment, is MyCardDetailFragment -> {
                 finishActivity()
+            }
+            else -> {
+                finishActivity()
+            }
         }
     }
 
@@ -132,6 +140,8 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         if (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_OK) {
             mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
             addCardDetailFragment()
+        } else if (requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_OK) { // close previous cart detail
+            finish()
         } else {
             supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
         }
@@ -142,4 +152,6 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
+    fun getStoreCardDetail() = mStoreCardDetail
 }

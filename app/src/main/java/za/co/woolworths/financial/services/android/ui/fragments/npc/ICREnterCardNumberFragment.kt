@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class ICREnterCardNumberFragment : MyCardExtension() {
     private var shouldDisableUINavigation = false
-    private var shouldClearCardNumber = false
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
@@ -78,28 +77,16 @@ class ICREnterCardNumberFragment : MyCardExtension() {
             }
             false
         }
-
-        cardNumberEditText?.setOnTouchListener { v, event ->
-            if (shouldClearCardNumber) {
-                cardNumberEditText?.text?.clear()
-                shouldClearCardNumber = false
-            }
-
-            false
-        }
     }
 
     private fun setupCardNumberField(cardNumber: String) {
         if (cardNumber.length == 16) {
             if (Utils.isValidLuhnNumber(cardNumber)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
-                shouldClearCardNumber = false
                 validCardNumberUI()
             } else {
-                shouldClearCardNumber = true
                 invalidCardNumberUI()
             }
-            hideKeyboard()
         } else {
             navigateToEnterOTPFragmentImageView?.isEnabled = false
         }

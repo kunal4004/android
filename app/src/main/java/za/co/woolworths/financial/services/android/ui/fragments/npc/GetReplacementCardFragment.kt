@@ -9,7 +9,6 @@ import android.graphics.PorterDuff
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -31,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorAct
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.CONTACT_INFO
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.MAP_LOCATION
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.PRODUCT_NAME
-import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
@@ -55,8 +53,12 @@ class GetReplacementCardFragment : MyCardExtension() {
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         requestGPSLocation()
-        val storeCard = (activity as? InstantStoreCardReplacementActivity)?.getStoreCardDetail()
-        tvAlreadyHaveCard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, Gson().toJson(storeCard)) } }
+        val storeCardResponse = (activity as? MyCardDetailActivity)?.getStoreCardDetail()
+        tvAlreadyHaveCard?.setOnClickListener {
+            (activity as? MyCardDetailActivity)?.apply {
+               navigateToLinkNewCardActivity(this,storeCardResponse)
+            }
+        }
         btnParticipatingStores?.setOnClickListener { checkForLocationPermission() }
     }
 
@@ -95,38 +97,50 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun navigateToParticipatingStores(location: Location?) {
-        val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude
-                ?: 0.0, location?.longitude ?: 0.0, "", true)
-        OneAppService.forceNetworkUpdate = true
-        progressVisibility(true)
-        locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
-            override fun onSuccess(locationResponse: LocationResponse?) {
-                if (!isAdded) return
-                activity?.apply {
-                    progressVisibility(false)
-                    when (locationResponse?.httpCode) {
-                        200 -> {
-                            val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
-                                    ?: mutableListOf()
-                            if (npcStores?.size ?: 0 > 0) {
-                                val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
-                                intentInStoreFinder.putExtra(PRODUCT_NAME, getString(R.string.participating_stores))
-                                intentInStoreFinder.putExtra(CONTACT_INFO, getString(R.string.participating_store_desc))
-                                intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
-                                startActivity(intentInStoreFinder)
-                                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                            }
+        activity?.runOnUiThread {
+            enableAlreadyHaveALink(false)
+            val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude
+                    ?: 0.0, location?.longitude ?: 0.0, "", true)
+            OneAppService.forceNetworkUpdate = true
+            progressVisibility(true)
+            locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+                override fun onSuccess(locationResponse: LocationResponse?) {
+                    if (!isAdded) return
+                    activity?.apply {
+                        progressVisibility(false)
+                        when (locationResponse?.httpCode) {
+                                200 -> {
+                                val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
+                                        ?: mutableListOf()
+                                if (npcStores?.size ?: 0 > 0) {
+                                    val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
+                                    intentInStoreFinder.putExtra(PRODUCT_NAME, getString(R.string.participating_stores))
+                                    intentInStoreFinder.putExtra(CONTACT_INFO, getString(R.string.participating_store_desc))
+                                    intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
+                                    startActivity(intentInStoreFinder)
+                                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                                }
+
+                                }
+                            else -> return
                         }
-                        else -> return
+                        enableAlreadyHaveALink(true)
                     }
                 }
-            }
 
-            override fun onFailure(error: Throwable?) {
-                progressVisibility(false)
-            }
+                override fun onFailure(error: Throwable?) {
+                    activity?.runOnUiThread {
+                        enableAlreadyHaveALink(true)
+                    }
+                    progressVisibility(false)
+                }
 
-        }, LocationResponse::class.java))
+            }, LocationResponse::class.java))
+        }
+    }
+
+    private fun enableAlreadyHaveALink(enableLink: Boolean) {
+        tvAlreadyHaveCard?.isEnabled = enableLink
     }
 
     override fun onResume() {

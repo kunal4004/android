@@ -114,6 +114,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun navigateToLinkStoreCard() {
+        hideKeyboard()
         val otpNumber = getNumberFromEditText(edtVerificationCode1)
                 .plus(getNumberFromEditText(edtVerificationCode2))
                 .plus(getNumberFromEditText(edtVerificationCode3))
@@ -147,10 +148,11 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun requestEditTextFocus() {
-        activity?.let {
-            edtVerificationCode1?.requestFocus()
-            edtVerificationCode1?.isFocusable = true
-            edtVerificationCode1?.isCursorVisible = true
+        (activity as? AppCompatActivity)?.let { activity ->
+            edtVerificationCode1?.apply {
+                requestFocus()
+                showSoftKeyboard(activity, this)
+            }
         }
     }
 

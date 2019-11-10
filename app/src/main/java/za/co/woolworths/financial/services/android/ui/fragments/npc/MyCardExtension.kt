@@ -28,6 +28,7 @@ open class MyCardExtension : Fragment() {
 
     companion object {
         @SuppressLint("DefaultLocale")
+        const val INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE = 555
         fun toTitleCase(name: String?): String {
             val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
             var output = ""
@@ -63,9 +64,8 @@ open class MyCardExtension : Fragment() {
         activity?.apply {
             val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
             openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, storeCard)
-            startActivity(openLinkNewCardActivity)
+            startActivityForResult(openLinkNewCardActivity,INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            finish()
         }
     }
 
