@@ -188,6 +188,10 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         Utils.fadeInFadeOutAnimation(btnEditCart, enable);
         btnEditCart.setEnabled(enable ? false : true);
     }
+    public void enableEditCart() {
+        Utils.fadeInFadeOutAnimation(btnEditCart, false);
+        btnEditCart.setEnabled(true);
+    }
 
     @Override
     public void onRemoveSuccess() {

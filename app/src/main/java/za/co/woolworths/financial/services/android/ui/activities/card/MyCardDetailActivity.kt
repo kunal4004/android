@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -92,7 +91,16 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         supportFragmentManager?.apply {
             if (backStackEntryCount > 0) {
                 popBackStack()
-                fragmentStack()
+                when (getCurrentFragment()) {
+                    // back pressed from replacement card
+                    is GetReplacementCardFragment -> {
+                        changeToolbarBackground(R.color.grey_bg)
+                        showToolbarTitle()
+                    }
+                    is MyCardBlockedFragment, is MyCardDetailFragment -> {
+                        finishActivity()
+                    }
+                }
             } else
                 fragmentStack()
         }
@@ -101,10 +109,6 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     private fun fragmentStack() {
         when (getCurrentFragment()) {
             // back pressed from replacement card
-            is GetReplacementCardFragment -> {
-                changeToolbarBackground(R.color.grey_bg)
-                showToolbarTitle()
-            }
             is MyCardBlockedFragment, is MyCardDetailFragment -> {
                 finishActivity()
             }
