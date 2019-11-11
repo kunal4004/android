@@ -41,11 +41,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         intent?.extras?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
         }
-//        addCardDetailFragment()
-        addFragment(
-                fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
-                tag = MyCardDetailFragment::class.java.simpleName,
-                containerViewId = R.id.flMyCard)
+        addCardDetailFragment()
     }
 
     private fun addCardDetailFragment() {
