@@ -453,6 +453,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         getActivity().getResources().getString(R.string.cli_got_it));
                 break;
             case R.id.rlMyStoreCard:
+                if (progressBarMyCard.getVisibility() == VISIBLE)
+                    return;
                 getStoreCards(this.account);
                 break;
             default:
