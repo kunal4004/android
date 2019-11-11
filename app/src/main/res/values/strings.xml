@@ -934,8 +934,7 @@
     <string name="get_a_replacement_card">Get A Replacement Card</string>
     <string name="already_have_a_card_title">ALREADY HAVE CARD? LINK IT NOW</string>
     <string name="participating_stores">participating stores</string>
-    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.</string>
-    <string name="replacement_desc_part_two">Please bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
+    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below</string>
@@ -943,7 +942,7 @@
     <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
-    <string name="enter_otp_title">Enter OTP number</string>
+    <string name="enter_otp_title">Enter OTP Number</string>
     <string name="enter_otp_phone_desc">Please confirm that this is you by entering the OTP sent to your cell phone number %1$s</string>
     <string name="enter_otp_email_desc">Please confirm that this is you by entering the OTP sent to your email address %1$s</string>
     <string name="did_not_receive_title">Did Not Receive OTP?</string>
@@ -1167,7 +1166,7 @@
     <string name="sign_out_layout">Sign Out</string>
     <string name="product_placeholder_selected_size">Selected Size</string>
     <string name="product_placeholder_select_size">Select Size</string>
-    <string name="call_us_now">Call us now</string>
+    <string name="call_us_now">Call Now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP you entered was incorrect. Please try again.</string>
 </resources>

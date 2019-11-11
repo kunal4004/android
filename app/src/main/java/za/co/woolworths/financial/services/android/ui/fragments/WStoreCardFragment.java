@@ -184,7 +184,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         }
 
 
-        rlMyStoreCard.setVisibility(VISIBLE);
+        if (rlMyStoreCard != null)
+            rlMyStoreCard.setVisibility(VISIBLE);
     }
 
     private void initUI(View view) {

@@ -21,14 +21,14 @@ import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
-class InstantStoreCardFragment : MyCardExtension() {
+class ICREnterCardNumberFragment : MyCardExtension() {
+
     private var shouldDisableUINavigation = false
-    private var shouldClearCardNumber = false
     private val mMCSInstantStoreCard = WoolworthsApplication.getInstantCardReplacement()
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
-        fun newInstance() = InstantStoreCardFragment()
+        fun newInstance() = ICREnterCardNumberFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
@@ -82,17 +82,6 @@ class InstantStoreCardFragment : MyCardExtension() {
             }
             false
         }
-
-        cardNumberEditText?.setOnFocusChangeListener { v, hasFocus -> cardNumberEditText?.isCursorVisible = hasFocus }
-
-        cardNumberEditText?.setOnTouchListener { v, event ->
-            if (shouldClearCardNumber) {
-                cardNumberEditText?.text?.clear()
-                shouldClearCardNumber = false
-            }
-
-            false
-        }
     }
 
     private fun setupCardNumberField(cardNumber: String) {
@@ -101,13 +90,10 @@ class InstantStoreCardFragment : MyCardExtension() {
             val storeCard6DigitBinNumber = cardNumber.substring(0, 7).toInt()
             if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray.contains(storeCard6DigitBinNumber)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
-                shouldClearCardNumber = false
                 validCardNumberUI()
             } else {
-                shouldClearCardNumber = true
                 invalidCardNumberUI()
             }
-            hideKeyboard()
         } else {
             navigateToEnterOTPFragmentImageView?.isEnabled = false
         }

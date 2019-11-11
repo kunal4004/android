@@ -81,9 +81,9 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         }
     }
 
-    fun make(requestListener: IOTPLinkStoreCard<LinkNewCardResponse>?, linkStoreCard: LinkStoreCard) {
+    fun linkStoreCardRequest(requestListener: IOTPLinkStoreCard<LinkNewCardResponse>?, linkStoreCard: LinkStoreCard) {
         requestListener?.showProgress()
-        OneAppService.linkStoreCard(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
+        OneAppService.linkStoreCardRequest(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
                 linkStoreCardHasFailed = false
                 when (response?.httpCode) {

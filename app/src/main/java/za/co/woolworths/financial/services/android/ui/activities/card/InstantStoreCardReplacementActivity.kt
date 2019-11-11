@@ -8,7 +8,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ICREnterCardNumberFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
@@ -25,8 +25,8 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
         if (savedInstanceState == null) {
             addFragment(
-                    fragment = InstantStoreCardFragment.newInstance(),
-                    tag = InstantStoreCardFragment::class.java.simpleName,
+                    fragment = ICREnterCardNumberFragment.newInstance(),
+                    tag = ICREnterCardNumberFragment::class.java.simpleName,
                     containerViewId = R.id.flMyCard)
         }
     }
@@ -73,7 +73,6 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     private fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-        navigateToMyCardActivity(mStoreCardDetail, true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

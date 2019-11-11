@@ -1039,7 +1039,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					cartProductAdapter.updateStockAvailability(cartItems);
 				}
 			}
-			enableEditCart(true);
+			CartActivity cartActivity = (CartActivity) activity;
+			cartActivity.enableEditCart();
 			btnCheckOut.setEnabled(false);
 			rlCheckOut.setEnabled(false);
 		});

@@ -37,7 +37,7 @@ class KotlinUtils {
             val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
             if (textIsClickable)
                 spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val dimenPix = context?.resources?.getDimension(R.dimen.store_card_spannable_text_18_sp_bold)
+            val dimenPix = context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
             typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
             spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt() ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             tvDesc?.text = spannableTitle
