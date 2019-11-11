@@ -167,6 +167,7 @@
                 android:id="@+id/textViewCardHolderName"
                 style="@style/card_item_semi_bold_text_style"
                 android:contentDescription="@string/text_cardHolderName"
+                android:textAllCaps="true"
                 android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
