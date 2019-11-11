@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.npc_link_store_card_failure.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.incLinkCardSuccessFulView
 import kotlinx.android.synthetic.main.process_block_card_fragment.incProcessingTextLayout
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -117,7 +118,11 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         val account = Account()
                         account.accountNumber = storeDetails?.visionAccountNumber
                         account.productOfferingId = storeDetails?.productOfferingId?.toInt() ?: 0
-
+                        when (mLinkCardType) {
+                            LinkCardType.LINK_NEW_CARD.type -> {
+                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CONFIRM)
+                            }
+                        }
                         // Make store card call
                         mStoreCardRequest?.getStoreCards(object : IOTPLinkStoreCard<StoreCardsResponse> {
 

@@ -119,7 +119,6 @@ private static AsyncTask<Void, Void, Void> async;
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
             view = inflater.inflate(R.layout.card_common_fragment, container, false);
-            view.setContentDescription(getString(R.string.linked_personal_loan_layout));
         }
         return view;
     }

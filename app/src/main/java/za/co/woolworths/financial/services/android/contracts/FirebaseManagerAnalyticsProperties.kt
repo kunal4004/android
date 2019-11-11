@@ -72,6 +72,12 @@ class FirebaseManagerAnalyticsProperties {
         const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
         const val MY_ACCOUNTS_VTC_PAY = "MYACCOUNTS_VTC_PAY"
         const val MY_ACCOUNTS_VTC_HOW_TO = "MYACCOUNTS_VTC_HOWTO"
+
+        const val MYACCOUNTS_ICR_GET_CARD = "MYACCOUNTS_ICR_GET_CARD"
+        const val MYACCOUNTS_ICR_STORES = "MYACCOUNTS_ICR_STORES"
+        const val MYACCOUNTS_ICR_LINK_START = "MYACCOUNTS_ICR_LINK_START"
+        const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
+        const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
     }
 
     class PropertyNames {
