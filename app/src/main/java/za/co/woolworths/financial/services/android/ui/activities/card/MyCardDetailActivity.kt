@@ -41,7 +41,11 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         intent?.extras?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
         }
-        addCardDetailFragment()
+//        addCardDetailFragment()
+        addFragment(
+                fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
+                tag = MyCardDetailFragment::class.java.simpleName,
+                containerViewId = R.id.flMyCard)
     }
 
     private fun addCardDetailFragment() {
@@ -110,7 +114,8 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         when (getCurrentFragment()) {
             // back pressed from replacement card
             is MyCardBlockedFragment, is MyCardDetailFragment -> {
-                finishActivity()
+                this.finish()
+                this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
             else -> {
                 finishActivity()
