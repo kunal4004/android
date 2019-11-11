@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import com.awfs.coordination.R
 
 class OTPViewTextWatcher(private val previousEditText: EditText?, private val currentEditText: EditText,
                          private val nextEditText: EditText?, private val method: () -> Unit) : TextWatcher {
@@ -33,7 +32,6 @@ class OTPViewTextWatcher(private val previousEditText: EditText?, private val cu
             }
             nextEditText?.requestFocus()
             nextEditText?.setSelection(nextEditText.length(), nextEditText.length())
-            currentEditText.isCursorVisible = !(currentEditText.id == R.id.edtVerificationCode5 && currentEditText.text.isNotEmpty())
         }
     }
 
