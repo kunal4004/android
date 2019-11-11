@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class ProductUtils {
+public class ProductUtils extends BaseProductUtils{
 
 	public static void displayPrice(TextView tvPrice, TextView tvWasPrice,
 									String fromPrice, String wasPrice) throws NumberFormatException, NullPointerException {

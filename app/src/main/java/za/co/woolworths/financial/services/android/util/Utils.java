@@ -97,6 +97,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -1556,6 +1558,24 @@ public class Utils {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		return currentUserObject.isVirtualTemporaryStoreCardPopupShown;
 	}
+
+	public static int calculateNoOfColumns(Context context, float columnWidthDp) {
+		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+		float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+		int noOfColumns = (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
+		return noOfColumns;
+	}
+
+	public static Boolean isCartSummarySuburbIDEmpty(CartSummaryResponse cartSummaryResponse) {
+        if (cartSummaryResponse.data != null) {
+            List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+            if (cartSummaryList.get(0) != null) {
+                CartSummary cartSummary = cartSummaryList.get(0);
+                return TextUtils.isEmpty(cartSummary.suburbId);
+            }
+        }
+        return true;
+    }
 
 	public static void showGeneralErrorDialog(FragmentManager fragmentManager,String message){
 		ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);

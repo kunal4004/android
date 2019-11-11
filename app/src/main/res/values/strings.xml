@@ -344,7 +344,7 @@
     <string name="email_rewards">rewards@woolworths.co.za</string>
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
-    <string name="ingredients">ingredients</string>
+    <string name="ingredients">Ingredients</string>
     <string name="savings_since">Savings Since</string>
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
@@ -1089,6 +1089,13 @@
     <string name="oops_err_message">Oops, something went wrong.</string>
     <string name="oops_err_title">Error</string>
     <string name="request_timeout_error">Your request timed out, please try again later</string>
+    <string name="product_options">Product Options</string>
+    <string name="check_in_store_availablity">Check In-store Availablity</string>
+    <string name="add_to_a_shopping_list">Add to a Shopping List</string>
+    <string name="add">Add</string>
+    <string name="product_information">Product Information</string>
+    <string name="product_details">Product Details</string>
+    <string name="nutritional_information">Nutritional Information</string>
     <string name="get_temp_sc_title">Your Woolies Store Card is on it\'s on way. Start shopping today with your temporary store card.</string>
     <string name="get_temp_sc_description">To shop with your temporary card in store, bring along your ID. Your temporary card is valid for 30 days.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
@@ -1158,7 +1165,8 @@
     <string name="update_password_layout">Update Password</string>
     <string name="mypreferences_layout">MyPreferences</string>
     <string name="sign_out_layout">Sign Out</string>
-
+    <string name="product_placeholder_selected_size">Selected Size</string>
+    <string name="product_placeholder_select_size">Select Size</string>
     <string name="call_us_now">Call us now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP you entered was incorrect. Please try again.</string>

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
@@ -30,7 +31,8 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
                     view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART)
-                            val storeId = view.getFulFillmentStoreId()
+                            val fulfilmentTypeId = WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.toString()
+                            val storeId = fulfilmentTypeId?.let { it1 -> ProductListingViewHolderItems.getFulFillmentStoreId(it1) }
                             navigator.queryInventoryForStore(storeId!!, AddItemToCart(productList.productId, productList.sku, 0), productList)
                         }
                     }
