@@ -15,6 +15,7 @@ import android.content.Intent
 import android.os.Parcelable
 import android.text.Editable
 import cards.pay.paycardsrecognizer.sdk.Card
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
@@ -23,6 +24,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class InstantStoreCardFragment : MyCardExtension() {
     private var shouldDisableUINavigation = false
     private var shouldClearCardNumber = false
+    private val mMCSInstantStoreCard = WoolworthsApplication.getInstantCardReplacement()
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
@@ -95,7 +97,9 @@ class InstantStoreCardFragment : MyCardExtension() {
 
     private fun setupCardNumberField(cardNumber: String) {
         if (cardNumber.length == 16) {
-            if (Utils.isValidLuhnNumber(cardNumber)) {
+            val validStoreCardBinsArray = mMCSInstantStoreCard.validStoreCardBins
+            val storeCard6DigitBinNumber = cardNumber.substring(0, 7).toInt()
+            if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray.contains(storeCard6DigitBinNumber)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
                 shouldClearCardNumber = false
                 validCardNumberUI()
