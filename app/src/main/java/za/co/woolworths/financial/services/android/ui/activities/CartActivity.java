@@ -5,7 +5,6 @@ import android.content.Intent;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.Gravity;
 import android.view.View;

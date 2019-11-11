@@ -988,7 +988,28 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
 			mMapStoreId.put("storeId", fullfilmentStoreId);
-			initInventoryRequest(fullfilmentStoreId, multiSKUS);
+
+			/***
+			 Product in Cart that doesn't have fulfillment information in the cart response
+			 (Cart Response comes with fulfillment information for all items in cart)
+			 - do not include the product in question in the inventory call and mark the item's quantity as 0
+			 */
+			if (TextUtils.isEmpty(fullfilmentStoreId)) {
+				if (cartProductAdapter != null && btnCheckOut != null) {
+					ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+					for (CartItemGroup cartItemGroup : cartItems) {
+						for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+							if (!commerceItem.isStockChecked && skuIds.contains(commerceItem.commerceItemInfo.commerceId)) {
+								commerceItem.quantityInStock = 0;
+								commerceItem.isStockChecked = true;
+							}
+						}
+					}
+					cartProductAdapter.updateStockAvailability(cartItems);
+				}
+			} else {
+				initInventoryRequest(fullfilmentStoreId, multiSKUS);
+			}
 		}
 	}
 
