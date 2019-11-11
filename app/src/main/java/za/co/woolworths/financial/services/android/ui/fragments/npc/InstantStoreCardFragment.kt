@@ -99,7 +99,7 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (cardNumber.length == 16) {
             val validStoreCardBinsArray = mMCSInstantStoreCard.validStoreCardBins
             val storeCard6DigitBinNumber = cardNumber.substring(0, 7).toInt()
-            if (Utils.isValidLuhnNumber(cardNumber) || validStoreCardBinsArray.contains(storeCard6DigitBinNumber)) {
+            if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray.contains(storeCard6DigitBinNumber)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
                 shouldClearCardNumber = false
                 validCardNumberUI()
