@@ -302,9 +302,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
 		isActivityInForeground = true;
-		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
+		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
 	}
 
@@ -519,13 +521,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	private void setUiPageViewController() {
 		try {
+			Activity activity = getActivity();
 			pager_indicator.removeAllViews();
 			dotsCount = adapter.getCount();
 			dots = new ImageView[dotsCount];
 
 			for (int i = 0; i < dotsCount; i++) {
 				dots[i] = new ImageView(getActivity());
-				dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
+				if (activity != null)
+					dots[i].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_default));
 
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -537,7 +541,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				pager_indicator.addView(dots[i], params);
 			}
 
-			dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
+			if (activity != null)
+				dots[0].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_selected));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -645,10 +650,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	@Override
 	public void onPageSelected(int position) {
+		Activity activity  = getActivity();
+		if (activity == null) return;
 		for (int i = 0; i < dotsCount; i++) {
-			dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
+			dots[i].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_default));
 		}
-		dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
+		dots[position].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_selected));
 	}
 
 	@Override
@@ -658,7 +665,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
     private void loadAccounts(boolean forceNetworkUpdate) {
 		if (!SessionUtilities.getInstance().isC2User()) return;
 			mErrorHandlerView.hideErrorHandlerLayout();
-		mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
+			Activity activity = getActivity();
+		if (activity != null)
+			mScrollView.setBackgroundColor(ContextCompat.getColor(activity, R.color.recent_search_bg));
 		if (forceNetworkUpdate)
 			mUpdateMyAccount.swipeToRefreshAccount(true);
 		else
@@ -689,13 +698,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                         case 440:
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
-                            onSessionExpired(getActivity());
+							if (activity != null)
+								onSessionExpired(activity);
 							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
 								mUpdateMyAccount.swipeToRefreshAccount(false);
-								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
+								if (activity != null)
+									Utils.alertErrorMessage(activity, accountsResponse.response.desc);
                             }
 
                             break;
@@ -717,9 +728,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						hideProgressBar();
 					} catch (Exception ignored) {
 					}
+					if (error != null)
+						mErrorHandlerView.networkFailureHandler(error.getMessage());
 				});
-                if (error != null)
-                    mErrorHandlerView.networkFailureHandler(error.getMessage());
 
             }
         });
@@ -948,18 +959,19 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			@Override
 			protected Void doInBackground(Void... voids) {
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						target.invalidate();
-					}
-				});
+				Activity activity = getActivity();
+				if (activity != null || isAdded()){
+					activity.runOnUiThread(target::invalidate);
+				}
+
 				return null;
 			}
 
 			@Override
 			protected void onPostExecute(Void aVoid) {
 				super.onPostExecute(aVoid);
+				Activity activity = getActivity();
+				if (activity == null || !isAdded()) return;
 				Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
 						.setTarget(target)
@@ -970,7 +982,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						.setAction(listener)
 						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
 						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-				getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+				getBottomNavigationActivity().walkThroughPromtView.show(activity);
 			}
 		}.execute();
 
