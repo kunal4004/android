@@ -395,7 +395,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void bindCartData(CartResponse cartResponse) {
 		parentLayout.setVisibility(View.VISIBLE);
 		if (cartResponse.cartItems.size() > 0) {
-			loadInventoryRequest(cartResponse.cartItems);
 			rlCheckOut.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
 			if (activity != null) {
@@ -405,7 +404,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
-			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            loadInventoryRequest(cartResponse.cartItems);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
@@ -989,27 +989,26 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			String multiSKUS = TextUtils.join("-", skuIds);
 			mMapStoreId.put("storeId", fullfilmentStoreId);
 
-			/***
-			 Product in Cart that doesn't have fulfillment information in the cart response
-			 (Cart Response comes with fulfillment information for all items in cart)
-			 - do not include the product in question in the inventory call and mark the item's quantity as 0
-			 */
-			if (TextUtils.isEmpty(fullfilmentStoreId)) {
-				if (cartProductAdapter != null && btnCheckOut != null) {
-					ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
-					for (CartItemGroup cartItemGroup : cartItems) {
-						for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-							if (!commerceItem.isStockChecked && skuIds.contains(commerceItem.commerceItemInfo.commerceId)) {
-								commerceItem.quantityInStock = 0;
-								commerceItem.isStockChecked = true;
-							}
-						}
-					}
-					cartProductAdapter.updateStockAvailability(cartItems);
-				}
-			} else {
-				initInventoryRequest(fullfilmentStoreId, multiSKUS);
-			}
+            /***
+             * Handles products with  no fullfilmentStoreId
+             * quantity = -2 is required to prevent change quantity api call
+             * triggered when commerceItemInfo.quantity > quantityInStock
+             */
+            if (TextUtils.isEmpty(fullfilmentStoreId)) {
+                ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+                for (CartItemGroup cartItemGroup : cartItems) {
+                    for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+                        if (commerceItem.fulfillmentStoreId.isEmpty()) {
+                            commerceItem.quantityInStock = 0;
+                            commerceItem.commerceItemInfo.quantity = -2;
+                            commerceItem.isStockChecked = true;
+                        }
+                    }
+                }
+                this.cartItems = cartItems;
+            } else {
+                initInventoryRequest(fullfilmentStoreId, multiSKUS);
+            }
 		}
 	}
 
@@ -1089,9 +1088,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * @Method getLastValueInMap() return last stored store Id
 		 * to trigger checkout button only once
 		 */
-		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			updateItemQuantityToMatchStock();
-		}
+        String lastMapValue = getLastValueInMap();
+        if (TextUtils.isEmpty(lastMapValue) || lastMapValue.equalsIgnoreCase(mStoreId)) {
+            updateItemQuantityToMatchStock();
+        }
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
 	}
