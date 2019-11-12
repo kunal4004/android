@@ -476,10 +476,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             when (index) {
                 -1 -> {
-                    setSelectedSku(null)
-                    productSizeSelectorAdapter?.clearSelection()
-                    defaultSku = otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
-                    updateUIForSelectedSKU(defaultSku)
+                    var otherSku:OtherSkus? = null
+                    otherSKUsByGroupKey[getSelectedGroupKey()]?.forEach {
+                        if (it.quantity > 0) {
+                            otherSku = it
+                            return@forEach
+                        }
+
+                    }
+                    setSelectedSku(otherSku)
+                    if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
+                    if (getSelectedSku() == null) defaultSku = otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                    if (getSelectedSku() == null) updateUIForSelectedSKU(defaultSku) else updateUIForSelectedSKU(getSelectedSku())
                 }
                 else -> {
                     setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
