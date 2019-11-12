@@ -396,7 +396,7 @@
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
     <string name="acc_my_detail">My Details</string>
-    <string name="acc_profile">Profile</string>
+    <string name="acc_profile">View my Details</string>
     <string name="acc_update_password">Update password</string>
 
     <string name="session_expired_title">SESSION EXPIRED</string>
