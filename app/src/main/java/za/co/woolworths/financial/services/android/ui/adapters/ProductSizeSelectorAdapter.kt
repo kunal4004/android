@@ -43,11 +43,9 @@ class ProductSizeSelectorAdapter(val dataList: ArrayList<OtherSkus>, var listene
                 itemView.size.text = size
                 when (quantity) {
                     0 -> {
-                        itemView.sizeBackground.visibility = View.VISIBLE
                         itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_no_stock_size_selected_background else R.drawable.product_no_stock_size_un_selected_background)
                     }
                     else -> {
-                        itemView.sizeBackground.visibility = View.INVISIBLE
                         itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
                     }
                 }
