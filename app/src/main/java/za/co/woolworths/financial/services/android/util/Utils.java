@@ -1601,7 +1601,7 @@ public class Utils {
 		return (sum % 10 == 0);
 	}
 
-	public static String aTGIdGoogleAnalyticValue(JsonElement atgId) {
+	public static String getUserATGId(JsonElement atgId) {
 		if (atgId instanceof JsonObject) {
 			return atgId.getAsString();
 		} else if (atgId instanceof JsonArray) {
