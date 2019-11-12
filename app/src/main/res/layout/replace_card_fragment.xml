@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnParticipatingStores"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:contentDescription="@string/label_getICRCardDescription"
         android:fontFamily="@font/myriad_pro_regular_otf"
@@ -21,9 +22,10 @@
         android:text="@string/replacement_desc_part_one"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnParticipatingStores"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="505dp" />
+        app:layout_constraintTop_toBottomOf="@+id/tvReplacementCardTitle" />
 
     <Button
         android:id="@+id/btnParticipatingStores"
@@ -68,8 +70,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="11dp"
         android:contentDescription="@string/label_getICR"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
@@ -77,9 +79,9 @@
         android:text="@string/get_a_replacement_card"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvPermanentBlockDescPart1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imReplacementCard"
         tools:text="@string/get_a_replacement_card" />
 
     <ImageView
@@ -89,12 +91,11 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:contentDescription="@string/replacement_card_image"
-        app:layout_constraintBottom_toTopOf="@+id/tvReplacementCardTitle"
+        app:layout_constraintDimensionRatio="H,3:2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/card_npc_isometric" />
 
     <ProgressBar
