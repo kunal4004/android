@@ -564,6 +564,7 @@ public class SSOActivity extends WebViewActivity {
 					JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 					Map<String, String> arguments = new HashMap<>();
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, Utils.aTGIdGoogleAnalyticValue(jwtDecodedModel.AtgId));
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments);
 
 					NotificationUtils.getInstance().sendRegistrationToServer();

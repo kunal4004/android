@@ -85,6 +85,7 @@ class FirebaseManagerAnalyticsProperties {
             const val SUBURBNAME: String = "SUBURBNAME"
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
             const val C2ID: String = "c2_id"
+            const val ATGId: String = "ATG Id"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
             const val DESCRIPTION : String = "DESCRIPTION"
         }
