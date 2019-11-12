@@ -39,6 +39,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     companion object {
         const val CARD_BLOCKED = "CARD_BLOCKED"
         const val BLOCK_CARD_REASON = "BLOCK_CARD_REASON"
+        const val RESULT_CODE_BLOCK_CODE_SUCCESS = 556
         fun newInstance(cardBlocked: Boolean, blockReason: Int?) = ProcessBlockCardFragment().withArgs {
             putBoolean(CARD_BLOCKED, cardBlocked)
             putInt(BLOCK_CARD_REASON, blockReason ?: 0)
@@ -145,6 +146,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                         val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
                         displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCard))
                         startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
+                        setResult(RESULT_CODE_BLOCK_CODE_SUCCESS)
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                         finish()
                     }

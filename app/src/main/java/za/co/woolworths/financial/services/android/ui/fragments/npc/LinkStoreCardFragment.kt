@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
@@ -297,7 +296,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                     displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
                     activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
                     activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-                    activity.setResult(RESULT_OK)
+                    activity.setResult(ProcessBlockCardFragment.RESULT_CODE_BLOCK_CODE_SUCCESS)
                 }
             }
 
