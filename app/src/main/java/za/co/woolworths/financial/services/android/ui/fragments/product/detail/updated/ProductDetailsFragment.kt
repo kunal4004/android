@@ -332,11 +332,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showSize() {
-        //productColorSelectorAdapter?
-        /*val layoutManager1 = FlexboxLayoutManager(activity)
-        layoutManager1.flexDirection = FlexDirection.ROW
-        layoutManager1.justifyContent = JustifyContent.FLEX_START*/
-        // val spanCount = Utils.calculateNoOfColumns(activity, 100F)
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
             sizeSelectorRecycleView.adapter = this
@@ -373,10 +368,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
         }
-        /*if (hasColor)
-            this.setSelectedColorIcon()*/
         loadSizeAndColor()
         loadPromotionalImages()
+        updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
             productIngredientsInformation.visibility = View.VISIBLE
 
@@ -429,7 +423,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onColorSelection(selectedColor: String?) {
         setSelectedGroupKey(selectedColor)
         showSelectedColor()
-        if (hasSize) updateSizesOnColorSelection() else setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+        if (hasSize) updateSizesOnColorSelection() else {
+            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+            updateUIForSelectedSKU(getSelectedSku())
+        }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
     }
 
@@ -524,6 +521,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onQuantitySelection(quantity: Int) {
         setSelectedQuantity(quantity)
+        quantityText.text = quantity.toString()
     }
 
     override fun setSelectedQuantity(selectedQuantity: Int?) {
@@ -561,12 +559,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun getImageCodeForAuxiliaryImages(): String {
         var imageCode = ""
 
-        getSelectedGroupKey()?.split("\\s+")?.let {
+        getSelectedGroupKey()?.split("\\s".toRegex())?.let {
             imageCode = when (it.size) {
                 1 -> it[0]
                 else -> {
                     it.forEachIndexed { i, s ->
-                        imageCode = if (i == 0) s else imageCode.plus(s)
+                        imageCode = if (i == 0) s[0].toString() else imageCode.plus(s)
                     }
                     imageCode
                 }
@@ -899,6 +897,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         getSelectedSku().let {
             selectedSizePlaceholder.text = getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
             selectedSize.text = if (it != null) " - ${it.size}" else ""
+            activity?.apply {
+                if (it != null)
+                    selectedSizePlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
+            }
         }
     }
 
@@ -916,7 +918,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             val userLocation = Utils.getPreferredDeliveryLocation()
             val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
-            currentDeliveryLocation.text = if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation.suburb?.name else defaultLocation?.suburb?.name
+            when(userLocation != null && SessionUtilities.getInstance().isUserAuthenticated){
+                true->{
+                    currentDeliveryLocation.text = userLocation.suburb?.name+","+userLocation.province?.name
+                    defaultLocationPlaceholder.text =  getString(R.string.delivering_to_pdp)
+                }
+                false->{
+                    currentDeliveryLocation.text = defaultLocation?.suburb?.name
+                    defaultLocationPlaceholder.text =  getString(R.string.set_to_default)
+                }
+            }
         }
 
     }

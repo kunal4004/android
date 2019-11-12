@@ -1170,4 +1170,6 @@
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP you entered was incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
+    <string name="set_to_default">Set to default - \u0020</string>
+    <string name="delivering_to_pdp">Delivering to - \u0020</string>
 </resources>
