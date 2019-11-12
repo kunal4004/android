@@ -152,7 +152,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         productDetails?.let {
             productName.text = it.productName
-            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
@@ -376,7 +376,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
-            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
         }
     }
 
@@ -498,7 +498,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
         otherSku?.let {
-            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
         }
         updateAddToCartButtonForSelectedSKU()
     }
