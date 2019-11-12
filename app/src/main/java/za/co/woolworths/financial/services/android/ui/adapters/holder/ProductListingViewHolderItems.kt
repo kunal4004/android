@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.util.ImageManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
@@ -68,7 +69,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
             val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
             val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
             var defaultStoreId = ""
-            if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
+            if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null || !SessionUtilities.getInstance().isUserAuthenticated) {
                 quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
                     if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfilmentTypeId, ignoreCase = true)) {
                         defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()

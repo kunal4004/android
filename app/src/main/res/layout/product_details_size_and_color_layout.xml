@@ -21,7 +21,7 @@
         style="@style/futura_medium_black_12_text_style"
         android:layout_marginTop="@dimen/twelve_dp"
         android:letterSpacing="0.05"
-        android:text="@string/selected_colour"
+        android:text="@string/select_colour"
         android:textAllCaps="true"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"

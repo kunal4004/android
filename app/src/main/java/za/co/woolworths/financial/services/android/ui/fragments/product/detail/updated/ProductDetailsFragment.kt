@@ -46,6 +46,7 @@ import android.graphics.Color
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -81,6 +82,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var permissionUtils: PermissionUtils? = null
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
+    private var defaultGroupKey: String? = null
 
 
     companion object {
@@ -152,7 +154,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         productDetails?.let {
             productName.text = it.productName
-            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
@@ -174,7 +176,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     fun addItemToCart() {
 
         if (getSelectedSku() == null) {
-            requestSelectSize()
+            if (getSelectedGroupKey().isNullOrEmpty())
+                requestSelectColor()
+            else
+                requestSelectSize()
             return
         }
 
@@ -194,13 +199,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
-        if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
+        if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType)) || getSelectedSku()?.quantity == 0) {
             //setSelectedSku(null)
             hideProgressBar()
-            val message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
-            activity?.apply {
-                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+            var message = ""
+            var title = ""
+            when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
+                true -> {
+                    title = getString(R.string.product_unavailable)
+                    message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                }
+                else -> {
+                    title = getString(R.string.out_of_stock)
+                    message = "Unfortunately this item is out of stock in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                }
             }
+            activity?.apply {
+                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, title, message)
+            }
+            updateAddToCartButtonForSelectedSKU()
             return
         }
         //finally add to cart after all checks
@@ -211,7 +228,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addToCartForSelectedSKU() {
-        val item = getSelectedQuantity()?.let { AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, it) }
+        val item = getSelectedQuantity()?.let {
+            AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, if (it < getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it)
+        }
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
         if (listOfItems.isNotEmpty()) {
@@ -332,11 +351,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showSize() {
-        //productColorSelectorAdapter?
-        /*val layoutManager1 = FlexboxLayoutManager(activity)
-        layoutManager1.flexDirection = FlexDirection.ROW
-        layoutManager1.justifyContent = JustifyContent.FLEX_START*/
-        // val spanCount = Utils.calculateNoOfColumns(activity, 100F)
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
             sizeSelectorRecycleView.adapter = this
@@ -369,20 +383,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateDefaultUI() {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
-        if (!hasSize) {
+
+        if ((!hasColor && !hasSize)) {
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
         }
-        /*if (hasColor)
-            this.setSelectedColorIcon()*/
+
+        if (hasSize)
+            setSelectedGroupKey(defaultGroupKey)
+
         loadSizeAndColor()
         loadPromotionalImages()
+        updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
             productIngredientsInformation.visibility = View.VISIBLE
 
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
-            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
         }
     }
 
@@ -390,7 +408,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsList.keys.forEach { key ->
             otherSKUsList[key]?.forEach { otherSku ->
                 if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
-                    setSelectedGroupKey(key)
+                    defaultGroupKey = key
                     return otherSku
                 }
             }
@@ -429,7 +447,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onColorSelection(selectedColor: String?) {
         setSelectedGroupKey(selectedColor)
         showSelectedColor()
-        if (hasSize) updateSizesOnColorSelection() else setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+        if (hasSize) updateSizesOnColorSelection() else {
+            setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+            updateUIForSelectedSKU(getSelectedSku())
+        }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
     }
 
@@ -455,10 +476,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             when (index) {
                 -1 -> {
-                    setSelectedSku(null)
-                    productSizeSelectorAdapter?.clearSelection()
-                    defaultSku = otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
-                    updateUIForSelectedSKU(defaultSku)
+                    var otherSku:OtherSkus? = null
+                    otherSKUsByGroupKey[getSelectedGroupKey()]?.forEach {
+                        if (it.quantity > 0) {
+                            otherSku = it
+                            return@forEach
+                        }
+
+                    }
+                    setSelectedSku(otherSku)
+                    if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
+                    if (getSelectedSku() == null) defaultSku = otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                    if (getSelectedSku() == null) updateUIForSelectedSKU(defaultSku) else updateUIForSelectedSKU(getSelectedSku())
                 }
                 else -> {
                     setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
@@ -477,10 +506,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         when (getSelectedSku()) {
             null -> showAddToCart()
             else -> {
-                getSelectedSku()?.quantity.let {
+                getSelectedSku()?.quantity?.let {
                     when (it) {
                         0 -> showFindInStore();
-                        else -> showAddToCart()
+                        else -> {
+                            getSelectedQuantity()?.apply {
+                                if (it < this)
+                                    onQuantitySelection(1)
+                            }
+                            showAddToCart()
+                        }
                     }
                 }
             }
@@ -501,7 +536,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
         otherSku?.let {
-            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
         }
         updateAddToCartButtonForSelectedSKU()
     }
@@ -524,6 +559,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onQuantitySelection(quantity: Int) {
         setSelectedQuantity(quantity)
+        quantityText.text = quantity.toString()
     }
 
     override fun setSelectedQuantity(selectedQuantity: Int?) {
@@ -561,12 +597,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun getImageCodeForAuxiliaryImages(): String {
         var imageCode = ""
 
-        getSelectedGroupKey()?.split("\\s+")?.let {
+        getSelectedGroupKey()?.split("\\s".toRegex())?.let {
             imageCode = when (it.size) {
                 1 -> it[0]
                 else -> {
                     it.forEachIndexed { i, s ->
-                        imageCode = if (i == 0) s else imageCode.plus(s)
+                        imageCode = if (i == 0) s[0].toString() else imageCode.plus(s)
                     }
                     imageCode
                 }
@@ -641,9 +677,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addItemToShoppingList() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST)
 
         if (getSelectedSku() == null) {
-            requestSelectSize()
+            if (getSelectedGroupKey().isNullOrEmpty())
+                requestSelectColor()
+            else
+                requestSelectSize()
             return
         }
 
@@ -836,6 +876,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    private fun requestSelectColor() {
+        activity?.apply {
+            resources.displayMetrics?.let {
+                val mid: Int = it.heightPixels / 2 - colorPlaceholder.height
+                ObjectAnimator.ofInt(scrollView, "scrollY", mid).setDuration(500).start()
+            }
+            colorPlaceholder?.let {
+                it.setTextColor(Color.RED)
+                it.postDelayed({
+                    it.setTextColor(ContextCompat.getColor(this, R.color.black))
+                }, 5000)
+            }
+        }
+    }
+
     override fun onFindStoresSuccess(location: List<StoreDetails>) {
         activity?.apply {
             WoolworthsApplication.getInstance().wGlobalState.storeDetailsArrayList = location
@@ -891,7 +946,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     @SuppressLint("SetTextI18n")
     private fun showSelectedColor() {
-        selectedColor.text = " - ${getSelectedGroupKey()}"
+        activity?.apply {
+            getSelectedGroupKey()?.let {
+                colorPlaceholder.text = getString(R.string.selected_colour)
+                colorPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
+                selectedColor.text = " - $it"
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -899,6 +960,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         getSelectedSku().let {
             selectedSizePlaceholder.text = getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
             selectedSize.text = if (it != null) " - ${it.size}" else ""
+            activity?.apply {
+                if (it != null)
+                    selectedSizePlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
+            }
         }
     }
 
@@ -916,7 +981,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             val userLocation = Utils.getPreferredDeliveryLocation()
             val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
-            currentDeliveryLocation.text = if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation.suburb?.name else defaultLocation?.suburb?.name
+            when(userLocation != null && SessionUtilities.getInstance().isUserAuthenticated){
+                true->{
+                    currentDeliveryLocation.text = userLocation.suburb?.name+","+userLocation.province?.name
+                    defaultLocationPlaceholder.text =  getString(R.string.delivering_to_pdp)
+                }
+                false->{
+                    currentDeliveryLocation.text = defaultLocation?.suburb?.name
+                    defaultLocationPlaceholder.text =  getString(R.string.set_to_default)
+                }
+            }
         }
 
     }
@@ -976,6 +1050,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.apply {
+            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+        }
     }
 
 }

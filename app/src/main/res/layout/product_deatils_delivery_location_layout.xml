@@ -29,16 +29,21 @@
     <TextView
         android:id="@+id/defaultLocationPlaceholder"
         style="@style/myriad_pro_regular_black_15_text_style"
-        android:layout_marginTop="@dimen/twenty_dp"
-        android:text="Set to default -  "
+        android:text="@string/set_to_default"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stockAvailabilityPlaceholder" />
+        app:layout_constraintTop_toTopOf="@+id/currentDeliveryLocation"
+        app:layout_constraintBottom_toBottomOf="@id/currentDeliveryLocation"
+        />
 
     <TextView
         android:id="@+id/currentDeliveryLocation"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
-        app:layout_constraintLeft_toRightOf="@id/defaultLocationPlaceholder"
-        app:layout_constraintTop_toTopOf="@+id/defaultLocationPlaceholder" />
+        android:layout_marginTop="@dimen/twenty_dp"
+        app:layout_constraintEnd_toStartOf="@id/editDeliveryLocation"
+        app:layout_constraintStart_toEndOf="@id/defaultLocationPlaceholder"
+        android:layout_marginRight="@dimen/ten_dp"
+        app:layout_constraintTop_toBottomOf="@+id/stockAvailabilityPlaceholder"
+        />
 
     <TextView
         android:id="@+id/editDeliveryLocation"
@@ -50,8 +55,8 @@
         android:letterSpacing="0.1"
         android:text="@string/edit"
         android:textAllCaps="true"
-        app:layout_constraintBottom_toBottomOf="@id/defaultLocationPlaceholder"
+        app:layout_constraintBottom_toBottomOf="@id/currentDeliveryLocation"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/defaultLocationPlaceholder" />
+        app:layout_constraintTop_toTopOf="@+id/currentDeliveryLocation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
