@@ -292,6 +292,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         clearOTP()
         edtVerificationCode1?.requestFocus()
         requestEditTextFocus()
+        imNextProcessLinkCard?.isEnabled = false
     }
 
     private fun saveOTP(otpSendTo: String?) {
