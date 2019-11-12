@@ -82,6 +82,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var permissionUtils: PermissionUtils? = null
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
+    private var defaultGroupKey: String? = null
 
 
     companion object {
@@ -175,7 +176,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     fun addItemToCart() {
 
         if (getSelectedSku() == null) {
-            requestSelectSize()
+            if (getSelectedGroupKey().isNullOrEmpty())
+                requestSelectColor()
+            else
+                requestSelectSize()
             return
         }
 
@@ -365,10 +369,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateDefaultUI() {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
-        if (!hasSize) {
+
+        if ((!hasColor && !hasSize)) {
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
         }
+
+        if (hasSize)
+            setSelectedGroupKey(defaultGroupKey)
+
         loadSizeAndColor()
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
@@ -385,7 +394,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsList.keys.forEach { key ->
             otherSKUsList[key]?.forEach { otherSku ->
                 if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
-                    setSelectedGroupKey(key)
+                    defaultGroupKey = key
                     return otherSku
                 }
             }
@@ -475,10 +484,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         when (getSelectedSku()) {
             null -> showAddToCart()
             else -> {
-                getSelectedSku()?.quantity.let {
+                getSelectedSku()?.quantity?.let {
                     when (it) {
                         0 -> showFindInStore();
-                        else -> showAddToCart()
+                        else -> {
+                            getSelectedQuantity()?.apply {
+                                if (it < this)
+                                    onQuantitySelection(1)
+                            }
+                            showAddToCart()
+                        }
                     }
                 }
             }
@@ -643,7 +658,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST)
 
         if (getSelectedSku() == null) {
-            requestSelectSize()
+            if (getSelectedGroupKey().isNullOrEmpty())
+                requestSelectColor()
+            else
+                requestSelectSize()
             return
         }
 
@@ -836,6 +854,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    private fun requestSelectColor() {
+        activity?.apply {
+            resources.displayMetrics?.let {
+                val mid: Int = it.heightPixels / 2 - colorPlaceholder.height
+                ObjectAnimator.ofInt(scrollView, "scrollY", mid).setDuration(500).start()
+            }
+            colorPlaceholder?.let {
+                it.setTextColor(Color.RED)
+                it.postDelayed({
+                    it.setTextColor(ContextCompat.getColor(this, R.color.black))
+                }, 5000)
+            }
+        }
+    }
+
     override fun onFindStoresSuccess(location: List<StoreDetails>) {
         activity?.apply {
             WoolworthsApplication.getInstance().wGlobalState.storeDetailsArrayList = location
@@ -891,7 +924,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     @SuppressLint("SetTextI18n")
     private fun showSelectedColor() {
-        selectedColor.text = " - ${getSelectedGroupKey()}"
+        activity?.apply {
+            getSelectedGroupKey()?.let {
+                colorPlaceholder.text = getString(R.string.selected_colour)
+                colorPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
+                selectedColor.text = " - $it"
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -993,7 +1032,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onResume() {
         super.onResume()
-        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+        activity?.apply {
+            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+        }
     }
 
 }
