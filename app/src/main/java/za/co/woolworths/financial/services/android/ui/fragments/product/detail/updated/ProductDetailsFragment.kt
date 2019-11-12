@@ -46,6 +46,7 @@ import android.graphics.Color
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
@@ -639,6 +640,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addItemToShoppingList() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST)
 
         if (getSelectedSku() == null) {
             requestSelectSize()
@@ -987,6 +989,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
     }
 
 }
