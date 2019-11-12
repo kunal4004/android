@@ -199,13 +199,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
-        if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
+        if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType)) || getSelectedSku()?.quantity == 0) {
             //setSelectedSku(null)
             hideProgressBar()
-            val message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
-            activity?.apply {
-                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+            var message = ""
+            var title = ""
+            when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
+                true -> {
+                    title = getString(R.string.product_unavailable)
+                    message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                }
+                else -> {
+                    title = getString(R.string.out_of_stock)
+                    message = "Unfortunately this item is out of stock in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                }
             }
+            activity?.apply {
+                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, title, message)
+            }
+            updateAddToCartButtonForSelectedSKU()
             return
         }
         //finally add to cart after all checks
@@ -216,7 +228,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addToCartForSelectedSKU() {
-        val item = getSelectedQuantity()?.let { AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, it) }
+        val item = getSelectedQuantity()?.let {
+            AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, if (it < getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it)
+        }
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
         if (listOfItems.isNotEmpty()) {
