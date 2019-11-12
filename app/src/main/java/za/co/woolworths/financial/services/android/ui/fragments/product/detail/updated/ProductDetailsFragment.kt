@@ -44,9 +44,10 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.product_color_row.view.*
 import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
+import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
@@ -112,6 +113,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         findInStoreAction.setOnClickListener(this)
         productDetailsInformation.setOnClickListener(this)
         productIngredientsInformation.setOnClickListener(this)
+        moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
     }
@@ -127,6 +129,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.editDeliveryLocation -> updateDeliveryLocation()
             R.id.productDetailsInformation -> showProductDetailsInformation()
             R.id.productIngredientsInformation -> showProductIngredientsInformation()
+            R.id.moreColor -> showMoreColors()
         }
     }
 
@@ -155,6 +158,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             it.saveText?.apply { setPromotionalText(this) }
         }
 
+        loadPromotionalImages()
 
         if (mFetchFromJson) {
             val productDetails = Utils.stringToJson(activity, defaultProductResponse)!!.product
@@ -186,7 +190,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
-            updateStockAvailability()
+            updateStockAvailability(false)
             return
         }
 
@@ -216,18 +220,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSessionTokenExpired() {
+        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+        activity?.runOnUiThread { ScreenManager.presentSSOSignin(activity) }
+        updateStockAvailabilityLocation()
     }
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         this.productDetails = productDetails
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
 
-            storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)?.apply {
-                showProductDetailsLoading()
-                val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
-                productDetailsPresenter?.loadStockAvailability(this, multiSKUs, true)
+            storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+            when (storeIdForInventory.isNullOrEmpty()) {
+                true -> showProductUnavailable()
+                false -> {
+                    showProductDetailsLoading()
+                    val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
+                    productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, true)
+                }
             }
-
 
         } else {
             showErrorWhileLoadingProductDetails()
@@ -256,6 +266,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             updateDefaultUI()
             hideProductDetailsLoading()
         } else {
+            hideProgressBar()
             getSelectedSku()?.let { selectedSku ->
                 productDetails?.otherSkus?.forEach {
                     if (it.sku.equals(selectedSku.sku, ignoreCase = true)) {
@@ -305,15 +316,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
-        /* val layoutManager = FlexboxLayoutManager(activity)
-         layoutManager.flexDirection = FlexDirection.ROW
-         layoutManager.justifyContent = JustifyContent.FLEX_START
-         colorSelectorRecycleView.layoutManager = layoutManager*/
-        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this).apply {
+        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this, spanCount, getSelectedGroupKey()).apply {
             colorSelectorRecycleView.adapter = this
-            updateColorSelection(getSelectedGroupKey())
             showSelectedColor()
         }
+
+        otherSKUsByGroupKey.size.let {
+            if (it > spanCount) {
+                moreColor.text = "+ " + (it - spanCount) + " More"
+                moreColor.visibility = View.VISIBLE
+            }
+        }
+
         colorSelectorLayout.visibility = View.VISIBLE
     }
 
@@ -322,6 +336,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         /*val layoutManager1 = FlexboxLayoutManager(activity)
         layoutManager1.flexDirection = FlexDirection.ROW
         layoutManager1.justifyContent = JustifyContent.FLEX_START*/
+        // val spanCount = Utils.calculateNoOfColumns(activity, 100F)
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
             sizeSelectorRecycleView.adapter = this
@@ -354,12 +369,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateDefaultUI() {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
-        if (!hasSize)
+        if (!hasSize) {
             setSelectedSku(this.defaultSku)
+            updateAddToCartButtonForSelectedSKU()
+        }
         /*if (hasColor)
             this.setSelectedColorIcon()*/
         loadSizeAndColor()
-
+        loadPromotionalImages()
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
             productIngredientsInformation.visibility = View.VISIBLE
 
@@ -596,12 +613,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
     }
 
-    private fun updateStockAvailability() {
-        val storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
-        productDetails?.apply {
-            otherSkus?.let {
-                val multiSKUs = it.joinToString(separator = "-") { it.sku }
-                productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, false)
+    private fun updateStockAvailability(isDefaultRequest: Boolean) {
+        storeIdForInventory = Utils.retrieveStoreId(productDetails?.fulfillmentType)
+        when (storeIdForInventory.isNullOrEmpty()) {
+            true -> showProductUnavailable()
+            false -> {
+                productDetails?.apply {
+                    otherSkus?.let {
+                        val multiSKUs = it.joinToString(separator = "-") { it.sku }
+                        productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, isDefaultRequest)
+                    }
+                }
             }
         }
 
@@ -679,7 +701,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         updateStockAvailabilityLocation()
 
                         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
-                            updateStockAvailability()
+                            updateStockAvailability(true)
                         }
                     }
                 }
@@ -894,7 +916,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             val userLocation = Utils.getPreferredDeliveryLocation()
             val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
-            currentDeliveryLocation.text = if (userLocation != null) userLocation.suburb?.name else defaultLocation?.suburb?.name
+            currentDeliveryLocation.text = if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation.suburb?.name else defaultLocation?.suburb?.name
         }
 
     }
@@ -917,6 +939,43 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
+    }
+
+    private fun showProductUnavailable() {
+        /*setSelectedSku(this.defaultSku)
+        hideProductDetailsLoading()
+        toCartAndFindInStoreLayout.visibility = View.GONE*/
+        hideProgressBar()
+    }
+
+    private fun showMoreColors() {
+        productColorSelectorAdapter?.apply {
+            showMoreColors()
+            moreColor.visibility = View.INVISIBLE
+        }
+    }
+
+    override fun loadPromotionalImages() {
+        activity?.apply {
+            productDetails?.promotionImages?.let {
+                val images = ArrayList<String>()
+                if (!it.save.isNullOrEmpty()) images.add(it.save)
+                if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
+                if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
+                if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
+                promotionalImages?.removeAllViews()
+                DrawImage(this).let { dImage ->
+                    images.forEach { image ->
+                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                            dImage.displaySmallImage(view.promotionImage, image)
+                            promotionalImages?.addView(view)
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 
 }
