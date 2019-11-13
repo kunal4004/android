@@ -30,6 +30,7 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -569,8 +570,13 @@ public class SSOActivity extends WebViewActivity {
 					NotificationUtils.getInstance().sendRegistrationToServer();
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					QueryBadgeCounter.getInstance().queryBadgeCount();
+
+					setUserATGId(jwtDecodedModel);
+
 					setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+
 					Utils.setUserKMSIState(isKMSIChecked);
+
 				} else {
 					setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 				}
@@ -588,6 +594,11 @@ public class SSOActivity extends WebViewActivity {
 		});
 	}
 
+	private void setUserATGId(JWTDecodedModel jwtDecodedModel) {
+		FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(SSOActivity.this);
+		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, Utils.getUserATGId((jwtDecodedModel.C2Id == null) ? null : jwtDecodedModel.AtgId));
+		firebaseAnalytics.setUserId(Utils.getUserATGId((jwtDecodedModel.C2Id == null) ? null : jwtDecodedModel.AtgId));
+	}
 
 	private void unknownNetworkFailure(WebView webView, String description) {
 		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {

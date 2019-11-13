@@ -655,6 +655,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return shoppingCartResponseCall;
 	}
 
+	public void removeItem(CommerceItem commerceItem) {
+		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+			@Override
+			public void onSuccess(ShoppingCartResponse response) {
+			}
+
+			@Override
+			public void onFailure(Throwable error) {
+
+			}
+		}, ShoppingCartResponse.class));
+	}
+
 	public Call<ShoppingCartResponse> removeCartItem(final CommerceItem commerceItem) {
 		mCommerceItem = commerceItem;
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.getCommerceId());
@@ -812,8 +825,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						CommerceItem commerceItem = new CommerceItem();
-						commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						CommerceItem commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
 						String fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType);
 						commerceItem.fulfillmentStoreId = fulfillmentStoreId.replaceAll("\"", "");
 						productList.add(commerceItem);
@@ -977,7 +989,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		}
 		Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems = multiListItems.getEntries();
-
 		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : mapStoreIdWithCommerceItems.entrySet()) {
 			Collection<CommerceItem> collection = collectionEntry.getValue();
 			String fullfilmentStoreId = collectionEntry.getKey();
@@ -998,11 +1009,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
                 for (CartItemGroup cartItemGroup : cartItems) {
                     for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-                        if (commerceItem.fulfillmentStoreId.isEmpty()) {
-                            commerceItem.quantityInStock = 0;
-                            commerceItem.commerceItemInfo.quantity = -2;
-                            commerceItem.isStockChecked = true;
-                        }
+						if (commerceItem.fulfillmentStoreId.isEmpty()) {
+							commerceItem.quantityInStock = 0;
+							commerceItem.commerceItemInfo.quantity = -2;
+							commerceItem.isStockChecked = true;
+							removeItem(commerceItem);
+						}
                     }
                 }
                 this.cartItems = cartItems;

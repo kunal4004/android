@@ -144,7 +144,7 @@
                                     android:letterSpacing="0.08"
                                     android:text="@string/product_unavailable"
                                     android:textAllCaps="true"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/black"
                                     android:textSize="@dimen/twelve_sp"
                                     android:visibility="gone"
                                     app:WTextView_font="myriadpro_semibold"/>
@@ -228,6 +228,7 @@
                                             />
                                     </LinearLayout>
                                 </LinearLayout>
+
 
                             </RelativeLayout>
 

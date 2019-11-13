@@ -1600,4 +1600,14 @@ public class Utils {
 		}
 		return (sum % 10 == 0);
 	}
+
+	public static String getUserATGId(JsonElement atgId) {
+		if (atgId instanceof JsonObject) {
+			return atgId.getAsString();
+		} else if (atgId instanceof JsonArray) {
+			return ((JsonArray) atgId).get(0).getAsString();
+		} else {
+			return "";
+		}
+	}
 }
