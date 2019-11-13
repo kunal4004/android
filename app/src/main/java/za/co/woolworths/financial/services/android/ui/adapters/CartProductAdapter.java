@@ -4,6 +4,9 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -162,21 +165,29 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     productHolder.tvColorSize.setVisibility(View.VISIBLE);
                 }
                 // Set Color and Size END
+                productHolder.deleteOutOfStockProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+                productHolder.pbQuantity.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 
                 productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : DISABLE_VIEW_VALUE);
                 if (commerceItem.isStockChecked) {
                     productHolder.llQuantity.setAlpha((commerceItem.quantityInStock == 0) ? 0.0f : 1.0f);
                     productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
                     Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
-                    productHolder.price.setVisibility((commerceItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
                     if (commerceItem.quantityInStock == 0) {
                         productHolder.llPromotionalText.setVisibility(View.GONE);
-                    } else if (commerceItem.quantityInStock == -1){
+                        productHolder.price.setVisibility(View.VISIBLE);
+                        productHolder.deleteOutOfStockProgressBar.setVisibility(View.VISIBLE);
+                    } else if (commerceItem.quantityInStock == -1) {
                         productHolder.llQuantity.setAlpha(DISABLE_VIEW_VALUE);
+                        productHolder.price.setVisibility(View.VISIBLE);
                         productHolder.llQuantity.setEnabled(false);
                         productHolder.quantity.setAlpha(DISABLE_VIEW_VALUE);
                         productHolder.imPrice.setAlpha(DISABLE_VIEW_VALUE);
-                    }else {}
+                        productHolder.deleteOutOfStockProgressBar.setVisibility(View.GONE);
+                    } else {
+                        productHolder.price.setVisibility(View.VISIBLE);
+                        productHolder.deleteOutOfStockProgressBar.setVisibility(View.GONE);
+                    }
                 } else {
                     productHolder.llQuantity.setVisibility(View.VISIBLE);
                     productHolder.tvProductAvailability.setVisibility(View.GONE);
@@ -401,6 +412,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ProgressBar pbDeleteProgress;
         private RelativeLayout rlDeleteButton;
         private WTextView tvProductAvailability;
+        private ProgressBar deleteOutOfStockProgressBar;
         private SwipeLayout swipeLayout;
 
         public ProductHolder(View view) {
@@ -416,6 +428,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             pbDeleteProgress = view.findViewById(R.id.pbDeleteProgress);
             imPrice = view.findViewById(R.id.imPrice);
             llCartItems = view.findViewById(R.id.llCartItems);
+            deleteOutOfStockProgressBar = (ProgressBar)view.findViewById(R.id.deleteOutOfStockProgressBar);
             tvDelete = view.findViewById(R.id.tvDelete);
             promotionalText = view.findViewById(R.id.promotionalText);
             llPromotionalText = view.findViewById(R.id.promotionalTextLayout);

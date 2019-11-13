@@ -655,17 +655,39 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return shoppingCartResponseCall;
 	}
 
-	public void removeItem(String commerceItemId) {
-		OneAppService.INSTANCE.removeCartItem(commerceItemId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+	public void removeItem(CommerceItem commerceItem) {
+		fadeCheckoutButton(true);
+		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
 
 			@Override
 			public void onSuccess(ShoppingCartResponse response) {
-
+				try {
+					switch (response.httpCode) {
+						case 200:
+							CartResponse cartResponse = convertResponseToCartResponseObject(response);
+							updateCart(cartResponse, commerceItem);
+							break;
+						case 440:
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+							SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity(), CartFragment.this);
+							break;
+						default:
+							Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.response.desc, true);
+							break;
+					}
+					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				fadeCheckoutButton(false);
 			}
 
 			@Override
 			public void onFailure(Throwable error) {
-
+				Activity activity = getActivity();
+				if (activity == null) return;
+				activity.runOnUiThread(() -> fadeCheckoutButton(false));
 			}
 		}, ShoppingCartResponse.class));
 	}
@@ -827,8 +849,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						CommerceItem commerceItem = new CommerceItem();
-						commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						CommerceItem commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						if (commerceItem.commerceItemInfo.productDisplayName.toLowerCase().contains("indian kalonji")){
+							commerceItem.fulfillmentType = "11";
+						}
 						String fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType);
 						commerceItem.fulfillmentStoreId = fulfillmentStoreId.replaceAll("\"", "");
 						productList.add(commerceItem);
@@ -992,7 +1016,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		}
 		Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems = multiListItems.getEntries();
-
 		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : mapStoreIdWithCommerceItems.entrySet()) {
 			Collection<CommerceItem> collection = collectionEntry.getValue();
 			String fullfilmentStoreId = collectionEntry.getKey();
@@ -1017,7 +1040,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							commerceItem.quantityInStock = 0;
 							commerceItem.commerceItemInfo.quantity = -2;
 							commerceItem.isStockChecked = true;
-							removeItem(commerceItem.commerceItemInfo.commerceId);
+							removeItem(commerceItem);
 						}
                     }
                 }

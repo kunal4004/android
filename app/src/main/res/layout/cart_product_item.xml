@@ -144,10 +144,22 @@
                                     android:letterSpacing="0.08"
                                     android:text="@string/product_unavailable"
                                     android:textAllCaps="true"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/black"
                                     android:textSize="@dimen/twelve_sp"
                                     android:visibility="gone"
                                     app:WTextView_font="myriadpro_semibold"/>
+
+                                <ProgressBar
+                                    android:id="@+id/deleteOutOfStockProgressBar"
+                                    style="?android:attr/progressBarStyle"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_below="@+id/tvProductAvailability"
+                                    android:layout_alignEnd="@+id/tvProductAvailability"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_marginStart="0dp"
+                                    android:layout_marginTop="4dp"
+                                    android:visibility="gone" />
 
                                 <RelativeLayout
                                     android:id="@+id/llQuantity"
@@ -228,6 +240,7 @@
                                             />
                                     </LinearLayout>
                                 </LinearLayout>
+
 
                             </RelativeLayout>
 
