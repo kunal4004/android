@@ -655,6 +655,21 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return shoppingCartResponseCall;
 	}
 
+	public void removeItem(String commerceItemId) {
+		OneAppService.INSTANCE.removeCartItem(commerceItemId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+
+			@Override
+			public void onSuccess(ShoppingCartResponse response) {
+
+			}
+
+			@Override
+			public void onFailure(Throwable error) {
+
+			}
+		}, ShoppingCartResponse.class));
+	}
+
 	public Call<ShoppingCartResponse> removeCartItem(final CommerceItem commerceItem) {
 		mCommerceItem = commerceItem;
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.getCommerceId());
@@ -1002,6 +1017,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             commerceItem.quantityInStock = 0;
                             commerceItem.commerceItemInfo.quantity = -2;
                             commerceItem.isStockChecked = true;
+							removeItem(commerceItem.commerceItemInfo.commerceId);
                         }
                     }
                 }
