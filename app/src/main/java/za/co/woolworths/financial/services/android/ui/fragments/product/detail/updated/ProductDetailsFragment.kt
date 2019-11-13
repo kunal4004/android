@@ -49,6 +49,7 @@ import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
@@ -374,7 +375,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
-                this.otherSKUsByGroupKey.put(groupKey, ArrayList<OtherSkus>())
+                this.otherSKUsByGroupKey[groupKey] = ArrayList<OtherSkus>()
             }
             this.otherSKUsByGroupKey.get(groupKey)!!.add(otherSkuObj)
         }
@@ -401,6 +402,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+        }
+
+        if (isAllProductsOutOfStock()) {
+            showProductOutOfStock()
         }
     }
 
@@ -525,13 +530,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
 
     private fun showFindInStore() {
+        if (!productDetails?.isnAvailable?.toBoolean()!!) {
+            toCartAndFindInStoreLayout.visibility = View.GONE
+            checkInStoreAvailability.visibility = View.GONE
+            return
+        }
+
         groupAddToCartAction.visibility = View.GONE
         findInStoreAction.visibility = View.VISIBLE
     }
 
     private fun showAddToCart() {
+        toCartAndFindInStoreLayout.visibility = View.VISIBLE
         groupAddToCartAction.visibility = View.VISIBLE
         findInStoreAction.visibility = View.GONE
+        if (isAllProductsOutOfStock()) {
+            showFindInStore()
+        }
     }
 
     private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
@@ -919,7 +934,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             hideProgressBar()
             viewsToHideOnProductLoading.visibility = View.VISIBLE
-            toCartAndFindInStoreLayout.visibility = View.VISIBLE
+            updateAddToCartButtonForSelectedSKU()
         }
     }
 
@@ -979,20 +994,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateStockAvailabilityLocation() {
         activity?.apply {
-            val userLocation = Utils.getPreferredDeliveryLocation()
-            val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
-            when(userLocation != null && SessionUtilities.getInstance().isUserAuthenticated){
-                true->{
-                    currentDeliveryLocation.text = userLocation.suburb?.name+","+userLocation.province?.name
-                    defaultLocationPlaceholder.text =  getString(R.string.delivering_to_pdp)
-                }
-                false->{
-                    currentDeliveryLocation.text = defaultLocation?.suburb?.name
-                    defaultLocationPlaceholder.text =  getString(R.string.set_to_default)
+            getDeliveryLocation().let {
+                when (it) {
+                    is ShoppingDeliveryLocation -> {
+                        currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
+                        defaultLocationPlaceholder.text = getString(R.string.delivering_to_pdp)
+                    }
+                    is QuickShopDefaultValues -> {
+                        currentDeliveryLocation.text = it.suburb.name
+                        defaultLocationPlaceholder.text = getString(R.string.set_to_default)
+                    }
                 }
             }
         }
-
     }
 
     override fun showProductDetailsInformation() {
@@ -1057,6 +1071,38 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
+    }
+
+    private fun isAllProductsOutOfStock(): Boolean {
+        var isAllProductsOutOfStock = true
+        productDetails?.otherSkus?.forEach {
+            if (it.quantity > 0) {
+                isAllProductsOutOfStock = false
+                return@forEach
+            }
+        }
+        return isAllProductsOutOfStock
+    }
+
+    private fun showProductOutOfStock() {
+        activity?.apply {
+            getDeliveryLocation()?.let {
+                val suburbName = when (it) {
+                    is ShoppingDeliveryLocation -> it.suburb.name
+                    is QuickShopDefaultValues -> it.suburb.name
+                    else -> ""}
+                val title = getString(R.string.out_of_stock)
+                val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
+                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, title, message)
+                updateAddToCartButtonForSelectedSKU()
+            }
+        }
+    }
+
+    private fun getDeliveryLocation(): Any {
+        val userLocation = Utils.getPreferredDeliveryLocation()
+        val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
+        return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
     }
 
 }
