@@ -656,38 +656,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void removeItem(CommerceItem commerceItem) {
-		fadeCheckoutButton(true);
 		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
-
 			@Override
 			public void onSuccess(ShoppingCartResponse response) {
-				try {
-					switch (response.httpCode) {
-						case 200:
-							CartResponse cartResponse = convertResponseToCartResponseObject(response);
-							updateCart(cartResponse, commerceItem);
-							break;
-						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-							SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity(), CartFragment.this);
-							break;
-						default:
-							Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.response.desc, true);
-							break;
-					}
-					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				fadeCheckoutButton(false);
 			}
 
 			@Override
 			public void onFailure(Throwable error) {
-				Activity activity = getActivity();
-				if (activity == null) return;
-				activity.runOnUiThread(() -> fadeCheckoutButton(false));
+
 			}
 		}, ShoppingCartResponse.class));
 	}
