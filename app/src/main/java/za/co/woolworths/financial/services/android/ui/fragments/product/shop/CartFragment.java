@@ -1013,12 +1013,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
                 for (CartItemGroup cartItemGroup : cartItems) {
                     for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-                        if (commerceItem.fulfillmentStoreId.isEmpty()) {
-                            commerceItem.quantityInStock = 0;
-                            commerceItem.commerceItemInfo.quantity = -2;
-                            commerceItem.isStockChecked = true;
+						if (commerceItem.fulfillmentStoreId.isEmpty()) {
+							commerceItem.quantityInStock = 0;
+							commerceItem.commerceItemInfo.quantity = -2;
+							commerceItem.isStockChecked = true;
 							removeItem(commerceItem.commerceItemInfo.commerceId);
-                        }
+						}
                     }
                 }
                 this.cartItems = cartItems;
