@@ -242,7 +242,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice, productDetails.priceType, productDetails.kilogramPrice);
+            //ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice, productDetails.priceType, productDetails.kilogramPrice);
         } catch (Exception ignored) {
         }
 
@@ -623,7 +623,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice,"",otherSku.kilogramPrice);
+            //ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice,"",otherSku.kilogramPrice);
         } catch (Exception ignored) {
         }
 
@@ -635,7 +635,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice,productDetails.priceType,otherSku.kilogramPrice);
+           // ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice,productDetails.priceType,otherSku.kilogramPrice);
         } catch (Exception ignored) {
         }
 

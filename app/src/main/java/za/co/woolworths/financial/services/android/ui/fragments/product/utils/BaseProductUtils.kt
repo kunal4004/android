@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.utils
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
+import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
@@ -10,7 +12,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 open class BaseProductUtils {
     companion object {
 
-        public fun displayPrice(tvPrice: TextView, tvWasPrice: TextView, price: String?, wasPrice: String?, priceType: String? = "", kilogramPrice: String? = "") {
+        public fun displayPrice(fromPricePlaceHolder:TextView, tvPrice: TextView, tvWasPrice: TextView, price: String?, wasPrice: String?, priceType: String? = "", kilogramPrice: String? = "") {
             val wasPrice: String? = wasPrice ?: ""
             val price: String? = price ?: ""
             val kilogramPrice: String = kilogramPrice ?: ""
@@ -34,6 +36,8 @@ open class BaseProductUtils {
                     tvWasPrice.setTextColor(android.graphics.Color.BLACK)
                 }
             }
+
+            showFromPriceLabel(priceType, fromPricePlaceHolder)
         }
 
         private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String): String {
@@ -43,12 +47,25 @@ open class BaseProductUtils {
                         WFormatter.formatAmount(price)
                     }
                     this!!.contains("from", true) -> {
-                        "From " + WFormatter.formatAmount(price)
+                        WFormatter.formatAmount(price)
                     }
                     this.contains("Kilogram", true) -> {
                         WFormatter.formatAmount(price) + " (" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
                     }
                     else -> WFormatter.formatAmount(price)
+                }
+            }
+        }
+
+        @SuppressLint("DefaultLocale")
+        private fun showFromPriceLabel(priceType: String?,fromPricePlaceHolder:TextView) {
+            priceType?.let {
+                if (it.toLowerCase().contains("from", true)) {
+                    fromPricePlaceHolder?.visibility = View.VISIBLE
+                    fromPricePlaceHolder?.text = "From " // add space on StrikeThrough only
+                } else {
+                    fromPricePlaceHolder?.visibility = View.GONE
+                    fromPricePlaceHolder?.text = ""
                 }
             }
         }

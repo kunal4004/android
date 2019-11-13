@@ -87,7 +87,7 @@
             android:id="@+id/logoAddToShoppingList"
             style="@style/card_item_start_icon_style"
             android:alpha="1"
-            app:srcCompat="@drawable/shopping_list_icon" />
+            app:srcCompat="@drawable/ic_add_to_list_pdp" />
 
         <TextView
             android:id="@+id/tvAddToShoppingList"

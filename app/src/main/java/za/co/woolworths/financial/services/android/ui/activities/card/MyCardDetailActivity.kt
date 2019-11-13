@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplaceme
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.RESULT_CODE_BLOCK_CODE_SUCCESS
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -141,12 +142,13 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_OK) {
             mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
             addCardDetailFragment()
-        } else if (requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_OK) { // close previous cart detail
-            finish()
+        } else if ((requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_OK) ||
+                (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_CODE_BLOCK_CODE_SUCCESS) ||
+                (requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_CODE_BLOCK_CODE_SUCCESS)) { // close previous cart detail
+            finish() // will close previous activity in stack
         } else {
             supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
         }
