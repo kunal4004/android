@@ -587,19 +587,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun getAuxiliaryImagesByGroupKey(): List<String> {
 
-        if (getSelectedGroupKey().isNullOrEmpty())
+        if (getSelectedGroupKey().isNullOrEmpty() && defaultGroupKey.isNullOrEmpty())
             return auxiliaryImages
 
         val auxiliaryImagesForGroupKey = ArrayList<String>()
+        val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)?.externalImageRef?.let {
+        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRef?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
 
         val allAuxImages = Gson().fromJson<Map<String, AuxiliaryImage>>(this.productDetails?.auxiliaryImages, object : TypeToken<Map<String, AuxiliaryImage>>() {}.type)
 
-        getImageCodeForAuxiliaryImages().let { imageCode ->
+        getImageCodeForAuxiliaryImages(groupKey).let { imageCode ->
             allAuxImages.entries.forEach { entry ->
                 if (entry.key.contains(imageCode, true))
                     auxiliaryImagesForGroupKey.add(entry.value.externalImageRef)
@@ -609,10 +610,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         return if (auxiliaryImagesForGroupKey.isNotEmpty()) auxiliaryImagesForGroupKey else auxiliaryImages
     }
 
-    private fun getImageCodeForAuxiliaryImages(): String {
+    private fun getImageCodeForAuxiliaryImages(groupKey: String?): String {
         var imageCode = ""
 
-        getSelectedGroupKey()?.split("\\s".toRegex())?.let {
+        groupKey?.split("\\s".toRegex())?.let {
             imageCode = when (it.size) {
                 1 -> it[0]
                 else -> {
