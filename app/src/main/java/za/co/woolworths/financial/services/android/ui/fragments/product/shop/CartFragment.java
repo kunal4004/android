@@ -850,9 +850,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
 						CommerceItem commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
-						if (commerceItem.commerceItemInfo.productDisplayName.toLowerCase().contains("indian kalonji")){
-							commerceItem.fulfillmentType = "11";
-						}
 						String fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType);
 						commerceItem.fulfillmentStoreId = fulfillmentStoreId.replaceAll("\"", "");
 						productList.add(commerceItem);
