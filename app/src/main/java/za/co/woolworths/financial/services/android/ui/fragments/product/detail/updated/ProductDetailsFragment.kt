@@ -956,7 +956,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun showErrorWhileLoadingProductDetails() {
         activity?.apply {
-            hideProgressBar()
+            showProductUnavailable()
             Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc))
         }
     }
