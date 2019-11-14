@@ -912,7 +912,7 @@
     <string name="my_card_title">My Card</string>
     <string name="card_detail_title">Card Details</string>
     <string name="card_number_title">Card Number:</string>
-    <string name="card_holder_title">Card Holder:</string>
+    <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
     <string name="block_card_title">Block Card</string>
     <string name="block_card_desc">Please select the reason for blocking your card.</string>
