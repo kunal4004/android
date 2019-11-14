@@ -24,10 +24,10 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import android.view.WindowManager
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.net.ConnectException
 import java.net.UnknownHostException
-
 
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
@@ -87,8 +87,8 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         (activity as? MyCardActivityExtension)?.apply {
             mOtpSentTo = otpType
             val otpDescriptionLabel = when (getOTPMethodType()) {
-                OTPMethodType.SMS -> activity?.resources?.getString(R.string.enter_otp_phone_desc, otpType)
-                OTPMethodType.EMAIL -> activity?.resources?.getString(R.string.enter_otp_email_desc, otpType)
+                OTPMethodType.SMS -> setResource(if (activityIsInstanceStoreCardActivity()) R.string.icr_otp_phone_desc else R.string.enter_otp_phone_desc, otpType)
+                OTPMethodType.EMAIL -> setResource(if (activityIsInstanceStoreCardActivity()) R.string.icr_otp_email_desc else R.string.enter_otp_email_desc, otpType)
                 else -> return
             }
             activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, enterOTPDescriptionScreen, false) } }
@@ -96,16 +96,23 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
     }
 
+    private fun setResource(enterOtpPhone: Int, otpType: String?) = activity?.resources?.getString(enterOtpPhone, otpType)
+
     private fun configureUI() {
-        didNotReceiveEditTextOTP?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
+        didNotReceiveOTPTextView?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
+        if (activityIsInstanceStoreCardActivity()) didNotReceiveOTPTextView?.isAllCaps = true
+
     }
+
+    private fun activityIsInstanceStoreCardActivity() = activity is InstantStoreCardReplacementActivity
 
     private fun clickEvent() {
         imNextProcessLinkCard?.setOnClickListener {
             if (isUnblockVirtualCard) sendOTBack() else navigateToLinkStoreCard()
         }
-        didNotReceiveEditTextOTP?.setOnClickListener {
+        didNotReceiveOTPTextView?.setOnClickListener {
             if (shouldDisableKeyboardOnOTPCall) return@setOnClickListener
+            hideKeyboard()
             (activity as? AppCompatActivity)?.apply {
                 mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, getSavedNumber())
                 mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
@@ -288,6 +295,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun showOTPErrorOnOTPFragment() {
+        otpErrorTextView?.text = if (activityIsInstanceStoreCardActivity()) setResource(R.string.icr_wrong_otp_error, "") else setResource(R.string.wrong_otp_desc, "")
         otpErrorTextView?.visibility = VISIBLE
         clearOTP()
         edtVerificationCode1?.requestFocus()
@@ -306,5 +314,4 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun getSavedNumber() = (activity as? MyCardActivityExtension)?.mPhoneNumberOTP
-
 }

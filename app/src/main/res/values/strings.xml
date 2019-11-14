@@ -396,8 +396,8 @@
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
     <string name="acc_my_detail">My Details</string>
-    <string name="acc_profile">View my Details</string>
-    <string name="acc_update_password">Update password</string>
+    <string name="acc_profile">View My Details</string>
+    <string name="acc_update_password">Update Password</string>
 
     <string name="session_expired_title">SESSION EXPIRED</string>
     <string name="session_expired_desc">Your session expired. To continue please
@@ -912,7 +912,7 @@
     <string name="my_card_title">My Card</string>
     <string name="card_detail_title">Card Details</string>
     <string name="card_number_title">Card Number:</string>
-    <string name="card_holder_title">Card Holder:</string>
+    <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
     <string name="block_card_title">Block Card</string>
     <string name="block_card_desc">Please select the reason for blocking your card.</string>
@@ -1173,4 +1173,7 @@
     <string name="set_to_default">Set to default - \u0020</string>
     <string name="delivering_to_pdp">Delivering to - \u0020</string>
     <string name="select_colour">Select Colour</string>
+    <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
+    <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
+    <string name="icr_wrong_otp_error">The One Time Pin provided doesn\'t exist</string>
 </resources>

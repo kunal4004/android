@@ -101,7 +101,9 @@
         app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/viewOTPBackground"
-        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
+        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" >
+         <requestFocus/>
+    </androidx.appcompat.widget.AppCompatEditText>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtVerificationCode2"
@@ -170,7 +172,7 @@
         app:srcCompat="@drawable/next_button_icon" />
 
     <TextView
-        android:id="@+id/didNotReceiveEditTextOTP"
+        android:id="@+id/didNotReceiveOTPTextView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
