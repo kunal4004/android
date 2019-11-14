@@ -536,6 +536,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
+        toCartAndFindInStoreLayout.visibility = View.VISIBLE
         groupAddToCartAction.visibility = View.GONE
         findInStoreAction.visibility = View.VISIBLE
     }
@@ -1031,10 +1032,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductUnavailable() {
-        /*setSelectedSku(this.defaultSku)
+        setSelectedSku(productDetails?.otherSkus?.get(0))
         hideProductDetailsLoading()
-        toCartAndFindInStoreLayout.visibility = View.GONE*/
-        hideProgressBar()
+        toCartAndFindInStoreLayout.visibility = View.GONE
+        updateAddToCartButtonForSelectedSKU()
+        //hideProgressBar()
     }
 
     private fun showMoreColors() {
