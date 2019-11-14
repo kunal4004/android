@@ -37,6 +37,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -203,7 +205,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     @Override
                     public void onClick(View view) {
                         if (commerceItem.quantityInStock == 0) return;
-
+                        if (!NetworkManager.getInstance().isConnectedToNetwork(mContext)) {
+                            new ErrorHandlerView(mContext).showToast();
+                            return;
+                        }
                         commerceItem.setQuantityUploading(true);
                         setFirstLoadCompleted(false);
                         onItemClick.onChangeQuantity(commerceItem);
