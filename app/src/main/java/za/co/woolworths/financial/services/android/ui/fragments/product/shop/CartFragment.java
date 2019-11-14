@@ -30,7 +30,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1056,6 +1058,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	private void disableQuantitySelector(Throwable error, Activity activity) {
 		if (activity == null || !isAdded()) return;
+		CartActivity cartActivity = (CartActivity) activity;
 		activity.runOnUiThread(() -> {
 			if (error instanceof SocketTimeoutException){
 				if (cartProductAdapter != null && btnCheckOut != null) {
@@ -1070,8 +1073,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					}
 					cartProductAdapter.updateStockAvailability(cartItems);
 				}
+			}else if (error instanceof ConnectException || error instanceof UnknownHostException){
+				if (cartProductAdapter != null && btnCheckOut != null) {
+					ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+					for (CartItemGroup cartItemGroup : cartItems) {
+						for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+							if (!commerceItem.isStockChecked) {
+								commerceItem.quantityInStock = -1 ;
+							}
+						}
+					}
+					cartProductAdapter.updateStockAvailability(cartItems);
+				}
 			}
-			CartActivity cartActivity = (CartActivity) activity;
 			cartActivity.enableEditCart();
 			btnCheckOut.setEnabled(false);
 			rlCheckOut.setEnabled(false);
@@ -1126,7 +1140,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate)
 			fadeCheckoutButton(false);
-
 	}
 
 	/***
