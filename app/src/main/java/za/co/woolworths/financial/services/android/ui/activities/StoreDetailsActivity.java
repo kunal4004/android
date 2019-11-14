@@ -6,9 +6,11 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -45,255 +47,262 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
-	private static final int REQUEST_CALL = 1;
-	GoogleMap googleMap;
-	public Toolbar toolbar;
-	StoreDetails storeDetails;
-	private String TAG = this.getClass().getSimpleName();
-	//Detail page Views
-	LinearLayout detailsLayout;
-	LinearLayout timeingsLayout;
-	LinearLayout brandsLayout;
+    private static final int REQUEST_CALL = 1;
+    GoogleMap googleMap;
+    public Toolbar toolbar;
+    StoreDetails storeDetails;
+    private String TAG = this.getClass().getSimpleName();
+    //Detail page Views
+    LinearLayout detailsLayout;
+    LinearLayout timeingsLayout;
+    LinearLayout brandsLayout;
 
-	RelativeLayout direction;
-	RelativeLayout makeCall;
-	RelativeLayout relBrandLayout;
-	RelativeLayout storeTimingView;
-	WTextView storeName;
-	WTextView storeOfferings;
-	WTextView storeAddress;
-	TextView storeDistance;
-	WTextView storeNumber;
-	WTextView nativeMap;
-	WTextView cancel;
-	ImageView closePage;
+    RelativeLayout direction;
+    RelativeLayout makeCall;
+    RelativeLayout relBrandLayout;
+    RelativeLayout storeTimingView;
+    WTextView storeName;
+    WTextView storeOfferings;
+    WTextView storeAddress;
+    TextView storeDistance;
+    WTextView storeNumber;
+    WTextView nativeMap;
+    WTextView cancel;
+    ImageView closePage;
 
-	LinearLayout mapLayout;
-	private SlidingUpPanelLayout mLayout;
+    LinearLayout mapLayout;
+    private SlidingUpPanelLayout mLayout;
 
-	Intent callIntent;
-	private PopWindowValidationMessage mPopWindowValidationMessage;
-	private boolean isFromStockLocator;
+    Intent callIntent;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
+    private boolean isFromStockLocator;
+    private boolean mShouldDisplayBackIcon;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Utils.updateStatusBarBackground(this);
-		setContentView(R.layout.store_details_activity);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Utils.updateStatusBarBackground(this);
+        setContentView(R.layout.store_details_activity);
 
-		mPopWindowValidationMessage = new PopWindowValidationMessage(this);
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		storeName = (WTextView) findViewById(R.id.storeName);
-		storeOfferings = (WTextView) findViewById(R.id.offerings);
-		storeDistance =  findViewById(R.id.distance);
-		storeAddress = (WTextView) findViewById(R.id.storeAddress);
-		timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
-		storeTimingView = (RelativeLayout) findViewById(R.id.storeTimingView);
-		brandsLayout = (LinearLayout) findViewById(R.id.brandsLayout);
-		mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-		mapLayout = (LinearLayout) findViewById(R.id.mapLayout);
-		closePage = (ImageView) findViewById(R.id.closePage);
-		//getting height of device
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		int height = displaymetrics.heightPixels;
-		int width = displaymetrics.widthPixels;
-		//set height of map view to 3/10 of the screen height
-		mapLayout.setLayoutParams(new SlidingUpPanelLayout.LayoutParams(width, (height * 3) / 10));
-		//set height of store details view to 7/10 of the screen height
-		mLayout.setPanelHeight((height * 7) / 10);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        storeName = (WTextView) findViewById(R.id.storeName);
+        storeOfferings = (WTextView) findViewById(R.id.offerings);
+        storeDistance = findViewById(R.id.distance);
+        storeAddress = (WTextView) findViewById(R.id.storeAddress);
+        timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
+        storeTimingView = (RelativeLayout) findViewById(R.id.storeTimingView);
+        brandsLayout = (LinearLayout) findViewById(R.id.brandsLayout);
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mapLayout = (LinearLayout) findViewById(R.id.mapLayout);
+        closePage = (ImageView) findViewById(R.id.closePage);
+        //getting height of device
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        //set height of map view to 3/10 of the screen height
+        mapLayout.setLayoutParams(new SlidingUpPanelLayout.LayoutParams(width, (height * 3) / 10));
+        //set height of store details view to 7/10 of the screen height
+        mLayout.setPanelHeight((height * 7) / 10);
 
-		direction = (RelativeLayout) findViewById(R.id.direction);
-		storeNumber = (WTextView) findViewById(R.id.storeNumber);
-		makeCall = (RelativeLayout) findViewById(R.id.call);
-		relBrandLayout = (RelativeLayout) findViewById(R.id.relBrandLayout);
-		Gson gson = new Gson();
-		storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
-		isFromStockLocator = getIntent().getBooleanExtra("FromStockLocator", false);
-		initStoreDetailsView(storeDetails);
+        direction = (RelativeLayout) findViewById(R.id.direction);
+        storeNumber = (WTextView) findViewById(R.id.storeNumber);
+        makeCall = (RelativeLayout) findViewById(R.id.call);
+        relBrandLayout = (RelativeLayout) findViewById(R.id.relBrandLayout);
+        Gson gson = new Gson();
+        storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
+        isFromStockLocator = getIntent().getBooleanExtra("FromStockLocator", false);
+        mShouldDisplayBackIcon = getIntent().getBooleanExtra("SHOULD_DISPLAY_BACK_ICON", false);
+        initStoreDetailsView(storeDetails);
 
-		closePage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-			}
-		});
+        if (mShouldDisplayBackIcon) {
+            closePage.setImageResource(R.drawable.back_button_circular_icon);
+            closePage.setRotation(180);
+        }
 
-		mLayout.setFadeOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-			}
-		});
-		mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-			@Override
-			public void onPanelSlide(View panel, float slideOffset) {
-				Log.i(TAG, "onPanelSlide, offset " + slideOffset);
-				if (slideOffset == 0.0) {
-					mLayout.setAnchorPoint(1.0f);
-				}
-			}
+        closePage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+            }
+        });
 
-			@Override
-			public void onPanelStateChanged(final View panel, SlidingUpPanelLayout.PanelState previousState, final SlidingUpPanelLayout.PanelState newState) {
-				Log.i(TAG, "onPanelStateChanged " + newState);
+        mLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
+        mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+                if (slideOffset == 0.0) {
+                    mLayout.setAnchorPoint(1.0f);
+                }
+            }
 
-				if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-					   /*
-						* Previous result: Application would exit completely when back button is pressed
-                        * New result: Panel just returns to its previous position (Panel collapses)
-                        */
-					mLayout.setFocusableInTouchMode(true);
-					mLayout.setOnKeyListener(new View.OnKeyListener() {
-						@Override
-						public boolean onKey(View v, int keyCode, KeyEvent event) {
-							if (keyCode == KeyEvent.KEYCODE_BACK) {
-								mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-								mLayout.setFocusable(false);
-								return true;
-							}
-							return true;
-						}
-					});
-				}
-			}
-		});
-		initMap();
-	}
+            @Override
+            public void onPanelStateChanged(final View panel, SlidingUpPanelLayout.PanelState previousState, final SlidingUpPanelLayout.PanelState newState) {
+                Log.i(TAG, "onPanelStateChanged " + newState);
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STORE_DETAILS);
-	}
+                if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                    /*
+                     * Previous result: Application would exit completely when back button is pressed
+                     * New result: Panel just returns to its previous position (Panel collapses)
+                     */
+                    mLayout.setFocusableInTouchMode(true);
+                    mLayout.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                                mLayout.setFocusable(false);
+                                return true;
+                            }
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
+        initMap();
+    }
 
-	@Override
-	public void onMapReady(GoogleMap map) {
-		googleMap = map;
-		googleMap.getUiSettings().setScrollGesturesEnabled(false);
-		googleMap.setMyLocationEnabled(false);
-		centerCamera();
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STORE_DETAILS);
+    }
 
-	public void centerCamera() {
-		googleMap.addMarker(new MarkerOptions().position(new LatLng(storeDetails.latitude, storeDetails.longitude))
-				.icon(BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)));
-		CameraPosition cameraPosition = new CameraPosition.Builder().target(
-				new LatLng(storeDetails.latitude, storeDetails.longitude)).zoom(13).build();
-		googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-	}
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+        googleMap.getUiSettings().setScrollGesturesEnabled(false);
+        googleMap.setMyLocationEnabled(false);
+        centerCamera();
+    }
 
-	public void initMap() {
-		if (googleMap == null) {
-			SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
-			mapFragment.getMapAsync(this);
+    public void centerCamera() {
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(storeDetails.latitude, storeDetails.longitude))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)));
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                new LatLng(storeDetails.latitude, storeDetails.longitude)).zoom(13).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
 
-		}
-	}
+    public void initMap() {
+        if (googleMap == null) {
+            SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
 
-	@Override
-	public void onBackPressed() {
-		StoreDetailsActivity.this.finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-	}
+        }
+    }
 
-	public void initStoreDetailsView(final StoreDetails storeDetail) {
-		timeingsLayout.removeAllViews();
-		brandsLayout.removeAllViews();
-		storeName.setText(storeDetail.name);
-		storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
-		if (storeDetail.phoneNumber != null)
-			storeNumber.setText(storeDetail.phoneNumber);
-		SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
-		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getResources().getString(R.string.distance_in_km));
-		Resources resources = getResources();
-		if (isFromStockLocator) {
-			Utils.setRagRating(StoreDetailsActivity.this, storeOfferings, storeDetails.status);
-		} else {
-			if (storeDetail.offerings != null) {
-				storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
-			}
-		}
-		if (storeDetail.offerings != null) {
-			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
-			if (brandslist != null) {
-				if (brandslist.size() > 0) {
-					WTextView textView;
-					relBrandLayout.setVisibility(View.VISIBLE);
-					for (int i = 0; i < brandslist.size(); i++) {
-						View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-						textView = (WTextView) v.findViewById(R.id.openingHours);
-						textView.setText(brandslist.get(i).offering);
-						brandsLayout.addView(textView);
-					}
-				} else {
-					relBrandLayout.setVisibility(View.GONE);
-				}
-			} else {
-				relBrandLayout.setVisibility(View.GONE);
-			}
-		} else {
-			relBrandLayout.setVisibility(View.GONE);
-		}
-		WTextView textView;
-		if (storeDetail.times != null && storeDetail.times.size() != 0) {
-			storeTimingView.setVisibility(View.VISIBLE);
-			for (int i = 0; i < storeDetail.times.size(); i++) {
-				View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-				textView = (WTextView) v.findViewById(R.id.openingHours);
-				textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
-				if (i == 0)
-					textView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Semibold.otf"));
-				timeingsLayout.addView(textView);
-			}
-		} else {
-			storeTimingView.setVisibility(View.GONE);
-		}
+    @Override
+    public void onBackPressed() {
+        StoreDetailsActivity.this.finish();
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+    }
 
-		makeCall.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (storeDetail.phoneNumber != null) {
-					Utils.makeCall(StoreDetailsActivity.this, storeDetail.phoneNumber);
-				}
+    public void initStoreDetailsView(final StoreDetails storeDetail) {
+        timeingsLayout.removeAllViews();
+        brandsLayout.removeAllViews();
+        storeName.setText(storeDetail.name);
+        storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
+        if (storeDetail.phoneNumber != null)
+            storeNumber.setText(storeDetail.phoneNumber);
+        SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
+        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getResources().getString(R.string.distance_in_km));
+        Resources resources = getResources();
+        if (isFromStockLocator) {
+            Utils.setRagRating(StoreDetailsActivity.this, storeOfferings, storeDetails.status);
+        } else {
+            if (storeDetail.offerings != null) {
+                storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
+            }
+        }
+        if (storeDetail.offerings != null) {
+            List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
+            if (brandslist != null) {
+                if (brandslist.size() > 0) {
+                    WTextView textView;
+                    relBrandLayout.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < brandslist.size(); i++) {
+                        View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
+                        textView = (WTextView) v.findViewById(R.id.openingHours);
+                        textView.setText(brandslist.get(i).offering);
+                        brandsLayout.addView(textView);
+                    }
+                } else {
+                    relBrandLayout.setVisibility(View.GONE);
+                }
+            } else {
+                relBrandLayout.setVisibility(View.GONE);
+            }
+        } else {
+            relBrandLayout.setVisibility(View.GONE);
+        }
+        WTextView textView;
+        if (storeDetail.times != null && storeDetail.times.size() != 0) {
+            storeTimingView.setVisibility(View.VISIBLE);
+            for (int i = 0; i < storeDetail.times.size(); i++) {
+                View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
+                textView = (WTextView) v.findViewById(R.id.openingHours);
+                textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
+                if (i == 0)
+                    textView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Semibold.otf"));
+                timeingsLayout.addView(textView);
+            }
+        } else {
+            storeTimingView.setVisibility(View.GONE);
+        }
 
-			}
-		});
-		direction.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (TextUtils.isEmpty(storeDetail.address))
-					return;
-				mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
-				mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
-				mPopWindowValidationMessage.displayValidationMessage("",
-						PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION);
-			}
-		});
-	}
+        makeCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (storeDetail.phoneNumber != null) {
+                    Utils.makeCall(StoreDetailsActivity.this, storeDetail.phoneNumber);
+                }
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		switch (requestCode) {
-			case REQUEST_CALL:
-				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					startActivity(callIntent);
-				} else {
-					////
-				}
-		}
-	}
+            }
+        });
+        direction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(storeDetail.address))
+                    return;
+                mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
+                mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
+                mPopWindowValidationMessage.displayValidationMessage("",
+                        PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION);
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CALL:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(callIntent);
+                } else {
+                    ////
+                }
+        }
+    }
 
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				onBackPressed();
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 //    public void openNativeMapWindow(final double lat, final double lon) {
 //        //darken the current screen
@@ -347,15 +356,15 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 //        });
 //    }
 
-	public List<StoreOfferings> getOfferingByType(List<StoreOfferings> offerings, String type) {
-		List<StoreOfferings> list = new ArrayList<>();
-		list.clear();
-		for (StoreOfferings d : offerings) {
-			if (d.type != null && d.type.contains(type))
-				list.add(d);
-		}
-		return list;
-	}
+    public List<StoreOfferings> getOfferingByType(List<StoreOfferings> offerings, String type) {
+        List<StoreOfferings> list = new ArrayList<>();
+        list.clear();
+        for (StoreOfferings d : offerings) {
+            if (d.type != null && d.type.contains(type))
+                list.add(d);
+        }
+        return list;
+    }
 
 
 }

@@ -26,6 +26,7 @@ import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
 import com.skydoves.balloon.balloon
 import kotlinx.android.synthetic.main.grid_layout.*
+import kotlinx.android.synthetic.main.grid_layout.incNoConnectionHandler
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*

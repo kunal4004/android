@@ -1207,8 +1207,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
     }
-
-
+    
     private void switchToShoppingListTab(JsonElement element) {
         if (element instanceof JsonObject) {
             JsonObject list = (JsonObject) element;

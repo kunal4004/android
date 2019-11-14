@@ -38,6 +38,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
@@ -195,21 +197,37 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 						WoolworthsApplication.setQuickShopDefaultValues(configResponse.configs.quickShopDefaultValues);
+						WoolworthsApplication.setWhitelistedDomainsForQRScanner(configResponse.configs.whitelistedDomainsForQRScanner);
+						WoolworthsApplication.setStsValues(configResponse.configs.sts);
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
 						if (absaBankingOpenApiServices == null) {
 							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");
 						} else {
-							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
+							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinimumSupportedAppBuildNumber()));
 						}
 						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
 						if (presenceInAppChat == null) {
 							presenceInAppChat = new PresenceInAppChat(new ArrayList<TradingHours>(), "", false);
 						} else {
-							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
+							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinimumSupportedAppBuildNumber()));
 						}
+
+                        InstantCardReplacement instantCardReplacement = configResponse.configs.instantCardReplacement;
+                        if (instantCardReplacement != null) {
+                            instantCardReplacement.setEnabled(Utils.isFeatureEnabled(instantCardReplacement.getMinimumSupportedAppBuildNumber()));
+                        }
+
+						VirtualTempCard virtualTempCard = configResponse.configs.virtualTempCard;
+						if (virtualTempCard != null) {
+							virtualTempCard.setEnabled(Utils.isFeatureEnabled(virtualTempCard.getMinimumSupportedAppBuildNumber()));
+						}
+
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
+
+						WoolworthsApplication.setInstantCardReplacement(instantCardReplacement);
+						WoolworthsApplication.setVirtualTempCard(virtualTempCard);
 
 						mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
 						mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
@@ -274,21 +292,14 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())
-				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-					@Override
-					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
-						// Get deep link from result (may be null if no link is found)
-						if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
-							mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
-						}
+				.addOnSuccessListener(this, pendingDynamicLinkData -> {
+					// Get deep link from result (may be null if no link is found)
+					if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
+						mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
+						Log.e("mDeepLinkUrl",mDeepLinkUrl);
 					}
 				})
-				.addOnFailureListener(this, new OnFailureListener() {
-					@Override
-					public void onFailure(Exception e) {
-						Log.w(TAG, "getDynamicLink:onFailure", e);
-					}
-				});
+				.addOnFailureListener(this, e -> Log.w(TAG, "getDynamicLink:onFailure", e));
 		if (isMinimized) {
 			isMinimized = false;
 			if (isServerMessageShown) {

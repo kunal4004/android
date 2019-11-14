@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -7,39 +8,50 @@ import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Html
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.models.dto.npc.Card
+import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
-import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
 open class MyCardExtension : Fragment() {
+
+    companion object {
+        @SuppressLint("DefaultLocale")
+        const val INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE = 555
+        fun toTitleCase(name: String?): String {
+            val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
+            var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+    }
 
     fun maskedCardNumberWithSpaces(cardNumber: String?): String {
         return " **** **** **** ".plus(cardNumber?.let { it.substring(it.length - 4, it.length) }
                 ?: "")
     }
 
-    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?, mCardDetail: Card?) {
+    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?) {
         activity?.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
-            openBlockMyCardActivity.putExtra(CARD, Gson().toJson(mCardDetail))
             openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
-            startActivityForResult(openBlockMyCardActivity,REQUEST_CODE_BLOCK_MY_CARD)
+            startActivityForResult(openBlockMyCardActivity, REQUEST_CODE_BLOCK_MY_CARD)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
         }
     }
-
 
     fun navigateToPermanentCardBlockFragment(activity: AppCompatActivity?) {
         activity?.supportFragmentManager?.apply {
@@ -48,28 +60,13 @@ open class MyCardExtension : Fragment() {
         }
     }
 
-    fun navigateToResendOTPFragment(activity: AppCompatActivity?) {
-        activity?.supportFragmentManager?.apply {
-            val resendOTPFragment = ResendOTPFragment.newInstance()
-            resendOTPFragment.show((this), ResendOTPFragment::class.java.simpleName)
-        }
-    }
-
-    internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?) {
+    internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?, storeCard: String?) {
         activity?.apply {
-            startActivity(Intent(this, LinkNewCardActivity::class.java))
+            val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
+            openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, storeCard)
+            startActivityForResult(openLinkNewCardActivity,INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            finish()
         }
-    }
-
-    fun toTitleCase(name: String?): String {
-        val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
-        var output = ""
-        for (word in words) {
-            output += word.capitalize() + " "
-        }
-        return output.trim()
     }
 
     fun showSoftKeyboard(activity: Activity, editTextView: EditText) {
@@ -80,7 +77,7 @@ open class MyCardExtension : Fragment() {
         }
     }
 
-    fun hideKeyboard() {
+    open fun hideKeyboard() {
         activity?.apply { KeyboardUtil.hideSoftKeyboard(this) }
     }
 
@@ -98,6 +95,7 @@ open class MyCardExtension : Fragment() {
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         }
     }
+
     fun navigateToMyCardActivity(cardIsBlocked: Boolean) {
         activity?.apply {
             startActivity(Intent(this, MyCardDetailActivity::class.java).putExtra(CARD_BLOCKED, cardIsBlocked))
@@ -119,6 +117,22 @@ open class MyCardExtension : Fragment() {
             setDisplayHomeAsUpEnabled(false)
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
+        }
+    }
+
+    fun invalidCardNumberUI() {
+        activity?.apply {
+            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_error_bg)
+            invalidCardNumberLabel?.visibility = View.VISIBLE
+            navigateToEnterOTPFragmentImageView?.isEnabled = false
+        }
+    }
+
+    fun validCardNumberUI() {
+        activity?.apply {
+            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_inactive_bg)
+            invalidCardNumberLabel?.visibility = View.GONE
+            navigateToEnterOTPFragmentImageView?.isEnabled = true
         }
     }
 }

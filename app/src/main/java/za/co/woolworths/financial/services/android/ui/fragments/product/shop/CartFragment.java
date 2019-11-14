@@ -30,6 +30,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -394,7 +397,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void bindCartData(CartResponse cartResponse) {
 		parentLayout.setVisibility(View.VISIBLE);
 		if (cartResponse.cartItems.size() > 0) {
-			loadInventoryRequest(cartResponse.cartItems);
 			rlCheckOut.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
 			if (activity != null) {
@@ -404,7 +406,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
-			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            loadInventoryRequest(cartResponse.cartItems);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
@@ -594,7 +597,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			@Override
 			public void onFailure(Throwable error) {
 				Activity activity = getActivity();
-				if (activity != null) {
+				if (activity != null && isAdded()) {
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -602,7 +605,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 								rvCartList.setVisibility(View.GONE);
 								rlCheckOut.setVisibility(View.GONE);
+								if (pBar != null)
+									pBar.setVisibility(View.GONE);
 								mErrorHandlerView.showErrorHandler();
+
 							}
 						}
 					});
@@ -649,6 +655,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		},ShoppingCartResponse.class));
 		return shoppingCartResponseCall;
+	}
+
+	public void removeItem(CommerceItem commerceItem) {
+		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+			@Override
+			public void onSuccess(ShoppingCartResponse response) {
+			}
+
+			@Override
+			public void onFailure(Throwable error) {
+
+			}
+		}, ShoppingCartResponse.class));
 	}
 
 	public Call<ShoppingCartResponse> removeCartItem(final CommerceItem commerceItem) {
@@ -808,8 +827,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						CommerceItem commerceItem = new CommerceItem();
-						commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						CommerceItem commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
 						String fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType);
 						commerceItem.fulfillmentStoreId = fulfillmentStoreId.replaceAll("\"", "");
 						productList.add(commerceItem);
@@ -973,7 +991,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		}
 		Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems = multiListItems.getEntries();
-
 		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : mapStoreIdWithCommerceItems.entrySet()) {
 			Collection<CommerceItem> collection = collectionEntry.getValue();
 			String fullfilmentStoreId = collectionEntry.getKey();
@@ -984,7 +1001,28 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
 			mMapStoreId.put("storeId", fullfilmentStoreId);
-			initInventoryRequest(fullfilmentStoreId, multiSKUS);
+
+            /***
+             * Handles products with  no fullfilmentStoreId
+             * quantity = -2 is required to prevent change quantity api call
+             * triggered when commerceItemInfo.quantity > quantityInStock
+             */
+            if (TextUtils.isEmpty(fullfilmentStoreId)) {
+                ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+                for (CartItemGroup cartItemGroup : cartItems) {
+                    for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+						if (commerceItem.fulfillmentStoreId.isEmpty()) {
+							commerceItem.quantityInStock = 0;
+							commerceItem.commerceItemInfo.quantity = -2;
+							commerceItem.isStockChecked = true;
+							removeItem(commerceItem);
+						}
+                    }
+                }
+                this.cartItems = cartItems;
+            } else {
+                initInventoryRequest(fullfilmentStoreId, multiSKUS);
+            }
 		}
 	}
 
@@ -1011,10 +1049,47 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 			@Override
 			public void onFailure(Throwable error) {
-
+				Activity activity = getActivity();
+				disableQuantitySelector(error, activity);
 			}
 		},SkusInventoryForStoreResponse.class));
 		return skusInventoryForStoreResponseCall;
+	}
+
+	private void disableQuantitySelector(Throwable error, Activity activity) {
+		if (activity == null || !isAdded()) return;
+		CartActivity cartActivity = (CartActivity) activity;
+		activity.runOnUiThread(() -> {
+			if (error instanceof SocketTimeoutException){
+				if (cartProductAdapter != null && btnCheckOut != null) {
+					ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+					for (CartItemGroup cartItemGroup : cartItems) {
+						for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+							if (!commerceItem.isStockChecked) {
+								commerceItem.quantityInStock = -1;
+								commerceItem.isStockChecked = true;
+							}
+						}
+					}
+					cartProductAdapter.updateStockAvailability(cartItems);
+				}
+			}else if (error instanceof ConnectException || error instanceof UnknownHostException){
+				if (cartProductAdapter != null && btnCheckOut != null) {
+					ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+					for (CartItemGroup cartItemGroup : cartItems) {
+						for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+							if (!commerceItem.isStockChecked) {
+								commerceItem.quantityInStock = -1 ;
+							}
+						}
+					}
+					cartProductAdapter.updateStockAvailability(cartItems);
+				}
+			}
+			cartActivity.enableEditCart();
+			btnCheckOut.setEnabled(false);
+			rlCheckOut.setEnabled(false);
+		});
 	}
 
 	public void updateCartListWithAvailableStock(List<SkuInventory> inventories, String storeID) {
@@ -1040,9 +1115,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * @Method getLastValueInMap() return last stored store Id
 		 * to trigger checkout button only once
 		 */
-		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			updateItemQuantityToMatchStock();
-		}
+        String lastMapValue = getLastValueInMap();
+        if (TextUtils.isEmpty(lastMapValue) || lastMapValue.equalsIgnoreCase(mStoreId)) {
+            updateItemQuantityToMatchStock();
+        }
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
 	}
@@ -1064,7 +1140,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate)
 			fadeCheckoutButton(false);
-
 	}
 
 	/***

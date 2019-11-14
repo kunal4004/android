@@ -1,22 +1,42 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.location.Location
+import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.annotation.NonNull
+import androidx.annotation.RequiresApi
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.replace_card_fragment.*
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.CONTACT_INFO
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.MAP_LOCATION
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.Utils
 
+@RequiresApi(Build.VERSION_CODES.M)
 class GetReplacementCardFragment : MyCardExtension() {
 
     companion object {
@@ -32,8 +52,28 @@ class GetReplacementCardFragment : MyCardExtension() {
         activity?.let { Utils.updateStatusBarBackground(it) }
         updateToolbarBg()
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvAlreadyHaveCard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
-        btnParticipatingStores?.setOnClickListener { navigateToParticipatingStores() }
+        pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
+        requestGPSLocation()
+        val storeCardResponse = (activity as? MyCardDetailActivity)?.getStoreCardDetail()
+        tvAlreadyHaveCard?.setOnClickListener {
+            (activity as? MyCardDetailActivity)?.apply {
+               navigateToLinkNewCardActivity(this,storeCardResponse)
+            }
+        }
+        btnParticipatingStores?.setOnClickListener { checkForLocationPermission() }
+    }
+
+    private fun requestGPSLocation() {
+        FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
+            override fun onLocationChange(location: Location?) {
+                activity?.let { activity -> Utils.saveLastLocation(location, activity) }
+                FuseLocationAPISingleton.stopLocationUpdate()
+                navigateToParticipatingStores(location)
+            }
+
+            override fun onPopUpLocationDialogMethod() {
+            }
+        })
     }
 
     private fun updateToolbarBg() {
@@ -43,156 +83,86 @@ class GetReplacementCardFragment : MyCardExtension() {
         }
     }
 
-    private fun navigateToParticipatingStores() {
+    private fun checkForLocationPermission() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES)
         activity?.apply {
-            val location = "[\n" +
-                    "    {\n" +
-                    "      \"id\": 127,\n" +
-                    "      \"name\": \"Canal Walk\",\n" +
-                    "      \"latitude\": -33.8944,\n" +
-                    "      \"longitude\": 18.5107,\n" +
-                    "      \"distance\": \"74.45614687697031\",\n" +
-                    "      \"phoneNumber\": \"0860 022 002\",\n" +
-                    "      \"address\": \"Canal Walk Shopping Centre,Century Boulevard,Century City,7441\",\n" +
-                    "      \"planningRegionID\": 10,\n" +
-                    "      \"offerings\": [\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Country Road\",\n" +
-                    "          \"type\": \"Brand\"\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Trenery\",\n" +
-                    "          \"type\": \"Brand\"\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Beauty\",\n" +
-                    "          \"type\": \"Department\"\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Clothing\",\n" +
-                    "          \"type\": \"Department\"\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Financial Services\",\n" +
-                    "          \"type\": \"Department\"\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Foods\",\n" +
-                    "          \"type\": \"Department\"\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Homeware\",\n" +
-                    "          \"type\": \"Department\"\n" +
-                    "        }\n" +
-                    "      ],\n" +
-                    "      \"times\": [\n" +
-                    "        {\n" +
-                    "          \"day\": \"Today\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Thursday\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Friday\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Saturday\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Sunday\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Monday\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Tuesday\",\n" +
-                    "          \"hours\": \"09h00 - 21h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        }\n" +
-                    "      ],\n" +
-                    "      \"status\": \"GREEN\"\n" +
-                    "    },\n" +
-                    "    {\n" +
-                    "      \"id\": 272,\n" +
-                    "      \"name\": \"Colosseum\",\n" +
-                    "      \"latitude\": -33.8929,\n" +
-                    "      \"longitude\": 18.5058,\n" +
-                    "      \"distance\": \"480.6295141390415\",\n" +
-                    "      \"phoneNumber\": \"0860 022 002\",\n" +
-                    "      \"address\": \"The Colosseum Shopping Centre,Century Blvd,Century City,7441\",\n" +
-                    "      \"planningRegionID\": 10,\n" +
-                    "      \"offerings\": [\n" +
-                    "        {\n" +
-                    "          \"offering\": \"Foods\",\n" +
-                    "          \"type\": \"Department\"\n" +
-                    "        }\n" +
-                    "      ],\n" +
-                    "      \"times\": [\n" +
-                    "        {\n" +
-                    "          \"day\": \"Today\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Thursday\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Friday\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Saturday\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Sunday\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Monday\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        },\n" +
-                    "        {\n" +
-                    "          \"day\": \"Tuesday\",\n" +
-                    "          \"hours\": \"08h00 - 20h00\",\n" +
-                    "          \"exception\": false\n" +
-                    "        }\n" +
-                    "      ],\n" +
-                    "      \"status\": \"GREEN\"\n" +
-                    "    }\n" +
-                    "  ]"
+            //Check if user has location services enabled. If not, notify user as per current store locator functionality.
+            if (!Utils.isLocationEnabled(this)) {
+                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
+                return@apply
+            }
 
-            val listType = object : TypeToken<List<StoreDetails>>() {}.type
-            WoolworthsApplication.getInstance().wGlobalState.storeDetailsArrayList = Gson().fromJson(location, listType)
-            val intentInStoreFinder = Intent(this, WStockFinderActivity::class.java)
-            intentInStoreFinder.putExtra("PRODUCT_NAME", getString(R.string.participating_stores))
-            intentInStoreFinder.putExtra("CONTACT_INFO", getString(R.string.participating_store_desc))
-
-            startActivity(intentInStoreFinder)
-            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+            // If location services enabled, extract latitude and longitude request v4/user/locations
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), ProductListingFindInStoreNoQuantityFragment.REQUEST_PERMISSION_LOCATION)
         }
+    }
+
+    private fun navigateToParticipatingStores(location: Location?) {
+        activity?.runOnUiThread {
+            enableAlreadyHaveALink(false)
+            val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude
+                    ?: 0.0, location?.longitude ?: 0.0, "", true)
+            OneAppService.forceNetworkUpdate = true
+            progressVisibility(true)
+            locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+                override fun onSuccess(locationResponse: LocationResponse?) {
+                    if (!isAdded) return
+                    activity?.apply {
+                        progressVisibility(false)
+                        when (locationResponse?.httpCode) {
+                                200 -> {
+                                val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
+                                        ?: mutableListOf()
+                                if (npcStores?.size ?: 0 > 0) {
+                                    val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
+                                    intentInStoreFinder.putExtra(PRODUCT_NAME, getString(R.string.participating_stores))
+                                    intentInStoreFinder.putExtra(CONTACT_INFO, getString(R.string.participating_store_desc))
+                                    intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
+                                    startActivity(intentInStoreFinder)
+                                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                                }
+
+                                }
+                            else -> return
+                        }
+                        enableAlreadyHaveALink(true)
+                    }
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    activity?.runOnUiThread {
+                        enableAlreadyHaveALink(true)
+                    }
+                    progressVisibility(false)
+                }
+
+            }, LocationResponse::class.java))
+        }
+    }
+
+    private fun enableAlreadyHaveALink(enableLink: Boolean) {
+        tvAlreadyHaveCard?.isEnabled = enableLink
     }
 
     override fun onResume() {
         super.onResume()
         hideKeyboard()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
+        when (requestCode) {
+            ProductListingFindInStoreNoQuantityFragment.REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdate()
+            }
+            else -> return
+        }
+    }
+
+    private fun startLocationUpdate() = FuseLocationAPISingleton.startLocationUpdate()
+
+    private fun progressVisibility(state: Boolean) = activity?.runOnUiThread {
+        pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
+        btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
+        btnParticipatingStores?.isClickable = !state
     }
 }
