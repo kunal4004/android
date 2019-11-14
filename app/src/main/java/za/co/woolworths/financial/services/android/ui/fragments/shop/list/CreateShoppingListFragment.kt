@@ -154,7 +154,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         btnCancel.setOnClickListener(this)
         etNewList.setOnEditorActionListener { v, actionId, event ->
             if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                activity?.beginCreateListExecution()
+                createListRequest()
             }
             true
         }
@@ -228,13 +228,16 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     view.postDelayed({ (activity as? AddToShoppingListActivity)?.exitActivityAnimation() }, HIDE_KEYBOARD_DELAY_MILIS)
                 }
 
-                R.id.btnCancel -> {
-                    isOrderIdNullOrEmpty = mOrderId.isNullOrEmpty()
-                    shoppingListPostProgress(true)
-                    activity?.beginCreateListExecution()
-                }
+                R.id.btnCancel -> createListRequest()
+
             }
         }
+    }
+
+    private fun createListRequest() {
+        isOrderIdNullOrEmpty = mOrderId.isNullOrEmpty()
+        shoppingListPostProgress(true)
+        activity?.beginCreateListExecution()
     }
 
     private fun FragmentActivity.closeFragment(view: View) {
