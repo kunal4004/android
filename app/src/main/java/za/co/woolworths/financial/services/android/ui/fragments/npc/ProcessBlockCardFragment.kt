@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -18,17 +17,19 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import android.os.CountDownTimer
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.npc_block_card_failure.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 
 class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimationState {
 
@@ -38,6 +39,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     companion object {
         const val CARD_BLOCKED = "CARD_BLOCKED"
         const val BLOCK_CARD_REASON = "BLOCK_CARD_REASON"
+        const val RESULT_CODE_BLOCK_CODE_SUCCESS = 556
         fun newInstance(cardBlocked: Boolean, blockReason: Int?) = ProcessBlockCardFragment().withArgs {
             putBoolean(CARD_BLOCKED, cardBlocked)
             putInt(BLOCK_CARD_REASON, blockReason ?: 0)
@@ -66,7 +68,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 containerViewId = R.id.flProgressIndicator
         )
 
-        btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity(false) }
+        okGotItButton?.setOnClickListener { navigateToMyCardActivity(false) }
         hideToolbarIcon()
 
         if (!mCardWasBlocked)
@@ -85,9 +87,13 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     }
 
     private fun executeBlockCard() {
-        val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
+        val storeCard = (activity as? BlockMyCardActivity)?.getCardDetail()
+        val storeCardDetail = (activity as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
         (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
-            account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber, mBlockCardReason), it.toString()) }
+            storeCardDetail?.productOfferingId?.let {
+                blockMyCardRequest(BlockCardRequestBody(storeCardDetail.visionAccountNumber, storeCard?.number
+                        ?: "", storeCard?.sequence?.toInt() ?: 0, mBlockCardReason), it)
+            }
         }
     }
 
@@ -131,17 +137,18 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
             incBlockCardSuccess?.visibility = VISIBLE
             incProcessingTextLayout?.visibility = GONE
             object : CountDownTimer(1500, 100) {
-                override fun onTick(millisUntilFinished: Long) {
-                }
-
+                override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     activity?.apply {
-                        val account = (this as? BlockMyCardActivity)?.getStoreCardDetail()
-                        account?.primaryCard?.cardBlocked = true
+                        val storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()
+                        storeCard?.storeCardsData?.primaryCards?.get(0)?.blockCode = "L"
                         PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
-                        setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, Gson().toJson(account)))
+                        val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
+                        displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCard))
+                        startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
+                        setResult(RESULT_CODE_BLOCK_CODE_SUCCESS)
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                         finish()
-                        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
                     }
                 }
             }.start()

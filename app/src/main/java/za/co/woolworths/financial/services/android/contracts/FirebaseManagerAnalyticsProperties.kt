@@ -68,6 +68,16 @@ class FirebaseManagerAnalyticsProperties {
         const val MY_ACCOUNTS_CHAT_OFFLINE = "MYACCOUNTS_CHAT_OFFLINE"
         const val MY_ACCOUNTS_CHAT_BREAK = "MYACCOUNTS_CHAT_BREAK"
         const val MY_ACCOUNTS_CHAT_END = "MYACCOUNTS_CHAT_END"
+
+        const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
+        const val MY_ACCOUNTS_VTC_PAY = "MYACCOUNTS_VTC_PAY"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "MYACCOUNTS_VTC_HOWTO"
+
+        const val MYACCOUNTS_ICR_GET_CARD = "MYACCOUNTS_ICR_GET_CARD"
+        const val MYACCOUNTS_ICR_STORES = "MYACCOUNTS_ICR_STORES"
+        const val MYACCOUNTS_ICR_LINK_START = "MYACCOUNTS_ICR_LINK_START"
+        const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
+        const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
     }
 
     class PropertyNames {
@@ -75,6 +85,7 @@ class FirebaseManagerAnalyticsProperties {
             const val SUBURBNAME: String = "SUBURBNAME"
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
             const val C2ID: String = "c2_id"
+            const val ATGId: String = "ATGId"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
             const val DESCRIPTION : String = "DESCRIPTION"
         }

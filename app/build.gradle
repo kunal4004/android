@@ -7,11 +7,11 @@ apply plugin: 'io.fabric'
 
 android {
 
-    def major = "5"
-    def minor = "17"
-    def fix = "1"
+    def major = "6"
+    def minor = "0"
+    def fix = "0"
 
-    def jobNumber = 361
+    def jobNumber = 380
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -72,7 +72,7 @@ android {
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 120
+            jobNumber = 119
         }
 
         defaultConfig {
@@ -190,7 +190,7 @@ dependencies {
     api 'com.google.zxing:core:3.3.3'
 
     api 'com.google.zxing:android-core:3.3.0'
-    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.1.0'
     implementation 'me.relex:circleindicator:2.1.0@aar'
 
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
@@ -200,14 +200,15 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation "com.github.skydoves:balloon:1.0.4"
+    implementation 'cards.pay:paycardsrecognizer:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'
 
     implementation 'com.android.volley:volley:1.1.1'
+    implementation "com.google.android.gms:play-services-auth-api-phone:17.3.0"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.25.0'

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -42,7 +41,7 @@
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:WTextView_font="medium_bold"
-                    />
+                    tools:ignore="UnusedAttribute" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -55,17 +54,15 @@
             app:tabIndicatorColor="@color/green"
             app:tabMode="fixed"
             app:tabSelectedTextColor="@color/black"
-            app:tabTextColor="@color/gray_circle"
-            />
+            app:tabTextColor="@color/gray_circle" />
 
-    </com.google.android.material.appbar.AppBarLayout >
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:id="@+id/nest_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -78,21 +75,20 @@
 
                 <include
                     layout="@layout/location_service_off_layout"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <include
                     layout="@layout/no_product_found"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <za.co.woolworths.financial.services.android.util.GoogleMapViewPager
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
 
-            <include layout="@layout/no_connection_handler"/>
+            <include layout="@layout/no_connection_handler" />
 
         </FrameLayout>
     </LinearLayout>

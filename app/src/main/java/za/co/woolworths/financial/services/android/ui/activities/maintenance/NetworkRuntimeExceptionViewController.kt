@@ -28,10 +28,8 @@ open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeE
     fun openSocketTimeOutDialog() {
         start()
         handler = Handler(looper)
-        handler!!.post {
-            val appInstance = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity)
-                    ?: return@post
-
+        handler?.post {
+            val appInstance = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity) ?: return@post
             val fragment = appInstance.supportFragmentManager.findFragmentByTag(ErrorMessageDialogWithTitleFragment::class.java.simpleName)
             val socketTimeoutExceptionDialog = ErrorMessageDialogWithTitleFragment.newInstance()
             if (fragment is ErrorMessageDialogWithTitleFragment) return@post

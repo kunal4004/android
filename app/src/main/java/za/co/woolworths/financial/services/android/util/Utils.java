@@ -88,8 +88,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
-import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
@@ -99,6 +97,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -116,6 +116,7 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -1505,16 +1506,16 @@ public class Utils {
 		}
 	}
 
-	public static int getMinSupportedAppVersion(String minSupportedAppVersion) {
-		return TextUtils.isEmpty(minSupportedAppVersion) ? 0 : Integer.valueOf(minSupportedAppVersion.replace(".", ""));
+	public static int getMinimumSupportedAppBuildNumber(String minimumSupportedAppBuildNumber) {
+		return TextUtils.isEmpty(minimumSupportedAppBuildNumber) ? 0 : Integer.valueOf(minimumSupportedAppBuildNumber);
 	}
 
-	public static Integer getAppMinorMajorBuildVersion() {
-		return Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
+	public static Integer getAppBuildNumber() {
+		return BuildConfig.VERSION_CODE;
 	}
 
-	public static Boolean isFeatureEnabled(String minSupportedAppVersion) {
-		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
+	public static Boolean isFeatureEnabled(String minimumSupportedAppBuildNumber) {
+		return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
 	}
 
 	public static boolean checkForBinarySu() {
@@ -1547,7 +1548,66 @@ public class Utils {
 		return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
 	}
 
+	public static void setAsVirtualTemporaryStoreCardPopupShown(Boolean state) {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.isVirtualTemporaryStoreCardPopupShown = state;
+		currentUserObject.save();
+	}
 
+	public static Boolean isVirtualTemporaryStoreCardPopupShown() {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return currentUserObject.isVirtualTemporaryStoreCardPopupShown;
+	}
 
+	public static int calculateNoOfColumns(Context context, float columnWidthDp) {
+		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+		float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+		int noOfColumns = (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
+		return noOfColumns;
+	}
 
+	public static Boolean isCartSummarySuburbIDEmpty(CartSummaryResponse cartSummaryResponse) {
+        if (cartSummaryResponse.data != null) {
+            List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+            if (cartSummaryList.get(0) != null) {
+                CartSummary cartSummary = cartSummaryList.get(0);
+                return TextUtils.isEmpty(cartSummary.suburbId);
+            }
+        }
+        return true;
+    }
+
+	public static void showGeneralErrorDialog(FragmentManager fragmentManager,String message){
+		ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
+		if (fragmentManager != null) {
+			minAmountDialog.show(fragmentManager, ErrorDialogFragment.class.getSimpleName());
+		}
+	}
+
+	public static boolean isValidLuhnNumber(String ccNumber) {
+		int sum = 0;
+		boolean alternate = false;
+		for (int i = ccNumber.length() - 1; i >= 0; i--) {
+			int n = Integer.parseInt(ccNumber.substring(i, i + 1));
+			if (alternate) {
+				n *= 2;
+				if (n > 9) {
+					n = (n % 10) + 1;
+				}
+			}
+			sum += n;
+			alternate = !alternate;
+		}
+		return (sum % 10 == 0);
+	}
+
+	public static String getUserATGId(JsonElement atgId) {
+		if (atgId instanceof JsonObject) {
+			return atgId.getAsString();
+		} else if (atgId instanceof JsonArray) {
+			return ((JsonArray) atgId).get(0).getAsString();
+		} else {
+			return "";
+		}
+	}
 }

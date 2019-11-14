@@ -228,17 +228,17 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
         });
     }
 
-    public Call<SkusInventoryForStoreResponse> queryInventoryForSKUs(String storeId, String multiSku, final boolean isMultiSKUs) {
+    public Call<SkusInventoryForStoreResponse> queryInventoryForSKUs(String storeId, String multiSku, final boolean isDefaultStoreId) {
         Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
         skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
             @Override
             public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
                 switch (skusInventoryForStoreResponse.httpCode) {
                     case 200:
-                        if (isMultiSKUs)
+                        if (isDefaultStoreId)
                             getNavigator().onInventoryResponseForAllSKUs(skusInventoryForStoreResponse);
                         else
-                            getNavigator().onInventoryResponseForSelectedSKU(skusInventoryForStoreResponse);
+                            getNavigator().onUpdatedInventoryResponse(skusInventoryForStoreResponse);
                         break;
                     default:
                         if (skusInventoryForStoreResponse.response != null)

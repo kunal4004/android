@@ -31,6 +31,7 @@
     <style name="CustomProgressBarTheme">
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">stateUnchanged</item>
     </style>
 
 </resources>

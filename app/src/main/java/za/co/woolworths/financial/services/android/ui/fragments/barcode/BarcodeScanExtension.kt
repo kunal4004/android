@@ -159,31 +159,36 @@ abstract class BarcodeScanExtension : Fragment() {
         }
     }
 
-    public fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
+    fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
         val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
         val uri = Uri.parse(urlString)
-        uri?.host?.apply {
-            with(this) {
-                when {
-                    contains(BarcodeScanFragment.HOST_WOOLWORTHS, true) -> {
-                        var searchTerm = uri.getQueryParameter("Ntt")
-                        if (searchTerm.isNullOrEmpty())
-                            searchTerm = uri.getQueryParameter("searchTerm")
+        uri?.host?.replace("www.", "")?.let { domain ->
+            WoolworthsApplication.getWhitelistedDomainsForQRScanner()?.apply {
+                if (domain in this) {
+                    when {
+                        domain.contains(BarcodeScanFragment.DOMAIN_WOOLWORTHS, true) -> {
+                            var searchTerm = uri.getQueryParameter("Ntt")
+                            if (searchTerm.isNullOrEmpty())
+                                searchTerm = uri.getQueryParameter("searchTerm")
 
-                        if (!searchTerm.isNullOrEmpty()) {
-                            productSearchTypeAndTerm.searchTerm = searchTerm
-                            productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
-                        } else {
-                            searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
                             if (!searchTerm.isNullOrEmpty()) {
                                 productSearchTypeAndTerm.searchTerm = searchTerm
-                                productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                                productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
+                            } else {
+                                searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
+                                if (!searchTerm.isNullOrEmpty()) {
+                                    productSearchTypeAndTerm.searchTerm = searchTerm
+                                    productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                                }else{
+                                    productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.WHITE_LISTED_DOMAIN
+                                }
                             }
                         }
+                        else -> {
+                            productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.WHITE_LISTED_DOMAIN
+                        }
                     }
-                    contains(BarcodeScanFragment.HOST_YOUTUBE, true) -> {
-                        productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.HOST_YOUTUBE
-                    }
+
                 }
             }
         }

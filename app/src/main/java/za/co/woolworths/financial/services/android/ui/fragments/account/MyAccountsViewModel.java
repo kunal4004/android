@@ -2,7 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody;
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
@@ -34,4 +37,5 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 		},MessageResponse.class));
 		return messageRequestCall;
 	}
+
 }

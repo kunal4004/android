@@ -5,4 +5,15 @@
     <dimen name="cli_fifty_dp">50dp</dimen>
     <dimen name="cli_sixteen_sp">16sp</dimen>
     <dimen name="cli_fifteen_sp">15sp</dimen>
+    <dimen name="store_card_enter_otp_title_top_margin_32dp">32dp</dimen>
+    <dimen name="store_card_enter_otp_title_top_margin_16dp">16dp</dimen>
+    <dimen name="store_card_enter_otp_title_top_margin_8dp">8dp</dimen>
+    <dimen name="store_card_text_size_20_sp">20sp</dimen>
+    <dimen name="store_card_text_size_15_sp">15sp</dimen>
+    <dimen name="store_card_text_size_14_sp">14sp</dimen>
+    <dimen name="store_card_spannable_text_17_sp_bold">17sp</dimen>
+    <dimen name="store_card_text_field_width_47_dp">47dp</dimen>
+    <dimen name="store_card_text_field_height_50_dp">50dp</dimen>
+    <dimen name="store_card_text_field_text_size_14_dp">14sp</dimen>
+    <dimen name="store_card_next_button_size_48_dp">48sp</dimen>
 </resources>

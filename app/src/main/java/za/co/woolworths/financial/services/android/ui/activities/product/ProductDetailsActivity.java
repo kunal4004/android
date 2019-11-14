@@ -14,6 +14,7 @@ import com.google.gson.JsonElement;
 import org.jetbrains.annotations.Nullable;
 
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
@@ -25,7 +26,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 
 public class ProductDetailsActivity extends AppCompatActivity implements IToastInterface {
 
-    ProductDetailsFragmentNew productDetailsFragmentNew;
+    ProductDetailsFragment productDetailsFragmentNew;
     public static WMaterialShowcaseView walkThroughPromtView = null;
     private FrameLayout flContentFrame;
 
@@ -37,7 +38,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
         setContentView(R.layout.product_details_activity);
         Bundle bundle = getIntent().getExtras();
         flContentFrame = findViewById(R.id.content_frame);
-        productDetailsFragmentNew = new ProductDetailsFragmentNew();
+        productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
