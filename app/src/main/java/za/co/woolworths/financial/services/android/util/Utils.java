@@ -1506,16 +1506,16 @@ public class Utils {
 		}
 	}
 
-	public static int getMinSupportedAppVersion(String minSupportedAppVersion) {
-		return TextUtils.isEmpty(minSupportedAppVersion) ? 0 : Integer.valueOf(minSupportedAppVersion.replace(".", ""));
+	public static int getMinimumSupportedAppBuildNumber(String minimumSupportedAppBuildNumber) {
+		return TextUtils.isEmpty(minimumSupportedAppBuildNumber) ? 0 : Integer.valueOf(minimumSupportedAppBuildNumber);
 	}
 
-	public static Integer getAppMinorMajorBuildVersion() {
-		return Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
+	public static Integer getAppBuildNumber() {
+		return BuildConfig.VERSION_CODE;
 	}
 
-	public static Boolean isFeatureEnabled(String minSupportedAppVersion) {
-		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
+	public static Boolean isFeatureEnabled(String minimumSupportedAppBuildNumber) {
+		return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
 	}
 
 	public static boolean checkForBinarySu() {

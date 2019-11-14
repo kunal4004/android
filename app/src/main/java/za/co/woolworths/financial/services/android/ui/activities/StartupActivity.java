@@ -203,23 +203,23 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						if (absaBankingOpenApiServices == null) {
 							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");
 						} else {
-							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
+							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinimumSupportedAppBuildNumber()));
 						}
 						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
 						if (presenceInAppChat == null) {
 							presenceInAppChat = new PresenceInAppChat(new ArrayList<TradingHours>(), "", false);
 						} else {
-							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
+							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinimumSupportedAppBuildNumber()));
 						}
 
                         InstantCardReplacement instantCardReplacement = configResponse.configs.instantCardReplacement;
                         if (instantCardReplacement != null) {
-                            instantCardReplacement.setEnabled(Utils.isFeatureEnabled(instantCardReplacement.getMinSupportedAppVersion()));
+                            instantCardReplacement.setEnabled(Utils.isFeatureEnabled(instantCardReplacement.getMinimumSupportedAppBuildNumber()));
                         }
 
 						VirtualTempCard virtualTempCard = configResponse.configs.virtualTempCard;
 						if (virtualTempCard != null) {
-							virtualTempCard.setEnabled(Utils.isFeatureEnabled(virtualTempCard.getMinSupportedAppVersion()));
+							virtualTempCard.setEnabled(Utils.isFeatureEnabled(virtualTempCard.getMinimumSupportedAppBuildNumber()));
 						}
 
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
