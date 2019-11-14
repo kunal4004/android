@@ -19,6 +19,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ICREnterCardNumberFragment : MyCardExtension() {
@@ -49,17 +51,20 @@ class ICREnterCardNumberFragment : MyCardExtension() {
     private fun navigateToOTPScreen() {
         if (shouldDisableUINavigation) return
         if (navigateToEnterOTPFragmentImageView?.isEnabled == true) {
-            (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)
-            replaceFragment(
-                    fragment = EnterOtpFragment.newInstance(),
-                    tag = EnterOtpFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard,
-                    allowStateLoss = true,
-                    enterAnimation = R.anim.slide_in_from_right,
-                    exitAnimation = R.anim.slide_to_left,
-                    popEnterAnimation = R.anim.slide_from_left,
-                    popExitAnimation = R.anim.slide_to_right
-            )
+            if (NetworkManager().isConnectedToNetwork(activity)) {
+                (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)
+                replaceFragment(
+                        fragment = EnterOtpFragment.newInstance(),
+                        tag = EnterOtpFragment::class.java.simpleName,
+                        containerViewId = R.id.flMyCard,
+                        allowStateLoss = true,
+                        enterAnimation = R.anim.slide_in_from_right,
+                        exitAnimation = R.anim.slide_to_left,
+                        popEnterAnimation = R.anim.slide_from_left,
+                        popExitAnimation = R.anim.slide_to_right)
+            } else {
+                activity?.let { activity -> ErrorHandlerView(activity).showToast() }
+            }
         }
     }
 
