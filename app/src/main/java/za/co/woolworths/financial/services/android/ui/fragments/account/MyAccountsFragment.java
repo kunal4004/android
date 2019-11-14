@@ -287,6 +287,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			if (SessionUtilities.getInstance().isC2User()) {
 				mUpdateMyAccount.enableSwipeToRefreshAccount(true);
+				if (imRefreshAccount != null)
+					imRefreshAccount.setEnabled(true);
 				this.loadAccounts(false);
 			}else {
 				this.configureSignInNoC2ID();
