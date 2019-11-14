@@ -363,7 +363,7 @@ public class SSOActivity extends WebViewActivity {
 					.appendQueryParameter("state", this.state)
 					.appendQueryParameter("nonce", this.nonce)
 					.appendQueryParameter("scope", scope)
-					.appendQueryParameter("appVersion",WoolworthsApplication.getAppVersionName());
+					.appendQueryParameter("appVersion", WoolworthsApplication.getStsValues().getKmsiMinimumSupportedAppVersion() != null ? WoolworthsApplication.getStsValues().getKmsiMinimumSupportedAppVersion() : WoolworthsApplication.getAppVersionName());
 		}
 
 		if (this.extraQueryStringParams != null) {

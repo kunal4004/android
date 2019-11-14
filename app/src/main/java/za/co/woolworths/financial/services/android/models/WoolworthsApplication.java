@@ -45,6 +45,7 @@ import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -97,6 +98,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static InstantCardReplacement instantCardReplacement;
 	private static VirtualTempCard virtualTempCard;
 	private static ArrayList<String> whitelistedDomainsForQRScanner;
+	private static Sts stsValues;
 
 	private Activity mCurrentActivity = null;
 
@@ -507,5 +509,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setWhitelistedDomainsForQRScanner(ArrayList<String> whitelistedDomainsForQRScanner) {
 		WoolworthsApplication.whitelistedDomainsForQRScanner = whitelistedDomainsForQRScanner;
+	}
+
+	public static Sts getStsValues() {
+		return stsValues != null ? stsValues : new Sts();
+	}
+
+	public static void setStsValues(Sts stsValues) {
+		WoolworthsApplication.stsValues = stsValues;
 	}
 }
