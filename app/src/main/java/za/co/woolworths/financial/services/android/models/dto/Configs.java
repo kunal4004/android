@@ -16,4 +16,5 @@ public class Configs {
     public InstantCardReplacement instantCardReplacement;
     public VirtualTempCard virtualTempCard;
     public ArrayList<String> whitelistedDomainsForQRScanner;
+    public Sts sts;
 }
