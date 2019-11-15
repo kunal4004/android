@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -198,6 +199,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     private void uniqueIdsForMyAccountCards() {
         mToolbar.setContentDescription(getString(R.string.toolbar_layout));
+        if (containsPersonalLoan)
+            mBtnApplyNow.setContentDescription(getString(R.string.drawn_down_amount_layout));
     }
 
     private void updateMyAccount(ImageView imRefreshAccount) {

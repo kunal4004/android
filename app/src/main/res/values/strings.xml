@@ -1180,7 +1180,7 @@
     <string name="toolbar_layout">Toolbar</string>
     <string name="active_account_layout">Active Account</string>
 
-    <!-- Unique ids for store card -->
+    <!-- Unique Ids for store card -->
     <string name="charged_off_account">Charged Off Account</string>
     <string name="card_detail_container_layout">Card Detail Container</string>
     <string name="funds_layout_layout">Funds Layout</string>
@@ -1194,5 +1194,8 @@
     <string name="balance_protection_layout">Balance Protection</string>
     <string name="debit_order_layout">Debit Order</string>
     <string name="my_card_layout">My Card</string>
+
+    <!-- Unique Ids for personal loan -->
+    <string name="drawn_down_amount_layout">Drawn Down Amount</string>
 
 </resources>
