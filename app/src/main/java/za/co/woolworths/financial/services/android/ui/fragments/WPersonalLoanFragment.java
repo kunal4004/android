@@ -721,6 +721,7 @@ private static AsyncTask<Void, Void, Void> async;
     }
 
     private void uniqueIdsForStoreCard() {
+        if (account == null || !isAdded()) return;
         llActiveAccount.setContentDescription(getString(R.string.active_account_layout));
         llCardDetailContainer.setContentDescription(getString(R.string.card_detail_container_layout));
         llTopFunds.setContentDescription(getString(R.string.funds_layout_layout));
@@ -734,6 +735,7 @@ private static AsyncTask<Void, Void, Void> async;
         relBalanceProtection.setContentDescription(getString(R.string.balance_protection_layout));
         relDebitOrders.setContentDescription(getString(R.string.debit_order_layout));
         rlMyStoreCard.setContentDescription(getString(R.string.my_card_layout));
+        mRelDrawnDownAmount.setContentDescription(getString(R.string.drawn_down_amount_layout));
     }
 }
 

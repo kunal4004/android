@@ -199,8 +199,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     private void uniqueIdsForMyAccountCards() {
         mToolbar.setContentDescription(getString(R.string.toolbar_layout));
-        if (containsPersonalLoan)
-            mBtnApplyNow.setContentDescription(getString(R.string.drawn_down_amount_layout));
     }
 
     private void updateMyAccount(ImageView imRefreshAccount) {
