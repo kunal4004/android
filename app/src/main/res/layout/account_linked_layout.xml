@@ -28,7 +28,6 @@
 
         <RelativeLayout
             android:id="@+id/linkedStoreCard"
-            android:contentDescription="@string/linked_store_card_layout"
             style="@style/accountsCardStyle">
 
             <FrameLayout
@@ -76,7 +75,6 @@
 
         <RelativeLayout
             android:id="@+id/linkedCrediCard"
-            android:contentDescription="@string/linked_credit_card_layout"
             style="@style/accountsCardStyle">
 
             <FrameLayout
@@ -123,7 +121,6 @@
 
         <RelativeLayout
             android:id="@+id/linkedPersonalLoan"
-            android:contentDescription="@string/linked_personal_loan_layout"
             style="@style/accountsCardStyle">
 
             <FrameLayout

@@ -1176,4 +1176,46 @@
     <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
     <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
     <string name="icr_wrong_otp_error">The One Time Pin provided doesn\'t exist</string>
+
+    <string name="toolbar_layout">Toolbar</string>
+    <string name="active_account_layout">Active Account</string>
+
+    <!-- Unique Ids for store card -->
+    <string name="charged_off_account">Charged Off Account</string>
+    <string name="card_detail_container_layout">Card Detail Container</string>
+    <string name="funds_layout_layout">Funds Layout</string>
+    <string name="accounts_status_layout">Accounts Status</string>
+    <string name="next_payment_due_layout">Next Payment Due</string>
+    <string name="current_balance_layout">Current Balance</string>
+    <string name="credit_limit_layout">Credit Limit</string>
+    <string name="increase_limit_container_layout">Increase Limit Container</string>
+    <string name="view_transaction_layout">View Transaction</string>
+    <string name="view_statement_layout">View Statement</string>
+    <string name="balance_protection_layout">Balance Protection</string>
+    <string name="debit_order_layout">Debit Order</string>
+    <string name="my_card_layout">My Card</string>
+
+    <!-- Unique Ids for personal loan -->
+    <string name="drawn_down_amount_layout">Drawn Down Amount</string>
+
+    <!-- Unique Ids for PLDD Enter Drawn Down Amount Layout-->
+    <string name="PLDD_toolbar_layout">Toolbar</string>
+    <string name="loan_withdrawal_drawn_down_amount_layout">Loan Withdrawal Drawn Down Amount</string>
+    <string name="enter_drawn_down_amount_layout">Enter Drawn Down Amount layout</string>
+    <string name="enter_drawn_down_amount_desc">Drawn Down Amount Description</string>
+    <string name="available_funds_layout">Available Funds Layout</string>
+    <string name="pldd_credit_limit_layout">Credit Limit Layout</string>
+
+    <!-- Unique Ids for Loan Confirmation Layout -->
+    <string name="pldd_drawn_down_amount_description_layout">Drawn Down Amount Description</string>
+    <string name="repayment_period_layout">Repayment Period Layout</string>
+    <string name="additional_monthly_payment_layout">Additional Monthly Payment Layout</string>
+    <string name="confirm_repayment_period_layout">Confirm Repayment Period Layout</string>
+    <string name="confirm_loan_layout">Confirm Loan Layout</string>
+    <string name="drawn_down_amount_label">Drawn Down Amount Label</string>
+
+    <!-- Unique Ids for Loan Withdrawal Success Layout -->
+    <string name="loan_withdrawal_success_layout">Loan Withdrawal Success Module</string>
+    <string name="on_success_button_tapped">On Success Button Tapped</string>
+
 </resources>
