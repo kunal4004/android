@@ -192,6 +192,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
         if (!SessionUtilities.getInstance().isC2User()){
             imRefreshAccount.setEnabled(false);
         }
+
+        uniqueIdsForMyAccountCards();
+    }
+
+    private void uniqueIdsForMyAccountCards() {
+        mToolbar.setContentDescription(getString(R.string.toolbar_layout));
     }
 
     private void updateMyAccount(ImageView imRefreshAccount) {
