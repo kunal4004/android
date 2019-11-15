@@ -224,7 +224,6 @@
                             <RelativeLayout
                                 android:id="@+id/storeLocator"
                                 style="@style/listStyle"
-                                android:contentDescription="@string/store_locator_layout"
                                 android:background="@drawable/stores_details_background">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -243,7 +242,6 @@
                             <RelativeLayout
                                 android:id="@+id/helpSection"
                                 style="@style/listStyle"
-                                android:contentDescription="@string/need_help_layout"
                                 android:background="@drawable/stores_details_background">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -285,7 +283,6 @@
                         android:id="@+id/rlProfile"
                         style="@style/listStyle"
                         android:layout_marginTop="@dimen/default_margin"
-                        android:contentDescription="@string/profile_layout"
                         android:background="@drawable/stores_details_background"
                         android:visibility="visible">
 
@@ -306,7 +303,6 @@
                     <RelativeLayout
                         android:id="@+id/rlUpdatePassword"
                         style="@style/listStyle"
-                        android:contentDescription="@string/update_password_layout"
                         android:background="@drawable/stores_details_background"
                         android:visibility="visible">
 
@@ -326,7 +322,6 @@
                     <RelativeLayout
                         android:id="@+id/rlMyPreferences"
                         style="@style/listStyle"
-                        android:contentDescription="@string/mypreferences_layout"
                         android:background="@drawable/stores_details_background"
                         android:visibility="visible">
 
@@ -347,7 +342,6 @@
                         android:id="@+id/signOutBtn"
                         style="@style/listStyle"
                         android:background="@drawable/stores_details_background"
-                        android:contentDescription="@string/sign_out_layout"
                         android:visibility="visible">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
