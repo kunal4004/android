@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sixteen_dp"
+        android:paddingBottom="@dimen/twenty_four_dp"
         >
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
