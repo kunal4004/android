@@ -1,5 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration.dto;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 public class Header {
@@ -68,7 +69,7 @@ public class Header {
 	private ResultMessage[] resultMessages;
 
 	@SerializedName("paginationContext")
-	private String paginationContext;
+	private JsonElement paginationContext;
 
 
 	public String getStatusCode() {
@@ -239,11 +240,11 @@ public class Header {
 		this.resultMessages = resultMessages;
 	}
 
-	public void setPaginationContext(String paginationContext) {
+	public void setPaginationContext(JsonElement paginationContext) {
 		this.paginationContext = paginationContext;
 	}
 
-	public String getPaginationContext() {
+	public JsonElement getPaginationContext() {
 		return paginationContext;
 	}
 
