@@ -230,7 +230,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun addToCartForSelectedSKU() {
         val item = getSelectedQuantity()?.let {
-            AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, if (it < getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it)
+            AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it)
         }
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
