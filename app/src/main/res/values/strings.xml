@@ -1198,20 +1198,24 @@
     <!-- Unique Ids for personal loan -->
     <string name="drawn_down_amount_layout">Drawn Down Amount</string>
 
-    <!-- Unique Ids for PLDD Module -->
+    <!-- Unique Ids for PLDD Enter Drawn Down Amount Layout-->
     <string name="PLDD_toolbar_layout">Toolbar</string>
     <string name="loan_withdrawal_drawn_down_amount_layout">Loan Withdrawal Drawn Down Amount</string>
     <string name="enter_drawn_down_amount_layout">Enter Drawn Down Amount layout</string>
     <string name="enter_drawn_down_amount_desc">Drawn Down Amount Description</string>
     <string name="available_funds_layout">Available Funds Layout</string>
     <string name="pldd_credit_limit_layout">Credit Limit Layout</string>
-    
+
+    <!-- Unique Ids for Loan Confirmation Layout -->
     <string name="pldd_drawn_down_amount_description_layout">Drawn Down Amount Description</string>
     <string name="repayment_period_layout">Repayment Period Layout</string>
     <string name="additional_monthly_payment_layout">Additional Monthly Payment Layout</string>
     <string name="confirm_repayment_period_layout">Confirm Repayment Period Layout</string>
     <string name="confirm_loan_layout">Confirm Loan Layout</string>
     <string name="drawn_down_amount_label">Drawn Down Amount Label</string>
+
+    <!-- Unique Ids for Loan Withdrawal Success Layout -->
     <string name="loan_withdrawal_success_layout">Loan Withdrawal Success Module</string>
     <string name="on_success_button_tapped">On Success Button Tapped</string>
+
 </resources>

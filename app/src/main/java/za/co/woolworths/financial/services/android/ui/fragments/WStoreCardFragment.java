@@ -746,6 +746,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     private void uniqueIdsForStoreCard() {
+    if (account == null || !isAdded()) return;
         llActiveAccount.setContentDescription(getString(R.string.active_account_layout));
         llCardDetailContainer.setContentDescription(getString(R.string.card_detail_container_layout));
         llTopFunds.setContentDescription(getString(R.string.funds_layout_layout));
