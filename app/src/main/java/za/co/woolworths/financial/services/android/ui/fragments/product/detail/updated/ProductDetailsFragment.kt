@@ -301,9 +301,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun getImageByWidth(imageUrl: String, context: Context): String {
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).apply {
-            //val deviceHeight = this.defaultDisplay
+            val deviceHeight = this.defaultDisplay
             val size = Point()
-            //deviceHeight.getSize(size)
+            deviceHeight.getSize(size)
             val width = size.x
             var imageLink = imageUrl
             if (imageLink.isEmpty()) imageLink = "https://images.woolworthsstatic.co.za/"
@@ -956,7 +956,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun showErrorWhileLoadingProductDetails() {
         activity?.apply {
-            hideProgressBar()
+            showProductUnavailable()
             Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc))
         }
     }
