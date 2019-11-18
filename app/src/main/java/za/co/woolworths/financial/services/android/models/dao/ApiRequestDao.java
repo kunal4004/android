@@ -78,15 +78,17 @@ public class ApiRequestDao extends BaseDao {
 
         for (Map.Entry<String, String> entry : result.entrySet()) {
 
+            final String key = entry.getKey();
             String value;
-            if (entry.getKey() == "id" || entry.getKey() == "appVersion"){
-                value = entry.getValue();
-            }else{
+
+            if (key.equals("endpoint") || key.equals("requestType") || key.equals("headers") || key.equals("parameters")){
                 try {
                     value = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                 } catch (DecryptionFailureException e) {
                     throw new RuntimeException(e);
                 }
+            }else{
+                value = entry.getValue();
             }
 
             switch (entry.getKey()) {
