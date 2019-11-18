@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/eighty_dp"
-        android:contentDescription="@string/app_label" />
+        android:contentDescription="@string/placeholder" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/errorTitle"
