@@ -123,6 +123,7 @@ android {
         productFlavors {
             qa {
                 applicationIdSuffix ".qa"
+                manifestPlaceholders = [appLabel: "Woolworths Q"]
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')

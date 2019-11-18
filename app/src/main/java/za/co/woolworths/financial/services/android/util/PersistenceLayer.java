@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -74,7 +75,6 @@ public class PersistenceLayer extends SQLiteOpenHelper {
                 instance.prepareDatabase();
             } catch (IOException e) {
                 instance = null;
-                e.printStackTrace();
             }
         }
 
@@ -102,6 +102,16 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void executeSQLStatements(final List<String> queries){
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+
+        for (String query : queries){
+            db.execSQL(query);
+        }
+
+        db.close();
+    }
+
     public void executeDeleteQuery(String query)
     {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
@@ -109,7 +119,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Map<String, String> executeReturnableQuery(String query, String[] arguments) throws Exception {
+    public Map<String, String> executeReturnableQuery(String query, String[] arguments){
         HashMap<String, String> result = new HashMap<String, String>();
 
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
@@ -120,10 +130,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
             db.close();
             return result;
-            //throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
         }
-
-        Log.d(TAG, "" + cursor.getCount());
 
         for(String columnName : cursor.getColumnNames()){
             int index = cursor.getColumnIndex(columnName);
@@ -143,7 +150,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         for(Map.Entry<String, String> entry : arguments.entrySet()){
             row.put(entry.getKey(),entry.getValue());
         }
-        long rowid=-1;
+        long rowid = -1;
         try {
             rowid = db.insert(tableName, null, row);
         }catch (SQLiteException e)
@@ -155,49 +162,17 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         return rowid;
     }
 
-
-    public long executeUpdateQuery(String tableName, Map<String, String> contentValue, String whereClause, String[] argument) {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-
-        ContentValues row = new ContentValues();
-
-        for (Map.Entry<String, String> entry : contentValue.entrySet()) {
-            row.put(entry.getKey(), entry.getValue());
-        }
-        long rowid = -1;
-        try {
-            rowid = db.update(tableName, row, whereClause, argument);
-        } catch (SQLiteException e) {
-            Log.e(TAG, e.getMessage());
-        } finally {
-            db.close();
-        }
-        return rowid;
-    }
-
-    public boolean requestQueryExist(String tableName, String whereClause, String[] argument) {
-        Map<String, String> result = null;
-        String query = "SELECT EXISTS(SELECT * FROM " + tableName +" WHERE "+ whereClause + " )";
-        try {
-            result = PersistenceLayer.getInstance().executeReturnableQuery(query, argument);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-        return result != null && result.containsValue("1");
-    }
-
     private PersistenceLayer(Context context, String filePath) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.myContext = context;
         pathToSaveDBFile = new StringBuffer(filePath).append("/").append(DATABASE_NAME).toString();
     }
+
     public void prepareDatabase() throws IOException {
         boolean dbExist = checkDataBase();
         if(dbExist) {
-            Log.d(TAG, "Database exists.");
             int currentDBVersion = DATABASE_VERSION;
             if (DATABASE_VERSION > currentDBVersion) {
-                Log.d(TAG, "Database version is higher than old.");
                 deleteDb();
                 try {
                     copyDataBase();
@@ -212,17 +187,19 @@ public class PersistenceLayer extends SQLiteOpenHelper {
                 Log.e(TAG, e.getMessage());
             }
         }
+
+        //perform table schema updates if needed
     }
+
     private boolean checkDataBase() {
-        boolean checkDB = false;
         try {
             File file = new File(pathToSaveDBFile);
-            checkDB = file.exists();
+            return file.exists();
         } catch(SQLiteException e) {
-            Log.d(TAG, e.getMessage());
+            return false;
         }
-        return checkDB;
     }
+
     private void copyDataBase() throws IOException {
         OutputStream os = new FileOutputStream(pathToSaveDBFile);
         InputStream is = myContext.getAssets().open("databases/"+DATABASE_NAME);
@@ -235,6 +212,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         os.flush();
         os.close();
     }
+
     public void deleteDb() {
         File file = new File(pathToSaveDBFile);
         if(file.exists()) {
@@ -246,106 +224,9 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate");
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
 
-
-    public int checkApirequest(String endpoint, String requestType, String heardes, String body)
-    {
-        int requestId=0;
-        String[] columns = {REQUEST_ID};
-        String selection=REQUEST_ENDPOINT+"=? and "+REQUEST_TYPE+"=? and "+REQUEST_HEADERS+"=? and "+REQUEST_PARAMETERS+"=? and "+REQUEST_DATE_EXPIRES+">?";
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-
-        Cursor cursor=db.query(API_REQUEST_TABLE,columns,selection, new String[] { endpoint,requestType,heardes,body,getCurrentTime() }, null, null, null);
-         if(cursor != null && cursor.moveToFirst()) {
-             requestId = cursor.getInt(cursor.getColumnIndex(REQUEST_ID));
-
-         }
-
-         return requestId;
-    }
-    public String getApiResponse(int requestId)
-    {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT * FROM " +API_RESPONSE_TABLE+ " WHERE " +RESPONSE_REQUEST_ID+" = "+requestId;
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor!=null)
-              cursor.moveToFirst();
-        String response="";
-        try {
-            response=new String (cursor.getBlob(cursor.getColumnIndex(RESPONSE_OBJECT)),"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return  response;
-
-    }
-    public int addApIRequest(String endpoint, String requestType, String heardes, String body)
-    {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        ContentValues row = new ContentValues();
-        row.put(REQUEST_ENDPOINT,endpoint);
-        row.put(REQUEST_TYPE,requestType);
-        row.put(REQUEST_HEADERS,heardes);
-        row.put(REQUEST_PARAMETERS,body);
-        row.put(REQUEST_DATE_CREATED,getCurrentTime());
-        row.put(REQUEST_DATE_EXPIRES,getExpireTime());
-        long id=db.insert(API_REQUEST_TABLE,null,row);
-         return (int) id;
-    }
-    public void addApIResponse(String response,int requestId,int responseHandler )
-    {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        byte[] contentByte = response.getBytes();
-        db.execSQL("insert into "+API_RESPONSE_TABLE+" ("+RESPONSE_REQUEST_ID+","+RESPONSE_OBJECT+","+RESPONSE_HANDLER+") values(?,?,?)",new Object[]{requestId,contentByte,responseHandler});
-
-    }
-     public boolean checkResponseHandler(int requestId)
-     {
-
-         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-         String query = "SELECT * FROM " +API_RESPONSE_TABLE+ " WHERE " +RESPONSE_REQUEST_ID+" = "+requestId;
-         Cursor cursor = db.rawQuery(query, null);
-         if(cursor!=null && cursor.moveToFirst()) {
-
-             int responseHandler = cursor.getInt(cursor.getColumnIndex(RESPONSE_HANDLER));
-             if (responseHandler == 0)
-                 return false;
-             else
-                 return true;
-         }
-         else return false;
-     }
-
-    public void getSession()
-    {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT * FROM Session";
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
-        do{
-            System.out.println("AAAAAAAAAAAAAAAAAAAA"+cursor.getString(0));
-        }
-        while(cursor.moveToNext());
-    }
-
-
-
-    public String getCurrentTime()
-    {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date date = new Date(System.currentTimeMillis());
-        String value=dateFormat.format(date);
-        return value;
-    }
-
-    public static String getExpireTime()
-    {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
-        Date date = new Date(System.currentTimeMillis()+30*1000);
-        String value=dateFormat.format(date);
-        return value;
     }
 }
