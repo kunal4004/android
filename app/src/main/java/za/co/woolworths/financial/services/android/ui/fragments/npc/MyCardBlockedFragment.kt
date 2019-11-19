@@ -62,6 +62,19 @@ class MyCardBlockedFragment : MyCardExtension() {
         }
 
         callUsNowButton?.setOnClickListener { activity?.let { activity -> Utils.makeCall(activity, "0861502020") } }
+        uniqueIdsForBlockCard()
+    }
+
+    private fun uniqueIdsForBlockCard() {
+        activity?.resources?.apply {
+            imStoreCard?.contentDescription = getString(R.string.image_card)
+            tvNoActiveCard?.contentDescription = getString(R.string.label_noActiveCard)
+            tvNoActiveCardDesc?.contentDescription = getString(R.string.label_noActiveCardDescription)
+            btnGetReplacementCard?.contentDescription = getString(R.string.button_getReplacementCard)
+            callUsNowButton?.contentDescription = getString(R.string.call_us)
+            btnLinkACard?.contentDescription = getString(R.string.link_alreadyHaveCard)
+            blockCardConstraintLayout?.contentDescription = getString(R.string.block_card_layout)
+        }
     }
 
     private fun navigateToReplacementCard() {
