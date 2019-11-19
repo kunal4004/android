@@ -141,8 +141,6 @@ public class ApiRequestDao extends BaseDao {
 
         } catch (DecryptionFailureException e) {
             throw new RuntimeException(e);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

@@ -142,7 +142,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         return result;
     }
 
-    public long executeInsertQuery(String tableName, Map<String, String> arguments) throws Exception {
+    public long executeInsertQuery(String tableName, Map<String, String> arguments) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
 
         ContentValues row = new ContentValues();
@@ -150,12 +150,11 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         for(Map.Entry<String, String> entry : arguments.entrySet()){
             row.put(entry.getKey(),entry.getValue());
         }
-        long rowid = -1;
+        long rowid;
         try {
             rowid = db.insert(tableName, null, row);
-        }catch (SQLiteException e)
-        {
-            Log.e(TAG,e.getMessage());
+        } catch (SQLiteException e) {
+            rowid = -1;
         }finally {
             db.close();
         }
