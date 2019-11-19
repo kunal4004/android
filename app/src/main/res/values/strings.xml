@@ -1222,5 +1222,7 @@
     <string name="verification_code_container">Verification Code Layout</string>
     <string name="load_otp_description">Load Otp Description</string>
     <string name="enter_otp_error">Invalid OTP Error</string>
+    <string name="resend_otp_layout">Resend OTP Layout</string>
+    <string name="resend_Otp_recyclerview">Resend OTP List</string>
 
 </resources>
