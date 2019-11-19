@@ -66,6 +66,13 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         closeIconImageView?.setOnClickListener(this)
         ibBack?.setOnClickListener(this)
         okGotItButton?.setOnClickListener(this)
+        uniqueIdsForLinkStoreCard()
+    }
+
+    private fun uniqueIdsForLinkStoreCard() {
+        incProcessingTextLayout?.contentDescription = getString(R.string.process_your_request_text_indicator)
+        closeIconImageView?.contentDescription = getString(R.string.close_icon_tapped)
+        ibBack?.contentDescription = getString(R.string.back_button_tapped)
     }
 
     override fun onAttach(context: Context) {
