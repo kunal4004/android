@@ -15,7 +15,6 @@ import android.content.Intent
 import android.os.Parcelable
 import android.text.Editable
 import cards.pay.paycardsrecognizer.sdk.Card
-import kotlinx.android.synthetic.main.view_floating_action_button.view.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType

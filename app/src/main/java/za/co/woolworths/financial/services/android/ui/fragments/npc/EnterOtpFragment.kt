@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import android.view.WindowManager
+import kotlinx.android.synthetic.main.view_floating_action_button.view.*
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.net.ConnectException
@@ -80,6 +81,19 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 setOTPDescription(getSavedOTP())
                 showOTPErrorOnOTPFragment()
             }
+        }
+
+        uniqueIdsForEnterOTPScreen()
+    }
+
+    private fun uniqueIdsForEnterOTPScreen() {
+        activity?.resources.apply {
+            tvEnterOtpTitle?.contentDescription = getString(R.string.enter_otp_title)
+            enterOTPDescriptionScreen?.contentDescription = getString(R.string.icr_enter_otp_description)
+            viewOTPBackground?.contentDescription = getString(R.string.verification_code_container)
+            loadingProgressIndicatorViewGroup?.contentDescription = getString(R.string.load_otp_description)
+            vLinkBottomNavigation?.contentDescription = getString(R.string.did_not_receive_title)
+            otpErrorTextView?.contentDescription = getString(R.string.enter_otp_error)
         }
     }
 

@@ -165,7 +165,6 @@
         android:layout_width="@dimen/store_card_next_button_size_48_dp"
         android:layout_height="@dimen/store_card_next_button_size_48_dp"
         android:alpha="0.5"
-        android:contentDescription="@string/app_label"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
         app:layout_constraintEnd_toEndOf="@+id/vLinkBottomNavigation"
         app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"

@@ -1218,5 +1218,9 @@
     <string name="loan_withdrawal_success_layout">Loan Withdrawal Success Module</string>
     <string name="on_success_button_tapped">On Success Button Tapped</string>
     <string name="block_card_layout">Block Card Layout</string>
+    <string name="icr_enter_otp_description">Enter OTP Description</string>
+    <string name="verification_code_container">Verification Code Layout</string>
+    <string name="load_otp_description">Load Otp Description</string>
+    <string name="enter_otp_error">Invalid OTP Error</string>
 
 </resources>
