@@ -34,7 +34,7 @@
                 <ImageView
                     android:id="@+id/imInfo"
                     style="@style/increase_limit_info_circle"
-                    android:contentDescription="@string/app_name"/>
+                    android:contentDescription="@string/placeholder"/>
 
             </RelativeLayout>
 

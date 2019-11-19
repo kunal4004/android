@@ -73,7 +73,7 @@
                         android:layout_width="84dp"
                         android:layout_height="84dp"
                         android:layout_gravity="center"
-                        android:contentDescription="@string/app_name"
+                        android:contentDescription="@string/placeholder"
                         android:minHeight="84dp"
                         fresco:fadeDuration="10"
                         fresco:failureImage="@drawable/woolworth_logo_icon" />

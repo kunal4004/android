@@ -23,13 +23,13 @@
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="@string/app_label"
+        android:text="@string/placeholder"
         android:textColor="@color/charcoal_grey"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@+id/imNextCallIcon"
         app:layout_constraintStart_toEndOf="@+id/imOTPNextEmail"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/app_label" />
+        tools:text="@string/placeholder" />
 
 
     <ImageView
