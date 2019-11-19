@@ -5,3 +5,5 @@ build/*
 app.iml
 library/*
 WigroupServices.properties
+app/ProductionKeystore.properties
+app/key/Woolworths.keystore.jks

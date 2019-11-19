@@ -20,7 +20,7 @@
                 <ImageView
                     style="@style/account_logged_out_icon"
                     android:background="@drawable/autorewards"
-                    android:contentDescription="@string/app_name" />
+                    android:contentDescription="@string/placeholder" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
@@ -39,7 +39,7 @@
                 <ImageView
                     style="@style/account_logged_out_icon"
                     android:background="@drawable/convenient"
-                    android:contentDescription="@string/app_name" />
+                    android:contentDescription="@string/placeholder" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
@@ -105,7 +105,7 @@
                 <ImageView
                     style="@style/account_logged_out_icon"
                     android:background="@drawable/ic_calendar"
-                    android:contentDescription="@string/app_name" />
+                    android:contentDescription="@string/placeholder" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
@@ -124,7 +124,7 @@
                 <ImageView
                     style="@style/account_logged_out_icon"
                     android:background="@drawable/easytomanage"
-                    android:contentDescription="@string/app_name" />
+                    android:contentDescription="@string/placeholder" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
@@ -191,7 +191,7 @@
                 <ImageView
                     style="@style/account_logged_out_icon"
                     android:background="@drawable/myschool"
-                    android:contentDescription="@string/app_name" />
+                    android:contentDescription="@string/placeholder" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"

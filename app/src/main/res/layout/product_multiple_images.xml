@@ -39,7 +39,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/sixteen_dp"
             android:layout_marginTop="@dimen/default_margin"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/placeholder"
             android:src="@drawable/icon_close_circle"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_label">Q Woolworths</string>
-    <integer name="account_time_to_live">600000</integer>
-</resources>
-
