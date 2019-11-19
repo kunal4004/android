@@ -15,6 +15,7 @@ import android.content.Intent
 import android.os.Parcelable
 import android.text.Editable
 import cards.pay.paycardsrecognizer.sdk.Card
+import kotlinx.android.synthetic.main.view_floating_action_button.view.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
@@ -46,6 +47,18 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
 
         navigateToEnterOTPFragmentImageView?.isEnabled = false
+
+        uniqueIdsForEnterCartNuberScreen()
+    }
+
+    private fun uniqueIdsForEnterCartNuberScreen() {
+        activity?.resources?.apply {
+            tvLinkNewCardTitle?.contentDescription = getString(R.string.label_linkICR)
+            tvLinkNewCardDesc?.contentDescription = getString(R.string.label_linkICRCardDescription)
+            cardNumberEditText?.contentDescription = getString(R.string.text_carddetails)
+            navigateToEnterOTPFragmentImageView?.contentDescription = getString(R.string.button_next)
+            invalidCardNumberLabel?.contentDescription = getString(R.string.invalid_card_number)
+        }
     }
 
     private fun navigateToOTPScreen() {
