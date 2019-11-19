@@ -48,10 +48,10 @@ class ICREnterCardNumberFragment : MyCardExtension() {
 
         navigateToEnterOTPFragmentImageView?.isEnabled = false
 
-        uniqueIdsForEnterCartNuberScreen()
+        uniqueIdsForEnterCartNumberScreen()
     }
 
-    private fun uniqueIdsForEnterCartNuberScreen() {
+    private fun uniqueIdsForEnterCartNumberScreen() {
         activity?.resources?.apply {
             tvLinkNewCardTitle?.contentDescription = getString(R.string.label_linkICR)
             tvLinkNewCardDesc?.contentDescription = getString(R.string.label_linkICRCardDescription)
