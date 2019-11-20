@@ -22,8 +22,8 @@
     <dimen name="acc_thirteen_sp">13sp</dimen>
     <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
     <dimen name="voucher_message_layout_height">191dp</dimen>
-    <dimen name="voucher_barcode_margin">16dp</dimen>
-    <dimen name="voucher_barcode_number_margintop">18dp</dimen>
+    <dimen name="voucher_barcode_margin">15dp</dimen>
+    <dimen name="voucher_barcode_number_margintop">16dp</dimen>
     <dimen name="voucher_min_spend_margintop">18dp</dimen>
     <dimen name="voucher_min_spend_padding">16dp</dimen>
     <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
@@ -146,5 +146,19 @@
     <dimen name="common_circle_width">3dp</dimen>
     <dimen name="chat_bubble_text_line_spacing">1.31dp</dimen>
     <dimen name="chat_bubble_text_size">16sp</dimen>
+    <dimen name="sixty_four_dp">64dp</dimen>
+    <dimen name="one_dp">1dp</dimen>
+    <dimen name="store_card_enter_otp_title_top_margin_32dp">32dp</dimen>
+    <dimen name="store_card_enter_otp_title_top_margin_16dp">16dp</dimen>
+    <dimen name="store_card_enter_otp_title_top_margin_8dp">8dp</dimen>
+    <dimen name="store_card_text_size_20_sp">20sp</dimen>
+    <dimen name="store_card_text_size_15_sp">15sp</dimen>
+    <dimen name="store_card_text_size_14_sp">14sp</dimen>
+    <dimen name="store_card_spannable_text_17_sp_bold">17sp</dimen>
+    <dimen name="store_card_text_field_width_47_dp">47dp</dimen>
+    <dimen name="store_card_text_field_height_50_dp">50dp</dimen>
+    <dimen name="store_card_text_field_text_size_14_dp">14sp</dimen>
+    <dimen name="store_card_next_button_size_48_dp">48sp</dimen>
+    <dimen name="twenty_four_sp">24sp</dimen>
 </resources>
 

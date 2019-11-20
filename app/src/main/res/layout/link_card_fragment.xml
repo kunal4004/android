@@ -3,35 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/tvInvalidCardNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="center|start"
-        android:lineSpacingExtra="1.dp"
-        android:lineSpacingMultiplier="1.40"
-        android:text="@string/invalid_card_number"
-        android:textColor="@color/red"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vInputCardNumberBackground"
-        tools:text="@string/invalid_card_number" />
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="false">
 
     <TextView
         android:id="@+id/tvLinkNewCardTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:autoSizeMaxTextSize="20sp"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
+        android:contentDescription="@string/label_linkICR"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
         android:lineSpacingMultiplier="1.40"
@@ -43,14 +30,14 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/link_your_new_card" />
 
-
     <TextView
         android:id="@+id/tvLinkNewCardDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="32dp"
+        android:contentDescription="@string/label_linkICRCardDescription"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
         android:lineSpacingExtra="1.dp"
@@ -64,97 +51,73 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLinkNewCardTitle"
         tools:text="@string/link_new_card_desc" />
 
-    <View
-        android:id="@+id/vInputCardNumberBackground"
-        android:layout_width="0dp"
-        android:layout_height="62dp"
+
+    <EditText
+        android:id="@+id/cardNumberEditText"
+        style="@style/instantStoreCardReplacementEditTextStyle"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/white_rectangle_grey_border_bg"
+        android:contentDescription="@string/text_carddetails"
+        android:cursorVisible="true"
+        android:digits="0123456789"
+        android:hint="@string/enter_new_card_number"
+        android:imeOptions="actionDone"
+        android:textColorHint="@color/unavailable"
+        android:textCursorDrawable="@drawable/cursor_custom_color"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLinkNewCardDesc" />
 
-    <View
-        android:id="@+id/vCameraBgTapped"
-        android:layout_width="62dp"
-        android:layout_height="62dp"
-        app:layout_constraintEnd_toEndOf="@+id/vInputCardNumberBackground"
-        app:layout_constraintTop_toTopOf="@+id/vInputCardNumberBackground" />
-
-    <ImageView
-        android:id="@+id/imCameraIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/app_label"
-        app:layout_constraintBottom_toBottomOf="@+id/vCameraBgTapped"
-        app:layout_constraintEnd_toEndOf="@+id/vCameraBgTapped"
-        app:layout_constraintStart_toStartOf="@+id/vCameraBgTapped"
-        app:layout_constraintTop_toTopOf="@+id/vCameraBgTapped"
-        app:srcCompat="@drawable/icon_camera" />
-
-    <EditText
-        android:id="@+id/etCardNumber"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:background="@color/white"
-        android:cursorVisible="false"
-        android:ems="10"
-        android:fontFamily="@font/futura_medium_ttf"
-        android:gravity="center|start"
-        android:hint="@string/enter_new_card_number"
-        android:inputType="number"
-        android:maxLength="19"
-        android:textColorHint="@color/unavailable"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/vInputCardNumberBackground"
-        app:layout_constraintEnd_toStartOf="@+id/vCameraBgTapped"
-        app:layout_constraintStart_toStartOf="@+id/vInputCardNumberBackground"
-        app:layout_constraintTop_toTopOf="@+id/vInputCardNumberBackground" />
+    <ImageButton
+        android:id="@+id/cameraIconImageButton"
+        style="@style/instantStoreCardReplacementImageButtonStyle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/cardNumberEditText"
+        app:layout_constraintEnd_toEndOf="@+id/cardNumberEditText"
+        app:layout_constraintTop_toTopOf="@+id/cardNumberEditText"
+        app:srcCompat="@drawable/camera_image_bg" />
 
 
-    <ImageView
-        android:id="@+id/imNavigateToOTPFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="0.5"
-        android:contentDescription="@string/app_label"
-        app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
-        app:layout_constraintEnd_toEndOf="@+id/vLinkBottomNavigation"
-        app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
-        app:srcCompat="@drawable/next_button_icon" />
-
-    <TextView
-        android:id="@+id/tvReplacementCardInfo"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="start|center"
-        android:text="@string/replacement_card_how_to"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="@dimen/cli_twelve_sp"
-        app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
-        app:layout_constraintEnd_toStartOf="@+id/imNavigateToOTPFragment"
-        app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
-        app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
-        tools:text="@string/replacement_card_how_to" />
-
-
-    <View
-        android:id="@+id/vLinkBottomNavigation"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/invalidCardNumberLabel">
 
+        <ImageView
+            android:id="@+id/navigateToEnterOTPFragmentImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom|end"
+            android:contentDescription="@string/button_next"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/next_button_state" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/invalidCardNumberLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:text="@string/invalid_card_number"
+        android:textColor="@color/input_error_color_code"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardNumberEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

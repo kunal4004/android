@@ -991,6 +991,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             @Override
             public void onFailure(Throwable error) {
                 addedToCartFail(true);
+                Activity activity = getActivity();
+                if (activity == null || !isAdded()) return;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pbLoadingIndicator.setVisibility(GONE);
+                        btnCheckOut.setVisibility(VISIBLE);
+                    }
+                });
             }
         });
     }

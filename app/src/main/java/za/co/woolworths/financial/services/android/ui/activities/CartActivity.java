@@ -5,7 +5,6 @@ import android.content.Intent;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.Gravity;
 import android.view.View;
@@ -187,6 +186,10 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public void enableEditCart(boolean enable) {
         Utils.fadeInFadeOutAnimation(btnEditCart, enable);
         btnEditCart.setEnabled(enable ? false : true);
+    }
+    public void enableEditCart() {
+        Utils.fadeInFadeOutAnimation(btnEditCart, false);
+        btnEditCart.setEnabled(true);
     }
 
     @Override

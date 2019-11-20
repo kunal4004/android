@@ -66,5 +66,17 @@ public class ProductDetails {
 	@SerializedName("saveText")
 	@Expose
 	public String saveText;
+	@SerializedName("price")
+	@Expose
+	public String price;
+	@SerializedName("priceType")
+	@Expose
+	public String priceType;
+	@SerializedName("wasPrice")
+	@Expose
+	public String wasPrice;
+	@SerializedName("kilogramPrice")
+	@Expose
+	public String kilogramPrice;
 
 }

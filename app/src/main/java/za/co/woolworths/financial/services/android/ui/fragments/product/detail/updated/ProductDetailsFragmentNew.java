@@ -74,6 +74,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePick
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -151,6 +152,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
     private Call<SkusInventoryForStoreResponse> mExecuteInventoryForSku;
+    private String storeIdForInventory = "";
 
     @Override
     public ProductDetailsViewModelNew getViewModel() {
@@ -240,7 +242,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(productDetails.fromPrice), getViewModel().maxWasPrice(productDetails.otherSkus));
+            //ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice, productDetails.priceType, productDetails.kilogramPrice);
         } catch (Exception ignored) {
         }
 
@@ -374,14 +376,21 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             return;
         }
 
+        // If user signin's in or updates delivery location this will reload inventory for updated storeId
+        String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+        if (!storeId.equalsIgnoreCase(storeIdForInventory)) {
+            enableAddToCartButton(true);
+            updateStockAvailability(storeId);
+            return;
+        }
+
         if (this.selectedOtherSku != null && this.otherSKUForCart == null) {
             this.otherSKUForCart = this.selectedOtherSku;
             addItemToCart();
             return;
         } else {
             this.enableAddToCartButton(true);
-            String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-            if (TextUtils.isEmpty(storeId)) {
+            if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails.fulfillmentType))) {
                 this.otherSKUForCart = null;
                 String message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again.";
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
@@ -390,10 +399,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             }
 
             if (this.otherSKUForCart != null)
-              mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false);
+                // mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false);
+                addToCartForSelectedSKU(this.otherSKUForCart);
             else {
-                String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
-                mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
+                //String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+               // mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
+
+                ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+                openSizePickerWithAvailableQuantity(stockRequestedSkus);
             }
 
         }
@@ -419,8 +433,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     public void onSuccessResponse(ProductDetails productDetails) {
         this.productDetails = productDetails;
         if (this.productDetails.otherSkus != null && this.productDetails.otherSkus.size() > 0) {
-            this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
-            this.updateDefaultUI();
+            storeIdForInventory = ProductListingViewHolderItems.Companion.getFulFillmentStoreId(productDetails.fulfillmentType);
+            String multiSKUs = getViewModel().getMultiSKUsStringForInventory(productDetails.otherSkus);
+            mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeIdForInventory, multiSKUs, true);
+
         } else {
             getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
             getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
@@ -444,7 +460,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         this.setProductCode(productDetails.productId);
         this.loadPromotionalImages(productDetails.promotionImages);
         this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
-        this.configureUIForOtherSKU(defaultSku);
+        this.configureUIForDefaultSKU(defaultSku);
         this.displayIngredients();
     }
 
@@ -607,7 +623,19 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+            //ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice,"",otherSku.kilogramPrice);
+        } catch (Exception ignored) {
+        }
+
+        if (hasColor)
+            this.setSelectedColorIcon();
+    }
+
+    private void configureUIForDefaultSKU(OtherSkus otherSku) {
+
+        try {
+            // set price list
+           // ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice,productDetails.priceType,otherSku.kilogramPrice);
         } catch (Exception ignored) {
         }
 
@@ -761,40 +789,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     }
 
     @Override
-    public void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse) {
-        int quantityInStock = 0;
-        for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
-            if (skuInventory.sku.equalsIgnoreCase(this.otherSKUForCart.sku)) {
-                quantityInStock = skuInventory.quantity;
-            }
-        }
+    public void onUpdatedInventoryResponse(SkusInventoryForStoreResponse inventoryResponse) {
 
-        if (quantityInStock == 1) {
-            executeAddToCartRequest(1);
-        } else if (quantityInStock == 0) {
-
-            if (this.otherSKUsByGroupKey.get(this.selectedGroupKey).size() == 1) {
-                //if there is no other skus for that selected group show out of stock
-                this.enableAddToCartButton(false);
-                this.outOfStockDialog();
-                return;
-            }
-
-            String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
-            String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);
-
-        } else {
-            openQuantityPicker(quantityInStock, false);
-        }
-    }
-
-    @Override
-    public void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse) {
-        if (getActivity() == null || rcvSizePickerForInventory== null) return;
-        ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
-
-        for (OtherSkus otherSkus : stockRequestedSkus) {
+        for (OtherSkus otherSkus : productDetails.otherSkus) {
             for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
                 if (otherSkus.sku.equalsIgnoreCase(skuInventory.sku)) {
                     otherSkus.quantity = skuInventory.quantity;
@@ -802,7 +799,39 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
                 }
             }
         }
-        openSizePickerWithAvailableQuantity(stockRequestedSkus);
+
+        //update selected sku with updated quantity
+        if(this.otherSKUForCart!=null){
+            for (OtherSkus otherSkus : productDetails.otherSkus) {
+                    if (otherSkus.sku.equalsIgnoreCase(otherSKUForCart.sku)) {
+                        otherSKUForCart.quantity = otherSkus.quantity;
+                        break;
+                    }
+            }
+        }
+
+        addItemToCart();
+    }
+
+    @Override
+    public void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse) {
+        //if (getActivity() == null || rcvSizePickerForInventory== null) return;
+       // ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+        for (OtherSkus otherSkus : productDetails.otherSkus) {
+            for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
+                if (otherSkus.sku.equalsIgnoreCase(skuInventory.sku)) {
+                    otherSkus.quantity = skuInventory.quantity;
+                    break;
+                }
+            }
+        }
+
+        this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
+        this.updateDefaultUI();
+
+
+        //openSizePickerWithAvailableQuantity(stockRequestedSkus);
 
     }
 
@@ -1151,7 +1180,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         this.enableFindInStoreButton(true);
         mFuseLocationAPISingleton.addLocationChangeListener(this);
-        mFuseLocationAPISingleton.startLocationUpdate(getActivity());
+        mFuseLocationAPISingleton.startLocationUpdate();
     }
 
     @Override
@@ -1310,5 +1339,37 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         if (mExecuteInventoryForSku!=null &&  !mExecuteInventoryForSku.isCanceled()){
             mExecuteInventoryForSku.cancel();
         }
+    }
+
+    private void addToCartForSelectedSKU(OtherSkus selectedOtherSku) {
+        int quantityInStock = selectedOtherSku.quantity;
+        if (quantityInStock == 1) {
+            executeAddToCartRequest(1);
+        } else if (quantityInStock == 0) {
+
+            if (this.otherSKUsByGroupKey.get(this.selectedGroupKey).size() == 1) {
+                //if there is no other skus for that selected group show out of stock
+                this.enableAddToCartButton(false);
+                this.outOfStockDialog();
+                return;
+            }
+
+            /*String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+            String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);*/
+
+            ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+            openSizePickerWithAvailableQuantity(stockRequestedSkus);
+
+        } else {
+            openQuantityPicker(quantityInStock, false);
+        }
+    }
+
+    private void updateStockAvailability(String storeId){
+        storeIdForInventory = storeId;
+        String multiSKUs = getViewModel().getMultiSKUsStringForInventory(productDetails.otherSkus);
+        mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeIdForInventory, multiSKUs, false);
     }
 }

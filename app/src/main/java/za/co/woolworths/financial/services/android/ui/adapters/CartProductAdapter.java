@@ -4,6 +4,9 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -34,6 +37,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -41,6 +46,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
+    private final float DISABLE_VIEW_VALUE = 0.5f;
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipe;
@@ -161,16 +167,25 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     productHolder.tvColorSize.setVisibility(View.VISIBLE);
                 }
                 // Set Color and Size END
+                productHolder.pbQuantity.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 
-                productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : 0.5f);
-
+                productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : DISABLE_VIEW_VALUE);
                 if (commerceItem.isStockChecked) {
                     productHolder.llQuantity.setAlpha((commerceItem.quantityInStock == 0) ? 0.0f : 1.0f);
                     productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
                     Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
-                    productHolder.price.setVisibility((commerceItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-                    if (commerceItem.quantityInStock == 0)
+                    if (commerceItem.quantityInStock == 0) {
                         productHolder.llPromotionalText.setVisibility(View.GONE);
+                        productHolder.price.setVisibility(View.VISIBLE);
+                    } else if (commerceItem.quantityInStock == -1) {
+                        productHolder.llQuantity.setAlpha(DISABLE_VIEW_VALUE);
+                        productHolder.price.setVisibility(View.VISIBLE);
+                        productHolder.llQuantity.setEnabled(false);
+                        productHolder.quantity.setAlpha(DISABLE_VIEW_VALUE);
+                        productHolder.imPrice.setAlpha(DISABLE_VIEW_VALUE);
+                    } else {
+                        productHolder.price.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     productHolder.llQuantity.setVisibility(View.VISIBLE);
                     productHolder.tvProductAvailability.setVisibility(View.GONE);
@@ -190,7 +205,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     @Override
                     public void onClick(View view) {
                         if (commerceItem.quantityInStock == 0) return;
-
+                        if (!NetworkManager.getInstance().isConnectedToNetwork(mContext)) {
+                            new ErrorHandlerView(mContext).showToast();
+                            return;
+                        }
                         commerceItem.setQuantityUploading(true);
                         setFirstLoadCompleted(false);
                         onItemClick.onChangeQuantity(commerceItem);

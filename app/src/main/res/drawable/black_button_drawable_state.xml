@@ -4,5 +4,5 @@
     <item android:drawable="@drawable/btn_black_disabled" android:state_enabled="false" />
     <item android:drawable="@drawable/btn_black_normal" android:state_pressed="false" /> <!-- pressed -->
     <item android:drawable="@drawable/btn_black_disabled" android:state_pressed="true" /> <!-- focused -->
-    <item android:drawable="@drawable/btn_black_disabled" android:state_enabled="true" /> <!-- idle state -->
+    <item android:drawable="@drawable/btn_black_normal" android:state_enabled="true" /> <!-- idle state -->
 </selector>

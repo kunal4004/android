@@ -14,6 +14,7 @@ abstract class RetrofitConfig : NetworkConfig() {
 
     companion object {
         private const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
+        private const val READ_CONNECT_TIMEOUT_UNIT_QA: Long = 180
         lateinit var mApiInterface: ApiInterface
     }
 
@@ -25,8 +26,9 @@ abstract class RetrofitConfig : NetworkConfig() {
 
         httpBuilder.run {
             addInterceptor(WfsApiInterceptor())
-            readTimeout(READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
-            connectTimeout(READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
+            readTimeout(if (BuildConfig.FLAVOR.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
+            connectTimeout(if (BuildConfig.FLAVOR.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
+            writeTimeout(if (BuildConfig.FLAVOR.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             interceptors().add(logging)
         }
 

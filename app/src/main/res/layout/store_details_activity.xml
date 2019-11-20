@@ -7,66 +7,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
+    app:umanoPanelHeight="0dp"
     sothree:umanoDragView="@+id/detailsView"
     sothree:umanoOverlay="true"
-    app:umanoPanelHeight="0dp"
     sothree:umanoParallaxOffset="100dp"
     sothree:umanoScrollableView="@+id/list"
     sothree:umanoShadowHeight="0dp">
 
-        <LinearLayout android:id="@+id/mapLayout"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            xmlns:android="http://schemas.android.com/apk/res/android">
+            android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <fragment
-                                android:id="@+id/map"
-                                android:name="com.google.android.gms.maps.SupportMapFragment"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                />
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/closePage"
-                                android:background="@drawable/ic_closecircle"
-                                android:layout_margin="12dp"
-                                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                        </RelativeLayout>
-
-                    </LinearLayout>
-
-                <!--<LinearLayout
-                    android:id="@+id/detailsView"
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="7"
-                    android:background="@color/white"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent" />
 
-                    <include layout="@layout/store_details_layout_common" />
-                </LinearLayout>-->
+                <ImageView
+                    android:id="@+id/closePage"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/ic_closecircle" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:id="@+id/detailsView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
             android:background="@color/white"
             android:orientation="vertical">
 
             <include layout="@layout/store_details_layout_common" />
-        </LinearLayout>
+        </LinearLayout>-->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/detailsView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/store_details_layout_common" />
+    </LinearLayout>
 
 </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
 

@@ -32,6 +32,7 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        maven { url "http://pay.cards/maven" }
         maven { url "https://mint.splunk.com/gradle/" }
         maven { url "https://jitpack.io" }
         maven {

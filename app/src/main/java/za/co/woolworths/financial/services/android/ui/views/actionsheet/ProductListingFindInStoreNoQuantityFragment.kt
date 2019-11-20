@@ -23,7 +23,7 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
 
     companion object {
         private const val SKU_ID = "SKU_ID"
-        private const val REQUEST_PERMISSION_LOCATION = 100
+        const val REQUEST_PERMISSION_LOCATION = 100
         fun newInstance(sku_id: String, mProductListing: IProductListing?) = ProductListingFindInStoreNoQuantityFragment(mProductListing).withArgs {
             putString(SKU_ID, sku_id)
         }
@@ -44,7 +44,7 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
         super.onViewCreated(view, savedInstanceState)
 
         FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
-            override fun onLocationChange(location: Location) {
+            override fun onLocationChange(location: Location?) {
                 activity?.let { activity -> Utils.saveLastLocation(location, activity) }
                 FuseLocationAPISingleton.stopLocationUpdate()
                 mProductListing?.queryStoreFinderProductByFusedLocation(location)
@@ -66,7 +66,7 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
         }
     }
 
-    private fun startLocationUpdate() = activity?.let { activity -> FuseLocationAPISingleton.startLocationUpdate(activity) }
+    private fun startLocationUpdate() = FuseLocationAPISingleton.startLocationUpdate()
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
         when (requestCode) {

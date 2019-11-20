@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models;
 
+import com.google.gson.JsonElement;
+
 import java.util.ArrayList;
 
 /**
@@ -24,7 +26,7 @@ public class JWTDecodedModel {
 	public ArrayList<String> email;
 	public ArrayList<String> name; //this is sometimes an array
 	public ArrayList<String> family_name; //this is sometimes an array
-	public ArrayList<String> AtgId; //this is sometimes an array
+	public JsonElement AtgId; //this is sometimes an array
 	public ArrayList<String> AtgSession; //json
 	public String C2Id;
 	public ArrayList<String> amr;
