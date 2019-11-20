@@ -1227,5 +1227,15 @@
     <string name="process_your_request_text_indicator">Process Your Request</string>
     <string name="back_button_tapped">Back Button Tapped</string>
     <string name="close_icon_tapped">Close Icon Tapped</string>
-
+    <string name="card_success_layout">Cart Success Layout</string>
+    <string name="content_description_label">Content Description Label</string>
+    <string name="success_link_card_title">Success Link Card Title</string>
+    <string name="success_link_card_description">Success Link Card Description</string>
+    <string name="success_got_it_button_tapped">Ok Got It Button Tapped</string>
+    <string name="link_card_failure_layout">Link Card Failure Layout</string>
+    <string name="link_card_failure_title_label">Failure Link Card</string>
+    <string name="link_card_failure_description">Link Card Failure Description</string>
+    <string name="retry_on_failure_button">Retry on Failure Tapped</string>
+    <string name="call_center_number_tapped">Call Center Number Tapped</string>
+    <string name="progress_indicator_state">Progress Indicator State</string>
 </resources>
