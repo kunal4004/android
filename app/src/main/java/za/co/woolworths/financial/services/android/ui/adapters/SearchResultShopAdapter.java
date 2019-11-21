@@ -29,8 +29,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
-
 public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
 	private boolean value;
@@ -38,6 +36,8 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	private List<ProductList> mProductList;
 
 	private SearchResultNavigator mSearchResultNavigator;
+
+	private static final String FOOD_PRODUCT = "foodProducts";
 
 	public SearchResultShopAdapter(List<ProductList> mProductList,
 								   SearchResultNavigator searchResultNavigator) {

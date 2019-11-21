@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
@@ -54,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MultipleImageAc
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 
 
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener {
@@ -87,6 +87,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
 
     companion object {
+        const val INDEX_STORE_FINDER = 1
+        const val INDEX_ADD_TO_CART = 2
+        const val INDEX_ADD_TO_SHOPPING_LIST = 3
+        const val INDEX_SEARCH_FROM_LIST = 4
+        const val RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002
         fun newInstance() = ProductDetailsFragment()
     }
 

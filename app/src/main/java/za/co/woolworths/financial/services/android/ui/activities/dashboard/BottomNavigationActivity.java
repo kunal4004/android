@@ -55,7 +55,7 @@ import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksVi
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
@@ -946,7 +946,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 default:
                     Fragment fragmentById = getBottomFragmentById();
                     if (fragmentById == null) break;
-                    if (fragmentById instanceof ProductDetailsFragmentNew)
+                    if (fragmentById instanceof ProductDetailsFragment)
                         fragmentById.onActivityResult(requestCode, resultCode, data);
                     break;
             }
@@ -959,7 +959,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         //Call product detail onActivityResult
         if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
-            if (getBottomFragmentById() instanceof ProductDetailsFragmentNew) {
+            if (getBottomFragmentById() instanceof ProductDetailsFragment) {
                 getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
             }
 
@@ -990,7 +990,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                if (getBottomFragmentById() instanceof ProductDetailsFragmentNew) {
+                if (getBottomFragmentById() instanceof ProductDetailsFragment) {
                     getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
                 }
             }

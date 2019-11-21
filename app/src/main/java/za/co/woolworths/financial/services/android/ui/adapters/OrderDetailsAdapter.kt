@@ -12,7 +12,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
-import kotlinx.android.synthetic.main.product_details_fragment_new.view.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.Utils

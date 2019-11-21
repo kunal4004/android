@@ -9,7 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.default_error_message_dialog.*
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 
 class ErrorMessageDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 

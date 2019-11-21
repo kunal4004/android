@@ -7,30 +7,26 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
 import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
-
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
 import com.skydoves.balloon.balloon
 import kotlinx.android.synthetic.main.grid_layout.*
-import kotlinx.android.synthetic.main.grid_layout.incNoConnectionHandler
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
-
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.RequestListener
@@ -52,11 +48,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -772,6 +769,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
         private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
+        const val SET_DELIVERY_LOCATION_REQUEST_CODE = 180
 
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
