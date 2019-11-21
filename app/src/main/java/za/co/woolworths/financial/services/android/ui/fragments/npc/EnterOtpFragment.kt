@@ -87,7 +87,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun uniqueIdsForEnterOTPScreen() {
-        activity?.resources.apply {
+        activity?.resources?.apply {
             tvEnterOtpTitle?.contentDescription = getString(R.string.enter_otp_title)
             enterOTPDescriptionScreen?.contentDescription = getString(R.string.icr_enter_otp_description)
             viewOTPBackground?.contentDescription = getString(R.string.verification_code_container)
