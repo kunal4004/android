@@ -157,7 +157,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productName.text = it.productName
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 ->
-                it.externalImageRef = null
                 getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
