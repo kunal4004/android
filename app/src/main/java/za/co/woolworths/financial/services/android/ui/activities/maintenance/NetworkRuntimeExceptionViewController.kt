@@ -6,6 +6,9 @@ import android.os.HandlerThread
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import com.crashlytics.android.Crashlytics
+import java.lang.IllegalStateException
 
 open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeExceptionViewController::class.java.simpleName) {
 
@@ -32,9 +35,12 @@ open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeE
             val appInstance = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity) ?: return@post
             val fragment = appInstance.supportFragmentManager.findFragmentByTag(ErrorMessageDialogWithTitleFragment::class.java.simpleName)
             val socketTimeoutExceptionDialog = ErrorMessageDialogWithTitleFragment.newInstance()
-            if (fragment is ErrorMessageDialogWithTitleFragment) return@post
+            if ((fragment is ErrorMessageDialogWithTitleFragment) || ((!appInstance.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)))) return@post
+            try {
                 socketTimeoutExceptionDialog.show(appInstance.supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
-
+            } catch (ex: IllegalStateException) {
+                Crashlytics.logException(ex)
+            }
             quit()
         }
         handler?.sendEmptyMessage(0)
