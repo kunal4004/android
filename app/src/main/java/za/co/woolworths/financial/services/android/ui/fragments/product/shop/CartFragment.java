@@ -499,7 +499,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				for (CartItemGroup cartItemGroup : currentCartItemGroup) {
 					for (CommerceItem currentItem : cartItemGroup.commerceItems) {
 						if (currentItem.commerceItemInfo.commerceId.equalsIgnoreCase(changeQuantity.getCommerceId())) {
-							currentCartItemGroup.remove(cartItemGroup);
+							cartItemGroup.commerceItems.remove(currentItem);
+							if (cartItemGroup.commerceItems.size() == 0) {
+								currentCartItemGroup.remove(cartItemGroup);
+							}
+							break;
 						}
 					}
 				}
@@ -509,13 +513,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					for (CommerceItem commerceItem : items.commerceItems) {
 						if (commerceItem.getQuantityUploading()) {
 							shouldEnableCheckOutAndEditButton = false;
+							break;
 						}
 					}
 				}
 
-				orderSummary = cartResponse.orderSummary;
-				cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary);
 				if (shouldEnableCheckOutAndEditButton) {
+					orderSummary = cartResponse.orderSummary;
+					cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary);
 					fadeCheckoutButton(false);
 				}
 			}
