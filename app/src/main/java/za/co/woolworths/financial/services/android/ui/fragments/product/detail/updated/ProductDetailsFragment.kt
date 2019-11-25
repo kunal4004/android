@@ -156,7 +156,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.let {
             productName.text = it.productName
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
-            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
+            auxiliaryImages.add(activity?.let { it1 ->
+                it.externalImageRef = null
+                getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
         }
@@ -306,7 +308,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-          if (imageLink == null) imageLink = "https://images.woolworthsstatic.co.za/"
+          if (imageLink.isNullOrEmpty()) imageLink = "https://images.woolworthsstatic.co.za/"
             return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
