@@ -59,6 +59,17 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
         rvResendOTPContent?.adapter = resendOtpAdapter
         resendOtpAdapter.setItem(resendOTPOption())
         tvCancel?.setOnClickListener { dismissView(OTPMethodType.NONE) }
+
+        uniqueIdForResendOTP()
+    }
+
+    private fun uniqueIdForResendOTP() {
+        activity?.resources?.apply {
+            resendOtpRootConstraintLayout?.contentDescription = getString(R.string.resend_otp_layout)
+            tvResendOTP?.contentDescription = getString(R.string.resend_otp_title)
+            rvResendOTPContent?.contentDescription = getString(R.string.resend_Otp_recyclerview)
+            tvCancel?.contentDescription = getString(R.string.cancel)
+        }
     }
 
     private fun dismissView(otpMethodType: OTPMethodType) {

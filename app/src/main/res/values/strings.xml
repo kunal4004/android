@@ -1217,5 +1217,25 @@
     <!-- Unique Ids for Loan Withdrawal Success Layout -->
     <string name="loan_withdrawal_success_layout">Loan Withdrawal Success Module</string>
     <string name="on_success_button_tapped">On Success Button Tapped</string>
-
+    <string name="block_card_layout">Block Card Layout</string>
+    <string name="icr_enter_otp_description">Enter OTP Description</string>
+    <string name="verification_code_container">Verification Code Layout</string>
+    <string name="load_otp_description">Load Otp Description</string>
+    <string name="enter_otp_error">Invalid OTP Error</string>
+    <string name="resend_otp_layout">Resend OTP Layout</string>
+    <string name="resend_Otp_recyclerview">Resend OTP List</string>
+    <string name="process_your_request_text_indicator">Process Your Request</string>
+    <string name="back_button_tapped">Back Button Tapped</string>
+    <string name="close_icon_tapped">Close Icon Tapped</string>
+    <string name="card_success_layout">Cart Success Layout</string>
+    <string name="content_description_label">Content Description Label</string>
+    <string name="success_link_card_title">Success Link Card Title</string>
+    <string name="success_link_card_description">Success Link Card Description</string>
+    <string name="success_got_it_button_tapped">Ok Got It Button Tapped</string>
+    <string name="link_card_failure_layout">Link Card Failure Layout</string>
+    <string name="link_card_failure_title_label">Failure Link Card</string>
+    <string name="link_card_failure_description">Link Card Failure Description</string>
+    <string name="retry_on_failure_button">Retry on Failure Tapped</string>
+    <string name="call_center_number_tapped">Call Center Number Tapped</string>
+    <string name="progress_indicator_state">Progress Indicator State</string>
 </resources>

@@ -79,6 +79,17 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         super.onViewCreated(view, savedInstanceState)
         initListener()
         populateView()
+        uniqueIdsForCardDetails()
+    }
+
+    private fun uniqueIdsForCardDetails() {
+        activity?.resources?.apply {
+            cardDetailsView?.contentDescription = getString(R.string.label_card_details)
+            cardNumberLayout?.contentDescription = getString(R.string.label_cardHolder)
+            cardHolderLayout?.contentDescription = getString(R.string.text_cardHolderName)
+            manageView?.contentDescription = getString(R.string.label_manage_layout)
+            blockCard?.contentDescription = getString(R.string.rlt_BlockCard)
+        }
     }
 
     private fun initListener() {

@@ -45,6 +45,13 @@ class ProgressStateFragment : Fragment() {
                 }
             }
         }
+        uniqueIdsForProgressIndicator()
+    }
+
+    private fun uniqueIdsForProgressIndicator() {
+        activity?.resources?.apply {
+            success_frame?.contentDescription = getString(R.string.progress_indicator_state)
+        }
     }
 
     fun animateSuccessEnd(cardIsBlocked: Boolean) {
