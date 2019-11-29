@@ -95,4 +95,5 @@
     <color name="selected_store_locator_tab_title">#212B36</color>
     <color name="input_error_color_code">#D0021B</color>
     <color name="input_error_box_color">#59FBEAE5</color>
+    <color name="transparent_4d">#4D000000</color>
 </resources>

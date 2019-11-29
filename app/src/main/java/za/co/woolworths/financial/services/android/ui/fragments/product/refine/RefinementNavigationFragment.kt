@@ -3,11 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
 import za.co.woolworths.financial.services.android.models.dto.ProductView
@@ -16,7 +19,6 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementSelectab
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementNavigationAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -24,9 +26,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementNavigationAdapter: RefinementNavigationAdapter? = null
-    private var clearOrRresetRefinement: TextView? = null
     private var productView: ProductView? = null
-    private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var baseNavigationState = ""
     private var updatedNavigationState = ""
@@ -49,6 +49,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         arguments?.let {
             productView = Utils.jsonStringToObject(it.getString(ARG_PARAM), ProductView::class.java) as ProductView
             baseNavigationState = it.getString(NAVIGATION_STATE, "")
@@ -62,15 +63,14 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun initViews() {
+
         activity?.let {
-            backButton = it.findViewById(R.id.btnClose)
-            clearOrRresetRefinement = it.findViewById(R.id.resetRefinement)
+            (it as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             pageTitle = it.findViewById(R.id.toolbarText)
         }
-        backButton?.setImageResource(R.drawable.close_24)
-        pageTitle?.text = resources.getString(R.string.refine)
-        backButton?.setOnClickListener { onBackPressed() }
-        clearOrRresetRefinement?.setOnClickListener { if (showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
+        pageTitle?.text = resources.getString(R.string.filter_results)
+        clearAndResetFilter?.text = getString(R.string.reset_filter)
+        clearAndResetFilter?.setOnClickListener { if (showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         updateToolBarMenuText()
@@ -100,10 +100,10 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
         var isHeaderAddedForCategory: Boolean = false
         navigationList.forEach {
             if (it.displayName.contentEquals(ON_PROMOTION)) {
-                dataList.add(0, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
+               // dataList.add(0, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
                 var refinementSelectableItem = RefinementSelectableItem(it, RefinementSelectableItem.ViewType.PROMOTION)
                 refinementSelectableItem.isSelected = (it.refinementCrumbs != null && it.refinementCrumbs.size > 0)
-                dataList.add(1, refinementSelectableItem)
+                dataList.add(0, refinementSelectableItem)
             } else if ((it.refinements != null && it.refinements.size > 0) || (it.refinementCrumbs != null && it.refinementCrumbs.size > 0)) {
                 if (!isHeaderAddedForCategory) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
@@ -121,7 +121,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     override fun onBackPressed() {
         activity?.finish()
-        activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun seeResults() {
@@ -130,16 +130,32 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     private fun updateToolBarMenuText() {
         if (showReset()) {
-            clearOrRresetRefinement?.text = getString(R.string.refine_reset)
-            clearOrRresetRefinement?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
+            clearAndResetFilter?.text = getString(R.string.reset_filter)
+            clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
         } else {
-            clearOrRresetRefinement?.text = getString(R.string.refinement_clear)
-            clearOrRresetRefinement?.isEnabled = !TextUtils.isEmpty(updatedNavigationState)
+            clearAndResetFilter?.text = getString(R.string.clear_filter)
+            clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(updatedNavigationState)
         }
     }
 
     private fun showReset(): Boolean {
         return (!TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.getItem(0)?.isVisible = true
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId) {
+            R.id.itmIconClose -> {
+                onBackPressed()
+                return true
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

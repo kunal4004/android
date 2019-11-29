@@ -3,11 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -17,16 +20,14 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
 class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementAdapter: RefinementAdapter? = null
-    private var clearRefinement: TextView? = null
     private var refinementNavigation: RefinementNavigation? = null
-    private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var pageTitle: TextView? = null
     private var refinedNavigateState = ""
@@ -42,6 +43,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         arguments?.let{
             refinementNavigation = Utils.jsonStringToObject(it.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
             refinedNavigateState = it.getString(REFINED_NAVIGATION_STATE, "")
@@ -60,15 +63,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun initViews() {
         activity?.let {
-            backButton = it.findViewById(R.id.btnClose)
-            clearRefinement = it.findViewById(R.id.resetRefinement)
             pageTitle = it.findViewById(R.id.toolbarText)
         }
-        backButton?.setImageResource(R.drawable.back24)
         pageTitle?.text = refinementNavigation?.displayName
-        clearRefinement?.text = getString(R.string.refinement_clear)
-        clearRefinement?.setOnClickListener { refinementAdapter?.clearRefinement() }
-        backButton?.setOnClickListener { onBackPressed() }
+        clearAndResetFilter?.text = getString(R.string.clear_filter)
+        clearAndResetFilter?.setOnClickListener { refinementAdapter?.clearRefinement() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         loadData()
@@ -146,7 +145,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     override fun onSelectionChanged() {
-        clearRefinement?.isEnabled = isAnyRefinementSelected()
+        clearAndResetFilter?.isEnabled = isAnyRefinementSelected()
         this.updateSeeResultButtonText()
     }
 
@@ -185,6 +184,22 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun updateSeeResultButtonText() {
         seeResultCount.text = buildSeeResultButtonText()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.getItem(0)?.isVisible = false
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed();
+                return true
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

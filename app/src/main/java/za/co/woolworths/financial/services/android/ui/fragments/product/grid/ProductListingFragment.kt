@@ -401,7 +401,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
                     intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
                     activity.startActivityForResult(intent, REFINE_REQUEST_CODE)
-                    activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 }
                 R.id.sortProducts -> {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED)

@@ -2,16 +2,22 @@ package za.co.woolworths.financial.services.android.ui.activities.product.refine
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
+import android.view.Menu
 import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_products_refine.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.ProductView
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.Refinement
+import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.refineProducts
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
@@ -42,15 +48,51 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_products_refine)
-        Utils.updateStatusBarBackground(this)
+        if (Build.VERSION.SDK_INT in 19..20) {
+            setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true)
+        }
+        if (Build.VERSION.SDK_INT >= 19) {
+            window?.decorView?.systemUiVisibility =
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
+        if (Build.VERSION.SDK_INT >= 21) {
+            setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
+            window?.statusBarColor = Color.TRANSPARENT
+        }
+        actionBar()
+        //Utils.updateStatusBarBackground(this,R.color.transparent)
         productsResponse = Utils.jsonStringToObject(intent.getStringExtra(REFINEMENT_DATA), ProductView::class.java) as ProductView?
         productsRequestParams = Utils.jsonStringToObject(intent.getStringExtra(PRODUCTS_REQUEST_PARAMS), ProductsRequestParams::class.java) as ProductsRequestParams?
         initViews()
     }
 
+    private fun actionBar() {
+        setSupportActionBar(mToolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
+    private fun setWindowFlag(bits: Int, on: Boolean) {
+        val winParams = window?.attributes
+        winParams?.apply {
+            if (on) {
+                flags = flags or bits
+            } else {
+                flags = flags and bits.inv()
+            }
+            window?.attributes = winParams
+        }
+    }
+
     private fun initViews() {
         replaceRefinementOptionsFragment(productsResponse!!)
+        emptyView.setOnClickListener { closeDownPage() }
     }
 
     private fun replaceRefinementOptionsFragment(productsResponse: ProductView) {
@@ -88,7 +130,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
             supportFragmentManager.popBackStack()
         } else {
             super.onBackPressed()
-            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+           // overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
     }
 
@@ -186,7 +228,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     private fun closeDownPage() {
         finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -215,5 +257,10 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     // will return BaseNavigationState if RefinedNavigationState is empty
     private fun getRefinementState(): String {
         return if (TextUtils.isEmpty(getRefinedNavigationState())) getBaseNavigationState() else getRefinedNavigationState()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.absa_close_activity_menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
