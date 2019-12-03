@@ -246,11 +246,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSessionTokenExpired() {
         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-        activity?.runOnUiThread { ScreenManager.presentSSOSignin(activity) }
+        activity?.let {activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) }}
         updateStockAvailabilityLocation()
     }
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
+        if (!isAdded) return
         this.productDetails = productDetails
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
 
@@ -270,6 +271,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onProductDetailedFailed(response: Response) {
+        if (isAdded)
         showErrorWhileLoadingProductDetails()
     }
 
@@ -304,14 +306,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun getImageByWidth(imageUrl: String, context: Context): String {
+    override fun getImageByWidth(imageUrl: String?, context: Context): String {
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).apply {
+            var imageLink = imageUrl
             val deviceHeight = this.defaultDisplay
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-            var imageLink = imageUrl
-            if (imageLink.isEmpty()) imageLink = "https://images.woolworthsstatic.co.za/"
+          if (imageLink.isNullOrEmpty()) imageLink = "https://images.woolworthsstatic.co.za/"
             return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
@@ -536,20 +538,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun showFindInStore() {
         if (!productDetails?.isnAvailable?.toBoolean()!!) {
-            toCartAndFindInStoreLayout.visibility = View.GONE
-            checkInStoreAvailability.visibility = View.GONE
+            toCartAndFindInStoreLayout?.visibility = View.GONE
+            checkInStoreAvailability?.visibility = View.GONE
             return
         }
 
-        toCartAndFindInStoreLayout.visibility = View.VISIBLE
-        groupAddToCartAction.visibility = View.GONE
-        findInStoreAction.visibility = View.VISIBLE
+        toCartAndFindInStoreLayout?.visibility = View.VISIBLE
+        groupAddToCartAction?.visibility = View.GONE
+        findInStoreAction?.visibility = View.VISIBLE
     }
 
     private fun showAddToCart() {
-        toCartAndFindInStoreLayout.visibility = View.VISIBLE
-        groupAddToCartAction.visibility = View.VISIBLE
-        findInStoreAction.visibility = View.GONE
+        toCartAndFindInStoreLayout?.visibility = View.VISIBLE
+        groupAddToCartAction?.visibility = View.VISIBLE
+        findInStoreAction?.visibility = View.GONE
         if (isAllProductsOutOfStock()) {
             showFindInStore()
         }
@@ -1001,7 +1003,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateStockAvailabilityLocation() {
         activity?.apply {
-            getDeliveryLocation().let {
+            getDeliveryLocation()?.let {
                 when (it) {
                     is ShoppingDeliveryLocation -> {
                         currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
@@ -1037,7 +1039,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductUnavailable() {
-        setSelectedSku(productDetails?.otherSkus?.get(0))
+        productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         hideProductDetailsLoading()
         toCartAndFindInStoreLayout.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
@@ -1094,7 +1096,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun showProductOutOfStock() {
         activity?.apply {
-            getDeliveryLocation()?.let {
+            getDeliveryLocation().let {
                 val suburbName = when (it) {
                     is ShoppingDeliveryLocation -> it.suburb.name
                     is QuickShopDefaultValues -> it.suburb.name
@@ -1107,7 +1109,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun getDeliveryLocation(): Any {
+    private fun getDeliveryLocation(): Any? {
         val userLocation = Utils.getPreferredDeliveryLocation()
         val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
         return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
