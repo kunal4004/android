@@ -43,11 +43,11 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
-import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
@@ -77,6 +77,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSelectedProductList: ProductList? = null
     private var mSearchType: ProductsRequestParams.SearchType? = null
     private var mSearchTerm: String? = null
+    private var mNavigationState: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +87,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
                 mSearchType = ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
                 mSearchTerm = getString(SEARCH_TERM, "")
+                mNavigationState = getString(NAVIGATION_STATE, "")
             }
             setProductBody()
         }
@@ -110,10 +112,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             setTitle()
             startProductRequest()
-            incNoConnectionHandler?.btnRetry?.setOnClickListener(this@ProductListingFragment)
-            refineProducts?.setOnClickListener(this@ProductListingFragment)
-            sortProducts?.setOnClickListener(this@ProductListingFragment)
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        incNoConnectionHandler?.btnRetry?.setOnClickListener(this@ProductListingFragment)
+        refineProducts?.setOnClickListener(this@ProductListingFragment)
+        sortProducts?.setOnClickListener(this@ProductListingFragment)
     }
 
     override fun onResume() {
@@ -149,6 +155,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             hideFooterView()
             if (!loadMoreData) {
                 sortAndRefineLayout?.visibility = View.VISIBLE
+                (activity as BottomNavigationActivity)?.setUpDrawerFragment(productView, productRequestBody)
                 setRefinementViewState(productView?.navigation?.let { nav -> getRefinementViewState(nav) }
                         ?: false)
                 bindRecyclerViewWithUI(productLists)
@@ -318,7 +325,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onDetach() {
         super.onDetach()
-        (activity as? BottomNavigationActivity)?.walkThroughPromtView?.removeFromWindow()
+        (activity as? BottomNavigationActivity)?.apply {
+            walkThroughPromtView?.removeFromWindow()
+            lockDrawerFragment()
+        }
+
     }
 
     override fun startProductRequest() {
@@ -346,7 +357,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun setProductBody() {
-        setProductRequestBody(mSearchType, mSearchTerm)
+        setProductRequestBody(mSearchType, mSearchTerm, mNavigationState)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
@@ -397,11 +408,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
                 R.id.refineProducts -> {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED)
-                    val intent = Intent(activity, ProductsRefineActivity::class.java)
+                    /*val intent = Intent(activity, ProductsRefineActivity::class.java)
                     intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
                     intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
-                    activity.startActivityForResult(intent, REFINE_REQUEST_CODE)
-                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    activity?.startActivityForResult(intent, REFINE_REQUEST_CODE)
+                    activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)*/
+                    (activity as BottomNavigationActivity).let {
+                        it.setUpDrawerFragment(productView, productRequestBody)
+                        it.openDrawerFragment()
+                    }
                 }
                 R.id.sortProducts -> {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED)
@@ -414,13 +429,21 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden) {
-            (activity as? BottomNavigationActivity)?.apply {
-                showToolbar()
-                showBackNavigationIcon(true)
-                setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                setTitle()
+        (activity as? BottomNavigationActivity)?.apply {
+            when (hidden) {
+                true -> {
+                    lockDrawerFragment()
+                }
+                else -> {
+                    showToolbar()
+                    showBackNavigationIcon(true)
+                    setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                    setTitle()
+                    if (!productView?.navigation.isNullOrEmpty())
+                        unLockDrawerFragment()
+                }
             }
+
         }
     }
 
@@ -472,9 +495,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             REFINE_REQUEST_CODE -> {
                 if (resultCode == RESULT_OK) {
-                    val navigationState = data?.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE)
-                    updateProductRequestBodyForRefinement(navigationState)
-                    reloadProductsWithSortAndFilter()
+                    val navigationState = data?.getStringExtra(NAVIGATION_STATE)
+                   // updateProductRequestBodyForRefinement(navigationState)
+                    //reloadProductsWithSortAndFilter()
+                    (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState))
                 }
             }
 
@@ -540,6 +564,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         refineProducts?.isEnabled = refinementViewState
         refineDownArrow?.isEnabled = refinementViewState
         refinementText?.isEnabled = refinementViewState
+        (activity as? BottomNavigationActivity)?.apply {
+            when (refinementViewState) {
+                true -> unLockDrawerFragment()
+                false -> lockDrawerFragment()
+            }
+        }
+
     }
 
     override fun openProductDetailView(productList: ProductList) {
@@ -761,6 +792,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
+    fun onRefined(navigationState: String) {
+        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState))
+    }
+
     companion object {
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
@@ -774,10 +809,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
 
-        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?) = ProductListingFragment().withArgs {
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?, navigationState: String?) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
+            putString(NAVIGATION_STATE, navigationState)
         }
     }
+
 }

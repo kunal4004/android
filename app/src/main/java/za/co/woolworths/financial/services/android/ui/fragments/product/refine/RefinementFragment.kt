@@ -1,15 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
@@ -29,8 +23,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var refinementAdapter: RefinementAdapter? = null
     private var refinementNavigation: RefinementNavigation? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
-    private var pageTitle: TextView? = null
     private var refinedNavigateState = ""
+
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -44,10 +38,15 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         arguments?.let{
             refinementNavigation = Utils.jsonStringToObject(it.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
             refinedNavigateState = it.getString(REFINED_NAVIGATION_STATE, "")
+        }
+
+        try {
+            listener = parentFragment as OnRefinementOptionSelected
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Calling fragment must implement Callback interface")
         }
     }
 
@@ -62,10 +61,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun initViews() {
-        activity?.let {
-            pageTitle = it.findViewById(R.id.toolbarText)
+        listener.apply {
+            refinementNavigation?.displayName?.let { setPageTitle(it) }
+            hideCloseButton()
         }
-        pageTitle?.text = refinementNavigation?.displayName
+        backButton?.setOnClickListener { onBackPressed() }
         clearAndResetFilter?.text = getString(R.string.clear_filter)
         clearAndResetFilter?.setOnClickListener { refinementAdapter?.clearRefinement() }
         refinementSeeResult.setOnClickListener { seeResults() }
@@ -80,15 +80,6 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         refinementList.adapter = refinementAdapter
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnRefinementOptionSelected) {
-            listener = context
-        } else {
-            throw ClassCastException("$context must implement OnRefinementOptionSelected.")
-        }
-    }
-
     private fun getRefinementSelectableItems(refinementNavigation: RefinementNavigation): ArrayList<RefinementSelectableItem> {
         var dataList = arrayListOf<RefinementSelectableItem>()
         if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
@@ -101,12 +92,13 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
         if (refinementNavigation.refinements != null && refinementNavigation.refinements.size > 0) {
             refinementNavigation.refinements.forEach {
-                if (it.subRefinements != null && it.subRefinements.size > 0) {
+                if (it.displayName.equals("Category", true)) {
+                    dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.CATEGORY))
+                } else if (it.subRefinements != null && it.subRefinements.size > 0) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.OPTIONS))
                 } else {
                     dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
                 }
-
             }
         }
         return dataList
@@ -184,22 +176,6 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun updateSeeResultButtonText() {
         seeResultCount.text = buildSeeResultButtonText()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.getItem(0)?.isVisible = false
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            android.R.id.home -> {
-                onBackPressed();
-                return true
-            }
-
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

@@ -1,15 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
@@ -18,6 +12,8 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementNavigationAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment.Companion.NAVIGATION_STATE
+import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment.Companion.UPDATED_NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -30,15 +26,12 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var baseNavigationState = ""
     private var updatedNavigationState = ""
-    private var pageTitle: TextView? = null
     private val emptyNavigationState = ""
 
     companion object {
         private val ARG_PARAM = "productViewObject"
         val ON_PROMOTION: String = "On Promotion"
         val CATEGORY: String = "Category"
-        val NAVIGATION_STATE = "NAVIGATION_STATE"
-        val UPDATED_NAVIGATION_STATE = "UPDATED_NAVIGATION_STATE"
 
         fun getInstance(productView: ProductView, navigationState: String, updatedNavigationState: String) = RefinementNavigationFragment().withArgs {
             putString(ARG_PARAM, Utils.toJson(productView))
@@ -55,6 +48,12 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
             baseNavigationState = it.getString(NAVIGATION_STATE, "")
             updatedNavigationState = it.getString(UPDATED_NAVIGATION_STATE, "")
         }
+
+        try {
+            listener = parentFragment as OnRefinementOptionSelected
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Calling fragment must implement Callback interface")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,12 +62,11 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun initViews() {
-
-        activity?.let {
-            (it as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            pageTitle = it.findViewById(R.id.toolbarText)
+        listener.apply {
+            setPageTitle(resources.getString(R.string.filter_results))
+            hideBackButton()
         }
-        pageTitle?.text = resources.getString(R.string.filter_results)
+        closeButton?.setOnClickListener { onBackPressed() }
         clearAndResetFilter?.text = getString(R.string.reset_filter)
         clearAndResetFilter?.setOnClickListener { if (showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
         refinementSeeResult.setOnClickListener { seeResults() }
@@ -86,21 +84,11 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnRefinementOptionSelected) {
-            listener = context
-        } else {
-            throw ClassCastException("$context must implement OnRefinementOptionSelected.")
-        }
-    }
-
     private fun getRefinementSelectableItems(navigationList: ArrayList<RefinementNavigation>): ArrayList<RefinementSelectableItem> {
         var dataList = arrayListOf<RefinementSelectableItem>()
         var isHeaderAddedForCategory: Boolean = false
         navigationList.forEach {
             if (it.displayName.contentEquals(ON_PROMOTION)) {
-               // dataList.add(0, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
                 var refinementSelectableItem = RefinementSelectableItem(it, RefinementSelectableItem.ViewType.PROMOTION)
                 refinementSelectableItem.isSelected = (it.refinementCrumbs != null && it.refinementCrumbs.size > 0)
                 dataList.add(0, refinementSelectableItem)
@@ -120,8 +108,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     override fun onBackPressed() {
-        activity?.finish()
-        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        listener?.onBackPressedWithOutRefinement()
     }
 
     private fun seeResults() {
@@ -140,22 +127,6 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     private fun showReset(): Boolean {
         return (!TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.getItem(0)?.isVisible = true
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            R.id.itmIconClose -> {
-                onBackPressed()
-                return true
-            }
-
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

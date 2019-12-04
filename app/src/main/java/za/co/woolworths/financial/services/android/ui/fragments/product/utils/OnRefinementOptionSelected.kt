@@ -12,4 +12,8 @@ interface OnRefinementOptionSelected {
     fun onSeeResults(navigationState: String)
     fun onRefinementClear()
     fun onRefinementReset()
+    fun onCategorySelected(refinement: Refinement)
+    fun hideCloseButton(){}
+    fun hideBackButton(){}
+    fun setPageTitle(title: String){}
 }

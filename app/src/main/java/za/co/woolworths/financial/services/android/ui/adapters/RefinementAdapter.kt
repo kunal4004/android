@@ -30,6 +30,9 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
             RefinementSelectableItem.ViewType.MULTI_SELECTOR.value -> {
                 MultiSelectorHolder(LayoutInflater.from(context).inflate(R.layout.refinements_multiple_selection_layout, parent, false))
             }
+            RefinementSelectableItem.ViewType.CATEGORY.value -> {
+                CategoryHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
+            }
             else -> OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
         }
     }
@@ -98,6 +101,17 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
                 dataList[position].isSelected = !dataList[position].isSelected
                 notifyDataSetChanged()
                 baseListner.onSelectionChanged()
+            }
+        }
+    }
+
+    inner class CategoryHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+        override fun bind(position: Int) {
+            val item = dataList[position].item as Refinement
+            itemView.displayName.text = item.label
+            itemView.rightArrow.visibility = View.INVISIBLE
+            itemView.refinementOptions.setOnClickListener {
+                listner.onCategorySelected(item)
             }
         }
     }

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
@@ -108,4 +110,17 @@ public interface BottomNavigator {
 
 	void setHomeAsUpIndicator(int drawable);
 
+	void lockDrawerFragment();
+
+	void unLockDrawerFragment();
+
+	void setUpDrawerFragment(ProductView productsResponse, ProductsRequestParams productsRequestParams);
+
+	void closeDrawerFragment();
+
+	void openDrawerFragment();
+
+	void addDrawerFragment();
+
+	void onRefined(String navigationState);
 }

@@ -354,10 +354,6 @@
             android:theme="@style/DebitOrder" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/RefineActivityStyle" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BalanceProtectionInsuranceStyle" />

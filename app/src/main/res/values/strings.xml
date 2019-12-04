@@ -1241,4 +1241,6 @@
     <string name="filter_results">FILTER RESULTS</string>
     <string name="reset_filter">RESET FILTER</string>
     <string name="clear_filter">CLEAR FILTER</string>
+    <string name="open_drawer">open</string>
+    <string name="close_drawer">close</string>
 </resources>

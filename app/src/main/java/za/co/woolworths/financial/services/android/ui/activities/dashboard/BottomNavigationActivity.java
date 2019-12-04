@@ -8,11 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.text.TextUtils;
@@ -44,6 +46,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -54,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
@@ -98,6 +102,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_BARCODE_SCAN;
+import static za.co.woolworths.financial.services.android.ui.extension.AppCompatActvityExtensionKt.addFragment;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -132,6 +137,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private QueryBadgeCounter mQueryBadgeCounter;
     public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
+    public DrawerFragment drawerFragment;
 
     @Override
     public int getLayoutId() {
@@ -195,7 +201,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (object instanceof LoadState) {
                     String searchProduct = ((LoadState) object).getSearchProduct();
                     if (!TextUtils.isEmpty((searchProduct))) {
-                        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
+                        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct, ""));
                     }
                 } else if (object instanceof AuthenticationState) {
                     AuthenticationState auth = ((AuthenticationState) object);
@@ -228,6 +234,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             badgeCount();
         }
+
+       addDrawerFragment();
+
     }
 
     private void initBadgeCounter() {
@@ -863,7 +872,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
-            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm, ""));
             return;
         }
 
@@ -1248,6 +1257,52 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ShopFragment shopFragment = (ShopFragment) currentFragment;
             shopFragment.onStartShopping();
             return;
+        }
+    }
+
+    @Override
+    public void addDrawerFragment() {
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * .80);
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) getViewDataBinding().drawerFragment.getLayoutParams();
+        params.width = width;
+        getViewDataBinding().drawerFragment.setLayoutParams(params);
+        lockDrawerFragment();
+        drawerFragment = new DrawerFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.drawerFragment, drawerFragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void lockDrawerFragment() {
+        getViewDataBinding().drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    @Override
+    public void unLockDrawerFragment() {
+        getViewDataBinding().drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    @Override
+    public void setUpDrawerFragment(ProductView productsResponse, ProductsRequestParams productsRequestParams) {
+        unLockDrawerFragment();
+        drawerFragment.setUpDrawer(getViewDataBinding().drawerLayout, productsResponse, productsRequestParams);
+    }
+
+    @Override
+    public void openDrawerFragment() {
+        getViewDataBinding().drawerLayout.openDrawer(Gravity.RIGHT);
+    }
+
+    @Override
+    public void closeDrawerFragment() {
+        getViewDataBinding().drawerLayout.closeDrawer(Gravity.RIGHT);
+    }
+
+    @Override
+    public void onRefined(String navigationState) {
+        if (getCurrentFragment() instanceof ProductListingFragment) {
+            ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState);
         }
     }
 }

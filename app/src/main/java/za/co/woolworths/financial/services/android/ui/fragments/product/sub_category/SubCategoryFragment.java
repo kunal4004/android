@@ -183,7 +183,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	@Override
 	public void onChildItemClicked(SubCategory subCategory) {
 		//Navigate to product grid
-		pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE,subCategory.categoryName,subCategory.dimValId));
+		pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE,subCategory.categoryName,subCategory.dimValId,""));
 	}
 
 	@Override

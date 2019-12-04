@@ -1,14 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -28,7 +23,6 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var subRefinementAdapter: SubRefinementAdapter? = null
     private var refinement: Refinement? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
-    private var pageTitle: TextView? = null
 
     companion object {
         private val ARG_PARAM = "refinementObject"
@@ -44,6 +38,12 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         arguments?.let{
             refinement = Utils.jsonStringToObject(it.getString(ARG_PARAM), Refinement::class.java) as Refinement
         }
+
+        try {
+            listener = parentFragment as OnRefinementOptionSelected
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Calling fragment must implement Callback interface")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,10 +58,11 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun initViews() {
 
-        activity?.let {
-            pageTitle = it.findViewById(R.id.toolbarText)
+        listener.apply {
+            refinement?.label?.let { setPageTitle(it) }
+            hideCloseButton()
         }
-        pageTitle?.text = refinement?.label
+        backButton?.setOnClickListener { onBackPressed() }
         clearAndResetFilter?.text = getString(R.string.clear_filter)
         clearAndResetFilter?.setOnClickListener { subRefinementAdapter?.clearRefinement() }
         refinementSeeResult.setOnClickListener { seeResults() }
@@ -74,15 +75,6 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
         subRefinementAdapter = activity?.let { SubRefinementAdapter(it, this, listener, dataList) }
         refinementList.adapter = subRefinementAdapter
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnRefinementOptionSelected) {
-            listener = context
-        } else {
-            throw ClassCastException("$context must implement OnRefinementOptionSelected.")
-        }
     }
 
     private fun getSubRefinementSelectableItems(subRefinements: ArrayList<SubRefinement>): ArrayList<RefinementSelectableItem> {
@@ -138,22 +130,6 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun updateSeeResultButtonText() {
         seeResultCount.text = buildSeeResultButtonText()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.getItem(0)?.isVisible = false
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            android.R.id.home -> {
-                onBackPressed();
-                return true
-            }
-
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }
