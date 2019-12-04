@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,6 +50,10 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	public ImageView savingSinceInfo;
 	public ImageView yearToDateSpendInfo;
 	private TextView tvWRewardInstantSaving;
+	private RelativeLayout wRewardInstantSavingsRelativeLayout;
+	private RelativeLayout savingSinceRelativeLayout;
+	private RelativeLayout quartlyVoucherEarnedRelativeLayout;
+	private RelativeLayout yearDateSpendRelativeLayout;
 
 	@Nullable
 	@Override
@@ -65,6 +71,10 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		savingSince = (TextView) view.findViewById(R.id.savingSince);
 		savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
 		tvWRewardInstantSaving = (TextView) view.findViewById(R.id.tvWRewardInstantSaving);
+		wRewardInstantSavingsRelativeLayout = (RelativeLayout)view.findViewById(R.id.wRewardInstantSavingsRelativeLayout);
+		savingSinceRelativeLayout = (RelativeLayout)view.findViewById(R.id.savingSinceRelativeLayout);
+		yearDateSpendRelativeLayout = (RelativeLayout)view.findViewById(R.id.yearDateSpendRelativeLayout);
+		quartlyVoucherEarnedRelativeLayout = (RelativeLayout)view.findViewById(R.id.quartlyVoucherEarnedRelativeLayout);
 		mLayoutManager = new ScrollingLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false, 1500);
 
 		Activity activity = getActivity();
@@ -105,8 +115,23 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 			}
 		}));
 		return view;
+	}
 
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		uniqueIdsForWRewardsSavings();
+	}
 
+	private void uniqueIdsForWRewardsSavings() {
+		Activity activity = getActivity();
+		if (activity != null && activity.getResources() != null) {
+			noSavingsView.setContentDescription(getString(R.string.savingsLayout));
+			wRewardInstantSavingsRelativeLayout.setContentDescription(getString(R.string.tvWRewardInstantSavingLayout));
+			savingSinceRelativeLayout.setContentDescription(getString(R.string.savingSinceLayout));
+			quartlyVoucherEarnedRelativeLayout.setContentDescription(getString(R.string.quarterlyVouchersEarnedLayout));
+			yearDateSpendRelativeLayout.setContentDescription(getString(R.string.yearToDateSpendTextLayout));
+		}
 	}
 
 	@Override

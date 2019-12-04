@@ -38,6 +38,8 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(), View.OnClickListe
         applyForWRewards.setOnClickListener(this)
         tvSignIn.setOnClickListener(this)
         tvRegister.setOnClickListener(this)
+
+        uniqueIdsForWRewardAutomation()
     }
 
     override fun onClick(view: View?) {
@@ -66,5 +68,16 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(), View.OnClickListe
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         mBottomNavigator?.removeToolbar()
+    }
+
+    private fun uniqueIdsForWRewardAutomation() {
+        activity?.resources?.apply {
+            vpJoinRewardInfo?.contentDescription = getString(R.string.joinWRewardsViewGroup)
+            scrollLoggedOutLoggedIn?.contentDescription = getString(R.string.join_wreward_nested_scrollview)
+            joinRewardScrollContainerLinearLayout?.contentDescription = getString(R.string.join_wreward_scroll_container_linearlayout)
+            tabIndicator?.contentDescription = getString(R.string.join_wreward_tab_indicator_layout)
+            incSignOutContent?.contentDescription = getString(R.string.include_sign_out_content)
+            applyForWRewards?.contentDescription = getString(R.string.joinWRewardsButton)
+        }
     }
 }
