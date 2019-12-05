@@ -1300,9 +1300,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void onRefined(String navigationState) {
+    public void onRefined(String navigationState, String categoryName) {
         if (getCurrentFragment() instanceof ProductListingFragment) {
-            ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState);
+            ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState, categoryName);
         }
     }
 

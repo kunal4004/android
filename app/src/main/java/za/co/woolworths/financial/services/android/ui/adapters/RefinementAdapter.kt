@@ -111,7 +111,7 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
             itemView.displayName.text = item.label
             itemView.rightArrow.visibility = View.INVISIBLE
             itemView.refinementOptions.setOnClickListener {
-                listner.onCategorySelected(item)
+                listner.onCategorySelected(item, item.label)
             }
         }
     }

@@ -122,7 +122,7 @@ public interface BottomNavigator {
 
 	void addDrawerFragment();
 
-	void onRefined(String navigationState);
+	void onRefined(String navigationState, String categoryName);
 
 	void onResetFilter();
 }

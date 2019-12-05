@@ -34,6 +34,7 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
     private var productsRequestParams: ProductsRequestParams? = null
     private var updatedProductsRequestParams: ProductsRequestParams? = null
     private val emptyNavigationState = ""
+    var categoryNameForPageTitle = ""
     private val ERROR_REQUEST_CODE = 755
     var selectedNavigationState: String? = null
     var isResetFilterSelected = false
@@ -52,11 +53,9 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
     }
 
     public fun setUpDrawer(drawerLayout: DrawerLayout, productsResponse: ProductView, productsRequestParams: ProductsRequestParams) {
-
+        resetRefinementData()
         this.productsResponse = productsResponse
         this.productsRequestParams = productsRequestParams
-        clearSelectedNavigationState()
-        isResetFilterSelected = false
         removeAllFragments()
         activity?.apply {
             mDrawerLayout = drawerLayout
@@ -70,11 +69,10 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
                 override fun onDrawerClosed(drawerView: View) {
                     super.onDrawerClosed(drawerView)
                     removeAllFragments()
-                    resetData()
                     if(isResetFilterSelected)
                         (activity as? BottomNavigationActivity)?.onResetFilter()
                     if (!selectedNavigationState.isNullOrEmpty())
-                        (activity as? BottomNavigationActivity)?.onRefined(selectedNavigationState)
+                        (activity as? BottomNavigationActivity)?.onRefined(selectedNavigationState, categoryNameForPageTitle)
                 }
 
                 override fun onDrawerStateChanged(newState: Int) {
@@ -115,7 +113,8 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
         replaceChildFragmentSafely(fragment, tag, false, true, R.id.fragment_container, R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
 
-    override fun onBackPressedWithRefinement(navigationState: String) {
+    override fun onBackPressedWithRefinement(navigationState: String, categoryName: String?) {
+        categoryNameForPageTitle = categoryName ?: ""
         executeRefineProducts(navigationState)
     }
 
@@ -156,7 +155,8 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
         Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, message, ERROR_REQUEST_CODE)
     }
 
-    override fun onSeeResults(navigationState: String) {
+    override fun onSeeResults(navigationState: String, categoryName: String?) {
+        categoryNameForPageTitle = categoryName?:""
         if (!TextUtils.isEmpty(navigationState)) {
             setResultForProductListing(navigationState)
         } else if (!TextUtils.isEmpty(getRefinedNavigationState())) {
@@ -169,8 +169,8 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
     }
 
     private fun setResultForProductListing(navigationState: String) {
-        closeDownPage()
         selectedNavigationState = navigationState
+        closeDownPage()
     }
 
     private fun hideProgressBar() {
@@ -258,8 +258,8 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
         return if (TextUtils.isEmpty(getRefinedNavigationState())) getBaseNavigationState() else getRefinedNavigationState()
     }
 
-    override fun onCategorySelected(refinement: Refinement) {
-        onSeeResults(refinement.navigationState)
+    override fun onCategorySelected(refinement: Refinement, categoryName: String?) {
+        onSeeResults(refinement.navigationState, categoryName)
     }
 
     override fun hideBackButton() {
@@ -300,14 +300,13 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
 
     }
 
-    private fun clearSelectedNavigationState() {
-        selectedNavigationState = null
-    }
-
-    private fun resetData() {
+    private fun resetRefinementData() {
         productsResponse = null
         productsRequestParams = null
         updatedProductsRequestParams = null
+        selectedNavigationState = null
+        categoryNameForPageTitle = ""
+        isResetFilterSelected = false
     }
 
 }

@@ -88,11 +88,11 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onBackPressed() {
         var navigationState = getNavigationState()
-        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
+        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState, refinement?.displayName)
     }
 
     private fun seeResults() {
-        listener.onSeeResults(if (TextUtils.isEmpty(getNavigationState())) refinement?.navigationState!! else getNavigationState())
+        listener.onSeeResults(if (TextUtils.isEmpty(getNavigationState())) refinement?.navigationState!! else getNavigationState(), refinement?.displayName)
     }
 
     private fun getNavigationState(): String {

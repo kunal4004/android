@@ -792,8 +792,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    fun onRefined(navigationState: String) {
-        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState))
+    fun onRefined(navigationState: String, categoryName: String?) {
+        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, categoryName, mSearchTerm, navigationState))
     }
 
     fun onResetFilter() {

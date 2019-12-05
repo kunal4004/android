@@ -106,11 +106,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onBackPressed() {
         var navigationState = getNavigationState()
-        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
+        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState, refinementNavigation?.displayName)
     }
 
     private fun seeResults() {
-        listener.onSeeResults(getNavigationState())
+        listener.onSeeResults(getNavigationState(), refinementNavigation?.displayName ?: "")
     }
 
     private fun getNavigationState(): String {
