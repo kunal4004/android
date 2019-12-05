@@ -1243,7 +1243,4 @@
     <string name="clear_filter">CLEAR FILTER</string>
     <string name="open_drawer">open</string>
     <string name="close_drawer">close</string>
-    <string name="dialog_chanel_title">We do not offer Chanel\n in our app.</string>
-    <string name="dialog_chanel_desc">Chanel is available at selected Woolworths stores and on our website.</string>
-    <string name="dialog_chanel_action">Continue</string>
 </resources>
