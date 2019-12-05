@@ -1305,4 +1305,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState);
         }
     }
+
+    @Override
+    public void onResetFilter() {
+        if (getCurrentFragment() instanceof ProductListingFragment) {
+            ((ProductListingFragment) getCurrentFragment()).onResetFilter();
+        }
+    }
 }

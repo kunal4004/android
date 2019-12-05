@@ -796,6 +796,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState))
     }
 
+    fun onResetFilter() {
+        (activity as? BottomNavigationActivity)?.popFragment()
+    }
+
     companion object {
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"

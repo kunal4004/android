@@ -36,6 +36,7 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
     private val emptyNavigationState = ""
     private val ERROR_REQUEST_CODE = 755
     var selectedNavigationState: String? = null
+    var isResetFilterSelected = false
 
     companion object {
         const val TAG_NAVIGATION_FRAGMENT: String = "OptionsFragment"
@@ -55,7 +56,7 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
         this.productsResponse = productsResponse
         this.productsRequestParams = productsRequestParams
         clearSelectedNavigationState()
-
+        isResetFilterSelected = false
         removeAllFragments()
         activity?.apply {
             mDrawerLayout = drawerLayout
@@ -69,6 +70,9 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
                 override fun onDrawerClosed(drawerView: View) {
                     super.onDrawerClosed(drawerView)
                     removeAllFragments()
+                    resetData()
+                    if(isResetFilterSelected)
+                        (activity as? BottomNavigationActivity)?.onResetFilter()
                     if (!selectedNavigationState.isNullOrEmpty())
                         (activity as? BottomNavigationActivity)?.onRefined(selectedNavigationState)
                 }
@@ -215,7 +219,9 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
     }
 
     override fun onRefinementReset() {
-        executeRefineProducts(emptyNavigationState)
+        //executeRefineProducts(emptyNavigationState)
+        isResetFilterSelected = true
+        closeDownPage()
     }
 
     private fun closeDownPage() {
@@ -296,6 +302,12 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
 
     private fun clearSelectedNavigationState() {
         selectedNavigationState = null
+    }
+
+    private fun resetData() {
+        productsResponse = null
+        productsRequestParams = null
+        updatedProductsRequestParams = null
     }
 
 }

@@ -68,7 +68,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
         }
         closeButton?.setOnClickListener { onBackPressed() }
         clearAndResetFilter?.text = getString(R.string.reset_filter)
-        clearAndResetFilter?.setOnClickListener { if (showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
+        clearAndResetFilter?.setOnClickListener { listener.onRefinementReset() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         updateToolBarMenuText()
@@ -116,17 +116,9 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun updateToolBarMenuText() {
-        if (showReset()) {
             clearAndResetFilter?.text = getString(R.string.reset_filter)
             clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
-        } else {
-            clearAndResetFilter?.text = getString(R.string.clear_filter)
-            clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(updatedNavigationState)
-        }
-    }
 
-    private fun showReset(): Boolean {
-        return (!TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState))
     }
 
 }

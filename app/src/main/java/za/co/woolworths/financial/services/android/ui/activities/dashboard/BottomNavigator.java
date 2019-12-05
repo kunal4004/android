@@ -123,4 +123,6 @@ public interface BottomNavigator {
 	void addDrawerFragment();
 
 	void onRefined(String navigationState);
+
+	void onResetFilter();
 }
