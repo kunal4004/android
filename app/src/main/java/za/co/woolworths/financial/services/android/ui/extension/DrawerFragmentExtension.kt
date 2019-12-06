@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
-import android.content.Context
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.ProductView
@@ -9,8 +8,8 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefineProductsResult
 
-fun refineProducts(context: Context, productsRequestParams: ProductsRequestParams): Call<ProductView> {
-    val resultListener: OnRefineProductsResult? = context as? OnRefineProductsResult
+fun refineProducts(onRefineProductsResult: OnRefineProductsResult, productsRequestParams: ProductsRequestParams): Call<ProductView> {
+    val resultListener: OnRefineProductsResult? = onRefineProductsResult
     productsRequestParams.responseType = ProductsRequestParams.ResponseType.SUMMARY
     val productRequest = OneAppService.getProducts(productsRequestParams)
     productRequest.enqueue(CompletionHandler(object : RequestListener<ProductView> {

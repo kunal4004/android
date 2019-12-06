@@ -1281,4 +1281,9 @@
     <string name="apply_for_wreward_layout">Apply For WReward Button</string>
     <string name="logged_in_not_linked_linearlayout">Logged In Not Link Layout</string>
 
+    <string name="filter_results">FILTER RESULTS</string>
+    <string name="reset_filter">RESET FILTER</string>
+    <string name="clear_filter">CLEAR FILTER</string>
+    <string name="open_drawer">open</string>
+    <string name="close_drawer">close</string>
 </resources>

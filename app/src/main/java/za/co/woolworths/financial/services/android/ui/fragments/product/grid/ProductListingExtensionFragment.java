@@ -51,8 +51,9 @@ public class ProductListingExtensionFragment extends Fragment {
         return mIsLoading;
     }
 
-    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm) {
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState) {
         this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
+        this.productsRequestParams.setRefinement(navigationState);
     }
 
     public ProductsRequestParams getProductRequestBody() {
