@@ -29,37 +29,38 @@
 
 
                 <FrameLayout
+                    android:id="@+id/cardFrameLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rewardsoverviewcardbg"
-                    android:paddingTop="@dimen/sixteen_dp"
-                    >
+                    android:paddingTop="@dimen/sixteen_dp">
+
                     <FrameLayout
+                        android:id="@+id/wRewardCardFrameLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        >
+                        android:layout_gravity="center_horizontal">
+
                         <FrameLayout
                             android:id="@+id/flipCardBackLayout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingTop="30dp"
+                            android:layout_marginLeft="@dimen/twenty_four_dp"
                             android:layout_marginTop="@dimen/twenty_four_dp"
                             android:layout_marginRight="@dimen/twenty_four_dp"
-                            android:layout_marginLeft="@dimen/twenty_four_dp"
-                            >
+                            android:paddingTop="30dp">
 
                             <LinearLayout
+                                android:id="@+id/cardBackgroundLinearLayout"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:background="@drawable/wrewards_barcode_white_background"
                                 android:orientation="vertical"
-                                android:paddingBottom="16dp"
                                 android:paddingLeft="20dp"
-                                android:paddingRight="20dp"
                                 android:paddingTop="16dp"
-                                >
+                                android:paddingRight="20dp"
+                                android:paddingBottom="16dp">
 
                                 <ImageView
                                     android:id="@+id/barCodeImage"
@@ -67,8 +68,7 @@
                                     android:layout_height="57dp"
                                     android:layout_gravity="center_horizontal"
                                     android:adjustViewBounds="true"
-                                    android:scaleType="fitXY"
-                                    />
+                                    android:scaleType="fitXY" />
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/barCodeNumber"
@@ -79,8 +79,7 @@
                                     android:letterSpacing="0.08"
                                     android:textColor="@color/black"
                                     android:textSize="15sp"
-                                    app:WTextView_font="medium"
-                                    />
+                                    app:WTextView_font="medium" />
                             </LinearLayout>
                         </FrameLayout>
 
@@ -88,9 +87,9 @@
                             android:id="@+id/flipCardFrontLayout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/twenty_four_dp"
                             android:layout_marginTop="@dimen/twenty_four_dp"
-                            android:layout_marginRight="@dimen/twenty_four_dp"
-                            android:layout_marginLeft="@dimen/twenty_four_dp"/>
+                            android:layout_marginRight="@dimen/twenty_four_dp" />
 
                         <ImageView
                             android:id="@+id/vipLogo"
@@ -105,6 +104,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/wRewardsBenefitsRelativeLayout"
                     style="@style/reward_benefit_container_style">
 
                     <TextView
@@ -112,29 +112,29 @@
                         style="@style/reward_benefit_title"
                         android:text="@string/reward_benefits_title" />
 
-                        <ImageView
-                            android:id="@+id/infoImage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_caret_black" />
+                    <ImageView
+                        android:id="@+id/infoImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_caret_black" />
 
-                        <TextView
-                            android:id="@+id/tvMoreInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@+id/infoImage"
-                            android:fontFamily="@font/futura_semi_bold_ttf"
-                            android:letterSpacing="0.1"
-                            android:text="@string/reward_more_info"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/twelve_sp"
-                            tools:targetApi="lollipop"
-                            android:paddingBottom="@dimen/eight_dp"
-                            android:paddingTop="@dimen/eight_dp"
-                            tools:text="@string/reward_more_info" />
+                    <TextView
+                        android:id="@+id/tvMoreInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/infoImage"
+                        android:fontFamily="@font/futura_semi_bold_ttf"
+                        android:letterSpacing="0.1"
+                        android:paddingTop="@dimen/eight_dp"
+                        android:paddingBottom="@dimen/eight_dp"
+                        android:text="@string/reward_more_info"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/twelve_sp"
+                        tools:targetApi="lollipop"
+                        tools:text="@string/reward_more_info" />
                 </RelativeLayout>
 
                 <View
@@ -142,7 +142,9 @@
                     android:layout_height="0.5dp"
                     android:background="#0a000000"/>
 
-                <RelativeLayout style="@style/reward_benefit_container_style">
+                <RelativeLayout
+                    android:id="@+id/wRewardSavingsRelativeLayout"
+                    style="@style/reward_benefit_container_style">
 
                     <TextView
                         style="@style/reward_benefit_title"
@@ -156,8 +158,7 @@
                         android:layout_centerVertical="true"
                         android:textColor="@color/black"
                         android:textSize="15sp"
-                        app:WTextView_font="medium_bold"
-                        />
+                        app:WTextView_font="medium_bold" />
                 </RelativeLayout>
 
                 <View
@@ -208,6 +209,7 @@
                         />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/featurePromotionTetView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
@@ -218,8 +220,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="12sp"
-                        app:WTextView_font="medium_bold"
-                        />
+                        app:WTextView_font="medium_bold" />
 
                     <androidx.viewpager.widget.ViewPager
                         android:id="@+id/promotionViewPager"

@@ -1238,6 +1238,49 @@
     <string name="retry_on_failure_button">Retry on Failure Tapped</string>
     <string name="call_center_number_tapped">Call Center Number Tapped</string>
     <string name="progress_indicator_state">Progress Indicator State</string>
+
+    <!-- Unique Ids for WReward Overview-->
+    <string name="flipCardBackLayout">CardBackLayout</string>
+    <string name="tvBenefitRewardLayout">BenefitReward</string>
+    <string name="savingsLayout">Savings layout</string>
+    <string name="toNextTireLayout">To Get To VIP</string>
+    <string name="promotionsLayout">FEATURED PROMOTIONS</string>
+    <string name="vipLogoLayout">VIP Logo</string>
+
+    <!-- Unique Ids for WReward Savings-->
+    <string name="savingsLayout_savings">Savings Layout</string>
+    <string name="tvWRewardInstantSavingLayout">WRewards Instant Savings</string>
+    <string name="savingSinceLayout">Saving Since Layout</string>
+    <string name="quarterlyVouchersEarnedLayout">Quarterly Vouchers Earned</string>
+    <string name="yearToDateSpendTextLayout">Year To Date Spend</string>
+
+    <!-- Unique Ids for WReward Vouchers-->
+    <string name="vouchersLayout">Vouchers layout</string>
+
+    <!-- Unique Ids for Wrewards Login /Join WRewards-->
+    <string name="infoLayout">Info Layout</string>
+    <string name="joinWRewardsViewGroup">Join WRewards viewGroup</string>
+    <string name="joinWRewardsButton">Join WRewards button</string>
+    <string name="join_wreward_nested_scrollview">Join Reward ScrollView</string>
+    <string name="join_wreward_scroll_container_linearlayout">Join Reward ScrollView Container</string>
+    <string name="join_wreward_tab_indicator_layout">Tab Indicator</string>
+    <string name="include_sign_out_content">Sign out layout</string>
+    <string name="wreward_logged_in_framelayout">WReward logged in FrameLayout</string>
+    <string name="wreward_logged_in_relativelayout">WReward logged in RelativeLayout</string>
+    <string name="wreward_progress_bar">Loading progress</string>
+    <string name="wreward_tab_layout">WReward tab layout</string>
+    <string name="fragment_tab_layout">Tab View Parent Container</string>
+    <string name="reward_items_layout">View Pager Main Container</string>
+    <string name="wreward_flip_card_framelayout">WReward Flip Card Layout</string>
+    <string name="cardBackgroundLinearLayout">Card background linear layout</string>
+    <string name="card_frame_layout">Card Main Frame Layout</string>
+    <string name="featured_promotions_label">Feature Promotions Label</string>
+    <string name="voucher_empty_state">Voucher Empty State</string>
+    <string name="join_wreward_view_pager">Join WReward View Pager</string>
+    <string name="logged_in_Not_link_scrollView">Scroll Logged In Not Link Content</string>
+    <string name="apply_for_wreward_layout">Apply For WReward Button</string>
+    <string name="logged_in_not_linked_linearlayout">Logged In Not Link Layout</string>
+
     <string name="filter_results">FILTER RESULTS</string>
     <string name="reset_filter">RESET FILTER</string>
     <string name="clear_filter">CLEAR FILTER</string>

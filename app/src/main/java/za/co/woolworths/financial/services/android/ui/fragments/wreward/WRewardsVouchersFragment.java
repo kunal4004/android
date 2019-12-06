@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,6 +50,7 @@ public class WRewardsVouchersFragment extends Fragment {
 	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private Activity mActivity;
 	private boolean isAuthenticated;
+	private RelativeLayout relEmptyStateHandler;
 
 	@Nullable
 	@Override
@@ -57,9 +60,9 @@ public class WRewardsVouchersFragment extends Fragment {
 		Bundle bundle = getArguments();
 		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
+		relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(),
-				(RelativeLayout) view.findViewById(R.id.relEmptyStateHandler),
+				relEmptyStateHandler,
 				(ImageView) view.findViewById(R.id.imgEmpyStateIcon),
 				(WTextView) view.findViewById(R.id.txtEmptyStateTitle),
 				(WTextView) view.findViewById(R.id.txtEmptyStateDesc));
@@ -97,7 +100,22 @@ public class WRewardsVouchersFragment extends Fragment {
 						}
 					}
 				}));
+
 		return view;
+	}
+
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		uniqueIdsForRewardVoucherAutomation();
+	}
+
+	private void uniqueIdsForRewardVoucherAutomation() {
+		Activity  activity = getActivity();
+		if (activity != null && activity.getResources()!=null) {
+			recyclerView.setContentDescription(getString(R.string.vouchersLayout));
+			relEmptyStateHandler.setContentDescription(getString(R.string.voucher_empty_state));
+		}
 	}
 
 	@Override
