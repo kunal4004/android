@@ -81,6 +81,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/wRewardInstantSavingsRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -91,9 +92,9 @@
             <TextView
                 android:id="@+id/tvWRewardInstantSaving"
                 style="@style/WRewardsInstantSavingsStyle"
+                android:layout_marginEnd="@dimen/four_dp"
                 android:layout_toStartOf="@+id/wrewardsInstantSavings"
                 android:ellipsize="end"
-                android:layout_marginEnd="@dimen/four_dp"
                 android:singleLine="true"
                 android:text="@string/wrewards_instant_savings" />
 
@@ -117,6 +118,7 @@
                 android:background="#0a000000" />
 
             <RelativeLayout
+                android:id="@+id/savingSinceRelativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -137,8 +139,8 @@
 
                     <TextView
                         android:id="@+id/savingSince"
-                        android:layout_marginEnd="10dp"
-                        style="@style/WRewardsInstantSavingsValueStyle" />
+                        style="@style/WRewardsInstantSavingsValueStyle"
+                        android:layout_marginEnd="10dp" />
 
                     <ImageView
                         android:id="@+id/savingSinceInfo"
@@ -159,6 +161,7 @@
             android:background="#0a000000" />
 
         <RelativeLayout
+            android:id="@+id/quartlyVoucherEarnedRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -181,6 +184,7 @@
             android:background="#0a000000" />
 
         <RelativeLayout
+            android:id="@+id/yearDateSpendRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -202,8 +206,8 @@
 
                 <TextView
                     android:id="@+id/yearToDateSpend"
-                    android:layout_marginEnd="10dp"
-                    style="@style/WRewardsInstantSavingsValueStyle" />
+                    style="@style/WRewardsInstantSavingsValueStyle"
+                    android:layout_marginEnd="10dp" />
 
                 <ImageView
                     android:id="@+id/yearToDateSpendInfo"

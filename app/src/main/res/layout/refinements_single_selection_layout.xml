@@ -22,7 +22,10 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/labelSingleSelector"
             style="@style/refinements_textview_style_with_margin_left"
-            android:layout_toRightOf="@+id/singleSelector" />
+            android:layout_toRightOf="@+id/singleSelector"
+            android:layout_toLeftOf="@+id/countSingleSelector"
+            android:layout_marginRight="@dimen/five_dp"
+            />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/countSingleSelector"

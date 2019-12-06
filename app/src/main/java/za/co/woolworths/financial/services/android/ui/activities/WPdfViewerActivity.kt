@@ -10,6 +10,7 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
 import android.util.Log
+import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import java.io.FileOutputStream
@@ -83,7 +84,7 @@ class WPdfViewerActivity : AppCompatActivity() {
         }
 
 
-        val uri = cacheFile?.let { FileProvider.getUriForFile(this, "za.co.woolworths.financial.services.android.util.WFileProvider", it) }
+        val uri = cacheFile?.let { FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".WFileProvider", it) }
 
         val intent = ShareCompat.IntentBuilder.from(this)
                 .setType("application/pdf")

@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 
-import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -17,19 +14,17 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
 class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementAdapter: RefinementAdapter? = null
-    private var clearRefinement: TextView? = null
     private var refinementNavigation: RefinementNavigation? = null
-    private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
-    private var pageTitle: TextView? = null
     private var refinedNavigateState = ""
+
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -42,9 +37,16 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         arguments?.let{
             refinementNavigation = Utils.jsonStringToObject(it.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
             refinedNavigateState = it.getString(REFINED_NAVIGATION_STATE, "")
+        }
+
+        try {
+            listener = parentFragment as OnRefinementOptionSelected
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Calling fragment must implement Callback interface")
         }
     }
 
@@ -59,16 +61,13 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun initViews() {
-        activity?.let {
-            backButton = it.findViewById(R.id.btnClose)
-            clearRefinement = it.findViewById(R.id.resetRefinement)
-            pageTitle = it.findViewById(R.id.toolbarText)
+        listener.apply {
+            refinementNavigation?.displayName?.let { setPageTitle(it) }
+            hideCloseButton()
         }
-        backButton?.setImageResource(R.drawable.back24)
-        pageTitle?.text = refinementNavigation?.displayName
-        clearRefinement?.text = getString(R.string.refinement_clear)
-        clearRefinement?.setOnClickListener { refinementAdapter?.clearRefinement() }
         backButton?.setOnClickListener { onBackPressed() }
+        clearAndResetFilter?.text = getString(R.string.clear_filter)
+        clearAndResetFilter?.setOnClickListener { refinementAdapter?.clearRefinement() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         loadData()
@@ -79,15 +78,6 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         dataList = getRefinementSelectableItems(refinementNavigation!!)
         refinementAdapter = activity?.let { RefinementAdapter(it, this, listener, dataList, refinementNavigation!!) }
         refinementList.adapter = refinementAdapter
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnRefinementOptionSelected) {
-            listener = context
-        } else {
-            throw ClassCastException("$context must implement OnRefinementOptionSelected.")
-        }
     }
 
     private fun getRefinementSelectableItems(refinementNavigation: RefinementNavigation): ArrayList<RefinementSelectableItem> {
@@ -102,12 +92,13 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
         if (refinementNavigation.refinements != null && refinementNavigation.refinements.size > 0) {
             refinementNavigation.refinements.forEach {
-                if (it.subRefinements != null && it.subRefinements.size > 0) {
+                if (it.displayName.equals("Category", true)) {
+                    dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.CATEGORY))
+                } else if (it.subRefinements != null && it.subRefinements.size > 0) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.OPTIONS))
                 } else {
                     dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
                 }
-
             }
         }
         return dataList
@@ -115,11 +106,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onBackPressed() {
         var navigationState = getNavigationState()
-        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
+        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState, refinementNavigation?.displayName)
     }
 
     private fun seeResults() {
-        listener.onSeeResults(getNavigationState())
+        listener.onSeeResults(getNavigationState(), refinementNavigation?.displayName ?: "")
     }
 
     private fun getNavigationState(): String {
@@ -146,7 +137,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     override fun onSelectionChanged() {
-        clearRefinement?.isEnabled = isAnyRefinementSelected()
+        clearAndResetFilter?.isEnabled = isAnyRefinementSelected()
         this.updateSeeResultButtonText()
     }
 

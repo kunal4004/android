@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitA
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.Utils.triggerFireBaseEvents
-import java.util.*
 
 class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
@@ -84,6 +83,23 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         tvMoreInfo.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
         tvMoreInfoVirtualCard.setOnClickListener(this)
+
+        uniqueIdsForWRewardOverview()
+    }
+
+    private fun uniqueIdsForWRewardOverview() {
+        activity?.resources?.apply {
+            wRewardCardFrameLayout?.contentDescription = getString(R.string.wreward_flip_card_framelayout)
+            flipCardBackLayout?.contentDescription = getString(R.string.flipCardBackLayout)
+            cardBackgroundLinearLayout?.contentDescription = getString(R.string.cardBackgroundLinearLayout)
+            cardFrameLayout?.contentDescription = getString(R.string.card_frame_layout)
+            wRewardsBenefitsRelativeLayout?.contentDescription = getString(R.string.tvBenefitRewardLayout)
+            wRewardSavingsRelativeLayout?.contentDescription = getString(R.string.savingsLayout)
+            toNextTireLayout?.contentDescription = getString(R.string.toNextTireLayout)
+            featurePromotionTetView?.contentDescription = getString(R.string.featured_promotions_label)
+            promotionsLayout?.contentDescription = getString(R.string.featured_promotions)
+            vipLogo?.contentDescription = getString(R.string.vipLogoLayout)
+        }
     }
 
     private fun loadDefaultCardType() {
