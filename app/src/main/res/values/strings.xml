@@ -1286,4 +1286,7 @@
     <string name="clear_filter">CLEAR FILTER</string>
     <string name="open_drawer">open</string>
     <string name="close_drawer">close</string>
+    <string name="virtual_card_number">Virtual Card Number</string>
+    <string name="virtual_card_number_desc">If your virtual card number does not match your physical WRewards card number, don’t worry this will not affect your WRewards points.</string>
+
 </resources>

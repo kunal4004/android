@@ -1898,7 +1898,7 @@
     <style name="dialog_description_text_style" parent="dialog_title_text_style">
         <item name="android:textSize">@dimen/sixteen_sp</item>
         <item name="android:textColor">@color/gray</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:lineSpacingMultiplier">1.13</item>
     </style>
 

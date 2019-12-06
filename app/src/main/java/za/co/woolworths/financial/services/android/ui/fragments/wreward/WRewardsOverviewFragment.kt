@@ -82,6 +82,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         infoImage.setOnClickListener(this)
         tvMoreInfo.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
+        tvMoreInfoVirtualCard.setOnClickListener(this)
 
         uniqueIdsForWRewardOverview()
     }
@@ -231,6 +232,9 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                         loadPromotionsAPI()
                     }
                 }
+            }
+            R.id.tvMoreInfoVirtualCard -> {
+                activity?.supportFragmentManager?.let { VirtualCardNumberInfoDialogFragment.newInstance().show(it, VirtualCardNumberInfoDialogFragment::class.java.simpleName) }
             }
             else -> return
         }

@@ -108,6 +108,44 @@
                     style="@style/reward_benefit_container_style">
 
                     <TextView
+                        android:id="@+id/tvBenefitRewardVirtualCard"
+                        style="@style/reward_benefit_title"
+                        android:text="@string/virtual_card_number" />
+
+                    <ImageView
+                        android:id="@+id/infoImageVirtualCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_caret_black" />
+
+                    <TextView
+                        android:id="@+id/tvMoreInfoVirtualCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/infoImageVirtualCard"
+                        android:fontFamily="@font/futura_semi_bold_ttf"
+                        android:letterSpacing="0.1"
+                        android:text="@string/reward_more_info"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/twelve_sp"
+                        tools:targetApi="lollipop"
+                        android:paddingBottom="@dimen/eight_dp"
+                        android:paddingTop="@dimen/eight_dp"
+                        tools:text="@string/reward_more_info" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#0a000000"/>
+
+                <RelativeLayout
+                    style="@style/reward_benefit_container_style">
+
+                    <TextView
                         android:id="@+id/tvBenefitReward"
                         style="@style/reward_benefit_title"
                         android:text="@string/reward_benefits_title" />
