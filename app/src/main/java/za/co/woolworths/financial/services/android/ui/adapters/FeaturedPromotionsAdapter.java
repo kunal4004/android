@@ -54,7 +54,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 			@Override
 			public void onClick(View v) {
 				mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);
-				mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, promotionImage.getContext().getResources().getString(R.string.featured_promotions), promotions.get(position).path));
+				mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, promotionImage.getContext().getResources().getString(R.string.featured_promotions), promotions.get(position).path, ""));
 			}
 		});
 		return cView;
