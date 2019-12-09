@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 
@@ -31,7 +31,7 @@ open class BaseRefinementFragment : Fragment(), BaseFragmentListner {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (parentFragment as DrawerFragment).view?.apply {
+        (parentFragment as RefinementDrawerFragment).view?.apply {
             pageTitle = findViewById(R.id.toolbarText)
             backButton = findViewById(R.id.backButton)
             closeButton = findViewById(R.id.closeButton)

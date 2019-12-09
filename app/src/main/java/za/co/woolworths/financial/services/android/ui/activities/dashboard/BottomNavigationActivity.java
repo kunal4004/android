@@ -57,7 +57,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
@@ -77,7 +77,6 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -101,7 +100,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
-import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_BARCODE_SCAN;
 import static za.co.woolworths.financial.services.android.ui.extension.AppCompatActvityExtensionKt.addFragment;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
@@ -137,7 +135,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private QueryBadgeCounter mQueryBadgeCounter;
     public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
-    public DrawerFragment drawerFragment;
+    public RefinementDrawerFragment drawerFragment;
 
     @Override
     public int getLayoutId() {
@@ -1267,7 +1265,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         params.width = width;
         getViewDataBinding().drawerFragment.setLayoutParams(params);
         lockDrawerFragment();
-        drawerFragment = new DrawerFragment();
+        drawerFragment = new RefinementDrawerFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.drawerFragment, drawerFragment);
         fragmentTransaction.commit();
