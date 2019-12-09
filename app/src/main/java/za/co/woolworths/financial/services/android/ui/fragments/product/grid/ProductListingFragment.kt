@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment.Companion.NAVIGATION_STATE
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment

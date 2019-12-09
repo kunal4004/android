@@ -12,9 +12,9 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementNavigationAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment
-import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment.Companion.NAVIGATION_STATE
-import za.co.woolworths.financial.services.android.ui.fragments.DrawerFragment.Companion.UPDATED_NAVIGATION_STATE
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.UPDATED_NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -113,7 +113,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun seeResults() {
-        listener.onSeeResults(emptyNavigationState, (parentFragment as DrawerFragment).categoryNameForPageTitle)
+        listener.onSeeResults(emptyNavigationState, (parentFragment as RefinementDrawerFragment).categoryNameForPageTitle)
     }
 
     private fun updateToolBarMenuText() {

@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.On
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
-class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsResult {
+class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsResult {
 
     private var mDrawerToggle: ActionBarDrawerToggle? = null
     private var mDrawerLayout: DrawerLayout? = null
@@ -83,7 +83,7 @@ class DrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefineProductsR
                     }
                 }
             }
-            mDrawerLayout?.addDrawerListener(mDrawerToggle as ActionBarDrawerToggle)
+            mDrawerToggle?.apply { mDrawerLayout?.addDrawerListener(this) }
 
             initViews()
 
