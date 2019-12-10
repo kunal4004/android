@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.account_sales_detail_fragment.*
 import kotlinx.android.synthetic.main.account_sales_more_benefit_layout.*
 import kotlinx.android.synthetic.main.account_sales_qualify_criteria_layout.*
 import za.co.woolworths.financial.services.android.models.dto.account.*
+import za.co.woolworths.financial.services.android.ui.activities.account.AccountSalesPresenterImpl.Companion.ACCOUNT_SALES_CREDIT_CARD
 import za.co.woolworths.financial.services.android.ui.adapters.AccountSalesCardBenefitAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
@@ -29,7 +30,6 @@ class AccountSalesFragment : Fragment() {
     private var expandedGroup: ExpandableGroup<*>? = null
 
     companion object {
-        const val ACCOUNT_SALES_CREDIT_CARD = "ACCOUNT_SALES_CREDIT_CARD"
         fun newInstance() = AccountSalesFragment().withArgs {
         }
 

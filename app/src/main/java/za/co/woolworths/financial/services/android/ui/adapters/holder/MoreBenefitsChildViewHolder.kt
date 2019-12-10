@@ -11,6 +11,9 @@ class MoreBenefitsChildViewHolder(itemView: View) : ChildViewHolder(itemView) {
     }
 
     fun setMoreBenefitsChildItem(name: String) {
+        /**
+         * TODO :: Split at || and display text description with bullets
+         */
         if (name.contains(splitBenefitSymbol)) {
             val benefitItems = name.split(splitBenefitSymbol)
         }
