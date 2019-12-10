@@ -29,7 +29,7 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
                 ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> {
                     // Gold vs Black credit card
                     val creditCard = getCreditCard()
-                    displayCreditCard(creditCard[0], creditCard[1], visibleApplyNowState(applyNowState))
+                    displayCreditCard(creditCard[0], creditCard[1], getGoldOrBlackCardPosition(applyNowState))
                 }
 
                 ApplyNowState.PERSONAL_LOAN -> {
@@ -41,7 +41,7 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
         }
     }
 
-    private fun visibleApplyNowState(applyNowState: ApplyNowState) = if (applyNowState == ApplyNowState.GOLD_CREDIT_CARD) 0 else 1
+    private fun getGoldOrBlackCardPosition(applyNowState: ApplyNowState) = if (applyNowState == ApplyNowState.GOLD_CREDIT_CARD) 0 else 1
 
     override fun getCreditCard(): MutableList<AccountSales> = model.getCreditCard()
 
@@ -49,14 +49,13 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
 
     override fun getPersonalLoan(): AccountSales = model.getPersonalLoan()
 
-    fun getOverlayDisplayedHeight(): Int? {
+    fun getOverlayAnchoredHeight(): Int? {
         val activity = WoolworthsApplication.getInstance()?.currentActivity
         val height: Int? = activity?.resources?.displayMetrics?.heightPixels ?: 0
         return height?.div(3)?.plus(Utils.dp2px(activity, 18f)) ?: 0
     }
 
-    fun onApplyNowButtonTapped(activity: Activity?) =
-            Utils.openExternalLink(activity, WoolworthsApplication.getApplyNowLink())
+    fun onApplyNowButtonTapped(activity: Activity?) = Utils.openExternalLink(activity, WoolworthsApplication.getApplyNowLink())
 
     fun setAccountSalesDetailPage(storeCard: AccountSales, navDetailController: NavController) {
         val bundle = Bundle()

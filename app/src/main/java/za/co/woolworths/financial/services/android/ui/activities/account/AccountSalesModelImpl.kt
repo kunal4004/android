@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.android
+package za.co.woolworths.financial.services.android.ui.activities.account
 
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R

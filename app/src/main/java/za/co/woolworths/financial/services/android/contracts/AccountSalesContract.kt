@@ -8,9 +8,10 @@ import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 interface AccountSalesContract {
 
     interface AccountSalesView {
-        fun displayHeaderItems(headerItems: CardHeader)
+        fun displayHeaderItems(cardHeader: CardHeader?)
         fun displayAccountSalesBlackInfo(storeCard: AccountSales)
         fun displayCreditCard(goldCreditCard: AccountSales, blackCreditCard: AccountSales, position: Int)
+        fun displayCreditCardFrontUI(position: Int)
     }
 
     interface AccountSalesPresenter {

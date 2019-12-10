@@ -386,18 +386,6 @@
         <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
-    <style name="apply_now_btn" parent="android:Theme">
-        <item name="android:layout_height">60dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">12sp</item>
-        <item name="WButton_font">medium_bold</item>
-        <item name="android:letterSpacing">0.2</item>
-        <item name="android:textAllCaps">true</item>
-    </style>
-
-
     <style name="colorSizeStyle" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
@@ -2113,6 +2101,17 @@
         <item name="android:textSize">14sp</item>
         <item name="android:lineSpacingExtra">21sp</item>
         <item name="android:lineSpacingMultiplier">0.05</item>
+    </style>
+
+    <style name="apply_now_btn" parent="android:Theme">
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
 </resources>
