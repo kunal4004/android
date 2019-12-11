@@ -234,6 +234,7 @@
         <item name="android:letterSpacing">0.2</item>
         <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
     <style name="transparentButtonStyle" parent="android:Theme">

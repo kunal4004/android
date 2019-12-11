@@ -1,89 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/light_gray_background"
-    android:gravity="bottom"
-    app:umanoAnchorPoint="0.3"
-    app:umanoDragView="@id/scrollContainerLinearLayout"
-    app:umanoOverlay="true"
-    app:umanoScrollableView="@id/nav_host_fragment">
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/incAccountSalesFrontLayout"
-        layout="@layout/account_sales_front_layout" />
-
-    <LinearLayout
-        android:id="@+id/scrollContainerLinearLayout"
+    <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent"
-        android:orientation="vertical">
+        android:background="@color/light_gray_background"
+        android:gravity="bottom"
+        app:umanoAnchorPoint="0.3"
+        app:umanoDragView="@id/scrollContainerLinearLayout"
+        app:umanoOverlay="true"
+        app:umanoScrollableView="@id/nav_host_fragment">
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="@drawable/rounded_view_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <include
+            android:id="@+id/incAccountSalesFrontLayout"
+            layout="@layout/account_sales_front_layout" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center">
-
-            <View
-                android:id="@+id/closeIndicator"
-                android:layout_width="56dp"
-                android:layout_height="6dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/rounded_grey_corner" />
-
-        </RelativeLayout>
-
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            app:defaultNavHost="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:navGraph="@navigation/account_sales_nav_graph" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="bottom"
-            android:background="@color/white"
-            app:tabIndicatorColor="@color/black"
-            app:tabIndicatorHeight="@dimen/four_dp"
-            app:tabMode="fixed"
-            app:tabRippleColor="@null"
-            app:tabSelectedTextColor="@color/black"
-            app:tabTextAppearance="@style/TabLayoutDefaultStyle"
-            app:tabTextColor="#80000000" />
-
-        <View
-            android:id="@+id/tabLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/light_gray" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/blackAndGoldCreditCardViewPager"
+        <LinearLayout
+            android:id="@+id/scrollContainerLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white" />
-    </LinearLayout>
+            android:background="@color/transparent"
+            android:orientation="vertical">
 
-</za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/rounded_view_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center">
+
+                <View
+                    android:id="@+id/closeIndicator"
+                    android:layout_width="56dp"
+                    android:layout_height="6dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/rounded_grey_corner" />
+
+            </RelativeLayout>
+
+            <fragment
+                android:id="@+id/nav_host_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:defaultNavHost="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:navGraph="@navigation/account_sales_nav_graph" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                app:tabIndicatorColor="@color/black"
+                app:tabIndicatorHeight="@dimen/four_dp"
+                app:tabMode="fixed"
+                app:tabRippleColor="@null"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextAppearance="@style/TabLayoutDefaultStyle"
+                app:tabTextColor="#80000000" />
+
+            <View
+                android:id="@+id/tabLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/blackAndGoldCreditCardViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+        </LinearLayout>
+
+    </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottomApplyNowButtonRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/light_gray_background"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/bottomApplyNowButton"
+            style="@style/blackButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/apply_now" />
+    </RelativeLayout>
+
+</FrameLayout>

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -17,18 +18,20 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_front_layout.*
+import kotlinx.android.synthetic.main.account_sales_front_layout.toolbar
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 
 private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
 
-class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView {
+class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +40,6 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         mAccountSalesModelImpl = AccountSalesPresenterImpl(this, AccountSalesModelImpl())
         val selectedBundle = intent?.extras?.getSerializable("APPLY_NOW_STATE")
         (selectedBundle as? ApplyNowState)?.let { state -> mAccountSalesModelImpl?.switchAccountSalesProduct(state) }
-
-        navigateBackImageButton?.setOnClickListener { onBackPressed() }
 
         tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -55,20 +56,37 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         sliding_layout?.apply {
             anchorPoint = 0.3f
             panelHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
-            panelState = SlidingUpPanelLayout.PanelState.ANCHORED
+            panelState = PanelState.ANCHORED
         }
 
-        storeCardApplyNowButton?.setOnClickListener { mAccountSalesModelImpl?.onApplyNowButtonTapped(this) }
+        val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? AccountSalesFragment
+        sliding_layout?.setScrollableView(navHostFragment?.scrollContainerLinearLayout)
+        storeCardApplyNowButton?.setOnClickListener(this)
+        bottomApplyNowButton?.setOnClickListener(this)
+        navigateBackImageButton?.setOnClickListener(this)
 
-        val toolbarHeight = toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
+        val toolbarHeight =
+                toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
+        val params =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+        toolbarHeight?.let { topMarginHeight -> params.setMargins(0, topMarginHeight, 0, 0) };
+//        sliding_layout?.layoutParams = params
 
-//        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-//        toolbarHeight?.let { layoutParams.setMargins(0, it, 0, 0) };
-//        scrollContainerLinearLayout?.layoutParams = layoutParams
+        sliding_layout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
+            override fun onPanelSlide(panel: View, slideOffset: Float) {
+                bottomApplyNowButtonRelativeLayout?.visibility =
+                        if (slideOffset > 0.16) VISIBLE else GONE
+            }
+
+            override fun onPanelStateChanged(panel: View, previousState: PanelState, newState: PanelState) {
+                //  if (newState == PanelState.EXPANDED) sli.setPanelState(PanelState.ANCHORED)
+            }
+        })
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
-        updateAccountSalesDetail(storeCard)
+        mAccountSalesModelImpl?.setAccountSalesDetailPage(storeCard, findNavController(R.id.nav_host_fragment))
     }
 
     override fun displayCreditCardFrontUI(position: Int) {
@@ -137,8 +155,6 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         (((tabLayout?.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? LinearLayout)?.getChildAt(1) as? AppCompatTextView)?.setTypeface(ResourcesCompat.getFont(this@AccountSalesActivity, if (tabIsSelected) R.font.futura_semi_bold_ttf else R.font.futura_medium_ttf), Typeface.NORMAL)
     }
 
-    private fun updateAccountSalesDetail(storeCard: AccountSales) = mAccountSalesModelImpl?.setAccountSalesDetailPage(storeCard, findNavController(R.id.nav_host_fragment))
-
     override fun onBackPressed() {
         mAccountSalesModelImpl?.onBackPressed(this@AccountSalesActivity)
     }
@@ -146,5 +162,12 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     override fun onDestroy() {
         super.onDestroy()
         mAccountSalesModelImpl?.onDestroy()
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> mAccountSalesModelImpl?.onApplyNowButtonTapped(this)
+            R.id.navigateBackImageButton -> onBackPressed()
+        }
     }
 }

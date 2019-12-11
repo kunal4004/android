@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.CardQualif
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefit
-import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefitItems
 
 class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
 
@@ -105,39 +104,39 @@ class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
 
     private val storeCardMoreBenefits =
             mutableListOf(
-                    MoreBenefit(shoppingIcon, getString(R.string.storeCardMoreBenefits_row_1_title), mutableListOf(MoreBenefitItems(getString(R.string.storeCardMoreBenefits_row_1_desc)))),
-                    MoreBenefit(calendarIcon, getString(R.string.storeCardMoreBenefits_row_2_title), mutableListOf(MoreBenefitItems(getString(R.string.storeCardMoreBenefits_row_2_desc)))),
-                    MoreBenefit(cardsIcon, getString(R.string.storeCardMoreBenefits_row_3_title), mutableListOf(MoreBenefitItems(getString(R.string.storeCardMoreBenefits_row_3_desc)))),
-                    MoreBenefit(smileIcon, getString(R.string.storeCardMoreBenefits_row_4_title), mutableListOf(MoreBenefitItems(getString(R.string.storeCardMoreBenefits_row_4_desc)))),
-                    MoreBenefit(mobileIcon, getString(R.string.storeCardMoreBenefits_row_5_title), mutableListOf(MoreBenefitItems(getString(R.string.storeCardMoreBenefits_row_5_desc)))))
+                    MoreBenefit(shoppingIcon, getString(R.string.storeCardMoreBenefits_row_1_title), getString(R.string.storeCardMoreBenefits_row_1_desc)),
+                    MoreBenefit(calendarIcon, getString(R.string.storeCardMoreBenefits_row_2_title), getString(R.string.storeCardMoreBenefits_row_2_desc)),
+                    MoreBenefit(cardsIcon, getString(R.string.storeCardMoreBenefits_row_3_title), getString(R.string.storeCardMoreBenefits_row_3_desc)),
+                    MoreBenefit(smileIcon, getString(R.string.storeCardMoreBenefits_row_4_title), getString(R.string.storeCardMoreBenefits_row_4_desc)),
+                    MoreBenefit(mobileIcon, getString(R.string.storeCardMoreBenefits_row_5_title), getString(R.string.storeCardMoreBenefits_row_5_desc)))
 
     private val goldCreditCardMoreBenefits =
             mutableListOf(
-                    MoreBenefit(rewardIcon, getString(R.string.goldCreditCardMoreBenefits_row_1_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_1_desc)))),
-                    MoreBenefit(voucherIcon, getString(R.string.goldCreditCardMoreBenefits_row_2_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_2_desc)))),
-                    MoreBenefit(fuelIcon, getString(R.string.goldCreditCardMoreBenefits_row_3_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_3_desc)))),
-                    MoreBenefit(smileIcon, getString(R.string.goldCreditCardMoreBenefits_row_4_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_4_desc)))),
-                    MoreBenefit(calendarIcon, getString(R.string.goldCreditCardMoreBenefits_row_5_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_5_desc)))),
-                    MoreBenefit(cardsIcon, getString(R.string.goldCreditCardMoreBenefits_row_6_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_6_desc)))),
-                    MoreBenefit(medicalIcon, getString(R.string.goldCreditCardMoreBenefits_row_7_title), mutableListOf(MoreBenefitItems(getString(R.string.goldCreditCardMoreBenefits_row_7_desc)))))
+                    MoreBenefit(rewardIcon, getString(R.string.goldCreditCardMoreBenefits_row_1_title), getString(R.string.goldCreditCardMoreBenefits_row_1_desc)),
+                    MoreBenefit(voucherIcon, getString(R.string.goldCreditCardMoreBenefits_row_2_title), getString(R.string.goldCreditCardMoreBenefits_row_2_desc)),
+                    MoreBenefit(fuelIcon, getString(R.string.goldCreditCardMoreBenefits_row_3_title), getString(R.string.goldCreditCardMoreBenefits_row_3_desc)),
+                    MoreBenefit(smileIcon, getString(R.string.goldCreditCardMoreBenefits_row_4_title), getString(R.string.goldCreditCardMoreBenefits_row_4_desc)),
+                    MoreBenefit(calendarIcon, getString(R.string.goldCreditCardMoreBenefits_row_5_title), getString(R.string.goldCreditCardMoreBenefits_row_5_desc)),
+                    MoreBenefit(cardsIcon, getString(R.string.goldCreditCardMoreBenefits_row_6_title), getString(R.string.goldCreditCardMoreBenefits_row_6_desc)),
+                    MoreBenefit(medicalIcon, getString(R.string.goldCreditCardMoreBenefits_row_7_title), getString(R.string.goldCreditCardMoreBenefits_row_7_desc)))
 
     private val blackCreditCardMoreBenefits =
             mutableListOf(
-                    MoreBenefit(trolleyIcon, getString(R.string.blackCreditCardMoreBenefits_row_1_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_1_desc)))),
-                    MoreBenefit(moneyIcon, getString(R.string.blackCreditCardMoreBenefits_row_2_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_2_desc)))),
-                    MoreBenefit(moneyIcon, getString(R.string.blackCreditCardMoreBenefits_row_3_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_3_desc)))),
-                    MoreBenefit(fuelIcon, getString(R.string.blackCreditCardMoreBenefits_row_4_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_4_desc)))),
-                    MoreBenefit(rewardIcon, getString(R.string.blackCreditCardMoreBenefits_row_5_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_5_desc)))),
-                    MoreBenefit(smileIcon, getString(R.string.blackCreditCardMoreBenefits_row_6_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_6_desc)))),
-                    MoreBenefit(calendarIcon, getString(R.string.blackCreditCardMoreBenefits_row_7_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_7_desc)))),
-                    MoreBenefit(cardsIcon, getString(R.string.blackCreditCardMoreBenefits_row_8_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_8_desc)))),
-                    MoreBenefit(medicalIcon, getString(R.string.blackCreditCardMoreBenefits_row_9_title), mutableListOf(MoreBenefitItems(getString(R.string.blackCreditCardMoreBenefits_row_9_desc)))))
+                    MoreBenefit(trolleyIcon, getString(R.string.blackCreditCardMoreBenefits_row_1_title), getString(R.string.blackCreditCardMoreBenefits_row_1_desc)),
+                    MoreBenefit(moneyIcon, getString(R.string.blackCreditCardMoreBenefits_row_2_title), getString(R.string.blackCreditCardMoreBenefits_row_2_desc)),
+                    MoreBenefit(moneyIcon, getString(R.string.blackCreditCardMoreBenefits_row_3_title), getString(R.string.blackCreditCardMoreBenefits_row_3_desc)),
+                    MoreBenefit(fuelIcon, getString(R.string.blackCreditCardMoreBenefits_row_4_title), getString(R.string.blackCreditCardMoreBenefits_row_4_desc)),
+                    MoreBenefit(rewardIcon, getString(R.string.blackCreditCardMoreBenefits_row_5_title), getString(R.string.blackCreditCardMoreBenefits_row_5_desc)),
+                    MoreBenefit(smileIcon, getString(R.string.blackCreditCardMoreBenefits_row_6_title), getString(R.string.blackCreditCardMoreBenefits_row_6_desc)),
+                    MoreBenefit(calendarIcon, getString(R.string.blackCreditCardMoreBenefits_row_7_title), getString(R.string.blackCreditCardMoreBenefits_row_7_desc)),
+                    MoreBenefit(cardsIcon, getString(R.string.blackCreditCardMoreBenefits_row_8_title), getString(R.string.blackCreditCardMoreBenefits_row_8_desc)),
+                    MoreBenefit(medicalIcon, getString(R.string.blackCreditCardMoreBenefits_row_9_title), getString(R.string.blackCreditCardMoreBenefits_row_9_desc)))
 
     private val personalLoanMoreBenefits =
             mutableListOf(
-                    MoreBenefit(smileIcon, getString(R.string.personalLoanMoreBenefits_row_1_title), mutableListOf(MoreBenefitItems(getString(R.string.personalLoanMoreBenefits_row_1_desc)))),
-                    MoreBenefit(moneyIcon, getString(R.string.personalLoanMoreBenefits_row_2_title), mutableListOf(MoreBenefitItems(getString(R.string.personalLoanMoreBenefits_row_2_desc)))),
-                    MoreBenefit(mobileIcon, getString(R.string.personalLoanMoreBenefits_row_3_title), mutableListOf(MoreBenefitItems(getString(R.string.personalLoanMoreBenefits_row_3_desc)))))
+                    MoreBenefit(smileIcon, getString(R.string.personalLoanMoreBenefits_row_1_title), getString(R.string.personalLoanMoreBenefits_row_1_desc)),
+                    MoreBenefit(moneyIcon, getString(R.string.personalLoanMoreBenefits_row_2_title), getString(R.string.personalLoanMoreBenefits_row_2_desc)),
+                    MoreBenefit(mobileIcon, getString(R.string.personalLoanMoreBenefits_row_3_title), getString(R.string.personalLoanMoreBenefits_row_3_desc)))
 
 
     private val storeCardQualifyCriteria =

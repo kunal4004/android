@@ -33,4 +33,5 @@
             layout="@layout/account_sales_card_collection_layout" />
 
     </LinearLayout>
+
 </androidx.core.widget.NestedScrollView>
