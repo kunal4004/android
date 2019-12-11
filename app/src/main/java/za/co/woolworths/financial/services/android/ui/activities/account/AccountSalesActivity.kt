@@ -23,15 +23,15 @@ import za.co.woolworths.financial.services.android.contracts.AccountSalesContrac
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-
-private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
-
 class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener {
+
+    private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +41,10 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val selectedBundle = intent?.extras?.getSerializable("APPLY_NOW_STATE")
         (selectedBundle as? ApplyNowState)?.let { state -> mAccountSalesModelImpl?.switchAccountSalesProduct(state) }
 
+        initUI()
+    }
+
+    private fun initUI() {
         tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 updateTabFont(tab?.position ?: 0, false)
@@ -62,6 +66,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? AccountSalesFragment
         sliding_layout?.setScrollableView(navHostFragment?.scrollContainerLinearLayout)
+
         storeCardApplyNowButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
@@ -70,8 +75,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
                 toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
         val params =
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-        toolbarHeight?.let { topMarginHeight -> params.setMargins(0, topMarginHeight, 0, 0) };
-//        sliding_layout?.layoutParams = params
+        toolbarHeight?.let { topMarginHeight -> params.setMargins(0, topMarginHeight, 0, 0) }
+        //        sliding_layout?.layoutParams = params
 
         sliding_layout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View, slideOffset: Float) {
@@ -80,7 +85,6 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
             }
 
             override fun onPanelStateChanged(panel: View, previousState: PanelState, newState: PanelState) {
-                //  if (newState == PanelState.EXPANDED) sli.setPanelState(PanelState.ANCHORED)
             }
         })
     }
@@ -109,8 +113,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         blackAndGoldCreditCardViewPager?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
-                    0 -> AccountSalesFragment.newInstance(goldCreditCard)
-                    1 -> AccountSalesFragment.newInstance(blackCreditCard)
+                    CreditCardType.GOLD_CREDIT_CARD.ordinal -> AccountSalesFragment.newInstance(goldCreditCard)
+                    CreditCardType.BLACK_CREDIT_CARD.ordinal -> AccountSalesFragment.newInstance(blackCreditCard)
                     else -> throw RuntimeException("Invalid Black/Gold Card Fragment Instance Index")
                 }
             }
@@ -120,8 +124,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
 
         TabLayoutMediator(tabLayout, blackAndGoldCreditCardViewPager) { tab, index ->
             tab.text = when (index) {
-                0 -> getString(R.string.credit_card_gold_title)
-                1 -> getString(R.string.credit_card_black_title)
+                CreditCardType.GOLD_CREDIT_CARD.ordinal -> getString(R.string.credit_card_gold_title)
+                CreditCardType.BLACK_CREDIT_CARD.ordinal -> getString(R.string.credit_card_black_title)
                 else -> throw RuntimeException("Invalid Account Gold/Black Title")
             }
         }.attach()
@@ -131,13 +135,13 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 when (position) {
-                    0 -> {
+                    CreditCardType.GOLD_CREDIT_CARD.ordinal -> {
                         displayHeaderItems(goldCreditCard.cardHeader)
                         cardFrontImageView?.visibility = VISIBLE
                         cardFrontBlackImageView?.visibility = GONE
                         goldCreditCard.cardHeader.drawables[1].let { drawable -> cardFrontImageView?.setImageResource(drawable) }
                     }
-                    1 -> {
+                    CreditCardType.BLACK_CREDIT_CARD.ordinal -> {
                         displayHeaderItems(blackCreditCard.cardHeader)
                         cardFrontImageView?.visibility = INVISIBLE
                         cardFrontBlackImageView?.visibility = VISIBLE
@@ -152,7 +156,10 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     }
 
     private fun updateTabFont(position: Int, tabIsSelected: Boolean) {
-        (((tabLayout?.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? LinearLayout)?.getChildAt(1) as? AppCompatTextView)?.setTypeface(ResourcesCompat.getFont(this@AccountSalesActivity, if (tabIsSelected) R.font.futura_semi_bold_ttf else R.font.futura_medium_ttf), Typeface.NORMAL)
+        val viewGroup = tabLayout?.getChildAt(0) as? ViewGroup
+        val tabPosition = viewGroup?.getChildAt(position) as? LinearLayout
+        val tabView = tabPosition?.getChildAt(1) as? AppCompatTextView
+        tabView?.setTypeface(ResourcesCompat.getFont(this@AccountSalesActivity, if (tabIsSelected) R.font.futura_semi_bold_ttf else R.font.futura_medium_ttf), Typeface.NORMAL)
     }
 
     override fun onBackPressed() {
