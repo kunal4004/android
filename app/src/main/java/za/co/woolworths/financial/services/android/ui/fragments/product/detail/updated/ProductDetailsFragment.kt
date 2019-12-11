@@ -338,6 +338,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
+        if(otherSKUsByGroupKey.size == 1 && !hasSize){
+            onColorSelection(this.defaultGroupKey)
+        }
         productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this, spanCount, getSelectedGroupKey()).apply {
             colorSelectorRecycleView.adapter = this
             showSelectedColor()
@@ -358,6 +361,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
             sizeSelectorRecycleView.adapter = this
         }
+
+        otherSKUsByGroupKey[getSelectedGroupKey()]?.let {
+            if (it.size == 1) {
+                productSizeSelectorAdapter?.setSelection(it[0])
+                onSizeSelection(it[0])
+            }
+        }
+
         sizeSelectorLayout.visibility = View.VISIBLE
     }
 
