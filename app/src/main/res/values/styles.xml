@@ -2039,4 +2039,80 @@
         <item name="android:gravity">center</item>
         <item name="android:maxLength">2</item>
     </style>
+
+    <style name="salesPageMainStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="statusBarBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <style name="account_sales_card_title_benefit_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:paddingStart">@dimen/twenty_four_dp</item>
+        <item name="android:paddingTop">32dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="account_sales_card_benefit_description_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:lineSpacingExtra">19sp</item>
+        <item name="android:lineSpacingMultiplier">0.2</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
+
+    </style>
+
+    <style name="account_sales_card_benefits_bottom_margin_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:background">@color/bpi_background</item>
+    </style>
+
+    <style name="sales_benefits_description_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:lineSpacingExtra">21sp</item>
+        <item name="android:lineSpacingMultiplier">0.2</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="rounded_bullets_style">
+        <item name="android:layout_width">4dp</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:contentDescription">@string/placeholder</item>
+    </style>
+
+    <style name="bullets_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">21sp</item>
+        <item name="android:lineSpacingMultiplier">0.05</item>
+    </style>
+
 </resources>
