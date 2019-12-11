@@ -5,19 +5,15 @@ import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder
 import kotlinx.android.synthetic.main.more_benefit_child_item.view.*
 
 class MoreBenefitsChildViewHolder(itemView: View) : ChildViewHolder(itemView) {
-
     companion object {
         private const val splitBenefitSymbol = "||"
     }
 
     fun setMoreBenefitsChildItem(name: String) {
-        /**
-         * TODO :: Split at || and display text description with bullets
-         */
         if (name.contains(splitBenefitSymbol)) {
+            // TODO:: Split TextView into bullets
             val benefitItems = name.split(splitBenefitSymbol)
         }
         itemView.moreBenefitDescriptionTextView?.text = name
-
     }
 }

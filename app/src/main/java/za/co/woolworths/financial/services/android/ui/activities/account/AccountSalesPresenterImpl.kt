@@ -73,4 +73,14 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
     }
+
+    fun getStatusBarHeight(actionBarHeight: Int): Int {
+        val activity = WoolworthsApplication.getInstance()?.currentActivity
+        val resId: Int = activity?.resources?.getIdentifier("status_bar_height", "dimen", "android") ?: -1
+        var statusBarHeight = 0
+        if (resId > 0) {
+            statusBarHeight = activity?.resources?.getDimensionPixelSize(resId) ?: 0
+        }
+        return statusBarHeight + actionBarHeight
+    }
 }

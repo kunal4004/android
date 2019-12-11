@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.AccountS
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
+
 private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
 
 class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView {
@@ -58,6 +59,12 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         }
 
         storeCardApplyNowButton?.setOnClickListener { mAccountSalesModelImpl?.onApplyNowButtonTapped(this) }
+
+        val toolbarHeight = toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
+
+//        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+//        toolbarHeight?.let { layoutParams.setMargins(0, it, 0, 0) };
+//        scrollContainerLinearLayout?.layoutParams = layoutParams
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {

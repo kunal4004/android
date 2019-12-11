@@ -10,10 +10,10 @@ data class CardBenefit(val drawableId: Int, val title: String?, val description:
 
 data class MoreBenefit(val drawableId: Int, val name: String?, internal val description: MutableList<MoreBenefitItems>)
 
-class MoreBenefits(title: String, items: MutableList<MoreBenefitItems>, val iconResId: Int) : ExpandableGroup<MoreBenefitItems>(title, items)
-
 data class CardQualifyCriteria(val title: String?)
 
 data class CardCollection(val title: String?)
+
+class MoreBenefits(title: String, items: MutableList<MoreBenefitItems>, val iconResId: Int) : ExpandableGroup<MoreBenefitItems>(title, items)
 
 data class AccountSales(var cardHeader: CardHeader, var cardBenefit: MutableList<CardBenefit>, var moreBenefit: MutableList<MoreBenefit>, var cardQualifyCriteria: MutableList<CardQualifyCriteria>, var cardCollection: MutableList<CardCollection> = mutableListOf())
