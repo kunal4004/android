@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
@@ -18,7 +20,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_front_layout.*
-import kotlinx.android.synthetic.main.account_sales_front_layout.toolbar
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -28,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.AccountS
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter
 
 class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener {
 
@@ -41,10 +43,6 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val selectedBundle = intent?.extras?.getSerializable("APPLY_NOW_STATE")
         (selectedBundle as? ApplyNowState)?.let { state -> mAccountSalesModelImpl?.switchAccountSalesProduct(state) }
 
-        initUI()
-    }
-
-    private fun initUI() {
         tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 updateTabFont(tab?.position ?: 0, false)
@@ -66,17 +64,11 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? AccountSalesFragment
         sliding_layout?.setScrollableView(navHostFragment?.scrollContainerLinearLayout)
-
         storeCardApplyNowButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
 
-        val toolbarHeight =
-                toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
-        val params =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-        toolbarHeight?.let { topMarginHeight -> params.setMargins(0, topMarginHeight, 0, 0) }
-        //        sliding_layout?.layoutParams = params
+        setMaximumSlidingHeight()
 
         sliding_layout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View, slideOffset: Float) {
@@ -87,6 +79,13 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
             override fun onPanelStateChanged(panel: View, previousState: PanelState, newState: PanelState) {
             }
         })
+    }
+
+    private fun setMaximumSlidingHeight() {
+        val toolbarHeight = toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
+        val params = SlidingUpPanelLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, SlidingUpPanelLayout.LayoutParams.MATCH_PARENT)
+        toolbarHeight?.let { topMarginHeight -> params.setMargins(0, topMarginHeight, 0, 0) }
+        scrollContainerLinearLayout?.layoutParams = params
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
