@@ -46,6 +46,13 @@
             android:layout_centerVertical="true"
             android:src="@drawable/close_24" />
     </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1A222222"
+        android:layout_marginLeft="@dimen/twenty_four_dp"
+        android:layout_marginRight="@dimen/twenty_four_dp"
+        />
 
     <FrameLayout
         android:layout_width="match_parent"

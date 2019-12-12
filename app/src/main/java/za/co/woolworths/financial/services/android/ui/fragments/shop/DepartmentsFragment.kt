@@ -116,7 +116,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
-            else -> ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, rootCategory.categoryName, rootCategory.dimValId, "")
+            else -> ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, rootCategory.categoryName, rootCategory.dimValId)
         }
     }
 
