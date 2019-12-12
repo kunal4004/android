@@ -107,8 +107,6 @@
         <Button
             android:id="@+id/bottomApplyNowButton"
             style="@style/blackButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="@string/apply_now" />
     </RelativeLayout>
 
