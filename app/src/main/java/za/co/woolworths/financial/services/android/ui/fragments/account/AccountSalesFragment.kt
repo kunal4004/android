@@ -51,6 +51,10 @@ class AccountSalesFragment : Fragment() {
     private fun displayCardBenefits(cardBenefits: MutableList<CardBenefit>?) {
         activity?.let { activity ->
             cardBenefits?.forEach { cardBenefit ->
+                // Personal Loan title is Benefits instead of Card Benefits in other sections
+                if (cardBenefit.cardBenefitTitle?.isNotEmpty() == true) {
+                    salesBenefitTitleTextView?.text = cardBenefit.cardBenefitTitle
+                }
                 val view = View.inflate(activity, R.layout.account_sales_card_benefits_item, null)
                 val titleTextView: TextView? = view?.findViewById(R.id.salesBenefitTitleTextView)
                 val descriptionTextView: TextView? =

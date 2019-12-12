@@ -78,26 +78,26 @@ class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
             CardHeader(getString(R.string.personalLoanCard_title), getString(R.string.personalLoanCard_desc), personalLoanHeaderDrawable)
 
     private val storeCardCardBenefits =
-            mutableListOf(CardBenefit(automaticRewardIcon, getString(R.string.storeCardBenefits_row_1_title), getString(R.string.storeCardBenefits_row_1_desc)),
+            mutableListOf(CardBenefit(automaticRewardIcon, getString(R.string.storeCardBenefits_row_1_title), getString(R.string.storeCardBenefits_row_1_desc), getString(R.string.cardBenefits_title)),
                     CardBenefit(makeADifferenceIcon, getString(R.string.storeCardBenefits_row_2_title), getString(R.string.storeCardBenefits_row_2_desc)),
                     CardBenefit(yourInControlIcon, getString(R.string.storeCardBenefits_row_3_title), getString(R.string.storeCardBenefits_row_3_desc)),
                     CardBenefit(easyToManageIcon, getString(R.string.storeCardBenefits_row_4_title), getString(R.string.storeCardBenefits_row_4_desc)))
 
 
     private val goldCardCreditCardBenefits =
-            mutableListOf(CardBenefit(voucherCircleIcon, getString(R.string.goldCreditCardBenefits_row_1_title), getString(R.string.goldCreditCardBenefits_row_1_desc)),
+            mutableListOf(CardBenefit(voucherCircleIcon, getString(R.string.goldCreditCardBenefits_row_1_title), getString(R.string.goldCreditCardBenefits_row_1_desc), getString(R.string.cardBenefits_title)),
                     CardBenefit(moneyCircleIcon, getString(R.string.goldCreditCardBenefits_row_2_title), getString(R.string.goldCreditCardBenefits_row_2_desc)),
                     CardBenefit(insuranceCircleIcon, getString(R.string.goldCreditCardBenefits_row_3_title), getString(R.string.goldCreditCardBenefits_row_3_desc)),
                     CardBenefit(cardCircleIcon, getString(R.string.goldCreditCardBenefits_row_4_title), getString(R.string.goldCreditCardBenefits_row_4_desc)))
 
     private val blackCardCreditCardBenefits =
-            mutableListOf(CardBenefit(voucherCircleIcon, getString(R.string.blackCreditCardBenefits_row_1_title), getString(R.string.blackCreditCardBenefits_row_1_desc)),
+            mutableListOf(CardBenefit(voucherCircleIcon, getString(R.string.blackCreditCardBenefits_row_1_title), getString(R.string.blackCreditCardBenefits_row_1_desc), getString(R.string.cardBenefits_title)),
                     CardBenefit(moneyCircleIcon, getString(R.string.blackCreditCardBenefits_row_2_title), getString(R.string.blackCreditCardBenefits_row_2_desc)),
                     CardBenefit(coffeeCircleIcon, getString(R.string.blackCreditCardBenefits_row_3_title), getString(R.string.blackCreditCardBenefits_row_3_desc)),
                     CardBenefit(deliveryCircleIcon, getString(R.string.blackCreditCardBenefits_row_4_title), getString(R.string.blackCreditCardBenefits_row_4_desc)))
 
     private val personalLoanCardBenefits =
-            mutableListOf(CardBenefit(moneyCircleIcon, getString(R.string.personalLoanBenefits_row_1_title), getString(R.string.personalLoanBenefits_row_1_desc)),
+            mutableListOf(CardBenefit(moneyCircleIcon, getString(R.string.personalLoanBenefits_row_1_title), getString(R.string.personalLoanBenefits_row_1_desc), getString(R.string.personalLoanBenefits_title)),
                     CardBenefit(callCircleIcon, getString(R.string.personalLoanBenefits_row_2_title), getString(R.string.personalLoanBenefits_row_2_desc)),
                     CardBenefit(iconPayCircleIcon, getString(R.string.personalLoanBenefits_row_3_title), getString(R.string.personalLoanBenefits_row_3_desc)),
                     CardBenefit(documentCircleIcon, getString(R.string.personalLoanBenefits_row_4_title), getString(R.string.personalLoanBenefits_row_4_desc)))

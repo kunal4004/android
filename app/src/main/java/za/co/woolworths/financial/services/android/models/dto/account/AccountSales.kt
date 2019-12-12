@@ -8,7 +8,7 @@ enum class CreditCardType { GOLD_CREDIT_CARD, BLACK_CREDIT_CARD }
 
 data class CardHeader(val title: String?, val description: String?, val drawables: List<Int>)
 
-data class CardBenefit(val drawableId: Int, val title: String?, val description: String?)
+data class CardBenefit(val drawableId: Int, val title: String?, val description: String?,var cardBenefitTitle: String? = "")
 
 data class MoreBenefit(val drawableId: Int, val name: String?, internal val description: String?) : ParentListItem {
     override fun getChildItemList(): MutableList<String?> = mutableListOf(description)
