@@ -24,7 +24,6 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import android.view.WindowManager
-import kotlinx.android.synthetic.main.view_floating_action_button.view.*
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.net.ConnectException
@@ -101,8 +100,8 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         (activity as? MyCardActivityExtension)?.apply {
             mOtpSentTo = otpType
             val otpDescriptionLabel = when (getOTPMethodType()) {
-                OTPMethodType.SMS -> setResource(if (activityIsInstanceStoreCardActivity()) R.string.icr_otp_phone_desc else R.string.enter_otp_phone_desc, otpType)
-                OTPMethodType.EMAIL -> setResource(if (activityIsInstanceStoreCardActivity()) R.string.icr_otp_email_desc else R.string.enter_otp_email_desc, otpType)
+                OTPMethodType.SMS -> setResource(R.string.icr_otp_phone_desc, otpType)
+                OTPMethodType.EMAIL -> setResource( R.string.icr_otp_email_desc, otpType)
                 else -> return
             }
             activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, enterOTPDescriptionScreen, false) } }

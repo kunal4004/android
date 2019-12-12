@@ -183,6 +183,7 @@
         android:letterSpacing="0.015"
         android:text="@string/did_not_receive_title"
         android:textColor="@color/black"
+        android:textAllCaps="true"
         android:textSize="@dimen/store_card_text_size_15_sp"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
         app:layout_constraintEnd_toStartOf="@+id/imNextProcessLinkCard"
