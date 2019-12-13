@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentFilter
 import android.view.WindowManager
@@ -18,7 +17,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlock
 import za.co.woolworths.financial.services.android.util.SMSReceiver
 
 
-@SuppressLint("Registered")
 open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener, IStoreCardListener {
 
     var mStoreCardDetail: String? = null
