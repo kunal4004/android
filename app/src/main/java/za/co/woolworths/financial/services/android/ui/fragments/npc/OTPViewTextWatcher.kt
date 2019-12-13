@@ -25,7 +25,7 @@ class OTPViewTextWatcher(private val previousEditText: EditText?, private val cu
                     // If stand on second position of EditText and enter new symbol,
                     // will move to next EditText copying second symbol.
                     val secondSymbol = s.substring(1, 2)
-                    nextEditText?.setText(secondSymbol)
+                    currentEditText?.setText(secondSymbol)
                 }
                 // Remove second symbol.
                 s.delete(1, s.length)
