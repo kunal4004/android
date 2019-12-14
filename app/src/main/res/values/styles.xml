@@ -2089,6 +2089,7 @@
         <item name="android:layout_width">4dp</item>
         <item name="android:layout_height">4dp</item>
         <item name="android:layout_marginStart">24dp</item>
+        <item name="android:background">@drawable/rounded_grey_corner</item>
         <item name="android:contentDescription">@string/placeholder</item>
     </style>
 

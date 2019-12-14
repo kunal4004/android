@@ -10,13 +10,9 @@ class MoreBenefitParentViewHolder(itemView: View) : ParentViewHolder(itemView) {
 
     fun bind(subCategoryModel: MoreBenefit, holder: MoreBenefitParentViewHolder) {
         itemView.moreBenefitsTitleTextView?.text = subCategoryModel.name
-        itemView.moreBenefitsIconImageView?.setImageResource(subCategoryModel.drawableId)
+        itemView.moreBenefitsArrowImageView?.setImageResource(subCategoryModel.drawableId)
         holder.itemView.setOnClickListener {
-            if (holder.isExpanded) {
-                holder.collapseView()
-            } else {
-                holder.expandView()
-            }
+            if (holder.isExpanded) holder.collapseView() else holder.expandView()
         }
     }
 

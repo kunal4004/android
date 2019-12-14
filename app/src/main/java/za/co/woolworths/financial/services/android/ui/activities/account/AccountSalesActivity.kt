@@ -12,7 +12,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
@@ -29,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.AccountS
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter
 
 class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener {
 
@@ -61,8 +59,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
             panelState = PanelState.ANCHORED
         }
 
-        val navHostFragment =
-                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? AccountSalesFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? AccountSalesFragment
         sliding_layout?.setScrollableView(navHostFragment?.scrollContainerLinearLayout)
         storeCardApplyNowButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
