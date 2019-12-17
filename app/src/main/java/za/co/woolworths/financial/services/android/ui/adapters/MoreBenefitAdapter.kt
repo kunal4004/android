@@ -23,11 +23,11 @@ class MoreBenefitAdapter(parentItemList: List<ParentListItem?>?) : ExpandableAda
 
     override fun onBindParentViewHolder(holder: MoreBenefitParentViewHolder?, position: Int, parentListItem: ParentListItem?) {
         val benefitListItem = parentListItem as? MoreBenefit
-        benefitListItem?.let { item -> holder?.bind(item, holder) }
+        benefitListItem?.let { headerItem -> holder?.bind(headerItem, holder) }
     }
 
     override fun onBindChildViewHolder(childHolder: MoreBenefitChildViewHolder?, position: Int, childListItem: Any?) {
-        val subCategoryChild = childListItem as? String
-        childHolder?.bind(subCategoryChild)
+        val childItem = childListItem as? String
+        childHolder?.bind(childItem)
     }
 }

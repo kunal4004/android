@@ -1,37 +1,32 @@
 package za.co.woolworths.financial.services.android.ui.activities.account
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
-import android.widget.FrameLayout
+import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.res.ResourcesCompat
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_front_layout.*
+import kotlinx.android.synthetic.main.bottom_sheet.*
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
-import za.co.woolworths.financial.services.android.ui.fragments.account.AccountSalesFragment
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
+import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener {
+
+class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
+    private var sheetBehavior: BottomSheetBehavior<*>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,48 +36,36 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val selectedBundle = intent?.extras?.getSerializable("APPLY_NOW_STATE")
         (selectedBundle as? ApplyNowState)?.let { state -> mAccountSalesModelImpl?.switchAccountSalesProduct(state) }
 
-        tabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                updateTabFont(tab?.position ?: 0, false)
+        val bottomSheetLayout = findViewById<LinearLayout>(R.id.scrollContainerLinearLayout)
+        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
+
+        setMaximumExpandedHeight()
+
+        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
+
+        sheetBehavior?.peekHeight = overlayAnchoredHeight
+        sheetBehavior?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                invoke(bottomSheet, newState)
             }
 
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                updateTabFont(tab?.position ?: 0, true)
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                fadeInFadeOutView?.alpha = slideOffset
             }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        sliding_layout?.apply {
-            anchorPoint = 0.3f
-            panelHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
-            panelState = PanelState.ANCHORED
-        }
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? AccountSalesFragment
-        sliding_layout?.setScrollableView(navHostFragment?.scrollContainerLinearLayout)
         storeCardApplyNowButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
-
-        setMaximumSlidingHeight()
-
-        sliding_layout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
-            override fun onPanelSlide(panel: View, slideOffset: Float) {
-                bottomApplyNowButtonRelativeLayout?.visibility =
-                        if (slideOffset > 0.16) VISIBLE else GONE
-            }
-
-            override fun onPanelStateChanged(panel: View, previousState: PanelState, newState: PanelState) {
-            }
-        })
     }
 
-    private fun setMaximumSlidingHeight() {
-        val toolbarHeight = toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
-        val params = SlidingUpPanelLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, SlidingUpPanelLayout.LayoutParams.MATCH_PARENT)
-        toolbarHeight?.let { topMarginHeight -> params.setMargins(0, topMarginHeight, 0, 0) }
-        scrollContainerLinearLayout?.layoutParams = params
+    private fun setMaximumExpandedHeight() {
+        val toolbarPeekHeight =
+                toolbar?.layoutParams?.height?.let { toolBarHeight -> mAccountSalesModelImpl?.getStatusBarHeight(toolBarHeight) }
+        val parent = view?.parent as? View
+        val layoutParams = parent?.layoutParams as? CoordinatorLayout.LayoutParams
+        layoutParams?.setMargins(0, toolbarPeekHeight ?: 0, 0, 0)
+        parent?.layoutParams = layoutParams
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
@@ -103,59 +86,11 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         }
     }
 
-    override fun displayCreditCard(goldCreditCard: AccountSales, blackCreditCard: AccountSales, position: Int) {
+    override fun displayCreditCard(fragmentList: Map<String, Fragment>?, position: Int) {
         nav_host_fragment?.view?.visibility = GONE
         blackAndGoldCreditCardViewPager?.visibility = VISIBLE
-        blackAndGoldCreditCardViewPager?.adapter = object : FragmentStateAdapter(this) {
-            override fun createFragment(position: Int): Fragment {
-                return when (position) {
-                    CreditCardType.GOLD_CREDIT_CARD.ordinal -> AccountSalesFragment.newInstance(goldCreditCard)
-                    CreditCardType.BLACK_CREDIT_CARD.ordinal -> AccountSalesFragment.newInstance(blackCreditCard)
-                    else -> throw RuntimeException("Invalid Black/Gold Card Fragment Instance Index")
-                }
-            }
-
-            override fun getItemCount(): Int = 2
-        }
-
-        TabLayoutMediator(tabLayout, blackAndGoldCreditCardViewPager) { tab, index ->
-            tab.text = when (index) {
-                CreditCardType.GOLD_CREDIT_CARD.ordinal -> getString(R.string.credit_card_gold_title)
-                CreditCardType.BLACK_CREDIT_CARD.ordinal -> getString(R.string.credit_card_black_title)
-                else -> throw RuntimeException("Invalid Account Gold/Black Title")
-            }
-        }.attach()
-
-        blackAndGoldCreditCardViewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                when (position) {
-                    CreditCardType.GOLD_CREDIT_CARD.ordinal -> {
-                        displayHeaderItems(goldCreditCard.cardHeader)
-                        cardFrontImageView?.visibility = VISIBLE
-                        cardFrontBlackImageView?.visibility = GONE
-                        goldCreditCard.cardHeader.drawables[1].let { drawable -> cardFrontImageView?.setImageResource(drawable) }
-                    }
-                    CreditCardType.BLACK_CREDIT_CARD.ordinal -> {
-                        displayHeaderItems(blackCreditCard.cardHeader)
-                        cardFrontImageView?.visibility = INVISIBLE
-                        cardFrontBlackImageView?.visibility = VISIBLE
-                        blackCreditCard.cardHeader.drawables[1].let { drawable -> cardFrontBlackImageView?.setImageResource(drawable) }
-                    }
-                    else -> throw RuntimeException("Invalid View Pager Page Selected ")
-                }
-            }
-        })
-
-        blackAndGoldCreditCardViewPager?.currentItem = position
-    }
-
-    private fun updateTabFont(position: Int, tabIsSelected: Boolean) {
-        val viewGroup = tabLayout?.getChildAt(0) as? ViewGroup
-        val tabPosition = viewGroup?.getChildAt(position) as? LinearLayout
-        val tabView = tabPosition?.getChildAt(1) as? AppCompatTextView
-        tabView?.setTypeface(ResourcesCompat.getFont(this@AccountSalesActivity, if (tabIsSelected) R.font.futura_semi_bold_ttf else R.font.futura_medium_ttf), Typeface.NORMAL)
+        SetUpViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
+        invoke(position)
     }
 
     override fun onBackPressed() {
@@ -172,5 +107,52 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
             R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> mAccountSalesModelImpl?.onApplyNowButtonTapped(this)
             R.id.navigateBackImageButton -> onBackPressed()
         }
+    }
+
+    override fun invoke(position: Int) {
+        when (position) {
+            CreditCardType.GOLD_CREDIT_CARD.ordinal -> {
+                val goldCreditCard = mAccountSalesModelImpl?.getCreditCard()?.get(position)
+                displayHeaderItems(goldCreditCard?.cardHeader)
+                cardFrontImageView?.visibility = VISIBLE
+                cardFrontBlackImageView?.visibility = GONE
+                goldCreditCard?.cardHeader?.drawables?.get(1)?.let { drawable -> cardFrontImageView?.setImageResource(drawable) }
+            }
+            CreditCardType.BLACK_CREDIT_CARD.ordinal -> {
+                val blackCreditCard = mAccountSalesModelImpl?.getCreditCard()?.get(position)
+                displayHeaderItems(blackCreditCard?.cardHeader)
+                cardFrontImageView?.visibility = INVISIBLE
+                cardFrontBlackImageView?.visibility = VISIBLE
+                blackCreditCard?.cardHeader?.drawables?.get(1)?.let { drawable -> cardFrontBlackImageView?.setImageResource(drawable) }
+            }
+            else -> throw RuntimeException("Invalid View Pager Page Selected ")
+        }
+    }
+
+    override fun invoke(view: View, position: Int) {
+        when (position) {
+            BottomSheetBehavior.STATE_COLLAPSED -> animateButtonOut()
+            BottomSheetBehavior.STATE_EXPANDED -> animateButtonIn()
+        }
+    }
+
+    private fun animateButtonOut() {
+        val animate =
+                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
+        animate.duration = 500
+        animate.fillAfter = true
+        bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
+        bottomApplyNowButtonRelativeLayout?.visibility = INVISIBLE
+        bottomApplyNowButtonRelativeLayout?.isEnabled = false
+    }
+
+    private fun animateButtonIn() {
+        bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
+        val animate =
+                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        animate.duration = 500
+        animate.fillAfter = true
+        bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
+        bottomApplyNowButtonRelativeLayout?.isEnabled = true
     }
 }

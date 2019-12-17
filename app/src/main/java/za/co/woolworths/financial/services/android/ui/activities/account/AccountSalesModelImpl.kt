@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account
 
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
@@ -10,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.CardQualif
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefit
+import za.co.woolworths.financial.services.android.ui.fragments.account.AccountSalesFragment
 
 class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
 
@@ -39,7 +41,6 @@ class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
     private val voucherCircleIcon = R.drawable.icon_voucher_circle
     private val documentCircleIcon = R.drawable.icon_document_circle
     private val moneyCircleIcon = R.drawable.icon_money_circle
-
 
     private var storeCardHeaderDrawable =
             mutableListOf(
@@ -211,6 +212,13 @@ class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
             getGoldCreditCardAccountSalesItem(),
             getBlackCreditCardAccountSalesItem())
 
-    private fun getString(stringId: Int): String? = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity)?.resources?.getString(stringId)
+    override fun getFragment(): Map<String, Fragment>? {
+        val goldTitle = getString(R.string.credit_card_gold_title) ?: ""
+        val blackTitle = getString(R.string.credit_card_black_title) ?: ""
+        val goldCardFragment = AccountSalesFragment.newInstance(getGoldCreditCardAccountSalesItem()) as? Fragment ?: Fragment()
+        val blackCardFragment =  AccountSalesFragment.newInstance(getBlackCreditCardAccountSalesItem()) as? Fragment ?: Fragment()
+        return mapOf(goldTitle to goldCardFragment,blackTitle to blackCardFragment)
+    }
 
+    private fun getString(stringId: Int): String? = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity)?.resources?.getString(stringId)
 }

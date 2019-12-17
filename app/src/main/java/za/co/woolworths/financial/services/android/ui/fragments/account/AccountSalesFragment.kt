@@ -58,10 +58,8 @@ class AccountSalesFragment : Fragment() {
                 }
                 val view = View.inflate(activity, R.layout.account_sales_card_benefits_item, null)
                 val titleTextView: TextView? = view?.findViewById(R.id.salesBenefitTitleTextView)
-                val descriptionTextView: TextView? =
-                        view?.findViewById(R.id.salesBenefitDescriptionTextView)
-                val salesItemImageView: ImageView? =
-                        view?.findViewById(R.id.salesItemImageView)
+                val descriptionTextView: TextView? = view?.findViewById(R.id.salesBenefitDescriptionTextView)
+                val salesItemImageView: ImageView? = view?.findViewById(R.id.salesItemImageView)
                 titleTextView?.text = cardBenefit.title
                 descriptionTextView?.text = cardBenefit.description
                 salesItemImageView?.setImageResource(cardBenefit.drawableId)
@@ -117,5 +115,4 @@ class AccountSalesFragment : Fragment() {
             }
         }
     }
-
 }

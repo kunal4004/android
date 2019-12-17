@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -28,8 +29,7 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
 
                 ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> {
                     // Gold vs Black credit card
-                    val creditCard = getCreditCard()
-                    displayCreditCard(creditCard[0], creditCard[1], getGoldOrBlackCardPosition(applyNowState))
+                    displayCreditCard(getFragment(), getGoldOrBlackCardPosition(applyNowState))
                 }
 
                 ApplyNowState.PERSONAL_LOAN -> {
@@ -44,6 +44,8 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
     private fun getGoldOrBlackCardPosition(applyNowState: ApplyNowState) = if (applyNowState == ApplyNowState.GOLD_CREDIT_CARD) 0 else 1
 
     override fun getCreditCard(): MutableList<AccountSales> = model.getCreditCard()
+
+    override fun getFragment(): Map<String, Fragment>? = model.getFragment()
 
     override fun getStoreCard(): AccountSales = model.getStoreCard()
 
@@ -76,7 +78,8 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
 
     fun getStatusBarHeight(actionBarHeight: Int): Int {
         val activity = WoolworthsApplication.getInstance()?.currentActivity
-        val resId: Int = activity?.resources?.getIdentifier("status_bar_height", "dimen", "android") ?: -1
+        val resId: Int =
+                activity?.resources?.getIdentifier("status_bar_height", "dimen", "android") ?: -1
         var statusBarHeight = 0
         if (resId > 0) {
             statusBarHeight = activity?.resources?.getDimensionPixelSize(resId) ?: 0
