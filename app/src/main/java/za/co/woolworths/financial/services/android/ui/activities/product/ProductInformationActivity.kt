@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsInformationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductIngredientsInformationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductNutritionalInformationFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductInformationActivity : AppCompatActivity() {
@@ -17,7 +18,7 @@ class ProductInformationActivity : AppCompatActivity() {
     private var productInformationType: ProductInformationType? = null
 
     enum class ProductInformationType {
-        DETAILS, INGREDIENTS
+        DETAILS, INGREDIENTS, NUTRITIONAL_INFO
     }
 
     companion object {
@@ -62,6 +63,12 @@ class ProductInformationActivity : AppCompatActivity() {
                     addFragment(
                             fragment = ProductIngredientsInformationFragment.newInstance(this.ingredients),
                             tag = ProductIngredientsInformationFragment::class.java.simpleName,
+                            containerViewId = R.id.fragmentContainer)
+                }
+                ProductInformationType.NUTRITIONAL_INFO -> {
+                    addFragment(
+                            fragment = ProductNutritionalInformationFragment.newInstance(Utils.toJson(this.nutritionalInformationDetails)),
+                            tag = ProductNutritionalInformationFragment::class.java.simpleName,
                             containerViewId = R.id.fragmentContainer)
                 }
             }

@@ -121,6 +121,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         findInStoreAction.setOnClickListener(this)
         productDetailsInformation.setOnClickListener(this)
         productIngredientsInformation.setOnClickListener(this)
+        nutritionalInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
@@ -137,6 +138,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.editDeliveryLocation -> updateDeliveryLocation()
             R.id.productDetailsInformation -> showProductDetailsInformation()
             R.id.productIngredientsInformation -> showProductIngredientsInformation()
+            R.id.nutritionalInformation -> showNutritionalInformation()
             R.id.moreColor -> showMoreColors()
         }
     }
@@ -416,6 +418,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
             productIngredientsInformation.visibility = View.VISIBLE
+        if (this.productDetails?.nutritionalInformationDetails != null)
+            nutritionalInformation.visibility = View.VISIBLE
 
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
@@ -1044,6 +1048,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val intent = Intent(this, ProductInformationActivity::class.java)
             intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
             intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.INGREDIENTS)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
+    }
+
+    override fun showNutritionalInformation() {
+        activity?.apply {
+            val intent = Intent(this, ProductInformationActivity::class.java)
+            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
+            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
