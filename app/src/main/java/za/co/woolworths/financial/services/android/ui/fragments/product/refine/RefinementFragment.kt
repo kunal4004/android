@@ -66,8 +66,14 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             hideCloseButton()
         }
         backButton?.setOnClickListener { onBackPressed() }
-        clearAndResetFilter?.text = getString(R.string.clear_filter)
-        clearAndResetFilter?.setOnClickListener { refinementAdapter?.clearRefinement() }
+        clearAndResetFilter?.apply {
+            text = getString(R.string.clear_filter)
+            setOnClickListener { refinementAdapter?.clearRefinement() }
+            visibility = when (refinementNavigation?.multiSelect) {
+                true -> View.VISIBLE
+                else -> View.INVISIBLE
+            }
+        }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         loadData()
