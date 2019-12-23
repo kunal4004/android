@@ -1,12 +1,19 @@
 package za.co.woolworths.financial.services.android.models.dto.account
 
+import za.co.woolworths.financial.services.android.util.expand.ParentListItem
+
 enum class ApplyNowState { STORE_CARD, GOLD_CREDIT_CARD, BLACK_CREDIT_CARD, PERSONAL_LOAN }
+
+enum class CreditCardType { GOLD_CREDIT_CARD, BLACK_CREDIT_CARD }
 
 data class CardHeader(val title: String?, val description: String?, val drawables: List<Int>)
 
-data class CardBenefit(val drawableId: Int, val title: String?, val description: String?)
+data class CardBenefit(val drawableId: Int, val title: String?, val description: String?,var cardBenefitTitle: String? = "")
 
-data class MoreBenefit(val drawableId: Int, val name: String?, internal val description: MutableList<MoreBenefitItems>)
+data class MoreBenefit(val drawableId: Int, val name: String?, internal val description: String?) : ParentListItem {
+    override fun getChildItemList(): MutableList<String?> = mutableListOf(description)
+    override fun isInitiallyExpanded(): Boolean = false
+}
 
 data class CardQualifyCriteria(val title: String?)
 
