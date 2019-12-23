@@ -30,9 +30,6 @@ public class ProductDetails {
 	@SerializedName("promotionImages")
 	@Expose
 	public PromotionImages promotionImages;
-	@SerializedName("nutritionalInformation")
-	@Expose
-	public List<Object> nutritionalInformation = null;
 	@SerializedName("longDescription")
 	@Expose
 	public String longDescription;
@@ -78,5 +75,8 @@ public class ProductDetails {
 	@SerializedName("kilogramPrice")
 	@Expose
 	public String kilogramPrice;
+	@SerializedName("nutritionalInformationDetails")
+	@Expose
+	public NutritionalInformationDetails nutritionalInformationDetails;
 
 }
