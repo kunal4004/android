@@ -78,6 +78,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSearchType: ProductsRequestParams.SearchType? = null
     private var mSearchTerm: String? = null
     private var mNavigationState: String? = null
+    private var mSortOption: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +89,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mSearchType = ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mNavigationState = getString(NAVIGATION_STATE, "")
+                mSortOption = getString(SORT_OPTION, "")
             }
             setProductBody()
         }
@@ -357,7 +359,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun setProductBody() {
-        setProductRequestBody(mSearchType, mSearchTerm, mNavigationState)
+        setProductRequestBody(mSearchType, mSearchTerm, mNavigationState, mSortOption)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
@@ -493,15 +495,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     queryStoreFinderProductByFusedLocation(null)
                 }
             }
-            REFINE_REQUEST_CODE -> {
-                if (resultCode == RESULT_OK) {
-                    val navigationState = data?.getStringExtra(NAVIGATION_STATE)
-                   // updateProductRequestBodyForRefinement(navigationState)
-                    //reloadProductsWithSortAndFilter()
-                    (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState))
-                }
-            }
-
             SSOActivity.SSOActivityResult.LAUNCH.rawValue(), SET_DELIVERY_LOCATION_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
                     addFoodProductTypeToCart(mAddItemsToCart?.get(0))
@@ -793,7 +786,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onRefined(navigationState: String, categoryName: String?) {
-        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, categoryName, mSearchTerm, navigationState))
+        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState, productRequestBody.sortOption))
     }
 
     fun onResetFilter() {
@@ -812,12 +805,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
+        private const val SORT_OPTION = "SORT_OPTION"
 
-        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?, navigationState: String?) = ProductListingFragment().withArgs {
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
+            putString(SUB_CATEGORY_NAME, sub_category_name)
+            putString(SEARCH_TERM, searchTerm)
+        }
+
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?, navigationState: String?, sortOption:String ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
             putString(NAVIGATION_STATE, navigationState)
+            putString(SORT_OPTION, sortOption)
         }
     }
 
