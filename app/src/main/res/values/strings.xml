@@ -937,14 +937,12 @@
     <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
-    <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below</string>
+    <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below.</string>
     <string name="invalid_card_number">Invalid card number</string>
     <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
     <string name="enter_otp_title">Enter OTP Number</string>
-    <string name="enter_otp_phone_desc">Please confirm that this is you by entering the OTP sent to your cell phone number %1$s</string>
-    <string name="enter_otp_email_desc">Please confirm that this is you by entering the OTP sent to your email address %1$s</string>
     <string name="did_not_receive_title">Did Not Receive OTP?</string>
     <string name="resend_otp_title">Resend OTP</string>
     <string name="resend_sms_to">SMS to </string>
@@ -1173,8 +1171,8 @@
     <string name="set_to_default">Set to default - \u0020</string>
     <string name="delivering_to_pdp">Delivering to - \u0020</string>
     <string name="select_colour">Select Colour</string>
-    <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
-    <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
+    <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
+    <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_wrong_otp_error">The One Time Pin provided doesn\'t exist</string>
 
     <string name="toolbar_layout">Toolbar</string>

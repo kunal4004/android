@@ -7,7 +7,7 @@ import android.widget.EditText
 class OTPViewTextWatcher(private val previousEditText: EditText?, private val currentEditText: EditText,
                          private val nextEditText: EditText?, private val method: () -> Unit) : TextWatcher {
 
-    var isEmptyFirstTime: Boolean = false
+    private var isEmptyFirstTime: Boolean = false
     override fun afterTextChanged(s: Editable?) {
 
         if (s.isNullOrEmpty()) {
@@ -25,7 +25,7 @@ class OTPViewTextWatcher(private val previousEditText: EditText?, private val cu
                     // If stand on second position of EditText and enter new symbol,
                     // will move to next EditText copying second symbol.
                     val secondSymbol = s.substring(1, 2)
-                    currentEditText?.setText(secondSymbol)
+                    currentEditText.setText(secondSymbol)
                 }
                 // Remove second symbol.
                 s.delete(1, s.length)
