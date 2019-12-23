@@ -17,6 +17,7 @@
             app:WTextView_font="medium_bold"
             android:letterSpacing="0.065"
             android:layout_marginLeft="0dp"
+            android:textSize="@dimen/twelve_sp"
             android:text="On Promotion" />
 
         <Switch
