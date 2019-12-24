@@ -268,7 +268,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-        } else if (productDetails.otherSkus.size == 0) {
+        } else if (productDetails.otherSkus.isNullOrEmpty()) {
             showProductOutOfStock()
         } else {
             showErrorWhileLoadingProductDetails()
@@ -1143,7 +1143,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onOutOfStockDialogDismiss() {
-        if (productDetails?.otherSkus?.size == 0)
+        if (productDetails?.otherSkus.isNullOrEmpty())
             activity?.onBackPressed()
     }
 
