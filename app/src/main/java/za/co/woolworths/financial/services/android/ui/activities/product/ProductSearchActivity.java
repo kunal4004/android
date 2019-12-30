@@ -130,7 +130,7 @@ public class ProductSearchActivity extends AppCompatActivity
 
 	private void searchProduct(String searchProductBrand) {
 		if (searchProductBrand.length() > 2) {
-			if (searchProductBrand.equalsIgnoreCase(SEARCH_VALUE_CHANEL)) {
+			if (searchProductBrand.toLowerCase().contains(SEARCH_VALUE_CHANEL)) {
 				ChanelMessageDialogFragment.Companion.newInstance().show(getSupportFragmentManager(), ChanelMessageDialogFragment.class.getSimpleName());
 			} else {
 				SearchHistory search = new SearchHistory();
