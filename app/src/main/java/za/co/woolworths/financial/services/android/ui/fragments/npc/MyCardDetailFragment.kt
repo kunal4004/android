@@ -89,6 +89,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             cardHolderLayout?.contentDescription = getString(R.string.text_cardHolderName)
             manageView?.contentDescription = getString(R.string.label_manage_layout)
             blockCard?.contentDescription = getString(R.string.rlt_BlockCard)
+            imStoreCard?.contentDescription = getString(R.string.store_card_image)
+            tvCardHolder?.contentDescription = getString(R.string.label_cardHolder)
+            textViewCardHolderName?.contentDescription = getString(R.string.text_cardHolderName)
+            tvExpires?.contentDescription = getString(R.string.label_card_expire_date)
+            cardExpireDate?.contentDescription = getString(R.string.text_card_expire_date)
+            expireInfo?.contentDescription = getString(R.string.info_card_expire_date)
+            payWithCard?.contentDescription = getString(R.string.layout_pay_with_card)
+            howItWorks?.contentDescription = getString(R.string.layout_how_it_works)
         }
     }
 

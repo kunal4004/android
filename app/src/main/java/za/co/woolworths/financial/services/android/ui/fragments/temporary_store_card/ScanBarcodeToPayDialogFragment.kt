@@ -63,6 +63,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         regenerateBarcode.setOnClickListener { regenerateBarcode() }
         configureUI()
+        setUniqueIds()
     }
 
     private fun configureUI() {
@@ -80,5 +81,15 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         if (isRegenerateBarcode) listener?.onRegenerateBarcode() else listener?.onDialogDismiss()
+    }
+
+    private fun setUniqueIds() {
+        activity?.resources?.apply {
+            title?.contentDescription = getString(R.string.scan_barcode_title)
+            description?.contentDescription = getString(R.string.scan_barcode_description)
+            barCodeImage?.contentDescription = getString(R.string.barcode_image)
+            regenerateBarcode?.contentDescription = getString(R.string.scan_barcode_regenerate)
+            cardHolderName?.contentDescription = getString(R.string.text_cardHolderName)
+        }
     }
 }
