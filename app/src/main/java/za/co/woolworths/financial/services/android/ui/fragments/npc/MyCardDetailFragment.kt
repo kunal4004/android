@@ -220,8 +220,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
 
     fun displayTemporaryCardToPayDialog() {
-        this.childFragmentManager.apply {
-            mStoreCardDetail?.let { ScanBarcodeToPayDialogFragment.newInstance(it).show(this, ScanBarcodeToPayDialogFragment::class.java.simpleName) }
+        activity?.apply {
+            this@MyCardDetailFragment.childFragmentManager.apply {
+                mStoreCardDetail?.let { ScanBarcodeToPayDialogFragment.newInstance(it).show(this, ScanBarcodeToPayDialogFragment::class.java.simpleName) }
+            }
         }
     }
 
