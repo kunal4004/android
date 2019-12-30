@@ -53,10 +53,11 @@ import za.co.woolworths.financial.services.android.ui.activities.MultipleImageAc
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -267,6 +268,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
+        } else if (productDetails.otherSkus.isNullOrEmpty()) {
+            showProductOutOfStock()
         } else {
             showErrorWhileLoadingProductDetails()
         }
@@ -1126,9 +1129,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     is ShoppingDeliveryLocation -> it.suburb.name
                     is QuickShopDefaultValues -> it.suburb.name
                     else -> ""}
-                val title = getString(R.string.out_of_stock)
                 val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
-                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, title, message)
+                OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
                 updateAddToCartButtonForSelectedSKU()
             }
         }
@@ -1138,6 +1140,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val userLocation = Utils.getPreferredDeliveryLocation()
         val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
         return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
+    }
+
+    override fun onOutOfStockDialogDismiss() {
+        if (productDetails?.otherSkus.isNullOrEmpty())
+            activity?.onBackPressed()
     }
 
 }
