@@ -517,7 +517,13 @@ public class SSOActivity extends WebViewActivity {
 
 		@Override @TargetApi(21)
 		public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-			openDialerForUrlIfNeeded(request.getUrl().toString());
+			final String url = request.getUrl().toString();
+
+			if (canOpenDialerForString(url)){
+				openDialerWithString(url);
+				return true;
+			}
+
 			return super.shouldOverrideUrlLoading(view, request);
 		}
 
@@ -526,18 +532,22 @@ public class SSOActivity extends WebViewActivity {
 			//shouldOverrideUrlLoading(WebView view, String url) is deprecated
 			//in api 24. shouldOverrideUrlLoading(WebView view, WebResourceRequest request) would
 			//have been called already.
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
-				openDialerForUrlIfNeeded(url);
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N && canOpenDialerForString(url)){
+				openDialerWithString(url);
+				return true;
 			}
+
 			return super.shouldOverrideUrlLoading(view, url);
 		}
 
-		private void openDialerForUrlIfNeeded(final String url){
-			if (url.startsWith("tel:")){
-				Intent intent = new Intent(Intent.ACTION_DIAL);
-				intent.setData(Uri.parse(url));
-				startActivity(intent);
-			}
+		private boolean canOpenDialerForString(final String string){
+			return string.startsWith("tel:");
+		}
+
+		private void openDialerWithString(final String string){
+			Intent intent = new Intent(Intent.ACTION_DIAL);
+			intent.setData(Uri.parse(string));
+			startActivity(intent);
 		}
 	};
 
