@@ -76,7 +76,10 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
         try {
             nutritionalInfo?.apply {
                 nutritionalTable.forEach {
-                    nutritionalDataList.putAll(Gson().fromJson(it, object : TypeToken<HashMap<String, List<NutritionalTableItem>>>() {}.type))
+                  val data:HashMap<String, List<NutritionalTableItem>> =  Gson().fromJson(it, object : TypeToken<HashMap<String, List<NutritionalTableItem>>>() {}.type)
+                    data.keys.toTypedArray()[0].let {key->
+                        data[key]?.let { it1 -> nutritionalDataList.put(key, it1) }
+                    }
                 }
             }
         } catch (e: Exception) {
