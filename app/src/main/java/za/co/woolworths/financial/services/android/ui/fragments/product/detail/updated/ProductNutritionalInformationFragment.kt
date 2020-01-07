@@ -106,6 +106,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
             val view = layoutInflater.inflate(R.layout.nutrition_filter_option_popup_view, null)
             val rcvSortOptions = view.findViewById<RecyclerView>(R.id.sortOptionsList)
             val popupLayout = view.findViewById<BubbleLayout>(R.id.popupLayout)
+            view.findViewById<View>(R.id.emptyView).setOnClickListener { this.dismiss() }
             popupLayout.arrowPosition = (Resources.getSystem().displayMetrics.widthPixels * 3 / 4).toFloat()
             rcvSortOptions?.layoutManager = activity?.let { activity -> LinearLayoutManager(activity) }
             rcvSortOptions?.adapter = NutritionalInformationFilterAdapter(filterOptions, this@ProductNutritionalInformationFragment)
