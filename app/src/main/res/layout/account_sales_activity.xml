@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/incAccountSalesFrontLayout"
+        layout="@layout/account_sales_front_layout" />
+
+    <!-- Adding bottom sheet after main content -->
+    <include layout="@layout/bottom_sheet" />
+
+
+    <RelativeLayout
+        android:id="@+id/bottomApplyNowButtonRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/grey_bg"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/bottomApplyNowButton"
+            style="@style/blackButtonStyle"
+            android:text="@string/apply_now" />
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
