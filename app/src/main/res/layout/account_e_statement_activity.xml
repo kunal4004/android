@@ -10,6 +10,7 @@
         android:id="@+id/mToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:contentDescription="@string/view_statements_title_layout"
         >
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView

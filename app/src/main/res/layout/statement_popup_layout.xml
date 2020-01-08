@@ -6,6 +6,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#8c000000"
+                android:contentDescription="@string/email_statement_popup_layout"
                 android:gravity="bottom">
 
     <RelativeLayout
@@ -75,6 +76,7 @@
                     android:textColor="@color/text_color_selector"
                     android:textSize="@dimen/twelve_sp"
                     android:visibility="visible"
+                    android:contentDescription="@string/button_confirm"
                     app:WButton_font="medium_bold"/>
             </RelativeLayout>
 
@@ -89,6 +91,7 @@
                 android:lineSpacingMultiplier="1.08"
                 android:paddingBottom="@dimen/four_dp"
                 android:text="@string/or_send_to_different_email"
+                android:contentDescription="@string/link_send_to_differentemail"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/twelve_sp"
