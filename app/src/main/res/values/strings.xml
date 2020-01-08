@@ -934,7 +934,7 @@
     <string name="get_a_replacement_card">Get A Replacement Card</string>
     <string name="already_have_a_card_title">ALREADY HAVE CARD? LINK IT NOW</string>
     <string name="participating_stores">participating stores</string>
-    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
+    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your SA ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below.</string>
@@ -949,7 +949,7 @@
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
-    <string name="congratulations_desc">Please remember to take your SA Identity Document (ID) along for your first purchase with this card.</string>
+    <string name="congratulations_desc">Please remember to take your SA ID along for your first purchase with this card</string>
     <string name="card_block_success">Your card has been</string>
     <string name="card_block_success_1">successfully blocked.</string>
     <string name="call_now">Call Now</string>
@@ -1166,7 +1166,7 @@
     <string name="product_placeholder_select_size">Select Size</string>
     <string name="call_us_now">Call Now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
-    <string name="wrong_otp_desc">The OTP you entered was incorrect. Please try again.</string>
+    <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
     <string name="set_to_default">Set to default - \u0020</string>
     <string name="delivering_to_pdp">Delivering to - \u0020</string>
