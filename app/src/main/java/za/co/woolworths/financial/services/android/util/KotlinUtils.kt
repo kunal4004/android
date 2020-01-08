@@ -1,10 +1,14 @@
 package za.co.woolworths.financial.services.android.util
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
-import android.text.*
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
@@ -15,6 +19,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 class KotlinUtils {
     companion object {
@@ -74,6 +79,58 @@ class KotlinUtils {
                 }
                 window?.attributes = winParams
             }
+        }
+
+        fun getOverlayAnchoredHeight(): Int? {
+            val activity = WoolworthsApplication.getInstance()?.currentActivity
+            val height: Int? = activity?.resources?.displayMetrics?.heightPixels ?: 0
+            return height?.div(3)?.plus(Utils.dp2px(activity, 18f)) ?: 0
+        }
+
+        fun getStatusBarHeight(actionBarHeight: Int): Int {
+            val activity = WoolworthsApplication.getInstance()?.currentActivity
+            val resId: Int =
+                    activity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
+                            ?: -1
+            var statusBarHeight = 0
+            if (resId > 0) {
+                statusBarHeight = activity?.resources?.getDimensionPixelSize(resId) ?: 0
+            }
+            return statusBarHeight + actionBarHeight
+        }
+
+
+        fun getStatusBarHeight(activity: Activity?): Int {
+            var result = 0
+            val resourceId: Int =
+                    activity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
+                            ?: result
+            if (resourceId > 0) {
+                result = activity?.resources?.getDimensionPixelSize(resourceId) ?: result
+            }
+            return result
+        }
+
+        fun onBackPressed(activity: Activity?) {
+            activity?.apply {
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
+        }
+
+        fun interpolateColor(fraction: Float, startValue: Int, endValue: Int): Int {
+            val startA = startValue shr 24 and 0xff
+            val startR = startValue shr 16 and 0xff
+            val startG = startValue shr 8 and 0xff
+            val startB = startValue and 0xff
+            val endA = endValue shr 24 and 0xff
+            val endR = endValue shr 16 and 0xff
+            val endG = endValue shr 8 and 0xff
+            val endB = endValue and 0xff
+            return startA + (fraction * (endA - startA)).toInt() shl 24 or
+                    (startR + (fraction * (endR - startR)).toInt() shl 16) or
+                    (startG + (fraction * (endG - startG)).toInt() shl 8) or
+                    startB + (fraction * (endB - startB)).toInt()
         }
     }
 }
