@@ -19,4 +19,8 @@ data class CardQualifyCriteria(val title: String?)
 
 data class CardCollection(val title: String?)
 
+data class AccountHelpInformation(val title: String?, val description: String?)
+
+data class HeaderDrawable(val card: Int, val background: Int)
+
 data class AccountSales(var cardHeader: CardHeader, var cardBenefit: MutableList<CardBenefit>, var moreBenefit: MutableList<MoreBenefit>, var cardQualifyCriteria: MutableList<CardQualifyCriteria>, var cardCollection: MutableList<CardCollection> = mutableListOf())
