@@ -1507,4 +1507,9 @@
     <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="silver_credit_card">silver credit card</string>
 
+    <string name="label_recent_transactions">Recent\nTransactions</string>
+    <string name="label_view_statements">View\nStatements</string>
+    <string name="label_payment_options">Payment\nOptions</string>
+    <string name="label_payment_options_button">Payment Options</string>
+    <string name="view_card">View Card</string>
 </resources>

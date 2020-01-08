@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/accountOverviewRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/store_card_background"
+    android:paddingTop="?attr/actionBarSize">
+
+    <TextView
+        android:id="@+id/availableFundTextView"
+        style="@style/accountAvailableFundTextViewStyle"
+        android:layout_width="110dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="40dp"
+        android:letterSpacing="0.021"
+        android:text="@string/available_funds"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/availableFundAmountTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/availableFundAmountTextView"
+        style="@style/accountAvailableFundAmountStyle"
+        android:text="R54 000.00"
+        app:layout_constraintBottom_toTopOf="@+id/currentBalanceTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.67"
+        app:layout_constraintHeight_percent="0.67" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="19dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endAmountGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+    <include
+        android:id="@+id/incRecentTransactionButton"
+        layout="@layout/view_recent_transaction_button"
+        android:layout_width="0dp"
+        android:layout_height="106dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toStartOf="@+id/incViewStatementButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <include
+        android:id="@+id/incViewStatementButton"
+        layout="@layout/view_statement_button"
+        android:layout_width="0dp"
+        android:layout_height="106dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toStartOf="@+id/incViewPaymentOptionButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
+
+    <include
+        android:id="@+id/incViewPaymentOptionButton"
+        layout="@layout/view_payment_option_button"
+        android:layout_width="0dp"
+        android:layout_height="106dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/incViewStatementButton" />
+
+    <TextView
+        android:id="@+id/paymentDueDateTextView"
+        style="@style/accountSalesTextViewStyle"
+        android:layout_marginBottom="40dp"
+        android:text="@string/info_next_payment_due_title"
+        app:layout_constraintBottom_toTopOf="@+id/incRecentTransactionButton"
+        app:layout_constraintEnd_toStartOf="@+id/nextPaymentDueDateTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <TextView
+        android:id="@+id/nextPaymentDueDateTextView"
+        style="@style/accountSalesTextViewAmountStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="@string/content_description_label"
+        app:layout_constraintBottom_toTopOf="@+id/incViewPaymentOptionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endAmountGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/paymentDueDateTextView" />
+
+    <TextView
+        android:id="@+id/totalAmountDueTextView"
+        style="@style/accountSalesTextViewStyle"
+        android:text="@string/total_amount_due"
+        app:layout_constraintBottom_toTopOf="@+id/paymentDueDateTextView"
+        app:layout_constraintEnd_toStartOf="@+id/totalAmountDueAmountTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <TextView
+        android:id="@+id/totalAmountDueAmountTextView"
+        style="@style/accountSalesTextViewAmountStyle"
+        app:layout_constraintBottom_toTopOf="@+id/nextPaymentDueDateTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endAmountGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/totalAmountDueTextView" />
+
+    <TextView
+        android:id="@+id/creditLimitTextView"
+        style="@style/accountSalesTextViewStyle"
+        android:text="@string/info_credit_limit_title"
+        app:layout_constraintBottom_toTopOf="@+id/totalAmountDueTextView"
+        app:layout_constraintEnd_toStartOf="@+id/creditLimitAmountTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <TextView
+        android:id="@+id/creditLimitAmountTextView"
+        style="@style/accountSalesTextViewAmountStyle"
+        app:layout_constraintBottom_toTopOf="@+id/totalAmountDueAmountTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endAmountGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/creditLimitTextView" />
+
+    <TextView
+        android:id="@+id/currentBalanceTextView"
+        style="@style/accountSalesTextViewStyle"
+        android:text="@string/current_balance_layout"
+        app:layout_constraintBottom_toTopOf="@+id/creditLimitTextView"
+        app:layout_constraintEnd_toStartOf="@+id/currentBalanceAmountTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <TextView
+        android:id="@+id/currentBalanceAmountTextView"
+        style="@style/accountSalesTextViewAmountStyle"
+        app:layout_constraintBottom_toTopOf="@+id/creditLimitAmountTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endAmountGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/currentBalanceTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
