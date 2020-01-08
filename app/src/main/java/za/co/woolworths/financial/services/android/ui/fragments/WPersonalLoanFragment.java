@@ -393,9 +393,6 @@ private static AsyncTask<Void, Void, Void> async;
                 }
                 break;
             case R.id.howToPayAccountStatus:
-            case R.id.howToPayArrears:
-                ScreenManager.presentHowToPayActivity(getActivity(), account);
-                break;
             case R.id.relDebitOrders:
                 Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
                 debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
@@ -591,9 +588,9 @@ private static AsyncTask<Void, Void, Void> async;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
-            ScreenManager.presentHowToPayActivity(getActivity(), account);
-        }
+//        if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
+//            ScreenManager.presentHowToPayActivity(getActivity(), account);
+//        }
         retryConnect();
     }
 

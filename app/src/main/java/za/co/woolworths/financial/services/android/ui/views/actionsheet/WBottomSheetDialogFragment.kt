@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
 import com.awfs.coordination.R
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
@@ -11,7 +10,6 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-
 
 open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
@@ -31,7 +29,7 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
         dialog?.apply {
             setOnShowListener { dialog ->
                 bottomSheet = (dialog as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet) as? FrameLayout?
-                BottomSheetBehavior.from(bottomSheet)?.state = BottomSheetBehavior.STATE_EXPANDED
+                bottomSheet?.let {  sheet ->  BottomSheetBehavior.from(sheet).state = BottomSheetBehavior.STATE_EXPANDED}
             }
 
         }

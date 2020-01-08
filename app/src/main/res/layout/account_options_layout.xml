@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+
+    <View
+        android:id="@+id/balanceProtectionInsuranceView"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/logoProtectionInsurance"
+        style="@style/style_loan_logo_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/bpi_covered"
+        android:src="@drawable/insurance"
+        app:layout_constraintBottom_toBottomOf="@+id/balanceProtectionInsuranceView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/balanceProtectionInsuranceView" />
+
+    <TextView
+        android:id="@+id/balanceProtectInsuranceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center|start"
+        android:letterSpacing="0.1"
+        android:lineSpacingExtra="0.1sp"
+        android:text="@string/bpi_covered"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/balanceProtectionInsuranceTextView"
+        app:layout_constraintEnd_toEndOf="@+id/balanceProtectionInsuranceView"
+        app:layout_constraintTop_toTopOf="@+id/balanceProtectionInsuranceTextView"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/balanceProtectionInsuranceTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:text="@string/balance_protection_insurance"
+        app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
+        app:layout_constraintEnd_toStartOf="@+id/balanceProtectInsuranceTextView"
+        app:layout_constraintStart_toEndOf="@+id/logoProtectionInsurance"
+        app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance" />
+
+    <View
+        android:id="@+id/balanceProtectionInsuranceDivider"
+        style="@style/creditLimitDividerStyle"
+        android:layout_height="1dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceView" />
+
+    <View
+        android:id="@+id/withdrawCashView"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceDivider" />
+
+
+    <ImageView
+        android:id="@+id/withdrawCashLogoImageView"
+        style="@style/style_loan_logo_img"
+        android:src="@drawable/money"
+        app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
+        app:layout_constraintStart_toStartOf="@+id/withdrawCashView"
+        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceDivider"
+        tools:ignore="ContentDescription" />
+
+
+    <TextView
+        android:id="@+id/withdrawCashTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:text="@string/instore_withdraw_cash_now"
+        app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
+        app:layout_constraintEnd_toStartOf="@+id/withdrawCashArrowImageView"
+        app:layout_constraintStart_toEndOf="@+id/withdrawCashLogoImageView"
+        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceDivider" />
+
+    <ImageView
+        android:id="@+id/withdrawCashArrowImageView"
+        style="@style/style_loan_img"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
+        app:layout_constraintEnd_toEndOf="@+id/withdrawCashView"
+        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceDivider"
+        tools:ignore="ContentDescription" />
+
+    <View
+        android:id="@+id/withdrawCashDivider"
+        style="@style/creditLimitDividerStyle"
+        android:layout_height="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashView" />
+
+
+    <View
+        android:id="@+id/debitOrderView"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashDivider" />
+
+    <ImageView
+        android:id="@+id/debitOrderLogoImageView"
+        style="@style/style_loan_logo_img"
+        android:src="@drawable/ic_debit_order"
+        app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
+        app:layout_constraintStart_toStartOf="@+id/debitOrderView"
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashDivider" />
+
+    <ImageView
+        android:id="@+id/debitOrderArrowImageView"
+        style="@style/style_loan_img"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
+        app:layout_constraintEnd_toEndOf="@+id/debitOrderView"
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashDivider" />
+
+    <TextView
+        android:id="@+id/debitOrderTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:text="@string/debit_orders"
+        app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
+        app:layout_constraintEnd_toStartOf="@+id/debitOrderArrowImageView"
+        app:layout_constraintStart_toEndOf="@+id/debitOrderLogoImageView"
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashView" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/withdrawCashGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="withdrawCashView,withdrawCashLogoImageView,withdrawCashTextView,withdrawCashArrowImageView,withdrawCashDivider" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/debitOrderViewGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="debitOrderView,debitOrderLogoImageView,debitOrderArrowImageView,debitOrderTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

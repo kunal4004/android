@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/accountCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.AccountCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountCardDetailFragment"
         android:label="AccountCardDetailFragment"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment

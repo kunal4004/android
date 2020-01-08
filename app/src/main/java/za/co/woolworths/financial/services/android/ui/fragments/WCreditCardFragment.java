@@ -368,9 +368,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                 }
                 break;
             case R.id.howToPayAccountStatus:
-            case R.id.howToPayArrears:
-                ScreenManager.presentHowToPayActivity(getActivity(), account);
-                break;
+//            case R.id.howToPayArrears:
+//                ScreenManager.presentHowToPayActivity(getActivity(), account);
+//                break;
             case R.id.relFindOutMore:
                 if (controllerNotNull())
                     mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
@@ -543,9 +543,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
-            ScreenManager.presentHowToPayActivity(getActivity(), account);
-        }
+//        if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
+//            ScreenManager.presentHowToPayActivity(getActivity(), account);
+//        }
         retryConnect();
     }
 

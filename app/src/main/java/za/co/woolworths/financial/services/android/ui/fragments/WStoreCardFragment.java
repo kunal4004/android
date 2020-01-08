@@ -412,9 +412,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 }
                 break;
             case R.id.howToPayAccountStatus:
-            case R.id.howToPayArrears:
-                ScreenManager.presentHowToPayActivity(getActivity(), account);
-                break;
             case R.id.relDebitOrders:
                 if (account.debitOrder.debitOrderActive) {
                     Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
@@ -621,9 +618,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case RESULT_CODE_FUNDS_INFO:
-                if (resultCode == RESULT_OK) {
-                    ScreenManager.presentHowToPayActivity(getActivity(), account);
-                }
+//                if (resultCode == RESULT_OK) {
+//                    ScreenManager.presentHowToPayActivity(getActivity(), account);
+//                }
                 break;
             case REQUEST_CODE_BLOCK_MY_STORE_CARD:
                 if (data != null)
