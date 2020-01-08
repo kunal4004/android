@@ -51,6 +51,8 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -606,13 +608,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
 				break;
 			case R.id.linkedStoreCard:
-				redirectToMyAccountsCardsActivity(0);
+				redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
 				break;
 			case R.id.linkedCrediCard:
-				redirectToMyAccountsCardsActivity(1);
+				redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
 				break;
 			case R.id.linkedPersonalLoan:
-				redirectToMyAccountsCardsActivity(2);
+				redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
 				break;
 			case R.id.contactUs:
 				pushFragment(new ContactUsFragment());
@@ -1060,6 +1062,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 	}
 
+	public void redirectToAccountSignInActivity(ApplyNowState applyNowState) {
+		Intent intent = new Intent(getActivity(), AccountSignedInActivity.class);
+		intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
+		intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
+		startActivity(intent);
+	}
+
 	public void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {
 		Activity activity = getActivity();
 		if (activity == null) return;
@@ -1070,4 +1079,5 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		startActivity(intent);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
+
 }
