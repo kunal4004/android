@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -16,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
@@ -43,6 +46,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         balanceProtectionInsuranceView?.setOnClickListener(this)
         cardImageRootView?.setOnClickListener(this)
         debitOrderView?.setOnClickListener(this)
+        cardDetailImageView?.setOnClickListener(this)
 
         mCardPresenterImpl?.apply {
             setBalanceProtectionInsuranceState()
@@ -51,18 +55,18 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun showStoreCardProgress() {
-        if (fragmentIsAlreadyAdded()) return
-        cardDetailImageView?.alpha = 0.5f
+        loadStoreCardProgressBar?.visibility = VISIBLE
+        storeCardLoaderView?.visibility = VISIBLE
         cardImageRootView?.isEnabled = false
     }
 
     @SuppressLint("DefaultLocale")
     override fun onStoreCardProgressCompleted() {
         if (fragmentIsAlreadyAdded()) return
-        cardDetailImageView?.alpha = 1.0f
+        loadStoreCardProgressBar?.visibility = GONE
+        storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
-        cardImageRootView?.isEnabled =
-                myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+        cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 
     override fun handleUnknownHttpCode(description: String?) {
@@ -72,7 +76,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     override fun handleSessionTimeOut(stsParams: String?) {
         if (fragmentIsAlreadyAdded()) return
-        activity?.apply { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, this) }
+        (activity as? AccountSignedInActivity)?.let { accountSignedInActivity -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, accountSignedInActivity)}
     }
 
     private fun fragmentIsAlreadyAdded(): Boolean = !isAdded
@@ -83,6 +87,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
+                R.id.cardDetailImageView -> mCardPresenterImpl?.requestGetAccountStoreCardCardsFromServer()
             }
         }
     }
@@ -126,7 +131,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI)
-            val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
+            val navigateToBalanceProtectionInsurance =
+                    Intent(this, BPIBalanceProtectionActivity::class.java)
             navigateToBalanceProtectionInsurance.putExtra("account_info", accountInfo)
             startActivity(navigateToBalanceProtectionInsurance)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)

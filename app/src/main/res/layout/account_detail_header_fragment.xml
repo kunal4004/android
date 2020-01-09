@@ -124,4 +124,29 @@
         app:layout_constraintStart_toStartOf="@+id/startUsernameVerticalGuide" />
 
 
+    <View
+        android:id="@+id/storeCardLoaderView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/grey_90_bg"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
+        app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
+        app:layout_constraintTop_toTopOf="@+id/cardDetailImageView" />
+
+
+    <ProgressBar
+        android:id="@+id/loadStoreCardProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/progress_circle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
+        app:layout_constraintStart_toStartOf="@+id/cardDetailImageView"
+        app:layout_constraintTop_toTopOf="@+id/cardDetailImageView" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,8 +47,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
-        requestGetAccountStoreCardCardsFromServer()
+        mApplyNowAccountKeyPair =
+                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -64,7 +64,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         if (account?.productGroupCode?.toLowerCase() == "cc") return
-        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
+        val storeCardsRequest: StoreCardsRequestBody? =
+                account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
         showProgress()
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
@@ -108,6 +109,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
         mainView?.displayViewCardText()
+        navigateToTemporaryStoreCardOnButtonTapped()
     }
 
     override fun navigateToTemporaryStoreCardOnButtonTapped() {

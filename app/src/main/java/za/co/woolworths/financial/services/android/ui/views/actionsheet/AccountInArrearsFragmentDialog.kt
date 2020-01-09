@@ -11,8 +11,9 @@ import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.*
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.util.CurrencyFormatterUtil
 import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClickListener {
 
@@ -28,7 +29,7 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
         val accountInStringFormat = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
         mAccountCards = Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
 
-        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc, CurrencyFormatterUtil.addSpaceBetweenRandSymbolAndAmount(totalAmountDue)) }
+        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc,  Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
 
         paymentOptionButton?.setOnClickListener(this)
         gotITButton?.setOnClickListener(this)

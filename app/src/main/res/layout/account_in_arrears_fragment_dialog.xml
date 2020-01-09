@@ -82,6 +82,7 @@
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.02"
         android:text="@string/label_payment_options_button"
+        android:stateListAnimator="@null"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="12sp"
