@@ -42,7 +42,6 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener {
         setUpView()
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
-        incViewPaymentOptionButton?.setOnClickListener(this)
     }
 
     private fun setUpView() {
@@ -64,7 +63,6 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToTransactionActivity()
             R.id.incViewStatementButton -> navigateToStatementActivity()
-            R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
         }
     }
 
@@ -89,7 +87,7 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun navigateToPaymentOptionActivity() {
+    fun navigateToPaymentOptionActivity() {
         activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mAccountPair) }
     }
 }

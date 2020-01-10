@@ -6,44 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/light_gray_background">
 
-    <View
-        android:id="@+id/creditLimitIncreaseRootView"
-        android:layout_width="0dp"
-        android:layout_height="176dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/creditLimitIncreaseTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:letterSpacing="0.1"
-        android:text="@string/cli_credit_limit_increase"
-        android:textColor="@color/overview_color"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
-        app:layout_constraintTop_toTopOf="@+id/creditLimitIncreaseRootView"
-        tools:ignore="UnusedAttribute" />
-
-    <TextView
-        android:id="@+id/applyNowTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:letterSpacing="0.12"
-        android:text="@string/apply_now"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
-        app:layout_constraintTop_toTopOf="@+id/creditLimitIncreaseRootView"
-        tools:ignore="UnusedAttribute" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startGuideline"
         android:layout_width="wrap_content"
@@ -60,71 +22,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintGuide_end="15dp" />
 
-    <TextView
-        android:id="@+id/creditLimitIncreaseDetailTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:alpha="0.5"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="start"
-        android:lineSpacingExtra="1.1dp"
-        android:lineSpacingMultiplier="1"
-        android:text="@string/apply_credit_limit_description"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/creditLimitIncreaseTextView" />
-
-    <View
-        android:id="@+id/balanceProtectionInsuranceDivider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="25dp"
-        android:background="@color/light_gray_background"
-        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/creditLimitIncreaseDetailTextView" />
-
-
-    <ImageView
-        android:id="@+id/creditLimitIncreaseImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:alpha="0.4"
-        app:layout_constraintBottom_toBottomOf="@+id/creditLimit"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceDivider"
-        app:srcCompat="@drawable/cli" />
-
-    <TextView
-        android:id="@+id/increaseLimitTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
-        android:text="@string/increase_my_limit"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/creditLimitIncreaseImageView"
-        app:layout_constraintEnd_toStartOf="@+id/imgFindOutMoreArrow"
-        app:layout_constraintStart_toEndOf="@+id/creditLimitIncreaseImageView" />
-
-    <ImageView
-        android:id="@+id/imgFindOutMoreArrow"
-        style="@style/style_loan_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="22dp"
-        android:padding="0dp"
-        android:src="@drawable/ic_caret_black"
-        app:layout_constraintBottom_toBottomOf="@+id/increaseLimitTextView"
-        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceDivider" />
 
     <View
         android:id="@+id/increaseMyLimitSepartorView"
@@ -133,7 +30,7 @@
         android:background="@color/light_gray_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/creditLimitIncreaseRootView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/accountOptionBackgroundView"
@@ -183,7 +80,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/accountOptionHeaderDivider" />
-
 
     <View
         android:id="@+id/bottomSpaceView"

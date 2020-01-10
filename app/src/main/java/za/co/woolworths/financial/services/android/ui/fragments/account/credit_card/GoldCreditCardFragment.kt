@@ -11,5 +11,13 @@ class GoldCreditCardFragment : AvailableFundFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         accountOverviewRootLayout?.setBackgroundResource(R.drawable.gold_credit_card_background)
+        incViewPaymentOptionButton?.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View?) {
+        super.onClick(view)
+        when (view?.id) {
+            R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
+        }
     }
 }

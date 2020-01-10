@@ -2,23 +2,20 @@
 
 package za.co.woolworths.financial.services.android.ui.extension
 
-import android.annotation.SuppressLint
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
-import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -226,6 +223,14 @@ inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, reque
             requestListener?.onFailure(error)
         }
     }, classType))
+}
+
+inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_OBJECT>?) {
+    call?.apply {
+        if (!isCanceled) {
+            cancel()
+        }
+    }
 }
 
 // Find current fragments in navigation graph

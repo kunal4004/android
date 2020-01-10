@@ -25,20 +25,11 @@
 
     <TextView
         android:id="@+id/balanceProtectInsuranceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:fontFamily="@font/futura_medium_ttf"
-        android:gravity="center|start"
-        android:letterSpacing="0.1"
-        android:lineSpacingExtra="0.1sp"
+        style="@style/textViewRoundedTagStyle"
         android:text="@string/bpi_covered"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/balanceProtectionInsuranceTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
         app:layout_constraintEnd_toEndOf="@+id/balanceProtectionInsuranceView"
-        app:layout_constraintTop_toTopOf="@+id/balanceProtectionInsuranceTextView"
+        app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance"
         tools:targetApi="lollipop" />
 
     <TextView
@@ -46,7 +37,6 @@
         style="@style/style_loan_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="@string/balance_protection_insurance"
         app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectInsuranceTextView"
@@ -78,13 +68,15 @@
         app:layout_constraintStart_toStartOf="@+id/debitOrderView"
         app:layout_constraintTop_toBottomOf="@+id/debitOrderDivider" />
 
-    <ImageView
-        android:id="@+id/debitOrderArrowImageView"
-        style="@style/style_loan_img"
-        android:src="@drawable/ic_caret_black"
-        app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
+    <TextView
+        android:id="@+id/debitOrderIsActiveTextView"
+        style="@style/textViewRoundedTagStyle"
+        android:layout_height="wrap_content"
+        android:text="active"
+        app:layout_constraintBottom_toBottomOf="@+id/debitOrderLogoImageView"
         app:layout_constraintEnd_toEndOf="@+id/debitOrderView"
-        app:layout_constraintTop_toBottomOf="@+id/debitOrderDivider" />
+        app:layout_constraintTop_toTopOf="@+id/debitOrderLogoImageView"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/debitOrderTextView"
@@ -92,7 +84,7 @@
         android:layout_width="0dp"
         android:text="@string/debit_orders"
         app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
-        app:layout_constraintEnd_toStartOf="@+id/debitOrderArrowImageView"
+        app:layout_constraintEnd_toStartOf="@+id/debitOrderIsActiveTextView"
         app:layout_constraintStart_toEndOf="@+id/debitOrderLogoImageView"
         app:layout_constraintTop_toBottomOf="@+id/debitOrderDivider" />
 
@@ -100,7 +92,7 @@
         android:id="@+id/debitOrderViewGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="debitOrderView,debitOrderLogoImageView,debitOrderArrowImageView,debitOrderTextView,debitOrderDivider"
+        app:constraint_referenced_ids="debitOrderView,debitOrderLogoImageView,debitOrderIsActiveTextView,debitOrderTextView,debitOrderDivider"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

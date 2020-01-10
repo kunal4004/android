@@ -13,6 +13,13 @@ class BlackCreditCardFragment : AvailableFundFragment() {
         super.onViewCreated(view, savedInstanceState)
         accountOverviewRootLayout?.setBackgroundResource(R.drawable.black_credit_card_background)
         myCardDetailTextView?.visibility = View.GONE
+        incViewPaymentOptionButton?.setOnClickListener(this)
+    }
 
+    override fun onClick(view: View?) {
+        super.onClick(view)
+        when (view?.id) {
+            R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
+        }
     }
 }
