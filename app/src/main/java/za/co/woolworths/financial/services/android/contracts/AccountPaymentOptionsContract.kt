@@ -26,7 +26,7 @@ interface AccountPaymentOptionsContract {
     interface AccountCardDetailPresenter {
         fun createCardHolderName(): String?
         fun displayCardHolderName()
-        fun balanceProtectionInsuranceIsCovered(account: Account?): String?
+        fun balanceProtectionInsuranceCoverState(account: Account?): String?
         fun setBalanceProtectionInsuranceState()
         fun getAppCompatActivity(): AppCompatActivity?
         fun setAccountDetailBundle(arguments: Bundle?)

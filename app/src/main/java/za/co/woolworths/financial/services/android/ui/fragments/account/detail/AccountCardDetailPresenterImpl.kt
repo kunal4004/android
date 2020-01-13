@@ -34,13 +34,13 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         mainView?.displayCardHolderName(createCardHolderName())
     }
 
-    override fun balanceProtectionInsuranceIsCovered(account: Account?): String? {
+    override fun balanceProtectionInsuranceCoverState(account: Account?): String? {
         val resources = getAppCompatActivity()?.resources
         return if (account?.insuranceCovered == true) resources?.getString(R.string.bpi_covered) else resources?.getString(R.string.bpi_not_covered)
     }
 
     override fun setBalanceProtectionInsuranceState() {
-        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceIsCovered(getAccount()))
+        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceCoverState(getAccount()))
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
