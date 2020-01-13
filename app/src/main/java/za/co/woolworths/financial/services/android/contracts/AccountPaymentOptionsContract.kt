@@ -35,8 +35,8 @@ interface AccountPaymentOptionsContract {
         fun isDebitOrderActive(): Int?
         fun getAccountInStringFormat(): String?
         fun handleUnknownHttpResponse(description: String?)
-        fun requestGetAccountStoreCardCardsFromServer()
-        fun requestGetUserCLIOfferActiveFromServer()
+        fun getAccountStoreCardCards()
+        fun getUserCLIOfferActiveFromServer()
         fun getStoreCardResponse(): StoreCardsResponse?
         fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse)
         fun navigateToGetTemporaryStoreCardPopupActivity()
