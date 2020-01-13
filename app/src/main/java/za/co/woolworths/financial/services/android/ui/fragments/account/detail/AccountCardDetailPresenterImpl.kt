@@ -58,7 +58,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun isDebitOrderActive(): Int? = if (getDebitOrder()?.debitOrderActive == true) VISIBLE else GONE
 
-    override fun getAccountInStringFormat(): String? = Gson().toJson(getAccount())
+    override fun convertAccountFromJsonToStringType(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
     override fun getAccountStoreCardCards() {
@@ -131,7 +131,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     }
 
     override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
-        mainView?.navigateToBalanceProtectionInsurance(getAccountInStringFormat())
+        mainView?.navigateToBalanceProtectionInsurance(convertAccountFromJsonToStringType())
     }
 
     override fun onDestroy() {
