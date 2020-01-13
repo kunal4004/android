@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.personal_loan
+package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailFragment
 
 class PersonalLoanDetailFragment : AccountCardDetailFragment() {
 

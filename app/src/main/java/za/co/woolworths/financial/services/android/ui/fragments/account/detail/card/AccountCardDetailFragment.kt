@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.detail
+package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -36,7 +36,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mCardPresenterImpl = AccountCardDetailPresenterImpl(this, AccountCardDetailModelImpl())
+        mCardPresenterImpl =
+                AccountCardDetailPresenterImpl(this, AccountCardDetailModelImpl())
         mCardPresenterImpl?.setAccountDetailBundle(arguments)
     }
 
@@ -153,13 +154,15 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
-        when(coveredText){
+        when (coveredText) {
             true -> {
-                balanceProtectInsuranceTextView?.text = activity?.resources?.getString(R.string.bpi_covered)
+                balanceProtectInsuranceTextView?.text =
+                        activity?.resources?.getString(R.string.bpi_covered)
                 balanceProtectInsuranceTextView?.setBackgroundResource(R.drawable.round_green_corner)
             }
             false -> {
-                balanceProtectInsuranceTextView?.text = activity?.resources?.getString(R.string.bpi_not_covered)
+                balanceProtectInsuranceTextView?.text =
+                        activity?.resources?.getString(R.string.bpi_not_covered)
                 balanceProtectInsuranceTextView?.setBackgroundResource(R.drawable.round_amber_corner)
             }
         }
@@ -211,6 +214,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     override fun hideProductNotInGoodStanding() {
         llIncreaseLimitContainer?.visibility = GONE
     }
+
 }
 
 

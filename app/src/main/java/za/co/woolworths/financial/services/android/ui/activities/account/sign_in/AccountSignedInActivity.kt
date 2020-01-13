@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountHel
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, View.OnClickListener {
 
@@ -95,7 +96,8 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
     override fun showAccountInArrears(account: Account) {
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
-        mAccountSignedInPresenter?.getMyAccountCardInfo()?.let {  accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+        mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+
     }
 
     override fun hideAccountInArrears(account: Account) {
@@ -105,6 +107,15 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     override fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>) {
         this.mAccountHelpInformation = informationModelAccount
+    }
+
+    override fun showAccountChargeOffForMoreThan6Months() {
+        window?.decorView?.fitsSystemWindows = true
+        Utils.updateStatusBarBackground(this)
+        frameLayout?.visibility = GONE
+        bottomSheetLayout?.visibility  = GONE
+        sixMonthArrearsFrameLayout?.visibility = VISIBLE
+        mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
     }
 
     override fun onClick(v: View?) {

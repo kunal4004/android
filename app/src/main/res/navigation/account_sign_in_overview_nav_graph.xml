@@ -8,22 +8,22 @@
 
     <fragment
         android:id="@+id/storeCardFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.store_card.StoreCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card.StoreCardFragment"
         android:label="Store Card Fragment"
         tools:layout="@layout/account_available_fund_overview_fragment" />
     <fragment
         android:id="@+id/blackCreditCardFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.credit_card.BlackCreditCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card.BlackCreditCardFragment"
         android:label="Black Credit Card Fragment"
         tools:layout="@layout/account_available_fund_overview_fragment" />
     <fragment
         android:id="@+id/goldCreditCardFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.credit_card.GoldCreditCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card.GoldCreditCardFragment"
         android:label="Gold Credit Card Fragment"
         tools:layout="@layout/account_available_fund_overview_fragment" />
     <fragment
         android:id="@+id/personalLoanFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.personal_loan.PersonalLoanFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment"
         android:label="Personal Loan Fragment"
         tools:layout="@layout/account_available_fund_overview_fragment" />
     <dialog
@@ -33,7 +33,7 @@
         tools:layout="@layout/account_in_arrears_fragment_dialog" />
     <fragment
         android:id="@+id/availableFundFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.AvailableFundFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment"
         android:label="AvailableFundFragment"
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/silverCreditCardFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.credit_card.SilverCreditCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card.SilverCreditCardFragment"
         android:label="Silver Credit Card"
         tools:layout="@layout/account_available_fund_overview_fragment" />
 

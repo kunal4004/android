@@ -1514,5 +1514,7 @@
     <string name="view_card">View Card</string>
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
+    <string name="account_arrears_description">Your account in in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="call_the_call_centre">call the call centre</string>
 
 </resources>
