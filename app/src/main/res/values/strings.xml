@@ -1305,7 +1305,6 @@
     <string name="barcode_image">barcode image</string>
     <string name="scan_barcode_regenerate">regenerate barcode</string>
 
-
     <!-- storeCardMoreBenefits -->
 
     <string name="storeCardMoreBenefits_row_1_title">24-Hour Shopping</string>
@@ -1470,4 +1469,41 @@
     <string name="more_benefits_title">More Benefits</string>
     <string name="credit_card_gold_title">Gold</string>
     <string name="credit_card_black_title">Black</string>
+
+    <string name="account_in_arrears_title">Account In Arrears</string>
+    <string name="amount_due_title">Amount Due</string>
+    <string name="amount_overdue_title">Amount Overdue</string>
+    <string name="total_amount_due_title">Total Amount Due</string>
+    <string name="next_payment_due_title">Next Payment Due</string>
+    <string name="balance_at_statement_date_title">Balance At Statement Date</string>
+    <string name="current_balance_title">Current Balance</string>
+    <string name="available_funds_title">Available Funds</string>
+    <string name="credit_limit_title">Credit Limit</string>
+    <string name="apply_credit_limit_description">Apply for a limit increase now. It’s quick and easy.</string>
+    <string name="information">Information</string>
+    <string name="WBottomSheetBehavior">za.co.woolworths.financial.services.android.ui.views.bottom_sheet.WBottomSheetBehavior</string>
+    <string name="label_payment_option_header">Payment Option Header</string>
+    <string name="credit_card_payment_options_label">Credit Card Payment Options</string>
+    <string name="payment_option_make_your_life_easier">4 ways we make your life easier</string>
+    <string name="payment_option_pay_woolies_card_label">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="account_options_label">Account Options</string>
+    <string name="withdrawal_options">View Withdrawals</string>
+
+    <string name="black_credit_card_available_fund_information_desc">Funds available for you to use.</string>
+    <string name="black_credit_card_current_balance_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_credit_limit_information_desc">This is the total amount of credit offered to you by Woolies.</string>
+    <string name="black_credit_card_total_amount_due_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
+    <string name="black_credit_card_next_payment_due_desc">This is the date the Total Amount Due is to be paid by.</string>
+    <string name="card_info_view_term_and_condition">View Terms and Conditions</string>
+
+    <string name="black_credit_card_account_in_arrears_information_desc">Account in arrears is when the minimum payment due is not paid in full by the due date.</string>
+    <string name="black_credit_card_amount_due_information_desc">This is the minimum amount that is due for the payment, by the due date for that month.</string>
+    <string name="black_credit_card_amount_overdue_arrears_information_desc">The amount that is outstanding from the previous billing due date</string>
+    <string name="black_credit_card_total_amount_due_arrears_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
+    <string name="black_credit_card_next_payment_due_arrears_desc">This is the date the Total Amount Due is to be paid by.</string>
+    <string name="black_credit_card_balance_at_statement_date_desc">Balance as at the date when you are billed.</string>
+    <string name="black_credit_card_current_balance_arrears_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_available_fund_arrears_information_desc">Funds available for you to use.</string>
+    <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
+
 </resources>
