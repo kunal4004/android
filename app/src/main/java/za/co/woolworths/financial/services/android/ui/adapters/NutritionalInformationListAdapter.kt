@@ -34,7 +34,13 @@ class NutritionalInformationListAdapter : RecyclerView.Adapter<NutritionalInform
         @SuppressLint("SetTextI18n")
         fun bind(item: NutritionalTableItem) {
             val nutritionalDescription = item.nutritionalDescription.trim()
-            itemView.unit.text = item.nutritionalDescriptionValue + " " + item.nutritionalMeasurement
+            with(item.nutritionalDescriptionValue) {
+                itemView.unit.text = when (this) {
+                    "-" -> this
+                    else -> this + " " + item.nutritionalMeasurement
+                }
+            }
+
             itemView.description.apply {
                 nutritionalDescription.let {
                     text = when (it.startsWith("of", true)) {
