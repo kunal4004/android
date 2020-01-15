@@ -84,8 +84,4 @@ class AvailableFundPresenterImpl(private var mainView: AvailableFundContract.Ava
     override fun onDestroy() {
         mainView = null
     }
-
-    @SuppressLint("DefaultLocale")
-    override fun getCardType(): String? = getAccount()?.productGroupCode?.toUpperCase()
-
 }

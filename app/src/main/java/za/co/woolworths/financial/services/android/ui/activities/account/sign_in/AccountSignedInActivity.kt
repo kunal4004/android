@@ -26,6 +26,11 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, View.OnClickListener {
 
+    companion object {
+        const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
+        const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021;
+    }
+
     private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null

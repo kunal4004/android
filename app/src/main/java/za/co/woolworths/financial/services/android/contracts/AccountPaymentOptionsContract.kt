@@ -17,6 +17,10 @@ interface AvailableFundContract {
         fun handleSessionTimeOut(stsParams: String)
         fun showABSAServiceGetUserCreditCardTokenProgressBar()
         fun hideABSAServiceGetUserCreditCardTokenProgressBar()
+        fun navigateToRecentTransactionActivity(cardType: String)
+        fun navigateToLoanWithdrawalActivity()
+        fun navigateToPaymentOptionActivity()
+        fun navigateToStatementActivity()
     }
 
     interface AvailableFundPresenter {
@@ -27,7 +31,6 @@ interface AvailableFundContract {
         fun getCreditCardNumber(cards: ArrayList<Card>?): String
         fun getAccount(): Account?
         fun onDestroy()
-        fun getCardType(): String?
     }
 
     interface AvailableFundModel {

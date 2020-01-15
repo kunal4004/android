@@ -9,16 +9,22 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_statement_button.*
 import za.co.woolworths.financial.services.android.contracts.AvailableFundContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.ui.activities.*
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
+import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.*
 
-open class AvailableFundFragment : Fragment(), View.OnClickListener, AvailableFundContract.AvailableFundView {
+open class AvailableFundFragment : Fragment(), AvailableFundContract.AvailableFundView {
     var mAvailableFundPresenter: AvailableFundPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +40,6 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener, AvailableFu
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpView()
-        incRecentTransactionButton?.setOnClickListener(this)
     }
 
     private fun setUpView() {
@@ -57,27 +62,7 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener, AvailableFu
         }
     }
 
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.incRecentTransactionButton -> navigateToTransactionActivity()
-        }
-    }
-
-    private fun navigateToTransactionActivity() {
-        mAvailableFundPresenter?.getAccount()?.apply {
-            (activity as? AccountSignedInActivity)?.let { activity ->
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
-                val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId.toString())
-                intent.putExtra("accountNumber", accountNumber.toString())
-                intent.putExtra("cardType", mAvailableFundPresenter?.getCardType())
-                activity.startActivityForResult(intent, 0)
-                activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
-        }
-    }
-
-    fun navigateToStatementActivity() {
+    override fun navigateToStatementActivity() {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
@@ -87,7 +72,7 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener, AvailableFu
         }
     }
 
-    fun navigateToPaymentOptionActivity() {
+    override fun navigateToPaymentOptionActivity() {
         if (fragmentAlreadyAdded()) return
         activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mAvailableFundPresenter?.getBundle()) }
     }
@@ -99,7 +84,7 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener, AvailableFu
                     Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
             openABSAOnlineBanking.putExtra(ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN, isRegistered)
             openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber)
-            startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
+            startActivityForResult(openABSAOnlineBanking, ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
@@ -141,5 +126,29 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener, AvailableFu
     override fun onDestroy() {
         mAvailableFundPresenter?.onDestroy()
         super.onDestroy()
+    }
+
+    override fun navigateToLoanWithdrawalActivity() {
+        activity?.apply {
+            val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
+            intentWithdrawalActivity.putExtra("account_info", Gson().toJson(mAvailableFundPresenter?.getAccount()))
+            startActivityForResult(intentWithdrawalActivity, 0)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
+    }
+
+    override fun navigateToRecentTransactionActivity(cardType: String) {
+        activity?.let { activity ->
+            mAvailableFundPresenter?.getAccount()?.apply {
+                val intent = Intent(activity, WTransactionsActivity::class.java)
+                intent.putExtra("productOfferingId", productOfferingId.toString())
+                if (cardType == "CC" && accountNumber?.isNotEmpty() == true) {
+                    intent.putExtra("accountNumber", accountNumber.toString())
+                }
+                intent.putExtra("cardType", cardType)
+                activity.startActivityForResult(intent, 0)
+                activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
     }
 }

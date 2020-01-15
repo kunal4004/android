@@ -137,7 +137,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
 
     override fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
-    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getOverlayAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 60f))
+    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getOverlayAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 80f))
 
     override fun onDestroy() {
         mainView = null

@@ -4,22 +4,21 @@ import android.os.Bundle
 import android.view.View
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
-import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 
-class BlackCreditCardFragment : AvailableFundFragment() {
+class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         accountOverviewRootLayout?.setBackgroundResource(R.drawable.black_credit_card_background)
-        myCardDetailTextView?.visibility = View.GONE
+        incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
         incViewPaymentOptionButton?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
-        super.onClick(view)
         when (view?.id) {
+            R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
             R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
             R.id.incViewStatementButton -> mAvailableFundPresenter?.queryABSAServiceGetUserCreditCardToken()
         }

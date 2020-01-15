@@ -47,7 +47,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity;
@@ -747,17 +746,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
         });
     }
 
-	public void redirectToMyAccountsCardsActivity(int position) {
-		Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
-		intent.putExtra("position", position);
-		if (mAccountResponse != null) {
-			intent.putExtra("accounts", Utils.objectToJson(mAccountResponse));
-		}
-		startActivityForResult(intent, 0);
-		getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-
-	}
-
 	@Override
 	public void onDetach() {
 		super.onDetach();
@@ -813,7 +801,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	private void messageCounterRequest() {
 		Activity activity = getActivity();
-		if (activity != null) {
+		if (activity != null && activity instanceof BottomNavigationActivity) {
 			// Enable message counter update if navigator points to account tab only
 			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
 			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();

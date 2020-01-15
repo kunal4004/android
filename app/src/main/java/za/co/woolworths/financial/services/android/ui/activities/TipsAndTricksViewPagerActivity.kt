@@ -13,6 +13,9 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.TIPS_AND_TRICKS_CTA_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
@@ -252,7 +255,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     }
 
     fun redirectToMyAccountsCardsActivity(position: Int) {
-        val intent = Intent(this, MyAccountCardsActivity::class.java)
+        val intent = Intent(this, MyAccountActivity::class.java)
         intent.putExtra("position", position)
         if (accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse))
