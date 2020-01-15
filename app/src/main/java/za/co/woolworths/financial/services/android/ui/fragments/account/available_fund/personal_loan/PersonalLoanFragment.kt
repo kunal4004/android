@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.view_payment_option_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.animation.PushDownAnim
 
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 

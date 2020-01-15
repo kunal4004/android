@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.animation.PushDownAnim
 
 open class AvailableFundFragment : Fragment(), AvailableFundContract.AvailableFundView {
     var mAvailableFundPresenter: AvailableFundPresenterImpl? = null
@@ -40,20 +41,30 @@ open class AvailableFundFragment : Fragment(), AvailableFundContract.AvailableFu
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpView()
+
+        setPushViewDownAnimation(incRecentTransactionButton)
+        setPushViewDownAnimation(incViewStatementButton)
+        setPushViewDownAnimation(incViewPaymentOptionButton)
+    }
+
+    override fun setPushViewDownAnimation(view: View) {
+        PushDownAnim.setPushDownAnimTo(view)
+                .setScale(PushDownAnim.MODE_STATIC_DP, 2f)
+                .setDurationPush(PushDownAnim.DEFAULT_PUSH_DURATION)
+                ?.setDurationRelease(PushDownAnim.DEFAULT_RELEASE_DURATION)
+                ?.setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                ?.setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR)
     }
 
     private fun setUpView() {
         mAvailableFundPresenter?.getAccount()?.apply {
-            val availableFund =
-                    Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1, activity))
-            val currentBalance =
-                    Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-            val creditLimit =
-                    Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, activity))
-            val paymentDueDate =
-                    paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
-            val totalAmountDueAmount =
-                    Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+
+            val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1, activity))
+            val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
+            val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, activity))
+            val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
+            val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+
             availableFundAmountTextView?.text = availableFund
             currentBalanceAmountTextView?.text = currentBalance
             creditLimitAmountTextView?.text = creditLimit

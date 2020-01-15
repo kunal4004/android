@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.contracts
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -21,6 +22,7 @@ interface AvailableFundContract {
         fun navigateToLoanWithdrawalActivity()
         fun navigateToPaymentOptionActivity()
         fun navigateToStatementActivity()
+        fun setPushViewDownAnimation(view: View)
     }
 
     interface AvailableFundPresenter {
