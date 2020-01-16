@@ -18,8 +18,7 @@ class MyAccountActivity : AppCompatActivity() {
             addFragment(
                     fragment = MyAccountsFragment(),
                     tag = MyAccountsFragment::class.java.simpleName,
-                    containerViewId = R.id.accountContainerFrameLayout
-            )
+                    containerViewId = R.id.accountContainerFrameLayout)
         }
     }
 
