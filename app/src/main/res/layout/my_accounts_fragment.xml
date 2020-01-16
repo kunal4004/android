@@ -1,29 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeToRefreshAccount"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:clickable="true"
-    android:focusable="true"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment">
+    android:enabled="false"
+    android:focusable="true">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment" />
-
-        <variable
-            name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel" />
-    </data>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeToRefreshAccount"
-        android:layout_width="match_parent"
-        android:enabled = "false"
-        android:layout_height="wrap_content">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -139,7 +123,7 @@
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 style="@style/accountsItem"
-                                android:drawableLeft="@{@drawable/ic_link_account}"
+                                android:drawableLeft="@drawable/ic_link_account"
                                 android:text="@string/link_your_woolies_card_today" />
 
                             <ImageView
@@ -160,9 +144,9 @@
 
                             <RelativeLayout
                                 android:id="@+id/openMessageActivity"
-                                android:contentDescription="@string/messages_layout"
                                 style="@style/listStyle"
-                                android:background="@drawable/stores_details_background">
+                                android:background="@drawable/stores_details_background"
+                                android:contentDescription="@string/messages_layout">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
@@ -228,7 +212,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@{@drawable/ic_store_locator}"
+                                    android:drawableLeft="@drawable/ic_store_locator"
                                     android:text="@string/store_locator" />
 
                                 <ImageView
@@ -246,7 +230,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@{@drawable/ic_faq}"
+                                    android:drawableLeft="@drawable/ic_faq"
                                     android:text="@string/need_help" />
 
                                 <ImageView
@@ -260,8 +244,8 @@
                             <RelativeLayout
                                 android:id="@+id/contactUs"
                                 style="@style/listStyle"
-                                android:contentDescription="@string/contact_us_layout"
-                                android:background="@drawable/stores_details_background">
+                                android:background="@drawable/stores_details_background"
+                                android:contentDescription="@string/contact_us_layout">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
@@ -288,7 +272,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_my_details}"
+                            android:drawableLeft="@drawable/ic_my_details"
                             android:text="@string/acc_profile" />
 
                         <ImageView
@@ -308,7 +292,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableStart="@{@drawable/account_update_password_icon}"
+                            android:drawableStart="@drawable/account_update_password_icon"
                             android:text="@string/acc_update_password" />
 
                         <ImageView
@@ -327,7 +311,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_my_preferences}"
+                            android:drawableLeft="@drawable/ic_my_preferences"
                             android:text="@string/acc_my_preferences" />
 
                         <ImageView
@@ -346,7 +330,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_signout}"
+                            android:drawableLeft="@drawable/ic_signout"
                             android:text="@string/sign_out" />
 
                         <ImageView
@@ -372,5 +356,4 @@
 
         <include layout="@layout/no_connection_handler" />
     </FrameLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</layout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

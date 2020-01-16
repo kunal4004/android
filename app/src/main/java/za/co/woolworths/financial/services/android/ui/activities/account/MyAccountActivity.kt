@@ -6,13 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.util.Utils
 
 class MyAccountActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_account_activity)
-
+        Utils.updateStatusBarBackground(this)
         if (savedInstanceState == null) {
             addFragment(
                     fragment = MyAccountsFragment(),

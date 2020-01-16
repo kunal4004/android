@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -156,14 +157,12 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
         when (coveredText) {
             true -> {
-                balanceProtectInsuranceTextView?.text =
-                        activity?.resources?.getString(R.string.bpi_covered)
-                balanceProtectInsuranceTextView?.setBackgroundResource(R.drawable.round_green_corner)
+                balanceProtectInsuranceTextView?.text = activity?.resources?.getString(R.string.bpi_covered)
+                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView,"#bad110")
             }
             false -> {
-                balanceProtectInsuranceTextView?.text =
-                        activity?.resources?.getString(R.string.bpi_not_covered)
-                balanceProtectInsuranceTextView?.setBackgroundResource(R.drawable.round_amber_corner)
+                balanceProtectInsuranceTextView?.text = activity?.resources?.getString(R.string.bpi_not_covered)
+                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView,"#4c000000")
             }
         }
     }

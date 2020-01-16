@@ -47,6 +47,8 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
             setToolbarTopMargin()
         }
 
+        KotlinUtils.roundCornerDrawable(accountInArrearsTextView,"#e41f1f")
+
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
