@@ -1512,4 +1512,7 @@
     <string name="label_payment_options">Payment\nOptions</string>
     <string name="label_payment_options_button">Payment Options</string>
     <string name="view_card">View Card</string>
+    <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
+    <string name="payment_options_title">Your Account Is In Arrears</string>
+
 </resources>

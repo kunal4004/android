@@ -19,9 +19,9 @@ import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import za.co.woolworths.financial.services.android.contracts.AccountSignedInContract
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-
 
 class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, View.OnClickListener {
 
@@ -38,7 +38,6 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
             setAvailableFundBundleInfo(findNavController(R.id.nav_host_available_fund_fragment))
             setAccountCardDetailInfo(findNavController(R.id.nav_host_overlay_bottom_sheet_fragment))
-            //requestGetStoreCardFromServer()
             setToolbarTopMargin()
         }
 
@@ -58,11 +57,13 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     private fun setUpBottomSheetDialog() {
         val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottomSheetLayout)
-        val maximumExpandedHeight = mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
+        val maximumExpandedHeight =
+                mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
         bottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
         sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
-        val overlayAnchoredHeight = mAccountSignedInPresenter?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight)
+        val overlayAnchoredHeight =
+                mAccountSignedInPresenter?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight)
         sheetBehavior?.peekHeight = overlayAnchoredHeight ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
@@ -74,6 +75,11 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
     }
 
     override fun onBackPressed() {
+        // Collapse overlay view if view is opened, else navigate to previous screen
+        if (sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+            return
+        }
         mAccountSignedInPresenter?.onBackPressed(this@AccountSignedInActivity)
     }
 
@@ -89,7 +95,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
     override fun showAccountInArrears(account: Account) {
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
-        showAccountInArrearsDialog()
+        mAccountSignedInPresenter?.getMyAccountCardInfo()?.let {  accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
     }
 
     override fun hideAccountInArrears(account: Account) {
@@ -103,7 +109,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.accountInArrearsTextView -> showAccountInArrearsDialog()
+            R.id.accountInArrearsTextView -> mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { account -> showAccountInArrearsDialog(account) }
             R.id.infoIconImageView -> navigateToCardInformation()
             R.id.navigateBackImageButton -> onBackPressed()
             else -> throw RuntimeException("Unexpected onClick Id found ${v?.id}")
@@ -117,8 +123,10 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
     }
 
-    private fun showAccountInArrearsDialog() {
-        findNavController(R.id.nav_host_available_fund_fragment).navigate(R.id.accountInArrearsFragmentDialog)
+    private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
+        val bundle = Bundle()
+        bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
+        findNavController(R.id.nav_host_available_fund_fragment).navigate(R.id.accountInArrearsFragmentDialog, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {

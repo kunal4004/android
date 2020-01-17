@@ -17,6 +17,7 @@
 <resources>
     <color name="black_50">#7f000000</color>
     <color name="grey_bg">#efefef</color>
+    <color name="grey_90_bg">#90efefef</color>
     <color name="black_99">#99000000</color>
     <!--<color name="black">#000000</color>-->
     <color name="purple">#7a4183</color>

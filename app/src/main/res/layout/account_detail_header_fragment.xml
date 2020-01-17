@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardImageRootView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_gray_background">
+
+    <TextView
+        android:id="@+id/myCardTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.1"
+        android:text="@string/my_card_title"
+        android:textAllCaps="true"
+        android:textColor="@color/drawer_color"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toTopOf="@+id/topGuide"
+        tools:ignore="UnusedAttribute" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="30dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/imageGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="48dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/imageGuideLineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="47dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.78"
+        app:layout_constraintHeight_percent="0.78" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startUsernameVerticalGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15"
+        app:layout_constraintHeight_percent="0.15" />
+
+    <TextView
+        android:id="@+id/myCardDetailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:letterSpacing="0.15"
+        android:text="@string/label_card_details"
+        android:textAllCaps="true"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintTop_toTopOf="@+id/topGuide"
+        tools:ignore="UnusedAttribute" />
+
+    <ImageView
+        android:id="@+id/cardDetailImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
+        app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
+        app:layout_constraintTop_toBottomOf="@+id/myCardTextView"
+        app:srcCompat="@drawable/w_black_credit_card"
+        tools:ignore="ContentDescription" />
+
+    <View
+        android:id="@+id/bottomView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardDetailImageView" />
+
+    <TextView
+        android:id="@+id/userNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:shadowColor="@color/black"
+        android:shadowRadius="1"
+        android:text="Thuli Sandile"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintStart_toStartOf="@+id/startUsernameVerticalGuide" />
+
+
+    <View
+        android:id="@+id/storeCardLoaderView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/grey_90_bg"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
+        app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
+        app:layout_constraintTop_toTopOf="@+id/cardDetailImageView" />
+
+
+    <ProgressBar
+        android:id="@+id/loadStoreCardProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/progress_circle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
+        app:layout_constraintStart_toStartOf="@+id/cardDetailImageView"
+        app:layout_constraintTop_toTopOf="@+id/cardDetailImageView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

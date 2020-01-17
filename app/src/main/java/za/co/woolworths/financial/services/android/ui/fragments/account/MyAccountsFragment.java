@@ -50,7 +50,9 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.account.AccountSalesActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -108,6 +110,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private ImageView imgCreditCard;
 	private FrameLayout imgStoreCardContainer;
 	private FrameLayout imgPersonalLoanCardContainer;
+	private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
 
 	Map<String, Account> accounts;
 	List<String> unavailableAccounts;
@@ -606,13 +609,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
 				break;
 			case R.id.linkedStoreCard:
-				redirectToMyAccountsCardsActivity(0);
+				redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
 				break;
 			case R.id.linkedCrediCard:
-				redirectToMyAccountsCardsActivity(1);
+				redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
 				break;
 			case R.id.linkedPersonalLoan:
-				redirectToMyAccountsCardsActivity(2);
+				redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
 				break;
 			case R.id.contactUs:
 				pushFragment(new ContactUsFragment());
@@ -1060,6 +1063,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 	}
 
+	public void redirectToAccountSignInActivity(ApplyNowState applyNowState) {
+		Intent intent = new Intent(getActivity(), AccountSignedInActivity.class);
+		intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
+		intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
+		startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+	}
+
 	public void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {
 		Activity activity = getActivity();
 		if (activity == null) return;
@@ -1070,4 +1080,5 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		startActivity(intent);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
+
 }
