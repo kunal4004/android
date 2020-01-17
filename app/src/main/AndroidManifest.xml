@@ -476,7 +476,7 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension" android:screenOrientation="portrait"/>
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.account.AccountSalesActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
 
@@ -485,11 +485,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
 
-
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
     </application>
 
 </manifest>
