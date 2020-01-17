@@ -2116,4 +2116,144 @@
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
+    <style name="accountInArrearsTextViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/rounded_corner_red_button</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.12</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+
+    <style name="accountSalesTextViewStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">25dp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="accountAvailableFundTextViewStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.021</item>
+    </style>
+
+    <style name="accountAvailableFundAmountStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">46dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+    <style name="accountPaymentOptionsRootStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">106dp</item>
+        <item name="android:background">@color/semi_transparent</item>
+    </style>
+
+    <style name="accountPaymentOptionIconImageViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:contentDescription">@string/label_view_statements</item>
+    </style>
+
+    <style name="accountPaymentOptionIconTextViewStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:letterSpacing" tools:targetApi="lollipop">0.03</item>
+    </style>
+
+    <style name="accountSalesTextViewAmountStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">25dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:text">@string/content_description_label</item>
+    </style>
+
+    <style name="accountSalesTextViewStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">25dp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="accountAvailableFundTextViewStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.021</item>
+    </style>
+
+    <style name="accountAvailableFundAmountStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">46dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="accountInArrearsTextViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/rounded_corner_red_button</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.12</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="whiteButtonBackgroundStyle" parent="android:Theme">
+        <item name="android:layout_height">@dimen/button_style_height</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:background">@drawable/white_borderless_background_drawable</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.1</item>
+        <item name="android:stateListAnimator" tools:ignore="NewApi">@null</item>
+    </style>
+
+    <style name="creditLimitDividerStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/light_gray_background</item>
+    </style>
+
+    <style name="paymentOptionsRootRowContainerStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_height">70dp</item>
+    </style>
 </resources>

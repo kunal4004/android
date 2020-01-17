@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.account
+package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.CardQualif
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefit
-import za.co.woolworths.financial.services.android.ui.fragments.account.AccountSalesFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 
 class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
 

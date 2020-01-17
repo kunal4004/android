@@ -479,6 +479,17 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.account.AccountSalesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
     </application>
 
 </manifest>

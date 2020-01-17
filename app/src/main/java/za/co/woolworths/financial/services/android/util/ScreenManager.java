@@ -10,10 +10,12 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 
+import kotlin.Pair;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
@@ -179,9 +181,9 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public static void presentHowToPayActivity(Activity activity, Account account) {
-		Intent howToPayIntent = new Intent(activity, HowToPayActivity.class);
-		howToPayIntent.putExtra("account",Utils.objectToJson(account));
+	public static void presentHowToPayActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
+		Intent howToPayIntent = new Intent(activity, PaymentOptionActivity.class);
+		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO,Utils.objectToJson(mAccountPair));
 		activity.startActivity(howToPayIntent);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}

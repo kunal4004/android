@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/accountInArrearsTitleTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="43dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:text="@string/account_in_arrears_info_title"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endButtonMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startButtonMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <TextView
+        android:id="@+id/accountInArrearsDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
+        android:lineSpacingExtra="1.0dp"
+        android:lineSpacingMultiplier="1.1"
+        android:text="@string/account_in_arrears_info_description"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTitleTextView" />
+
+    <Button
+        android:id="@+id/paymentOptionButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.02"
+        android:text="@string/label_payment_options_button"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/endButtonMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startButtonMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDescriptionTextView"
+        tools:ignore="UnusedAttribute" />
+
+    <Button
+        android:id="@+id/gotITButton"
+        style="@style/whiteButtonBackgroundStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_background_drawable_state"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:letterSpacing="0.1"
+        android:text="@string/cli_got_it"
+        android:textAllCaps="true"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/endButtonMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startButtonMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/paymentOptionButton"
+        tools:ignore="UnusedAttribute" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/endButtonMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startButtonMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/gotITButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
