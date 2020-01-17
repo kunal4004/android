@@ -1304,4 +1304,24 @@
     <string name="scan_barcode_description">barcode description</string>
     <string name="barcode_image">barcode image</string>
     <string name="scan_barcode_regenerate">regenerate barcode</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="transactions_title_layout">View Transaction Title Layout</string>
+    <string name="transaction_list_layout">Transaction List Layout</string>
+    <string name="transaction_months_layout">Transaction Months Layout</string>
+    <string name="transactions_layout">Transactions Layout</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="view_statements_title_layout">View Statements Title Layout</string>
+    <string name="statement_list_layout">Statement List Layout</string>
+    <string name="statement_months_layout">Statement Months Layout</string>
+    <string name="statement_details_layout">Statement Details Layout</string>
+    <string name="view_statement_details_title_layout">View Statement Details Title Layout</string>
+    <string name="button_back_to_myaccount">Button Back To MyAccount</string>
+    <string name="enter_email_layout">Enter Email Layout</string>
+    <string name="button_email_statement">Button Email Statement</string>
+    <string name="information_layout">Information Layout</string>
+    <string name="link_send_to_differentemail">Link Send To DifferentEmail</string>
+    <string name="button_confirm">Button Confirm</string>
+    <string name="email_statement_popup_layout">Email Statement Popup Layout</string>
 </resources>

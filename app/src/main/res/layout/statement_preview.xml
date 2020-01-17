@@ -37,6 +37,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="@string/view_statement_details_title_layout"
             app:layout_constraintTop_toBottomOf="@+id/imMaintenanceMessage"
             app:layout_constraintVertical_chainStyle="packed" />
 
