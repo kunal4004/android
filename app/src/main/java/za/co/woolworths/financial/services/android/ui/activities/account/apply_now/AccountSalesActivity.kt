@@ -1,12 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.*
 import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -31,7 +29,6 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
