@@ -23,6 +23,8 @@ interface AvailableFundContract {
         fun navigateToPaymentOptionActivity()
         fun navigateToStatementActivity()
         fun setPushViewDownAnimation(view: View)
+        fun onABSACreditCardFailureHandler(error: Throwable?)
+        fun navigateToABSAStatementActivity()
     }
 
     interface AvailableFundPresenter {
@@ -60,6 +62,7 @@ interface AccountPaymentOptionsContract {
         fun enableContentStatusUI()
         fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive)
         fun hideProductNotInGoodStanding()
+        fun onOfferActiveFailureResult()
     }
 
     interface AccountCardDetailPresenter {
@@ -74,8 +77,8 @@ interface AccountPaymentOptionsContract {
         fun isDebitOrderActive(): Int?
         fun getAccountInStringFormat(): String?
         fun handleUnknownHttpResponse(description: String?)
-        fun requestGetAccountStoreCardCardsFromServer()
-        fun requestGetUserCLIOfferActiveFromServer()
+        fun getAccountStoreCardCards()
+        fun getUserCLIOfferActive()
         fun getStoreCardResponse(): StoreCardsResponse?
         fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse)
         fun navigateToGetTemporaryStoreCardPopupActivity()

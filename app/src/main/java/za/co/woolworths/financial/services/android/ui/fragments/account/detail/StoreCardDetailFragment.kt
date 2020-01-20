@@ -14,10 +14,11 @@ class StoreCardDetailFragment : AccountCardDetailFragment() {
         super.onViewCreated(view, savedInstanceState)
         cardDetailImageView?.setImageResource(R.drawable.w_store_card)
         if (mCardPresenterImpl?.isDebitOrderActive() == View.VISIBLE) {
-            KotlinUtils.roundCornerDrawable(debitOrderIsActiveTextView,"#bad110")
+            KotlinUtils.roundCornerDrawable(debitOrderIsActiveTextView, "#bad110")
         } else {
             debitOrderViewGroup?.visibility = View.GONE
         }
         debitOrderViewGroup?.visibility = mCardPresenterImpl?.isDebitOrderActive() ?: 0
+
     }
 }

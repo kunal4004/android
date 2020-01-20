@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.View
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundsFragment
 
-class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
+class GoldCreditCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -21,7 +21,7 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
             R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
-            R.id.incViewStatementButton -> mAvailableFundPresenter?.queryABSAServiceGetUserCreditCardToken()
+            R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }
 }

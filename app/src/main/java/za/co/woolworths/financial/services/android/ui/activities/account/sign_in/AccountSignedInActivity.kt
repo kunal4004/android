@@ -28,7 +28,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
-        const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021;
+        const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021
     }
 
     private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
@@ -65,8 +65,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     private fun setUpBottomSheetDialog() {
         val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottomSheetLayout)
-        val maximumExpandedHeight =
-                mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
+        val maximumExpandedHeight = mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
         bottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
         sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
@@ -151,5 +150,9 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         val colorFrom = ContextCompat.getColor(this, android.R.color.transparent)
         val colorTo = ContextCompat.getColor(this, R.color.black_99)
         dimView?.setBackgroundColor(KotlinUtils.interpolateColor(slideOffset, colorFrom, colorTo))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

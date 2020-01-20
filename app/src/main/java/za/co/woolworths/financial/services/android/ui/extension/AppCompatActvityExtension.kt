@@ -16,6 +16,7 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -236,4 +237,17 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
 // Find current fragments in navigation graph
 fun Fragment.getFragmentNavController(@IdRes id: Int) = activity?.let {
     return@let Navigation.findNavController(it, id)
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
+    val navHostFragment = this.supportFragmentManager.fragments.first() as NavHostFragment
+
+    navHostFragment.childFragmentManager.fragments.forEach {
+        if (fragmentClass.isAssignableFrom(it.javaClass)) {
+            return it as F
+        }
+    }
+
+    return null
 }

@@ -5,10 +5,10 @@ import android.view.View
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
+class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -18,6 +18,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         incViewStatementButton?.setOnClickListener(this)
         incViewPaymentOptionButton?.setOnClickListener(this)
     }
+
 
     override fun onClick(view: View?) {
         when (view?.id) {

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
@@ -399,4 +400,15 @@ public class IncreaseLimitController {
 			view.setPadding(0, 0, 0, screenHeight);
 		}
 	}
+
+	public void intentFindOutMore(Activity activity, OfferActive offerActive) {
+		Intent openFindOutMore = new Intent(activity, FindOutMoreActivity.class);
+		if (activity instanceof AccountSignedInActivity) {
+			openFindOutMore.putExtra("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(offerActive));
+			openFindOutMore.putExtra("OFFER_IS_ACTIVE", offerActive.offerActive);
+			activity.startActivity(openFindOutMore);
+			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		}
+	}
+
 }

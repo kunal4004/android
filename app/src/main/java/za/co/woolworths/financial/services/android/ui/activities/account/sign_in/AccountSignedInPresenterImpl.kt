@@ -104,8 +104,8 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
     override fun shouldDisplayAccountInArrears(): Boolean {
         val account = getAccount()
         account?.apply {
-            return when (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) {
-                true -> {
+            return when  {
+                (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
                     // account is in arrears for more than 6 months
                     mainView?.showAccountChargeOffForMoreThan6Months()
                     false

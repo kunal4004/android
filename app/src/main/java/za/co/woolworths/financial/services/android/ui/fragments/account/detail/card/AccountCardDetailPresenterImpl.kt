@@ -19,16 +19,24 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
+import java.net.ConnectException
 
 class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptionsContract.AccountCardDetailView?, private var model: AccountPaymentOptionsContract.AccountCardDetailModel?) : AccountPaymentOptionsContract.AccountCardDetailPresenter, ICommonView<Any> {
+
+    companion object {
+        const val GET_OFFER_ACTIVE = 0
+        const val GET_STORE_CARD_CARD = 1
+    }
 
     private var mOfferActive: OfferActive? = null
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: IncreaseLimitController? = null
+    private var mQueryService = -1
 
     init {
-        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController =
+                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
     }
 
     override fun createCardHolderName(): String? {
@@ -67,7 +75,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     override fun getAccountInStringFormat(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
-    override fun requestGetAccountStoreCardCardsFromServer() {
+    override fun getAccountStoreCardCards() {
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
@@ -78,7 +86,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
 
-    override fun requestGetUserCLIOfferActiveFromServer() {
+    override fun getUserCLIOfferActive() {
         val account = getAccount()
         if (!cliProductOfferingGoodStanding()) {
             mainView?.hideProductNotInGoodStanding()
@@ -191,7 +199,11 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     }
 
     override fun onFailure(error: Throwable?) {
+        if (error is ConnectException) {
+            when (mQueryService) {
+                GET_OFFER_ACTIVE -> mainView?.onOfferActiveFailureResult()
+            }
+        }
         mainView?.hideAccountStoreCardProgress()
-        mainView?.hideUserOfferActiveProgress()
     }
 }

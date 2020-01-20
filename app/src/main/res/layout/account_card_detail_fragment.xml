@@ -41,7 +41,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginEnd="@dimen/sixteen_dp"
                     android:alpha="0.3"
-                    android:src="@drawable/icon_info" />
+                    android:src="@color/white"
+                    android:visibility="gone"/>
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvIncreaseLimit"
@@ -81,7 +82,7 @@
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:visibility="gone"
-                        app:WTextView_font="medium" />
+                        app:WTextView_font="medium_bold" />
 
                     <ProgressBar
                         android:id="@+id/progressCreditLimit"
@@ -142,32 +143,6 @@
                 </RelativeLayout>
 
                 <View style="@style/horizontal_divider_bold_style" />
-
-                <RelativeLayout
-                    android:id="@+id/relFindOutMore"
-                    style="@style/last_card_style"
-                    android:paddingBottom="2dp"
-                    android:visibility="visible">
-
-                    <ImageView
-                        android:id="@+id/imgLogoFindOutMore"
-                        style="@style/style_loan_logo_img"
-                        android:src="@drawable/icon_info" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvFindOutMore"
-                        style="@style/style_loan_title"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="14dp"
-                        android:layout_toEndOf="@+id/imgLogoFindOutMore"
-                        android:text="@string/find_out_more" />
-
-                    <ImageView
-                        android:id="@+id/iconFindOutMore"
-                        style="@style/style_loan_img"
-                        android:src="@drawable/ic_caret_black" />
-
-                </RelativeLayout>
 
             </LinearLayout>
 
