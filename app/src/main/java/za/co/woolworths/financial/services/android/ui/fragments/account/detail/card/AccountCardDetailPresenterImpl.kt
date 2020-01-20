@@ -23,11 +23,6 @@ import java.net.ConnectException
 
 class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptionsContract.AccountCardDetailView?, private var model: AccountPaymentOptionsContract.AccountCardDetailModel?) : AccountPaymentOptionsContract.AccountCardDetailPresenter, ICommonView<Any> {
 
-    companion object {
-        const val GET_OFFER_ACTIVE = 0
-        const val GET_STORE_CARD_CARD = 1
-    }
-
     private var mOfferActive: OfferActive? = null
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
@@ -119,6 +114,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
                 }
 
                 is OfferActive -> {
+                    mainView?.onOfferActiveSuccessResult()
                     when (httpCode) {
                         200 -> handleUserOfferActiveSuccessResult(this)
                         440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
@@ -199,11 +195,6 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     }
 
     override fun onFailure(error: Throwable?) {
-        if (error is ConnectException) {
-            when (mQueryService) {
-                GET_OFFER_ACTIVE -> mainView?.onOfferActiveFailureResult()
-            }
-        }
         mainView?.hideAccountStoreCardProgress()
     }
 }

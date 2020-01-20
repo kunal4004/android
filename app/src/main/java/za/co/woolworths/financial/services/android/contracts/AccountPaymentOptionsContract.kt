@@ -62,7 +62,7 @@ interface AccountPaymentOptionsContract {
         fun enableContentStatusUI()
         fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive)
         fun hideProductNotInGoodStanding()
-        fun onOfferActiveFailureResult()
+        fun onOfferActiveSuccessResult()
     }
 
     interface AccountCardDetailPresenter {

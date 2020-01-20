@@ -37,8 +37,7 @@ import za.co.woolworths.financial.services.android.util.*
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountPaymentOptionsContract.AccountCardDetailView {
 
     private var userOfferActiveCallWasCompleted = false
-    private var storeWasAlreadyRunOnce: Boolean = false
-    private var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
+    var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +81,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                             handleCreditLimitIncreaseTagStatus(offerActive)
                         } else if (item.makeApiCall()) {
                             hideCLIView()
-                            storeWasAlreadyRunOnce = false
+                            userOfferActiveCallWasCompleted = false
                             retryConnect()
                         }
                     }
@@ -96,7 +95,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         activity?.let { activity ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
-                    if (hasConnection && userOfferActiveCallWasCompleted) {
+                    if (hasConnection && !userOfferActiveCallWasCompleted) {
                         retryConnect()
                     }
                 }
@@ -126,7 +125,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
-        cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+        cardImageRootView?.isEnabled =
+                myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 
     override fun handleUnknownHttpCode(description: String?) {
@@ -274,14 +274,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         llIncreaseLimitContainer?.visibility = GONE
     }
 
-    override fun onOfferActiveFailureResult() {
+    override fun onOfferActiveSuccessResult() {
         userOfferActiveCallWasCompleted = true
     }
 
     private fun hideCLIView() {
         mCardPresenterImpl?.getCreditLimitIncreaseController()?.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription)
     }
-
 }
 
 
