@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_security_check_fragment.*
+import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListener {
 
@@ -22,6 +24,13 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         activateCardButton.setOnClickListener(this)
+        inEnvelope.setOnClickListener(this)
+        correctDetails.setOnClickListener(this)
+        pinSealInTact.setOnClickListener(this)
+        callCallCenter?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener(this@CreditCardActivationSecurityCheckFragment)
+        }
     }
 
     override fun onClick(v: View?) {
@@ -29,9 +38,23 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
             R.id.activateCardButton -> {
                 navController?.navigate(R.id.action_to_creditCardActivationProgressFragment)
             }
-            R.id.callCallCenter -> {
-
+            R.id.callCallCenter -> activity?.apply { Utils.makeCall(this, "0861 50 20 20") }
+            R.id.inEnvelope -> {
+                inEnvelopeCheck.isChecked = !inEnvelopeCheck.isChecked
+                validateSecurityCheck()
+            }
+            R.id.correctDetails -> {
+                correctDetailsCheck.isChecked = !correctDetailsCheck.isChecked
+                validateSecurityCheck()
+            }
+            R.id.pinSealInTact -> {
+                pinSealInTactCheck.isChecked = !pinSealInTactCheck.isChecked
+                validateSecurityCheck()
             }
         }
+    }
+
+    private fun validateSecurityCheck() {
+        activateCardButton.isEnabled = (inEnvelopeCheck.isChecked && correctDetailsCheck.isChecked && pinSealInTactCheck.isChecked)
     }
 }

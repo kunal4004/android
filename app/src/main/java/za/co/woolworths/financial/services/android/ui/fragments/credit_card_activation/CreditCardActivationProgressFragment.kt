@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.credit_card_act
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         presenter = CreditCardActivationPresenterImpl(this, CreditCardActivationInteractorImpl())
     }
 
@@ -64,14 +66,9 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as? AppCompatActivity)?.supportActionBar?.hide()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        (activity as? AppCompatActivity)?.supportActionBar?.show()
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.clear()
     }
 
 

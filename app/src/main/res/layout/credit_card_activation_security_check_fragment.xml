@@ -50,12 +50,12 @@
             android:textColor="@color/account_amount_color" />
 
         <CheckBox
+            android:id="@+id/inEnvelopeCheck"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:button="@drawable/refine_multi_selector"
-            android:checked="true"
             android:clickable="false" />
     </RelativeLayout>
 
@@ -88,12 +88,12 @@
             android:textColor="@color/account_amount_color" />
 
         <CheckBox
+            android:id="@+id/correctDetailsCheck"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:button="@drawable/refine_multi_selector"
-            android:checked="true"
             android:clickable="false" />
     </RelativeLayout>
 
@@ -126,12 +126,12 @@
             android:textColor="@color/account_amount_color" />
 
         <CheckBox
+            android:id="@+id/pinSealInTactCheck"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:button="@drawable/refine_multi_selector"
-            android:checked="true"
             android:clickable="false" />
     </RelativeLayout>
 
@@ -140,8 +140,9 @@
         style="@style/call_to_action_text_style"
         android:layout_height="@dimen/fifty_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:background="@color/black"
+        android:background="@drawable/order_add_to_cart_button_bg"
         android:text="@string/cc_activation_security_check_action"
+        android:enabled="false"
         app:layout_constraintBottom_toTopOf="@+id/callCallCenter"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintHorizontal_bias="0.0"
