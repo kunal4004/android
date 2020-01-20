@@ -7,6 +7,8 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -314,6 +316,10 @@ object OneAppService : RetrofitConfig() {
 
     fun unblockStoreCard(productOfferingId: String, requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse> {
         return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, requestBody)
+    }
+
+    fun activateCreditCardRequest(requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse> {
+        return mApiInterface.activateCreditCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), requestBody)
     }
 
 }

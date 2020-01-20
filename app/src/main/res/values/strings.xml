@@ -1331,4 +1331,5 @@
     <string name="cc_activation_security_check_1">My card was in a sealed envelope</string>
     <string name="cc_activation_security_check_2">My card details are correct</string>
     <string name="cc_activation_security_check_3">My PIN seal is in tact</string>
+    <string name="credit_card_activation_success_title">Your Credit Card Has Successfully Been Activated.</string>
 </resources>
