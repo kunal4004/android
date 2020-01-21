@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/statement_line_drawable"
+    android:contentDescription="@string/statement_details_layout"
     android:paddingBottom="@dimen/twenty_eight_dp"
     android:paddingEnd="@dimen/twenty_four_dp"
     android:paddingStart="@dimen/twenty_four_dp"

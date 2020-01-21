@@ -76,7 +76,10 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
         try {
             nutritionalInfo?.apply {
                 nutritionalTable.forEach {
-                    nutritionalDataList.putAll(Gson().fromJson(it, object : TypeToken<HashMap<String, List<NutritionalTableItem>>>() {}.type))
+                  val data:HashMap<String, List<NutritionalTableItem>> =  Gson().fromJson(it, object : TypeToken<HashMap<String, List<NutritionalTableItem>>>() {}.type)
+                    data.keys.toTypedArray()[0].let {key->
+                        data[key]?.let { it1 -> nutritionalDataList.put(key, it1) }
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -106,6 +109,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
             val view = layoutInflater.inflate(R.layout.nutrition_filter_option_popup_view, null)
             val rcvSortOptions = view.findViewById<RecyclerView>(R.id.sortOptionsList)
             val popupLayout = view.findViewById<BubbleLayout>(R.id.popupLayout)
+            view.findViewById<View>(R.id.emptyView).setOnClickListener { this.dismiss() }
             popupLayout.arrowPosition = (Resources.getSystem().displayMetrics.widthPixels * 3 / 4).toFloat()
             rcvSortOptions?.layoutManager = activity?.let { activity -> LinearLayoutManager(activity) }
             rcvSortOptions?.adapter = NutritionalInformationFilterAdapter(filterOptions, this@ProductNutritionalInformationFragment)
