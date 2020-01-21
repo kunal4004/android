@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
-open class AvailableFundFragment : Fragment(), View.OnClickListener {
+open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     var mAccount: Account? = null
 

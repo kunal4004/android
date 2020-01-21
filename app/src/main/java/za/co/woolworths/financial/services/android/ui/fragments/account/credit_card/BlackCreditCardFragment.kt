@@ -5,9 +5,9 @@ import android.view.View
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.AvailableFundsFragment
 
-class BlackCreditCardFragment : AvailableFundFragment() {
+class BlackCreditCardFragment : AvailableFundsFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

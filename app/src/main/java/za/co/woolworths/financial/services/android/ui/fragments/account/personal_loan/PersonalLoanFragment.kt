@@ -8,9 +8,9 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_payment_option_button.*
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.AvailableFundsFragment
 
-class PersonalLoanFragment : AvailableFundFragment() {
+class PersonalLoanFragment : AvailableFundsFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
