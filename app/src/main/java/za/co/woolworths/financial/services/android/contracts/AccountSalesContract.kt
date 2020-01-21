@@ -34,7 +34,7 @@ interface AccountSignedInContract {
         fun setAvailableFundBundleInfo(navDetailController: NavController?)
         fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>?
         fun getToolbarTitle(state: ApplyNowState): String?
-        fun showProductOfferingGoodStanding()
+        fun showProductOfferingStand()
         fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int?
         fun setAccountCardDetailInfo(navDetailController: NavController?)
     }

@@ -64,7 +64,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferingGoodStanding()
+        showProductOfferingStand()
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -105,7 +105,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
      * Account in Arrears is activated when productOfferingGoodStanding is false and  productOfferingStatus
      * is in "CHARGED OFF" state
      */
-    override fun showProductOfferingGoodStanding() {
+    override fun showProductOfferingStand() {
         val account = getAccount()
         account?.apply {
             return when (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) {
