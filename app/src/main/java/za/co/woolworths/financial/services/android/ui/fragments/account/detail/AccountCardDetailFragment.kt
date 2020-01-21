@@ -71,7 +71,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     @SuppressLint("DefaultLocale")
     override fun hideAccountStoreCardProgress() {
-        if (fragmentIsAlreadyAdded()) return
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
@@ -80,16 +79,12 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun handleUnknownHttpCode(description: String?) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.supportFragmentManager?.let { fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, description) }
     }
 
     override fun handleSessionTimeOut(stsParams: String?) {
-        if (fragmentIsAlreadyAdded()) return
         (activity as? AccountSignedInActivity)?.let { accountSignedInActivity -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, accountSignedInActivity) }
     }
-
-    private fun fragmentIsAlreadyAdded(): Boolean = !isAdded
 
     override fun onClick(v: View?) {
         mCardPresenterImpl?.apply {
@@ -111,7 +106,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             val intent = Intent(this, GetTemporaryStoreCardPopupActivity::class.java)
             intent.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
@@ -121,7 +115,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
             displayStoreCardDetail.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
@@ -131,7 +124,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             val debitOrderIntent = Intent(this, DebitOrderActivity::class.java)
             debitOrderIntent.putExtra("DebitOrder", debitOrder)
@@ -141,7 +133,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI)
             val navigateToBalanceProtectionInsurance =
@@ -170,7 +161,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun displayViewCardText() {
-        if (fragmentIsAlreadyAdded()) return
         myCardDetailTextView?.text = activity?.getString(R.string.view_card)
     }
 

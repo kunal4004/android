@@ -28,8 +28,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     private var mIncreaseLimitController: IncreaseLimitController? = null
 
     init {
-        mIncreaseLimitController =
-                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
     }
 
     override fun createCardHolderName(): String? {
@@ -55,8 +54,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
