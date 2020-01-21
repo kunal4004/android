@@ -110,6 +110,7 @@ class AccountSalesFragment : Fragment() {
     private fun displayCartCollection(cartCollection: MutableList<CardCollection>) {
         if (cartCollection.isEmpty()) {
             cardCollectionConstraintLayout?.visibility = GONE
+            return
         }
         activity?.let { activity ->
             cartCollection.forEach { items ->
