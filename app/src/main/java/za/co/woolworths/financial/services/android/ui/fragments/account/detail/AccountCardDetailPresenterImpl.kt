@@ -66,7 +66,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     override fun getAccountInStringFormat(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
-    override fun requestGetAccountStoreCardCardsFromServer() {
+    override fun getAccountStoreCardCards() {
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
@@ -77,7 +77,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
 
-    override fun requestGetUserCLIOfferActiveFromServer() {
+    override fun getUserCLIOfferActive() {
         val account = getAccount()
         if (!cliProductOfferingGoodStanding()) {
             mainView?.hideProductNotInGoodStanding()

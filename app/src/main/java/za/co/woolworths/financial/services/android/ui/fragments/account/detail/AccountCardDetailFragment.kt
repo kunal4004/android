@@ -59,7 +59,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
             setBalanceProtectionInsuranceState()
             displayCardHolderName()
             getCreditLimitIncreaseController()?.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
-            requestGetUserCLIOfferActiveFromServer()
+            getUserCLIOfferActive()
         }
     }
 
@@ -92,7 +92,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
-                R.id.cardDetailImageView -> mCardPresenterImpl?.requestGetAccountStoreCardCardsFromServer()
+                R.id.cardDetailImageView -> mCardPresenterImpl?.getAccountStoreCardCards()
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
                     getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
                 }
