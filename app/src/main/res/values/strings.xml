@@ -1338,4 +1338,5 @@
     <string name="credit_card_activation_popup_title">Card Activation Unavailable</string>
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 9am - 6pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_action">activate</string>
+    <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
 </resources>
