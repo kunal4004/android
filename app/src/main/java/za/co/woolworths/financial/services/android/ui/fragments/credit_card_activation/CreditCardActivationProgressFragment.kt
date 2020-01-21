@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,15 +9,17 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.credit_card_activation_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_progress_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_success_layout.*
+import kotlinx.android.synthetic.main.credit_card_activation_success_layout.okGotItButton
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationContract.CreditCardActivationView, IProgressAnimationState {
-
+class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationContract.CreditCardActivationView, IProgressAnimationState, View.OnClickListener {
 
     var presenter: CreditCardActivationContract.CreditCardActivationPresenter? = null
 
@@ -33,7 +36,12 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activateCreditCard()
-        okGotItButton?.setOnClickListener { activity?.onBackPressed() }
+        okGotItButton?.setOnClickListener(this)
+        callTheCallCenter?.setOnClickListener(this)
+        cancel?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener(this@CreditCardActivationProgressFragment)
+        }
     }
 
     override fun activateCreditCard() {
@@ -60,6 +68,8 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
 
     override fun onCreditCardActivationFailure() {
         getProgressState()?.animateSuccessEnd(false)
+        activationProcessingLayout?.visibility = View.GONE
+        activationFailureView?.visibility = View.VISIBLE
     }
 
     override fun onSessionTimeout() {
@@ -71,5 +81,11 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         menu.clear()
     }
 
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.okGotItButton, R.id.cancel -> activity?.onBackPressed()
+            R.id.callTheCallCenter -> activity?.apply { Utils.makeCall(this, "0861 50 20 20") }
+        }
+    }
 
 }

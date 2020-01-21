@@ -46,8 +46,8 @@
 
 
     <include
-        android:id="@+id/incNPCBlockCardFailure"
-        layout="@layout/npc_block_card_failure"
+        android:id="@+id/activationFailureView"
+        layout="@layout/credit_card_activation_failure_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"

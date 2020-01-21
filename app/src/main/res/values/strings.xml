@@ -1332,4 +1332,7 @@
     <string name="cc_activation_security_check_2">My card details are correct</string>
     <string name="cc_activation_security_check_3">My PIN seal is in tact</string>
     <string name="credit_card_activation_success_title">Your Credit Card Has Successfully Been Activated.</string>
+    <string name="credit_card_activation_failure_title">We Are Unable To Activate Your Card</string>
+    <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="call_the_call_centre">Call the call centre</string>
 </resources>
