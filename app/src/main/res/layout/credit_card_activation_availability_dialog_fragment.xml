@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_dp"
-        android:background="@drawable/ic_virtual_card_numer"
+        android:background="@drawable/gold_cc_envelope"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
