@@ -10,6 +10,7 @@
         android:padding="16dp"
         android:orientation="vertical"
         android:background="@color/white"
+        android:contentDescription="@string/transactions_layout"
         >
         <RelativeLayout
             android:layout_width="match_parent"

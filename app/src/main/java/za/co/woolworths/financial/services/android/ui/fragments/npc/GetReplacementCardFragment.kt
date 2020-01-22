@@ -61,6 +61,18 @@ class GetReplacementCardFragment : MyCardExtension() {
             }
         }
         btnParticipatingStores?.setOnClickListener { checkForLocationPermission() }
+
+        uniqueIdsForReplacementCard()
+    }
+
+    private fun uniqueIdsForReplacementCard() {
+        activity?.resources?.apply {
+            imReplacementCard?.contentDescription = getString(R.string.image_card)
+            tvReplacementCardTitle?.contentDescription = getString(R.string.label_getICR)
+            tvPermanentBlockDescPart1?.contentDescription = getString(R.string.label_getICRCardDescription)
+            btnParticipatingStores?.contentDescription = getString(R.string.button_getParticipantsStores)
+            tvAlreadyHaveCard?.contentDescription = getString(R.string.link_alreadyHaveCard)
+        }
     }
 
     private fun requestGPSLocation() {

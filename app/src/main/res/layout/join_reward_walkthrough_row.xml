@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/infoLinearLayoutCompat"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#2C2C2D"
-        android:contentDescription="@string/app_label"
+        android:contentDescription="@string/placeholder"
         android:adjustViewBounds="true"
         app:srcCompat="@drawable/join_reward_default_header" />
 

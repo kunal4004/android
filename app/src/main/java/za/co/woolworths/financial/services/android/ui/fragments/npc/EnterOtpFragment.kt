@@ -81,14 +81,27 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 showOTPErrorOnOTPFragment()
             }
         }
+
+        uniqueIdsForEnterOTPScreen()
+    }
+
+    private fun uniqueIdsForEnterOTPScreen() {
+        activity?.resources?.apply {
+            tvEnterOtpTitle?.contentDescription = getString(R.string.enter_otp_title)
+            enterOTPDescriptionScreen?.contentDescription = getString(R.string.icr_enter_otp_description)
+            viewOTPBackground?.contentDescription = getString(R.string.verification_code_container)
+            loadingProgressIndicatorViewGroup?.contentDescription = getString(R.string.load_otp_description)
+            vLinkBottomNavigation?.contentDescription = getString(R.string.did_not_receive_title)
+            otpErrorTextView?.contentDescription = getString(R.string.enter_otp_error)
+        }
     }
 
     private fun setOTPDescription(otpType: String?) {
         (activity as? MyCardActivityExtension)?.apply {
             mOtpSentTo = otpType
             val otpDescriptionLabel = when (getOTPMethodType()) {
-                OTPMethodType.SMS -> setResource(if (activityIsInstanceStoreCardActivity()) R.string.icr_otp_phone_desc else R.string.enter_otp_phone_desc, otpType)
-                OTPMethodType.EMAIL -> setResource(if (activityIsInstanceStoreCardActivity()) R.string.icr_otp_email_desc else R.string.enter_otp_email_desc, otpType)
+                OTPMethodType.SMS -> setResource(R.string.icr_otp_phone_desc, otpType)
+                OTPMethodType.EMAIL -> setResource( R.string.icr_otp_email_desc, otpType)
                 else -> return
             }
             activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, enterOTPDescriptionScreen, false) } }

@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in;
 
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -9,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -65,6 +68,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private Call<CardDetailsResponse> wRewardsCardDetails;
 	private String TAG = this.getClass().getSimpleName();
 	boolean isActivityInForeground;
+	private FrameLayout joinWRewardLoggedInFrameLayout;
+	private RelativeLayout joinWRewardLoggedInRelativeLayout;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,6 +108,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		progressBar = getViewDataBinding().progressBar;
 		fragmentView = getViewDataBinding().fragmentView;
 		tabLayout = getViewDataBinding().tabs;
+		joinWRewardLoggedInFrameLayout = getViewDataBinding().joinWRewardLoggedInFrameLayout;
+		joinWRewardLoggedInRelativeLayout =  getViewDataBinding().joinWRewardLoggedInRelativeLayout;
 		viewPager.setOffscreenPageLimit(3);
 		mRlConnect = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
@@ -122,6 +129,21 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				}
 			}
 		});
+
+		uniqueIdsForWRewardSignedInState();
+	}
+
+	private void uniqueIdsForWRewardSignedInState() {
+		Activity activity = getActivity();
+		if (activity!= null && activity.getResources()!=null) {
+			joinWRewardLoggedInFrameLayout.setContentDescription(getString(R.string.wreward_logged_in_framelayout));
+			joinWRewardLoggedInRelativeLayout.setContentDescription(getString(R.string.wreward_logged_in_relativelayout));
+			progressBar.setContentDescription(getString(R.string.wreward_progress_bar));
+			tabLayout.setContentDescription(getString(R.string.wreward_tab_layout));
+			fragmentView.setContentDescription(getString(R.string.fragment_tab_layout));
+			viewPager.setContentDescription(getString(R.string.reward_items_layout));
+			mRlConnect.setContentDescription(getString(R.string.no_connection));
+		}
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse, CardDetailsResponse cardResponse) {

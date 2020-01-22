@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">WOOLWORTHS</string>
+    <string name="placeholder">PLACEHOLDER TEXT</string>
     <string name="drawer_faq">FAQ</string>
     <string name="log_in">Sign in</string>
     <string name="store_card">STORE CARD</string>
@@ -396,7 +396,7 @@
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
     <string name="acc_my_detail">My Details</string>
-    <string name="acc_profile">View My Details</string>
+    <string name="acc_profile">Profile</string>
     <string name="acc_update_password">Update Password</string>
 
     <string name="session_expired_title">SESSION EXPIRED</string>
@@ -934,24 +934,22 @@
     <string name="get_a_replacement_card">Get A Replacement Card</string>
     <string name="already_have_a_card_title">ALREADY HAVE CARD? LINK IT NOW</string>
     <string name="participating_stores">participating stores</string>
-    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
+    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your SA ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
-    <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below</string>
+    <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below.</string>
     <string name="invalid_card_number">Invalid card number</string>
     <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
-    <string name="enter_otp_title">Enter OTP Number</string>
-    <string name="enter_otp_phone_desc">Please confirm that this is you by entering the OTP sent to your cell phone number %1$s</string>
-    <string name="enter_otp_email_desc">Please confirm that this is you by entering the OTP sent to your email address %1$s</string>
+    <string name="enter_otp_title">Enter OTP</string>
     <string name="did_not_receive_title">Did Not Receive OTP?</string>
     <string name="resend_otp_title">Resend OTP</string>
     <string name="resend_sms_to">SMS to </string>
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
-    <string name="congratulations_desc">Please remember to take your SA Identity Document (ID) along for your first purchase with this card.</string>
+    <string name="congratulations_desc">Please remember to take your SA ID along for your first purchase with this card</string>
     <string name="card_block_success">Your card has been</string>
     <string name="card_block_success_1">successfully blocked.</string>
     <string name="call_now">Call Now</string>
@@ -1168,12 +1166,162 @@
     <string name="product_placeholder_select_size">Select Size</string>
     <string name="call_us_now">Call Now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
-    <string name="wrong_otp_desc">The OTP you entered was incorrect. Please try again.</string>
+    <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
     <string name="set_to_default">Set to default - \u0020</string>
     <string name="delivering_to_pdp">Delivering to - \u0020</string>
     <string name="select_colour">Select Colour</string>
-    <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
-    <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s, once you have received it. Please enter the OTP below.</string>
+    <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
+    <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_wrong_otp_error">The One Time Pin provided doesn\'t exist</string>
+
+    <string name="toolbar_layout">Toolbar</string>
+    <string name="active_account_layout">Active Account</string>
+
+    <!-- Unique Ids for store card -->
+    <string name="charged_off_account">Charged Off Account</string>
+    <string name="card_detail_container_layout">Card Detail Container</string>
+    <string name="funds_layout_layout">Funds Layout</string>
+    <string name="accounts_status_layout">Accounts Status</string>
+    <string name="next_payment_due_layout">Next Payment Due</string>
+    <string name="current_balance_layout">Current Balance</string>
+    <string name="credit_limit_layout">Credit Limit</string>
+    <string name="increase_limit_container_layout">Increase Limit Container</string>
+    <string name="view_transaction_layout">View Transaction</string>
+    <string name="view_statement_layout">View Statement</string>
+    <string name="balance_protection_layout">Balance Protection</string>
+    <string name="debit_order_layout">Debit Order</string>
+    <string name="my_card_layout">My Card</string>
+
+    <!-- Unique Ids for personal loan -->
+    <string name="drawn_down_amount_layout">Drawn Down Amount</string>
+
+    <!-- Unique Ids for PLDD Enter Drawn Down Amount Layout-->
+    <string name="PLDD_toolbar_layout">Toolbar</string>
+    <string name="loan_withdrawal_drawn_down_amount_layout">Loan Withdrawal Drawn Down Amount</string>
+    <string name="enter_drawn_down_amount_layout">Enter Drawn Down Amount layout</string>
+    <string name="enter_drawn_down_amount_desc">Drawn Down Amount Description</string>
+    <string name="available_funds_layout">Available Funds Layout</string>
+    <string name="pldd_credit_limit_layout">Credit Limit Layout</string>
+
+    <!-- Unique Ids for Loan Confirmation Layout -->
+    <string name="pldd_drawn_down_amount_description_layout">Drawn Down Amount Description</string>
+    <string name="repayment_period_layout">Repayment Period Layout</string>
+    <string name="additional_monthly_payment_layout">Additional Monthly Payment Layout</string>
+    <string name="confirm_repayment_period_layout">Confirm Repayment Period Layout</string>
+    <string name="confirm_loan_layout">Confirm Loan Layout</string>
+    <string name="drawn_down_amount_label">Drawn Down Amount Label</string>
+
+    <!-- Unique Ids for Loan Withdrawal Success Layout -->
+    <string name="loan_withdrawal_success_layout">Loan Withdrawal Success Module</string>
+    <string name="on_success_button_tapped">On Success Button Tapped</string>
+    <string name="block_card_layout">Block Card Layout</string>
+    <string name="icr_enter_otp_description">Enter OTP Description</string>
+    <string name="verification_code_container">Verification Code Layout</string>
+    <string name="load_otp_description">Load Otp Description</string>
+    <string name="enter_otp_error">Invalid OTP Error</string>
+    <string name="resend_otp_layout">Resend OTP Layout</string>
+    <string name="resend_Otp_recyclerview">Resend OTP List</string>
+    <string name="process_your_request_text_indicator">Process Your Request</string>
+    <string name="back_button_tapped">Back Button Tapped</string>
+    <string name="close_icon_tapped">Close Icon Tapped</string>
+    <string name="card_success_layout">Cart Success Layout</string>
+    <string name="content_description_label">Content Description Label</string>
+    <string name="success_link_card_title">Success Link Card Title</string>
+    <string name="success_link_card_description">Success Link Card Description</string>
+    <string name="success_got_it_button_tapped">Ok Got It Button Tapped</string>
+    <string name="link_card_failure_layout">Link Card Failure Layout</string>
+    <string name="link_card_failure_title_label">Failure Link Card</string>
+    <string name="link_card_failure_description">Link Card Failure Description</string>
+    <string name="retry_on_failure_button">Retry on Failure Tapped</string>
+    <string name="call_center_number_tapped">Call Center Number Tapped</string>
+    <string name="progress_indicator_state">Progress Indicator State</string>
+
+    <string name="dialog_chanel_title">We do not offer Chanel\n in our app.</string>
+    <string name="dialog_chanel_desc">Chanel is available at selected Woolworths stores and on our website.</string>
+    <string name="dialog_chanel_action">Continue</string>
+
+    <!-- Unique Ids for WReward Overview-->
+    <string name="flipCardBackLayout">CardBackLayout</string>
+    <string name="tvBenefitRewardLayout">BenefitReward</string>
+    <string name="savingsLayout">Savings layout</string>
+    <string name="toNextTireLayout">To Get To VIP</string>
+    <string name="promotionsLayout">FEATURED PROMOTIONS</string>
+    <string name="vipLogoLayout">VIP Logo</string>
+
+    <!-- Unique Ids for WReward Savings-->
+    <string name="savingsLayout_savings">Savings Layout</string>
+    <string name="tvWRewardInstantSavingLayout">WRewards Instant Savings</string>
+    <string name="savingSinceLayout">Saving Since Layout</string>
+    <string name="quarterlyVouchersEarnedLayout">Quarterly Vouchers Earned</string>
+    <string name="yearToDateSpendTextLayout">Year To Date Spend</string>
+
+    <!-- Unique Ids for WReward Vouchers-->
+    <string name="vouchersLayout">Vouchers layout</string>
+
+    <!-- Unique Ids for Wrewards Login /Join WRewards-->
+    <string name="infoLayout">Info Layout</string>
+    <string name="joinWRewardsViewGroup">Join WRewards viewGroup</string>
+    <string name="joinWRewardsButton">Join WRewards button</string>
+    <string name="join_wreward_nested_scrollview">Join Reward ScrollView</string>
+    <string name="join_wreward_scroll_container_linearlayout">Join Reward ScrollView Container</string>
+    <string name="join_wreward_tab_indicator_layout">Tab Indicator</string>
+    <string name="include_sign_out_content">Sign out layout</string>
+    <string name="wreward_logged_in_framelayout">WReward logged in FrameLayout</string>
+    <string name="wreward_logged_in_relativelayout">WReward logged in RelativeLayout</string>
+    <string name="wreward_progress_bar">Loading progress</string>
+    <string name="wreward_tab_layout">WReward tab layout</string>
+    <string name="fragment_tab_layout">Tab View Parent Container</string>
+    <string name="reward_items_layout">View Pager Main Container</string>
+    <string name="wreward_flip_card_framelayout">WReward Flip Card Layout</string>
+    <string name="cardBackgroundLinearLayout">Card background linear layout</string>
+    <string name="card_frame_layout">Card Main Frame Layout</string>
+    <string name="featured_promotions_label">Feature Promotions Label</string>
+    <string name="voucher_empty_state">Voucher Empty State</string>
+    <string name="join_wreward_view_pager">Join WReward View Pager</string>
+    <string name="logged_in_Not_link_scrollView">Scroll Logged In Not Link Content</string>
+    <string name="apply_for_wreward_layout">Apply For WReward Button</string>
+    <string name="logged_in_not_linked_linearlayout">Logged In Not Link Layout</string>
+
+    <string name="filter_results">FILTER RESULTS</string>
+    <string name="reset_filter">RESET FILTER</string>
+    <string name="clear_filter">CLEAR FILTER</string>
+    <string name="open_drawer">open</string>
+    <string name="close_drawer">close</string>
+    <string name="virtual_card_number">Virtual Card Number</string>
+    <string name="virtual_card_number_desc">If your virtual card number does not match your physical WRewards card number, don’t worry this will not affect your WRewards points.</string>
+
+    <!-- Unique Ids for Virtual Temp Card-->
+    <string name="how_to_pay_toolbar_title">How to pay</string>
+    <string name="store_card_image">card image</string>
+    <string name="menu_close_page">close page</string>
+    <string name="label_card_expire_date">label card expire date</string>
+    <string name="text_card_expire_date">text card expire date</string>
+    <string name="info_card_expire_date">info card expire date</string>
+    <string name="layout_pay_with_card">layout pay with card</string>
+    <string name="layout_how_it_works">layout how it works</string>
+    <string name="scan_barcode_title">barcode title</string>
+    <string name="scan_barcode_description">barcode description</string>
+    <string name="barcode_image">barcode image</string>
+    <string name="scan_barcode_regenerate">regenerate barcode</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="transactions_title_layout">View Transaction Title Layout</string>
+    <string name="transaction_list_layout">Transaction List Layout</string>
+    <string name="transaction_months_layout">Transaction Months Layout</string>
+    <string name="transactions_layout">Transactions Layout</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="view_statements_title_layout">View Statements Title Layout</string>
+    <string name="statement_list_layout">Statement List Layout</string>
+    <string name="statement_months_layout">Statement Months Layout</string>
+    <string name="statement_details_layout">Statement Details Layout</string>
+    <string name="view_statement_details_title_layout">View Statement Details Title Layout</string>
+    <string name="button_back_to_myaccount">Button Back To MyAccount</string>
+    <string name="enter_email_layout">Enter Email Layout</string>
+    <string name="button_email_statement">Button Email Statement</string>
+    <string name="information_layout">Information Layout</string>
+    <string name="link_send_to_differentemail">Link Send To DifferentEmail</string>
+    <string name="button_confirm">Button Confirm</string>
+    <string name="email_statement_popup_layout">Email Statement Popup Layout</string>
 </resources>

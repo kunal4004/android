@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -118,7 +118,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 						}
 						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
 
-						if (getBottomFragmentById() instanceof ProductDetailFragment) {
+						if (getBottomFragmentById() instanceof ProductDetailsFragment) {
 							try {
 								getBottomFragmentById().onDetach();
 							} catch (NullPointerException ex) {
@@ -192,7 +192,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 				break;
 
 			default:
-				sendBus(new ProductDetailFragment());
+				sendBus(new ProductDetailsFragment());
 				break;
 		}
 	}

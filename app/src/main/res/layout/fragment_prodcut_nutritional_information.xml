@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/twenty_four_dp"
+    android:paddingTop="@dimen/twenty_four_dp"
+    android:paddingRight="@dimen/twenty_four_dp">
+
+    <TextView
+        android:id="@+id/pageTitle"
+        style="@style/futura_semi_bold_black"
+        android:text="@string/nutritional_information"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_width="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:letterSpacing="0.1"
+        android:paddingTop="@dimen/sixteen_dp"
+        android:paddingBottom="@dimen/sixteen_dp"
+        android:text="Description"
+        android:textAllCaps="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pageTitle" />
+
+    <TextView
+        android:id="@+id/filterOptionSelector"
+        style="@style/futura_medium_black_12_text_style"
+        android:drawableEnd="@drawable/refinement_down_arrow_selector"
+        android:drawablePadding="@dimen/six_dp"
+        android:letterSpacing="0.1"
+        android:paddingTop="@dimen/sixteen_dp"
+        android:paddingBottom="@dimen/sixteen_dp"
+        android:textAllCaps="true"
+        android:textColor="@color/offer_title"
+        android:gravity="end"
+        app:layout_constraintBottom_toBottomOf="@+id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/description" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/swatch_border_color"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/nutritionalInformationList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

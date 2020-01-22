@@ -44,7 +44,9 @@
             app:WEditTextView_font="myriadpro_regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/WTextView"/>
+            app:layout_constraintTop_toBottomOf="@+id/WTextView"
+            android:contentDescription="@string/enter_email_layout"
+            />
 
 
         <RelativeLayout
@@ -70,6 +72,7 @@
                 android:background="@drawable/button_disable_color"
                 android:gravity="center"
                 android:text="@string/email_statement"
+                android:contentDescription="@string/button_email_statement"
                 android:textColor="@color/text_color_selector"
                 app:WButton_font="medium_bold"/>
         </RelativeLayout>

@@ -46,7 +46,7 @@
             android:gravity="center|start"
             android:lineSpacingMultiplier="1.67"
             android:singleLine="true"
-            android:text="@string/app_label"
+            android:text="@string/placeholder"
             android:textColor="@color/black"
             android:textSize="@dimen/fifteen_sp"
             app:WTextView_font="myriadpro_regular"

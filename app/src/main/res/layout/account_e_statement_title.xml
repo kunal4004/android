@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/statement_line_drawable"
     android:paddingStart="@dimen/sixteen_dp"
+    android:contentDescription="@string/statement_months_layout"
     >
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView

@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_ADD_TO_CART;
 
 public class SizeFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface, CustomSizePickerAdapter.RecyclerViewClickListener {
 

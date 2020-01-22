@@ -69,6 +69,7 @@
         app:WTextView_font="myriadpro_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/information_layout"
         app:layout_constraintTop_toBottomOf="@+id/tvUserEmailAddress"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
@@ -85,6 +86,8 @@
         app:WButton_font="medium_bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/button_back_to_myaccount"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,6 +46,18 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
 
         navigateToEnterOTPFragmentImageView?.isEnabled = false
+
+        uniqueIdsForEnterCartNumberScreen()
+    }
+
+    private fun uniqueIdsForEnterCartNumberScreen() {
+        activity?.resources?.apply {
+            tvLinkNewCardTitle?.contentDescription = getString(R.string.label_linkICR)
+            tvLinkNewCardDesc?.contentDescription = getString(R.string.label_linkICRCardDescription)
+            cardNumberEditText?.contentDescription = getString(R.string.text_carddetails)
+            navigateToEnterOTPFragmentImageView?.contentDescription = getString(R.string.button_next)
+            invalidCardNumberLabel?.contentDescription = getString(R.string.invalid_card_number)
+        }
     }
 
     private fun navigateToOTPScreen() {

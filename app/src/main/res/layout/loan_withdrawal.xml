@@ -31,7 +31,7 @@
         android:minHeight="80dp">
 
         <LinearLayout
-            android:id="@+id/LinAvailableFunds"
+            android:id="@+id/availableFundsLinearLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -64,7 +64,7 @@
             android:background="#7a4183" />
 
         <LinearLayout
-            android:id="@+id/LinCreditLimit"
+            android:id="@+id/credit_limit_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

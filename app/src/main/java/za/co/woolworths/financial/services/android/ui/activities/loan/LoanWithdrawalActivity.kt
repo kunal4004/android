@@ -39,6 +39,13 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
         }
 
         connectionDetector()
+
+        uniqueIdsForPLDDModule()
+    }
+
+    private fun uniqueIdsForPLDDModule() {
+        toolbar?.contentDescription = getString(R.string.PLDD_toolbar_layout)
+
     }
 
     private fun connectionDetector() {

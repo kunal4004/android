@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -192,6 +193,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
         if (!SessionUtilities.getInstance().isC2User()){
             imRefreshAccount.setEnabled(false);
         }
+
+        uniqueIdsForMyAccountCards();
+    }
+
+    private void uniqueIdsForMyAccountCards() {
+        mToolbar.setContentDescription(getString(R.string.toolbar_layout));
     }
 
     private void updateMyAccount(ImageView imRefreshAccount) {
