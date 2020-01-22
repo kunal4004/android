@@ -1,40 +1,61 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingBottom="@dimen/twenty_four_dp"
     android:paddingLeft="@dimen/twenty_four_dp"
     android:paddingRight="@dimen/twenty_four_dp"
+    android:paddingBottom="@dimen/twenty_four_dp"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementFragment">
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/refinementList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/refinementSeeResult"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipToPadding="true"
-        android:paddingBottom="@dimen/twenty_four_dp" />
+        android:paddingBottom="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toTopOf="@+id/refinementSeeResult"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:id="@+id/refinementSeeResult"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
-        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/thirty_dp"
         android:background="@color/black"
         android:paddingLeft="@dimen/twenty_four_dp"
-        android:paddingRight="@dimen/twenty_four_dp">
+        android:paddingRight="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toTopOf="@+id/clearAndResetFilter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/seeResultCount"
             style="@style/toolbar_menu_text_style"
             android:layout_centerInParent="true"
+            android:ellipsize="end"
             android:letterSpacing="0.1"
+            android:singleLine="true"
             android:text="@string/see_results"
             android:textColor="@color/white"
-            android:textSize="13sp"
-            android:singleLine="true"
-            android:ellipsize="end" />
+            android:textSize="13sp" />
     </RelativeLayout>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/clearAndResetFilter"
+        style="@style/futura_medium_black_12_text_style"
+        android:layout_width="wrap_content"
+        android:gravity="center_horizontal"
+        android:letterSpacing=".15"
+        android:text="@string/reset_filter"
+        android:textAllCaps="true"
+        android:textColor="@drawable/refine_toolbar_menu_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -409,21 +409,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		}
 	}
 
-	private boolean isAppUpdated() {
-		String appVersionFromDB = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.APP_VERSION);
-		String appLatestVersion = null;
-		try {
-			appLatestVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
-		if (appVersionFromDB == null || !appVersionFromDB.equalsIgnoreCase(appLatestVersion)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	protected void onResume() {
 		super.onResume();
 		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP);
@@ -463,9 +448,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 				} else if ((mDeepLinkUrl.contains("/products/"))) { // land on product detail activity
 					String productIdAndSkuId = mDeepLinkUrl.substring(mDeepLinkUrl.lastIndexOf('/') + 1);
 					String[] arrayOfProductAndSKuId = productIdAndSkuId.split("&sku=");
-					new RetrieveProductDetail(this, arrayOfProductAndSKuId[0], arrayOfProductAndSKuId[1], isFirstTime == null || isAppUpdated()).retrieveProduct();
+					new RetrieveProductDetail(this, arrayOfProductAndSKuId[0], arrayOfProductAndSKuId[1], isFirstTime == null || Utils.isAppUpdated(this)).retrieveProduct();
 				}
-			}else if (isFirstTime == null || isAppUpdated())
+			}else if (isFirstTime == null || Utils.isAppUpdated(this))
 				ScreenManager.presentOnboarding(StartupActivity.this);
 			else {
 				ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
@@ -477,7 +462,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	}
 
 	private void openDeepLinkBackgroundActivity(String isFirstTime) {
-		if (isFirstTime == null || isAppUpdated()) {
+		if (isFirstTime == null || Utils.isAppUpdated(this)) {
 			ScreenManager.presentOnboarding(StartupActivity.this);
 		} else {
 			Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);

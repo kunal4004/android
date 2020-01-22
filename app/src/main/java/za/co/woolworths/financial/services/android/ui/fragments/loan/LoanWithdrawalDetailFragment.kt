@@ -6,7 +6,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.*
+import kotlinx.android.synthetic.main.loan_confirmation_layout.*
+import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.btnConfirm
+import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.mConfirmProgressBar
+import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvAdditionalMonthlyRepayment
+import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvDrawnDownSelectedAmount
+import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvRepaymentPeriod
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan
@@ -66,6 +71,18 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
         }
 
         btnConfirm?.setOnClickListener { authoriseLoanRequest() }
+        uniqueIdsForLoanWithdrawalDetails()
+    }
+
+    private fun uniqueIdsForLoanWithdrawalDetails() {
+        activity?.resources?.let {
+            txtWithdrawAmount?.contentDescription = getString(R.string.pldd_drawn_down_amount_description_layout)
+            rlRepaymentPeriod?.contentDescription = getString(R.string.repayment_period_layout)
+            rlAdditionalMonthlyPayment?.contentDescription = getString(R.string.additional_monthly_payment_layout)
+            btnConfirm?.contentDescription = getString(R.string.confirm_repayment_period_layout)
+            confirmLoanRequestConstraintLayout?.contentDescription = getString(R.string.confirm_loan_layout)
+            tvDrawnDownSelectedAmount?.contentDescription = getString(R.string.drawn_down_amount_label)
+        }
     }
 
     private fun authoriseLoanRequest() {

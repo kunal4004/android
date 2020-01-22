@@ -24,7 +24,7 @@ abstract class RetrofitConfig : NetworkConfig() {
 
         logging.level = if (Util.isDebug(appContext())) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 
-        httpBuilder.run {
+        with(httpBuilder) {
             addInterceptor(WfsApiInterceptor())
             readTimeout(if (BuildConfig.FLAVOR.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             connectTimeout(if (BuildConfig.FLAVOR.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)

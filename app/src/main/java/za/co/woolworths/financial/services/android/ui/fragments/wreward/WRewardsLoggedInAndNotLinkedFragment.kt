@@ -30,6 +30,16 @@ class WRewardsLoggedInAndNotLinkedFragment : WRewardOnBoardingFragment() {
         setUpPager(vpJoinRewardInfo, tabIndicator)
         applyForWRewards?.setOnClickListener { activity?.let { activity -> Utils.openExternalLink(activity, WoolworthsApplication.getWrewardsLink()) } }
         tvRewardLinkAccount?.setOnClickListener { activity?.let { activity -> ScreenManager.presentSSOLinkAccounts(activity) }; }
+        uniqueIdsForWRewardsLoggedInNotLinkAutomation()
+    }
+
+    private fun uniqueIdsForWRewardsLoggedInNotLinkAutomation() {
+        activity?.resources?.apply {
+            vpJoinRewardInfo?.contentDescription = getString(R.string.join_wreward_view_pager)
+            scrollLoggedOutLoggedIn?.contentDescription = getString(R.string.logged_in_Not_link_scrollView)
+            applyForWRewards?.contentDescription = getString(R.string.apply_for_wreward_layout)
+            loggedInNotLinkedLinearLayout?.contentDescription = getString(R.string.logged_in_not_linked_linearlayout)
+        }
     }
 
     override fun onResume() {

@@ -132,6 +132,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private String mStoreCardAccountDetail;
     private ProgressBar progressBarMyCard;
     private ImageView myCArdRightArrow;
+    private LinearLayout llCommonFragmentContainer;
+    private LinearLayout llCardDetailContainer;
+    private LinearLayout llTopFunds;
+    private RelativeLayout accountStatusRelativeLayout;
+    private RelativeLayout llNextPaymentDueContainer;
+    private RelativeLayout llCurrentBalanceContainer;
+    private RelativeLayout llCreditLimitContainer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -186,6 +193,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
         if (rlMyStoreCard != null)
             rlMyStoreCard.setVisibility(VISIBLE);
+
+        uniqueIdsForStoreCard();
     }
 
     private void initUI(View view) {
@@ -205,6 +214,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
         rlViewTransactions = view.findViewById(R.id.rlViewTransactions);
         rlMyStoreCard = view.findViewById(R.id.rlMyStoreCard);
+        llCreditLimitContainer = view.findViewById(R.id.llCreditLimitContainer);
+        llCardDetailContainer = view.findViewById(R.id.llCardDetailContainer);
+        llCommonFragmentContainer =  view.findViewById(R.id.llCommonFragmentContainer);
+        llNextPaymentDueContainer = view.findViewById(R.id.llNextPaymentDueContainer);
+        llCurrentBalanceContainer = view.findViewById(R.id.llCurrentBalanceContainer);
+        llTopFunds = view.findViewById(R.id.llTopFunds);
         rlMyStoreCard.setOnClickListener(this);
 
         iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
@@ -222,6 +237,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         tvAmountOverdue = view.findViewById(R.id.amountOverdue);
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
+        accountStatusRelativeLayout = view.findViewById(R.id.accountStatusRelativeLayout);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setOnClickListener(this);
@@ -727,5 +743,22 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             progressBarMyCard.setVisibility(state);
             myCArdRightArrow.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
         }
+    }
+
+    private void uniqueIdsForStoreCard() {
+    if (account == null || !isAdded()) return;
+        llActiveAccount.setContentDescription(getString(R.string.active_account_layout));
+        llCardDetailContainer.setContentDescription(getString(R.string.card_detail_container_layout));
+        llTopFunds.setContentDescription(getString(R.string.funds_layout_layout));
+        accountStatusRelativeLayout.setContentDescription(getString(R.string.accounts_status_layout));
+        llNextPaymentDueContainer.setContentDescription(getString(R.string.next_payment_due_layout));
+        llCurrentBalanceContainer.setContentDescription(getString(R.string.current_balance_layout));
+        llCreditLimitContainer.setContentDescription(getString(R.string.credit_limit_layout));
+        llIncreaseLimitContainer.setContentDescription(getString(R.string.increase_limit_container_layout));
+        rlViewTransactions.setContentDescription(getString(R.string.view_transaction_layout));
+        rlViewStatement.setContentDescription(getString(R.string.view_statement_layout));
+        relBalanceProtection.setContentDescription(getString(R.string.balance_protection_layout));
+        relDebitOrders.setContentDescription(getString(R.string.debit_order_layout));
+        rlMyStoreCard.setContentDescription(getString(R.string.my_card_layout));
     }
 }

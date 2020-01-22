@@ -15,7 +15,7 @@ interface ProductDetailsContract {
         fun onProductDetailedFailed(response: Response)
         fun onFailureResponse(error: String)
         fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean)
-        fun getImageByWidth(imageUrl: String, context: Context): String
+        fun getImageByWidth(imageUrl: String?, context: Context): String
         fun updateDefaultUI()
         fun updateAuxiliaryImages(imagesList: List<String>)
         fun setPromotionalText(promotionValue: String)
@@ -37,6 +37,7 @@ interface ProductDetailsContract {
         fun showProductDetailsInformation()
         fun showProductIngredientsInformation()
         fun loadPromotionalImages()
+        fun showNutritionalInformation()
     }
 
     interface ProductDetailsPresenter {

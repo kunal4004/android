@@ -6,7 +6,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
-import za.co.woolworths.financial.services.android.models.dto.Transaction
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -23,6 +22,7 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         actionBar()
+        setUniqueIds()
     }
 
     private fun actionBar() {
@@ -56,6 +56,13 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
             R.id.action_search, android.R.id.home -> onBackPressed()
         }
         return false
+    }
+
+    private fun setUniqueIds() {
+        resources?.apply {
+            toolbarText?.contentDescription = getString(R.string.how_to_pay_toolbar_title)
+            imTempCard?.contentDescription = getString(R.string.store_card_image)
+        }
     }
 }
 

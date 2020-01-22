@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fourty_dp"
+        android:background="@drawable/refine_item_background">
+
+        <RadioButton
+            android:id="@+id/filterSelector"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/sixteen_dp"
+            android:button="@drawable/nutritional_option_item_selector"
+            android:clickable="false" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/filterOptionName"
+            style="@style/toolbar_menu_text_style"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/sixteen_dp"
+            android:text="Price Low-High"
+            android:textColor="@color/offer_title" />
+
+    </RelativeLayout>
+</LinearLayout>

@@ -8,11 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.text.TextUtils;
@@ -44,6 +46,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -54,8 +57,9 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
@@ -73,7 +77,6 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -97,7 +100,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
-import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_BARCODE_SCAN;
+import static za.co.woolworths.financial.services.android.ui.extension.AppCompatActvityExtensionKt.addFragment;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -132,6 +135,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private QueryBadgeCounter mQueryBadgeCounter;
     public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
+    public RefinementDrawerFragment drawerFragment;
 
     @Override
     public int getLayoutId() {
@@ -228,6 +232,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             badgeCount();
         }
+
+       addDrawerFragment();
+
     }
 
     private void initBadgeCounter() {
@@ -946,7 +953,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 default:
                     Fragment fragmentById = getBottomFragmentById();
                     if (fragmentById == null) break;
-                    if (fragmentById instanceof ProductDetailsFragmentNew)
+                    if (fragmentById instanceof ProductDetailsFragment)
                         fragmentById.onActivityResult(requestCode, resultCode, data);
                     break;
             }
@@ -959,7 +966,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         //Call product detail onActivityResult
         if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
-            if (getBottomFragmentById() instanceof ProductDetailsFragmentNew) {
+            if (getBottomFragmentById() instanceof ProductDetailsFragment) {
                 getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
             }
 
@@ -990,7 +997,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                if (getBottomFragmentById() instanceof ProductDetailsFragmentNew) {
+                if (getBottomFragmentById() instanceof ProductDetailsFragment) {
                     getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
                 }
             }
@@ -1248,6 +1255,59 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ShopFragment shopFragment = (ShopFragment) currentFragment;
             shopFragment.onStartShopping();
             return;
+        }
+    }
+
+    @Override
+    public void addDrawerFragment() {
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * .80);
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) getViewDataBinding().drawerFragment.getLayoutParams();
+        params.width = width;
+        getViewDataBinding().drawerFragment.setLayoutParams(params);
+        lockDrawerFragment();
+        drawerFragment = new RefinementDrawerFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.drawerFragment, drawerFragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void lockDrawerFragment() {
+        getViewDataBinding().drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    @Override
+    public void unLockDrawerFragment() {
+        getViewDataBinding().drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    @Override
+    public void setUpDrawerFragment(ProductView productsResponse, ProductsRequestParams productsRequestParams) {
+        unLockDrawerFragment();
+        drawerFragment.setUpDrawer(getViewDataBinding().drawerLayout, productsResponse, productsRequestParams);
+    }
+
+    @Override
+    public void openDrawerFragment() {
+        getViewDataBinding().drawerLayout.openDrawer(Gravity.RIGHT);
+    }
+
+    @Override
+    public void closeDrawerFragment() {
+        getViewDataBinding().drawerLayout.closeDrawer(Gravity.RIGHT);
+    }
+
+    @Override
+    public void onRefined(String navigationState, String categoryName) {
+        if (getCurrentFragment() instanceof ProductListingFragment) {
+            ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState, categoryName);
+        }
+    }
+
+    @Override
+    public void onResetFilter() {
+        if (getCurrentFragment() instanceof ProductListingFragment) {
+            ((ProductListingFragment) getCurrentFragment()).onResetFilter();
         }
     }
 }

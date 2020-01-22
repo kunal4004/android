@@ -303,7 +303,7 @@
         <item name="android:layout_marginTop">30dp</item>
         <item name="android:layout_marginBottom">25dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:contentDescription">@string/app_name</item>
+        <item name="android:contentDescription">@string/placeholder</item>
     </style>
 
     <style name="account_logged_out_reward_title" parent="android:Theme">
@@ -826,7 +826,7 @@
     <style name="increase_limit_info_circle" parent="android:Theme">
         <item name="android:layout_width">26dp</item>
         <item name="android:layout_height">26dp</item>
-        <item name="android:contentDescription">@string/app_name</item>
+        <item name="android:contentDescription">@string/placeholder</item>
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:src">@drawable/icon_info</item>
         <item name="android:alpha">0.2</item>
@@ -1428,17 +1428,6 @@
         <item name="android:paddingBottom">@dimen/eighteen_dp</item>
     </style>
 
-    <style name="RefineActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:selectableItemBackground">@android:color/transparent</item>
-        <item name="android:actionBarItemBackground">@null</item>
-        <item name="actionBarItemBackground">@null</item>
-    </style>
-
     <style name="RuntimeExceptionActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -1909,7 +1898,7 @@
     <style name="dialog_description_text_style" parent="dialog_title_text_style">
         <item name="android:textSize">@dimen/sixteen_sp</item>
         <item name="android:textColor">@color/gray</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:lineSpacingMultiplier">1.13</item>
     </style>
 

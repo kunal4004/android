@@ -63,8 +63,8 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.CLOSE_ICON_TAPPED_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_SEARCH_FROM_LIST;
 
 public class SearchResultFragment extends Fragment implements SearchResultNavigator, View.OnClickListener, NetworkChangeListener {
 

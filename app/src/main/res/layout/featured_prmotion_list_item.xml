@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:contentDescription="@string/app_name"
+        android:contentDescription="@string/placeholder"
         fresco:fadeDuration="50"
         fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
 

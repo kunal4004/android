@@ -14,7 +14,10 @@
             name="viewModel"
             type="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationViewModel"/>
     </data>
-
+<androidx.drawerlayout.widget.DrawerLayout
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -85,4 +88,13 @@
                 />
         </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <FrameLayout
+        android:id="@+id/drawerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:background="@android:color/white"/>
+</androidx.drawerlayout.widget.DrawerLayout>
 </layout>

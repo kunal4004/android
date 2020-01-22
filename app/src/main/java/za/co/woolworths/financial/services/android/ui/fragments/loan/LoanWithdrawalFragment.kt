@@ -63,6 +63,16 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
         mErrorHandlerView = ErrorHandlerView(activity)
         configureEditText()
         populatePersonalLoanView()
+        uniqueIdForPLDDModule()
+    }
+
+    private fun uniqueIdForPLDDModule() {
+        activity?.resources?.let {
+            relLoanWithdrawal?.contentDescription = getString(R.string.loan_withdrawal_drawn_down_amount_layout)
+            relWithdrawalAmount?.contentDescription = getString(R.string.enter_drawn_down_amount_layout)
+            availableFundsLinearLayout?.contentDescription = getString(R.string.available_funds_layout)
+            credit_limit_layout?.contentDescription = getString(R.string.pldd_credit_limit_layout)
+        }
     }
 
     private fun populatePersonalLoanView() {

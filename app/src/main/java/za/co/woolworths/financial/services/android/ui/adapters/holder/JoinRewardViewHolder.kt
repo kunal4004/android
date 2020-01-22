@@ -26,6 +26,13 @@ class JoinRewardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder
                 imHeader?.setImageResource(imageDrawable)
             }
         }
+        uniqueIdsForRewards()
+    }
+
+    private fun uniqueIdsForRewards() {
+        itemView.context?.resources?.apply {
+            itemView.infoLinearLayoutCompat?.contentDescription = getString(R.string.infoLayout)
+        }
     }
 
     private fun Context.updateWRewardCharacter(description: Int): SpannableStringBuilder {

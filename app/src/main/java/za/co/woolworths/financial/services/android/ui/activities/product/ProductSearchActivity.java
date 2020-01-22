@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -43,7 +44,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.product.
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 
 public class ProductSearchActivity extends AppCompatActivity
-		implements View.OnClickListener {
+		implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
 	public LinearLayoutManager mLayoutManager;
 	public Toolbar toolbar;
 	private WEditTextView mEditSearchProduct;
@@ -52,6 +53,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	private String mSearchTextHint = "";
 	private String mListID;
 	public static int PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE = 1244;
+	public final String SEARCH_VALUE_CHANEL = "chanel";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -128,18 +130,22 @@ public class ProductSearchActivity extends AppCompatActivity
 
 	private void searchProduct(String searchProductBrand) {
 		if (searchProductBrand.length() > 2) {
-			SearchHistory search = new SearchHistory();
-			search.searchedValue = searchProductBrand;
-			saveRecentSearch(search);
-			if (TextUtils.isEmpty(mSearchTextHint)) {
-				LoadState loadState = new LoadState();
-				loadState.setSearchProduct(searchProductBrand);
-				Utils.sendBus(loadState);
-				mEditSearchProduct.setText("");
-				finish();
-				overridePendingTransition(0, 0);
+			if (searchProductBrand.toLowerCase().contains(SEARCH_VALUE_CHANEL)) {
+				ChanelMessageDialogFragment.Companion.newInstance().show(getSupportFragmentManager(), ChanelMessageDialogFragment.class.getSimpleName());
 			} else {
-				ScreenManager.presentShoppingListSearchResult(this, search.searchedValue, mListID);
+				SearchHistory search = new SearchHistory();
+				search.searchedValue = searchProductBrand;
+				saveRecentSearch(search);
+				if (TextUtils.isEmpty(mSearchTextHint)) {
+					LoadState loadState = new LoadState();
+					loadState.setSearchProduct(searchProductBrand);
+					Utils.sendBus(loadState);
+					mEditSearchProduct.setText("");
+					finish();
+					overridePendingTransition(0, 0);
+				} else {
+					ScreenManager.presentShoppingListSearchResult(this, search.searchedValue, mListID);
+				}
 			}
 		}
 	}
@@ -278,5 +284,10 @@ public class ProductSearchActivity extends AppCompatActivity
 	protected void onDestroy() {
 		super.onDestroy();
 		hideSoftKeyboard();
+	}
+
+	@Override
+	public void onDialogDismiss() {
+		mEditSearchProduct.setText("");
 	}
 }

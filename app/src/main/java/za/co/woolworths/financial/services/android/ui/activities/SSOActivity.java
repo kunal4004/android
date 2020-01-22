@@ -515,6 +515,40 @@ public class SSOActivity extends WebViewActivity {
 			dialog.show();
 		}
 
+		@Override @TargetApi(21)
+		public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+			final String url = request.getUrl().toString();
+
+			if (canOpenDialerForString(url)){
+				openDialerWithString(url);
+				return true;
+			}
+
+			return super.shouldOverrideUrlLoading(view, request);
+		}
+
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			//shouldOverrideUrlLoading(WebView view, String url) is deprecated
+			//in api 24. shouldOverrideUrlLoading(WebView view, WebResourceRequest request) would
+			//have been called already.
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N && canOpenDialerForString(url)){
+				openDialerWithString(url);
+				return true;
+			}
+
+			return super.shouldOverrideUrlLoading(view, url);
+		}
+
+		private boolean canOpenDialerForString(final String string){
+			return string.startsWith("tel:");
+		}
+
+		private void openDialerWithString(final String string){
+			Intent intent = new Intent(Intent.ACTION_DIAL);
+			intent.setData(Uri.parse(string));
+			startActivity(intent);
+		}
 	};
 
 	private void extractFormDataOnUIThreadForLoginRegisterAndCloseSSOIfNeeded(){

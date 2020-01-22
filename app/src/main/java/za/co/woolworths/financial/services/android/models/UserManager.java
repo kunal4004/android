@@ -43,7 +43,7 @@ public class UserManager {
 	}
 
 	public String getWRewards() {
-		if (getSharedPreferences().getLong(W_REWARDS_CACHE_TIME, 0l) + mContext.getResources().getInteger(R.integer.account_time_to_live) < System.currentTimeMillis()) {
+		if (getSharedPreferences().getLong(W_REWARDS_CACHE_TIME, 0l) + 600000 < System.currentTimeMillis()) {
 			return "";
 		} else {
 			return getSharedPreferences().getString(W_REWARDS, "");
@@ -56,7 +56,7 @@ public class UserManager {
 	}
 
 	public String getAccounts() {
-		if (getSharedPreferences().getLong(ACCOUNT_CACHE_TIME, 0l) + mContext.getResources().getInteger(R.integer.account_time_to_live) < System.currentTimeMillis()) {
+		if (getSharedPreferences().getLong(ACCOUNT_CACHE_TIME, 0l) + 600000 < System.currentTimeMillis()) {
 			return "";
 		} else {
 			return getSharedPreferences().getString(ACCOUNT, "");

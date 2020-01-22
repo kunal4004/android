@@ -161,7 +161,7 @@
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productDetailsInformation">
+        app:layout_constraintTop_toBottomOf="@+id/productIngredientsInformation">
 
         <View
             android:layout_width="match_parent"
@@ -185,7 +185,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/nutritionalInformation">
+        app:layout_constraintTop_toBottomOf="@+id/productDetailsInformation">
 
         <View
             android:layout_width="match_parent"

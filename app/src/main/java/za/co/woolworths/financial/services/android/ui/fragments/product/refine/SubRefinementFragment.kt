@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 
-import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -15,19 +13,16 @@ import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.models.dto.SubRefinement
 import za.co.woolworths.financial.services.android.ui.adapters.SubRefinementAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
+import za.co.woolworths.financial.services.android.util.Utils
 
 class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
     private var subRefinementAdapter: SubRefinementAdapter? = null
-    private var clearRefinement: TextView? = null
     private var refinement: Refinement? = null
-    private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
-    private var pageTitle: TextView? = null
 
     companion object {
         private val ARG_PARAM = "refinementObject"
@@ -38,8 +33,16 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         arguments?.let{
             refinement = Utils.jsonStringToObject(it.getString(ARG_PARAM), Refinement::class.java) as Refinement
+        }
+
+        try {
+            listener = parentFragment as OnRefinementOptionSelected
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Calling fragment must implement Callback interface")
         }
     }
 
@@ -55,16 +58,13 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun initViews() {
 
-        activity?.let {
-            backButton = it.findViewById(R.id.btnClose)
-            clearRefinement = it.findViewById(R.id.resetRefinement)
-            pageTitle = it.findViewById(R.id.toolbarText)
+        listener.apply {
+            refinement?.label?.let { setPageTitle(it) }
+            hideCloseButton()
         }
-        backButton?.setImageResource(R.drawable.back24)
-        pageTitle?.text = refinement?.label
-        clearRefinement?.text = getString(R.string.refinement_clear)
-        clearRefinement?.setOnClickListener { subRefinementAdapter?.clearRefinement() }
         backButton?.setOnClickListener { onBackPressed() }
+        clearAndResetFilter?.text = getString(R.string.clear_filter)
+        clearAndResetFilter?.setOnClickListener { subRefinementAdapter?.clearRefinement() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         onSelectionChanged()
@@ -75,15 +75,6 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
         subRefinementAdapter = activity?.let { SubRefinementAdapter(it, this, listener, dataList) }
         refinementList.adapter = subRefinementAdapter
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnRefinementOptionSelected) {
-            listener = context
-        } else {
-            throw ClassCastException("$context must implement OnRefinementOptionSelected.")
-        }
     }
 
     private fun getSubRefinementSelectableItems(subRefinements: ArrayList<SubRefinement>): ArrayList<RefinementSelectableItem> {
@@ -97,11 +88,11 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onBackPressed() {
         var navigationState = getNavigationState()
-        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
+        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState, refinement?.displayName)
     }
 
     private fun seeResults() {
-        listener.onSeeResults(if (TextUtils.isEmpty(getNavigationState())) refinement?.navigationState!! else getNavigationState())
+        listener.onSeeResults(if (TextUtils.isEmpty(getNavigationState())) refinement?.navigationState!! else getNavigationState(), refinement?.displayName)
     }
 
     private fun getNavigationState(): String {
@@ -120,7 +111,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     override fun onSelectionChanged() {
-        clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+        clearAndResetFilter?.isEnabled = !TextUtils.isEmpty(getNavigationState())
         updateSeeResultButtonText()
     }
 

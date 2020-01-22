@@ -79,6 +79,25 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         super.onViewCreated(view, savedInstanceState)
         initListener()
         populateView()
+        uniqueIdsForCardDetails()
+    }
+
+    private fun uniqueIdsForCardDetails() {
+        activity?.resources?.apply {
+            cardDetailsView?.contentDescription = getString(R.string.label_card_details)
+            cardNumberLayout?.contentDescription = getString(R.string.label_cardHolder)
+            cardHolderLayout?.contentDescription = getString(R.string.text_cardHolderName)
+            manageView?.contentDescription = getString(R.string.label_manage_layout)
+            blockCard?.contentDescription = getString(R.string.rlt_BlockCard)
+            imStoreCard?.contentDescription = getString(R.string.store_card_image)
+            tvCardHolder?.contentDescription = getString(R.string.label_cardHolder)
+            textViewCardHolderName?.contentDescription = getString(R.string.text_cardHolderName)
+            tvExpires?.contentDescription = getString(R.string.label_card_expire_date)
+            cardExpireDate?.contentDescription = getString(R.string.text_card_expire_date)
+            expireInfo?.contentDescription = getString(R.string.info_card_expire_date)
+            payWithCard?.contentDescription = getString(R.string.layout_pay_with_card)
+            howItWorks?.contentDescription = getString(R.string.layout_how_it_works)
+        }
     }
 
     private fun initListener() {
@@ -201,8 +220,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
 
     fun displayTemporaryCardToPayDialog() {
-        this.childFragmentManager.apply {
-            mStoreCardDetail?.let { ScanBarcodeToPayDialogFragment.newInstance(it).show(this, ScanBarcodeToPayDialogFragment::class.java.simpleName) }
+        activity?.apply {
+            this@MyCardDetailFragment.childFragmentManager.apply {
+                mStoreCardDetail?.let { ScanBarcodeToPayDialogFragment.newInstance(it).show(this, ScanBarcodeToPayDialogFragment::class.java.simpleName) }
+            }
         }
     }
 

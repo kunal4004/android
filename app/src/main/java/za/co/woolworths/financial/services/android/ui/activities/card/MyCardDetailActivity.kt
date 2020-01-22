@@ -43,6 +43,13 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
         }
         addCardDetailFragment()
+
+        uniqueIdsForCardDetails()
+    }
+
+    private fun uniqueIdsForCardDetails() {
+        tbMyCard?.contentDescription = getString(R.string.toolbar_title)
+
     }
 
     private fun addCardDetailFragment() {

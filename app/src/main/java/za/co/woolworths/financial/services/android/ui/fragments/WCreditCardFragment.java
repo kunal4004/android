@@ -113,6 +113,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private ImageView mimgViewStatementsRightArrow;
     private boolean mCreditCardFragmentIsVisible = false;
 
+    private LinearLayout llCardDetailContainer;
+    private LinearLayout llTopFunds;
+    private RelativeLayout accountStatusRelativeLayout;
+    private RelativeLayout llNextPaymentDueContainer;
+    private RelativeLayout llCurrentBalanceContainer;
+    private RelativeLayout llCreditLimitContainer;
+    private RelativeLayout rlViewTransactions;
+    private RelativeLayout rlMyStoreCard;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -186,6 +195,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
+
+        llCardDetailContainer = view.findViewById(R.id.llCardDetailContainer);
+        llTopFunds = view.findViewById(R.id.llTopFunds);
+        accountStatusRelativeLayout = view.findViewById(R.id.accountStatusRelativeLayout);
+        llNextPaymentDueContainer = view.findViewById(R.id.llNextPaymentDueContainer);
+        llCurrentBalanceContainer = view.findViewById(R.id.llCurrentBalanceContainer);
+        llCreditLimitContainer = view.findViewById(R.id.llCreditLimitContainer);
+        rlViewTransactions = view.findViewById(R.id.rlViewTransactions);
+        rlMyStoreCard = view.findViewById(R.id.rlMyStoreCard);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setVisibility(GONE);
@@ -674,5 +692,21 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         mCreditCardFragmentIsVisible = isVisibleToUser;
+    }
+
+    private void uniqueIdsForStoreCard() {
+        llActiveAccount.setContentDescription(getString(R.string.active_account_layout));
+        llCardDetailContainer.setContentDescription(getString(R.string.card_detail_container_layout));
+        llTopFunds.setContentDescription(getString(R.string.funds_layout_layout));
+        accountStatusRelativeLayout.setContentDescription(getString(R.string.accounts_status_layout));
+        llNextPaymentDueContainer.setContentDescription(getString(R.string.next_payment_due_layout));
+        llCurrentBalanceContainer.setContentDescription(getString(R.string.current_balance_layout));
+        llCreditLimitContainer.setContentDescription(getString(R.string.credit_limit_layout));
+        llIncreaseLimitContainer.setContentDescription(getString(R.string.increase_limit_container_layout));
+        rlViewTransactions.setContentDescription(getString(R.string.view_transaction_layout));
+        rlViewStatement.setContentDescription(getString(R.string.view_statement_layout));
+        relBalanceProtection.setContentDescription(getString(R.string.balance_protection_layout));
+        relDebitOrders.setContentDescription(getString(R.string.debit_order_layout));
+        rlMyStoreCard.setContentDescription(getString(R.string.my_card_layout));
     }
 }
