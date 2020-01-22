@@ -14,7 +14,6 @@
         android:layout_toStartOf="@+id/unit"
         android:lineSpacingMultiplier="0.94"
         android:maxLines="2"
-        android:text="@string/absa_biometric_desc"
         android:textColor="@color/black_50"
         android:textSize="@dimen/sixteen_sp" />
 
