@@ -23,7 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.util.animation.PushDownAnim
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
 open class AvailableFundsFragment : Fragment(), AvailableFundContract.AvailableFundView {
@@ -49,12 +49,7 @@ open class AvailableFundsFragment : Fragment(), AvailableFundContract.AvailableF
     }
 
     override fun setPushViewDownAnimation(view: View) {
-        PushDownAnim.setPushDownAnimTo(view)
-                .setScale(PushDownAnim.MODE_STATIC_DP, 2f)
-                .setDurationPush(PushDownAnim.DEFAULT_PUSH_DURATION)
-                ?.setDurationRelease(PushDownAnim.DEFAULT_RELEASE_DURATION)
-                ?.setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
-                ?.setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR)
+        AnimationUtilExtension.animateViewPushDown(view)
     }
 
     override fun onABSACreditCardFailureHandler(error: Throwable?) {

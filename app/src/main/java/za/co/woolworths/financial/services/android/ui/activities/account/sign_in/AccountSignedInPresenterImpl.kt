@@ -64,7 +64,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        shouldDisplayAccountInArrears()
+        showProductOfferingGoodStanding()
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -101,30 +101,26 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         }
     }
 
-    override fun shouldDisplayAccountInArrears(): Boolean {
+    override fun showProductOfferingGoodStanding() {
         val account = getAccount()
         account?.apply {
             return when  {
                 (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
                     // account is in arrears for more than 6 months
-                    mainView?.showAccountChargeOffForMoreThan6Months()
-                    false
+                    mainView?.showAccountChargeOffForMoreThan6Months()!!
                 }
                 !productOfferingGoodStanding -> { // account is in arrears
                     mainView?.showAccountInArrears(account)
                     val informationModel = getCardProductInformation(true)
-                    mainView?.showAccountHelp(informationModel)
-                    true
+                    mainView?.showAccountHelp(informationModel)!!
                 }
                 else -> {
                     mainView?.hideAccountInArrears(account)
                     val informationInArrearsModel = getCardProductInformation(false)
-                    mainView?.showAccountHelp(informationInArrearsModel)
-                    true
+                    mainView?.showAccountHelp(informationInArrearsModel)!!
                 }
             }
         }
-        return false
     }
 
     private fun getAccount(): Account? {

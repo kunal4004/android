@@ -50,7 +50,6 @@ class AccountSalesFragment : Fragment() {
             displayCartCollection(cardCollection)
         }
 
-        ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, false)
     }
 
     private fun displayCardBenefits(cardBenefits: MutableList<CardBenefit>?) {

@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceP
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountPaymentOptionsContract.AccountCardDetailView {
 
@@ -60,6 +61,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
+
+        AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
             setBalanceProtectionInsuranceState()

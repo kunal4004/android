@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nestedScrollViewLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/light_gray_background"
     android:fillViewport="true"
     app:layout_behavior="@string/view_pager_bottom_sheet_behavior"
@@ -13,7 +13,7 @@
     <LinearLayout
         android:id="@+id/accountSalesContainerLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/light_gray_background"
         android:orientation="vertical">
 
