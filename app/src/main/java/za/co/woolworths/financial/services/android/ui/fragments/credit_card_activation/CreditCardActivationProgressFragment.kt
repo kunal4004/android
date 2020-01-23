@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationContract.CreditCardActivationView, IProgressAnimationState, View.OnClickListener {
 
     var presenter: CreditCardActivationContract.CreditCardActivationPresenter? = null
+    lateinit var absaCardToken: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_activation_progress_layout, container, false)
@@ -31,6 +32,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         presenter = CreditCardActivationPresenterImpl(this, CreditCardActivationInteractorImpl())
+        absaCardToken = arguments?.getString("absaCardToken").toString()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,7 +48,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
 
     override fun activateCreditCard() {
         startProgress()
-        presenter?.initCreditCardActivation("4103752306880391")
+        presenter?.initCreditCardActivation(absaCardToken)
     }
 
     override fun getProgressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
