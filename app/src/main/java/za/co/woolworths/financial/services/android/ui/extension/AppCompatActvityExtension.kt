@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -24,6 +25,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.ICommonView
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import java.security.acl.Group
 
 
 /**

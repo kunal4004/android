@@ -20,8 +20,6 @@ import za.co.woolworths.financial.services.android.contracts.AccountSalesContrac
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
-import za.co.woolworths.financial.services.android.ui.extension.getFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -64,8 +62,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
 
-        val maximumExpandedHeight =
-                mAccountSalesModelImpl?.maximumExpandableHeight(0f, toolbar) ?: 0
+        val maximumExpandedHeight = mAccountSalesModelImpl?.maximumExpandableHeight(0f, toolbar) ?: 0
         incBottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
         val overlayAnchoredHeight =
@@ -73,20 +70,6 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        val myFragment: AccountSalesFragment? =
-                                getFragment(AccountSalesFragment::class.java) as AccountSalesFragment
-                        myFragment?.onStateCollapsed()
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        val myFragment: AccountSalesFragment? =
-                                getFragment(AccountSalesFragment::class.java) as AccountSalesFragment
-                        myFragment?.onStateExpanded()
-                    }
-                    else -> {
-                    }
-                }
                 invoke(bottomSheet, newState)
             }
 
@@ -172,8 +155,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     }
 
     private fun animateButtonOut() {
-        val animate =
-                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
+        val animate = TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
         animate.duration = 500
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
@@ -183,8 +165,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
 
     private fun animateButtonIn() {
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
         animate.duration = 500
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)

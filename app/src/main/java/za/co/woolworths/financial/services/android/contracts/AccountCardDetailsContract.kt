@@ -42,7 +42,7 @@ interface AvailableFundContract {
     }
 }
 
-interface AccountPaymentOptionsContract {
+interface AccountCardDetailsContract {
 
     interface AccountCardDetailView {
         fun handleUnknownHttpCode(description: String?)
@@ -63,6 +63,7 @@ interface AccountPaymentOptionsContract {
         fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive)
         fun hideProductNotInGoodStanding()
         fun onOfferActiveSuccessResult()
+        fun navigateToLoanWithdrawalActivity()
     }
 
     interface AccountCardDetailPresenter {

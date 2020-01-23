@@ -7,7 +7,7 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.ViewCompat
+import androidx.core.view.NestedScrollingChild
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -19,10 +19,11 @@ import kotlinx.android.synthetic.main.account_sales_more_benefit_layout.*
 import kotlinx.android.synthetic.main.account_sales_qualify_criteria_layout.*
 import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesPresenterImpl.Companion.ACCOUNT_SALES_CREDIT_CARD
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.adapters.MoreBenefitAdapter
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.expand.ExpandableAdapter
 import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter
+
 
 class AccountSalesFragment : Fragment() {
 
@@ -49,7 +50,6 @@ class AccountSalesFragment : Fragment() {
             displayQualifyCriteria(cardQualifyCriteria)
             displayCartCollection(cardCollection)
         }
-
     }
 
     private fun displayCardBenefits(cardBenefits: MutableList<CardBenefit>?) {
@@ -123,13 +123,29 @@ class AccountSalesFragment : Fragment() {
 
     fun onStateExpanded() {
         activity?.runOnUiThread {
-            ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, true)
         }
     }
 
     fun onStateCollapsed() {
         activity?.runOnUiThread {
-            ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, false)
         }
+    }
+
+    private fun findScrollingChild(view: View): View? {
+        if (view is NestedScrollingChild) {
+            return view
+        }
+        if (view is ViewGroup) {
+            var i = 0
+            val count = view.childCount
+            while (i < count) {
+                val scrollingChild = findScrollingChild(view.getChildAt(i))
+                if (scrollingChild != null) {
+                    return scrollingChild
+                }
+                i++
+            }
+        }
+        return null
     }
 }

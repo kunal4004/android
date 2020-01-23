@@ -31,7 +31,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021
     }
 
-    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
+    var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 
@@ -103,7 +103,6 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
         mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
-
     }
 
     override fun hideAccountInArrears(account: Account) {

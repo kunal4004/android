@@ -12,13 +12,14 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import za.co.woolworths.financial.services.android.contracts.AccountPaymentOptionsContract
+import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -31,11 +32,12 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountPaymentOptionsContract.AccountCardDetailView {
+open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountCardDetailsContract.AccountCardDetailView {
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
@@ -61,6 +63,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
+        withdrawCashView?.setOnClickListener (this)
 
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
@@ -153,6 +156,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.cardDetailImageView -> navigateToGetStoreCards()
                 R.id.tvIncreaseLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
                 R.id.relIncreaseMyLimit -> activity?.let { activity -> getCreditLimitIncreaseController()?.intentFindOutMore(activity, getOfferActive()) }
+                R.id.withdrawCashView,R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
             }
         }
     }
@@ -279,6 +283,15 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     override fun onOfferActiveSuccessResult() {
         userOfferActiveCallWasCompleted = true
+    }
+
+    override fun navigateToLoanWithdrawalActivity() {
+        activity?.apply {
+            val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
+            intentWithdrawalActivity.putExtra("account_info", Gson().toJson(mCardPresenterImpl?.getAccount()))
+            startActivityForResult(intentWithdrawalActivity, 0)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
     }
 
     private fun hideCLIView() {

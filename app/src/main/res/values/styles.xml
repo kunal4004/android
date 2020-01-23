@@ -586,6 +586,7 @@
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
         <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
     </style>
 
     <style name="style_loan_item">
