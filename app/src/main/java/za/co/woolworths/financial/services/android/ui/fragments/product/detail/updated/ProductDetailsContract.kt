@@ -38,6 +38,7 @@ interface ProductDetailsContract {
         fun showProductIngredientsInformation()
         fun loadPromotionalImages()
         fun showNutritionalInformation()
+        fun setUniqueIds()
     }
 
     interface ProductDetailsPresenter {

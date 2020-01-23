@@ -111,6 +111,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
+        setUniqueIds()
     }
 
     private fun initViews() {
@@ -1145,6 +1146,40 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onOutOfStockDialogDismiss() {
         if (productDetails?.otherSkus.isNullOrEmpty())
             activity?.onBackPressed()
+    }
+
+    override fun setUniqueIds() {
+            resources?.apply {
+                productLayout?.contentDescription = getString(R.string.pdp_layout)
+                productImagesViewPagerIndicator?.contentDescription = getString(R.string.store_card_image)
+                closePage?.contentDescription = getString(R.string.pdp_layout)
+                productName?.contentDescription = getString(R.string.pdp_textViewProductName)
+                priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
+                colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
+                selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
+                colorSelectorRecycleView?.contentDescription = getString(R.string.pdp_colorSelectorRecycleView)
+                addToCartAction?.contentDescription = getString(R.string.pdp_buttonAddToCart)
+                quantitySelector?.contentDescription = getString(R.string.pdp_quantitySelector)
+                quantityText?.contentDescription = getString(R.string.pdp_quantitySelected)
+                sizeColorSelectorLayout?.contentDescription = getString(R.string.pdp_sizeColourSelectorLayout)
+                sizeSelectorRecycleView?.contentDescription = getString(R.string.pdp_sizeSelectorRecycleView)
+                selectedSizePlaceholder?.contentDescription = getString(R.string.pdp_selectedSizePlaceholder)
+                selectedSize?.contentDescription = getString(R.string.pdp_textViewSelectedSize)
+                stockAvailabilityPlaceholder?.contentDescription = getString(R.string.pdp_stockAvailabilityPlaceholder)
+                deliveryLocationLayout?.contentDescription = getString(R.string.pdp_deliveryLocationLayout)
+                currentDeliveryLocation?.contentDescription = getString(R.string.pdp_txtCurrentDeliveryLocation)
+                defaultLocationPlaceholder?.contentDescription = getString(R.string.pdp_defaultLocationPlaceholder)
+                editDeliveryLocation?.contentDescription = getString(R.string.pdp_buttoneditDeliveryLocationn)
+                productDetailOptionsAndInformation?.contentDescription = getString(R.string.pdp_productDetailOptionsAndInformationLayout)
+                headerProductOptions?.contentDescription = getString(R.string.pdp_headerProductOptionsLayout)
+                checkInStoreAvailability?.contentDescription = getString(R.string.pdp_checkInStoreAvailabilityLayout)
+                buttonView?.contentDescription = getString(R.string.pdp_buttonView)
+                addToShoppingList?.contentDescription = getString(R.string.pdp_addToShoppingListLayout)
+                headerProductInformation?.contentDescription = getString(R.string.pdp_headerProductInformationLayout)
+                productDetailsInformation?.contentDescription = getString(R.string.pdp_productDetailsInformationLayout)
+                nutritionalInformation?.contentDescription = getString(R.string.pdp_productIngredientsInformationLayout)
+                productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
+            }
     }
 
 }

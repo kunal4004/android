@@ -39,6 +39,7 @@ class ProductDetailsInformationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setProductDetailsInformation()
         productCodeText.text = productCode
+        setUniqueIds()
     }
 
     private fun setProductDetailsInformation() {
@@ -73,6 +74,14 @@ class ProductDetailsInformationFragment : Fragment() {
 
             webDescription.loadDataWithBaseURL("file:///android_res/drawable/",
                     htmlData, "text/html; charset=UTF-8", "UTF-8", null)
+        }
+    }
+
+    private fun setUniqueIds() {
+        resources?.apply {
+            productCodeText?.contentDescription = getString(R.string.pdp_textProductCode)
+            title?.contentDescription = getString(R.string.pdp_productDetailsTitle)
+            productCodeTitle?.contentDescription = getString(R.string.pdp_productCodeTitle)
         }
     }
 }
