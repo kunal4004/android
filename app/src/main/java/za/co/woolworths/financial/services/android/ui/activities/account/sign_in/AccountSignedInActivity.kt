@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -37,6 +38,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.account_signed_in_activity)
         KotlinUtils.setTransparentStatusBar(this)
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())

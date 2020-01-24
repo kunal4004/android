@@ -5,7 +5,6 @@
     android:id="@+id/accountSalesPageFrontConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="8dp"
     android:background="@drawable/store_card_background">
 
     <ImageView
@@ -68,6 +67,7 @@
         app:layout_constraintBottom_toTopOf="@+id/storeCardDescriptionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardHeader"
         tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -78,35 +78,10 @@
         app:layout_constraintGuide_percent="0.66"
         app:layout_constraintHeight_percent="0.66" />
 
-    <ImageView
-        android:id="@+id/cardBackImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/storeCardTitleTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cardFrontImageView"
-        app:srcCompat="@drawable/store_card_back"
-        tools:ignore="ContentDescription" />
 
-
-    <ImageView
-        android:id="@+id/cardFrontImageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="5dp"
-        android:adjustViewBounds="true"
-        android:cropToPadding="true"
-        android:scaleType="fitEnd"
-        android:visibility="visible"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/storeCardTitleTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/storeCardTopImageView"
-        app:srcCompat="@drawable/store_card_front"
-        tools:ignore="ContentDescription"
-        tools:srcCompat="@drawable/store_card_front" />
+    <include
+        android:id="@+id/cardHeader"
+        layout="@layout/account_sales_card_header"/>
 
     <ImageView
         android:id="@+id/cardFrontBlackImageView"

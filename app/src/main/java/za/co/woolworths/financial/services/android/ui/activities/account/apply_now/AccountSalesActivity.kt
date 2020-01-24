@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.view.View.*
@@ -14,6 +15,7 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
+import kotlinx.android.synthetic.main.account_sales_card_header.*
 import kotlinx.android.synthetic.main.account_sales_front_layout.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
@@ -24,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTa
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
@@ -32,6 +35,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         KotlinUtils.setTransparentStatusBar(this)
 
         mAccountSalesModelImpl = AccountSalesPresenterImpl(this, AccountSalesModelImpl())
@@ -49,6 +53,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         AnimationUtilExtension.animateViewPushDown(storeCardApplyNowButton)
         AnimationUtilExtension.animateViewPushDown(bottomApplyNowButton)
         AnimationUtilExtension.animateViewPushDown(navigateBackImageButton)
+        AnimationUtilExtension.animateViewPushDown(cardFrontImageView)
+        AnimationUtilExtension.animateViewPushDown(cardBackImageView)
     }
 
     private fun setToolbarTopMargin() {
@@ -65,8 +71,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         val maximumExpandedHeight = mAccountSalesModelImpl?.maximumExpandableHeight(0f, toolbar) ?: 0
         incBottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
-        val overlayAnchoredHeight =
-                mAccountSalesModelImpl?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight) ?: 0
+        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight) ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
