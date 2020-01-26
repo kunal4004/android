@@ -1352,6 +1352,9 @@
     <string name="plp_textViewPromotion">textViewPromotion</string>
     <string name="plp_textViewPrice">textViewPrice</string>
     <string name="plp_textViewWasPrice">textViewWasPrice</string>
-    <string name="plp_imageViewPromotionalLayout">imageViewPromotionalLayout</string>
+    <string name="plp_newPromotionalImage">newPromotionalImage</string>
+    <string name="plp_savePromotionalImage">savePromotionalImage</string>
+    <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
+    <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
 
 </resources>

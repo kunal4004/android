@@ -114,6 +114,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             setTitle()
             startProductRequest()
+            setUniqueIds()
         }
     }
 
@@ -821,5 +822,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             putString(SORT_OPTION, sortOption)
         }
     }
+
+    fun setUniqueIds(){
+        resources?.apply {
+            refineProducts?.contentDescription = getString(R.string.plp_buttonRefine)
+            sortProducts?.contentDescription = getString(R.string.plp_buttonSort)
+            productList?.contentDescription = getString(R.string.plp_productListLayout)
+        }
+    }
+
 
 }
