@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -98,7 +99,7 @@ class WRewardsFragment : Fragment() {
         }
         if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             if (data != null) {
-                val stsParams : String = data.getStringExtra("stsParams") ?: ""
+                val stsParams: String = data.getStringExtra("stsParams") ?: ""
                 onSessionExpired(activity, stsParams)
             }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {

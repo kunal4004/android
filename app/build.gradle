@@ -8,10 +8,10 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "6"
-    def minor = "0"
-    def fix = "1"
+    def minor = "1"
+    def fix = "0"
 
-    def jobNumber = 382
+    def jobNumber = 391
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -43,6 +43,8 @@ android {
     }
 
     defaultConfig {
+        applicationId "com.awfs.coordination"
+        manifestPlaceholders = [appLabel: "Woolworths"]
         minSdkVersion 19 //kitkat 4.4
         targetSdkVersion 28
         compileSdkVersion 28
@@ -61,22 +63,21 @@ android {
     // MS App Center doesn't currently support productFlavors, only supports release/debug.
     if (isAppCenter) {
 
-        def appId = "com.awfs.coordination"
         def host = System.getenv("WigroupServer_API_URL").toString()
         def hash = System.getenv("WigroupServer_API_HASH").toString()
 
-        def env = ""
+        String env = ""
 
         if (host.contains("-qa")){
-            appId = "com.awfs.coordination.qa"
+            defaultConfig.applicationIdSuffix = ".qa"
+            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q"]
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 123
+            jobNumber = 124
         }
 
         defaultConfig {
-            applicationId appId
             versionCode jobNumber
             buildConfigField("String", "HOST", '"' + host + '"')
             buildConfigField("String", "SHA1", '"' + hash + '"')
@@ -85,7 +86,20 @@ android {
     }
     else {
 
+        def apiKey = "ANDROID_V" + major + "." + minor
+        def wigroupServicesProperties = new Properties()
+        file("WigroupServices.properties").withInputStream { wigroupServicesProperties.load(it) }
+
+        def productionKeystoreProperties = new Properties()
+        file("ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
+
         signingConfigs {
+            woolworths {
+                keyAlias productionKeystoreProperties['keyAlias']
+                keyPassword productionKeystoreProperties['keyPassword']
+                storeFile file(productionKeystoreProperties['storeFile'])
+                storePassword productionKeystoreProperties['storePassword']
+            }
             woneappDev {
                 keyAlias 'woneapp_dev'
                 keyPassword 'woneapp_dev'
@@ -106,24 +120,21 @@ android {
             }
         }
 
-        def apiKey = "ANDROID_V" + major + "." + minor
-        def props = new Properties()
-        file("WigroupServices.properties").withInputStream { props.load(it) }
-
         productFlavors {
             qa {
-                applicationId "com.awfs.coordination.qa"
-                buildConfigField("String", "HOST", '"' +  props.getProperty("URL_QA_" + apiKey) + '"')
-                buildConfigField("String", "SHA1", '"' +  props.getProperty("HASH_QA_" + apiKey) + '"')
+                applicationIdSuffix ".qa"
+                manifestPlaceholders = [appLabel: "Woolworths Q"]
+                buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
                 signingConfig signingConfigs.woneappQa
             }
 
             production {
-                applicationId "com.awfs.coordination"
-                buildConfigField("String", "HOST", '"' +  props.getProperty("URL_PROD_" + apiKey) + '"')
-                buildConfigField("String", "SHA1", '"' +  props.getProperty("HASH_PROD_" + apiKey) + '"')
+                buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
+                signingConfig signingConfigs.woolworths
             }
         }
     }

@@ -91,9 +91,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	LinearLayout loggedOutHeaderLayout;
 	LinearLayout loggedInHeaderLayout;
 	RelativeLayout unlinkedLayout;
-	RelativeLayout signOutBtn;
-	RelativeLayout mProfileBtn;
-	RelativeLayout myPreferences;
+	RelativeLayout signOutRelativeLayout;
+	RelativeLayout profileRelativeLayout;
+	RelativeLayout preferenceRelativeLayout;
 	ViewPager viewPager;
 	MyAccountOverViewPagerAdapter adapter;
 	LinearLayout pager_indicator;
@@ -125,9 +125,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	boolean isActivityInForeground;
 	boolean isPromptsShown;
 	boolean isAccountsCallMade;
-    private RelativeLayout mUpdatePasswordBtn;
+    private RelativeLayout updatePasswordRelativeLayout;
 	private UpdateMyAccount mUpdateMyAccount;
 	private ImageView imRefreshAccount;
+	private RelativeLayout storeLocatorRelativeLayout;
+	private RelativeLayout helpSectionRelativeLayout;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -189,10 +191,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
-			signOutBtn = view.findViewById(R.id.signOutBtn);
-			mProfileBtn = view.findViewById(R.id.rlProfile);
-            mUpdatePasswordBtn = view.findViewById(R.id.rlUpdatePassword);
-            myPreferences = view.findViewById(R.id.rlMyPreferences);
+			signOutRelativeLayout = view.findViewById(R.id.signOutBtn);
+			profileRelativeLayout = view.findViewById(R.id.rlProfile);
+            updatePasswordRelativeLayout = view.findViewById(R.id.rlUpdatePassword);
+            preferenceRelativeLayout = view.findViewById(R.id.rlMyPreferences);
 			viewPager = view.findViewById(R.id.pager);
 			pager_indicator = view.findViewById(R.id.viewPagerCountDots);
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
@@ -201,11 +203,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounter = view.findViewById(R.id.messageCounter);
 			userName = view.findViewById(R.id.user_name);
 			imgCreditCard = view.findViewById(R.id.imgCreditCard);
-			RelativeLayout helpSection = view.findViewById(R.id.helpSection);
+			helpSectionRelativeLayout = view.findViewById(R.id.helpSection);
 			RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 			mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 			mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
-			RelativeLayout storeLocator = view.findViewById(R.id.storeLocator);
+			storeLocatorRelativeLayout = view.findViewById(R.id.storeLocator);
 			allUserOptionsLayout = view.findViewById(R.id.parentOptionsLayout);
 			loginUserOptionsLayout = view.findViewById(R.id.loginUserOptionsLayout);
 			imgStoreCardStatusIndicator = view.findViewById(R.id.storeCardStatusIndicator);
@@ -225,11 +227,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			linkedCreditCardView.setOnClickListener(this);
 			linkedPersonalCardView.setOnClickListener(this);
 			openShoppingList.setOnClickListener(this);
-			signOutBtn.setOnClickListener(this);
-			mProfileBtn.setOnClickListener(this);
-			mUpdatePasswordBtn.setOnClickListener(this);
-			helpSection.setOnClickListener(this);
-			storeLocator.setOnClickListener(this);
+			signOutRelativeLayout.setOnClickListener(this);
+			profileRelativeLayout.setOnClickListener(this);
+			updatePasswordRelativeLayout.setOnClickListener(this);
+			helpSectionRelativeLayout.setOnClickListener(this);
+			storeLocatorRelativeLayout.setOnClickListener(this);
 			adapter = new MyAccountOverViewPagerAdapter(getActivity());
 			viewPager.addOnPageChangeListener(this);
 			setUiPageViewController();
@@ -242,7 +244,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
-			myPreferences.setOnClickListener(this);
+			preferenceRelativeLayout.setOnClickListener(this);
 
 			mSwipeToRefreshAccount.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 				@Override
@@ -273,6 +275,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				imRefreshAccount.setEnabled(true);
 			}
 		}
+
+		uniqueIdentifiersForAccount();
 	}
 
 	private void initialize() {
@@ -484,10 +488,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			String familyName = jwtDecoded.family_name.get(0);
 			userName.setText(name + " " + familyName);
 			//initials of the logged in user will be displayed on the page
-			showView(signOutBtn);
-			showView(mProfileBtn);
-            showView(mUpdatePasswordBtn);
-			showView(myPreferences);
+			showView(signOutRelativeLayout);
+			showView(profileRelativeLayout);
+            showView(updatePasswordRelativeLayout);
+			showView(preferenceRelativeLayout);
 			showView(loginUserOptionsLayout);
 			mUpdateMyAccount.swipeToRefreshAccount(true);
 			if (SessionUtilities.getInstance().isC2User())
@@ -510,15 +514,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void hideAllLayers() {
 		hideView(loggedInHeaderLayout);
 		hideView(loggedOutHeaderLayout);
-		hideView(signOutBtn);
-		hideView(mProfileBtn);
-        hideView(mUpdatePasswordBtn);
+		hideView(signOutRelativeLayout);
+		hideView(profileRelativeLayout);
+        hideView(updatePasswordRelativeLayout);
 		hideView(linkedAccountsLayout);
 		hideView(applyNowAccountsLayout);
 		hideView(allUserOptionsLayout);
 		hideView(unlinkedLayout);
 		hideView(loginUserOptionsLayout);
-		hideView(myPreferences);
+		hideView(preferenceRelativeLayout);
 	}
 
 	private void setUiPageViewController() {
@@ -1035,4 +1039,22 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		isActivityInForeground = false;
 	}
 
+	private void uniqueIdentifiersForAccount() {
+		Activity activity = getActivity();
+		if (activity != null && isAdded()) {
+			linkedStoreCardView.setContentDescription(getString(R.string.linked_store_card_layout));
+			linkedCreditCardView.setContentDescription(getString(R.string.linked_credit_card_layout));
+			linkedPersonalCardView.setContentDescription(getString(R.string.linked_personal_loan_layout));
+			applyStoreCardView.setContentDescription(getString(R.string.apply_store_card_layout));
+			applyCreditCardView.setContentDescription(getString(R.string.apply_credit_card_layout));
+			applyPersonalCardView.setContentDescription(getString(R.string.apply_personal_loan_layout));
+			openMessageActivity.setContentDescription(getString(R.string.messages_layout));
+			storeLocatorRelativeLayout.setContentDescription(getString(R.string.store_locator_layout));
+			helpSectionRelativeLayout.setContentDescription(getString(R.string.need_help_layout));
+			profileRelativeLayout.setContentDescription(getString(R.string.profile_layout));
+			updatePasswordRelativeLayout.setContentDescription(getString(R.string.update_password_layout));
+			preferenceRelativeLayout.setContentDescription(getString(R.string.mypreferences_layout));
+			signOutRelativeLayout.setContentDescription(getString(R.string.sign_out_layout));
+		}
+	}
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -40,7 +40,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
 public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface, IToastInterface {
 
@@ -223,7 +223,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         Fragment fragment = fm.findFragmentById(R.id.content_frame);
         Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
         if (bottomFragment != null) {
-            if (bottomFragment != null && bottomFragment instanceof ProductDetailFragment) {
+            if (bottomFragment != null && bottomFragment instanceof ProductDetailsFragment) {
                 bottomFragment.onActivityResult(requestCode, resultCode, data);
             }
         }

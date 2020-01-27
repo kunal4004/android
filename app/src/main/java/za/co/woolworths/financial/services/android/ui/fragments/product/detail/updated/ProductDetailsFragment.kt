@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
@@ -54,9 +53,11 @@ import za.co.woolworths.financial.services.android.ui.activities.MultipleImageAc
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -87,6 +88,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
 
     companion object {
+        const val INDEX_STORE_FINDER = 1
+        const val INDEX_ADD_TO_CART = 2
+        const val INDEX_ADD_TO_SHOPPING_LIST = 3
+        const val INDEX_SEARCH_FROM_LIST = 4
+        const val RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002
         fun newInstance() = ProductDetailsFragment()
     }
 
@@ -116,6 +122,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         findInStoreAction.setOnClickListener(this)
         productDetailsInformation.setOnClickListener(this)
         productIngredientsInformation.setOnClickListener(this)
+        nutritionalInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
@@ -132,6 +139,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.editDeliveryLocation -> updateDeliveryLocation()
             R.id.productDetailsInformation -> showProductDetailsInformation()
             R.id.productIngredientsInformation -> showProductIngredientsInformation()
+            R.id.nutritionalInformation -> showNutritionalInformation()
             R.id.moreColor -> showMoreColors()
         }
     }
@@ -260,6 +268,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
+        } else if (productDetails.otherSkus.isNullOrEmpty()) {
+            showProductOutOfStock()
         } else {
             showErrorWhileLoadingProductDetails()
         }
@@ -411,6 +421,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
             productIngredientsInformation.visibility = View.VISIBLE
+        if (this.productDetails?.nutritionalInformationDetails != null)
+            nutritionalInformation.visibility = View.VISIBLE
 
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
@@ -1044,6 +1056,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    override fun showNutritionalInformation() {
+        activity?.apply {
+            val intent = Intent(this, ProductInformationActivity::class.java)
+            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
+            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
+    }
+
     private fun showProductUnavailable() {
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         hideProductDetailsLoading()
@@ -1107,9 +1129,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     is ShoppingDeliveryLocation -> it.suburb.name
                     is QuickShopDefaultValues -> it.suburb.name
                     else -> ""}
-                val title = getString(R.string.out_of_stock)
                 val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
-                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, title, message)
+                OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
                 updateAddToCartButtonForSelectedSKU()
             }
         }
@@ -1119,6 +1140,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val userLocation = Utils.getPreferredDeliveryLocation()
         val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
         return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
+    }
+
+    override fun onOutOfStockDialogDismiss() {
+        if (productDetails?.otherSkus.isNullOrEmpty())
+            activity?.onBackPressed()
     }
 
 }

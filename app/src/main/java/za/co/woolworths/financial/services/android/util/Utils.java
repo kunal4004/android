@@ -169,7 +169,6 @@ public class Utils {
 			"image/jpeg",
 			"image/tiff"
 	};
-	private static WTextView elipseEnd;
 
 	public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -332,25 +331,6 @@ public class Utils {
 		String response = gson.toJson(object);
 
 		return response;
-	}
-
-	public static List<AddToListRequest> toList(String jsonArrayString) {
-		if (TextUtils.isEmpty(jsonArrayString)) return null;
-		return Arrays.asList(new Gson().fromJson(jsonArrayString, AddToListRequest[].class));
-	}
-
-
-	public static int getToolbarHeight(Context context) {
-		final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
-				new int[]{R.attr.actionBarSize});
-		int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
-		styledAttributes.recycle();
-
-		return toolbarHeight;
-	}
-
-	public static int getTabsHeight(Context context) {
-		return (int) context.getResources().getDimension(R.dimen.bank_spacing_width);
 	}
 
 	public static ProductDetailResponse stringToJson(Context context, String value) {
@@ -597,20 +577,6 @@ public class Utils {
 		mTooltip.show();
 	}
 
-
-	public static void showOneTimePopup(Context context, SessionDao.KEY key, View view) {
-		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
-			if (firstTime == null) {
-				view.setVisibility(View.VISIBLE);
-			} else {
-				view.setVisibility(View.GONE);
-			}
-			Utils.sessionDaoSave(context, key, "1");
-		} catch (NullPointerException ignored) {
-		}
-	}
-
 	public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 
@@ -660,13 +626,6 @@ public class Utils {
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
 	}
 
-	public static void setBackground(WTextView textView, int drawableId, int value) {
-		Context context = textView.getContext();
-		textView.setText(context.getResources().getString(value));
-		textView.setTextColor(Color.WHITE);
-		textView.setBackgroundResource(drawableId);
-	}
-
 	public static ListIterator removeObjectFromArrayList(Context context, List<StoreDetails> storeDetails) {
 		ListIterator listIterator = storeDetails.listIterator();
 		for (Iterator<StoreDetails> it = storeDetails.iterator(); it.hasNext(); ) {
@@ -696,11 +655,6 @@ public class Utils {
 			setBackgroundColor(storeOfferings, R.drawable.round_green_corner, R.string.status_green_desc);
 		} else {
 		}
-	}
-
-	private static void showView(WTextView view, String messageSummary) {
-		view.setVisibility(View.VISIBLE);
-		view.setText(messageSummary);
 	}
 
 	public static void hideView(View view) {
@@ -1608,6 +1562,24 @@ public class Utils {
 			return ((JsonArray) atgId).get(0).getAsString();
 		} else {
 			return "";
+		}
+	}
+
+	public static boolean isAppUpdated(Context context) {
+		if (context == null){
+			context = WoolworthsApplication.getAppContext();
+		}
+		String appVersionFromDB = Utils.getSessionDaoValue(context, SessionDao.KEY.APP_VERSION);
+		String appLatestVersion = null;
+		try {
+			appLatestVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (appVersionFromDB == null || !appVersionFromDB.equalsIgnoreCase(appLatestVersion)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

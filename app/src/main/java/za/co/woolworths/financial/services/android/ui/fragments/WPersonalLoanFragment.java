@@ -114,6 +114,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 private static AsyncTask<Void, Void, Void> async;
     private AsyncTask<Void, Void, Void> mWalThroughStatementEducationFeature;
 
+    private LinearLayout llCardDetailContainer;
+    private LinearLayout llTopFunds;
+    private RelativeLayout accountStatusRelativeLayout;
+    private RelativeLayout llNextPaymentDueContainer;
+    private RelativeLayout llCurrentBalanceContainer;
+    private RelativeLayout llCreditLimitContainer;
+    private RelativeLayout rlViewTransactions;
+    private RelativeLayout rlMyStoreCard;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -157,6 +166,7 @@ private static AsyncTask<Void, Void, Void> async;
                     }));
         }
 
+        uniqueIdsForStoreCard();
     }
 
     @Override
@@ -201,6 +211,16 @@ private static AsyncTask<Void, Void, Void> async;
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         imViewStatementLogo =  view.findViewById(R.id.imViewStatementLogo);
+
+        llCardDetailContainer = view.findViewById(R.id.llCardDetailContainer);
+        llTopFunds = view.findViewById(R.id.llTopFunds);
+        accountStatusRelativeLayout = view.findViewById(R.id.accountStatusRelativeLayout);
+        llNextPaymentDueContainer = view.findViewById(R.id.llNextPaymentDueContainer);
+        llCurrentBalanceContainer = view.findViewById(R.id.llCurrentBalanceContainer);
+        llCreditLimitContainer = view.findViewById(R.id.llCreditLimitContainer);
+        rlViewTransactions = view.findViewById(R.id.rlViewTransactions);
+        rlMyStoreCard = view.findViewById(R.id.rlMyStoreCard);
+
         relDebitOrders.setOnClickListener(this);
 
         fakeView = view.findViewById(R.id.fakeView);
@@ -698,6 +718,24 @@ private static AsyncTask<Void, Void, Void> async;
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         mPersonalLoanFragmentIsVisible = isVisibleToUser;
+    }
+
+    private void uniqueIdsForStoreCard() {
+        if (account == null || !isAdded()) return;
+        llActiveAccount.setContentDescription(getString(R.string.active_account_layout));
+        llCardDetailContainer.setContentDescription(getString(R.string.card_detail_container_layout));
+        llTopFunds.setContentDescription(getString(R.string.funds_layout_layout));
+        accountStatusRelativeLayout.setContentDescription(getString(R.string.accounts_status_layout));
+        llNextPaymentDueContainer.setContentDescription(getString(R.string.next_payment_due_layout));
+        llCurrentBalanceContainer.setContentDescription(getString(R.string.current_balance_layout));
+        llCreditLimitContainer.setContentDescription(getString(R.string.credit_limit_layout));
+        llIncreaseLimitContainer.setContentDescription(getString(R.string.increase_limit_container_layout));
+        rlViewTransactions.setContentDescription(getString(R.string.view_transaction_layout));
+        rlViewStatement.setContentDescription(getString(R.string.view_statement_layout));
+        relBalanceProtection.setContentDescription(getString(R.string.balance_protection_layout));
+        relDebitOrders.setContentDescription(getString(R.string.debit_order_layout));
+        rlMyStoreCard.setContentDescription(getString(R.string.my_card_layout));
+        mRelDrawnDownAmount.setContentDescription(getString(R.string.drawn_down_amount_layout));
     }
 }
 
