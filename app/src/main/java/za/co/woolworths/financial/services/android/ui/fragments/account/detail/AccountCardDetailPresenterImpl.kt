@@ -28,8 +28,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     private var mIncreaseLimitController: IncreaseLimitController? = null
 
     init {
-        mIncreaseLimitController =
-                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
     }
 
     override fun createCardHolderName(): String? {
@@ -55,8 +54,9 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        getAccountStoreCardCards()
+
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -65,10 +65,10 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun isDebitOrderActive(): Int? = if (getDebitOrder()?.debitOrderActive == true) VISIBLE else GONE
 
-    override fun getAccountInStringFormat(): String? = Gson().toJson(getAccount())
+    override fun convertAccountFromJsonToStringType(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
-    override fun requestGetAccountStoreCardCardsFromServer() {
+    override fun getAccountStoreCardCards() {
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
@@ -79,7 +79,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
 
-    override fun requestGetUserCLIOfferActiveFromServer() {
+    override fun getUserCLIOfferActive() {
         val account = getAccount()
         if (!cliProductOfferingGoodStanding()) {
             mainView?.hideProductNotInGoodStanding()
@@ -175,7 +175,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     }
 
     override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
-        mainView?.navigateToBalanceProtectionInsurance(getAccountInStringFormat())
+        mainView?.navigateToBalanceProtectionInsurance(convertAccountFromJsonToStringType())
     }
 
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding ?: false
