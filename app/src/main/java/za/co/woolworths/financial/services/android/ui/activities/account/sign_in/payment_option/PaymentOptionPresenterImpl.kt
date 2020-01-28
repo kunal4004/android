@@ -19,8 +19,7 @@ class PaymentOptionPresenterImpl(private var mainView: PaymentOptionContract.Pay
     private var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
     override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails =
-                Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? {

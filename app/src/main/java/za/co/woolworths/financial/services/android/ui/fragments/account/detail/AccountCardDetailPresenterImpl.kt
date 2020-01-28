@@ -12,16 +12,24 @@ import za.co.woolworths.financial.services.android.contracts.AccountPaymentOptio
 import za.co.woolworths.financial.services.android.contracts.ICommonView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 
 class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptionsContract.AccountCardDetailView?, private var model: AccountPaymentOptionsContract.AccountCardDetailModel?) : AccountPaymentOptionsContract.AccountCardDetailPresenter, ICommonView<Any> {
 
+    private var mOfferActive: OfferActive? = null
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
+    private var mIncreaseLimitController: IncreaseLimitController? = null
+
+    init {
+        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+    }
 
     override fun createCardHolderName(): String? {
         val jwtDecoded = SessionUtilities.getInstance()?.jwt
@@ -34,22 +42,21 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         mainView?.displayCardHolderName(createCardHolderName())
     }
 
-    override fun balanceProtectionInsuranceCoverState(account: Account?): String? {
-        val resources = getAppCompatActivity()?.resources
-        return if (account?.insuranceCovered == true) resources?.getString(R.string.bpi_covered) else resources?.getString(R.string.bpi_not_covered)
+    override fun balanceProtectionInsuranceIsCovered(account: Account?): Boolean {
+        return getAccount()?.insuranceCovered ?: false
     }
 
     override fun setBalanceProtectionInsuranceState() {
-        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceCoverState(getAccount()))
+        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceIsCovered(getAccount()))
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
         getAccountStoreCardCards()
+
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -64,15 +71,23 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     override fun getAccountStoreCardCards() {
         val account = getAccount()
         //store card api is disabled for Credit Card group code
-        if (account?.productGroupCode?.toLowerCase() == "cc") return
-        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
-        showProgress()
+        val productGroupCode = account?.productGroupCode?.toLowerCase()
+        if (productGroupCode == "cc" || productGroupCode == "pl") return
+        val storeCardsRequest: StoreCardsRequestBody? =
+                account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
+        mainView?.showStoreCardProgress()
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
 
-    override fun getUserCLIOfferActiveFromServer() {
+    override fun getUserCLIOfferActive() {
         val account = getAccount()
+        if (!cliProductOfferingGoodStanding()) {
+            mainView?.hideProductNotInGoodStanding()
+            return
+        }
+
         val productOfferingId = account?.productOfferingId
+        mainView?.showUserOfferActiveProgress()
         productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
     }
 
@@ -93,10 +108,34 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
                         440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> handleUnknownHttpResponse(response?.desc)
                     }
-                    hideProgress()
+                    mainView?.hideAccountStoreCardProgress()
                 }
+
+                is OfferActive -> {
+                    when (httpCode) {
+                        200 -> handleUserOfferActiveSuccessResult(this)
+                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> handleUnknownHttpResponse(response?.desc)
+                    }
+                    mainView?.hideUserOfferActiveProgress()
+                }
+                else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
             }
         }
+    }
+
+    private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
+        val activity = getAppCompatActivity() ?: return
+        this.mOfferActive = offerActive
+        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+
+        if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
+            mainView?.disableContentStatusUI()
+        } else {
+            mainView?.enableContentStatusUI()
+        }
+
+        mainView?.handleCreditLimitIncreaseTagStatus(offerActive)
     }
 
     override fun handleUnknownHttpResponse(description: String?) {
@@ -109,6 +148,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
         mainView?.displayViewCardText()
+        navigateToTemporaryStoreCardOnButtonTapped()
     }
 
     override fun navigateToTemporaryStoreCardOnButtonTapped() {
@@ -126,6 +166,10 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         getStoreCardResponse()?.let { storeCardsResponse -> mainView?.navigateToMyCardDetailActivity(storeCardsResponse) }
     }
 
+    override fun getOfferActive(): OfferActive? = mOfferActive
+
+    override fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
+
     override fun navigateToDebitOrderActivityOnButtonTapped() {
         getDebitOrder()?.let { debitOrder -> mainView?.navigateToDebitOrderActivity(debitOrder) }
     }
@@ -134,19 +178,17 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         mainView?.navigateToBalanceProtectionInsurance(convertAccountFromJsonToStringType())
     }
 
+    override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding ?: false
+
+
+    override fun getCreditLimitIncreaseController(): IncreaseLimitController? = mIncreaseLimitController
+
     override fun onDestroy() {
         mainView = null
     }
 
     override fun onFailure(error: Throwable?) {
-        hideProgress()
-    }
-
-    override fun showProgress() {
-        mainView?.showStoreCardProgress()
-    }
-
-    override fun hideProgress() {
-        mainView?.onStoreCardProgressCompleted()
+        mainView?.hideAccountStoreCardProgress()
+        mainView?.hideUserOfferActiveProgress()
     }
 }

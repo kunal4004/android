@@ -12,6 +12,11 @@ class StoreCardDetailFragment : AccountCardDetailFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cardDetailImageView?.setImageResource(R.drawable.w_store_card)
+        if (mCardPresenterImpl?.isDebitOrderActive() == View.VISIBLE) {
+            debitOrderIsActiveTextView?.setBackgroundResource(R.drawable.round_green_corner)
+        } else {
+            debitOrderViewGroup?.visibility = View.GONE
+        }
         debitOrderViewGroup?.visibility = mCardPresenterImpl?.isDebitOrderActive() ?: 0
     }
 }

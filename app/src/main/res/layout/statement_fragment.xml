@@ -52,6 +52,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginBottom="@dimen/fifty_eight_dp"
                         android:background="@color/white"
+                        android:contentDescription="@string/statement_list_layout"
                         />
 
                 </LinearLayout>

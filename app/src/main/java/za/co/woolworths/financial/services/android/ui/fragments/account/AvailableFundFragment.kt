@@ -17,14 +17,14 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.util.CurrencyFormatterUtil
-import za.co.woolworths.financial.services.android.util.DateConverterUtil
+import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 open class AvailableFundFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
-    private var mAccount: Account? = null
+    var mAccount: Account? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,16 +42,15 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener {
         setUpView()
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
-        incViewPaymentOptionButton?.setOnClickListener(this)
     }
 
     private fun setUpView() {
         mAccount?.apply {
-            val availableFund = CurrencyFormatterUtil.convertCurrencyToDot(availableFunds)
-            val currentBalance = CurrencyFormatterUtil.addSpaceBetweenRandSymbolAndAmount(currentBalance)
-            val creditLimit = CurrencyFormatterUtil.addSpaceBetweenRandSymbolAndAmount(creditLimit)
-            val paymentDueDate = DateConverterUtil.formatDate(paymentDueDate)
-            val totalAmountDueAmount = CurrencyFormatterUtil.addSpaceBetweenRandSymbolAndAmount(totalAmountDue)
+            val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1, activity))
+            val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
+            val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, activity))
+            val paymentDueDate = paymentDueDate?.let{ paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate))}
+            val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
             availableFundAmountTextView?.text = availableFund
             currentBalanceAmountTextView?.text = currentBalance
             creditLimitAmountTextView?.text = creditLimit
@@ -64,7 +63,6 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToTransactionActivity()
             R.id.incViewStatementButton -> navigateToStatementActivity()
-            R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
         }
     }
 
@@ -89,7 +87,7 @@ open class AvailableFundFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun navigateToPaymentOptionActivity() {
+    fun navigateToPaymentOptionActivity() {
         activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mAccountPair) }
     }
 }

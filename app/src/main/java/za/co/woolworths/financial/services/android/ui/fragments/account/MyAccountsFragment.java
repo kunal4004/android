@@ -110,6 +110,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private ImageView imgCreditCard;
 	private FrameLayout imgStoreCardContainer;
 	private FrameLayout imgPersonalLoanCardContainer;
+	private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
 
 	Map<String, Account> accounts;
 	List<String> unavailableAccounts;
@@ -1066,7 +1067,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		Intent intent = new Intent(getActivity(), AccountSignedInActivity.class);
 		intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
 		intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-		startActivity(intent);
+		startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
 	}
 
 	public void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {

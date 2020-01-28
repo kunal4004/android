@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.NutritionalTableItem
 import kotlinx.android.synthetic.main.nutritional_info_table_item.view.*
+import za.co.wigroup.androidutils.Util.dpToPx
 
 
 class NutritionalInformationListAdapter : RecyclerView.Adapter<NutritionalInformationListAdapter.ViewHolder>() {
@@ -24,6 +25,7 @@ class NutritionalInformationListAdapter : RecyclerView.Adapter<NutritionalInform
     override fun getItemCount() = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.setIsRecyclable(false)
         holder.bind(data[position])
     }
 
@@ -31,8 +33,27 @@ class NutritionalInformationListAdapter : RecyclerView.Adapter<NutritionalInform
 
         @SuppressLint("SetTextI18n")
         fun bind(item: NutritionalTableItem) {
-            itemView.description.text = item.nutritionalDescription + " (" + item.nutritionalMeasurement + ")"
-            itemView.unit.text = item.nutritionalDescriptionValue
+            val nutritionalDescription = item.nutritionalDescription.trim()
+            with(item.nutritionalDescriptionValue) {
+                itemView.unit.text = when (this) {
+                    "-" -> this
+                    else -> this + " " + item.nutritionalMeasurement
+                }
+            }
+
+            itemView.description.apply {
+                nutritionalDescription.let {
+                    text = when (it.startsWith("of", true)) {
+                        true -> {
+                            setPadding(dpToPx(16), 0, 0, 0)
+                            it.decapitalize()
+                        }
+                        false -> {
+                            it
+                        }
+                    }
+                }
+            }
         }
     }
 

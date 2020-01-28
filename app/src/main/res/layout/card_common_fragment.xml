@@ -360,7 +360,6 @@
                 android:visibility="gone"
                 app:WTextView_font="myriadpro_regular" />
 
-
             <LinearLayout
                 android:id="@+id/llCommonLayer"
                 android:layout_width="match_parent"
