@@ -20,6 +20,9 @@
         <argument
             android:name="absaCardToken"
             android:defaultValue="None" />
+        <action
+            android:id="@+id/action_creditCardActivationSecurityCheckFragment_to_retrieveOTPFragment"
+            app:destination="@id/retrieveOTPFragment" />
     </fragment>
     <fragment
         android:id="@+id/creditCardActivationProgressFragment"
@@ -29,5 +32,56 @@
         <argument
             android:name="absaCardToken"
             android:defaultValue="None" />
+    </fragment>
+    <fragment
+        android:id="@+id/retrieveOTPFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.RetrieveOTPFragment"
+        android:label="RetrieveOTPFragment"
+        tools:layout="@layout/retrieve_otp_fragment">
+        <action
+            android:id="@+id/action_retrieveOTPFragment_to_enterOTPFragment"
+            app:destination="@id/enterOTPFragment" />
+        <action
+            android:id="@+id/action_retrieveOTPFragment_to_retrieveOTPErrorFragment"
+            app:destination="@id/retrieveOTPErrorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/validateOTPFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.ValidateOTPFragment"
+        android:label="ValidateOTPFragment"
+        tools:layout="@layout/validate_otp_fragment">
+        <action
+            android:id="@+id/action_validateOTPFragment_to_creditCardActivationProgressFragment"
+            app:destination="@id/creditCardActivationProgressFragment" />
+        <action
+            android:id="@+id/action_validateOTPFragment_to_validateOTPErrorFragment"
+            app:destination="@id/validateOTPErrorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterOTPFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.EnterOTPFragment"
+        android:label="EnterOTPFragment"
+        tools:layout="@layout/fragment_enter_otp">
+        <action
+            android:id="@+id/action_enterOTPFragment_to_validateOTPFragment"
+            app:destination="@id/validateOTPFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/validateOTPErrorFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.ValidateOTPErrorFragment"
+        android:label="ValidateOTPErrorFragment"
+        tools:layout="@layout/validate_otp_error_fragment">
+        <action
+            android:id="@+id/action_validateOTPErrorFragment_to_enterOTPFragment"
+            app:destination="@id/enterOTPFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/retrieveOTPErrorFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.RetrieveOTPErrorFragment"
+        android:label="RetrieveOTPErrorFragment"
+        tools:layout="@layout/retrieve_otp_error_fragment">
+        <action
+            android:id="@+id/action_retrieveOTPErrorFragment_to_retrieveOTPFragment"
+            app:destination="@id/retrieveOTPFragment" />
     </fragment>
 </navigation>
