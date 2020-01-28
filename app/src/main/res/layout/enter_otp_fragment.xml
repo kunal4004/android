@@ -102,9 +102,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/viewOTPBackground"
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" >
-         <requestFocus/>
+        <requestFocus/>
     </androidx.appcompat.widget.AppCompatEditText>
-
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtVerificationCode2"
         style="@style/enter_otp_edit_text_style"
