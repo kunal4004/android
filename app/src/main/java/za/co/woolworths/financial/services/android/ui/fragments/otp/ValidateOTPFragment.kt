@@ -20,6 +20,9 @@ class ValidateOTPFragment : Fragment() {
 
     var navController: NavController? = null
     var bundle: Bundle? = null
+    lateinit var otpValue: String
+    lateinit var productOfferingId: String
+    lateinit var otpMethodType: OTPMethodType
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.validate_otp_fragment, container, false)
@@ -34,10 +37,15 @@ class ValidateOTPFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            otpValue = getString("otpValue", "")
+            productOfferingId = getString("productOfferingId", "")
+            otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
+        }
     }
 
     private fun initValidateOTP() {
-        OneAppService.validateOTP(ValidateOTPRequest(OTPMethodType.SMS.name, ""), "20").enqueue(CompletionHandler(object : RequestListener<ValidateOTPResponse> {
+        OneAppService.validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : RequestListener<ValidateOTPResponse> {
             override fun onSuccess(validateOTPResponse: ValidateOTPResponse?) {
                 navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
                 /*when (retrieveOTPResponse?.httpCode) {
