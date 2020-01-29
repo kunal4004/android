@@ -24,13 +24,13 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
-        <argument
-            android:name="absaCardToken"
-            android:defaultValue="None" />
+        <argument android:name="bundle" />
         <action
             android:id="@+id/action_creditCardActivationSecurityCheckFragment_to_retrieveOTPFragment"
             app:destination="@id/retrieveOTPFragment" />
+
     </fragment>
+
     <fragment
         android:id="@+id/creditCardActivationProgressFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationProgressFragment"
@@ -40,6 +40,7 @@
             android:name="absaCardToken"
             android:defaultValue="None" />
     </fragment>
+
     <fragment
         android:id="@+id/retrieveOTPFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.RetrieveOTPFragment"
@@ -52,6 +53,7 @@
             android:id="@+id/action_to_retrieveOTPErrorFragment"
             app:destination="@id/retrieveOTPErrorFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/validateOTPFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.ValidateOTPFragment"
@@ -64,6 +66,7 @@
             android:id="@+id/action_to_validateOTPErrorFragment"
             app:destination="@id/validateOTPErrorFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/enterOTPFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.EnterOTPFragment"
@@ -76,6 +79,7 @@
             android:id="@+id/action_to_retrieveOTPFragment"
             app:destination="@id/retrieveOTPFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/validateOTPErrorFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.ValidateOTPErrorFragment"
@@ -85,6 +89,7 @@
             android:id="@+id/action_validateOTPErrorFragment_to_enterOTPFragment"
             app:destination="@id/enterOTPFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/retrieveOTPErrorFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.otp.RetrieveOTPErrorFragment"
@@ -94,4 +99,5 @@
             android:id="@+id/action_to_retrieveOTPFragment"
             app:destination="@id/retrieveOTPFragment" />
     </fragment>
+
 </navigation>

@@ -44,7 +44,8 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
         when (v?.id) {
             R.id.activateCardButton -> {
                 //navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("absaCardToken" to absaCardToken))
-                navController?.navigate(R.id.action_to_RetrieveOTPFragment, bundleOf("absaCardToken" to absaCardToken))
+                val bundle = bundleOf("absaCardToken" to absaCardToken, "productOfferingId" to "20")
+                navController?.navigate(R.id.action_to_RetrieveOTPFragment, bundleOf("bundle" to bundle))
             }
             R.id.callCallCenter -> activity?.apply { Utils.makeCall(this, "0861 50 20 20") }
             R.id.inEnvelope -> {
