@@ -1,22 +1,18 @@
 package za.co.woolworths.financial.services.android.util
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.text.*
-import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.util.TypedValue
 import android.view.View
-import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
 
 class KotlinUtils {
     companion object {
-        fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, tvDesc: TextView?, textIsClickable: Boolean = true) {
+        fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
                 start = 0
@@ -40,9 +36,8 @@ class KotlinUtils {
             val dimenPix = context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
             typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
             spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt() ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            tvDesc?.text = spannableTitle
-            tvDesc?.movementMethod = LinkMovementMethod.getInstance()
-            tvDesc?.highlightColor = Color.TRANSPARENT
+
+            return spannableTitle
         }
     }
 }
