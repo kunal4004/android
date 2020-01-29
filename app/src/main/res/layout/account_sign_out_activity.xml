@@ -7,6 +7,7 @@
     android:background="@drawable/store_card_background"
     android:orientation="vertical">
 
+
     <include
         android:id="@+id/cardHeader"
         layout="@layout/account_sales_card_header"
@@ -16,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
-
 
     <TextView
         android:id="@+id/storeCardTitleTextView"
@@ -88,16 +88,5 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageView
-        android:id="@+id/cardFrontBlackImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitStart"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/cardHeader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/black_credit_card_front"
-        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
