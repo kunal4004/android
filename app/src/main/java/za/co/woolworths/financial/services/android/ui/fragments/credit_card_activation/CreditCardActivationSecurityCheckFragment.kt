@@ -43,7 +43,8 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.activateCardButton -> {
-                navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("absaCardToken" to absaCardToken))
+                //navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("absaCardToken" to absaCardToken))
+                navController?.navigate(R.id.action_to_RetrieveOTPFragment, bundleOf("absaCardToken" to absaCardToken))
             }
             R.id.callCallCenter -> activity?.apply { Utils.makeCall(this, "0861 50 20 20") }
             R.id.inEnvelope -> {

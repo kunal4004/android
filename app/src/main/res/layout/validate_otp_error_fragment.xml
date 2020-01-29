@@ -41,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/errorTitle" />
 
     <Button
-        android:id="@+id/callTheCallCenter"
+        android:id="@+id/retry"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -55,13 +55,13 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
-        app:layout_constraintBottom_toTopOf="@+id/cancel"
+        app:layout_constraintBottom_toTopOf="@+id/needHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="UnusedAttribute" />
 
     <TextView
-        android:id="@+id/cancel"
+        android:id="@+id/needHelp"
         style="@style/link_text_style"
         android:layout_marginBottom="@dimen/thirty_two_dp"
         android:text="@string/need_help_call_the_center"

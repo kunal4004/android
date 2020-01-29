@@ -17,6 +17,13 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_to_RetrieveOTPFragment"
+            app:destination="@id/retrieveOTPFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <argument
             android:name="absaCardToken"
             android:defaultValue="None" />
@@ -39,10 +46,10 @@
         android:label="RetrieveOTPFragment"
         tools:layout="@layout/retrieve_otp_fragment">
         <action
-            android:id="@+id/action_retrieveOTPFragment_to_enterOTPFragment"
+            android:id="@+id/action_to_enterOTPFragment"
             app:destination="@id/enterOTPFragment" />
         <action
-            android:id="@+id/action_retrieveOTPFragment_to_retrieveOTPErrorFragment"
+            android:id="@+id/action_to_retrieveOTPErrorFragment"
             app:destination="@id/retrieveOTPErrorFragment" />
     </fragment>
     <fragment
@@ -51,10 +58,10 @@
         android:label="ValidateOTPFragment"
         tools:layout="@layout/validate_otp_fragment">
         <action
-            android:id="@+id/action_validateOTPFragment_to_creditCardActivationProgressFragment"
+            android:id="@+id/action_to_creditCardActivationProgressFragment"
             app:destination="@id/creditCardActivationProgressFragment" />
         <action
-            android:id="@+id/action_validateOTPFragment_to_validateOTPErrorFragment"
+            android:id="@+id/action_to_validateOTPErrorFragment"
             app:destination="@id/validateOTPErrorFragment" />
     </fragment>
     <fragment
@@ -63,8 +70,11 @@
         android:label="EnterOTPFragment"
         tools:layout="@layout/fragment_enter_otp">
         <action
-            android:id="@+id/action_enterOTPFragment_to_validateOTPFragment"
+            android:id="@+id/action_to_validateOTPFragment"
             app:destination="@id/validateOTPFragment" />
+        <action
+            android:id="@+id/action_to_retrieveOTPFragment"
+            app:destination="@id/retrieveOTPFragment" />
     </fragment>
     <fragment
         android:id="@+id/validateOTPErrorFragment"
@@ -81,7 +91,7 @@
         android:label="RetrieveOTPErrorFragment"
         tools:layout="@layout/retrieve_otp_error_fragment">
         <action
-            android:id="@+id/action_retrieveOTPErrorFragment_to_retrieveOTPFragment"
+            android:id="@+id/action_to_retrieveOTPFragment"
             app:destination="@id/retrieveOTPFragment" />
     </fragment>
 </navigation>

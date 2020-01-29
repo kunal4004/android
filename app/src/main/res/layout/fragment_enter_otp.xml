@@ -161,7 +161,7 @@
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
 
     <ImageView
-        android:id="@+id/imNextProcessLinkCard"
+        android:id="@+id/buttonNext"
         android:layout_width="@dimen/store_card_next_button_size_48_dp"
         android:layout_height="@dimen/store_card_next_button_size_48_dp"
         android:alpha="0.5"
@@ -186,7 +186,7 @@
         android:textAllCaps="true"
         android:textSize="@dimen/store_card_text_size_15_sp"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
-        app:layout_constraintEnd_toStartOf="@+id/imNextProcessLinkCard"
+        app:layout_constraintEnd_toStartOf="@+id/buttonNext"
         app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
         app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
         tools:ignore="UnusedAttribute"

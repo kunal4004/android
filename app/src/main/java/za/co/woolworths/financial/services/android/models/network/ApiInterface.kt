@@ -1184,7 +1184,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<RetrieveOTPResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/otp/validate/{productOfferingId}")
+    @POST("accounts/otp/validate/{productOfferingId}")
     fun validateOTP(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
