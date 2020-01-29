@@ -16,7 +16,7 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_card_header.*
-import kotlinx.android.synthetic.main.account_sales_front_layout.*
+import kotlinx.android.synthetic.main.account_sign_out_activity.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales

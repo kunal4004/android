@@ -16,7 +16,7 @@
 
             <include
                 android:id="@+id/incAccountSalesFrontLayout"
-                layout="@layout/account_sales_front_layout" />
+                layout="@layout/account_sign_out_activity" />
         </FrameLayout>
 
         <View
