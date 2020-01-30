@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.util.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.GradientDrawable;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -15,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -28,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class IncreaseLimitController {
@@ -36,14 +36,9 @@ public class IncreaseLimitController {
 	public static final String EXPENSE_DETAILS = "EXPENSE_DETAILS";
 	public static final String FROM_EXPENSE_SCREEN = "FROM_EXPENSE_SCREEN";
 
-	public static final String YOUTUBE_API_KEY = "AIzaSyDY-DV5jz11iahZuIFGWcxQWtA37MgoSIA";
-
 	private Context mContext;
 	private String nextStep;
 	private boolean offerActive;
-
-	public IncreaseLimitController() {
-	}
 
 	public IncreaseLimitController(Context context) {
 		this.mContext = context;
@@ -78,13 +73,13 @@ public class IncreaseLimitController {
 		editTextView.setSelection(editTextView.getText().length());
 	}
 
-	public void cliDefaultView(LinearLayout llCommonLayer, WTextView tvIncreaseLimitDescription) {
+	public void cliDefaultView(LinearLayout llCommonLayer,TextView tvIncreaseLimitDescription) {
 		hideView(llCommonLayer);
 		hideView(tvIncreaseLimitDescription);
 	}
 
-	public void accountCLIStatus(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
-		tvIncreaseLimit.setText(getString(R.string.increase_limit));
+	public void accountCLIStatus(LinearLayout llCommonLayer, TextView tvIncreaseLimit, TextView tvApplyNowIncreaseLimit, TextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
+		tvIncreaseLimit.setText("");
 		hideView(llCommonLayer);
 		hideView(tvIncreaseLimitDescription);
 		boolean activeOffer = false;
@@ -190,7 +185,7 @@ public class IncreaseLimitController {
 		view.setVisibility(View.VISIBLE);
 	}
 
-	private void setStatusText(String messageSummary, WTextView wTextView) {
+	private void setStatusText(String messageSummary, TextView wTextView) {
 		wTextView.setText(messageSummary);
 	}
 
@@ -199,14 +194,14 @@ public class IncreaseLimitController {
 		return mContext.getResources().getString(stringId);
 	}
 
-	private void setCLITag(String messageSummary, String nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+	private void setCLITag(String messageSummary, String nextStepColour, TextView tvApplyNowIncreaseLimit) {
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
-		roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour);
+		KotlinUtils.Companion.roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour);
 		tvApplyNowIncreaseLimit.setText(messageSummary);
 	}
 
-	private void setCLITag(String messageSummary, int nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+	private void setCLITag(String messageSummary, int nextStepColour, TextView tvApplyNowIncreaseLimit) {
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
 		tvApplyNowIncreaseLimit.setBackground(ContextCompat.getDrawable(tvApplyNowIncreaseLimit.getContext(), nextStepColour));
@@ -262,11 +257,10 @@ public class IncreaseLimitController {
 		}
 	}
 
-	public void defaultIncreaseLimitView(ImageView logoIncreaseLimit, LinearLayout llCommonLayer, WTextView tvIncreaseLimit) {
+	public void defaultIncreaseLimitView(ImageView logoIncreaseLimit, LinearLayout llCommonLayer, TextView tvIncreaseLimit) {
 		showView(logoIncreaseLimit);
 		hideView(llCommonLayer);
-		String messageSummary = getString(R.string.increase_limit);
-		tvIncreaseLimit.setText(messageSummary);
+		tvIncreaseLimit.setText("");
 	}
 
 	public HashMap<String, String> expenseHashMap(WEditTextView etMortgagePayments, WEditTextView etRentalPayments, WEditTextView etMaintainanceExpenses, WEditTextView etMonthlyCreditPayments, WEditTextView etOtherExpenses) {
@@ -357,23 +351,9 @@ public class IncreaseLimitController {
 //		}
 //	}
 
-	private void displayDescription(WTextView view, String messageDetail) {
+	private void displayDescription(TextView view, String messageDetail) {
 		view.setVisibility(View.VISIBLE);
 		view.setText(messageDetail);
-	}
-
-	public static void roundCornerDrawable(View v, String color) {
-		if (TextUtils.isEmpty(color))
-			return;
-
-		int paddingDp = (int) (12 * v.getContext().getResources().getDisplayMetrics().density);
-
-		GradientDrawable shape = new GradientDrawable();
-		shape.setShape(GradientDrawable.RECTANGLE);
-		shape.setCornerRadii(new float[]{paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp});
-		shape.setColor(Color.parseColor(color));
-		shape.setStroke(2, Color.parseColor(color));
-		v.setBackground(shape);
 	}
 
 	private String nullToEmpty(Integer amount) {

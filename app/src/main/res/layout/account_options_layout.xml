@@ -25,9 +25,8 @@
 
     <TextView
         android:id="@+id/balanceProtectInsuranceTextView"
-        style="@style/textViewRoundedTagStyle"
+        style="@style/tag_badge_style"
         android:text="@string/bpi_covered"
-        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
         app:layout_constraintEnd_toEndOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance"
@@ -70,10 +69,8 @@
 
     <TextView
         android:id="@+id/debitOrderIsActiveTextView"
-        style="@style/textViewRoundedTagStyle"
-        android:layout_height="wrap_content"
-        android:text="active"
-        android:padding="4dp"
+        style="@style/tag_badge_style"
+        android:text="@string/active"
         app:layout_constraintBottom_toBottomOf="@+id/debitOrderLogoImageView"
         app:layout_constraintEnd_toEndOf="@+id/debitOrderView"
         app:layout_constraintTop_toTopOf="@+id/debitOrderLogoImageView"
