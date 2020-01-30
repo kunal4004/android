@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.account_sales_front_layout.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
 import za.co.woolworths.financial.services.android.ui.extension.getFragment
@@ -38,9 +37,10 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         KotlinUtils.setTransparentStatusBar(this)
 
         mAccountSalesModelImpl = AccountSalesPresenterImpl(this, AccountSalesModelImpl())
-        val selectedBundle = intent?.extras?.getSerializable("APPLY_NOW_STATE")
-        (selectedBundle as? ApplyNowState)?.let { state -> mAccountSalesModelImpl?.switchAccountSalesProduct(state) }
-
+        mAccountSalesModelImpl?.apply {
+            setAccountSalesIntent(intent)
+            switchAccountSalesProduct()
+        }
         setToolbarTopMargin()
         setUpBottomSheetDialog()
 

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -14,6 +15,8 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.AccountSalesView?, private var model: AccountSalesContract.AccountSalesModel) : AccountSalesContract.AccountSalesPresenter, AccountSalesContract.AccountSalesModel {
+
+    private var mApplyNowState: ApplyNowState? = null
 
     companion object {
         const val ACCOUNT_SALES_CREDIT_CARD = "ACCOUNT_SALES_CREDIT_CARD"
@@ -31,11 +34,20 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
 
     fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getOverlayAnchoredHeight()
 
-    fun onApplyNowButtonTapped(activity: Activity?) = Utils.openExternalLink(activity, WoolworthsApplication.getApplyNowLink())
+    fun onApplyNowButtonTapped(activity: Activity?) {
+        val applyNowLinks = WoolworthsApplication.getApplyNowLink()
+        Utils.openExternalLink(activity,
+        when (getApplyNowState()) {
+            ApplyNowState.STORE_CARD -> applyNowLinks.storeCard
+            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD ->  applyNowLinks.creditCard
+            ApplyNowState.PERSONAL_LOAN -> applyNowLinks.personalLoan
+            else -> throw RuntimeException("OnApplyNowButtonTapped:: Invalid ApplyNowState ## : ${getApplyNowState()}")
+        })
+    }
 
     fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
-    fun getStatusBarHeight(actionBarHeight: Int): Int = KotlinUtils.getStatusBarHeight(actionBarHeight)
+    private fun getStatusBarHeight(actionBarHeight: Int): Int = KotlinUtils.getStatusBarHeight(actionBarHeight)
 
     fun onDestroy() {
         mainView = null
@@ -47,7 +59,8 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
         navDetailController.setGraph(navDetailController.graph, bundle)
     }
 
-    override fun switchAccountSalesProduct(applyNowState: ApplyNowState) {
+    override fun switchAccountSalesProduct() {
+        val applyNowState = getApplyNowState()
         mainView?.apply {
             when (applyNowState) {
                 ApplyNowState.STORE_CARD -> {
@@ -74,4 +87,10 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
     override fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
         return toolbar?.layoutParams?.height?.let { toolBarHeight -> getStatusBarHeight(toolBarHeight) }
     }
+
+    override fun setAccountSalesIntent(intent: Intent?) {
+        mApplyNowState = intent?.extras?.getSerializable("APPLY_NOW_STATE") as? ApplyNowState
+    }
+
+    override fun getApplyNowState(): ApplyNowState? = mApplyNowState
 }
