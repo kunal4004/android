@@ -54,8 +54,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        getAccountStoreCardCards()
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -64,7 +64,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
 
     override fun isDebitOrderActive(): Int? = if (getDebitOrder()?.debitOrderActive == true) VISIBLE else GONE
 
-    override fun getAccountInStringFormat(): String? = Gson().toJson(getAccount())
+    override fun convertAccountObjectToJsonString(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
     override fun getAccountStoreCardCards() {
@@ -177,7 +177,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     }
 
     override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
-        mainView?.navigateToBalanceProtectionInsurance(getAccountInStringFormat())
+        mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
     }
 
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding

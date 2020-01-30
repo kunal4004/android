@@ -64,7 +64,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferingGoodStanding()
+        showProductOfferOutstanding()
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -101,10 +101,10 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         }
     }
 
-    override fun showProductOfferingGoodStanding() {
+    override fun showProductOfferOutstanding() {
         val account = getAccount()
         account?.apply {
-            return when  {
+            return when {
                 (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
                     // account is in arrears for more than 6 months
                     mainView?.showAccountChargeOffForMoreThan6Months()!!
@@ -133,7 +133,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
 
     override fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
-    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getOverlayAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 80f))
+    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 60f))
 
     override fun onDestroy() {
         mainView = null

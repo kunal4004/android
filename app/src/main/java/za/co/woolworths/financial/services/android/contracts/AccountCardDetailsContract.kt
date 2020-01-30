@@ -76,7 +76,7 @@ interface AccountCardDetailsContract {
         fun getAccount(): Account?
         fun getDebitOrder(): DebitOrder?
         fun isDebitOrderActive(): Int?
-        fun getAccountInStringFormat(): String?
+        fun convertAccountObjectToJsonString(): String?
         fun handleUnknownHttpResponse(description: String?)
         fun getAccountStoreCardCards()
         fun getUserCLIOfferActive()
