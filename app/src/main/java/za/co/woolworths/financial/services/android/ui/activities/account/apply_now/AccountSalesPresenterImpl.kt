@@ -32,7 +32,7 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
 
     override fun getPersonalLoan(): AccountSales = model.getPersonalLoan()
 
-    fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getOverlayAnchoredHeight()
+    fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()
 
     fun onApplyNowButtonTapped(activity: Activity?) {
         val applyNowLinks = WoolworthsApplication.getApplyNowLink()

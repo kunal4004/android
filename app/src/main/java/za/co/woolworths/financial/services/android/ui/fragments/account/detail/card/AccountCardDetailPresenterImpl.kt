@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import za.co.woolworths.financial.services.android.contracts.AccountPaymentOptionsContract
+import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.ICommonView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -20,17 +20,15 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 
-class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptionsContract.AccountCardDetailView?, private var model: AccountPaymentOptionsContract.AccountCardDetailModel?) : AccountPaymentOptionsContract.AccountCardDetailPresenter, ICommonView<Any> {
+class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsContract.AccountCardDetailView?, private var model: AccountCardDetailsContract.AccountCardDetailModel?) : AccountCardDetailsContract.AccountCardDetailPresenter, ICommonView<Any> {
 
     private var mOfferActive: OfferActive? = null
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: IncreaseLimitController? = null
-    private var mQueryService = -1
 
     init {
-        mIncreaseLimitController =
-                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
     }
 
     override fun createCardHolderName(): String? {
@@ -58,7 +56,6 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
         getAccountStoreCardCards()
-
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -132,8 +129,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary =
-                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()

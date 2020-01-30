@@ -51,15 +51,14 @@
         android:layout_height="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceView" />
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashView" />
 
     <View
         android:id="@+id/debitOrderView"
         style="@style/paymentOptionsRootRowContainerStyle"
-        android:layout_marginTop="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceView" />
+        app:layout_constraintTop_toBottomOf="@+id/debitOrderDivider" />
 
     <ImageView
         android:id="@+id/debitOrderLogoImageView"
@@ -67,7 +66,7 @@
         android:src="@drawable/ic_debit_order"
         app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
         app:layout_constraintStart_toStartOf="@+id/debitOrderView"
-        app:layout_constraintTop_toBottomOf="@+id/debitOrderDivider" />
+        app:layout_constraintTop_toTopOf="@+id/debitOrderView" />
 
     <TextView
         android:id="@+id/debitOrderIsActiveTextView"
@@ -88,7 +87,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/debitOrderView"
         app:layout_constraintEnd_toStartOf="@+id/debitOrderIsActiveTextView"
         app:layout_constraintStart_toEndOf="@+id/debitOrderLogoImageView"
-        app:layout_constraintTop_toBottomOf="@+id/debitOrderDivider" />
+        app:layout_constraintTop_toTopOf="@+id/debitOrderView" />
+
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/debitOrderViewGroup"
@@ -98,5 +98,59 @@
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <View
+        android:id="@+id/withdrawCashView"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/withdrawCashDivider" />
+
+    <ImageView
+        android:id="@+id/loanWithdrawalLogoImageView"
+        style="@style/style_loan_logo_img"
+        android:src="@drawable/money"
+        app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
+        app:layout_constraintStart_toStartOf="@+id/withdrawCashView"
+        app:layout_constraintTop_toTopOf="@+id/withdrawCashView" />
+
+
+    <ImageView
+        android:id="@+id/iconDrawnDownAmount"
+        style="@style/style_loan_img"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/loanWithdrawalLogoImageView"
+        app:layout_constraintEnd_toEndOf="@+id/withdrawCashView"
+        app:layout_constraintTop_toTopOf="@+id/loanWithdrawalLogoImageView"
+        tools:ignore="UnusedAttribute" />
+
+    <TextView
+        android:id="@+id/withdrawCashTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:text="@string/instore_withdraw_cash_now"
+        app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
+        app:layout_constraintEnd_toStartOf="@+id/debitOrderIsActiveTextView"
+        app:layout_constraintStart_toEndOf="@+id/loanWithdrawalLogoImageView"
+        app:layout_constraintTop_toTopOf="@+id/withdrawCashView" />
+
+    <View
+        android:id="@+id/withdrawCashDivider"
+        style="@style/creditLimitDividerStyle"
+        android:layout_height="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/balanceProtectionInsuranceView" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/withdrawCashViewGroup"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="withdrawCashView,loanWithdrawalLogoImageView,iconDrawnDownAmount,withdrawCashTextView,withdrawCashDivider"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

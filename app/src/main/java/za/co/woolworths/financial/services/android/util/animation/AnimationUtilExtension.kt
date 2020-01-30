@@ -25,5 +25,16 @@ class AnimationUtilExtension {
             rotateAnimation?.fillAfter = true
             view?.startAnimation(rotateAnimation)
         }
+
+        fun animateViewPushDown(view: View?) {
+            view?.let { view ->
+                PushDownAnim.setPushDownAnimTo(view)
+                        .setScale(PushDownAnim.MODE_STATIC_DP, 3f)
+                        .setDurationPush(PushDownAnim.DEFAULT_PUSH_DURATION)
+                        ?.setDurationRelease(PushDownAnim.DEFAULT_RELEASE_DURATION)
+                        ?.setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                        ?.setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR)
+            }
+        }
     }
 }

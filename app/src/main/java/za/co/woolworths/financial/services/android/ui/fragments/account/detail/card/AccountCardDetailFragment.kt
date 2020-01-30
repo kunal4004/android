@@ -12,13 +12,14 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import za.co.woolworths.financial.services.android.contracts.AccountPaymentOptionsContract
+import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -31,10 +32,12 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountPaymentOptionsContract.AccountCardDetailView {
+open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountCardDetailsContract.AccountCardDetailView {
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
@@ -60,6 +63,9 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
+        withdrawCashView?.setOnClickListener (this)
+
+        AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
             setBalanceProtectionInsuranceState()
@@ -121,7 +127,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     @SuppressLint("DefaultLocale")
     override fun hideAccountStoreCardProgress() {
-        if (fragmentIsAlreadyAdded()) return
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
@@ -130,16 +135,12 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun handleUnknownHttpCode(description: String?) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.supportFragmentManager?.let { fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, description) }
     }
 
     override fun handleSessionTimeOut(stsParams: String?) {
-        if (fragmentIsAlreadyAdded()) return
         (activity as? AccountSignedInActivity)?.let { accountSignedInActivity -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, accountSignedInActivity) }
     }
-
-    private fun fragmentIsAlreadyAdded(): Boolean = !isAdded
 
     override fun onClick(v: View?) {
         mCardPresenterImpl?.apply {
@@ -148,7 +149,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
                 R.id.cardDetailImageView -> navigateToGetStoreCards()
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.tvIncreaseLimit,R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.withdrawCashView,R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
             }
         }
     }
@@ -170,7 +172,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             val intent = Intent(this, GetTemporaryStoreCardPopupActivity::class.java)
             intent.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
@@ -180,7 +181,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
             displayStoreCardDetail.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
@@ -190,7 +190,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             val debitOrderIntent = Intent(this, DebitOrderActivity::class.java)
             debitOrderIntent.putExtra("DebitOrder", debitOrder)
@@ -200,7 +199,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
-        if (fragmentIsAlreadyAdded()) return
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI)
             val navigateToBalanceProtectionInsurance =
@@ -231,7 +229,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun displayViewCardText() {
-        if (fragmentIsAlreadyAdded()) return
         myCardDetailTextView?.text = activity?.getString(R.string.view_card)
     }
 
@@ -275,6 +272,15 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     override fun onOfferActiveSuccessResult() {
         userOfferActiveCallWasCompleted = true
+    }
+
+    override fun navigateToLoanWithdrawalActivity() {
+        activity?.apply {
+            val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
+            intentWithdrawalActivity.putExtra("account_info", Gson().toJson(mCardPresenterImpl?.getAccount()))
+            startActivityForResult(intentWithdrawalActivity, 0)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
     }
 
     private fun hideCLIView() {

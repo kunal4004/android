@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -31,12 +32,13 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021
     }
 
-    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
+    var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.account_signed_in_activity)
         KotlinUtils.setTransparentStatusBar(this)
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
@@ -103,7 +105,6 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
         mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
-
     }
 
     override fun hideAccountInArrears(account: Account) {

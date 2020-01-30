@@ -15,11 +15,15 @@ class PersonalLoanDetailFragment : AccountCardDetailFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cardDetailImageView?.setImageResource(R.drawable.w_personal_loan_card)
+
         if (mCardPresenterImpl?.isDebitOrderActive() == VISIBLE) {
             KotlinUtils.roundCornerDrawable(debitOrderIsActiveTextView,"#bad110")
         } else {
             debitOrderViewGroup?.visibility = GONE
         }
         myCardDetailTextView?.visibility = GONE
+
+        // Hide withdraw cash row for accounts not in productOfferingGoodStanding
+        withdrawCashViewGroup?.visibility = if (mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding == true) VISIBLE else GONE
     }
 }

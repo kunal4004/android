@@ -1487,7 +1487,7 @@
     <string name="payment_option_make_your_life_easier">4 ways we make your life easier</string>
     <string name="payment_option_pay_woolies_card_label">You can pay your woolworths credit card account in any of the following ways</string>
     <string name="account_options_label">Account Options</string>
-    <string name="withdrawal_options">View\nWithdrawals</string>
+    <string name="withdrawal_options">Withdraw \nFunds</string>
 
     <string name="black_credit_card_available_fund_information_desc">Funds available for you to use.</string>
     <string name="black_credit_card_current_balance_information_desc">Balance as at the current date</string>
@@ -1514,6 +1514,7 @@
     <string name="view_card">View Card</string>
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
+
     <string name="account_arrears_description">Your account in in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_pager_bottom_sheet_behavior" translatable="false">za.co.woolworths.financial.services.android.ui.views.ViewPagerBottomSheetBehavior</string>
