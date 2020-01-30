@@ -86,7 +86,7 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
             mDrawerToggle?.apply { mDrawerLayout?.addDrawerListener(this) }
 
             initViews()
-
+            setUniqueIds()
         }
 
     }
@@ -307,6 +307,13 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         selectedNavigationState = null
         categoryNameForPageTitle = ""
         isResetFilterSelected = false
+    }
+
+    fun setUniqueIds(){
+        resources?.apply {
+            toolbarText?.contentDescription = getString(R.string.plp_testViewFilterResult)
+            closeButton?.contentDescription = getString(R.string.plp_buttonClose)
+        }
     }
 
 }
