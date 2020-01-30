@@ -1173,7 +1173,7 @@
     <string name="select_colour">Select Colour</string>
     <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
-    <string name="icr_wrong_otp_error">The One Time Pin provided doesn\'t exist</string>
+    <string name="icr_wrong_otp_error">The OTP entered is incorrect. Please try again.</string>
 
     <string name="toolbar_layout">Toolbar</string>
     <string name="active_account_layout">Active Account</string>

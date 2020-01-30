@@ -688,7 +688,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         handleStoreCardResponse(storeCardsResponse);
                         break;
                     case 440:
-                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
+                        String stsParams ="";
+                        Activity activity = getActivity();
+                        if (storeCardsResponse.getResponse()!=null && storeCardsResponse.getResponse().stsParams !=null ){
+                            stsParams = storeCardsResponse.getResponse().stsParams;
+                        }
+                        if (activity!=null) {
+                            String finalStsParams = stsParams;
+                            activity.runOnUiThread(() -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, finalStsParams, activity));
+                        }
                         break;
                     default:
                         String message = (storeCardsResponse.getResponse() != null && storeCardsResponse.getResponse().desc != null) ? storeCardsResponse.getResponse().desc : getString(R.string.general_error_desc);
