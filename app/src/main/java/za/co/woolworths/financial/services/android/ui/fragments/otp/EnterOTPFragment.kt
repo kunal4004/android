@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.otp
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,7 +104,18 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     private fun showWrongOTP() {
+        if (!TextUtils.isEmpty(otpValue)) {
+            with(otpValue.split("")) {
+                edtVerificationCode1?.setText(this[1])
+                edtVerificationCode2?.setText(this[2])
+                edtVerificationCode3?.setText(this[3])
+                edtVerificationCode4?.setText(this[4])
+                edtVerificationCode5?.setText(this[5])
+            }
+            edtVerificationCode1?.setSelection(0)
+        }
         otpErrorTextView.visibility = View.VISIBLE
+        setOtpErrorBackground(R.drawable.otp_box_error_background)
     }
 
     override fun onResume() {

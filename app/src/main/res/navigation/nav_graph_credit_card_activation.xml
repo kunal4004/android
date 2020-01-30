@@ -65,6 +65,9 @@
         <action
             android:id="@+id/action_to_validateOTPErrorFragment"
             app:destination="@id/validateOTPErrorFragment" />
+        <action
+            android:id="@+id/action_to_enterOTPFragment"
+            app:destination="@id/enterOTPFragment" />
     </fragment>
 
     <fragment
@@ -86,8 +89,8 @@
         android:label="ValidateOTPErrorFragment"
         tools:layout="@layout/validate_otp_error_fragment">
         <action
-            android:id="@+id/action_to_enterOTPFragment"
-            app:destination="@id/enterOTPFragment" />
+            android:id="@+id/action_to_validateOTPFragment"
+            app:destination="@id/validateOTPFragment" />
     </fragment>
 
     <fragment

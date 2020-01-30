@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.validate_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -23,6 +24,7 @@ class ValidateOTPFragment : Fragment() {
     lateinit var otpValue: String
     lateinit var productOfferingId: String
     lateinit var otpMethodType: OTPMethodType
+    lateinit var otpSentTo: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.validate_otp_fragment, container, false)
@@ -31,6 +33,7 @@ class ValidateOTPFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        description.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
         initValidateOTP()
     }
 
@@ -38,6 +41,7 @@ class ValidateOTPFragment : Fragment() {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
+            otpSentTo = getString("otpSentTo", "")
             otpValue = getString("otpValue", "")
             productOfferingId = getString("productOfferingId", "")
             otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
@@ -50,14 +54,24 @@ class ValidateOTPFragment : Fragment() {
                 validateOTPResponse?.apply {
                     when (httpCode) {
                         200 -> navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
-                        else -> navController?.navigate(R.id.action_to_validateOTPErrorFragment, bundleOf("bundle" to bundle))
+                        502 -> {
+                            if (response?.code.equals("1060"))
+                                navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to bundle))
+                            else
+                                navigateToValidateOTPErrorFragment()
+                        }
+                        else -> navigateToValidateOTPErrorFragment()
                     }
                 }
             }
 
             override fun onFailure(error: Throwable) {
-                navController?.navigate(R.id.action_to_validateOTPErrorFragment, bundleOf("bundle" to bundle))
+                navigateToValidateOTPErrorFragment()
             }
         }, ValidateOTPResponse::class.java))
+    }
+
+    fun navigateToValidateOTPErrorFragment() {
+        navController?.navigate(R.id.action_to_validateOTPErrorFragment, bundleOf("bundle" to bundle))
     }
 }
