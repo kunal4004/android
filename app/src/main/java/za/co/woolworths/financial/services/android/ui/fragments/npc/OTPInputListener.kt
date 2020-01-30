@@ -1,22 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.view.View.FOCUS_DOWN
-import android.view.View.GONE
+import android.view.View.*
+import androidx.core.content.ContextCompat
+import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 
 open class OTPInputListener : MyCardExtension() {
 
     fun setupInputListeners() {
 
-        edtVerificationCode1?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode1, edtVerificationCode2) { validateVerificationCode() })
-        edtVerificationCode2?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode2, edtVerificationCode3) { validateVerificationCode() })
-        edtVerificationCode3?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode2, edtVerificationCode3, edtVerificationCode4) { validateVerificationCode() })
-        edtVerificationCode4?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode3, edtVerificationCode4, edtVerificationCode5) { validateVerificationCode() })
-        edtVerificationCode5?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode4, edtVerificationCode5, edtVerificationCode5) { validateVerificationCode() })
+        edtVerificationCode1?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode1, edtVerificationCode2) {validateVerificationCode()})
+        edtVerificationCode2?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode2, edtVerificationCode3) {validateVerificationCode()})
+        edtVerificationCode3?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode2, edtVerificationCode3, edtVerificationCode4) {validateVerificationCode()})
+        edtVerificationCode4?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode3, edtVerificationCode4, edtVerificationCode5) {validateVerificationCode()})
+        edtVerificationCode5?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode4, edtVerificationCode5, edtVerificationCode5) {validateVerificationCode()})
 
-        edtVerificationCode1.setOnKeyListener(View.OnKeyListener
+        edtVerificationCode1?.setOnKeyListener(View.OnKeyListener
         { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                 if (edtVerificationCode1?.text?.isEmpty() == true) {
@@ -30,7 +32,7 @@ open class OTPInputListener : MyCardExtension() {
             false
         })
 
-        edtVerificationCode2.setOnKeyListener(View.OnKeyListener
+        edtVerificationCode2?.setOnKeyListener(View.OnKeyListener
         { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
 
@@ -46,7 +48,7 @@ open class OTPInputListener : MyCardExtension() {
             false
         })
 
-        edtVerificationCode3.setOnKeyListener(View.OnKeyListener
+        edtVerificationCode3?.setOnKeyListener(View.OnKeyListener
         { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
 
@@ -61,7 +63,7 @@ open class OTPInputListener : MyCardExtension() {
             false
         })
 
-        edtVerificationCode4.setOnKeyListener(View.OnKeyListener
+        edtVerificationCode4?.setOnKeyListener(View.OnKeyListener
         { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                 if (edtVerificationCode4?.text?.isEmpty() == true) {
@@ -75,7 +77,7 @@ open class OTPInputListener : MyCardExtension() {
             false
         })
 
-        edtVerificationCode5.setOnKeyListener(View.OnKeyListener
+        edtVerificationCode5?.setOnKeyListener(View.OnKeyListener
         { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                 if (edtVerificationCode5?.text?.isEmpty() == true) {
@@ -88,7 +90,7 @@ open class OTPInputListener : MyCardExtension() {
             }
             false
         })
-        
+
     }
 
     private fun validateVerificationCode() {
@@ -108,6 +110,32 @@ open class OTPInputListener : MyCardExtension() {
                 imNextProcessLinkCard?.isFocusable = true
             }
         }
+
+        if (otpErrorTextView.visibility == VISIBLE) {
+            clearOTP()
+            setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+        }
+
         otpErrorTextView?.visibility = GONE
+    }
+
+    fun clearOTP() {
+        edtVerificationCode1?.text?.clear()
+        edtVerificationCode2?.text?.clear()
+        edtVerificationCode3?.text?.clear()
+        edtVerificationCode4?.text?.clear()
+        edtVerificationCode5?.text?.clear()
+    }
+
+    fun setOtpErrorBackground(drawableId: Int) {
+        context?.let { context ->
+            ContextCompat.getDrawable(context, drawableId)?.apply {
+                edtVerificationCode1?.setBackgroundResource(drawableId)
+                edtVerificationCode2?.setBackgroundResource(drawableId)
+                edtVerificationCode3?.setBackgroundResource(drawableId)
+                edtVerificationCode4?.setBackgroundResource(drawableId)
+                edtVerificationCode5?.setBackgroundResource(drawableId)
+            }
+        }
     }
 }
