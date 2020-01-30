@@ -7,13 +7,11 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.text.*
-import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.view.WindowManager
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
@@ -21,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 class KotlinUtils {
     companion object {
-        fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, tvDesc: TextView?, textIsClickable: Boolean = true) {
+        fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
                 start = 0
@@ -39,18 +37,15 @@ class KotlinUtils {
                 }
             }
 
-            val typeface: Typeface? =
-                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
-            if (textIsClickable)
-                spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val dimenPix =
-                    context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
+            val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+            if (textIsClickable) spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val dimenPix = context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
             typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
             spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
                     ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            tvDesc?.text = spannableTitle
-            tvDesc?.movementMethod = LinkMovementMethod.getInstance()
-            tvDesc?.highlightColor = Color.TRANSPARENT
+            spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
+                    ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            return spannableTitle
         }
 
         fun setTransparentStatusBar(appCompatActivity: AppCompatActivity?) {
@@ -136,7 +131,8 @@ class KotlinUtils {
             val paddingDp: Float = (12 * view.context.resources.displayMetrics.density)
             val shape = GradientDrawable()
             shape.shape = GradientDrawable.RECTANGLE
-            shape.cornerRadii = floatArrayOf(paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp)
+            shape.cornerRadii =
+                    floatArrayOf(paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp)
             shape.setColor(Color.parseColor(color))
             view.background = shape
         }
