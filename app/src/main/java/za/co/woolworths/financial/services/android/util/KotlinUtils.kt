@@ -79,7 +79,7 @@ class KotlinUtils {
             }
         }
 
-        fun getOverlayAnchoredHeight(): Int? {
+        fun getBottomSheetBehaviorDefaultAnchoredHeight(): Int? {
             val activity = WoolworthsApplication.getInstance()?.currentActivity
             val height: Int? = activity?.resources?.displayMetrics?.heightPixels ?: 0
             return height?.div(3)?.plus(Utils.dp2px(activity, 18f)) ?: 0
