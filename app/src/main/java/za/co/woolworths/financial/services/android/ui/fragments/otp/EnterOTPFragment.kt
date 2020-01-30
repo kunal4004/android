@@ -13,11 +13,6 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_enter_otp.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_enter_otp.edtVerificationCode1
-import kotlinx.android.synthetic.main.fragment_enter_otp.edtVerificationCode2
-import kotlinx.android.synthetic.main.fragment_enter_otp.edtVerificationCode3
-import kotlinx.android.synthetic.main.fragment_enter_otp.edtVerificationCode4
-import kotlinx.android.synthetic.main.fragment_enter_otp.edtVerificationCode5
 import kotlinx.android.synthetic.main.fragment_enter_otp.enterOTPDescriptionScreen
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 

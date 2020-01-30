@@ -17,4 +17,5 @@ public class Configs {
     public VirtualTempCard virtualTempCard;
     public ArrayList<String> whitelistedDomainsForQRScanner;
     public Sts sts;
+    public CreditCardActivation creditCardActivation;
 }
