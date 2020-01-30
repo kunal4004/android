@@ -10,8 +10,6 @@ import androidx.navigation.NavController
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.*
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import java.io.Serializable
 import java.util.*
 
@@ -22,6 +20,7 @@ interface AccountSignedInContract {
         fun showAccountInArrears(account: Account)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
+        fun showAccountChargeOffForMoreThan6Months()
     }
 
     interface MyAccountPresenter {
@@ -37,6 +36,8 @@ interface AccountSignedInContract {
         fun shouldDisplayAccountInArrears(): Boolean
         fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int?
         fun setAccountCardDetailInfo(navDetailController: NavController?)
+        fun setAccountSixMonthInArrears(navDetailController: NavController?)
+        fun getSixMonthOutstandingTitleAndCardResource() : Pair<Int, Int>
     }
 
     interface MyAccountModel {

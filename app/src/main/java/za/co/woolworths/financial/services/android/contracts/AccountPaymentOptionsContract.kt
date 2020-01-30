@@ -1,13 +1,44 @@
 package za.co.woolworths.financial.services.android.contracts
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.DebitOrder
-import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
+
+interface AvailableFundContract {
+
+    interface AvailableFundView {
+        fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean)
+        fun displayCardNumberNotFound()
+        fun handleUnknownHttpResponse(desc: String?)
+        fun handleSessionTimeOut(stsParams: String)
+        fun showABSAServiceGetUserCreditCardTokenProgressBar()
+        fun hideABSAServiceGetUserCreditCardTokenProgressBar()
+        fun navigateToRecentTransactionActivity(cardType: String)
+        fun navigateToLoanWithdrawalActivity()
+        fun navigateToPaymentOptionActivity()
+        fun navigateToStatementActivity()
+        fun setPushViewDownAnimation(view: View)
+    }
+
+    interface AvailableFundPresenter {
+        fun setBundle(bundle: Bundle?)
+        fun getBundle(): Pair<ApplyNowState, Account>?
+        fun queryABSAServiceGetUserCreditCardToken()
+        fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse)
+        fun getCreditCardNumber(cards: ArrayList<Card>?): String
+        fun getAccount(): Account?
+        fun onDestroy()
+    }
+
+    interface AvailableFundModel {
+        fun queryABSAServiceGetUserCreditCardToken(requestListener: ICommonView<Any>)
+    }
+}
 
 interface AccountPaymentOptionsContract {
 
@@ -50,7 +81,7 @@ interface AccountPaymentOptionsContract {
         fun navigateToGetTemporaryStoreCardPopupActivity()
         fun navigateToMyCardDetailActivity()
         fun getOfferActive(): OfferActive?
-        fun getProductOfferingId() : Int?
+        fun getProductOfferingId(): Int?
         fun onDestroy()
         fun navigateToTemporaryStoreCardOnButtonTapped()
         fun navigateToDebitOrderActivityOnButtonTapped()

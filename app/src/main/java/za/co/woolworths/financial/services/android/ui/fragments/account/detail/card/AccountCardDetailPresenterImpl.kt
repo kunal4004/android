@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.detail
+package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -119,15 +119,18 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
                     }
                     mainView?.hideUserOfferActiveProgress()
                 }
+
                 else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
             }
         }
     }
 
+
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary =
+                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()
@@ -178,10 +181,11 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
         mainView?.navigateToBalanceProtectionInsurance(convertAccountFromJsonToStringType())
     }
 
-    override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding ?: false
-
+    override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding
+            ?: false
 
     override fun getCreditLimitIncreaseController(): IncreaseLimitController? = mIncreaseLimitController
+
 
     override fun onDestroy() {
         mainView = null

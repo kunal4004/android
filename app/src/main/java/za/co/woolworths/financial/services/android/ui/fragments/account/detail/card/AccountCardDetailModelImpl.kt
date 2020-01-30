@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.detail
+package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import za.co.woolworths.financial.services.android.contracts.AccountPaymentOptionsContract
 import za.co.woolworths.financial.services.android.contracts.ICommonView

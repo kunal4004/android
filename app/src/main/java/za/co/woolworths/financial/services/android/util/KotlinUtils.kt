@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
+import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
@@ -132,5 +130,17 @@ class KotlinUtils {
                     (startG + (fraction * (endG - startG)).toInt() shl 8) or
                     startB + (fraction * (endB - startB)).toInt()
         }
+
+        fun roundCornerDrawable(v: View, color: String?) {
+            if (TextUtils.isEmpty(color)) return
+            val paddingDp = (12 * v.context.resources.displayMetrics.density).toInt()
+            val shape = GradientDrawable()
+            shape.shape = GradientDrawable.RECTANGLE
+            shape.cornerRadii = floatArrayOf(paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat())
+            shape.setColor(Color.parseColor(color))
+            shape.setStroke(1, Color.parseColor(color))
+            v.background = shape
+        }
+
     }
 }
