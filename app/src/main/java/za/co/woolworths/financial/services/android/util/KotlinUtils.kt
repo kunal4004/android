@@ -131,15 +131,14 @@ class KotlinUtils {
                     startB + (fraction * (endB - startB)).toInt()
         }
 
-        fun roundCornerDrawable(v: View, color: String?) {
+        fun roundCornerDrawable(view: View, color: String?) {
             if (TextUtils.isEmpty(color)) return
-            val paddingDp = (12 * v.context.resources.displayMetrics.density).toInt()
+            val paddingDp: Float = (12 * view.context.resources.displayMetrics.density)
             val shape = GradientDrawable()
             shape.shape = GradientDrawable.RECTANGLE
-            shape.cornerRadii = floatArrayOf(paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat(), paddingDp.toFloat())
+            shape.cornerRadii = floatArrayOf(paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp)
             shape.setColor(Color.parseColor(color))
-            shape.setStroke(1, Color.parseColor(color))
-            v.background = shape
+            view.background = shape
         }
 
     }

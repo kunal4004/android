@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, View.OnClickListener {
 
@@ -50,6 +51,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         }
 
         KotlinUtils.roundCornerDrawable(accountInArrearsTextView,"#e41f1f")
+        AnimationUtilExtension.animateViewPushDown(accountInArrearsTextView)
 
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)

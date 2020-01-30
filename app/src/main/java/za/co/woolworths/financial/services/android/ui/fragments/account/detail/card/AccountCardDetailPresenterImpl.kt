@@ -28,7 +28,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     private var mIncreaseLimitController: IncreaseLimitController? = null
 
     init {
-        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController =
+                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
     }
 
     override fun createCardHolderName(): String? {
@@ -103,21 +104,31 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
             when (this) {
                 is StoreCardsResponse -> {
                     when (httpCode) {
-                        200 -> handleStoreCardSuccessResponse(this)
+                        200 -> {
+                            mainView?.hideAccountStoreCardProgress()
+                            handleStoreCardSuccessResponse(this)
+                        }
                         440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
-                        else -> handleUnknownHttpResponse(response?.desc)
+                        else -> {
+                            mainView?.hideAccountStoreCardProgress()
+                            handleUnknownHttpResponse(response?.desc)
+                        }
                     }
-                    mainView?.hideAccountStoreCardProgress()
                 }
 
                 is OfferActive -> {
                     mainView?.onOfferActiveSuccessResult()
                     when (httpCode) {
-                        200 -> handleUserOfferActiveSuccessResult(this)
+                        200 -> {
+                            mainView?.hideUserOfferActiveProgress()
+                            handleUserOfferActiveSuccessResult(this)
+                        }
                         440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
-                        else -> handleUnknownHttpResponse(response?.desc)
+                        else -> {
+                            mainView?.hideUserOfferActiveProgress()
+                            handleUnknownHttpResponse(response?.desc)
+                        }
                     }
-                    mainView?.hideUserOfferActiveProgress()
                 }
 
                 else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
@@ -129,7 +140,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary =
+                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()
