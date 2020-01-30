@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
@@ -26,8 +27,10 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     var bundle: Bundle? = null
     lateinit var otpSentTo: String
     lateinit var numberToOTPSent: String
+    lateinit var otpValue: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         return inflater.inflate(R.layout.fragment_enter_otp, container, false)
     }
 
@@ -37,7 +40,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
         buttonNext?.isEnabled = false
         setupInputListeners()
         clickEvent()
-        enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
+        configureUI()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +49,14 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
         bundle?.apply {
             otpSentTo = getString("otpSentTo", "")
             numberToOTPSent = getString("numberToOTPSent", "")
+            otpValue = getString("otpValue", "")
         }
+    }
+
+    fun configureUI() {
+        enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
+        if (otpValue.isNotEmpty())
+            showWrongOTP()
     }
 
     private fun clickEvent() {
@@ -56,7 +66,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
         didNotReceiveOTPTextView?.setOnClickListener {
             hideKeyboard()
             (activity as? AppCompatActivity)?.apply {
-                mResendOTPDialogFragment = ResendOTPDialogFragment.newInstance(this@EnterOTPFragment, "")
+                mResendOTPDialogFragment = ResendOTPDialogFragment.newInstance(this@EnterOTPFragment, numberToOTPSent)
                 mResendOTPDialogFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPDialogFragment::class.java.simpleName)
             }
         }
@@ -74,8 +84,36 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     override fun onOTPMethodSelected(otpMethodType: OTPMethodType) {
-        bundle?.putString("otpMethodType", otpMethodType.name)
-        navController?.navigate(R.id.action_to_retrieveOTPFragment, bundleOf("bundle" to bundle))
+        if (otpMethodType == OTPMethodType.NONE)
+            requestEditTextFocus()
+        else {
+            bundle?.putString("otpMethodType", otpMethodType.name)
+            bundle?.putString("otpValue", "")
+            navController?.navigate(R.id.action_to_retrieveOTPFragment, bundleOf("bundle" to bundle))
+        }
+    }
+
+    private fun requestEditTextFocus() {
+        (activity as? AppCompatActivity)?.let { activity ->
+            edtVerificationCode1?.apply {
+                requestFocus()
+                showSoftKeyboard(activity, this)
+            }
+        }
+    }
+
+    private fun showWrongOTP() {
+        otpErrorTextView.visibility = View.VISIBLE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requestEditTextFocus()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
     }
 
 

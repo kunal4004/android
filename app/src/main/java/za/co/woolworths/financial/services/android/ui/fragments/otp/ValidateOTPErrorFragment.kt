@@ -23,7 +23,7 @@ class ValidateOTPErrorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        retry.setOnClickListener { navController?.navigate(R.id.action_to_retrieveOTPFragment, bundleOf("bundle" to bundle)) }
+        retry.setOnClickListener { navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to bundle)) }
         needHelp.setOnClickListener { activity?.apply { Utils.makeCall(this, "0861 50 20 20") } }
     }
 

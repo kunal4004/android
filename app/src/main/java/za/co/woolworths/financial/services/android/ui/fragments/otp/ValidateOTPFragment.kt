@@ -47,11 +47,12 @@ class ValidateOTPFragment : Fragment() {
     private fun initValidateOTP() {
         OneAppService.validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : RequestListener<ValidateOTPResponse> {
             override fun onSuccess(validateOTPResponse: ValidateOTPResponse?) {
-                navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
-                /*when (retrieveOTPResponse?.httpCode) {
-                    200 -> navController?.navigate(R.id.action_to_enterOTPFragment)
-                    else -> navController?.navigate(R.id.action_to_retrieveOTPErrorFragment)
-                }*/
+                validateOTPResponse?.apply {
+                    when (httpCode) {
+                        200 -> navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
+                        else -> navController?.navigate(R.id.action_to_validateOTPErrorFragment, bundleOf("bundle" to bundle))
+                    }
+                }
             }
 
             override fun onFailure(error: Throwable) {

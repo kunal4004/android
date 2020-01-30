@@ -76,9 +76,7 @@ class ResendOTPDialogFragment : WBottomSheetDialogFragment() {
     }
 
     private fun dismissView(otpMethodType: OTPMethodType) {
-        if (otpMethodType != OTPMethodType.NONE) {
-            listener?.onOTPMethodSelected(otpMethodType)
-        }
+        listener?.onOTPMethodSelected(otpMethodType)
         dismissAllowingStateLoss()
     }
 

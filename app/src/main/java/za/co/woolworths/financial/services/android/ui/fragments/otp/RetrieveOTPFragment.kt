@@ -44,7 +44,7 @@ class RetrieveOTPFragment : Fragment() {
     }
 
     private fun initRetrieveOTP(otpMethodType: OTPMethodType) {
-        OneAppService.retrieveOTP(OTPMethodType.SMS, productOfferingId).enqueue(CompletionHandler(object : RequestListener<RetrieveOTPResponse> {
+        OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : RequestListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 retrieveOTPResponse?.apply {
                     when (httpCode) {
@@ -57,14 +57,14 @@ class RetrieveOTPFragment : Fragment() {
                                 navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to this))
                             }
                         }
-                        else -> navController?.navigate(R.id.action_to_retrieveOTPErrorFragment)
+                        else -> navController?.navigate(R.id.action_to_retrieveOTPErrorFragment, bundleOf("bundle" to bundle))
                     }
                 }
 
             }
 
             override fun onFailure(error: Throwable) {
-                navController?.navigate(R.id.action_to_retrieveOTPErrorFragment)
+                navController?.navigate(R.id.action_to_retrieveOTPErrorFragment, bundleOf("bundle" to bundle))
             }
         }, RetrieveOTPResponse::class.java))
     }
