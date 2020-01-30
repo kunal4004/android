@@ -22,8 +22,14 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountHel
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, View.OnClickListener {
+
+    companion object {
+        const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
+        const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021
+    }
 
     private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
@@ -41,6 +47,8 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
             setToolbarTopMargin()
         }
 
+        KotlinUtils.roundCornerDrawable(accountInArrearsTextView,"#e41f1f")
+
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
@@ -57,8 +65,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     private fun setUpBottomSheetDialog() {
         val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottomSheetLayout)
-        val maximumExpandedHeight =
-                mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
+        val maximumExpandedHeight = mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
         bottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
         sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
@@ -95,7 +102,8 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
     override fun showAccountInArrears(account: Account) {
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
-        mAccountSignedInPresenter?.getMyAccountCardInfo()?.let {  accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+        mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+
     }
 
     override fun hideAccountInArrears(account: Account) {
@@ -105,6 +113,15 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     override fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>) {
         this.mAccountHelpInformation = informationModelAccount
+    }
+
+    override fun showAccountChargeOffForMoreThan6Months() {
+        window?.decorView?.fitsSystemWindows = true
+        Utils.updateStatusBarBackground(this)
+        frameLayout?.visibility = GONE
+        bottomSheetLayout?.visibility  = GONE
+        sixMonthArrearsFrameLayout?.visibility = VISIBLE
+        mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
     }
 
     override fun onClick(v: View?) {
@@ -133,5 +150,9 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         val colorFrom = ContextCompat.getColor(this, android.R.color.transparent)
         val colorTo = ContextCompat.getColor(this, R.color.black_99)
         dimView?.setBackgroundColor(KotlinUtils.interpolateColor(slideOffset, colorFrom, colorTo))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

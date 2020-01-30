@@ -89,5 +89,19 @@
             app:navGraph="@navigation/account_sign_in_detail_overlay_nav_host" />
     </LinearLayout>
 
-
+    <FrameLayout
+        android:id="@+id/sixMonthArrearsFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <fragment
+            android:id="@+id/six_month_arrears_nav_host"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:navGraph="@navigation/account_six_month_in_arrears_nav_host" />
+    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

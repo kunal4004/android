@@ -64,7 +64,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        shouldDisplayAccountInArrears()
+        showProductOfferOutStanding()
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -105,25 +105,26 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
      * Account in Arrears is activated when productOfferingGoodStanding is false and  productOfferingStatus
      * is in "CHARGED OFF" state
      */
-    override fun shouldDisplayAccountInArrears(): Boolean {
+    override fun showProductOfferOutStanding() {
         val account = getAccount()
         account?.apply {
-            return when (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) {
-                true -> {
+            return when {
+                (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
+                    // account is in arrears for more than 6 months
+                    mainView?.showAccountChargeOffForMoreThan6Months()!!
+                }
+                !productOfferingGoodStanding -> { // account is in arrears
                     mainView?.showAccountInArrears(account)
                     val informationModel = getCardProductInformation(true)
-                    mainView?.showAccountHelp(informationModel)
-                    true
+                    mainView?.showAccountHelp(informationModel)!!
                 }
                 else -> {
                     mainView?.hideAccountInArrears(account)
                     val informationInArrearsModel = getCardProductInformation(false)
-                    mainView?.showAccountHelp(informationInArrearsModel)
-                    false
+                    mainView?.showAccountHelp(informationInArrearsModel)!!
                 }
             }
         }
-        return false
     }
 
     private fun getAccount(): Account? {
@@ -136,7 +137,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
 
     override fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
-    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getOverlayAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 60f))
+    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 60f))
 
     override fun onDestroy() {
         mainView = null
@@ -164,5 +165,24 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
             else -> throw (java.lang.RuntimeException(" setAccountCardDetailInfo() :: Invalid account State found $accountInfo"))
         }
         navDetailController?.setGraph(navDetailController.graph, bundle)
+    }
+
+    override fun setAccountSixMonthInArrears(navDetailController: NavController?) {
+        val bundle = Bundle()
+        val resources = getSixMonthOutstandingTitleAndCardResource()
+        bundle.putString(MY_ACCOUNT_RESPONSE, Gson().toJson(resources))
+        navDetailController?.setGraph(navDetailController.graph, bundle)
+    }
+
+    override fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int> {
+        val accountInfo = getMyAccountCardInfo()
+        return when (accountInfo?.first) {
+            ApplyNowState.STORE_CARD -> Pair(R.drawable.w_store_card, R.string.store_card_title)
+            ApplyNowState.SILVER_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.silver_credit_card)
+            ApplyNowState.BLACK_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.blackCreditCard_title)
+            ApplyNowState.GOLD_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.goldCreditCard_title)
+            ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_gold_credit_card, R.string.personalLoanCard_title)
+            else -> throw RuntimeException("SixMonthOutstanding Invalid  ApplyNowState ${accountInfo?.first}")
+        }
     }
 }

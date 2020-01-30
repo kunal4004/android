@@ -3,9 +3,11 @@ package za.co.woolworths.financial.services.android.ui.activities.account.apply_
 import android.os.Bundle
 import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -13,15 +15,15 @@ import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_front_layout.*
-import kotlinx.android.synthetic.main.account_sales_front_layout.navigateBackImageButton
-import kotlinx.android.synthetic.main.account_sales_front_layout.toolbar
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
+import za.co.woolworths.financial.services.android.ui.extension.getFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTab
+import za.co.woolworths.financial.services.android.ui.views.ViewPagerUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
@@ -33,39 +35,51 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
         KotlinUtils.setTransparentStatusBar(this)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         mAccountSalesModelImpl = AccountSalesPresenterImpl(this, AccountSalesModelImpl())
-        val selectedBundle = intent?.extras?.getSerializable("APPLY_NOW_STATE")
-        (selectedBundle as? ApplyNowState)?.let { state -> mAccountSalesModelImpl?.switchAccountSalesProduct(state) }
+        mAccountSalesModelImpl?.apply {
+            setAccountSalesIntent(intent)
+            switchAccountSalesProduct()
+        }
+        setToolbarTopMargin()
+        setUpBottomSheetDialog()
 
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
-        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
-
-        configureMoreDetailOverlay()
+        ViewPagerUtils.findBottomSheetParent(blackAndGoldCreditCardViewPager)
 
         storeCardApplyNowButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
     }
 
-    private fun configureMoreDetailOverlay() {
+    private fun setToolbarTopMargin() {
+        val bar = findViewById<Toolbar>(R.id.toolbar)
+        val params = bar?.layoutParams as? ViewGroup.MarginLayoutParams
+        params?.topMargin = KotlinUtils.getStatusBarHeight(this)
+        bar?.layoutParams = params
+    }
+
+    private fun setUpBottomSheetDialog() {
+        val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
+        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
+
         val maximumExpandedHeight = mAccountSalesModelImpl?.maximumExpandableHeight(0f, toolbar) ?: 0
         incBottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
-        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight) ?: 0
+        val overlayAnchoredHeight =
+                mAccountSalesModelImpl?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight) ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-
+                        val myFragment : AccountSalesFragment? = getFragment(AccountSalesFragment::class.java) as AccountSalesFragment
+                        myFragment?.onStateCollapsed()
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        val myFragment : AccountSalesFragment? = getFragment(AccountSalesFragment::class.java) as AccountSalesFragment
+                        myFragment?.onStateExpanded()
                     }
-                    else -> {
-                    }
+                    else -> { }
                 }
                 invoke(bottomSheet, newState)
             }
@@ -103,6 +117,12 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     }
 
     override fun onBackPressed() {
+        // Collapse overlay view if view is opened, else navigate to previous screen
+        if (sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+            return
+        }
+
         mAccountSalesModelImpl?.onBackPressed(this@AccountSalesActivity)
     }
 

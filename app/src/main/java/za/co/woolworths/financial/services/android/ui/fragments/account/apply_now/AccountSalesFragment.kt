@@ -49,8 +49,8 @@ class AccountSalesFragment : Fragment() {
             displayQualifyCriteria(cardQualifyCriteria)
             displayCartCollection(cardCollection)
         }
-        ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, true)
 
+        ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, false)
     }
 
     private fun displayCardBenefits(cardBenefits: MutableList<CardBenefit>?) {
@@ -110,6 +110,7 @@ class AccountSalesFragment : Fragment() {
     private fun displayCartCollection(cartCollection: MutableList<CardCollection>) {
         if (cartCollection.isEmpty()) {
             cardCollectionConstraintLayout?.visibility = GONE
+            return
         }
         activity?.let { activity ->
             cartCollection.forEach { items ->
@@ -118,6 +119,18 @@ class AccountSalesFragment : Fragment() {
                 titleTextView?.text = items.title
                 cardCollectionItemLinearLayout?.addView(view)
             }
+        }
+    }
+
+    fun onStateExpanded() {
+        activity?.runOnUiThread {
+            ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, true)
+        }
+    }
+
+    fun onStateCollapsed() {
+        activity?.runOnUiThread {
+            ViewCompat.setNestedScrollingEnabled(nestedScrollViewLayout, false)
         }
     }
 }

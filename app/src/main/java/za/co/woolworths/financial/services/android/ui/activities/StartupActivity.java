@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
@@ -188,7 +189,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
 						WoolworthsApplication.setAuthenticVersionReleaseNote(configResponse.configs.enviroment.getAuthenticVersionReleaseNote());
 						WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
-						WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
 						WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
 						WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
 						WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
@@ -225,6 +225,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
+
+						ApplyNowLinks applyNowLinks = configResponse.configs.applyNowLinks;
+						WoolworthsApplication.setApplyNowLink(applyNowLinks);
 
 						WoolworthsApplication.setInstantCardReplacement(instantCardReplacement);
 						WoolworthsApplication.setVirtualTempCard(virtualTempCard);
