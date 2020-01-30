@@ -24,4 +24,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewStatementImageView" />
 
+    <View
+        android:id="@+id/statementProgressbarView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/viewStatementTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/statementProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@drawable/progress_circle"
+        app:layout_constraintBottom_toBottomOf="@+id/statementProgressbarView"
+        app:layout_constraintEnd_toEndOf="@+id/statementProgressbarView"
+        app:layout_constraintStart_toStartOf="@+id/statementProgressbarView"
+        app:layout_constraintTop_toTopOf="@+id/viewStatementImageView" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/statementProgressBarGroup"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="statementProgressBar,statementProgressbarView"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
