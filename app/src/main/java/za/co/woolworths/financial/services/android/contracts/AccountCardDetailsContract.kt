@@ -9,9 +9,9 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 
-interface AvailableFundContract {
+interface AvailableFundsContract {
 
-    interface AvailableFundView {
+    interface AvailableFundsView {
         fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean)
         fun displayCardNumberNotFound()
         fun handleUnknownHttpResponse(desc: String?)
@@ -27,7 +27,7 @@ interface AvailableFundContract {
         fun navigateToABSAStatementActivity()
     }
 
-    interface AvailableFundPresenter {
+    interface AvailableFundsPresenter {
         fun setBundle(bundle: Bundle?)
         fun getBundle(): Pair<ApplyNowState, Account>?
         fun queryABSAServiceGetUserCreditCardToken()
@@ -37,7 +37,7 @@ interface AvailableFundContract {
         fun onDestroy()
     }
 
-    interface AvailableFundModel {
+    interface AvailableFundsModel {
         fun queryABSAServiceGetUserCreditCardToken(requestListener: ICommonView<Any>)
     }
 }

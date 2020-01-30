@@ -43,8 +43,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
             setAccountSalesIntent(intent)
             switchAccountSalesProduct()
         }
-        setToolbarTopMargin()
-        setUpBottomSheetDialog()
+        setupToolbarTopMargin()
+        setupBottomSheetBehaviour()
 
         storeCardApplyNowButton?.setOnClickListener(this)
         bottomApplyNowButton?.setOnClickListener(this)
@@ -57,21 +57,21 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
         AnimationUtilExtension.animateViewPushDown(cardBackImageView)
     }
 
-    private fun setToolbarTopMargin() {
+    private fun setupToolbarTopMargin() {
         val bar = findViewById<Toolbar>(R.id.toolbar)
         val params = bar?.layoutParams as? ViewGroup.MarginLayoutParams
         params?.topMargin = KotlinUtils.getStatusBarHeight(this)
         bar?.layoutParams = params
     }
 
-    private fun setUpBottomSheetDialog() {
+    private fun setupBottomSheetBehaviour() {
         val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
 
-        val maximumExpandedHeight = mAccountSalesModelImpl?.maximumExpandableHeight(0f, toolbar) ?: 0
-        incBottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
+        val anchoredHeight = mAccountSalesModelImpl?.getAnchoredHeight(0f, toolbar) ?: 0
+        incBottomSheetLayout?.setPadding(0, anchoredHeight, 0, 0)
 
-        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight) ?: 0
+        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -160,7 +160,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
     }
 
     private fun animateButtonOut() {
-        val animate = TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
+        val animate =
+                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
         animate.duration = 500
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
@@ -170,7 +171,8 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
 
     private fun animateButtonIn() {
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        val animate =
+                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
         animate.duration = 500
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)

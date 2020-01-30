@@ -22,4 +22,8 @@
     <dimen name="available_fund_16sp_amount">16sp</dimen>
     <dimen name="available_fund_16dp_margin">16dp</dimen>
     <dimen name="available_fund_46dp_margin">46dp</dimen>
+    <dimen name="account_sales_apply_now_button_height">50dp</dimen>
+    <dimen name="account_sales_apply_now_button_text_size">12sp</dimen>
+    <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
+    <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
 </resources>

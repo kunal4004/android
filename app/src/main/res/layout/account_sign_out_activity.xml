@@ -7,74 +7,44 @@
     android:background="@drawable/store_card_background"
     android:orientation="vertical">
 
-
     <include
         android:id="@+id/cardHeader"
         layout="@layout/account_sales_card_header"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/storeCardTitleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/storeCardTitleTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:letterSpacing="0.073"
-        android:lineSpacingExtra="0.24dp"
-        android:text="@string/store_card"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardHeader"
-        tools:ignore="UnusedAttribute" />
-
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/bottomGuide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.66"
-        app:layout_constraintHeight_percent="0.66" />
-
+        app:layout_constraintGuide_percent="0.7"
+        app:layout_constraintHeight_percent="0.7" />
 
     <TextView
-        android:id="@+id/storeCardDescriptionTextView"
+        android:id="@+id/storeCardTitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="16dp"
-        android:alpha="0.7"
-        android:fontFamily="@font/futura_medium_ttf"
-        android:text="@string/store_card_desc"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/storeCardTitleTextView" />
-
-
-    <Button
-        android:id="@+id/storeCardApplyNowButton"
-        style="@style/apply_now_btn"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@color/semi_transparent"
-        android:text="@string/apply_now"
-        android:textAllCaps="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="9dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.073"
+        android:lineSpacingExtra="0.24dp"
+        android:text="@string/store_card"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        android:textSize="@dimen/apply_now_card_type_title_size_32"
+        app:layout_constraintBottom_toTopOf="@+id/storeCardDescriptionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/storeCardDescriptionTextView" />
+        tools:ignore="UnusedAttribute" />
+
 
     <View
         android:id="@+id/fadeInFadeOutView"
@@ -87,6 +57,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <Button
+        android:id="@+id/storeCardApplyNowButton"
+        style="@style/apply_now_btn"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:background="@color/semi_transparent"
+        android:text="@string/apply_now"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/storeCardDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="18dp"
+        android:alpha="0.7"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:text="@string/store_card_desc"
+        android:textColor="@color/white"
+        android:textSize="@dimen/apply_now_card_type_desc_size_18"
+        app:layout_constraintBottom_toTopOf="@+id/storeCardApplyNowButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

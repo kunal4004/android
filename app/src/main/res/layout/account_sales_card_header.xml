@@ -9,36 +9,37 @@
         android:id="@+id/cardBackImageView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:paddingTop="@dimen/sixteen_dp"
+        android:cropToPadding="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/store_card_back"
         app:layout_constraintBottom_toBottomOf="@+id/cardFrontImageView"
-        app:layout_constraintDimensionRatio="0.8"
+        app:layout_constraintEnd_toEndOf="@+id/cardFrontImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cardFrontImageView"
-        app:srcCompat="@drawable/store_card_back"
         tools:ignore="ContentDescription" />
+
 
     <ImageView
         android:id="@+id/cardFrontImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:paddingTop="?attr/actionBarSize"
         android:scaleType="fitEnd"
-        android:paddingTop="@dimen/thirty_two_dp"
-        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/store_card_front"
         tools:ignore="ContentDescription"
         tools:srcCompat="@drawable/store_card_front" />
 
-
     <ImageView
         android:id="@+id/cardFrontBlackImageView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:scaleType="fitEnd"
-        app:layout_constraintDimensionRatio="H,1:1"
         android:visibility="gone"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/black_credit_card_front"

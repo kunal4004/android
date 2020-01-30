@@ -56,7 +56,7 @@ interface AccountSalesContract {
 
     interface AccountSalesPresenter {
         fun switchAccountSalesProduct()
-        fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int?
+        fun getAnchoredHeight(slideOffset: Float, toolbar: Toolbar?): Int?
         fun setAccountSalesIntent(intent: Intent?)
         fun getApplyNowState(): ApplyNowState?
     }

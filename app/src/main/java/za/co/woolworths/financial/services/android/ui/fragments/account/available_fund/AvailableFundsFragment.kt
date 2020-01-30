@@ -12,7 +12,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_statement_button.*
-import za.co.woolworths.financial.services.android.contracts.AvailableFundContract
+import za.co.woolworths.financial.services.android.contracts.AvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -26,12 +26,12 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
-open class AvailableFundsFragment : Fragment(), AvailableFundContract.AvailableFundView {
-    var mAvailableFundPresenter: AvailableFundPresenterImpl? = null
+open class AvailableFundsFragment : Fragment(), AvailableFundsContract.AvailableFundsView {
+    var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mAvailableFundPresenter = AvailableFundPresenterImpl(this, AvailableFundModelImpl())
+        mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
         mAvailableFundPresenter?.setBundle(arguments)
     }
 

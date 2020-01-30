@@ -84,7 +84,7 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
         }
     }
 
-    override fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
+    override fun getAnchoredHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
         return toolbar?.layoutParams?.height?.let { toolBarHeight -> getStatusBarHeight(toolBarHeight) }
     }
 

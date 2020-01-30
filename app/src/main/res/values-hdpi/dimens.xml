@@ -33,4 +33,8 @@
     <dimen name="available_fund_16sp_amount">15sp</dimen>
     <dimen name="available_fund_16dp_margin">13dp</dimen>
     <dimen name="available_fund_46dp_margin">20dp</dimen>
+    <dimen name="account_sales_apply_now_button_height">30dp</dimen>
+    <dimen name="account_sales_apply_now_button_text_size">11sp</dimen>
+    <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
+    <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
 </resources>
