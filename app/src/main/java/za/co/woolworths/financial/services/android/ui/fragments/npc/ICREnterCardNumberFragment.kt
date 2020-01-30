@@ -103,9 +103,9 @@ class ICREnterCardNumberFragment : MyCardExtension() {
 
     private fun setupCardNumberField(cardNumber: String) {
         if (cardNumber.length == 16) {
-            val validStoreCardBinsArray = mMCSInstantStoreCard.validStoreCardBins
+            val validStoreCardBinsArray = mMCSInstantStoreCard?.validStoreCardBins
             val storeCard6DigitBinNumber = cardNumber.substring(0, 6).toInt()
-            if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray.contains(storeCard6DigitBinNumber)) {
+            if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray?.contains(storeCard6DigitBinNumber) ==true) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
                 validCardNumberUI()
             } else {

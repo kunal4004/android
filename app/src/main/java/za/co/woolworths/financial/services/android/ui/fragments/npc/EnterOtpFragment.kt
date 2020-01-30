@@ -2,9 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.method.LinkMovementMethod
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -104,8 +106,14 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 OTPMethodType.EMAIL -> setResource( R.string.icr_otp_email_desc, otpType)
                 else -> return
             }
-            activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, enterOTPDescriptionScreen, false) } }
-            enterOTPDescriptionScreen?.visibility = VISIBLE
+
+            val otpDescription = activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, false) } }
+            enterOTPDescriptionScreen?.apply {
+                text = otpDescription
+                movementMethod = LinkMovementMethod.getInstance()
+                highlightColor = Color.TRANSPARENT
+                visibility = VISIBLE
+            }
         }
     }
 
