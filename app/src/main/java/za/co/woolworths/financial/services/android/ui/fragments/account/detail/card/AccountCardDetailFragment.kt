@@ -148,8 +148,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
                 R.id.cardDetailImageView -> navigateToGetStoreCards()
-                R.id.tvIncreaseLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
-                R.id.relIncreaseMyLimit -> activity?.let { activity -> getCreditLimitIncreaseController()?.intentFindOutMore(activity, getOfferActive()) }
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
             }
         }
     }

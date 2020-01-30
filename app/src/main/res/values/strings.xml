@@ -934,7 +934,7 @@
     <string name="get_a_replacement_card">Get A Replacement Card</string>
     <string name="already_have_a_card_title">ALREADY HAVE CARD? LINK IT NOW</string>
     <string name="participating_stores">participating stores</string>
-    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
+    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.\n\nPlease bring your SA ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below.</string>
@@ -942,14 +942,14 @@
     <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
-    <string name="enter_otp_title">Enter OTP Number</string>
+    <string name="enter_otp_title">Enter OTP</string>
     <string name="did_not_receive_title">Did Not Receive OTP?</string>
     <string name="resend_otp_title">Resend OTP</string>
     <string name="resend_sms_to">SMS to </string>
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
-    <string name="congratulations_desc">Please remember to take your SA Identity Document (ID) along for your first purchase with this card.</string>
+    <string name="congratulations_desc">Please remember to take your SA ID along for your first purchase with this card</string>
     <string name="card_block_success">Your card has been</string>
     <string name="card_block_success_1">successfully blocked.</string>
     <string name="call_now">Call Now</string>
@@ -1166,7 +1166,7 @@
     <string name="product_placeholder_select_size">Select Size</string>
     <string name="call_us_now">Call Now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
-    <string name="wrong_otp_desc">The OTP you entered was incorrect. Please try again.</string>
+    <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
     <string name="set_to_default">Set to default - \u0020</string>
     <string name="delivering_to_pdp">Delivering to - \u0020</string>
@@ -1517,4 +1517,24 @@
     <string name="account_arrears_description">Your account in in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_pager_bottom_sheet_behavior" translatable="false">za.co.woolworths.financial.services.android.ui.views.ViewPagerBottomSheetBehavior</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="transactions_title_layout">View Transaction Title Layout</string>
+    <string name="transaction_list_layout">Transaction List Layout</string>
+    <string name="transaction_months_layout">Transaction Months Layout</string>
+    <string name="transactions_layout">Transactions Layout</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="view_statements_title_layout">View Statements Title Layout</string>
+    <string name="statement_list_layout">Statement List Layout</string>
+    <string name="statement_months_layout">Statement Months Layout</string>
+    <string name="statement_details_layout">Statement Details Layout</string>
+    <string name="view_statement_details_title_layout">View Statement Details Title Layout</string>
+    <string name="button_back_to_myaccount">Button Back To MyAccount</string>
+    <string name="enter_email_layout">Enter Email Layout</string>
+    <string name="button_email_statement">Button Email Statement</string>
+    <string name="information_layout">Information Layout</string>
+    <string name="link_send_to_differentemail">Link Send To DifferentEmail</string>
+    <string name="button_confirm">Button Confirm</string>
+    <string name="email_statement_popup_layout">Email Statement Popup Layout</string>
 </resources>
