@@ -26,9 +26,11 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: IncreaseLimitController? = null
+    private var mQueryService = -1
 
     init {
-        mIncreaseLimitController = getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController =
+                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
     }
 
     override fun createCardHolderName(): String? {
@@ -65,7 +67,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun isDebitOrderActive(): Int? = if (getDebitOrder()?.debitOrderActive == true) VISIBLE else GONE
 
-    override fun convertAccountFromJsonToStringType(): String? = Gson().toJson(getAccount())
+    override fun convertAccountObjectToJsonString(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
     override fun getAccountStoreCardCards() {
@@ -112,6 +114,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
                 }
 
                 is OfferActive -> {
+                    mainView?.onOfferActiveSuccessResult()
                     when (httpCode) {
                         200 -> handleUserOfferActiveSuccessResult(this)
                         440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
@@ -178,7 +181,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
     }
 
     override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
-        mainView?.navigateToBalanceProtectionInsurance(convertAccountFromJsonToStringType())
+        mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
     }
 
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding
@@ -193,6 +196,5 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountPaymentOptions
 
     override fun onFailure(error: Throwable?) {
         mainView?.hideAccountStoreCardProgress()
-        mainView?.hideUserOfferActiveProgress()
     }
 }

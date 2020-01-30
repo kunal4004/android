@@ -33,7 +33,7 @@
         tools:layout="@layout/account_in_arrears_fragment_dialog" />
     <fragment
         android:id="@+id/availableFundFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundsFragment"
         android:label="AvailableFundFragment"
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action

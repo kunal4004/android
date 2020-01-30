@@ -12,33 +12,37 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
 import za.co.woolworths.financial.services.android.contracts.AccountPaymentOptionsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountPaymentOptionsContract.AccountCardDetailView {
 
+    private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
+    private val disposable: CompositeDisposable? = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mCardPresenterImpl =
-                AccountCardDetailPresenterImpl(this, AccountCardDetailModelImpl())
+        mCardPresenterImpl = AccountCardDetailPresenterImpl(this, AccountCardDetailModelImpl())
         mCardPresenterImpl?.setAccountDetailBundle(arguments)
     }
 
@@ -62,6 +66,50 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
             displayCardHolderName()
             getCreditLimitIncreaseController()?.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
             getUserCLIOfferActive()
+        }
+
+        disposable?.add(WoolworthsApplication.getInstance()
+                .bus()
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { item ->
+                    if (item is BusStation) {
+                        val offerActive = item.offerActive
+                        if (offerActive != null) {
+                            hideCLIView()
+                            handleCreditLimitIncreaseTagStatus(offerActive)
+                        } else if (item.makeApiCall()) {
+                            hideCLIView()
+                            userOfferActiveCallWasCompleted = false
+                            retryConnect()
+                        }
+                    }
+                })
+
+
+        autoConnectToNetwork()
+    }
+
+    private fun autoConnectToNetwork() {
+        activity?.let { activity ->
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    if (hasConnection && !userOfferActiveCallWasCompleted) {
+                        retryConnect()
+                    }
+                }
+            })
+        }
+    }
+
+    private fun retryConnect() {
+        activity?.apply {
+            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                mCardPresenterImpl?.getUserCLIOfferActive()
+            } else {
+                ErrorHandlerView(this).showToast()
+            }
         }
     }
 
@@ -99,15 +147,24 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
-                R.id.cardDetailImageView -> mCardPresenterImpl?.getAccountStoreCardCards()
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
-                    getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
-                }
+                R.id.cardDetailImageView -> navigateToGetStoreCards()
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+            }
+        }
+    }
+
+    private fun navigateToGetStoreCards() {
+        activity?.apply {
+            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                mCardPresenterImpl?.getAccountStoreCardCards()
+            } else {
+                ErrorHandlerView(this).showToast()
             }
         }
     }
 
     override fun onDestroy() {
+        disposable?.dispose()
         mCardPresenterImpl?.onDestroy()
         super.onDestroy()
     }
@@ -157,12 +214,14 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
         when (coveredText) {
             true -> {
-                balanceProtectInsuranceTextView?.text = activity?.resources?.getString(R.string.bpi_covered)
-                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView,"#bad110")
+                balanceProtectInsuranceTextView?.text =
+                        activity?.resources?.getString(R.string.bpi_covered)
+                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView, "#bad110")
             }
             false -> {
-                balanceProtectInsuranceTextView?.text = activity?.resources?.getString(R.string.bpi_not_covered)
-                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView,"#4c000000")
+                balanceProtectInsuranceTextView?.text =
+                        activity?.resources?.getString(R.string.bpi_not_covered)
+                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView, "#4c000000")
             }
         }
     }
@@ -214,6 +273,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         llIncreaseLimitContainer?.visibility = GONE
     }
 
+    override fun onOfferActiveSuccessResult() {
+        userOfferActiveCallWasCompleted = true
+    }
+
+    private fun hideCLIView() {
+        mCardPresenterImpl?.getCreditLimitIncreaseController()?.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription)
+    }
 }
 
 

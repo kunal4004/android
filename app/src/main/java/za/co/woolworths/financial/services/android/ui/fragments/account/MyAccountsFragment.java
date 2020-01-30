@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,6 +142,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private ProgressBar pbAccount;
 	private FrameLayout imgCreditCardLayout;
 	private Call<MessageResponse> messageRequestCall;
+	private Account mCreditCardAccount;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -359,6 +361,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 					linkedCreditCardView.setVisibility(View.VISIBLE);
 					applyCreditCardView.setVisibility(View.GONE);
 					//Check with AccountNumber and change the image accordingly
+					this.mCreditCardAccount = account;
 					if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
 						imgCreditCard.setBackgroundResource(R.drawable.small_5);
 					} else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
@@ -617,7 +620,17 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				break;
 			case R.id.applyCrediCard:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
-				redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
+				if (mCreditCardAccount == null){
+					redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
+					return;
+				}
+				if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+					redirectToMyAccountsCardsActivity(ApplyNowState.SILVER_CREDIT_CARD);
+				} else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+					redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
+				} else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+					redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
+				}
 				break;
 			case R.id.applyPersonalLoan:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
@@ -1116,7 +1129,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		if (activity == null) return;
 		Intent intent = new Intent(getActivity(), AccountSalesActivity.class);
 		Bundle bundle = new Bundle();
+
 		bundle.putSerializable("APPLY_NOW_STATE", applyNowState);
+		bundle.putString("ACCOUNT_INFO", new Gson().toJson(accounts));
 		intent.putExtras(bundle);
 		startActivity(intent);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);

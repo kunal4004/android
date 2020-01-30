@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextUtils
 import com.google.gson.Gson
@@ -23,8 +22,7 @@ class AvailableFundPresenterImpl(private var mainView: AvailableFundContract.Ava
     override fun setBundle(bundle: Bundle?) {
         val account = bundle?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
                 ?: throw RuntimeException("Accounts object is null or not found")
-        mAccountPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
         mAccount = mAccountPair?.second
     }
 
@@ -52,7 +50,8 @@ class AvailableFundPresenterImpl(private var mainView: AvailableFundContract.Ava
     }
 
     override fun onFailure(error: Throwable?) {
-
+        mainView?.onABSACreditCardFailureHandler(error)
+        mainView?.hideABSAServiceGetUserCreditCardTokenProgressBar()
     }
 
     override fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse) {
