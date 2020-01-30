@@ -7,6 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sixty_dp"
+        android:contentDescription="@string/plp_promotionLayout"
         android:background="@drawable/refine_item_background">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -18,6 +19,7 @@
             android:letterSpacing="0.065"
             android:layout_marginLeft="0dp"
             android:textSize="@dimen/twelve_sp"
+            android:contentDescription="@string/plp_textViewOnPromotion"
             android:text="On Promotion" />
 
         <Switch
@@ -25,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:contentDescription="@string/plp_buttonEnablePromotiont"
             android:layout_centerVertical="true" />
 
     </RelativeLayout>
