@@ -21,13 +21,9 @@ import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesPresenterImpl.Companion.ACCOUNT_SALES_CREDIT_CARD
 import za.co.woolworths.financial.services.android.ui.adapters.MoreBenefitAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.util.expand.ExpandableAdapter
-import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter
 
 
 class AccountSalesFragment : Fragment() {
-
-    private var lastExpandedPosition: Int = 0
 
     companion object {
         fun newInstance(hashMap: AccountSales?) = AccountSalesFragment().withArgs {
@@ -79,19 +75,6 @@ class AccountSalesFragment : Fragment() {
             clipToPadding = true
             layoutManager = activity?.let { activity -> LinearLayoutManager(activity) }
             adapter = accountSalesMoreBenefitAdapter
-            accountSalesMoreBenefitAdapter.setExpandCollapseListener(object : ExpandableRecyclerAdapter.ExpandCollapseListener, ExpandableAdapter.ExpandCollapseListener {
-                override fun onListItemExpanded(position: Int) {
-                    if (lastExpandedPosition != -1
-                            && position != lastExpandedPosition) {
-                        accountSalesMoreBenefitAdapter.collapseParent(lastExpandedPosition)
-                    }
-                    lastExpandedPosition = position
-                    val linearLayoutManager = layoutManager as? LinearLayoutManager
-                    linearLayoutManager?.scrollToPositionWithOffset(position, 0)
-                }
-
-                override fun onListItemCollapsed(position: Int) {}
-            })
         }
     }
 
