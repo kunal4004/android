@@ -65,7 +65,7 @@
         style="@style/link_text_style"
         android:layout_marginBottom="@dimen/thirty_two_dp"
         android:text="@string/need_help_call_the_center"
-        android:textAllCaps="false"
+        android:textAllCaps="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

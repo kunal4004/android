@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.otp
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,10 @@ class RetrieveOTPErrorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         retry.setOnClickListener { navController?.navigate(R.id.action_to_retrieveOTPFragment, bundleOf("bundle" to bundle)) }
-        needHelp.setOnClickListener { activity?.apply { Utils.makeCall(this, "0861 50 20 20") } }
+        needHelp?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener { activity?.apply { Utils.makeCall(this, "0861 50 20 20") } }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -25,9 +25,6 @@
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
         <argument android:name="bundle" />
-        <action
-            android:id="@+id/action_creditCardActivationSecurityCheckFragment_to_retrieveOTPFragment"
-            app:destination="@id/retrieveOTPFragment" />
 
     </fragment>
 
@@ -48,10 +45,18 @@
         tools:layout="@layout/retrieve_otp_fragment">
         <action
             android:id="@+id/action_to_enterOTPFragment"
-            app:destination="@id/enterOTPFragment" />
+            app:destination="@id/enterOTPFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/action_to_retrieveOTPErrorFragment"
-            app:destination="@id/retrieveOTPErrorFragment" />
+            app:destination="@id/retrieveOTPErrorFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -61,13 +66,25 @@
         tools:layout="@layout/validate_otp_fragment">
         <action
             android:id="@+id/action_to_creditCardActivationProgressFragment"
-            app:destination="@id/creditCardActivationProgressFragment" />
+            app:destination="@id/creditCardActivationProgressFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_to_validateOTPErrorFragment"
-            app:destination="@id/validateOTPErrorFragment" />
+            app:destination="@id/validateOTPErrorFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/action_to_enterOTPFragment"
-            app:destination="@id/enterOTPFragment" />
+            app:destination="@id/enterOTPFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -77,10 +94,18 @@
         tools:layout="@layout/fragment_enter_otp">
         <action
             android:id="@+id/action_to_validateOTPFragment"
-            app:destination="@id/validateOTPFragment" />
+            app:destination="@id/validateOTPFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/action_to_retrieveOTPFragment"
-            app:destination="@id/retrieveOTPFragment" />
+            app:destination="@id/retrieveOTPFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -90,7 +115,11 @@
         tools:layout="@layout/validate_otp_error_fragment">
         <action
             android:id="@+id/action_to_validateOTPFragment"
-            app:destination="@id/validateOTPFragment" />
+            app:destination="@id/validateOTPFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -100,7 +129,11 @@
         tools:layout="@layout/retrieve_otp_error_fragment">
         <action
             android:id="@+id/action_to_retrieveOTPFragment"
-            app:destination="@id/retrieveOTPFragment" />
+            app:destination="@id/retrieveOTPFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
 </navigation>

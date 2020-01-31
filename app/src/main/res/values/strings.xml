@@ -1342,7 +1342,7 @@
     <string name="sending_otp_title">Sending OTP</string>
     <string name="sending_otp_desc">An One-time PIN is being sent to you. It should arrive shortly.</string>
     <string name="validating_otp">Validating OTP</string>
-    <string name="need_help_call_the_center">Need help? call the center</string>
+    <string name="need_help_call_the_center">Need help? call the call center</string>
     <string name="sending_otp_error">There was a Problem  \nSending Your OTP</string>
     <string name="validate_otp_error">There was server or \nnetworking error.</string>
 

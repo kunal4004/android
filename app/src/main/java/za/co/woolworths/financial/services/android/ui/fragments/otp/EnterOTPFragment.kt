@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.otp
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -51,6 +52,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
 
     fun configureUI() {
         enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
+        didNotReceiveOTPTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         if (otpValue.isNotEmpty())
             showWrongOTP()
     }
