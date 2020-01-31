@@ -11,7 +11,7 @@ android {
     def minor = "1"
     def fix = "0"
 
-    def jobNumber = 3911
+    def jobNumber = 3912
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -68,7 +68,7 @@ android {
 
         String env = ""
 
-            if (host.contains("-qa") || host.contains("feature")){
+            if (host.contains("-qa") || host.contains("feature-")){
                 defaultConfig.applicationIdSuffix = ".qa"
                 defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q"]
                 env = "QA"
