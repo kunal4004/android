@@ -12,15 +12,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardActivationActivity : AppCompatActivity() {
 
-    var absaCardToken: String = "4103752306880391"
-    var productOfferingId: String = "20"
+    var bundle: Bundle? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.credit_card_activation_activity)
         Utils.updateStatusBarBackground(this)
-        Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
+        bundle = intent.getBundleExtra("bundle")
         actionBar()
         loadNavHostFragment()
     }
@@ -50,8 +49,7 @@ class CreditCardActivationActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
-    fun loadNavHostFragment() {
-        val bundle = bundleOf("absaCardToken" to absaCardToken, "productOfferingId" to productOfferingId)
+    private fun loadNavHostFragment() {
         findNavController(R.id.nav_host_fragment)
                 .setGraph(
                         R.navigation.nav_graph_credit_card_activation,

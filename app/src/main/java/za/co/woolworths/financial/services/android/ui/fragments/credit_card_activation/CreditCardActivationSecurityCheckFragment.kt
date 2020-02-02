@@ -17,8 +17,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListener {
 
     var navController: NavController? = null
-    lateinit var absaCardToken: String
-    lateinit var productOfferingId: String
     var bundle: Bundle? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -41,10 +39,6 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            absaCardToken = getString("absaCardToken", "")
-            productOfferingId = getString("productOfferingId", "")
-        }
     }
 
     override fun onClick(v: View?) {
