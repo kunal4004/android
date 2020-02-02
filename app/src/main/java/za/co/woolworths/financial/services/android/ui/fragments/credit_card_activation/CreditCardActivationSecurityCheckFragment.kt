@@ -19,6 +19,7 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
     var navController: NavController? = null
     lateinit var absaCardToken: String
     lateinit var productOfferingId: String
+    var bundle: Bundle? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_activation_security_check_fragment, container, false)
@@ -39,14 +40,16 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        absaCardToken = arguments?.getString("absaCardToken").toString()
-        productOfferingId = arguments?.getString("productOfferingId").toString()
+        bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            absaCardToken = getString("absaCardToken", "")
+            productOfferingId = getString("productOfferingId", "")
+        }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.activateCardButton -> {
-                val bundle = bundleOf("absaCardToken" to absaCardToken, "productOfferingId" to "20")
                 navController?.navigate(if (WoolworthsApplication.getCreditCardActivation().otpEnabledForCreditCardActivation)
                     R.id.action_to_RetrieveOTPFragment
                 else

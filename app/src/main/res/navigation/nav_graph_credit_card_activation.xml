@@ -24,7 +24,6 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
-        <argument android:name="bundle" />
 
     </fragment>
 
@@ -32,11 +31,7 @@
         android:id="@+id/creditCardActivationProgressFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationProgressFragment"
         android:label="CreditCardActivationProgressFragment"
-        tools:layout="@layout/credit_card_activation_progress_layout">
-        <argument
-            android:name="absaCardToken"
-            android:defaultValue="None" />
-    </fragment>
+        tools:layout="@layout/credit_card_activation_progress_layout" />
 
     <fragment
         android:id="@+id/retrieveOTPFragment"

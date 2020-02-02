@@ -32,7 +32,9 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         presenter = CreditCardActivationPresenterImpl(this, CreditCardActivationInteractorImpl())
-        absaCardToken = arguments?.getString("absaCardToken").toString()
+        arguments?.getBundle("bundle")?.apply {
+            absaCardToken = getString("absaCardToken", "")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
