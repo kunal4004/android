@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -226,6 +227,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         iconAvailableFundsInfo.setOnClickListener(this);
         tvHowToPayArrears.setOnClickListener(this);
         tvHowToPayAccountStatus.setOnClickListener(this);
+        rlMyStoreCard.setOnClickListener(this);
 
         fakeView = view.findViewById(R.id.fakeView);
         infoMinimumAmountDue = view.findViewById(R.id.infoMinimumAmountDue);
@@ -245,6 +247,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         } catch (NullPointerException ex) {
             rlViewStatement.setVisibility(GONE);
         }
+
+        rlMyStoreCard.setVisibility(VISIBLE);
     }
 
     private void addListener() {
@@ -419,6 +423,14 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         activity.getResources().getString(R.string.info_credit_limit_title),
                         getActivity().getResources().getString(R.string.info_credit_limit_desc),
                         getActivity().getResources().getString(R.string.cli_got_it));
+                break;
+            case R.id.rlMyStoreCard:
+                Intent mIntent = new Intent(getActivity(), CreditCardActivationActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putString("absaCardToken", "4103752306880391");
+                mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
+                mIntent.putExtra("bundle", mBundle);
+                getActivity().startActivity(mIntent);
                 break;
         }
     }
