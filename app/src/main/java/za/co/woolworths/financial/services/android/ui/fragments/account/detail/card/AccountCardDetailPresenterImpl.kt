@@ -56,7 +56,6 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
-        getAccountStoreCardCards()
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second

@@ -128,7 +128,7 @@
         android:layout_width="0dp"
         android:text="@string/instore_withdraw_cash_now"
         app:layout_constraintBottom_toBottomOf="@+id/withdrawCashView"
-        app:layout_constraintEnd_toStartOf="@+id/debitOrderIsActiveTextView"
+        app:layout_constraintEnd_toStartOf="@+id/iconDrawnDownAmount"
         app:layout_constraintStart_toEndOf="@+id/loanWithdrawalLogoImageView"
         app:layout_constraintTop_toTopOf="@+id/withdrawCashView" />
 

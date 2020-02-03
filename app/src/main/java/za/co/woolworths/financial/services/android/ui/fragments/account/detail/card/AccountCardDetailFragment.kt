@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -63,7 +64,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
-        withdrawCashView?.setOnClickListener (this)
+        withdrawCashView?.setOnClickListener(this)
 
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
@@ -71,7 +72,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
             setBalanceProtectionInsuranceState()
             displayCardHolderName()
             getCreditLimitIncreaseController()?.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
-            getUserCLIOfferActive()
         }
 
         disposable?.add(WoolworthsApplication.getInstance()
@@ -112,6 +112,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     private fun retryConnect() {
         activity?.apply {
             if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                Log.e("ConnectionIssue", "NetworkManagerIssue")
                 mCardPresenterImpl?.getUserCLIOfferActive()
             } else {
                 ErrorHandlerView(this).showToast()
@@ -149,8 +150,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
                 R.id.cardDetailImageView -> navigateToGetStoreCards()
-                R.id.tvIncreaseLimit,R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
-                R.id.withdrawCashView,R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
             }
         }
     }

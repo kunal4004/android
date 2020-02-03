@@ -112,6 +112,7 @@ public class IncreaseLimitController {
 			tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e))) {
+			tvIncreaseLimit.setText(getString(R.string.increase_my_limit));
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
