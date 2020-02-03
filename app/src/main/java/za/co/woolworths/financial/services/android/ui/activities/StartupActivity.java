@@ -195,7 +195,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
 						WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
-						WoolworthsApplication.setCartCheckoutLink("");
 						WoolworthsApplication.setQuickShopDefaultValues(configResponse.configs.quickShopDefaultValues);
 						WoolworthsApplication.setWhitelistedDomainsForQRScanner(configResponse.configs.whitelistedDomainsForQRScanner);
 						WoolworthsApplication.setStsValues(configResponse.configs.sts);
