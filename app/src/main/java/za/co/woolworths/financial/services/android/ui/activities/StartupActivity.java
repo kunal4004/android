@@ -188,7 +188,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
 						WoolworthsApplication.setAuthenticVersionReleaseNote(configResponse.configs.enviroment.getAuthenticVersionReleaseNote());
 						WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
-						WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
 						WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
 						WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
 						WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
@@ -199,6 +198,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setQuickShopDefaultValues(configResponse.configs.quickShopDefaultValues);
 						WoolworthsApplication.setWhitelistedDomainsForQRScanner(configResponse.configs.whitelistedDomainsForQRScanner);
 						WoolworthsApplication.setStsValues(configResponse.configs.sts);
+
+						WoolworthsApplication.setApplyNowLink(configResponse.configs.applyNowLinks);
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
 						if (absaBankingOpenApiServices == null) {
