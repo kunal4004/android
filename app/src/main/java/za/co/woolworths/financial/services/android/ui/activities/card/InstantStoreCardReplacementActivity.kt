@@ -46,6 +46,7 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     }
 
     private fun navigateBack() {
+        if (requestOTPFragmentIsActivated) return //prevent back navigation when getOTP call is running
         when (supportFragmentManager.findFragmentById(R.id.flMyCard)) {
             is EnterOtpFragment -> {
                 val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)

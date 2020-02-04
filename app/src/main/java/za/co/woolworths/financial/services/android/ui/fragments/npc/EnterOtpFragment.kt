@@ -225,6 +225,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         disableEditText(edtVerificationCode3)
                         disableEditText(edtVerificationCode4)
                         disableEditText(edtVerificationCode5)
+                        otpCallIsRunning(true)
                     }
 
                     override fun hideProgress() {
@@ -237,6 +238,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         enableEditText(edtVerificationCode4)
                         enableEditText(edtVerificationCode5)
                         requestEditTextFocus()
+                        otpCallIsRunning(false)
                     }
 
                     override fun onSuccessHandler(response: LinkNewCardOTP) {
@@ -248,15 +250,18 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         } else {
                             setOTPDescription(response.otpSentTo?.toLowerCase(Locale.getDefault()))
                         }
+                        otpCallIsRunning(false)
                     }
 
                     override fun onFailureHandler() {
                         super.onFailureHandler()
+                        otpCallIsRunning(false)
                         setOTPDescription(getSavedOTP())
                     }
 
                     override fun onFailureHandler(error: Throwable?) {
                         super.onFailureHandler(error)
+                        otpCallIsRunning(false)
                         if (error is ConnectException || error is UnknownHostException) {
                             activity.resources?.let { resources ->
                                 enterOTPDescriptionScreen?.text =
@@ -266,10 +271,15 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     }
                 })
             } else {
+                otpCallIsRunning(false)
                 ErrorHandlerView(activity).showToast()
                 return
             }
         }
+    }
+
+    private fun otpCallIsRunning(state: Boolean) {
+        MyCardActivityExtension.requestOTPFragmentIsActivated = state
     }
 
 
@@ -283,8 +293,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? MyCardActivityExtension)?.hideBackIcon()
-                activity?.onBackPressed()
+                if (!MyCardActivityExtension.requestOTPFragmentIsActivated) {
+                    (activity as? MyCardActivityExtension)?.hideBackIcon()
+                    activity?.onBackPressed()
+                }
                 super.onOptionsItemSelected(item)
             }
             else -> super.onOptionsItemSelected(item)
