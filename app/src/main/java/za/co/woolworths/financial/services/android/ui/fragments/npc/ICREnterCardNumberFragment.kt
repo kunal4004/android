@@ -14,11 +14,13 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Parcelable
 import android.text.Editable
+import android.text.TextUtils
 import cards.pay.paycardsrecognizer.sdk.Card
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -47,6 +49,13 @@ class ICREnterCardNumberFragment : MyCardExtension() {
 
         navigateToEnterOTPFragmentImageView?.isEnabled = false
 
+        // Populate card number when navigate back from Enter OTP fragment
+        // TODO:: Communicate via Navigation graph to eliminate activity dependency
+        val cardNumber = MyCardActivityExtension.mCardNumber
+        if (!TextUtils.isEmpty(cardNumber)){
+            cardNumberEditText.setText(cardNumber)
+        }
+
         uniqueIdsForEnterCartNumberScreen()
     }
 
@@ -61,7 +70,7 @@ class ICREnterCardNumberFragment : MyCardExtension() {
     }
 
     private fun navigateToOTPScreen() {
-        if (shouldDisableUINavigation) return
+        if (shouldDisableUINavigation|| activity== null) return
         if (navigateToEnterOTPFragmentImageView?.isEnabled == true) {
             if (NetworkManager().isConnectedToNetwork(activity)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)

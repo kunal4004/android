@@ -6,6 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.CARD_NUMBER
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ICREnterCardNumberFragment
@@ -20,7 +22,8 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
         actionBar()
 
         intent?.extras?.apply {
-            mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL)
+            mStoreCardDetail = getString(STORE_CARD_DETAIL)
+            mCardNumber = getString(CARD_NUMBER)
         }
 
         if (savedInstanceState == null) {
@@ -50,7 +53,8 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
         when (supportFragmentManager.findFragmentById(R.id.flMyCard)) {
             is EnterOtpFragment -> {
                 val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
-                openLinkNewCardActivity.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, mStoreCardDetail)
+                openLinkNewCardActivity.putExtra(CARD_NUMBER, getCardNumber())
+                openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, mStoreCardDetail)
                 startActivity(openLinkNewCardActivity)
                 overridePendingTransition(0, 0)
                 finish()

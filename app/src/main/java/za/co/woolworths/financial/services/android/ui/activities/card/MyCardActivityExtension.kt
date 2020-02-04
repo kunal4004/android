@@ -21,6 +21,7 @@ open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener, I
 
     companion object {
         var requestOTPFragmentIsActivated = false
+        var mCardNumber: String? = null
     }
 
     var mStoreCardDetail: String? = null
