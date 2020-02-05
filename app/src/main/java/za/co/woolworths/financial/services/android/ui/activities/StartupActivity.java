@@ -200,6 +200,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setWhitelistedDomainsForQRScanner(configResponse.configs.whitelistedDomainsForQRScanner);
 						WoolworthsApplication.setStsValues(configResponse.configs.sts);
 
+						WoolworthsApplication.setApplyNowLink(configResponse.configs.applyNowLinks);
+
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
 						if (absaBankingOpenApiServices == null) {
 							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");

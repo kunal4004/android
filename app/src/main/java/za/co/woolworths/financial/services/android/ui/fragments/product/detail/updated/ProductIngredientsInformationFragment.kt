@@ -34,5 +34,13 @@ class ProductIngredientsInformationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ingredientText.text = ingredients
+        setUniqueIds()
+    }
+
+    private fun setUniqueIds() {
+        resources?.apply {
+            title?.contentDescription = getString(R.string.pdp_productIngredientsTitle)
+            ingredientText?.contentDescription = getString(R.string.pdp_textViewIngredient)
+        }
     }
 }
