@@ -71,7 +71,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_SERVER_ENVIRONMENT_KEY, startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
             startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_VERSION_KEY, startupViewModel.getAppVersion());
 
-            setUpScreen();
+            setupScreen();
         } else {
             showNonVideoViewWithErrorLayout();
         }
@@ -175,7 +175,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                 startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_SERVER_ENVIRONMENT_KEY, startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
                 startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_VERSION_KEY, startupViewModel.getAppVersion());
 
-                setUpScreen();
+                setupScreen();
                 initialize();
             } else {
                 showNonVideoViewWithErrorLayout();
@@ -276,7 +276,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             return false;
     }
 
-    private void setUpScreen() {
+    private void setupScreen() {
         if (isFirstTime()) {
             showVideoView();
         } else {
