@@ -516,7 +516,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         try {
             Utils.deleteDirectory(new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf"));
         } catch (Exception ex) {
-            Log.d("deleteDirectoryErr", ex.toString());
         }
     }
 }

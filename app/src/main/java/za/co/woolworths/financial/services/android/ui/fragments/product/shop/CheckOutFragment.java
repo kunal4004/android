@@ -131,7 +131,6 @@ public class CheckOutFragment extends Fragment {
 				// a callback which is executed when the cookies have been removed
 				@Override
 				public void onReceiveValue(Boolean aBoolean) {
-					Log.d(TAG, "Cookie removed: " + aBoolean);
 				}
 			});
 		} else cookieManager.removeAllCookie();

@@ -166,7 +166,6 @@ public class NotificationUtils {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
             List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
 			if (runningProcesses == null) {
-				Log.d(TAG, "runningProcesses is null");
 				return false;
 			}
             for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {

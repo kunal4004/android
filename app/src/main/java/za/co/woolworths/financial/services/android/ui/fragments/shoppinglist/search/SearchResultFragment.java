@@ -193,7 +193,6 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
             if (getProductAdapter() != null)
                 getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
         } catch (NullPointerException ex) {
-            Log.d("cancelColorSize", ex.getMessage());
         }
     }
 

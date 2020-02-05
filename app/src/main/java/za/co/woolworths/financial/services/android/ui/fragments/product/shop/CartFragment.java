@@ -167,7 +167,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				mToggleItemRemoved = (ToggleRemoveItem) activity;
 			}
 		} catch (IllegalStateException ex) {
-			Log.d("mToggleItemRemoved", ex.toString());
 		}
 		mMapStoreId = new HashMap<>();
 		mChangeQuantityList = new ArrayList<>();
