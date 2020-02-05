@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.HeaderDraw
 class PaymentOptionModelImpl : PaymentOptionContract.PaymentOptionModel {
 
     override fun getAccountDetailValues(): HashMap<String, String?> {
-        return hashMapOf("accountHolder" to getString(R.string.account_details_account_holder), "accountNumber" to getString(R.string.account_details_account_number), "bank" to getString(R.string.account_details_bank), "branchCode" to getString(R.string.account_details_branch_code), "referenceNumber" to getString(R.string.account_details_reference_number), "swiftCode" to getString(R.string.account_details_swift_code))
+        return hashMapOf("AccountHolder" to getString(R.string.account_details_account_holder), "AccountNumber" to getString(R.string.account_details_account_number), "Bank" to getString(R.string.account_details_bank), "BranchCode" to getString(R.string.account_details_branch_code), "ReferenceNumber" to getString(R.string.account_details_reference_number), "SwiftCode" to getString(R.string.account_details_swift_code))
     }
 
     override fun getDrawableHeader(): List<HeaderDrawable> {

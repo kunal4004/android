@@ -18,5 +18,4 @@ public class Configs {
     public ApplyNowLinks applyNowLinks;
     public ArrayList<String> whitelistedDomainsForQRScanner;
     public Sts sts;
-    public ApplyNowLinks applyNowLinks;
 }
