@@ -2,8 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,13 +14,9 @@ import android.widget.RelativeLayout;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import io.fabric.sdk.android.services.common.CommonUtils;
 import za.co.woolworths.financial.services.android.contracts.ConfigResponseListener;
@@ -42,41 +36,15 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
-    private FirebaseAnalytics mFirebaseAnalytics = null;
-
-    private String appVersion;
-    private String environment;
-
-    private static final String APP_SERVER_ENVIRONMENT_KEY = "app_server_environment";
-    private static final String APP_VERSION_KEY = "app_version";
-
-    private boolean mVideoPlayerShouldPlay = true;
-    private boolean isVideoPlaying = false;
-    private boolean isMinimized = false;
-    private boolean isServerMessageShown = false;
-
-    private boolean splashScreenDisplay = false;
-    private boolean splashScreenPersist = false;
-    private String splashScreenText = "";
-
-    private WVideoView videoView;
-    private LinearLayout errorLayout;
-    private View noVideoView;
-    private View serverMessageView;
-    private WTextView serverMessageLabel;
-    private RelativeLayout videoViewLayout;
-    private ProgressBar pBar;
-
     private IStartupViewModel startupViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_startup);
-        Toolbar toolbar = findViewById(R.id.mToolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(findViewById(R.id.mToolbar));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.hide();
@@ -88,30 +56,20 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             startupViewModel.setPushNotificationUpdate(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT));
 
         try {
-            this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
+            startupViewModel.setAppVersion(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+            startupViewModel.setEnvironment(com.awfs.coordination.BuildConfig.FLAVOR);
         } catch (PackageManager.NameNotFoundException e) {
-            this.appVersion = "6.1.0";
-            this.environment = "QA";
+            startupViewModel.setAppVersion("6.1.0");
+            startupViewModel.setEnvironment("QA");
             e.printStackTrace();
         }
 
-        if (mFirebaseAnalytics == null)
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        if (startupViewModel.getFirebaseAnalytics() == null)
+            startupViewModel.setFirebaseAnalytics(FirebaseAnalytics.getInstance(this));
 
-        videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
-        errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
-        noVideoView = (View) findViewById(R.id.splashNoVideoView);
-        serverMessageView = (View) findViewById(R.id.splashServerMessageView);
-        serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
-        videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
-        pBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-        //Mobile Config Server
         if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-            mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
-            mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_SERVER_ENVIRONMENT_KEY, startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
+            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_VERSION_KEY, startupViewModel.getAppVersion());
 
             setUpScreen();
         } else {
@@ -138,18 +96,14 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         startupViewModel.queryServiceGetConfig(new ConfigResponseListener() {
             @Override
             public void onSuccess(ConfigResponse response) {
-                mVideoPlayerShouldPlay = false;
+                startupViewModel.setVideoPlayerShouldPlay(false);
 
                 if (response.configs.enviroment.stsURI == null || response.configs.enviroment.stsURI.isEmpty()) {
                     showNonVideoViewWithErrorLayout();
                     return;
                 }
 
-                splashScreenText = response.configs.enviroment.splashScreenText;
-                splashScreenDisplay = response.configs.enviroment.splashScreenDisplay;
-                splashScreenPersist = response.configs.enviroment.splashScreenPersist;
-
-                if (!isVideoPlaying) {
+                if (!startupViewModel.isVideoPlaying()) {
                     presentNextScreenOrServerMessage();
                 }
             }
@@ -165,9 +119,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     @Override
     public void onCompletion(MediaPlayer mp) {
 
-        isVideoPlaying = false;
+        startupViewModel.setVideoPlaying(false);
 
-        if (!mVideoPlayerShouldPlay) {
+        if (!startupViewModel.videoPlayerShouldPlay()) {
 
             presentNextScreenOrServerMessage();
             mp.stop();
@@ -180,24 +134,28 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     @Override
     protected void onStop() {
         super.onStop();
-        isMinimized = true;
+        startupViewModel.setAppMinimized(true);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+            ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
+
             if (pBar != null)
                 pBar.setVisibility(View.GONE);
+
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP);
             RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
             rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
             return;
         }
 
-        if (isMinimized) {
-            isMinimized = false;
-            if (isServerMessageShown) {
+        if (startupViewModel.isAppMinimized()) {
+            startupViewModel.setAppMinimized(false);
+
+            if (startupViewModel.isServerMessageShown()) {
                 showNonVideoViewWithoutErrorLayout();
                 initialize();
             } else {
@@ -214,8 +172,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         @Override
         public void onClick(View v) {
             if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
-                mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
-                mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_SERVER_ENVIRONMENT_KEY, startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
+                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_VERSION_KEY, startupViewModel.getAppVersion());
 
                 setUpScreen();
                 initialize();
@@ -226,6 +184,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     };
 
     private void showVideoView() {
+        WVideoView videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+
         noVideoView.setVisibility(View.GONE);
         serverMessageView.setVisibility(View.GONE);
         videoViewLayout.setVisibility(View.VISIBLE);
@@ -236,10 +199,16 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         videoView.start();
         videoView.setOnCompletionListener(this);
 
-        isVideoPlaying = true;
+        startupViewModel.setVideoPlaying(true);
     }
 
     private void showNonVideoViewWithErrorLayout() {
+        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
+
         runOnUiThread(new Runnable() {
             public void run() {
                 pBar.setVisibility(View.GONE);
@@ -253,6 +222,12 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
     private void showNonVideoViewWithoutErrorLayout() {
+        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
+
         pBar.setVisibility(View.VISIBLE);
         videoViewLayout.setVisibility(View.GONE);
         errorLayout.setVisibility(View.GONE);
@@ -260,16 +235,22 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         serverMessageView.setVisibility(View.GONE);
     }
 
-    private void showServerMessage(String label, boolean persist) {
+    private void showServerMessage() {
+        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        WTextView serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
 
         pBar.setVisibility(View.GONE);
         videoViewLayout.setVisibility(View.GONE);
         errorLayout.setVisibility(View.GONE);
         noVideoView.setVisibility(View.GONE);
 
-        serverMessageLabel.setText(label);
+        serverMessageLabel.setText(startupViewModel.getSplashScreenText());
         WButton proceedButton = findViewById(R.id.proceedButton);
-        if (persist) {
+        if (startupViewModel.isSplashScreenPersist()) {
             proceedButton.setVisibility(View.GONE);
         } else {
             proceedButton.setVisibility(View.VISIBLE);
@@ -285,7 +266,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
         serverMessageView.setVisibility(View.VISIBLE);
 
-        isServerMessageShown = true;
+        startupViewModel.setServerMessageShown(true);
     }
 
     private boolean isFirstTime() {
@@ -304,8 +285,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
     private void presentNextScreenOrServerMessage() {
-        if (splashScreenDisplay) {
-            showServerMessage(splashScreenText, splashScreenPersist);
+        if (startupViewModel.isSplashScreenDisplay()) {
+            showServerMessage();
         } else {
             showNonVideoViewWithoutErrorLayout();
             startupViewModel.presentNextScreen();

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,23 @@ public class StartupViewModel implements IStartupViewModel {
     private final Context mContext;
     private Intent mIntent;
     private String mPushNotificationUpdate;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
+
+    private String appVersion;
+    private String environment;
+
+    public static final String APP_SERVER_ENVIRONMENT_KEY = "app_server_environment";
+    public static final String APP_VERSION_KEY = "app_version";
+
+    private boolean mVideoPlayerShouldPlay = true;
+    private boolean mIsVideoPlaying = false;
+    private boolean mIsAppMinimized = false;
+
+    private boolean mIsServerMessageShown = false;
+    private boolean mSplashScreenDisplay = false;
+    private boolean mSplashScreenPersist = false;
+    private String mSplashScreenText = "";
 
     public StartupViewModel(Context context){
         mContext = context;
@@ -75,8 +93,88 @@ public class StartupViewModel implements IStartupViewModel {
     }
 
     @Override
-    public String getPushNotificationUpdate() {
-        return mPushNotificationUpdate;
+    public FirebaseAnalytics getFirebaseAnalytics() {
+        return mFirebaseAnalytics;
+    }
+
+    @Override
+    public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
+        this.mFirebaseAnalytics = firebaseAnalytics;
+    }
+
+    @Override
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    @Override
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    @Override
+    public String getEnvironment() {
+        return environment;
+    }
+
+    @Override
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public boolean videoPlayerShouldPlay() {
+        return mVideoPlayerShouldPlay;
+    }
+
+    @Override
+    public void setVideoPlayerShouldPlay(boolean videoPlayerShouldPlay) {
+        this.mVideoPlayerShouldPlay = videoPlayerShouldPlay;
+    }
+
+    @Override
+    public boolean isVideoPlaying() {
+        return mIsVideoPlaying;
+    }
+
+    @Override
+    public void setVideoPlaying(boolean isVideoPlaying) {
+        this.mIsVideoPlaying = isVideoPlaying;
+    }
+
+    @Override
+    public boolean isAppMinimized() {
+        return mIsAppMinimized;
+    }
+
+    @Override
+    public void setAppMinimized(boolean isAppMinimized) {
+        this.mIsAppMinimized = isAppMinimized;
+    }
+
+    @Override
+    public boolean isServerMessageShown() {
+        return mIsServerMessageShown;
+    }
+
+    @Override
+    public void setServerMessageShown(boolean isServerMessageShown) {
+        this.mIsServerMessageShown = isServerMessageShown;
+    }
+
+    @Override
+    public boolean isSplashScreenDisplay() {
+        return mSplashScreenDisplay;
+    }
+
+    @Override
+    public boolean isSplashScreenPersist() {
+        return mSplashScreenPersist;
+    }
+
+    @Override
+    public String getSplashScreenText() {
+        return mSplashScreenText;
     }
 
     @Override
@@ -114,6 +212,10 @@ public class StartupViewModel implements IStartupViewModel {
     }
 
     private void persistGlobalConfig(ConfigResponse response){
+        mSplashScreenText = response.configs.enviroment.splashScreenText;
+        mSplashScreenDisplay = response.configs.enviroment.splashScreenDisplay;
+        mSplashScreenPersist = response.configs.enviroment.splashScreenPersist;
+
         WoolworthsApplication.setStoreCardBlockReasons(response.configs.enviroment.storeCardBlockReasons);
         WoolworthsApplication.setSsoRedirectURI(response.configs.enviroment.getSsoRedirectURI());
         WoolworthsApplication.setStsURI(response.configs.enviroment.getStsURI());
