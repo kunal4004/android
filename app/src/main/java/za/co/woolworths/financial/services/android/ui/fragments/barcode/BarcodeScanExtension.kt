@@ -206,6 +206,5 @@ abstract class BarcodeScanExtension : Fragment() {
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
         }
-
     }
 }

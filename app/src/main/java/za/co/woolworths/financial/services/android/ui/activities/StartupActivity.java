@@ -21,8 +21,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import io.fabric.sdk.android.services.common.CommonUtils;
 import za.co.woolworths.financial.services.android.contracts.ConfigResponseListener;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.IStartupViewModel;
-import za.co.woolworths.financial.services.android.models.StartupViewModel;
+import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel;
+import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
-    private IStartupViewModel startupViewModel;
+    private StartupViewModel startupViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         if (actionBar != null)
             actionBar.hide();
 
-        startupViewModel = new StartupViewModel(this);
+        startupViewModel = new StartupViewModelImpl(this);
         startupViewModel.setIntent(getIntent());
         Bundle bundle = startupViewModel.getIntent().getExtras();
         if (bundle != null)
@@ -68,8 +68,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             startupViewModel.setFirebaseAnalytics(FirebaseAnalytics.getInstance(this));
 
         if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_SERVER_ENVIRONMENT_KEY, startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
-            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_VERSION_KEY, startupViewModel.getAppVersion());
+            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_SERVER_ENVIRONMENT_KEY(), startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
+            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_VERSION_KEY(), startupViewModel.getAppVersion());
 
             setupScreen();
         } else {
@@ -172,8 +172,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         @Override
         public void onClick(View v) {
             if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
-                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_SERVER_ENVIRONMENT_KEY, startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
-                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModel.APP_VERSION_KEY, startupViewModel.getAppVersion());
+                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_SERVER_ENVIRONMENT_KEY(), startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
+                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_VERSION_KEY(), startupViewModel.getAppVersion());
 
                 setupScreen();
                 initialize();
@@ -209,14 +209,12 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
         ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        runOnUiThread(new Runnable() {
-            public void run() {
-                pBar.setVisibility(View.GONE);
-                videoViewLayout.setVisibility(View.GONE);
-                noVideoView.setVisibility(View.VISIBLE);
-                serverMessageView.setVisibility(View.GONE);
-                errorLayout.setVisibility(View.VISIBLE);
-            }
+        runOnUiThread(() -> {
+            pBar.setVisibility(View.GONE);
+            videoViewLayout.setVisibility(View.GONE);
+            noVideoView.setVisibility(View.VISIBLE);
+            serverMessageView.setVisibility(View.GONE);
+            errorLayout.setVisibility(View.VISIBLE);
         });
 
     }
@@ -254,13 +252,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             proceedButton.setVisibility(View.GONE);
         } else {
             proceedButton.setVisibility(View.VISIBLE);
-            proceedButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showNonVideoViewWithoutErrorLayout();
-                    startupViewModel.presentNextScreen();
-                }
-
+            proceedButton.setOnClickListener(v -> {
+                showNonVideoViewWithoutErrorLayout();
+                startupViewModel.presentNextScreen();
             });
         }
 
