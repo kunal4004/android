@@ -20,6 +20,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
+import kotlinx.android.synthetic.main.common_account_detail.*
 import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -131,7 +132,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
-        cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+        cardImageRootView?.isEnabled =
+                myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 
     override fun handleUnknownHttpCode(description: String?) {
@@ -155,7 +157,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
                     cancelRequest()
-                    navigateToLoanWithdrawalActivity()}
+                    navigateToLoanWithdrawalActivity()
+                }
             }
         }
     }
@@ -276,6 +279,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     override fun hideProductNotInGoodStanding() {
         llIncreaseLimitContainer?.visibility = GONE
+        increaseMyLimitSepartorView?.visibility = GONE
     }
 
     override fun onOfferActiveSuccessResult() {
