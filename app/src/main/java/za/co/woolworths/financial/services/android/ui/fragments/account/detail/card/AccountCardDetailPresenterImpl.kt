@@ -17,19 +17,24 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 
 class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsContract.AccountCardDetailView?, private var model: AccountCardDetailsContract.AccountCardDetailModel?) : AccountCardDetailsContract.AccountCardDetailPresenter, ICommonView<Any> {
+
+    companion object {
+        private const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
+        private const val PERSONAL_LOAN_PRODUCT_GROUP_CORE = "pl"
+    }
 
     private var mOfferActive: OfferActive? = null
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
-    private var mIncreaseLimitController: IncreaseLimitController? = null
+    private var mIncreaseLimitController: CreditLimitIncreaseStatus? = null
+    var storeCardCallIsRunning = false
 
     init {
-        mIncreaseLimitController =
-                getAppCompatActivity()?.let { appCompatActivity -> IncreaseLimitController(appCompatActivity) }
+        mIncreaseLimitController = getAppCompatActivity()?.let { CreditLimitIncreaseStatus() }
     }
 
     override fun createCardHolderName(): String? {
@@ -55,7 +60,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair =
+                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -71,9 +77,11 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
-        if (productGroupCode == "cc" || productGroupCode == "pl") return
-        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
+        if (productGroupCode == CREDIT_CARD_PRODUCT_GROUP_CODE || productGroupCode == PERSONAL_LOAN_PRODUCT_GROUP_CORE) return
+        val storeCardsRequest: StoreCardsRequestBody? =
+                account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
         mainView?.showStoreCardProgress()
+        storeCardCallIsRunning = true
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
 
@@ -98,6 +106,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     }
 
     override fun onSuccess(apiResponse: Any?) {
+        storeCardCallIsRunning = false
         with(apiResponse) {
             when (this) {
                 is StoreCardsResponse -> {
@@ -138,8 +147,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary =
-                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()
@@ -152,14 +160,12 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
 
     override fun handleUnknownHttpResponse(description: String?) {
         val resources = getAppCompatActivity()?.resources
-        val message: String? =
-                if (description.isNullOrEmpty()) resources?.getString(R.string.general_error_desc) else description
+        val message: String? = if (description.isNullOrEmpty()) resources?.getString(R.string.general_error_desc) else description
         mainView?.handleUnknownHttpCode(message)
     }
 
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
-        mainView?.displayViewCardText()
         navigateToTemporaryStoreCardOnButtonTapped()
     }
 
@@ -193,7 +199,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding
             ?: false
 
-    override fun getCreditLimitIncreaseController(): IncreaseLimitController? = mIncreaseLimitController
+    override fun creditLimitIncrease(): CreditLimitIncreaseStatus? = mIncreaseLimitController
 
 
     override fun onDestroy() {
@@ -201,6 +207,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     }
 
     override fun onFailure(error: Throwable?) {
+        storeCardCallIsRunning = false
         mainView?.hideAccountStoreCardProgress()
     }
 }

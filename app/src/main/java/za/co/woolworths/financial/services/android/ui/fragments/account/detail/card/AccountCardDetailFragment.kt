@@ -35,13 +35,11 @@ import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceP
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountCardDetailsContract.AccountCardDetailView {
 
-    private var mCreditLimitIncreaseStatus: CreditLimitIncreaseStatus? = null
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
@@ -70,14 +68,12 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
-        mCreditLimitIncreaseStatus = CreditLimitIncreaseStatus()
-
         mCardPresenterImpl?.apply {
             setBalanceProtectionInsuranceState()
             displayCardHolderName()
+            creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
         }
 
-        mCreditLimitIncreaseStatus?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
 
         disposable?.add(WoolworthsApplication.getInstance()
                 .bus()
@@ -154,8 +150,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
-                R.id.cardDetailImageView -> navigateToGetStoreCards()
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> mCreditLimitIncreaseStatus?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.cardDetailImageView -> if (!storeCardCallIsRunning) navigateToGetStoreCards()
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
             }
         }
@@ -234,10 +230,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         userNameTextView?.text = name
     }
 
-    override fun displayViewCardText() {
-        myCardDetailTextView?.text = activity?.getString(R.string.view_card)
-    }
-
     override fun hideUserOfferActiveProgress() {
         llIncreaseLimitContainer?.isEnabled = true
         relIncreaseMyLimit?.isEnabled = true
@@ -267,7 +259,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive) {
-        activity?.runOnUiThread { mCreditLimitIncreaseStatus?.cliStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
+        activity?.runOnUiThread { mCardPresenterImpl?.creditLimitIncrease()?.cliStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
     }
 
     override fun hideProductNotInGoodStanding() {
@@ -288,7 +280,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     private fun hideCLIView() {
-        mCreditLimitIncreaseStatus?.showCLIProgress(llCommonLayer, tvIncreaseLimitDescription)
+        mCardPresenterImpl?.creditLimitIncrease()?.showCLIProgress(llCommonLayer, tvIncreaseLimitDescription)
     }
 }
 

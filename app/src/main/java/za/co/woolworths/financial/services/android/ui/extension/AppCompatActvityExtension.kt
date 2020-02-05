@@ -212,7 +212,7 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
     }
 }
 
-inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: ICommonView<Any>? = null) {
+inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: ICommonView<Any>? = null): Call<RESPONSE_OBJECT>? {
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
     call?.enqueue(CompletionHandler(object : RequestListener<RESPONSE_OBJECT> {
@@ -226,6 +226,8 @@ inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, reque
             requestListener?.onFailure(error)
         }
     }, classType))
+
+    return call
 }
 
 inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_OBJECT>?) {
