@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 
 open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
-    var mAccount: Account? = null
+    private var mAccount: Account? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

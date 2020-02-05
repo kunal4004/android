@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceP
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
+import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -74,7 +75,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
             creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
         }
 
-
         disposable?.add(WoolworthsApplication.getInstance()
                 .bus()
                 .toObservable()
@@ -93,7 +93,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                         }
                     }
                 })
-
 
         autoConnectToNetwork()
     }
@@ -132,8 +131,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
-        cardImageRootView?.isEnabled =
-                myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+        cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 
     override fun handleUnknownHttpCode(description: String?) {
@@ -150,11 +148,21 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
-                R.id.cardDetailImageView -> if (!storeCardCallIsRunning) navigateToGetStoreCards()
+                R.id.cardDetailImageView -> {
+                    cancelRetrofitRequest(mOfferActiveCall)
+                    navigateToGetStoreCards()
+                }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
-                R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
+                R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
+                    cancelRequest()
+                    navigateToLoanWithdrawalActivity()}
             }
         }
+    }
+
+    private fun AccountCardDetailPresenterImpl.cancelRequest() {
+        cancelRetrofitRequest(mOfferActiveCall)
+        cancelRetrofitRequest(mStoreCardCall)
     }
 
     private fun navigateToGetStoreCards() {
@@ -169,7 +177,10 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
     override fun onDestroy() {
         disposable?.dispose()
-        mCardPresenterImpl?.onDestroy()
+        mCardPresenterImpl?.apply {
+            onDestroy()
+            cancelRequest()
+        }
         super.onDestroy()
     }
 
@@ -238,6 +249,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun showUserOfferActiveProgress() {
+        cancelRetrofitRequest(mCardPresenterImpl?.mStoreCardCall)
         llIncreaseLimitContainer?.isEnabled = false
         relIncreaseMyLimit?.isEnabled = false
         progressCreditLimit?.visibility = VISIBLE

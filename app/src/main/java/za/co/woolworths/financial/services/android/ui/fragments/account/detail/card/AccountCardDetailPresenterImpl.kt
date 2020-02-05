@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.ICommonView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -16,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -27,11 +29,12 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
         private const val PERSONAL_LOAN_PRODUCT_GROUP_CORE = "pl"
     }
 
+    var mOfferActiveCall: Call<OfferActive>? = null
+    var mStoreCardCall: Call<StoreCardsResponse>? = null
     private var mOfferActive: OfferActive? = null
     private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: CreditLimitIncreaseStatus? = null
-    var storeCardCallIsRunning = false
 
     init {
         mIncreaseLimitController = getAppCompatActivity()?.let { CreditLimitIncreaseStatus() }
@@ -81,8 +84,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
         val storeCardsRequest: StoreCardsRequestBody? =
                 account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
         mainView?.showStoreCardProgress()
-        storeCardCallIsRunning = true
-        model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
+        mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
 
     override fun getUserCLIOfferActive() {
@@ -94,7 +96,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
 
         val productOfferingId = account?.productOfferingId
         mainView?.showUserOfferActiveProgress()
-        productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
+        mOfferActiveCall =
+                productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
     }
 
     override fun getStoreCardResponse(): StoreCardsResponse? {
@@ -106,20 +109,18 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     }
 
     override fun onSuccess(apiResponse: Any?) {
-        storeCardCallIsRunning = false
         with(apiResponse) {
             when (this) {
                 is StoreCardsResponse -> {
+                    mainView?.hideAccountStoreCardProgress()
+                    if (WoolworthsApplication.getInstance()?.currentActivity !is AccountSignedInActivity) return
                     when (httpCode) {
-                        200 -> {
-                            mainView?.hideAccountStoreCardProgress()
-                            handleStoreCardSuccessResponse(this)
+                        200 -> handleStoreCardSuccessResponse(this)
+                        440 -> response?.stsParams?.let { stsParams ->
+                            mainView?.handleSessionTimeOut(stsParams)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
-                        else -> {
-                            mainView?.hideAccountStoreCardProgress()
-                            handleUnknownHttpResponse(response?.desc)
-                        }
+
+                        else -> handleUnknownHttpResponse(response?.desc)
                     }
                 }
 
@@ -147,7 +148,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary =
+                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()
@@ -160,7 +162,8 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
 
     override fun handleUnknownHttpResponse(description: String?) {
         val resources = getAppCompatActivity()?.resources
-        val message: String? = if (description.isNullOrEmpty()) resources?.getString(R.string.general_error_desc) else description
+        val message: String? =
+                if (description.isNullOrEmpty()) resources?.getString(R.string.general_error_desc) else description
         mainView?.handleUnknownHttpCode(message)
     }
 
@@ -207,7 +210,6 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
     }
 
     override fun onFailure(error: Throwable?) {
-        storeCardCallIsRunning = false
         mainView?.hideAccountStoreCardProgress()
     }
 }

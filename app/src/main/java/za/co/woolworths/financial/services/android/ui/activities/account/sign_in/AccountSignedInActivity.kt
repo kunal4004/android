@@ -30,10 +30,10 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
-        const val  REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021
+        const val REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021
     }
 
-    var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
+    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 
@@ -50,7 +50,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
             setToolbarTopMargin()
         }
 
-        KotlinUtils.roundCornerDrawable(accountInArrearsTextView,"#e41f1f")
+        KotlinUtils.roundCornerDrawable(accountInArrearsTextView, "#e41f1f")
         AnimationUtilExtension.animateViewPushDown(accountInArrearsTextView)
 
         accountInArrearsTextView?.setOnClickListener(this)
@@ -69,13 +69,13 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
 
     private fun setUpBottomSheetDialog() {
         val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottomSheetLayout)
-        val maximumExpandedHeight = mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
+        val maximumExpandedHeight =
+                mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
         bottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
 
         sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
-        val overlayAnchoredHeight =
-                mAccountSignedInPresenter?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight)
-        sheetBehavior?.peekHeight = overlayAnchoredHeight ?: 0
+        val overlayAnchoredHeight: Int = mAccountSignedInPresenter?.getOverlayAnchoredHeight()?.plus(maximumExpandedHeight * 1.4)?.toInt() ?: 0
+        sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -122,7 +122,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         window?.decorView?.fitsSystemWindows = true
         Utils.updateStatusBarBackground(this)
         frameLayout?.visibility = GONE
-        bottomSheetLayout?.visibility  = GONE
+        bottomSheetLayout?.visibility = GONE
         sixMonthArrearsFrameLayout?.visibility = VISIBLE
         mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
     }
@@ -153,9 +153,5 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         val colorFrom = ContextCompat.getColor(this, android.R.color.transparent)
         val colorTo = ContextCompat.getColor(this, R.color.black_99)
         dimView?.setBackgroundColor(KotlinUtils.interpolateColor(slideOffset, colorFrom, colorTo))
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

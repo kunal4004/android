@@ -56,8 +56,8 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent">
 
-            <View
-                android:id="@+id/view"
+            <TextView
+                android:id="@+id/topRoundedView"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:background="@drawable/rounded_view_grey_bg"
@@ -72,10 +72,10 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/rounded_grey_corner"
-                app:layout_constraintBottom_toBottomOf="@+id/view"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+                app:layout_constraintBottom_toBottomOf="@+id/topRoundedView"
+                app:layout_constraintEnd_toEndOf="@+id/topRoundedView"
+                app:layout_constraintStart_toStartOf="@+id/topRoundedView"
+                app:layout_constraintTop_toTopOf="@+id/topRoundedView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <fragment
@@ -94,6 +94,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
+
         <fragment
             android:id="@+id/six_month_arrears_nav_host"
             android:name="androidx.navigation.fragment.NavHostFragment"

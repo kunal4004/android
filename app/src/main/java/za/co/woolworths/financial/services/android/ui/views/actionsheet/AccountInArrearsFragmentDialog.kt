@@ -26,10 +26,13 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val accountInStringFormat = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        mAccountCards = Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        val accountInStringFormat =
+                arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
+        mAccountCards =
+                Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
 
-        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc,  Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
+        accountInArrearsDescriptionTextView?.text =
+                mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
 
         paymentOptionButton?.setOnClickListener(this)
         gotITButton?.setOnClickListener(this)
@@ -38,7 +41,10 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.gotITButton -> dismiss()
-            R.id.paymentOptionButton -> ScreenManager.presentHowToPayActivity(activity, mAccountCards)
+            R.id.paymentOptionButton -> {
+                ScreenManager.presentHowToPayActivity(activity, mAccountCards)
+                dismiss()
+            }
         }
     }
 }
