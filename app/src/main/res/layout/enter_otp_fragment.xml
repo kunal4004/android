@@ -91,27 +91,23 @@
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtVerificationCode1"
         style="@style/enter_otp_edit_text_style"
-        android:background="@drawable/edit_text_bg_selector_bg"
+        android:background="@drawable/otp_box_background_focus_selector"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:imeOptions="actionNext"
         android:importantForAutofill="no"
         android:nextFocusForward="@+id/edtVerificationCode2"
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
-        app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode2"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/viewOTPBackground"
-        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" >
-         <requestFocus/>
-    </androidx.appcompat.widget.AppCompatEditText>
+        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground"></androidx.appcompat.widget.AppCompatEditText>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtVerificationCode2"
         style="@style/enter_otp_edit_text_style"
-        android:layout_marginStart="1dp"
-        android:background="@drawable/edit_text_bg_selector_bg"
+        android:background="@drawable/otp_box_background_focus_selector"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:imeOptions="actionNext"
+
         android:importantForAutofill="no"
         android:nextFocusForward="@+id/edtVerificationCode3"
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
@@ -124,9 +120,10 @@
         android:id="@+id/edtVerificationCode3"
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="2dp"
-        android:background="@drawable/edit_text_bg_selector_bg"
+        android:background="@drawable/otp_box_background_focus_selector"
         android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:imeOptions="actionNext"
+       
         android:nextFocusForward="@+id/edtVerificationCode4"
         app:layout_constraintBottom_toBottomOf="@+id/edtVerificationCode2"
         app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode4"
@@ -138,9 +135,10 @@
         android:id="@+id/edtVerificationCode4"
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="1dp"
-        android:background="@drawable/edit_text_bg_selector_bg"
+        android:background="@drawable/otp_box_background_focus_selector"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:imeOptions="actionNext"
+       
         android:nextFocusForward="@+id/edtVerificationCode5"
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
         app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode5"
@@ -152,9 +150,10 @@
         android:id="@+id/edtVerificationCode5"
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="2dp"
-        android:background="@drawable/edit_text_bg_selector_bg"
+        android:background="@drawable/otp_box_background_focus_selector"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:imeOptions="actionDone"
+       
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
         app:layout_constraintEnd_toEndOf="@+id/viewOTPBackground"
         app:layout_constraintStart_toEndOf="@+id/edtVerificationCode4"

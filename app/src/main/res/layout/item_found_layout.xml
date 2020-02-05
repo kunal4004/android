@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/default_background"
+    android:contentDescription="@string/plp_viewGroupItemsFound"
     android:paddingTop="18dp"
     android:paddingBottom="24dp">
 
@@ -19,6 +20,7 @@
         android:text="0"
         android:textColor="@color/black"
         android:textSize="12sp"
+        android:contentDescription="@string/plp_itemNumber"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvFoundItem"
@@ -32,6 +34,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/futura_medium_ttf"
         android:letterSpacing="0.15"
+        android:contentDescription="@string/plp_testViewItemFound"
         android:text="@string/product_item_found"
         android:textAllCaps="true"
         android:textColor="@color/black_desc_opacity"

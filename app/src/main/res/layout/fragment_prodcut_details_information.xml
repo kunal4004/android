@@ -31,7 +31,7 @@
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
-            android:id="@+id/title1"
+            android:id="@+id/productCodeTitle"
             style="@style/myriad_pro_semi_bold_black_15_text_style"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:text="Product code:"
@@ -47,7 +47,7 @@
             android:layout_marginTop="@dimen/five_dp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/title1" />
+            app:layout_constraintTop_toBottomOf="@+id/productCodeTitle" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"

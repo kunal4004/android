@@ -1173,7 +1173,7 @@
     <string name="select_colour">Select Colour</string>
     <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
-    <string name="icr_wrong_otp_error">The One Time Pin provided doesn\'t exist</string>
+    <string name="icr_wrong_otp_error">The OTP entered is incorrect. Please try again.</string>
 
     <string name="toolbar_layout">Toolbar</string>
     <string name="active_account_layout">Active Account</string>
@@ -1339,4 +1339,79 @@
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 9am - 6pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_action">activate</string>
     <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
+
+    <!-- Unique Ids for PDP-->
+    <string name="pdp_layout">productLayout</string>
+    <string name="pdp_view_pager_indicator">productImagesViewPagerIndicator</string>
+    <string name="pdp_close_button">buttonClose</string>
+    <string name="pdp_textViewProductName">textViewProductName</string>
+    <string name="pdp_textViewPrice">textViewPrice</string>
+    <string name="pdp_textViewColourPlaceHolder">textViewColourPlaceHolder</string>
+    <string name="pdp_textSelectedColour">textSelectedColour</string>
+    <string name="pdp_colorSelectorRecycleView">colorSelectorRecycleView</string>
+    <string name="pdp_buttonAddToCart">buttonAddToCart</string>
+    <string name="pdp_quantitySelector">quantitySelector</string>
+    <string name="pdp_quantitySelected">quantitySelected</string>
+    <string name="pdp_sizeColourSelectorLayout">sizeColourSelectorLayout</string>
+    <string name="pdp_sizeSelectorRecycleView">sizeSelectorRecycleView</string>
+    <string name="pdp_selectedSizePlaceholder">selectedSizePlaceholder</string>
+    <string name="pdp_textViewSelectedSize">textViewSelectedSize</string>
+    <string name="pdp_stockAvailabilityPlaceholder">stockAvailabilityPlaceholder</string>
+    <string name="pdp_deliveryLocationLayout">deliveryLocationLayout</string>
+    <string name="pdp_defaultLocationPlaceholder">defaultLocationPlaceholder</string>
+    <string name="pdp_txtCurrentDeliveryLocation">txtCurrentDeliveryLocation</string>
+    <string name="pdp_buttoneditDeliveryLocationn">buttoneditDeliveryLocationn</string>
+    <string name="pdp_productDetailOptionsAndInformationLayout">productDetailOptionsAndInformationLayout</string>
+    <string name="pdp_headerProductOptionsLayout">headerProductOptionsLayout</string>
+    <string name="pdp_checkInStoreAvailabilityLayout">checkInStoreAvailabilityLayout</string>
+    <string name="pdp_buttonView">buttonView</string>
+    <string name="pdp_addToShoppingListLayout">addToShoppingListLayout</string>
+    <string name="pdp_headerProductInformationLayout">headerProductInformationLayout</string>
+    <string name="pdp_productDetailsInformationLayout">productDetailsInformationLayout</string>
+    <string name="pdp_productIngredientsInformationLayout">productIngredientsInformationLayout</string>
+    <string name="pdp_nutritionalInformationLayout">nutritionalInformationLayout</string>
+    <string name="pdp_productDetailsTitle">productDetailsTitle</string>
+    <string name="pdp_productCodeTitle">productCodeTitle</string>
+    <string name="pdp_textProductCode">textProductCode</string>
+    <string name="pdp_productIngredientsTitle">productIngredientsTitle</string>
+    <string name="pdp_textViewIngredient">textViewIngredient</string>
+    <string name="pdp_nutritionalInformationTitle">nutritionalInformationTitle</string>
+    <string name="pdp_descriptionTitle">descriptionTitle</string>
+    <string name="pdp_filterOptionSelector">filterOptionSelector</string>
+    <string name="pdp_optionPopupLayout">optionPopupLayout</string>
+    <string name="pdp_sortOptionsList">sortOptionsList</string>
+    <string name="pdp_nutritionLayout">nutritionLayout</string>
+
+    <!-- Unique Ids for PLP-->
+    <string name="plp_buttonSort">buttonSort</string>
+    <string name="plp_buttonRefine">buttonRefine</string>
+    <string name="plp_viewGroupItemsFound">viewGroupItemsFound</string>
+    <string name="plp_itemNumber">itemNumber</string>
+    <string name="plp_testViewItemFound">testViewItemFound</string>
+    <string name="plp_sortByFrameLayout">sortByFrameLayout</string>
+    <string name="plp_sortOptionList">sortOptionList</string>
+    <string name="plp_buttonAddToCart">buttonAddToCart</string>
+    <string name="plp_productImageLayout">productImageLayout</string>
+    <string name="plp_refineDrawerFrameLayout">refineDrawerFrameLayout</string>
+    <string name="plp_testViewFilterResult">testViewFilterResul</string>
+    <string name="plp_buttonClose">buttonClose</string>
+    <string name="plp_promotionLayout">promotionLayout</string>
+    <string name="plp_textViewOnPromotion">textViewOnPromotio</string>
+    <string name="plp_viewListRefinement">viewListRefinement</string>
+    <string name="plp_buttonEnablePromotiont">buttonEnablePromotiont</string>
+    <string name="plp_seeResultsButtonLayout">seeResultsButtonLayout</string>
+    <string name="plp_textViewSeeResults">textViewSeeResults</string>
+    <string name="plp_viewListSubRefinement">viewListSubRefinement</string>
+    <string name="plp_seeResultsLayout">seeResultsLayout</string>
+    <string name="plp_textViewAllCategory">textViewAllCategory</string>
+    <string name="plp_productListLayout">productListLayout</string>
+    <string name="plp_textViewProductName">textViewProductName</string>
+    <string name="plp_textViewPromotion">textViewPromotion</string>
+    <string name="plp_textViewPrice">textViewPrice</string>
+    <string name="plp_textViewWasPrice">textViewWasPrice</string>
+    <string name="plp_newPromotionalImage">newPromotionalImage</string>
+    <string name="plp_savePromotionalImage">savePromotionalImage</string>
+    <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
+    <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
+
 </resources>

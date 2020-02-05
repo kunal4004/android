@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:contentDescription="@string/placeholder"
+        android:contentDescription="@string/plp_productImageLayout"
         android:gravity="center"
         android:paddingStart="24dp"
         android:paddingTop="44dp"
@@ -38,7 +38,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/placeholder"
+        android:contentDescription="@string/plp_newPromotionalImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +49,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/placeholder"
+        android:contentDescription="@string/plp_savePromotionalImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imNewImage" />
 
@@ -62,7 +62,7 @@
         android:adjustViewBounds="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imSave"
-        tools:ignore="ContentDescription" />
+        android:contentDescription="@string/plp_rewardsPromotionalImage"/>
 
     <ImageView
         android:id="@+id/imVitality"
@@ -73,7 +73,7 @@
         android:adjustViewBounds="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imReward"
-        tools:ignore="ContentDescription" />
+        android:contentDescription="@string/plp_vitalityPromotionalImage"/>
 
 
     <View
@@ -107,6 +107,7 @@
         app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
         app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator"
         tools:ignore="HardcodedText"
+        android:contentDescription="@string/plp_textViewProductName"
         tools:targetApi="lollipop" />
 
 
@@ -125,6 +126,7 @@
         android:text="BUY 6 AND SAVE 10% ONLINE ONLY"
         android:textColor="@color/promo_text_color"
         android:textSize="12sp"
+        android:contentDescription="@string/plp_textViewPromotion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
         app:layout_constraintTop_toBottomOf="@+id/tvProductName"
@@ -136,7 +138,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="9dp"
-        android:contentDescription="@string/placeholder"
+        android:contentDescription="@string/plp_buttonAddToCart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
@@ -195,6 +197,7 @@
             android:textColor="@color/black"
             android:textSize="14sp"
             android:visibility="visible"
+            android:contentDescription="@string/plp_textViewWasPrice"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -235,6 +238,7 @@
         android:textColor="@color/red"
         android:textSize="14sp"
         app:layout_alignSelf="flex_end"
+        android:contentDescription="@string/plp_textViewPrice"
         app:layout_constraintBottom_toTopOf="@+id/bottomSpace"
         app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout"
