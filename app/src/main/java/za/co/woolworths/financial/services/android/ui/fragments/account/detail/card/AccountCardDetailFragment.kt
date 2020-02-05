@@ -35,11 +35,13 @@ import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceP
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountCardDetailsContract.AccountCardDetailView {
 
+    private var mCreditLimitIncreaseStatus: CreditLimitIncreaseStatus? = null
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
@@ -68,11 +70,14 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
 
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
+        mCreditLimitIncreaseStatus = CreditLimitIncreaseStatus()
+
         mCardPresenterImpl?.apply {
             setBalanceProtectionInsuranceState()
             displayCardHolderName()
-            getCreditLimitIncreaseController()?.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
         }
+
+        mCreditLimitIncreaseStatus?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
 
         disposable?.add(WoolworthsApplication.getInstance()
                 .bus()
@@ -150,7 +155,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
                 R.id.cardDetailImageView -> navigateToGetStoreCards()
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> getCreditLimitIncreaseController()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> mCreditLimitIncreaseStatus?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> navigateToLoanWithdrawalActivity()
             }
         }
@@ -262,9 +267,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     override fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive) {
-        activity?.runOnUiThread {
-            mCardPresenterImpl?.getCreditLimitIncreaseController()?.accountCLIStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive)
-        }
+        activity?.runOnUiThread { mCreditLimitIncreaseStatus?.cliStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive) }
     }
 
     override fun hideProductNotInGoodStanding() {
@@ -285,7 +288,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, Account
     }
 
     private fun hideCLIView() {
-        mCardPresenterImpl?.getCreditLimitIncreaseController()?.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription)
+        mCreditLimitIncreaseStatus?.showCLIProgress(llCommonLayer, tvIncreaseLimitDescription)
     }
 }
 

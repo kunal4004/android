@@ -72,8 +72,7 @@ class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsCon
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
         if (productGroupCode == "cc" || productGroupCode == "pl") return
-        val storeCardsRequest: StoreCardsRequestBody? =
-                account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
+        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
         mainView?.showStoreCardProgress()
         model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, this)
     }
