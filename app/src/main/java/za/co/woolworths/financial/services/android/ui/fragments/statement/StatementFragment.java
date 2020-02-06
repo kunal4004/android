@@ -437,21 +437,23 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     @Override
     public void onResume() {
         super.onResume();
-        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STATEMENTS_LIST);
         Activity activity = getActivity();
-        if (activity instanceof StatementActivity) {
-            activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-            ((StatementActivity) activity).setTitle(getString(R.string.statement));
+        if (activity != null) {
+            Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.STATEMENTS_LIST);
+            if (activity instanceof StatementActivity) {
+                activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+                ((StatementActivity) activity).setTitle(getString(R.string.statement));
+            }
         }
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         Activity activity = getActivity();
-        if (activity != null) {
+        if (activity instanceof StatementActivity) {
             activity.unregisterReceiver(mConnectionBroadcast);
         }
+        super.onPause();
     }
 
     public SlidingUpPanelLayout.PanelState isSlideUpPanelEnabled() {
