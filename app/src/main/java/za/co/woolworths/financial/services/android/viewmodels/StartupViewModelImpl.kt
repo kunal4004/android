@@ -93,6 +93,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
+        ScreenManager.presentMain(mContext as Activity, pushNotificationUpdate, appLinkData)
     }
 
     private fun persistGlobalConfig(response: ConfigResponse) {

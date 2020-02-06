@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -136,6 +137,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
+    public Uri appLinkData;
 
     @Override
     public int getLayoutId() {
@@ -172,6 +174,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
+        appLinkData = getIntent().getData();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                 getSupportFragmentManager(),
                 R.id.frag_container)
@@ -286,6 +289,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
         removeToolbar();
+        if (appLinkData != null) {
+            ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.SEARCH;
+            String searchTerm = appLinkData.getQueryParameter("Ntt");
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+        }
     }
 
     @Override
