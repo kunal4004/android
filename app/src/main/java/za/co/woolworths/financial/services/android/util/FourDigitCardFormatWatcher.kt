@@ -18,6 +18,7 @@ open class FourDigitCardFormatWatcher(private var mEditText: EditText) : TextWat
                 try {
                     mShouldDeleteSpace = keyCode == KeyEvent.KEYCODE_DEL && mEditText.selectionEnd - mEditText.selectionStart <= 1 && mEditText.selectionStart > 0 && mEditText.text.toString()[mEditText.selectionEnd - 1] == '-'
                 } catch (e: IndexOutOfBoundsException) { // never to happen because of checks
+                    mShouldDeleteSpace = false
                     Crashlytics.logException(e)
                 }
                 false
