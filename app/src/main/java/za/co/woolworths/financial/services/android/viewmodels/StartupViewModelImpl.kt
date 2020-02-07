@@ -11,17 +11,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.ArrayList
 import java.util.Collections
 
-import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.ConfigResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement
-import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -29,14 +24,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override var intent: Intent? = null
-    private var mPushNotificationUpdate: String? = null
+    override var pushNotificationUpdate: String? = null
 
     override var firebaseAnalytics: FirebaseAnalytics? = null
 
     override var appVersion: String? = null
     override var environment: String? = null
 
-    private var mVideoPlayerShouldPlay = true
+    override var videoPlayerShouldPlay = true
     override var isVideoPlaying = false
     override var isAppMinimized = false
 
@@ -55,10 +50,10 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             return listOfVideo[0]
         }
 
-    override fun queryServiceGetConfig(responseListener: ConfigResponseListener) {
+    override fun queryServiceGetConfig(responseListener: IResponseListener<ConfigResponse>) {
 
         val configResponseCall = OneAppService.getConfig()
-        configResponseCall.enqueue(CompletionHandler(object : RequestListener<ConfigResponse> {
+        configResponseCall.enqueue(CompletionHandler(object : IResponseListener<ConfigResponse> {
 
             override fun onSuccess(response: ConfigResponse) {
                 if (response.httpCode == 200) {
@@ -75,18 +70,6 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
     }
 
-    override fun setPushNotificationUpdate(pushNotificationUpdate: String) {
-        mPushNotificationUpdate = pushNotificationUpdate
-    }
-
-    override fun videoPlayerShouldPlay(): Boolean {
-        return mVideoPlayerShouldPlay
-    }
-
-    override fun setVideoPlayerShouldPlay(videoPlayerShouldPlay: Boolean) {
-        this.mVideoPlayerShouldPlay = videoPlayerShouldPlay
-    }
-
     override fun presentNextScreen() {
 
         val isFirstTime = Utils.getSessionDaoValue(mContext, SessionDao.KEY.ON_BOARDING_SCREEN)
@@ -100,7 +83,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             if (isFirstTime == null || Utils.isAppUpdated(mContext))
                 ScreenManager.presentOnboarding(activity)
             else {
-                ScreenManager.presentMain(activity, mPushNotificationUpdate)
+                ScreenManager.presentMain(activity, pushNotificationUpdate)
             }
         }
     }

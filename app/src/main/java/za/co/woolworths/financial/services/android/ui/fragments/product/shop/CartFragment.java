@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +45,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -587,7 +586,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.getShoppingCart();
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -651,7 +650,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartProductAdapter.onChangeQuantityLoad();
 		fadeCheckoutButton(true);
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.getChangeQuantity(changeQuantity);
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -686,7 +685,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void removeItem(CommerceItem commerceItem) {
-		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse response) {
 			}
@@ -701,7 +700,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public Call<ShoppingCartResponse> removeCartItem(final CommerceItem commerceItem) {
 		mCommerceItem = commerceItem;
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.getCommerceId());
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -748,7 +747,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mToggleItemRemoved.onRemoveItem(true);
 		updateCartSummary(0);
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeAllCartItems();
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -924,7 +923,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							cartActivity.hideEditCart();
 						}
 						Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.suburb.id);
-						setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
+						setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
 							@Override
 							public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
 								if(setDeliveryLocationSuburbResponse.httpCode == 200) {
@@ -1056,7 +1055,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public Call<SkusInventoryForStoreResponse> initInventoryRequest(String storeId, String multiSku) {
 		Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
-		skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
+		skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 				if (skusInventoryForStoreResponse.httpCode == 200) {

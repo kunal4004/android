@@ -37,7 +37,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
@@ -240,7 +240,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		onLoad();
 		showView(llNextButtonLayout);
 		createOfferTask = OneAppService.INSTANCE.cliCreateApplication(createOfferRequest);
-		createOfferTask.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+		createOfferTask.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
 			@Override
 			public void onSuccess(OfferActive offerActive) {
 				switch (offerActive.httpCode) {
@@ -284,7 +284,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		onLoad();
 		showView(llNextButtonLayout);
 		cliUpdateApplication = OneAppService.INSTANCE.cliUpdateApplication(createOfferRequest, cliId);
-		cliUpdateApplication.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+		cliUpdateApplication.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
 			@Override
 			public void onSuccess(OfferActive offerActive) {
 				mObjOffer = offerActive;
@@ -328,7 +328,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
 		declineOfferInterface.onLoad();
 		cliOfferDecision = OneAppService.INSTANCE.createOfferDecision(createOfferDecision, String.valueOf(mObjOffer.cliId));
-		cliOfferDecision.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+		cliOfferDecision.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
 			@Override
 			public void onSuccess(OfferActive response) {
 				switch (mObjOffer.httpCode) {
@@ -537,7 +537,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
 				cliAcceptOfferDecision = OneAppService.INSTANCE.createOfferDecision(createOfferDecision, String.valueOf(mCLiId));
-				cliAcceptOfferDecision.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+				cliAcceptOfferDecision.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
 					@Override
 					public void onSuccess(OfferActive offerActive) {
 						mObjOffer = offerActive;

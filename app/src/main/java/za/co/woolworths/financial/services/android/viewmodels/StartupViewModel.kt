@@ -3,8 +3,8 @@ package za.co.woolworths.financial.services.android.viewmodels
 import android.content.Intent
 
 import com.google.firebase.analytics.FirebaseAnalytics
-
-import za.co.woolworths.financial.services.android.contracts.ConfigResponseListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 
 interface StartupViewModel {
 
@@ -13,7 +13,9 @@ interface StartupViewModel {
     var isServerMessageShown: Boolean
     var isAppMinimized: Boolean
     var isVideoPlaying: Boolean
+    var videoPlayerShouldPlay: Boolean
 
+    var pushNotificationUpdate: String?
     val randomVideoPath: String
     val splashScreenText: String
     var environment: String?
@@ -22,9 +24,6 @@ interface StartupViewModel {
     var firebaseAnalytics: FirebaseAnalytics?
     var intent: Intent?
 
-    fun queryServiceGetConfig(responseListener: ConfigResponseListener)
+    fun queryServiceGetConfig(responseListener: IResponseListener<ConfigResponse>)
     fun presentNextScreen()
-    fun setVideoPlayerShouldPlay(videoPlayerShouldPlay: Boolean)
-    fun setPushNotificationUpdate(pushNotificationUpdate: String)
-    fun videoPlayerShouldPlay(): Boolean
 }

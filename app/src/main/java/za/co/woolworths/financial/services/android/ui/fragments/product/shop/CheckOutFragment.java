@@ -36,7 +36,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
@@ -287,7 +287,7 @@ public class CheckOutFragment extends Fragment {
 	{
 		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
 		Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(Utils.getPreferredDeliveryLocation().suburb.id));
-		checkoutSuccess.enqueue(new CompletionHandler<>(new RequestListener<Void>() {
+		checkoutSuccess.enqueue(new CompletionHandler<>(new IResponseListener<Void>() {
 			@Override
 			public void onSuccess(Void response) {
 			}

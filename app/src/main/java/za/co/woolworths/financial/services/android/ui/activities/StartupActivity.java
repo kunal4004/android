@@ -19,8 +19,8 @@ import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import io.fabric.sdk.android.services.common.CommonUtils;
-import za.co.woolworths.financial.services.android.contracts.ConfigResponseListener;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel;
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -93,7 +93,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
     private void initialize() {
 
-        startupViewModel.queryServiceGetConfig(new ConfigResponseListener() {
+        startupViewModel.queryServiceGetConfig(new IResponseListener<ConfigResponse>() {
             @Override
             public void onSuccess(ConfigResponse response) {
                 startupViewModel.setVideoPlayerShouldPlay(false);
@@ -121,7 +121,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
         startupViewModel.setVideoPlaying(false);
 
-        if (!startupViewModel.videoPlayerShouldPlay()) {
+        if (!startupViewModel.getVideoPlayerShouldPlay()) {
 
             presentNextScreenOrServerMessage();
             mp.stop();

@@ -60,7 +60,7 @@ import java.util.List;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
@@ -529,7 +529,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		double longitude = (location == null) ? 0.0 : location.getLongitude();
 
 		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, "", false);
-		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
+		locationResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {
 				enableSearchMenu();

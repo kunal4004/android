@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
@@ -36,7 +35,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -460,7 +459,7 @@ private static AsyncTask<Void, Void, Void> async;
         onLoad();
 
         cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
-        cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+        cliGetOfferActive.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
             @Override
             public void onSuccess(OfferActive response) {
                 if (getActivity()==null && !mPersonalLoanFragmentIsVisible) return;

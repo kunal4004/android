@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -35,7 +35,7 @@ abstract class BarcodeScanExtension : Fragment() {
         networkConnectivityStatus()
         asyncTaskIsRunning(true)
         mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService.getProducts(it) }
-        mRetrieveProductDetail?.enqueue(CompletionHandler(object : RequestListener<ProductView> {
+        mRetrieveProductDetail?.enqueue(CompletionHandler(object : IResponseListener<ProductView> {
             override fun onSuccess(response: ProductView) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response.httpCode) {
@@ -83,7 +83,7 @@ abstract class BarcodeScanExtension : Fragment() {
 
         val productDetailRequestCall = OneAppService.productDetail(productRequest.productId, productRequest.skuId)
 
-        productDetailRequestCall.enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
+        productDetailRequestCall.enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
             override fun onSuccess(response: ProductDetailResponse?) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response?.httpCode) {

@@ -36,7 +36,7 @@ import java.util.Map;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -45,7 +45,6 @@ import za.co.woolworths.financial.services.android.models.dto.FulfillmentStoreMa
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
@@ -386,7 +385,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
         editButtonVisibility();
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.deleteShoppingListItem(listId, id, productId, catalogRefId);
-        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingListItemsResponse>() {
             @Override
             public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
                 if (shouldUpdateShoppingList)
@@ -523,7 +522,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
 
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.getShoppingListItems(listId);
-        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingListItemsResponse>() {
             @Override
             public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
                 onShoppingListItemsResponse(shoppingListItemsResponse);
@@ -960,7 +959,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         addedToCartFail(false);
 
         PostItemToCart postItemToCart = new PostItemToCart();
-        return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
+        return postItemToCart.make(addItemToCart, new IResponseListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 switch (addItemToCartResponse.httpCode) {
@@ -1017,7 +1016,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         setInternetConnectionWasLost(false);
 
         Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
-        skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
+        skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
             @Override
             public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
                 getInventoryForStoreSuccess(skusInventoryForStoreResponse);
