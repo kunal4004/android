@@ -1,27 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.text.Editable
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import cards.pay.paycardsrecognizer.sdk.Card
+import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.link_card_fragment.*
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.util.CreditCardTextWatcher
-import android.view.inputmethod.EditorInfo
-import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
-import android.app.Activity.RESULT_OK
-import android.content.Intent
-import android.os.Parcelable
-import android.text.Editable
-import cards.pay.paycardsrecognizer.sdk.Card
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.util.*
+
 
 class ICREnterCardNumberFragment : MyCardExtension() {
 
@@ -47,6 +47,13 @@ class ICREnterCardNumberFragment : MyCardExtension() {
 
         navigateToEnterOTPFragmentImageView?.isEnabled = false
 
+        // Populate card number when navigate back from Enter OTP fragment
+        // TODO:: Communicate via Navigation graph to eliminate activity dependency
+        val cardNumber = MyCardActivityExtension.mCardNumber
+        if (!TextUtils.isEmpty(cardNumber)) {
+            cardNumberEditText.setText(cardNumber)
+        }
+
         uniqueIdsForEnterCartNumberScreen()
     }
 
@@ -55,13 +62,14 @@ class ICREnterCardNumberFragment : MyCardExtension() {
             tvLinkNewCardTitle?.contentDescription = getString(R.string.label_linkICR)
             tvLinkNewCardDesc?.contentDescription = getString(R.string.label_linkICRCardDescription)
             cardNumberEditText?.contentDescription = getString(R.string.text_carddetails)
-            navigateToEnterOTPFragmentImageView?.contentDescription = getString(R.string.button_next)
+            navigateToEnterOTPFragmentImageView?.contentDescription =
+                    getString(R.string.button_next)
             invalidCardNumberLabel?.contentDescription = getString(R.string.invalid_card_number)
         }
     }
 
     private fun navigateToOTPScreen() {
-        if (shouldDisableUINavigation) return
+        if (shouldDisableUINavigation || activity == null) return
         if (navigateToEnterOTPFragmentImageView?.isEnabled == true) {
             if (NetworkManager().isConnectedToNetwork(activity)) {
                 (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)
@@ -80,8 +88,9 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
     }
 
-    private fun inputTextWatcher() = cardNumberEditText?.apply {
-        addTextChangedListener(object : CreditCardTextWatcher(this) {
+    private fun inputTextWatcher() {
+        cardNumberEditText?.addTextChangedListener(object : FourDigitCardFormatWatcher(cardNumberEditText) {
+
             override fun afterTextChanged(s: Editable) {
                 super.afterTextChanged(s)
                 cardNumberEditText?.text?.toString()?.replace(" ", "")?.let { cardNumber -> setupCardNumberField(cardNumber) }
@@ -101,11 +110,12 @@ class ICREnterCardNumberFragment : MyCardExtension() {
         }
     }
 
+
     private fun setupCardNumberField(cardNumber: String) {
         if (cardNumber.length == 16) {
             val validStoreCardBinsArray = mMCSInstantStoreCard?.validStoreCardBins
             val storeCard6DigitBinNumber = cardNumber.substring(0, 6).toInt()
-            if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray?.contains(storeCard6DigitBinNumber) ==true) {
+            if (Utils.isValidLuhnNumber(cardNumber) && validStoreCardBinsArray?.contains(storeCard6DigitBinNumber) == true) {
                 (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
                 validCardNumberUI()
             } else {
