@@ -225,7 +225,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         disableEditText(edtVerificationCode3)
                         disableEditText(edtVerificationCode4)
                         disableEditText(edtVerificationCode5)
-                        otpCallIsRunning(true)
+                        setIsOtpApiInProgress(true)
                     }
 
                     override fun hideProgress() {
@@ -238,7 +238,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         enableEditText(edtVerificationCode4)
                         enableEditText(edtVerificationCode5)
                         requestEditTextFocus()
-                        otpCallIsRunning(false)
+                        setIsOtpApiInProgress(false)
                     }
 
                     override fun onSuccessHandler(response: LinkNewCardOTP) {
@@ -250,18 +250,18 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         } else {
                             setOTPDescription(response.otpSentTo?.toLowerCase(Locale.getDefault()))
                         }
-                        otpCallIsRunning(false)
+                        setIsOtpApiInProgress(false)
                     }
 
                     override fun onFailureHandler() {
                         super.onFailureHandler()
-                        otpCallIsRunning(false)
+                        setIsOtpApiInProgress(false)
                         setOTPDescription(getSavedOTP())
                     }
 
                     override fun onFailureHandler(error: Throwable?) {
                         super.onFailureHandler(error)
-                        otpCallIsRunning(false)
+                        setIsOtpApiInProgress(false)
                         if (error is ConnectException || error is UnknownHostException) {
                             activity.resources?.let { resources ->
                                 enterOTPDescriptionScreen?.text =
@@ -271,14 +271,14 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     }
                 })
             } else {
-                otpCallIsRunning(false)
+                setIsOtpApiInProgress(false)
                 ErrorHandlerView(activity).showToast()
                 return
             }
         }
     }
 
-    private fun otpCallIsRunning(state: Boolean) {
+    private fun setIsOtpApiInProgress(state: Boolean) {
         MyCardActivityExtension.requestOTPFragmentIsActivated = state
     }
 
