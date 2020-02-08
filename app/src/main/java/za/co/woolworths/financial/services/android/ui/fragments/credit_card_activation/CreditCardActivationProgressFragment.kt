@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation
 
+import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -87,8 +88,15 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.okGotItButton, R.id.cancel -> activity?.onBackPressed()
+            R.id.cancel -> activity?.onBackPressed()
             R.id.callTheCallCenter -> activity?.apply { Utils.makeCall(this, "0861 50 20 20") }
+            R.id.okGotItButton -> {
+                activity?.apply {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                }
+            }
         }
     }
 

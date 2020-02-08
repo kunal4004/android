@@ -589,15 +589,16 @@ public class MyAccountCardsActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         //Absa registration activity request and result code
         // requestCode == REQUEST_CODE_BLOCK_MY_STORE_CARD updates cardBlocked state on back pressed
-        if ((requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE || (requestCode == REQUEST_CODE_BLOCK_MY_STORE_CARD))
-                && resultCode == RESULT_OK) {
-            if (fragmentPager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem(),requestCode,resultCode,data);
+        if (((requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE || (requestCode == REQUEST_CODE_BLOCK_MY_STORE_CARD))
+                && resultCode == RESULT_OK) || requestCode == WCreditCardFragment.REQUEST_CREDIT_CARD_ACTIVATION) {
+            if (fragmentPager != null)
+                getCurrentFragmentFromViewpager(pager.getCurrentItem(), requestCode, resultCode, data);
         }
     }
 
     private void getCurrentFragmentFromViewpager(int position,int requestCode, int resultCode, Intent data) {
         Fragment fragment = (Fragment) fragmentPager.getAdapter().instantiateItem(fragmentPager, position);
-        if (fragment instanceof WStoreCardFragment) {
+        if (fragment instanceof WStoreCardFragment || fragment instanceof WCreditCardFragment) {
             fragment.onActivityResult(requestCode,resultCode,data);
         }
     }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -45,6 +46,7 @@ class CreditCardActivationActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }

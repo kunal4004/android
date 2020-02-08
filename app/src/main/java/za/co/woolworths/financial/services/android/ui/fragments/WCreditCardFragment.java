@@ -122,6 +122,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private RelativeLayout llCreditLimitContainer;
     private RelativeLayout rlViewTransactions;
     private RelativeLayout rlMyStoreCard;
+    private ImageView imMyCardNextArrow;
+    private ProgressBar pbGetCardToken;
+    private WTextView tvCreditCardActivationState;
+    private CreditCardActivationState creditCardActivationState;
+    private String absaTokenForCreditCardActivation = null;
+    public static int REQUEST_CREDIT_CARD_ACTIVATION = 1983;
 
     @Nullable
     @Override
@@ -211,6 +217,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
+        imMyCardNextArrow = view.findViewById(R.id.imMyCardNextArrow);
+        tvCreditCardActivationState = view.findViewById(R.id.tvCreditCardActivationState);
+        pbGetCardToken = view.findViewById(R.id.pbGetCardToken);
 
         RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
@@ -249,6 +258,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }
 
         rlMyStoreCard.setVisibility(VISIBLE);
+        imMyCardNextArrow.setVisibility(GONE);
     }
 
     private void addListener() {
@@ -425,12 +435,21 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         getActivity().getResources().getString(R.string.cli_got_it));
                 break;
             case R.id.rlMyStoreCard:
-                Intent mIntent = new Intent(getActivity(), CreditCardActivationActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putString("absaCardToken", "4103752306880391");
-                mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
-                mIntent.putExtra("bundle", mBundle);
-                getActivity().startActivity(mIntent);
+                if (creditCardActivationState == null) return;
+                switch (creditCardActivationState) {
+                    case AVAILABLE:
+                        Intent mIntent = new Intent(getActivity(), CreditCardActivationActivity.class);
+                        Bundle mBundle = new Bundle();
+                        mBundle.putString("absaCardToken", absaTokenForCreditCardActivation);
+                        mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
+                        mIntent.putExtra("bundle", mBundle);
+                        getActivity().startActivityForResult(mIntent, REQUEST_CREDIT_CARD_ACTIVATION);
+                        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+                        break;
+                    case FAILED:
+                        getCreditCardActivationStatus();
+                        break;
+                }
                 break;
         }
     }
@@ -512,9 +531,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             @Override
             public void run() {
                 if (!creditWasAlreadyRunOnce) {
-                    if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+                    if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                         getActiveOffer();
-                    else {
+                        getCreditCardActivationStatus();
+                    } else {
                         mErrorHandlerView.showToast();
                         onLoadComplete();
                     }
@@ -546,8 +566,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     public void onConnectionChanged() {
         //connection changed
         if (!creditWasAlreadyRunOnce) {
-            if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+            if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                 getActiveOffer();
+                getCreditCardActivationStatus();
+            }
 
         }
     }
@@ -557,6 +579,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
             ScreenManager.presentHowToPayActivity(getActivity(), account);
+        } else if (requestCode == REQUEST_CREDIT_CARD_ACTIVATION && resultCode == RESULT_OK) {
+            getCreditCardActivationStatus();
         }
         retryConnect();
     }
@@ -564,9 +588,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private void retryConnect() {
         if (!creditWasAlreadyRunOnce) {
             creditWasAlreadyRunOnce = true;
-            if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+            if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                 getActiveOffer();
-            else {
+                getCreditCardActivationStatus();
+            } else {
                 mErrorHandlerView.showToast();
                 onLoadComplete();
             }
@@ -720,5 +745,107 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         relBalanceProtection.setContentDescription(getString(R.string.balance_protection_layout));
         relDebitOrders.setContentDescription(getString(R.string.debit_order_layout));
         rlMyStoreCard.setContentDescription(getString(R.string.my_card_layout));
+    }
+
+    public void getCreditCardActivationStatus() {
+        showGetCreditCardActivationStatus(CreditCardActivationState.API_IN_PROGRESS);
+        OneAppService.INSTANCE.getCreditCardToken().enqueue(new CompletionHandler<>(new RequestListener<CreditCardTokenResponse>() {
+            @Override
+            public void onSuccess(CreditCardTokenResponse creditCardTokenResponse) {
+                if (getActivity() == null && !mCreditCardFragmentIsVisible) return;
+                if (!Utils.isCreditCardActivationEndpointAvailable()) {
+                    showGetCreditCardActivationStatus(CreditCardActivationState.UNAVAILABLE);
+                    return;
+                }
+                switch (creditCardTokenResponse.httpCode) {
+                    case 200:
+                        ArrayList<Card> cards = creditCardTokenResponse.cards;
+                        if (cards.size() == 0) {
+                            Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                            showGetCreditCardActivationStatus(CreditCardActivationState.UNAVAILABLE);
+                        } else {
+                            for (Card card : cards) {
+                                if (card.cardStatus.trim().equalsIgnoreCase("PLC")) {
+                                    absaTokenForCreditCardActivation = card.absaCardToken;
+                                    creditCardActivationState = CreditCardActivationState.AVAILABLE;
+                                    break;
+                                }
+                            }
+                            if (absaTokenForCreditCardActivation != null)
+                                showGetCreditCardActivationStatus(CreditCardActivationState.AVAILABLE);
+                            else
+                                showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED);
+                        }
+                        break;
+
+                    case 440:
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
+                        break;
+
+                    default:
+                        showGetCreditCardActivationStatus(CreditCardActivationState.FAILED);
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(final Throwable error) {
+                if (error == null)return;
+                final Activity activity = getActivity();
+                if (activity!=null && mCreditCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showGetCreditCardActivationStatus(CreditCardActivationState.FAILED);
+                        }
+                    });
+                }
+            }
+        },CreditCardTokenResponse.class));
+
+    }
+
+    private void showGetCreditCardActivationStatus( CreditCardActivationState state) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            this.creditCardActivationState = state;
+            pbGetCardToken.setVisibility((state == CreditCardActivationState.API_IN_PROGRESS) ? VISIBLE : GONE);
+            switch (state) {
+                case FAILED:
+                    tvCreditCardActivationState.setBackgroundResource(R.drawable.status_red);
+                    break;
+                case ACTIVATED:
+                case UNAVAILABLE:
+                    tvCreditCardActivationState.setBackgroundResource(R.drawable.status_grey);
+                    break;
+                case AVAILABLE:
+                    tvCreditCardActivationState.setBackgroundResource(R.drawable.cli_round_apply_now_tag);
+                    break;
+            }
+            tvCreditCardActivationState.setVisibility((state == CreditCardActivationState.API_IN_PROGRESS) ? GONE : VISIBLE);
+            tvCreditCardActivationState.setText(state.value);
+        }
+    }
+
+    public enum CreditCardActivationState {
+        FAILED("TRY AGAIN"),
+        AVAILABLE("AVAILABLE"),
+        ACTIVATED("ACTIVATED"),
+        UNAVAILABLE("ACTIVATE"),
+        API_IN_PROGRESS("IN PROGRESS");
+
+        private final String value;
+
+        /**
+         * @param state
+         */
+        private CreditCardActivationState(final String state) {
+            this.value = state;
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
     }
 }
