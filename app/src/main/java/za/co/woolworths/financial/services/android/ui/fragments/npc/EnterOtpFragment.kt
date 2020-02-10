@@ -80,7 +80,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
                 requestOTPApi(getOTPMethodType())
             } else {
-                setOTPDescription(getSavedOTP())
                 val otpNumber = getOtpNumber()
                 if (!TextUtils.isEmpty(otpNumber)) {
                     with(otpNumber.split("")) {
@@ -93,6 +92,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     edtVerificationCode1?.setSelection(0)
                 }
                 showOTPErrorOnOTPFragment()
+                setOTPDescription(getSavedOTP())
             }
         }
 
@@ -136,7 +136,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     private fun configureUI() {
         didNotReceiveOTPTextView?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
         if (activityIsInstanceStoreCardActivity()) didNotReceiveOTPTextView?.isAllCaps = true
-
     }
 
     private fun activityIsInstanceStoreCardActivity() = activity is InstantStoreCardReplacementActivity
