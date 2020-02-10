@@ -141,8 +141,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
-            @Query("searchString") searchString: String,
-            @Query("includeDetails") includeDetails: Boolean
+            @Query("searchString") searchString: String
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1146,5 +1145,24 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("user/locations")
+    fun getStoresForNPC(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("lat") lat: String,
+            @Query("lon") lon: String,
+            @Query("searchString") searchString: String,
+            @Query("npc") npc: Boolean
+    ): Call<LocationResponse>
 
 }
