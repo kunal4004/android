@@ -1,18 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.activities.temporary_store_card
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.LinkType
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
 
     companion object {
         var TRANSACTION_TYPE = "TRANSACTION_TYPE"
+        private val arrayHowToUse = arrayOf(Triple("appfeedback@woolworths.co.za", LinkType.EMAIL,""))
+        private val arrayHowToUse8 = arrayOf(Triple("queries@wfs.co.za", LinkType.EMAIL,""), Triple("086 50 20 20", LinkType.PHONE,"+27086502020"))
     }
 
     var type: Transition = Transition.SLIDE_LEFT
@@ -22,7 +31,20 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         actionBar()
+
+        val howToUseSpannableContent = KotlinUtils.underlineSearchTermAndCallEventOnTap(this@HowToUseTemporaryStoreCardActivity, getString(R.string.how_to_use0), arrayHowToUse)
+        setUnderlineText(howToUseSpannableContent, howToUse)
+
+        val howToUse8SpannableContent: Spannable = KotlinUtils.underlineSearchTermAndCallEventOnTap(this@HowToUseTemporaryStoreCardActivity,  getString(R.string.temp_store_card_contact_customer_service_desc), arrayHowToUse8)
+        setUnderlineText(howToUse8SpannableContent, howToUse8)
+
         setUniqueIds()
+    }
+
+    private fun setUnderlineText(howToUseSpannableContent: Spannable, textView: TextView?) {
+        textView?.text = howToUseSpannableContent
+        textView?.movementMethod = LinkMovementMethod.getInstance()
+        textView?.highlightColor = Color.TRANSPARENT
     }
 
     private fun actionBar() {
