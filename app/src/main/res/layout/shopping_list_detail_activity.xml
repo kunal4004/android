@@ -19,52 +19,81 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/mToolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/appbar_background"
-            android:gravity="center"
-            android:minHeight="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/appbar_background">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvToolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:ellipsize="end"
-                android:letterSpacing="0.2"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:WTextView_font="medium_bold" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/back24" />
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/back24" />
 
-            <TextView
-                android:id="@+id/tvEditShoppingListItem"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@color/black"
-                android:textSize="@dimen/twelve_sp"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="@dimen/four_dp"
-                android:fontFamily="@font/futura_medium_ttf"
-                android:letterSpacing="0.2"
-                android:paddingStart="@dimen/four_dp"
-                android:paddingEnd="@dimen/four_dp"
-                android:text="@string/edit"
-                android:visibility="gone"
-                android:textAllCaps="true"
-                tools:ignore="UnusedAttribute" />
+                <TextView
+                    android:id="@+id/editShoppingListItemTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@+id/btnBack"
+                    android:fontFamily="@font/futura_medium_ttf"
+                    android:gravity="center"
+                    android:letterSpacing="0.2"
+                    android:paddingStart="@dimen/four_dp"
+                    android:paddingEnd="@dimen/four_dp"
+                    android:text="@string/edit"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/twelve_sp"
+                    android:visibility="visible"
+                    tools:ignore="UnusedAttribute" />
+
+
+                <TextView
+                    android:id="@+id/selectDeselectAllTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="@font/futura_medium_ttf"
+                    android:gravity="center"
+                    android:letterSpacing="0.2"
+                    android:paddingStart="@dimen/four_dp"
+                    android:paddingEnd="@dimen/four_dp"
+                    android:text="@string/select"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/twelve_sp"
+                    android:visibility="visible"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/shoppingListTitleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toStartOf="@+id/selectDeselectAllTextView"
+                    android:layout_toEndOf="@+id/editShoppingListItemTextView"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/futura_semi_bold_ttf"
+                    android:gravity="center"
+                    android:letterSpacing="0.2"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="@string/toolbar_layout"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    tools:ignore="UnusedAttribute" />
+
+            </RelativeLayout>
 
         </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout >
+    </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/flShoppingListDetailFragment"
