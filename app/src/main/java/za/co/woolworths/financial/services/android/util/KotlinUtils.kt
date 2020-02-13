@@ -11,6 +11,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 enum class LinkType { PHONE, EMAIL }
 
@@ -25,7 +26,7 @@ class KotlinUtils {
             val end = start + searchTerm.length
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(textView: View) {
-                    Utils.makeCall(context, searchTerm)
+                    Utils.makeCall(searchTerm)
                 }
 
                 override fun updateDrawState(ds: TextPaint) {
@@ -47,20 +48,18 @@ class KotlinUtils {
             return spannableTitle
         }
 
-        fun howToUseSearchTerms(appCompatActivity: AppCompatActivity, paragraph: String, searchKeywordArray: Array<Triple<String, LinkType, String>>): Spannable {
-            var start: Int
-            var end: Int
-            val spannableContent: Spannable = SpannableString(paragraph)
+        fun makeStringUnderlinedAndClickable(description: String, searchKeywordArray: Array<Triple<String, LinkType, String>>): Spannable {
+            val spannableContent: Spannable = SpannableString(description)
             searchKeywordArray.forEach { items ->
                 val searchTerm = items.first
                 when (items.second) {
                     LinkType.PHONE -> {
                         val phoneNumber = items.third
-                        start = paragraph.indexOf(searchTerm.first())
-                        end = paragraph.lastIndexOf(searchTerm.last()) + 1
+                        val start = description.indexOf(searchTerm.first())
+                        val end = description.lastIndexOf(searchTerm.last()) + 1
                         spannableContent.setSpan(object : ClickableSpan() {
                             override fun onClick(widget: View) {
-                                Utils.makeCall(appCompatActivity, phoneNumber)
+                                Utils.makeCall(phoneNumber)
                             }
 
                             override fun updateDrawState(textPaint: TextPaint) {
@@ -70,11 +69,11 @@ class KotlinUtils {
                         spannableContent.setSpan(UnderlineSpan(), start, end, 0)
                     }
                     LinkType.EMAIL -> {
-                        start = paragraph.indexOf(searchTerm)
-                        end = paragraph.lastIndexOf(searchTerm) + searchTerm.length
+                        val start = description.indexOf(searchTerm)
+                        val end = description.lastIndexOf(searchTerm) + searchTerm.length
                         spannableContent.setSpan(object : ClickableSpan() {
                             override fun onClick(widget: View) {
-                                Utils.sendEmail(searchTerm, appCompatActivity)
+                                Utils.sendEmail(searchTerm)
                             }
 
                             override fun updateDrawState(textPaint: TextPaint) {

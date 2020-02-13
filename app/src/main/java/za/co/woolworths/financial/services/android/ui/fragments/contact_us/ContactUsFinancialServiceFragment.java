@@ -61,10 +61,10 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.localCaller:
-				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.fs_local_caller_number));
+				Utils.makeCall(getActivity().getResources().getString(R.string.fs_local_caller_number));
 				break;
 			case R.id.internationalCaller:
-				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.fs_inter_national_caller_number));
+				Utils.makeCall(getActivity().getResources().getString(R.string.fs_inter_national_caller_number));
 				break;
 			case R.id.blackCrediCardQuery:
 				sendEmail(getActivity().getResources().getString(R.string.email_black_credit_card_query), getActivity().getResources().getString(R.string.txt_black_credit_card_query));

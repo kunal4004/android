@@ -69,7 +69,7 @@ public class CLIPOIProblemFragment extends Fragment implements View.OnClickListe
 		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.btnContinue:
-				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.poi_problem_phone_no));
+				Utils.makeCall(getActivity().getResources().getString(R.string.poi_problem_phone_no));
 				break;
 			default:
 				break;

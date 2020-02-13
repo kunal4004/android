@@ -32,10 +32,10 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         actionBar()
 
-        val howToUseSpannableContent = KotlinUtils.howToUseSearchTerms(this@HowToUseTemporaryStoreCardActivity, getString(R.string.how_to_use0), arrayHowToUse)
+        val howToUseSpannableContent = KotlinUtils.makeStringUnderlinedAndClickable( getString(R.string.how_to_use0), arrayHowToUse)
         setUnderlineText(howToUseSpannableContent, howToUse)
 
-        val howToUse8SpannableContent: Spannable = KotlinUtils.howToUseSearchTerms(this@HowToUseTemporaryStoreCardActivity,  getString(R.string.temp_store_card_contact_customer_service_desc), arrayHowToUse8)
+        val howToUse8SpannableContent: Spannable = KotlinUtils.makeStringUnderlinedAndClickable( getString(R.string.temp_store_card_contact_customer_service_desc), arrayHowToUse8)
         setUnderlineText(howToUse8SpannableContent, howToUse8)
 
         setUniqueIds()
