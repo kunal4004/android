@@ -8,10 +8,8 @@ import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 enum class LinkType { PHONE, EMAIL }
 
@@ -52,39 +50,41 @@ class KotlinUtils {
             val spannableContent: Spannable = SpannableString(description)
             searchKeywordArray.forEach { items ->
                 val searchTerm = items.first
-                when (items.second) {
+                when (val linkType = items.second) {
                     LinkType.PHONE -> {
                         val phoneNumber = items.third
-                        val start = description.indexOf(searchTerm.first())
-                        val end = description.lastIndexOf(searchTerm.last()) + 1
-                        spannableContent.setSpan(object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                Utils.makeCall(phoneNumber)
-                            }
-
-                            override fun updateDrawState(textPaint: TextPaint) {
-                                textPaint.isUnderlineText = true
-                            }
-                        }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-                        spannableContent.setSpan(UnderlineSpan(), start, end, 0)
+                        val firstIndexOfSearchKeyword = description.indexOf(searchTerm)
+                        val lastIndexOfSearchKeyword = description.lastIndexOf(searchTerm).plus(searchTerm.length)
+                        makeStringsUnderline(makeStringsClickable(firstIndexOfSearchKeyword, lastIndexOfSearchKeyword, phoneNumber, linkType, spannableContent), firstIndexOfSearchKeyword, lastIndexOfSearchKeyword)
                     }
                     LinkType.EMAIL -> {
-                        val start = description.indexOf(searchTerm)
-                        val end = description.lastIndexOf(searchTerm) + searchTerm.length
-                        spannableContent.setSpan(object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                Utils.sendEmail(searchTerm)
-                            }
-
-                            override fun updateDrawState(textPaint: TextPaint) {
-                                textPaint.isUnderlineText = true
-                            }
-                        }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-                        spannableContent.setSpan(UnderlineSpan(), start, end, 0)
+                        val firstIndexOfSearchKeyword = description.indexOf(searchTerm)
+                        val lastIndexOfSearchKeyword = description.lastIndexOf(searchTerm) + searchTerm.length
+                        makeStringsUnderline(makeStringsClickable(firstIndexOfSearchKeyword, lastIndexOfSearchKeyword, searchTerm, linkType, spannableContent), firstIndexOfSearchKeyword, lastIndexOfSearchKeyword)
                     }
                 }
             }
             return spannableContent
+        }
+
+        private fun makeStringsClickable(firstIndexOfSearchKeyword: Int, lastIndexOfSearchKeyword: Int, term: String, linkType: LinkType, spannableContent: Spannable): Spannable {
+            spannableContent.setSpan(object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    when (linkType) {
+                        LinkType.PHONE -> Utils.makeCall(term)
+                        LinkType.EMAIL -> Utils.sendEmail(term)
+                    }
+                }
+
+                override fun updateDrawState(textPaint: TextPaint) {
+                    textPaint.isUnderlineText = true
+                }
+            }, firstIndexOfSearchKeyword, lastIndexOfSearchKeyword, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+            return spannableContent
+        }
+
+        private fun makeStringsUnderline(spannableContent: Spannable, firstIndexOfSearchKeyword: Int, lastIndexOfSearchKeyword: Int) {
+            spannableContent.setSpan(UnderlineSpan(), firstIndexOfSearchKeyword, lastIndexOfSearchKeyword, 0)
         }
     }
 }
