@@ -47,38 +47,38 @@ class KotlinUtils {
             return spannableTitle
         }
 
-        fun underlineSearchTermAndCallEventOnTap(activity: AppCompatActivity, message: String, howToUseSearchItems: Array<Triple<String, LinkType, String>>): Spannable {
+        fun howToUseSearchTerms(appCompatActivity: AppCompatActivity, paragraph: String, searchKeywordArray: Array<Triple<String, LinkType, String>>): Spannable {
             var start: Int
             var end: Int
-            val spannableContent: Spannable = SpannableString(message)
-            howToUseSearchItems.forEach { items ->
+            val spannableContent: Spannable = SpannableString(paragraph)
+            searchKeywordArray.forEach { items ->
                 val searchTerm = items.first
                 when (items.second) {
                     LinkType.PHONE -> {
                         val phoneNumber = items.third
-                        start = message.indexOf(searchTerm.first())
-                        end = message.lastIndexOf(searchTerm.last()) + 1
+                        start = paragraph.indexOf(searchTerm.first())
+                        end = paragraph.lastIndexOf(searchTerm.last()) + 1
                         spannableContent.setSpan(object : ClickableSpan() {
                             override fun onClick(widget: View) {
-                                Utils.makeCall(activity, phoneNumber)
+                                Utils.makeCall(appCompatActivity, phoneNumber)
                             }
 
-                            override fun updateDrawState(ds: TextPaint) {
-                                ds.isUnderlineText = true
+                            override fun updateDrawState(textPaint: TextPaint) {
+                                textPaint.isUnderlineText = true
                             }
                         }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
                         spannableContent.setSpan(UnderlineSpan(), start, end, 0)
                     }
                     LinkType.EMAIL -> {
-                        start = message.indexOf(searchTerm)
-                        end = message.lastIndexOf(searchTerm) + searchTerm.length
+                        start = paragraph.indexOf(searchTerm)
+                        end = paragraph.lastIndexOf(searchTerm) + searchTerm.length
                         spannableContent.setSpan(object : ClickableSpan() {
                             override fun onClick(widget: View) {
-                                Utils.sendEmail(searchTerm, activity)
+                                Utils.sendEmail(searchTerm, appCompatActivity)
                             }
 
-                            override fun updateDrawState(ds: TextPaint) {
-                                ds.isUnderlineText = true
+                            override fun updateDrawState(textPaint: TextPaint) {
+                                textPaint.isUnderlineText = true
                             }
                         }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
                         spannableContent.setSpan(UnderlineSpan(), start, end, 0)
