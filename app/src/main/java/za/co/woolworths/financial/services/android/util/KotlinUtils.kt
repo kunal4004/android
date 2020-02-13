@@ -3,15 +3,11 @@ package za.co.woolworths.financial.services.android.util
 import android.content.Context
 import android.graphics.Typeface
 import android.text.*
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
+import android.text.style.*
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+
 
 enum class LinkType { PHONE, EMAIL }
 
@@ -46,45 +42,6 @@ class KotlinUtils {
                     ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             return spannableTitle
-        }
-
-        fun makeStringUnderlinedAndClickable(description: String, searchKeywordArray: Array<Triple<String, LinkType, String>>): Spannable {
-            val spannableContent: Spannable = SpannableString(description)
-            searchKeywordArray.forEach { items ->
-                val searchTerm = items.first
-                when (items.second) {
-                    LinkType.PHONE -> {
-                        val phoneNumber = items.third
-                        val start = description.indexOf(searchTerm.first())
-                        val end = description.lastIndexOf(searchTerm.last()) + 1
-                        spannableContent.setSpan(object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                Utils.makeCall(phoneNumber)
-                            }
-
-                            override fun updateDrawState(textPaint: TextPaint) {
-                                textPaint.isUnderlineText = true
-                            }
-                        }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-                        spannableContent.setSpan(UnderlineSpan(), start, end, 0)
-                    }
-                    LinkType.EMAIL -> {
-                        val start = description.indexOf(searchTerm)
-                        val end = description.lastIndexOf(searchTerm) + searchTerm.length
-                        spannableContent.setSpan(object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                Utils.sendEmail(searchTerm)
-                            }
-
-                            override fun updateDrawState(textPaint: TextPaint) {
-                                textPaint.isUnderlineText = true
-                            }
-                        }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-                        spannableContent.setSpan(UnderlineSpan(), start, end, 0)
-                    }
-                }
-            }
-            return spannableContent
         }
     }
 }
