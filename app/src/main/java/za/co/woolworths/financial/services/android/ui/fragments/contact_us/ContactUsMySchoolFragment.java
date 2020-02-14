@@ -48,7 +48,7 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.localCaller:
-				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.my_school_local_caller_number));
+				Utils.makeCall(getActivity().getResources().getString(R.string.my_school_local_caller_number));
 				break;
 			case R.id.mySchoolCard:
 				sendEmail(getActivity().getResources().getString(R.string.email_myschool), getActivity().getResources().getString(R.string.txt_myschool_card));

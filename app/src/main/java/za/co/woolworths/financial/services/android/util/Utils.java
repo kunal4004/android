@@ -508,11 +508,11 @@ public class Utils {
 		return mBroadcastReceiver;
 	}
 
-	public static void makeCall(Context context, String number) {
+	public static void makeCall(String number) {
+		Context context = WoolworthsApplication.getInstance().getApplicationContext();
 		Uri call = Uri.parse("tel:" + number);
 		Intent openNumericKeypad = new Intent(Intent.ACTION_DIAL, call);
 		context.startActivity(openNumericKeypad);
-		((Activity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
 	public static String getScope(String scope) {
@@ -791,13 +791,14 @@ public class Utils {
 		return null;
 	}
 
-	public static void sendEmail(String email, FragmentActivity activity) {
+	public static void sendEmail(String email) {
+		Context context = WoolworthsApplication.getAppContext();
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		Uri data = Uri.parse("mailto:"
 				+ email
 				+ "?subject=" + "" + "&body=" + "");
 		intent.setData(data);
-		activity.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	public static Badge addBadgeAt(Context context, WBottomNavigationView mBottomNav, int position, int number) {

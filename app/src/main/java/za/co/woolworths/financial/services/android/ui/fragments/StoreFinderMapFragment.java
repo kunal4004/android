@@ -451,7 +451,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			@Override
 			public void onClick(View v) {
 				if (storeDetail.phoneNumber != null) {
-					Utils.makeCall(getActivity(), storeDetail.phoneNumber);
+					Utils.makeCall(storeDetail.phoneNumber);
 				}
 
 			}
