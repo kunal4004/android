@@ -512,6 +512,7 @@ public class Utils {
 		Context context = WoolworthsApplication.getInstance().getApplicationContext();
 		Uri call = Uri.parse("tel:" + number);
 		Intent openNumericKeypad = new Intent(Intent.ACTION_DIAL, call);
+		openNumericKeypad.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(openNumericKeypad);
 	}
 
@@ -797,6 +798,7 @@ public class Utils {
 		Uri data = Uri.parse("mailto:"
 				+ email
 				+ "?subject=" + "" + "&body=" + "");
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.setData(data);
 		context.startActivity(intent);
 	}
