@@ -14,14 +14,13 @@ import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.LinkType
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 
 
 class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
 
     companion object {
         var TRANSACTION_TYPE = "TRANSACTION_TYPE"
-        private val arrayHowToUse = arrayOf(Triple("appfeedback@woolworths.co.za", LinkType.EMAIL,""))
-        private val arrayHowToUse8 = arrayOf(Triple("queries@wfs.co.za", LinkType.EMAIL,""), Triple("086 50 20 20", LinkType.PHONE,"+27086502020"))
     }
 
     var type: Transition = Transition.SLIDE_LEFT
@@ -32,11 +31,17 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         actionBar()
 
-        val howToUseSpannableContent = KotlinUtils.makeStringUnderlinedAndClickable(getString(R.string.how_to_use0), arrayHowToUse)
-        setUnderlineText(howToUseSpannableContent, howToUse)
+        val howToUseSpannableStringBuilder = WSpannableStringBuilder(getString(R.string.how_to_use0))
+        howToUseSpannableStringBuilder.makeStringInteractable("appfeedback@woolworths.co.za", LinkType.EMAIL)
+        howToUseSpannableStringBuilder.makeStringUnderlined("appfeedback@woolworths.co.za")
+        setUnderlineText(howToUseSpannableStringBuilder.build(), howToUse)
 
-        val howToUse8SpannableContent: Spannable = KotlinUtils.makeStringUnderlinedAndClickable( getString(R.string.temp_store_card_contact_customer_service_desc), arrayHowToUse8)
-        setUnderlineText(howToUse8SpannableContent, howToUse8)
+        val howToUse8SpannableContent = WSpannableStringBuilder(getString(R.string.temp_store_card_contact_customer_service_desc))
+        howToUse8SpannableContent.makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
+        howToUse8SpannableContent.makeStringUnderlined("queries@wfs.co.za")
+        howToUse8SpannableContent.makeStringInteractable("086 50 20 20", LinkType.PHONE)
+        howToUse8SpannableContent.makeStringUnderlined("086 50 20 20")
+        setUnderlineText(howToUse8SpannableContent.build(), howToUse8)
 
         setUniqueIds()
     }
