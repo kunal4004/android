@@ -39,8 +39,8 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         val howToUse8SpannableContent = WSpannableStringBuilder(getString(R.string.temp_store_card_contact_customer_service_desc))
         howToUse8SpannableContent.makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
         howToUse8SpannableContent.makeStringUnderlined("queries@wfs.co.za")
-        howToUse8SpannableContent.makeStringInteractable("086 50 20 20", LinkType.PHONE)
-        howToUse8SpannableContent.makeStringUnderlined("086 50 20 20")
+        howToUse8SpannableContent.makeStringInteractable("0861 50 20 20", LinkType.PHONE)
+        howToUse8SpannableContent.makeStringUnderlined("0861 50 20 20")
         setUnderlineText(howToUse8SpannableContent.build(), howToUse8)
 
         setUniqueIds()
