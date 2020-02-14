@@ -83,6 +83,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
                 navigateBackImageButton?.rotation = slideOffset * -90
             }
         })
+
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
@@ -127,7 +128,7 @@ class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSa
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> mAccountSalesModelImpl?.onApplyNowButtonTapped(this)
+            R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> mAccountSalesModelImpl?.onApplyNowButtonTapped()
             R.id.navigateBackImageButton -> onBackPressed()
         }
     }

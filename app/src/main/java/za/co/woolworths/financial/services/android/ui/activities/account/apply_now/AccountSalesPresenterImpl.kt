@@ -34,10 +34,9 @@ class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.Accou
 
     fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()
 
-    fun onApplyNowButtonTapped(activity: Activity?) {
+    fun onApplyNowButtonTapped() {
         val applyNowLinks = WoolworthsApplication.getApplyNowLink()
-        Utils.openExternalLink(activity,
-        when (getApplyNowState()) {
+        Utils.openInternalWebView(when (getApplyNowState()) {
             ApplyNowState.STORE_CARD -> applyNowLinks.storeCard
             ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD ->  applyNowLinks.creditCard
             ApplyNowState.PERSONAL_LOAN -> applyNowLinks.personalLoan

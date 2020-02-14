@@ -31,7 +31,7 @@ class VIPExclusiveFragment : Fragment() {
             activity?.apply {
                 text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
                 setOnClickListener {
-                    Utils.openExternalLink(this, WoolworthsApplication.getWrewardsTCLink())
+                    Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink())
                 }
             }
         }

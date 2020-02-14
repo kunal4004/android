@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -109,6 +110,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -488,12 +490,22 @@ public class Utils {
 		return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
 	}
 
-	public static void openExternalLink(Context context, String url) {
+	public static void openLinkInInternalWebView(String url) {
+		Context context = WoolworthsApplication.getAppContext();
 		Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
+		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		openInternalWebView.putExtra("externalLink", url);
 		context.startActivity(openInternalWebView);
-		((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
+
+	public static void openInternalWebView(String url) {
+		Context context = WoolworthsApplication.getAppContext();
+		Intent openInternalWebView = new Intent(context, InternalWebViewActivity.class);
+		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		openInternalWebView.putExtra("externalLink", url);
+		context.startActivity(openInternalWebView);
+	}
+
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
