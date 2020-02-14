@@ -170,9 +170,9 @@
     <dimen name="account_sales_apply_now_button_text_size">12sp</dimen>
     <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
     <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
-    <dimen name="voucher_off_price_size">93sp</dimen>
-    <dimen name="voucher_off_size">20sp</dimen>
-    <dimen name="voucher_description_size">15sp</dimen>
+    <dimen name="voucher_off_price_text_size">93sp</dimen>
+    <dimen name="voucher_off_text_size">20sp</dimen>
+    <dimen name="voucher_description_text_size">15sp</dimen>
     <dimen name="voucher_barcode_text_size">20sp</dimen>
 </resources>
 

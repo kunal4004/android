@@ -26,6 +26,6 @@
     <dimen name="account_sales_apply_now_button_text_size">12sp</dimen>
     <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
     <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
-    <dimen name="voucher_description_size">15sp</dimen>
+    <dimen name="voucher_description_text_size">15sp</dimen>
     <dimen name="voucher_barcode_text_size">17sp</dimen>
 </resources>
