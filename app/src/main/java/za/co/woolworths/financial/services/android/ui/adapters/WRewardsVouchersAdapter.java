@@ -1,23 +1,33 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.awfs.coordination.R;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 
 import java.text.ParseException;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
 
 /**
  * Created by W7099877 on 12/01/2017.
