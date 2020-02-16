@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cancel_order_progress_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -37,5 +38,13 @@ class CancelOrderProgressActivity : AppCompatActivity() {
     override fun onBackPressed() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    companion object {
+        fun triggerFirebaseEvent(properties: String){
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = properties
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments)
+        }
     }
 }

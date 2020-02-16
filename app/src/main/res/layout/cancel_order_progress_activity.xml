@@ -32,6 +32,14 @@
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 tools:targetApi="lollipop" />
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:visibility="gone"
+                android:src="@drawable/close_24" />
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout >

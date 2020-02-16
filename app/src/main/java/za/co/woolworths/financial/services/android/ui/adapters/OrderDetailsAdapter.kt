@@ -12,7 +12,9 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -38,7 +40,6 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 return ViewTaxInvoiceViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_view_tax_invoice_layout, parent, false))
             }
             OrderDetailsItem.ViewType.CANCEL_ORDER.value -> {
-                //isTaxInvoiceViewExist = true
                 return CancelOrderViewHolder(LayoutInflater.from(context).inflate(R.layout.cancel_order_layout, parent, false))
             }
         }
@@ -108,8 +109,8 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     inner class CancelOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            //itemView.fakeDivider.visibility = if (isTaxInvoiceViewExist) View.GONE else View.VISIBLE
             itemView.setOnClickListener {
+                CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_ORDER_TAP)
                 listner.onCancelOrder()
             }
         }
