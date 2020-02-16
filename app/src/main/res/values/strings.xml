@@ -1406,4 +1406,15 @@
     <string name="need_help_call_the_call_centre">Need Help? Call The Call Centre</string>
     <string name="cancel_order_success_title">Your order has been \nsuccessfully cancelled.</string>
 
+    <!-- Unique Ids for Transactions-->
+    <string name="cancel_order_popup_layout">layoutCancelOrderPopup</string>
+    <string name="cancel_order_popup_image">imgCancelOrder</string>
+    <string name="cancel_order_popup_confirmation_message">tvConfirmCancelOrder</string>
+    <string name="cancel_order_popup_button_cancel">btnCancel</string>
+    <string name="cancel_order_popup_no_thanks_link">linkNoThanks</string>
+    <string name="cancel_order_error_title">labelProblemTitle</string>
+    <string name="cancel_order_error_desc">LableProblemDesct</string>
+    <string name="cancel_order_retry">btnRetry</string>
+    <string name="cancel_order_need_help">linkHelp</string>
+
 </resources>
