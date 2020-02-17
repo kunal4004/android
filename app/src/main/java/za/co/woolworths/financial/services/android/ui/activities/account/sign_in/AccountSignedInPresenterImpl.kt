@@ -73,6 +73,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
 
     override fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>? {
         val account: Account? = getAccount()
+        account?.productOfferingId?.let { WoolworthsApplication.getInstance().setProductOfferingId(it) }
         val productGroupInfo = when (account?.productGroupCode) {
             STORE_CARD -> Pair(ApplyNowState.STORE_CARD, account)
             CREDIT_CARD -> when (account.accountNumberBin) {
