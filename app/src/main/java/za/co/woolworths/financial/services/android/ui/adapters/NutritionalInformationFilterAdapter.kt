@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.NutritionalInforma
 
 class NutritionalInformationFilterAdapter(var data: ArrayList<NutritionalInformationFilterOption>, var listener: FilterOptionSelection) : RecyclerView.Adapter<NutritionalInformationFilterAdapter.ViewHolder>() {
     interface FilterOptionSelection {
-        fun onOptionSelected(filterOption: NutritionalInformationFilterOption)
+        fun onOptionSelected(selectedSortedOption: NutritionalInformationFilterOption)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
