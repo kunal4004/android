@@ -1398,5 +1398,23 @@
     <string name="plp_savePromotionalImage">savePromotionalImage</string>
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
+    <string name="confirm_cancel_order_dialog_title">Are you sure you wish to \ncancel this order?</string>
+    <string name="cancel_order_failure_title">There was a Problem Cancelling your Order</string>
+    <string name="cancel_order_failure_desc">Unfortunately we are not able to cancel your order. Please try again later.</string>
+    <string name="need_help_call_the_call_centre">Need Help? Call The Call Centre</string>
+    <string name="cancel_order_success_title">Your order has been \nsuccessfully cancelled.</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="cancel_order_popup_layout">layoutCancelOrderPopup</string>
+    <string name="cancel_order_popup_image">imgCancelOrder</string>
+    <string name="cancel_order_popup_confirmation_message">tvConfirmCancelOrder</string>
+    <string name="cancel_order_popup_button_cancel">btnCancel</string>
+    <string name="cancel_order_popup_no_thanks_link">linkNoThanks</string>
+    <string name="cancel_order_error_title">labelProblemTitle</string>
+    <string name="cancel_order_error_desc">LableProblemDesct</string>
+    <string name="cancel_order_retry">btnRetry</string>
+    <string name="cancel_order_need_help">linkHelp</string>
 
 </resources>

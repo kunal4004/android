@@ -14,10 +14,10 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/my_orders_textview_style_2"
-            android:drawableLeft="@drawable/ic_tax_invoice"
+            android:drawableLeft="@drawable/ic_cancel_order"
             android:drawablePadding="@dimen/sixteen_dp"
             android:gravity="center_vertical"
-            android:text="@string/view_tax_invoice"
+            android:text="@string/cancel_order"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -34,6 +34,5 @@
             android:layout_alignParentBottom="true"
             android:background="@color/orders_bg" />
     </RelativeLayout>
-
 
 </LinearLayout>

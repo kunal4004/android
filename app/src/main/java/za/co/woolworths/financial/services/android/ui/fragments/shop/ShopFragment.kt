@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
+import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
@@ -166,11 +167,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE_ORDER_DETAILS_PAGE) {
             if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
                 navigateToMyListFragment()
                 refreshViewPagerFragment(true)
             } else if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+                refreshViewPagerFragment(true)
+            }else if(resultCode == CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS){
                 refreshViewPagerFragment(true)
             }
         }
