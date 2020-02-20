@@ -32,7 +32,7 @@
     <color name="horizontal_line">#10000000</color>
     <color name="reward_status_bar_color">#cc000000</color>
     <color name="default_background">#ececec</color>
-    <color name="product_search_hint">#30000000</color>
+    <color name="product_search_hint">#40000000</color>
     <color name="divider">#B6B6B6</color>
     <color name="product_divider">#22000000</color>
     <color name="barcode_button">#40ffffff</color>
