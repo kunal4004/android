@@ -43,7 +43,6 @@ public abstract class BaseDao {
             return;
 
         } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
         }
 
         try {
@@ -52,7 +51,6 @@ public abstract class BaseDao {
             return;
 
         } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
         }
     }
 }

@@ -6,7 +6,7 @@ import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -32,7 +32,7 @@ abstract class WTodayExtension : Fragment() {
     fun retrieveProduct(productId: String, skuId: String) {
         progressBarVisibility(true)
         mGetProductDetail =  OneAppService.productDetail(productId, skuId).apply {
-            enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
+            enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
                 override fun onSuccess(response: ProductDetailResponse?) {
                     if (!WoolworthsApplication.isApplicationInForeground() && !isAdded && !isVisible && !userVisibleHint && !isHidden)
                         return

@@ -22,7 +22,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -80,7 +80,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         if (isPullToRefresh) swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
         mGetShoppingListRequest = OneAppService.getShoppingLists().apply {
-            enqueue(CompletionHandler(object : RequestListener<ShoppingListsResponse> {
+            enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
                 override fun onSuccess(response: ShoppingListsResponse?) {
                     activity?.let {
                         response?.apply {
@@ -259,7 +259,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
         val deleteShoppingList =  OneAppService.deleteShoppingList(shoppingList.listId)
-        deleteShoppingList.enqueue(CompletionHandler(object: RequestListener<ShoppingListsResponse>{
+        deleteShoppingList.enqueue(CompletionHandler(object: IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(shoppingListsResponse: ShoppingListsResponse?) {
                 shoppingListsResponse?.apply {
                     when (httpCode) {

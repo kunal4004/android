@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Observable;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
@@ -108,7 +108,7 @@ public class QueryBadgeCounter extends Observable {
 
     private Call<VoucherResponse> loadVoucherCount() {
         Call<VoucherResponse> voucherCall = OneAppService.INSTANCE.getVouchers();
-        voucherCall.enqueue(new CompletionHandler<>(new RequestListener<VoucherResponse>() {
+        voucherCall.enqueue(new CompletionHandler<>(new IResponseListener<VoucherResponse>() {
             @Override
             public void onSuccess(VoucherResponse voucherResponse) {
                 switch (voucherResponse.httpCode) {
@@ -136,7 +136,7 @@ public class QueryBadgeCounter extends Observable {
 
     private Call<CartSummaryResponse> loadShoppingCartCount() {
         GetCartSummary cartSummary = new GetCartSummary();
-        return cartSummary.getCartSummary(new RequestListener<CartSummaryResponse>() {
+        return cartSummary.getCartSummary(new IResponseListener<CartSummaryResponse>() {
             @Override
             public void onSuccess(CartSummaryResponse cartSummaryResponse) {
                 if (cartSummaryResponse.httpCode == 200) {
@@ -157,7 +157,7 @@ public class QueryBadgeCounter extends Observable {
 
     private Call<MessageResponse> loadMessageCount() {
         Call<MessageResponse> messageResponseCall = OneAppService.INSTANCE.getMessagesResponse(5, 1);
-        messageResponseCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
+        messageResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
             @Override
             public void onSuccess(MessageResponse messageResponse) {
                 setMessageCount(messageResponse.unreadCount, INDEX_ACCOUNT);

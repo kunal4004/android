@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -75,7 +75,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     private fun requestOrderDetails(orderId: String): Call<OrderDetailsResponse> {
         val orderDetailRequest = OneAppService.getOrderDetails(orderId)
-        orderDetailRequest.enqueue(CompletionHandler(object : RequestListener<OrderDetailsResponse> {
+        orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<OrderDetailsResponse> {
             override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
                 if (!isAdded) return
                 mainLayout.visibility = View.VISIBLE

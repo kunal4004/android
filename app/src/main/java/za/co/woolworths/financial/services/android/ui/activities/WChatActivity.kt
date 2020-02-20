@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.ChatState
 import za.co.woolworths.financial.services.android.models.dto.chat.*
@@ -126,7 +126,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
     private fun createChatSession() {
         val requestBody = SessionUtilities.getInstance().jwt?.let { CreateChatSession(it.C2Id, it.name?.get(0), it.family_name?.get(0), it.email?.get(0), productOfferingId, accountNumber, accountNumber) }
         requestBody?.let {
-            OneAppService.createChatSession(it).enqueue(CompletionHandler(object : RequestListener<CreateChatSessionResponse> {
+            OneAppService.createChatSession(it).enqueue(CompletionHandler(object : IResponseListener<CreateChatSessionResponse> {
                 override fun onSuccess(response: CreateChatSessionResponse?) {
                     when (response?.httpCode) {
                         200 -> response.chatId?.let { id ->
@@ -159,7 +159,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
 
     private fun sendMessage(chatMessage: ChatMessage) {
         chatId?.let {
-            OneAppService.sendChatMessage(it, SendMessageRequestBody(chatMessage.message)).enqueue(CompletionHandler(object : RequestListener<SendChatMessageResponse> {
+            OneAppService.sendChatMessage(it, SendMessageRequestBody(chatMessage.message)).enqueue(CompletionHandler(object : IResponseListener<SendChatMessageResponse> {
                 override fun onSuccess(response: SendChatMessageResponse?) {
                     when (response?.httpCode) {
                         200 -> {
@@ -256,7 +256,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_END)
         stopAllPolling()
         chatId?.let {
-            OneAppService.endChatSession(it).enqueue(CompletionHandler(object : RequestListener<EndChatSessionResponse> {
+            OneAppService.endChatSession(it).enqueue(CompletionHandler(object : IResponseListener<EndChatSessionResponse> {
                 override fun onSuccess(response: EndChatSessionResponse?) {
                     closePage()
                 }

@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -9,9 +9,9 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 
 class PostItemToCart {
 
-    fun make(addItemToCart: MutableList<AddItemToCart>, requestBuilder: RequestListener<AddItemToCartResponse>): Call<AddItemToCartResponse> {
+    fun make(addItemToCart: MutableList<AddItemToCart>, requestBuilder: IResponseListener<AddItemToCartResponse>): Call<AddItemToCartResponse> {
         val postItemRequest = OneAppService.addItemToCart(addItemToCart)
-        postItemRequest.enqueue(CompletionHandler(object : RequestListener<AddItemToCartResponse> {
+        postItemRequest.enqueue(CompletionHandler(object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse) {
 
                 // Ensure counter is always updated after a successful add to cart

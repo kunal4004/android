@@ -5,7 +5,7 @@ import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -36,11 +36,11 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
 
     fun accountUpdateActive() = (mRefreshAccountType !== RefreshAccountType.NONE)
 
-    fun make(forceNetworkUpdate: Boolean, responseListener: RequestListener<AccountsResponse>?) {
+    fun make(forceNetworkUpdate: Boolean, responseListener: IResponseListener<AccountsResponse>?) {
         val oneAppService = OneAppService
         mAccountRequest = oneAppService.getAccounts()
         oneAppService.forceNetworkUpdate = forceNetworkUpdate
-        mAccountRequest?.enqueue(CompletionHandler(object : RequestListener<AccountsResponse> {
+        mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
             override fun onSuccess(accountsResponse: AccountsResponse?) {
                 responseListener?.onSuccess(accountsResponse)
             }

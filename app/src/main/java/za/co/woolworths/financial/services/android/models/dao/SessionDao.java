@@ -123,8 +123,6 @@ public class SessionDao extends BaseDao {
 			sessionDao = new SessionDao(id, key, value, dateCreated, dateUpdated);
 		} catch (Exception e) {
 
-			Log.d("", "Unable to retrieve entry for " + key.toString());
-
 			sessionDao = new SessionDao();
 			sessionDao.key = key;
 		}

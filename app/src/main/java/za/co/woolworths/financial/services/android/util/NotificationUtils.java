@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -21,7 +20,7 @@ import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -166,7 +165,6 @@ public class NotificationUtils {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
             List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
 			if (runningProcesses == null) {
-				Log.d(TAG, "runningProcesses is null");
 				return false;
 			}
             for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
@@ -226,7 +224,7 @@ public class NotificationUtils {
         //Need to be done after Login
 
         Call<CreateUpdateDeviceResponse> createUpdateDeviceCall = OneAppService.INSTANCE.getResponseOnCreateUpdateDevice(device);
-        createUpdateDeviceCall.enqueue(new CompletionHandler<>(new RequestListener<CreateUpdateDeviceResponse>() {
+        createUpdateDeviceCall.enqueue(new CompletionHandler<>(new IResponseListener<CreateUpdateDeviceResponse>() {
             @Override
             public void onSuccess(CreateUpdateDeviceResponse response) {
 

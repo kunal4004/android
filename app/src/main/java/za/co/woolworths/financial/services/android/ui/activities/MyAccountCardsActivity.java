@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
@@ -604,7 +604,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     private void loadAccounts(){
         mUpdateMyAccount.swipeToRefreshAccount(true);
-        mUpdateMyAccount.make(true, new RequestListener<AccountsResponse>() {
+        mUpdateMyAccount.make(true, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
                     switch ( accountsResponse.httpCode) {

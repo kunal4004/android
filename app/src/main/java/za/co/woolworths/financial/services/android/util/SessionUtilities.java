@@ -143,7 +143,6 @@ public class SessionUtilities {
 		try {
 			stsParameters = decodeSTSParams(stsParameters);
 		} catch (UnsupportedEncodingException e) {
-			Log.d("decodeSTSParams", stsParameters);
 		}
 		SessionDao.SESSION_STATE sessionState = (isUserAuthenticated() ? SessionDao.SESSION_STATE.ACTIVE : SessionDao.SESSION_STATE.INACTIVE);
 		setSessionState(sessionState, stsParameters);

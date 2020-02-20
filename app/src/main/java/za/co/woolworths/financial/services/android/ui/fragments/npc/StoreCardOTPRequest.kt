@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -33,7 +33,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         requestListener.showProgress()
         storeOTPService = OneAppService.getLinkNewCardOTP(otpMethodType)
         storeOTPService?.enqueue(
-                CompletionHandler(object : RequestListener<LinkNewCardOTP> {
+                CompletionHandler(object : IResponseListener<LinkNewCardOTP> {
                     override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
                         with(linkNewCardOTP) {
                             when (this.httpCode) {
@@ -83,7 +83,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
 
     fun linkStoreCardRequest(requestListener: IOTPLinkStoreCard<LinkNewCardResponse>?, linkStoreCard: LinkStoreCard) {
         requestListener?.showProgress()
-        OneAppService.linkStoreCardRequest(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
+        OneAppService.linkStoreCardRequest(linkStoreCard).enqueue(CompletionHandler(object : IResponseListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
                 linkStoreCardHasFailed = false
                 when (response?.httpCode) {
@@ -114,7 +114,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
 
     fun getStoreCards(requestListener: IOTPLinkStoreCard<StoreCardsResponse>?, account: Account): Call<StoreCardsResponse> {
         val getStoreCardsRequest = OneAppService.getStoreCards(StoreCardsRequestBody(account.accountNumber, account.productOfferingId))
-        getStoreCardsRequest.enqueue(CompletionHandler(object : RequestListener<StoreCardsResponse> {
+        getStoreCardsRequest.enqueue(CompletionHandler(object : IResponseListener<StoreCardsResponse> {
             override fun onSuccess(response: StoreCardsResponse) {
                 getCardCallHasFailed = false
                 when (response.httpCode) {

@@ -18,7 +18,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
 import org.json.JSONObject
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -287,7 +287,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     private fun getInventoryStockForStore(storeId: String, multiSku: String): Call<SkusInventoryForStoreResponse> {
       val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(storeId, multiSku)
-        skusInventoryForStoreRequest.enqueue(CompletionHandler(object: RequestListener<SkusInventoryForStoreResponse>{
+        skusInventoryForStoreRequest.enqueue(CompletionHandler(object: IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 when (skusInventoryForStoreResponse?.httpCode) {
                     200 -> {
@@ -401,7 +401,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     private fun postAddItemToCart(addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
         val postItemToCart = PostItemToCart()
-        return postItemToCart.make(addItemToCart, object : RequestListener<AddItemToCartResponse> {
+        return postItemToCart.make(addItemToCart, object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {
                 addItemToCartResponse?.let { onAddToCartSuccess(it) }
             }
