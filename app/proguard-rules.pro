@@ -121,3 +121,8 @@
 -keep public class com.google.android.material.bottomnavigation.BottomNavigationMenuView { *; }
 -keep public class com.google.android.material.bottomnavigation.BottomNavigationPresenter { *; }
 -keep public class com.google.android.material.bottomnavigation.BottomNavigationItemView { *; }
+
+
+-keep public class  za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension {
+    public <fields>;
+}

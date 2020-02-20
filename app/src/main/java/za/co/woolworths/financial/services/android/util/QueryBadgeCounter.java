@@ -81,12 +81,6 @@ public class QueryBadgeCounter extends Observable {
         return updateAtPosition;
     }
 
-    public void queryAllBadgeCounters() {
-        queryVoucherCount();
-        queryCartSummaryCount();
-        queryMessageCount();
-    }
-
     public void queryMessageCount() {
         if (isUserAuthenticated()) return;
         if (isC2User()) return;

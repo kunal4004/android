@@ -49,6 +49,7 @@ class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_PROMO_OFF: String = "GA_Event_ONE_SORTSFILTERS_PROMOOFF"
         const val REFINE_EVENT_SEE_RESULT: String = "GA_Event_ONE_SORTSFILTERS_SEERSB"
         const val REFINE_EVENT_BACK_BUTTON: String = "GA_Event_ONE_SORTSFILTERS_SEERSBB"
+        const val SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION: String = "SHOP_PDP_NI"
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
         const val SHOPMYLISTS: String = "GA_Event_ONE_SHOP_MYLISTS"
@@ -88,6 +89,8 @@ class FirebaseManagerAnalyticsProperties {
             const val ATGId: String = "ATGId"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
             const val DESCRIPTION : String = "DESCRIPTION"
+            const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "PRODUCT_ID"
+            const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
         }
     }
 

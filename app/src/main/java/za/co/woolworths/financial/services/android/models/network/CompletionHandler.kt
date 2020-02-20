@@ -7,26 +7,33 @@ import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import java.io.InputStreamReader
 
-open class CompletionHandler<ResponseObj>(private val requestListener: IResponseListener<ResponseObj>?, private val genericClassType: Class<ResponseObj>) : Callback<ResponseObj> {
+open class CompletionHandler<T>(private val requestListener: IResponseListener<T>?, private val typeParameterClass: Class<T>) : Callback<T> {
 
-    override fun onResponse(call: Call<ResponseObj>, response: Response<ResponseObj>?) {
+    override fun onResponse(call: Call<T>, response: Response<T>?) {
         this.requestListener?.apply {
             response?.apply {
                 if (displayMaintenanceScreenIfNeeded(this)) return
                 when (isSuccessful) {
                     true -> onSuccess(body())
-                    else -> errorBody()?.apply { onSuccess(Gson().fromJson(InputStreamReader(byteStream()), genericClassType)) }
+                    else -> errorBody()?.apply {
+                        if (response.code() == 504){
+                            onFailure(Throwable(this.string()));
+                        } else{
+                            val stream = InputStreamReader(byteStream());
+                            onSuccess(Gson().fromJson(stream, typeParameterClass));
+                        }
+                    }
                 }
             }
         }
     }
 
-    override fun onFailure(call: Call<ResponseObj>, throwable: Throwable) {
+    override fun onFailure(call: Call<T>, throwable: Throwable) {
         if (!call.isCanceled) {
             this.requestListener?.onFailure(throwable)
             RetrofitException(throwable).show()
         }
     }
 
-    private fun displayMaintenanceScreenIfNeeded(response: Response<ResponseObj>): Boolean = RetrofitException(response.code()).show()
+    private fun displayMaintenanceScreenIfNeeded(response: Response<T>): Boolean = RetrofitException(response.code()).show()
 }

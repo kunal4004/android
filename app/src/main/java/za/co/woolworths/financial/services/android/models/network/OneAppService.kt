@@ -50,8 +50,12 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, includeDetails: Boolean): Call<LocationResponse> {
-           return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField, includeDetails)
+    fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String): Call<LocationResponse> {
+           return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
+    }
+
+    fun getStoresForNPC(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, npc: Boolean): Call<LocationResponse> {
+        return mApiInterface.getStoresForNPC(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField, npc)
     }
 
     fun getLocationsItem(sku: String, startRadius: String, endRadius: String): Call<LocationResponse> {

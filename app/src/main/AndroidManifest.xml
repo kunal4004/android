@@ -136,43 +136,28 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter
-                android:autoVerify="true"
-                android:order="1">
+            <intent-filter android:order="1"
+                android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-<!--                <data-->
-<!--                    android:host="*.woolworths.co.za"-->
-<!--                    android:scheme="http" />-->
-
                 <data
-                    android:host="endcrypt3d.co.za"
-                    android:scheme="http" />
-
-                <data android:path="/cat" />
-                <data android:scheme="https" />
+                    android:scheme="https"
+                    android:host="www-win-qa.woolworths.co.za"
+                    android:path="/cat" />
             </intent-filter>
-            <intent-filter
-                android:autoVerify="true"
-                android:order="2">
+            <intent-filter android:order="2">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-<!--                <data-->
-<!--                    android:host="*.woolworths.co.za"-->
-<!--                    android:scheme="http" />-->
-
                 <data
-                    android:host="endcrypt3d.co.za"
-                    android:scheme="http" />
-
-                <data android:path="/fragments/common/dimension-search-results.jsp" />
-                <data android:scheme="https" />
+                    android:scheme="https"
+                    android:host="www-win-qa.woolworths.co.za"
+                    android:path="/fragments/common/dimension-search-results.jsp" />
             </intent-filter>
         </activity>
         <activity

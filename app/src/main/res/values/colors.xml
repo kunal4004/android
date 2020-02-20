@@ -97,4 +97,5 @@
     <color name="input_error_color_code_05">#05D0021B</color>
     <color name="input_error_box_color">#59FBEAE5</color>
     <color name="transparent_4d">#4D000000</color>
+    <color name="searchBarHintColor">#20000000</color>
 </resources>

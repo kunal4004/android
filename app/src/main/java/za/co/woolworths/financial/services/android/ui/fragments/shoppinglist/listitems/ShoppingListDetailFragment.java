@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -94,9 +95,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private String listId;
     private List<ShoppingListItem> mShoppingListItems;
     private ShoppingListItemsAdapter shoppingListItemsAdapter;
-    private MenuItem mMenuActionSearch, mMenuActionSelectAll;
     private boolean isMenuItemReadyToShow = false;
-    private WTextView tvMenuSelectAll;
     private ErrorHandlerView mErrorHandlerView;
     private BroadcastReceiver mConnectionBroadcast;
     private Call<AddItemToCartResponse> mPostAddToCart;
@@ -115,6 +114,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private LinearLayout rlEmptyView;
     private boolean openFromMyList;
     private List<String> matchesFullFillmentTypeKey;
+    private TextView selectDeselectAllTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,6 +138,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         super.onViewCreated(view, savedInstanceState);
         initViewAndEvent(view);
         initGetShoppingListItems();
+        selectDeselectAllTextView.setOnClickListener(this);
     }
 
     private void initViewAndEvent(View view) {
@@ -150,6 +151,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         pbLoadingIndicator = view.findViewById(R.id.pbLoadingIndicator);
         btnCheckOut = view.findViewById(R.id.btnCheckOut);
         rlEmptyView = view.findViewById(R.id.rlEmptyListView);
+        Activity activity = getActivity();
+        if (activity != null)
+            selectDeselectAllTextView = activity.findViewById(R.id.selectDeselectAllTextView);
         initList(rcvShoppingListItems);
         setScrollListener(rcvShoppingListItems);
 
@@ -283,6 +287,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.selectDeselectAllTextView:
+                onOptionsItemSelected();
+                break;
             case R.id.textProductSearch:
                 openProductSearchActivity();
                 break;
@@ -349,15 +356,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             if (items.size() > 0)
                 setSelectAllButtonText(items);
             else
-                mMenuActionSelectAll.setVisible(false);
+                selectDeselectAllTextView.setVisibility(GONE);
         } else {
             setSelectAllButtonText(items);
         }
     }
 
     public void setSelectAllButtonText(List<ShoppingListItem> items) {
-        if (getActivity() != null && tvMenuSelectAll != null)
-            tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
+        if (getActivity() != null && selectDeselectAllTextView != null)
+            selectDeselectAllTextView.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
     }
 
     public void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse) {
@@ -569,50 +576,29 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Activity activity = getActivity();
         if (activity == null) return;
         ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
-        inflater.inflate(R.menu.shopping_list_more, menu);
-        mMenuActionSearch = menu.findItem(R.id.action_search);
-        mMenuActionSelectAll = menu.findItem(R.id.selectAll);
-        actionSearchVisibility(false);
-
         if (isMenuItemReadyToShow) {
-            mMenuActionSelectAll.setVisible(true);
+            selectDeselectAllTextView.setVisibility(VISIBLE);
             shoppingListActivity.editButtonVisibility(true);
         } else {
-            mMenuActionSelectAll.setVisible(false);
+            selectDeselectAllTextView.setVisibility(GONE);
             editButtonVisibility();
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void actionSearchVisibility(boolean visible) {
-        if (mMenuActionSearch != null) {
-            mMenuActionSearch.setVisible(visible);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public void onOptionsItemSelected() {
         if (shouldUserSetSuburb()) {
             deliverySelectionIntent(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
-            return super.onOptionsItemSelected(item);
+            return;
         }
 
-        switch (item.getItemId()) {
-            case R.id.selectAll:
-                if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
-                    selectAllListItems(true);
-                    tvMenuSelectAll.setText(getString(R.string.deselect_all));
-                } else {
-                    selectAllListItems(false);
-                    tvMenuSelectAll.setText(getString(R.string.select_all));
-                }
-                return super.onOptionsItemSelected(item);
-            case R.id.action_search:
-                return super.onOptionsItemSelected(item);
-            default:
-                break;
+        if (selectDeselectAllTextView.getText().toString().equalsIgnoreCase("SELECT ALL")) {
+            selectAllListItems(true);
+            selectDeselectAllTextView.setText(getString(R.string.deselect_all));
+        } else {
+            selectAllListItems(false);
+            selectDeselectAllTextView.setText(getString(R.string.select_all));
         }
-        return false;
     }
 
 
@@ -625,7 +611,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                actionSearchVisibility(dy > rcvShoppingListItems.getHeight());
+                // actionSearchVisibility(dy > rcvShoppingListItems.getHeight());
             }
         });
     }
@@ -670,21 +656,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
             shoppingListItemsAdapter.updateList(mShoppingListItems);
         }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        final MenuItem menuItem = menu.findItem(R.id.selectAll);
-        LinearLayout rootView = (LinearLayout) menuItem.getActionView();
-        tvMenuSelectAll = rootView.findViewById(R.id.title);
-        tvMenuSelectAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onOptionsItemSelected(menuItem);
-            }
-        });
-
     }
 
     @Override
@@ -734,8 +705,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     private void selectAllTextVisibility(boolean visible) {
-        if (tvMenuSelectAll != null)
-            tvMenuSelectAll.setVisibility(visible ? VISIBLE : GONE);
+        if (selectDeselectAllTextView != null)
+            selectDeselectAllTextView.setVisibility(visible ? VISIBLE : GONE);
     }
 
     public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
@@ -799,7 +770,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                         }
                     }
                     if (!allItemsAreOutOfStock)
-                        tvMenuSelectAll.performClick();
+                        selectDeselectAllTextView.performClick();
                 }
 
             }
@@ -1066,17 +1037,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         if (name.equalsIgnoreCase(resources.getString(R.string.edit))) {
             hideEditShoppingListMode();
             shoppingListItemsAdapter.editButtonEnabled(false);
-            tvMenuSelectAll.setEnabled(true);
-            tvMenuSelectAll.setVisibility(VISIBLE);
+            selectDeselectAllTextView.setEnabled(true);
+            selectDeselectAllTextView.setVisibility(VISIBLE);
         } else {
             showEditShoppingListSetting();
             shoppingListItemsAdapter.editButtonEnabled(true);
-            tvMenuSelectAll.setEnabled(false);
-            tvMenuSelectAll.setVisibility(GONE);
+            selectDeselectAllTextView.setEnabled(false);
+            selectDeselectAllTextView.setVisibility(GONE);
         }
 
         resetSelectAll();
-        tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(mShoppingListItems) ? R.string.deselect_all : R.string.select_all));
+        selectDeselectAllTextView.setText(getString(getSelectAllMenuVisibility(mShoppingListItems) ? R.string.deselect_all : R.string.select_all));
         rlCheckOut.setVisibility(getButtonStatus(mShoppingListItems) ? VISIBLE : GONE);
     }
 
@@ -1089,19 +1060,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
         }
         if (!isMenuItemReadyToShow) {
-            tvMenuSelectAll.setVisibility(GONE);
+            selectDeselectAllTextView.setVisibility(GONE);
         }
     }
 
     private void hideEditShoppingListMode() {
-        mMenuActionSelectAll.setVisible(true);
+        selectDeselectAllTextView.setVisibility(VISIBLE);
         rlCheckOut.setEnabled(true);
         btnCheckOut.setEnabled(true);
         rlCheckOut.setAlpha(1.0f);
     }
 
     private void showEditShoppingListSetting() {
-        mMenuActionSelectAll.setVisible(false);
+        selectDeselectAllTextView.setVisibility(GONE);
         rlCheckOut.setEnabled(false);
         btnCheckOut.setEnabled(false);
         rlCheckOut.setAlpha(0.5f);

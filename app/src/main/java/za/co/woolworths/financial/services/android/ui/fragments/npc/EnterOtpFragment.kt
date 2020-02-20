@@ -80,7 +80,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
                 requestOTPApi(getOTPMethodType())
             } else {
-                setOTPDescription(getSavedOTP())
                 val otpNumber = getOtpNumber()
                 if (!TextUtils.isEmpty(otpNumber)) {
                     with(otpNumber.split("")) {
@@ -93,6 +92,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     edtVerificationCode1?.setSelection(0)
                 }
                 showOTPErrorOnOTPFragment()
+                setOTPDescription(getSavedOTP())
             }
         }
 
@@ -136,7 +136,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     private fun configureUI() {
         didNotReceiveOTPTextView?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
         if (activityIsInstanceStoreCardActivity()) didNotReceiveOTPTextView?.isAllCaps = true
-
     }
 
     private fun activityIsInstanceStoreCardActivity() = activity is InstantStoreCardReplacementActivity
@@ -225,6 +224,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         disableEditText(edtVerificationCode3)
                         disableEditText(edtVerificationCode4)
                         disableEditText(edtVerificationCode5)
+                        setIsOtpApiInProgress(true)
                     }
 
                     override fun hideProgress() {
@@ -237,6 +237,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         enableEditText(edtVerificationCode4)
                         enableEditText(edtVerificationCode5)
                         requestEditTextFocus()
+                        setIsOtpApiInProgress(false)
                     }
 
                     override fun onSuccessHandler(response: LinkNewCardOTP) {
@@ -248,15 +249,18 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         } else {
                             setOTPDescription(response.otpSentTo?.toLowerCase(Locale.getDefault()))
                         }
+                        setIsOtpApiInProgress(false)
                     }
 
                     override fun onFailureHandler() {
                         super.onFailureHandler()
+                        setIsOtpApiInProgress(false)
                         setOTPDescription(getSavedOTP())
                     }
 
                     override fun onFailureHandler(error: Throwable?) {
                         super.onFailureHandler(error)
+                        setIsOtpApiInProgress(false)
                         if (error is ConnectException || error is UnknownHostException) {
                             activity.resources?.let { resources ->
                                 enterOTPDescriptionScreen?.text =
@@ -266,10 +270,15 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     }
                 })
             } else {
+                setIsOtpApiInProgress(false)
                 ErrorHandlerView(activity).showToast()
                 return
             }
         }
+    }
+
+    private fun setIsOtpApiInProgress(state: Boolean) {
+        MyCardActivityExtension.requestOTPFragmentIsActivated = state
     }
 
 
@@ -283,8 +292,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? MyCardActivityExtension)?.hideBackIcon()
-                activity?.onBackPressed()
+                if (!MyCardActivityExtension.requestOTPFragmentIsActivated) {
+                    (activity as? MyCardActivityExtension)?.hideBackIcon()
+                    activity?.onBackPressed()
+                }
                 super.onOptionsItemSelected(item)
             }
             else -> super.onOptionsItemSelected(item)

@@ -1,13 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.activities.temporary_store_card
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.LinkType
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
+
 
 class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
 
@@ -22,7 +30,26 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         actionBar()
+
+        val howToUseSpannableStringBuilder = WSpannableStringBuilder(getString(R.string.how_to_use0))
+        howToUseSpannableStringBuilder.makeStringInteractable("appfeedback@woolworths.co.za", LinkType.EMAIL)
+        howToUseSpannableStringBuilder.makeStringUnderlined("appfeedback@woolworths.co.za")
+        setUnderlineText(howToUseSpannableStringBuilder.build(), howToUse)
+
+        val howToUse8SpannableContent = WSpannableStringBuilder(getString(R.string.temp_store_card_contact_customer_service_desc))
+        howToUse8SpannableContent.makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
+        howToUse8SpannableContent.makeStringUnderlined("queries@wfs.co.za")
+        howToUse8SpannableContent.makeStringInteractable("0861 50 20 20", LinkType.PHONE)
+        howToUse8SpannableContent.makeStringUnderlined("0861 50 20 20")
+        setUnderlineText(howToUse8SpannableContent.build(), howToUse8)
+
         setUniqueIds()
+    }
+
+    private fun setUnderlineText(howToUseSpannableContent: Spannable, textView: TextView?) {
+        textView?.text = howToUseSpannableContent
+        textView?.movementMethod = LinkMovementMethod.getInstance()
+        textView?.highlightColor = Color.TRANSPARENT
     }
 
     private fun actionBar() {
