@@ -258,7 +258,8 @@ public class ProductSearchActivity extends AppCompatActivity
 		super.onResume();
 		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH);
 		showRecentSearchHistoryView(true);
-
+		if (mEditSearchProduct != null)
+			mEditSearchProduct.requestFocus();
 	}
 
     @Override
