@@ -78,5 +78,17 @@ public class ProductDetails {
 	@SerializedName("nutritionalInformationDetails")
 	@Expose
 	public NutritionalInformationDetails nutritionalInformationDetails;
+	@SerializedName("freeGiftText")
+	@Expose
+	public String freeGiftText;
+	@SerializedName("freeGift")
+	@Expose
+	public String freeGift;
+	@SerializedName("brandText")
+	@Expose
+	public String brandText;
+	@SerializedName("rangeText")
+	@Expose
+	public String rangeText;
 
 }

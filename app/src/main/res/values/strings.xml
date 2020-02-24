@@ -1401,5 +1401,7 @@
     <string name="how_to_use0">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature.  Feedback can be given at appfeedback@woolworths.co.za.</string>
     <string name="temp_store_card_engine_service_stations_desc">Your temp card cannot be used at Engen service stations.</string>
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
+    <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
+    <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
 
 </resources>
