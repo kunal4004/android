@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 import android.view.MenuInflater
 import android.view.View.GONE
@@ -27,11 +26,14 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import android.view.WindowManager
+import android.widget.Toast
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.net.ConnectException
 import java.net.UnknownHostException
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private var mStoreCardRequest: StoreCardOTPRequest? = null
@@ -90,9 +92,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         edtVerificationCode5?.setText(this[5])
                     }
                     edtVerificationCode1?.setSelection(0)
+                    showOTPErrorOnOTPFragment()
+                    setOTPDescription(getSavedOTP())
+                    enterOTPDescriptionScreen?.visibility = VISIBLE
                 }
-                showOTPErrorOnOTPFragment()
-                setOTPDescription(getSavedOTP())
             }
         }
 
@@ -102,11 +105,9 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     private fun uniqueIdsForEnterOTPScreen() {
         activity?.resources?.apply {
             tvEnterOtpTitle?.contentDescription = getString(R.string.enter_otp_title)
-            enterOTPDescriptionScreen?.contentDescription =
-                    getString(R.string.icr_enter_otp_description)
+            enterOTPDescriptionScreen?.contentDescription = getString(R.string.icr_enter_otp_description)
             viewOTPBackground?.contentDescription = getString(R.string.verification_code_container)
-            loadingProgressIndicatorViewGroup?.contentDescription =
-                    getString(R.string.load_otp_description)
+            loadingProgressIndicatorViewGroup?.contentDescription = getString(R.string.load_otp_description)
             vLinkBottomNavigation?.contentDescription = getString(R.string.did_not_receive_title)
             otpErrorTextView?.contentDescription = getString(R.string.enter_otp_error)
         }
@@ -118,10 +119,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
             val otpDescriptionLabel = when (getOTPMethodType()) {
                 OTPMethodType.SMS -> setResource(R.string.icr_otp_phone_desc, otpType)
                 OTPMethodType.EMAIL -> setResource(R.string.icr_otp_email_desc, otpType)
-                else -> return
+                OTPMethodType.NONE -> ""
             }
 
-            val otpDescription = activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel), type, false) } }
+            val otpDescription = activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel as CharSequence?), type, false) } }
             enterOTPDescriptionScreen?.apply {
                 text = otpDescription
                 movementMethod = LinkMovementMethod.getInstance()
