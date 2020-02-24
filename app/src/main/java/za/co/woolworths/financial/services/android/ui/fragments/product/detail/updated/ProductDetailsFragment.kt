@@ -435,9 +435,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     visibility = View.VISIBLE
                 }
             }
-            if(!it.freeGiftText.isNullOrEmpty()){
+            if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+                activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, it.freeGift) }
+                freeGiftImage.visibility = View.VISIBLE
             }
         }
 
