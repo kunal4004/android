@@ -1,12 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -21,19 +25,33 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.BottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
+
 open class AvailableFundsFragment : Fragment(), AvailableFundsContract.AvailableFundsView {
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
+    private var bottomSheetBehaviourPeekHeightListener: BottomSheetBehaviourPeekHeightListener? =
+            null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
         mAvailableFundPresenter?.setBundle(arguments)
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BottomSheetBehaviourPeekHeightListener) {
+            bottomSheetBehaviourPeekHeightListener = context
+        } else {
+            throw RuntimeException( "AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.account_available_fund_overview_fragment, container, false)
@@ -46,6 +64,17 @@ open class AvailableFundsFragment : Fragment(), AvailableFundsContract.Available
         setPushViewDownAnimation(incRecentTransactionButton)
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incViewPaymentOptionButton)
+
+        accountOverviewRootLayout?.post {
+            val dm = DisplayMetrics()
+            (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
+            val deviceHeight = dm.heightPixels
+            val location = IntArray(2)
+            bottomGuide?.getLocationOnScreen(location)
+            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - location[1]
+            bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
+            Log.e("GUIDELINE_TAG_ARRAY", "${location[0]} ${location[1]} height $deviceHeight")
+        }
     }
 
     override fun setPushViewDownAnimation(view: View) {
@@ -65,11 +94,17 @@ open class AvailableFundsFragment : Fragment(), AvailableFundsContract.Available
     private fun setUpView() {
         mAvailableFundPresenter?.getAccount()?.apply {
             activity?.apply {
-                val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1, this))
-                val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, this))
-                val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) } ?: "N/A"
-                val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+                val availableFund =
+                        Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1, this))
+                val currentBalance =
+                        Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
+                val creditLimit =
+                        Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, this))
+                val paymentDueDate =
+                        paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
+                                ?: "N/A"
+                val totalAmountDueAmount =
+                        Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
                 currentBalanceAmountTextView?.text = currentBalance
