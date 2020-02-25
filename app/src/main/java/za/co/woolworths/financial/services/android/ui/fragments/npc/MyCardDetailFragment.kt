@@ -13,7 +13,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -186,7 +186,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
         unblockStoreCardRequestBody?.let {
             StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId
-                    ?: "", it, object : RequestListener<UnblockStoreCardResponse> {
+                    ?: "", it, object : IResponseListener<UnblockStoreCardResponse> {
                 override fun onSuccess(response: UnblockStoreCardResponse?) {
                     showPayWithCardProgressBar(GONE)
                     when (response?.httpCode) {
@@ -250,7 +250,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
         blockStoreCardRequestBody?.let {
             StoreCardAPIRequest().blockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId
-                    ?: "", it, object : RequestListener<BlockMyCardResponse> {
+                    ?: "", it, object : IResponseListener<BlockMyCardResponse> {
                 override fun onSuccess(response: BlockMyCardResponse?) {
                 }
 

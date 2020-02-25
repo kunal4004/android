@@ -264,7 +264,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onClick(View v) {
                 if (storeDetail.phoneNumber != null) {
-                    Utils.makeCall(StoreDetailsActivity.this, storeDetail.phoneNumber);
+                    Utils.makeCall(storeDetail.phoneNumber);
                 }
 
             }

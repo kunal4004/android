@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -20,7 +20,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
     }
 
     override fun postAddItemToCart(addItemToCart: List<AddItemToCart>, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
-        PostItemToCart().make(addItemToCart as MutableList<AddItemToCart>, object : RequestListener<AddItemToCartResponse> {
+        PostItemToCart().make(addItemToCart as MutableList<AddItemToCart>, object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(cartSummaryResponse: AddItemToCartResponse?) {
                 onFinishListener?.onSuccess(cartSummaryResponse)
             }
@@ -39,7 +39,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
 
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
-        call.enqueue(CompletionHandler(object : RequestListener<RESPONSE_OBJECT> {
+        call.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
             override fun onSuccess(response: RESPONSE_OBJECT) {
                 requestListener?.onSuccess(response)
             }
@@ -51,7 +51,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
     }
 
     override fun getCartSummary(requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
-         GetCartSummary().getCartSummary(object : RequestListener<CartSummaryResponse> {
+         GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
             override fun onSuccess(cartSummaryResponse: CartSummaryResponse?) {
                 requestListener?.onSuccess(cartSummaryResponse)
             }

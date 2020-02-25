@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -596,7 +596,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         showProgressBar()
         OneAppService.getInventorySkuForStore(storeId, addItemToCart?.catalogRefId
-                ?: "").enqueue(CompletionHandler(object : RequestListener<SkusInventoryForStoreResponse> {
+                ?: "").enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
                 if (!isAdded) return
                 dismissProgressBar()
@@ -665,7 +665,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         mAddItemsToCart = mutableListOf()
         addItemToCart?.let { cartItem -> mAddItemsToCart?.add(cartItem) }
         PostItemToCart().make(mAddItemsToCart
-                ?: mutableListOf(), object : RequestListener<AddItemToCartResponse> {
+                ?: mutableListOf(), object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse) {
                 if (!isAdded) return
                 activity?.apply {
@@ -747,7 +747,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
             OneAppService.getLocationsItem(mSelectedProductList?.sku
-                    ?: "", startRadius.toString(), endRadius.toString()).enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+                    ?: "", startRadius.toString(), endRadius.toString()).enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
                 override fun onSuccess(locationResponse: LocationResponse) {
                     if (!isAdded) return
                     dismissProgressBar()

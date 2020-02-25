@@ -71,7 +71,7 @@ public class CLIProofOfIncomeDocumentFragment extends Fragment {
 			public void onClick(View view) {
 				Activity activity = getActivity();
 				if (activity != null) {
-					Utils.sendEmail("cliproofofincome@wfs.co.za", getActivity());
+					Utils.sendEmail("cliproofofincome@wfs.co.za");
 				}
 			}
 		};

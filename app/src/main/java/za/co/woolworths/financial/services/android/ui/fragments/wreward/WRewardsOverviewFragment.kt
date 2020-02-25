@@ -19,7 +19,7 @@ import com.google.zxing.WriterException
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.wrewards_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse
 import za.co.woolworths.financial.services.android.models.dto.TierInfo
@@ -248,7 +248,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private fun loadPromotionsAPI() {
         mErrorHandlerView?.hideErrorHandlerLayout()
         val promotionsResponseCall = OneAppService.getPromotions()
-        promotionsResponseCall.enqueue(CompletionHandler(object : RequestListener<PromotionsResponse> {
+        promotionsResponseCall.enqueue(CompletionHandler(object : IResponseListener<PromotionsResponse> {
             override fun onSuccess(promotionsResponse: PromotionsResponse) {
                 handlePromotionResponse(promotionsResponse)
             }

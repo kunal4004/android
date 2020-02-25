@@ -2,16 +2,16 @@ package za.co.woolworths.financial.services.android.util
 
 import android.text.TextUtils
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.dto.*
 
 class GetCartSummary {
 
-    fun getCartSummary(response: RequestListener<CartSummaryResponse>): Call<CartSummaryResponse> {
+    fun getCartSummary(response: IResponseListener<CartSummaryResponse>): Call<CartSummaryResponse> {
         val cartSummaryRequest = OneAppService.getCartSummary()
-        cartSummaryRequest.enqueue(CompletionHandler(object : RequestListener<CartSummaryResponse> {
+        cartSummaryRequest.enqueue(CompletionHandler(object : IResponseListener<CartSummaryResponse> {
             override fun onSuccess(cartSummaryResponse: CartSummaryResponse?) {
                 cartSummaryResponse?.apply {
                     cacheSuburbFromCartSummary(this)
