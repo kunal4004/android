@@ -14,7 +14,7 @@
         android:layout_height="@dimen/twenty_four_dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/cli"
+        android:src="@drawable/ic_gift_with_purchase"
         />
 
     <TextView

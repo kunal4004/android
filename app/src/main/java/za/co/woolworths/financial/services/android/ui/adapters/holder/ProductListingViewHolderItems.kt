@@ -42,6 +42,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")

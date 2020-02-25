@@ -30,6 +30,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.60" />
 
+    <ImageView
+        android:id="@+id/imFreeGiftImage"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_newPromotionalImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imNewImage"
@@ -40,7 +50,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/plp_newPromotionalImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imFreeGiftImage" />
 
     <ImageView
         android:id="@+id/imSave"
