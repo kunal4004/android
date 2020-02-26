@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
@@ -23,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.net.ConnectException
 import java.net.UnknownHostException
 
-class StoreCardOTPRequest(private val activity: Activity?, private val otpMethodType: OTPMethodType) {
+class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val otpMethodType: OTPMethodType) {
 
     private var storeOTPService: Call<LinkNewCardOTP>? = null
     var linkStoreCardHasFailed = false
@@ -45,8 +45,10 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                                 else -> {
                                     requestListener.hideProgress()
                                     requestListener.onFailureHandler()
-                                    val errorTitle = activity?.resources?.getString(R.string.absa_general_error_title)
-                                    messageDialog(errorTitle)
+                                    if (activity?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == true) {
+                                        val errorTitle = activity.resources?.getString(R.string.absa_general_error_title)
+                                        messageDialog(errorTitle)
+                                    }
                                 }
                             }
                         }
@@ -75,7 +77,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
     }
 
     private fun messageDialog(response: String?) {
-        (activity as? AppCompatActivity)?.apply {
+        activity?.apply {
             val dialog = response?.let { ErrorMessageDialogWithTitleFragment.newInstance(it, true) }
             dialog?.show(supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
         }

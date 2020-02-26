@@ -205,7 +205,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         saveSelectedOTP(otpMethodType)
         clearOTP()
         requestEditTextFocus()
-        activity?.let { activity ->
+        (activity as? AppCompatActivity)?.let { activity ->
             mStoreCardRequest = StoreCardOTPRequest(activity, otpMethodType)
             if (NetworkManager().isConnectedToNetwork(activity)) {
                 mStoreCardRequest?.make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
@@ -271,6 +271,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 })
             } else {
                 setIsOtpApiInProgress(false)
+                if (!isAdded)return
                 ErrorHandlerView(activity).showToast()
                 return
             }
