@@ -345,7 +345,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onItemSelectionChange(List<ShoppingListItem> items) {
         boolean itemWasSelected = getButtonStatus(items);
         rlCheckOut.setVisibility(itemWasSelected ? VISIBLE : GONE);
-        Utils.setRecyclerViewMargin(rcvShoppingListItems, itemWasSelected ? Utils.dp2px(getActivity(), 60) : 0);
+        Utils.setRecyclerViewMargin(rcvShoppingListItems, itemWasSelected ? Utils.dp2px(60) : 0);
         if (isAdded()) {
             if (items.size() > 0)
                 setSelectAllButtonText(items);

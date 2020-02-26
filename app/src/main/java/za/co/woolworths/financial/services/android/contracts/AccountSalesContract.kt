@@ -34,7 +34,8 @@ interface AccountSignedInContract {
         fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>?
         fun getToolbarTitle(state: ApplyNowState): String?
         fun showProductOfferOutstanding()
-        fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int?
+        fun getStatusBarHeight(slideOffset: Float, toolbar: Toolbar?): Int?
+        fun getStatusBarHeight(): Int?
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
         fun getSixMonthOutstandingTitleAndCardResource() : Pair<Int, Int>

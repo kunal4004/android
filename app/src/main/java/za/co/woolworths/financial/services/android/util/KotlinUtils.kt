@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -37,9 +38,11 @@ class KotlinUtils {
                 }
             }
 
-            val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+            val typeface: Typeface? =
+                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
             if (textIsClickable) spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val dimenPix = context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
+            val dimenPix =
+                    context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
             typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
             spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
                     ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -77,7 +80,7 @@ class KotlinUtils {
         fun getBottomSheetBehaviorDefaultAnchoredHeight(): Int? {
             val activity = WoolworthsApplication.getInstance()?.currentActivity
             val height: Int? = activity?.resources?.displayMetrics?.heightPixels ?: 0
-            return height?.div(3)?.plus(Utils.dp2px(activity, 18f)) ?: 0
+            return height?.div(3)?.plus(Utils.dp2px(18f)) ?: 0
         }
 
         fun getStatusBarHeight(actionBarHeight: Int): Int {
@@ -137,5 +140,12 @@ class KotlinUtils {
             view.background = shape
         }
 
+        fun dpToPxConverter(dp: Int): Int {
+            return (dp * Resources.getSystem().displayMetrics.density).toInt()
+        }
+
+        fun pxToDpConverter(px: Int): Int {
+            return (px / Resources.getSystem().displayMetrics.density).toInt()
+        }
     }
 }

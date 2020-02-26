@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import kotlinx.android.synthetic.main.view_statement_button.*
 import za.co.woolworths.financial.services.android.contracts.AvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -48,7 +49,7 @@ open class AvailableFundsFragment : Fragment(), AvailableFundsContract.Available
         if (context is BottomSheetBehaviourPeekHeightListener) {
             bottomSheetBehaviourPeekHeightListener = context
         } else {
-            throw RuntimeException( "AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
+            throw RuntimeException("AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
         }
     }
 
@@ -71,7 +72,8 @@ open class AvailableFundsFragment : Fragment(), AvailableFundsContract.Available
             val deviceHeight = dm.heightPixels
             val location = IntArray(2)
             bottomGuide?.getLocationOnScreen(location)
-            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - location[1]
+            val bottomGuidelineVerticalPosition = location[1]
+            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
             Log.e("GUIDELINE_TAG_ARRAY", "${location[0]} ${location[1]} height $deviceHeight")
         }

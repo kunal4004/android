@@ -26,12 +26,11 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 interface BottomSheetBehaviourPeekHeightListener {
     fun onBottomSheetPeekHeight(pixel: Int)
 }
 
-class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, BottomSheetBehaviourPeekHeightListener,View.OnClickListener {
+class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, BottomSheetBehaviourPeekHeightListener, View.OnClickListener {
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
@@ -72,12 +71,12 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
     }
 
     private fun configureBottomSheetDialog() {
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottomSheetLayout)
-        val maximumExpandedHeight = mAccountSignedInPresenter?.maximumExpandableHeight(0f, toolbarContainer) ?: 0
-        bottomSheetLayout?.setPadding(0, maximumExpandedHeight, 0, 0)
+        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
+        val statusBarHeight = mAccountSignedInPresenter?.getStatusBarHeight(0f, toolbarContainer) ?: 0
+        bottomSheetBehaviourLinearLayout?.setPadding(0, statusBarHeight, 0, 0)
 
-        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
-        sheetBehavior?.peekHeight = mPeekHeight.plus(maximumExpandedHeight)
+        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetBehaviourLinearLayout)
+        sheetBehavior?.peekHeight = mPeekHeight.plus(statusBarHeight).minus(KotlinUtils.dpToPxConverter(12))
 
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
@@ -125,7 +124,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
         window?.decorView?.fitsSystemWindows = true
         Utils.updateStatusBarBackground(this)
         frameLayout?.visibility = GONE
-        bottomSheetLayout?.visibility = GONE
+        bottomSheetBehaviourLinearLayout?.visibility = GONE
         sixMonthArrearsFrameLayout?.visibility = VISIBLE
         mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
     }

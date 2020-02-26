@@ -134,7 +134,7 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
 
     override fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
-    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()?.minus(Utils.dp2px(getAppCompatActivity(), 60f))
+    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()?.minus(KotlinUtils.dpToPxConverter(60))
 
     override fun onDestroy() {
         mainView = null
@@ -144,9 +144,11 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         return model.getCardProductInformation(accountIsInArrearsState)
     }
 
-    override fun maximumExpandableHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
+    override fun getStatusBarHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
         return toolbar?.layoutParams?.height?.let { toolBarHeight -> getStatusBarHeight(toolBarHeight) }
     }
+
+    override fun getStatusBarHeight(): Int? = KotlinUtils.getStatusBarHeight(getAppCompatActivity())
 
     override fun setAccountCardDetailInfo(navDetailController: NavController?) {
         val bundle = Bundle()
