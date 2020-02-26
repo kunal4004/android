@@ -488,6 +488,11 @@ public class Utils {
 		return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
 	}
 
+	public static void openBrowserWithUrl(Context context, String urlString) {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+		context.startActivity(intent);
+	}
+
 	public static void openExternalLink(Context context, String url) {
 		Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
 		openInternalWebView.putExtra("externalLink", url);

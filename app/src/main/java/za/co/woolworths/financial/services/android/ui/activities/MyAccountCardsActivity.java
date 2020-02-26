@@ -409,15 +409,15 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
                     switch (pager.getCurrentItem()) {
                         case 0:
-                            Utils.openExternalLink(MyAccountCardsActivity.this,mApplyNowLinks.getStoreCard());
+                            Utils.openBrowserWithUrl(MyAccountCardsActivity.this,mApplyNowLinks.getStoreCard());
                             break;
 
                         case 1:
-                            Utils.openExternalLink(MyAccountCardsActivity.this, mApplyNowLinks.getCreditCard());
+                            Utils.openBrowserWithUrl(MyAccountCardsActivity.this, mApplyNowLinks.getCreditCard());
                             break;
 
                         case 2:
-                            Utils.openExternalLink(MyAccountCardsActivity.this,mApplyNowLinks.getPersonalLoan());
+                            Utils.openBrowserWithUrl(MyAccountCardsActivity.this,mApplyNowLinks.getPersonalLoan());
                             break;
                     }
 
