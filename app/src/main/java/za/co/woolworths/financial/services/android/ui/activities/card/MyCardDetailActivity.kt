@@ -29,6 +29,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
+        const val CARD_NUMBER = "CARD_NUMBER"
     }
 
     private var mStoreCardDetail: String? = null

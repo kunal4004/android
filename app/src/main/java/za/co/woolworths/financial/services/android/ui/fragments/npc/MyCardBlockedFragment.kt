@@ -61,7 +61,7 @@ class MyCardBlockedFragment : MyCardExtension() {
             callUsNowButton?.visibility = VISIBLE
         }
 
-        callUsNowButton?.setOnClickListener { activity?.let { activity -> Utils.makeCall(activity, "0861502020") } }
+        callUsNowButton?.setOnClickListener {  Utils.makeCall( "0861502020") }
         uniqueIdsForBlockCard()
     }
 

@@ -61,7 +61,7 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
 
     private void setUpToolbar(String listName) {
         Toolbar shoppingToolbar = findViewById(R.id.mToolbar);
-        WTextView tvToolbar = findViewById(R.id.tvToolbar);
+        TextView tvToolbar = findViewById(R.id.tvToolbar);
         tvToolbar.setText(listName);
         setSupportActionBar(shoppingToolbar);
         ActionBar actionBar = getSupportActionBar();

@@ -32,6 +32,8 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static androidx.lifecycle.Lifecycle.State.STARTED;
+
 public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
 	public Toolbar toolbar;
@@ -90,17 +92,15 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 
 	public void loadTransactionHistory(final String prOfferId) {
 			pbTransaction.setVisibility(View.VISIBLE);
-			mExecuteTransactionRequest = transactionAsyncAPI(prOfferId);
+			transactionAsyncAPI(prOfferId);
 	}
 
-	private Call<TransactionHistoryResponse> transactionAsyncAPI(final String productOfferingId) {
-
-		Call<TransactionHistoryResponse> transactionHistoryRequestCall = OneAppService.INSTANCE.getAccountTransactionHistory(productOfferingId);
-		transactionHistoryRequestCall.enqueue(new CompletionHandler<>(new RequestListener<TransactionHistoryResponse>() {
+	private void transactionAsyncAPI(final String productOfferingId) {
+		mExecuteTransactionRequest = OneAppService.INSTANCE.getAccountTransactionHistory(productOfferingId);
+		mExecuteTransactionRequest.enqueue(new CompletionHandler<>(new RequestListener<TransactionHistoryResponse>() {
 			@Override
 			public void onSuccess(TransactionHistoryResponse transactionHistoryResponse) {
-				if (getSupportFragmentManager() != null) {
-					dismissProgress();
+				if (WTransactionsActivity.this.getLifecycle().getCurrentState().isAtLeast(STARTED)) {
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
@@ -120,7 +120,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 							}
 							break;
 						default:
-							if (transactionHistoryResponse.response != null) {
+							if (transactionHistoryResponse.response != null && transactionHistoryResponse.response.desc != null) {
 								if (!TextUtils.isEmpty(transactionHistoryResponse.response.desc)) {
 									SingleButtonDialogFragment singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(transactionHistoryResponse.response.desc);
 									singleButtonDialogFragment.show(getSupportFragmentManager(), SingleButtonDialogFragment.class.getSimpleName());
@@ -128,17 +128,18 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 							}
 							break;
 					}
+				}
 
-			}
 			}
 
 			@Override
 			public void onFailure(Throwable error) {
-					if(error != null)
+				if (WTransactionsActivity.this.getLifecycle().getCurrentState().isAtLeast(STARTED)) {
+					if (error != null)
 						networkFailureHandler(error.getMessage());
+				}
 			}
 		},TransactionHistoryResponse.class));
-		return transactionHistoryRequestCall;
 	}
 
 	@Override
@@ -163,12 +164,9 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	}
 
 	public void networkFailureHandler(final String errorMessage) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mErrorHandlerView.networkFailureHandler(errorMessage);
-				dismissProgress();
-			}
+		runOnUiThread(() -> {
+			mErrorHandlerView.networkFailureHandler(errorMessage);
+			dismissProgress();
 		});
 	}
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -233,7 +234,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             badgeCount();
         }
 
-       addDrawerFragment();
+        addDrawerFragment();
 
     }
 
@@ -675,7 +676,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {}
+    public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {
+    }
 
     @NonNull
     @Override
@@ -809,14 +811,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
 
-        @Override
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof StoresNearbyFragment1) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }else if(fragment instanceof ShopFragment){
+        } else if (fragment instanceof ShopFragment) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
@@ -836,7 +838,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
 
-                switch (resultCode){
+                switch (resultCode) {
                     case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
                         // refresh my list view
                         getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
@@ -875,7 +877,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestcode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && resultCode == RESULT_OK_ACCOUNTS ) {
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && resultCode == RESULT_OK_ACCOUNTS) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
             Fragment fragment = mNavController.getCurrentFrag();
@@ -1151,7 +1153,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
                 mQueryBadgeCounter.queryCartSummaryCount();
-                mQueryBadgeCounter.queryVoucherCount();
                 break;
 
             case R.id.navigate_to_shop:
@@ -1163,19 +1164,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                  */
                 if (Utils.getPreferredDeliveryLocation() != null)
                     mQueryBadgeCounter.queryCartSummaryCount();
-                mQueryBadgeCounter.queryMessageCount();
-                mQueryBadgeCounter.queryVoucherCount();
                 break;
             case R.id.navigate_to_wreward:
                 mQueryBadgeCounter.queryCartSummaryCount();
-                mQueryBadgeCounter.queryMessageCount();
                 break;
             case R.id.navigate_to_cart:
-                mQueryBadgeCounter.queryMessageCount();
-                mQueryBadgeCounter.queryVoucherCount();
+                break;
+            case R.id.navigation_today:
+                mQueryBadgeCounter.queryCartSummaryCount();
                 break;
             default:
-                mQueryBadgeCounter.queryAllBadgeCounters();
                 break;
         }
     }
@@ -1214,7 +1212,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
     }
-    
+
     private void switchToShoppingListTab(JsonElement element) {
         if (element instanceof JsonObject) {
             JsonObject list = (JsonObject) element;
@@ -1247,7 +1245,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         mQueryBadgeCounter.cancelCounterRequest();
     }
 
-    private void navigateToDepartmentFragment(){
+    private void navigateToDepartmentFragment() {
         getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
         clearStack();
         Fragment currentFragment = mNavController.getCurrentFrag();

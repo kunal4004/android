@@ -7,13 +7,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
@@ -53,8 +54,9 @@ public class ShoppingListSearchResultActivity extends AppCompatActivity {
 
     private void setUpToolbar(String listName) {
         Toolbar shoppingToolbar = findViewById(R.id.mToolbar);
-        WTextView tvToolbar = findViewById(R.id.tvToolbar);
-        tvToolbar.setText(listName);
+        TextView tvToolbar = findViewById(R.id.tvToolbar);
+        if (tvToolbar != null)
+            tvToolbar.setText(listName);
         setSupportActionBar(shoppingToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

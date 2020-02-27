@@ -8,15 +8,16 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.text.*
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
+import android.text.style.*
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+
+
+enum class LinkType { PHONE, EMAIL }
 
 class KotlinUtils {
     companion object {
@@ -29,7 +30,7 @@ class KotlinUtils {
             val end = start + searchTerm.length
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(textView: View) {
-                    Utils.makeCall(context, searchTerm)
+                    Utils.makeCall(searchTerm)
                 }
 
                 override fun updateDrawState(ds: TextPaint) {

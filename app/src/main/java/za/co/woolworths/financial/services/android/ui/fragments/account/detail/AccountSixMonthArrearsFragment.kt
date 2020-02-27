@@ -33,7 +33,7 @@ class AccountSixMonthArrearsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         hideCardTextViews()
         setTitleAndCardType()
-        callTheCallCenterButton?.setOnClickListener { activity?.let { activity -> Utils.makeCall(activity, "0861502020") } }
+        callTheCallCenterButton?.setOnClickListener { activity?.let { activity -> Utils.makeCall("0861502020") } }
         navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
     }
 
