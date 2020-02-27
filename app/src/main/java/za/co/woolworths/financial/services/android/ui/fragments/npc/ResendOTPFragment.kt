@@ -51,7 +51,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
             when (selectedPosition) {
                 0 -> dismissView(OTPMethodType.SMS)
                 1 -> dismissView(OTPMethodType.EMAIL)
-                2 -> activity?.let { activity -> Utils.makeCall(activity, PHONE_NUMBER) }
+                2 -> Utils.makeCall( PHONE_NUMBER)
             }
         }
 

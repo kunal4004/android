@@ -51,10 +51,10 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.localCaller:
-				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.customer_service_local_caller_number));
+				Utils.makeCall(getActivity().getResources().getString(R.string.customer_service_local_caller_number));
 				break;
 			case R.id.internationalCaller:
-				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.customer_service_international_call));
+				Utils.makeCall(getActivity().getResources().getString(R.string.customer_service_international_call));
 				break;
 			case R.id.productQuery:
 				sendEmail(getActivity().getResources().getString(R.string.email_custserv), getActivity().getResources().getString(R.string.txt_product_query));
