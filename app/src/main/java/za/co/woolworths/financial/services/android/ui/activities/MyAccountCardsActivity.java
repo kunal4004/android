@@ -405,47 +405,18 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
             case R.id.btnApplyNow:
 
-                if (!cardsHasAccount) { //not logged in
+                switch (pager.getCurrentItem()) {
+                    case 0:
+                        Utils.openBrowserWithUrl(MyAccountCardsActivity.this,mApplyNowLinks.getStoreCard());
+                        break;
 
-                    switch (pager.getCurrentItem()) {
-                        case 0:
-                            Utils.openExternalLink(MyAccountCardsActivity.this,mApplyNowLinks.getStoreCard());
-                            break;
+                    case 1:
+                        Utils.openBrowserWithUrl(MyAccountCardsActivity.this, mApplyNowLinks.getCreditCard());
+                        break;
 
-                        case 1:
-                            Utils.openExternalLink(MyAccountCardsActivity.this, mApplyNowLinks.getCreditCard());
-                            break;
-
-                        case 2:
-                            Utils.openExternalLink(MyAccountCardsActivity.this,mApplyNowLinks.getPersonalLoan());
-                            break;
-                    }
-
-                } else {
-                    switch (pager.getCurrentItem()) { //logged in
-
-                        case 0:
-                            if (!containsStoreCard) {
-                                Utils.openExternalLink(MyAccountCardsActivity.this,
-                                        mApplyNowLinks.getStoreCard());
-                            }
-                            break;
-
-                        case 1:
-                            if (!containsCreditCard) {
-                                Utils.openExternalLink(MyAccountCardsActivity.this,
-                                        mApplyNowLinks.getCreditCard());
-
-                            }
-                            break;
-                        case 2:
-                            if (!containsPersonalLoan) {
-                                Utils.openExternalLink(MyAccountCardsActivity.this,
-                                        mApplyNowLinks.getPersonalLoan());
-
-                            }
-                            break;
-                    }
+                    case 2:
+                        Utils.openBrowserWithUrl(MyAccountCardsActivity.this,mApplyNowLinks.getPersonalLoan());
+                        break;
                 }
                 break;
         }
