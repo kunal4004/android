@@ -45,7 +45,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View cView = mContext.getLayoutInflater().inflate(R.layout.featured_prmotion_list_item, container, false);
+        View cView = mContext.getLayoutInflater().inflate(R.layout.featured_promotion_list_item, container, false);
         final ImageView promotionImage = cView.findViewById(R.id.promotionImage);
         container.addView(cView);
 
