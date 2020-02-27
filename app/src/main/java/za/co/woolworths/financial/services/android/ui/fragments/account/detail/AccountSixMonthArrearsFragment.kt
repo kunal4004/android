@@ -21,7 +21,7 @@ class AccountSixMonthArrearsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
+        val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE,"")
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
     }
 
@@ -33,7 +33,7 @@ class AccountSixMonthArrearsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         hideCardTextViews()
         setTitleAndCardType()
-        callTheCallCenterButton?.setOnClickListener { activity?.let { activity -> Utils.makeCall("0861502020") } }
+        callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
         navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
     }
 
