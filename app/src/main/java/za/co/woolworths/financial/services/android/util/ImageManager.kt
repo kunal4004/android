@@ -63,7 +63,7 @@ class ImageManager {
             }
         }
 
-        fun setPictureFitXY(productImage: ImageView?, img_location: String) = productImage?.let { image ->
+        fun loadImage(productImage: ImageView?, img_location: String) = productImage?.let { image ->
             productImage.visibility = if (img_location.isEmpty()) View.GONE else View.VISIBLE
             productImage.context?.apply {
                 Glide.with(this)

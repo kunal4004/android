@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.os.Parcelable;
 
 import androidx.viewpager.widget.PagerAdapter;
@@ -20,7 +19,6 @@ import za.co.woolworths.financial.services.android.models.dto.Promotion;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
-import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
@@ -52,10 +50,9 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
         container.addView(cView);
 
         if (TextUtils.isEmpty(promotions.get(position).image)) return cView;
-        String promoImage = android.net.Uri.encode(promotions.get(position).image, "@#&=*+-_.,:!?()/~'%");
-        ImageManager.Companion.setPictureFitXY(promotionImage, promoImage);
+        String featurePromotionImageUrl = android.net.Uri.encode(promotions.get(position).image, "@#&=*+-_.,:!?()/~'%");
+        ImageManager.Companion.loadImage(promotionImage, featurePromotionImageUrl);
 
-//		promotionImage.setImageURI(promoImage);
         cView.setOnClickListener(v -> {
             mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);
             mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, promotionImage.getContext().getResources().getString(R.string.featured_promotions), promotions.get(position).path));
