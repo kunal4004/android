@@ -502,7 +502,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				if (storeDetail.phoneNumber != null) {
-					Utils.makeCall(getActivity(), storeDetail.phoneNumber);
+					Utils.makeCall(storeDetail.phoneNumber);
 				}
 
 			}
@@ -528,7 +528,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		double latitude = (location == null) ? 0.0 : location.getLatitude();
 		double longitude = (location == null) ? 0.0 : location.getLongitude();
 
-		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, "", false);
+		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, "");
 		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {

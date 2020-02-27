@@ -112,7 +112,7 @@ class GetReplacementCardFragment : MyCardExtension() {
     private fun navigateToParticipatingStores(location: Location?) {
         activity?.runOnUiThread {
             enableAlreadyHaveALink(false)
-            val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude
+            val locationRequestRequest = OneAppService.getStoresForNPC(location?.latitude
                     ?: 0.0, location?.longitude ?: 0.0, "", true)
             OneAppService.forceNetworkUpdate = true
             progressVisibility(true)

@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
+import android.text.method.LinkMovementMethod
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -50,7 +52,12 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
-        KotlinUtils.highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "0861 50 20 20", tvStoreContactInfo)
+        val participatingStoreDescription = KotlinUtils.highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "0861 50 20 20")
+        tvStoreContactInfo?.apply {
+            text = participatingStoreDescription
+            movementMethod = LinkMovementMethod.getInstance()
+            highlightColor = Color.TRANSPARENT
+        }
     }
 
     fun getLocation(): MutableList<StoreDetails>? = mLocations

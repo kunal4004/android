@@ -44,6 +44,7 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
@@ -63,7 +64,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Context mContextApplication;
 	private UserManager mUserManager;
 	private Tracker mTracker;
-	private static String applyNowLink;
+	private static ApplyNowLinks applyNowLink;
 	private static String registrationTCLink;
 	private static String faqLink;
 	private static String wrewardsLink;
@@ -176,11 +177,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		WoolworthsApplication.wrewardsTCLink = wrewardsTCLink;
 	}
 
-	public static String getApplyNowLink() {
+	public static ApplyNowLinks getApplyNowLink() {
 		return applyNowLink;
 	}
 
-	public static void setApplyNowLink(String applyNowLink) {
+	public static void setApplyNowLink(ApplyNowLinks applyNowLink) {
 		WoolworthsApplication.applyNowLink = applyNowLink;
 	}
 

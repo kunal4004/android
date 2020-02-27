@@ -263,7 +263,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     override fun onClick(view: View?) {
         activity?.apply {
             when (view?.id) {
-                R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
+                R.id.tvCallCenterNumber -> Utils.makeCall( "0861 50 20 20")
 
                 R.id.btnRetryOnFailure -> onAPIFailureRetry()
 

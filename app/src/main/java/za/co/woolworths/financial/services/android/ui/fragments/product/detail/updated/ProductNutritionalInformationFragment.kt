@@ -50,6 +50,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        setUniqueIds()
     }
 
     fun initViews() {
@@ -123,6 +124,15 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
             setTitle(null)
             setCancelable(true)
             show()
+        }
+    }
+
+    private fun setUniqueIds() {
+        resources?.apply {
+            pageTitle?.contentDescription = getString(R.string.pdp_nutritionalInformationTitle)
+            description?.contentDescription = getString(R.string.pdp_descriptionTitle)
+            filterOptionSelector?.contentDescription = getString(R.string.pdp_filterOptionSelector)
+            nutritionalInformationList?.contentDescription = getString(R.string.pdp_nutritionLayout)
         }
     }
 
