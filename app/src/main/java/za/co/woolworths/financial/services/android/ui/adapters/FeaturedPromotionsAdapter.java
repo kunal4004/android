@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Parcelable;
 
 import androidx.viewpager.widget.PagerAdapter;
@@ -50,7 +51,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
         container.addView(cView);
 
         if (TextUtils.isEmpty(promotions.get(position).image)) return cView;
-        String featurePromotionImageUrl = android.net.Uri.encode(promotions.get(position).image, "@#&=*+-_.,:!?()/~'%");
+        String featurePromotionImageUrl = Uri.encode(promotions.get(position).image, "@#&=*+-_.,:!?()/~'%");
         ImageManager.Companion.loadImage(promotionImage, featurePromotionImageUrl);
 
         cView.setOnClickListener(v -> {
