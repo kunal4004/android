@@ -177,10 +177,10 @@ class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract
         val accountInfo = getMyAccountCardInfo()
         return when (accountInfo?.first) {
             ApplyNowState.STORE_CARD -> Pair(R.drawable.w_store_card, R.string.store_card_title)
-            ApplyNowState.SILVER_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.silver_credit_card)
-            ApplyNowState.BLACK_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.blackCreditCard_title)
+            ApplyNowState.SILVER_CREDIT_CARD -> Pair(R.drawable.w_silver_credit_card, R.string.silver_credit_card)
+            ApplyNowState.BLACK_CREDIT_CARD -> Pair(R.drawable.w_black_credit_card, R.string.blackCreditCard_title)
             ApplyNowState.GOLD_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.goldCreditCard_title)
-            ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_gold_credit_card, R.string.personalLoanCard_title)
+            ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_personal_loan_card, R.string.personalLoanCard_title)
             else -> throw RuntimeException("SixMonthOutstanding Invalid  ApplyNowState ${accountInfo?.first}")
         }
     }
