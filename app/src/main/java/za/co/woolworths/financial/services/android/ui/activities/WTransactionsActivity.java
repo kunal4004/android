@@ -100,6 +100,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 		mExecuteTransactionRequest.enqueue(new CompletionHandler<>(new RequestListener<TransactionHistoryResponse>() {
 			@Override
 			public void onSuccess(TransactionHistoryResponse transactionHistoryResponse) {
+				dismissProgress();
 				if (WTransactionsActivity.this.getLifecycle().getCurrentState().isAtLeast(STARTED)) {
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:
