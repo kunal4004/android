@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_tax_invoice_list.*
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.OrderTaxInvoiceResponse
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.FILE_NAME
@@ -72,7 +72,7 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
         showProgressBar()
 
         val getInvoiceOrderRequest = OneAppService.getOrderTaxInvoice(taxNumber)
-        getInvoiceOrderRequest.enqueue(CompletionHandler(object : RequestListener<OrderTaxInvoiceResponse> {
+        getInvoiceOrderRequest.enqueue(CompletionHandler(object : IResponseListener<OrderTaxInvoiceResponse> {
             override fun onSuccess(orderTaxInvoiceResponse: OrderTaxInvoiceResponse?) {
                 hideProgressBar()
                 orderTaxInvoiceResponse?.data?.let { response -> buildTaxInvoicePDF(response) }

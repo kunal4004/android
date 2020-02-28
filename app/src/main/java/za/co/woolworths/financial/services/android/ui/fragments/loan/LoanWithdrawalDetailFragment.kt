@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvAdditionalM
 import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvDrawnDownSelectedAmount
 import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvRepaymentPeriod
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -92,7 +92,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
                 mIssueLoan!!.drawDownAmount,mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
                 mIssueLoan!!.creditLimit))
 
-        mAuthoriseLoan?.enqueue(CompletionHandler(object : RequestListener<AuthoriseLoanResponse> {
+        mAuthoriseLoan?.enqueue(CompletionHandler(object : IResponseListener<AuthoriseLoanResponse> {
             override fun onSuccess(authoriseLoanResponse: AuthoriseLoanResponse?) {
                 activity?.let { fragmentActivity ->
                     progressBarVisibility(false)

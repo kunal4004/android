@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -1046,7 +1046,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
     public void sendStatement() {
         onLoad();
         sendUserStatement = OneAppService.INSTANCE.sendStatementRequest(mSendUserStatementRequest);
-        sendUserStatement.enqueue(new CompletionHandler<>(new RequestListener<SendUserStatementResponse>() {
+        sendUserStatement.enqueue(new CompletionHandler<>(new IResponseListener<SendUserStatementResponse>() {
             @Override
             public void onSuccess(SendUserStatementResponse statementResponse) {
                 if (statementResponse != null) {

@@ -29,7 +29,7 @@ import java.util.Objects;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
@@ -193,7 +193,6 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
             if (getProductAdapter() != null)
                 getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
         } catch (NullPointerException ex) {
-            Log.d("cancelColorSize", ex.getMessage());
         }
     }
 
@@ -710,7 +709,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         setProductIsLoading(true);
 
         Call<ProductView> productListCall =  OneAppService.INSTANCE.getProducts(requestParams);
-        productListCall.enqueue(new CompletionHandler<>(new RequestListener<ProductView>() {
+        productListCall.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {
                 switch (productView.httpCode) {
@@ -759,7 +758,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         onAddToListLoad(true);
 
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.addToList(addToListRequest,listId);
-        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingListItemsResponse>() {
             @Override
             public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
                 switch (shoppingListItemsResponse.httpCode) {
@@ -932,7 +931,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     public Call<ProductDetailResponse> getProductDetail(ProductRequest productRequest) {
        Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId());
-        productDetailRequest.enqueue(new CompletionHandler<>(new RequestListener<ProductDetailResponse>() {
+        productDetailRequest.enqueue(new CompletionHandler<>(new IResponseListener<ProductDetailResponse>() {
             @Override
             public void onSuccess(ProductDetailResponse productDetailResponse) {
                 String detailProduct = Utils.objectToJson(productDetailResponse);

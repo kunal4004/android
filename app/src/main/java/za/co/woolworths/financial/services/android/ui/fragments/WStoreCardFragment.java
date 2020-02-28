@@ -34,12 +34,11 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData;
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody;
@@ -56,7 +55,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
@@ -486,7 +484,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         onLoad();
 
        cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
-       cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+       cliGetOfferActive.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
            @Override
            public void onSuccess(OfferActive response) {
                offerActive  = response;
@@ -679,7 +677,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public Call<StoreCardsResponse> getStoreCards(Account account) {
         showGetCreditCardTokenProgressBar(VISIBLE);
         Call<StoreCardsResponse> getStoreCardsRequest = OneAppService.INSTANCE.getStoreCards(new StoreCardsRequestBody(account.accountNumber, account.productOfferingId));
-        getStoreCardsRequest.enqueue(new CompletionHandler<>(new RequestListener<StoreCardsResponse>() {
+        getStoreCardsRequest.enqueue(new CompletionHandler<>(new IResponseListener<StoreCardsResponse>() {
             @Override
             public void onSuccess(StoreCardsResponse storeCardsResponse) {
                 showGetCreditCardTokenProgressBar(GONE);

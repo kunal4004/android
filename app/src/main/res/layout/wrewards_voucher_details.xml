@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="#cc000000"
               android:orientation="vertical">
@@ -31,7 +32,8 @@
             android:letterSpacing="0.1"
             app:WTextView_font="medium"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentEnd="true"
+            tools:ignore="UnusedAttribute" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -45,9 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
-            android:paddingTop="16dp"
-            android:paddingLeft="@dimen/voucher_card_layout_padding"
-            android:paddingRight="@dimen/voucher_card_layout_padding"
+            android:paddingStart="@dimen/voucher_card_layout_padding"
+            android:paddingEnd="@dimen/voucher_card_layout_padding"
             app:stack_rotation="0"
             app:stack_size="3"
             app:stack_spacing="-10dp"

@@ -29,7 +29,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
@@ -132,7 +132,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 	private Call<SuburbsResponse>  getSuburbs(final String locationId) {
 
 	Call<SuburbsResponse> suburbsResponseCall =  OneAppService.INSTANCE.getSuburbs(locationId);
-		suburbsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SuburbsResponse>() {
+		suburbsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SuburbsResponse>() {
 			@Override
 			public void onSuccess(SuburbsResponse suburbsResponse) {
 				handleSuburbsResponse(suburbsResponse);
@@ -259,7 +259,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		mErrorHandlerView.hideErrorHandlerLayout();
 		toggleLoading(true);
 		setDeliveryLocationSuburb =  OneAppService.INSTANCE.setSuburb(suburb.id);
-		setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
+		setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
 			@Override
 			public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
 				handleSetSuburbResponse(setDeliveryLocationSuburbResponse, province, suburb);

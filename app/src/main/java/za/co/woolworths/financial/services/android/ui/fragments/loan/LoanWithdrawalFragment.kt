@@ -25,7 +25,7 @@ import android.content.Context
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
@@ -275,7 +275,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
             showProgressDialog(true)
 
             mPostLoanIssue =  OneAppService.issueLoan(issueLoanRequest)
-            mPostLoanIssue?.enqueue(CompletionHandler(object: RequestListener<IssueLoanResponse>{
+            mPostLoanIssue?.enqueue(CompletionHandler(object: IResponseListener<IssueLoanResponse> {
                 override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
                     activity?.let { activity ->
                         issueLoanResponse?.apply {

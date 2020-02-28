@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.chat_activity.*
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
@@ -13,7 +13,6 @@ import za.co.woolworths.financial.services.android.models.dto.chat.UserTypingRes
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WCountDownTimer
 
@@ -97,7 +96,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     fun userStoppedTyping() {
         if (isAgentOnline) {
             chatId?.let {
-                OneAppService.userStoppedTyping(it).enqueue(CompletionHandler(object : RequestListener<UserTypingResponse> {
+                OneAppService.userStoppedTyping(it).enqueue(CompletionHandler(object : IResponseListener<UserTypingResponse> {
                     override fun onSuccess(response: UserTypingResponse?) {
                     }
 
@@ -113,7 +112,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     fun userStartedTyping() {
         if (isAgentOnline) {
             chatId?.let {
-                OneAppService.userTyping(it).enqueue(CompletionHandler(object : RequestListener<UserTypingResponse> {
+                OneAppService.userTyping(it).enqueue(CompletionHandler(object : IResponseListener<UserTypingResponse> {
                     override fun onSuccess(response: UserTypingResponse?) {
                     }
 
