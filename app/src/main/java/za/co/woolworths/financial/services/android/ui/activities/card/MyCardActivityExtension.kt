@@ -19,6 +19,11 @@ import za.co.woolworths.financial.services.android.util.SMSReceiver
 
 open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener, IStoreCardListener {
 
+    companion object {
+        var requestOTPFragmentIsActivated = false
+        var mCardNumber: String? = null
+    }
+
     var mStoreCardDetail: String? = null
     private var otpType: OTPMethodType = OTPMethodType.SMS
     private var cardNumber: String? = null
@@ -115,4 +120,6 @@ open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener, I
                 containerViewId = R.id.flMyCard,
                 allowBackStack = false)
     }
+
+
 }

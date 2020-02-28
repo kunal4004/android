@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +34,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -82,6 +82,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
     public static WMaterialShowcaseView walkThroughPromtView = null;
     public static final int ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111;
     private UpdateMyAccount mUpdateMyAccount;
+    private ApplyNowLinks mApplyNowLinks;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -102,6 +103,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(currentPosition);
         getScreenResolution();
+
+        mApplyNowLinks =  WoolworthsApplication.getApplyNowLink();
 
         ImageView imRefreshAccount = findViewById(R.id.imRefreshAccount);
         updateMyAccount(imRefreshAccount);
@@ -402,50 +405,18 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
             case R.id.btnApplyNow:
 
-                if (!cardsHasAccount) { //not logged in
+                switch (pager.getCurrentItem()) {
+                    case 0:
+                        Utils.openBrowserWithUrl(MyAccountCardsActivity.this,mApplyNowLinks.getStoreCard());
+                        break;
 
-                    switch (pager.getCurrentItem()) {
-                        case 0:
-                            Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication.getApplyNowLink());
-                            break;
+                    case 1:
+                        Utils.openBrowserWithUrl(MyAccountCardsActivity.this, mApplyNowLinks.getCreditCard());
+                        break;
 
-                        case 1:
-                            Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication.getApplyNowLink());
-                            break;
-
-                        case 2:
-                            Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication.getApplyNowLink());
-                            break;
-                    }
-
-                } else {
-                    switch (pager.getCurrentItem()) { //logged in
-
-                        case 0:
-                            if (!containsStoreCard) {
-                                Utils.openExternalLink(MyAccountCardsActivity.this,
-                                        WoolworthsApplication
-                                                .getApplyNowLink());
-                            }
-                            break;
-
-                        case 1:
-                            if (!containsCreditCard) {
-                                Utils.openExternalLink(MyAccountCardsActivity.this,
-                                        WoolworthsApplication
-                                                .getApplyNowLink());
-
-                            }
-                            break;
-                        case 2:
-                            if (!containsPersonalLoan) {
-                                Utils.openExternalLink(MyAccountCardsActivity.this,
-                                        WoolworthsApplication
-                                                .getApplyNowLink());
-
-                            }
-                            break;
-                    }
+                    case 2:
+                        Utils.openBrowserWithUrl(MyAccountCardsActivity.this,mApplyNowLinks.getPersonalLoan());
+                        break;
                 }
                 break;
         }

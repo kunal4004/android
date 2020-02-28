@@ -95,6 +95,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:clickable="true"
+        android:contentDescription="@string/plp_refineDrawerFrameLayout"
         android:background="@android:color/white"/>
 </androidx.drawerlayout.widget.DrawerLayout>
 </layout>
