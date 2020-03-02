@@ -4,4 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:adjustViewBounds="true"
-    android:contentDescription="@string/placeholder" />
+    android:contentDescription="@string/placeholder"
+    android:paddingStart="0dp"
+    android:paddingEnd="8dp" />
