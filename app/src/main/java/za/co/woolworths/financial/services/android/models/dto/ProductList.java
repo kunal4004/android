@@ -50,6 +50,9 @@ public class ProductList {
     @SerializedName("wasPrice")
     @Expose
     public Float wasPrice;
+    @SerializedName("brandText")
+    @Expose
+    public String brandText;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;
