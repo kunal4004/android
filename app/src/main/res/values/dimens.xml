@@ -160,6 +160,7 @@
     <dimen name="store_card_text_field_text_size_14_dp">14sp</dimen>
     <dimen name="store_card_next_button_size_48_dp">48sp</dimen>
     <dimen name="twenty_four_sp">24sp</dimen>
+    <dimen name="eleven_sp">11sp</dimen>
     <dimen name="available_fund_transaction_button_height" >100dp</dimen>
     <dimen name="account_thirteen_sp">13sp</dimen>
     <dimen name="available_fund_40dp_margin">40dp</dimen>
