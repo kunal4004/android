@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -100,6 +101,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.extension.AppCompatActvityExtensionKt.addFragment;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
@@ -137,6 +139,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
+    public Uri appLinkData;
 
     @Override
     public int getLayoutId() {
@@ -173,6 +176,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
+        appLinkData = getIntent().getData();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                 getSupportFragmentManager(),
                 R.id.frag_container)
@@ -287,6 +291,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
         removeToolbar();
+        if (appLinkData != null) {
+            ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.SEARCH;
+            String searchTerm = appLinkData.getQueryParameter("Ntt");
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+        }
     }
 
     @Override
@@ -834,7 +843,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         // Navigate from shopping list detail activity
         switch (requestCode) {
-            case ADD_TO_SHOPPING_LIST_REQUEST_CODE:  // Call back when Toast clicked after adding item to shopping list
+            case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
+            case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
 

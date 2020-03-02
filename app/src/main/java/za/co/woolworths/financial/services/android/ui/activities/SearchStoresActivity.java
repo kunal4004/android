@@ -36,7 +36,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
@@ -248,7 +248,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		double longitude = (location == null) ? 0.0 : location.getLongitude();
 
 		Call<LocationResponse> locationRequestCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, searchTextField);
-		locationRequestCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
+		locationRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {
 				storeDetailsList = new ArrayList<>();

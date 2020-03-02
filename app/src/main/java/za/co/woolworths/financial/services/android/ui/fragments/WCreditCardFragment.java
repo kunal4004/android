@@ -34,10 +34,9 @@ import retrofit2.Call;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Card;
@@ -428,7 +427,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             return;
         onLoad();
         cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
-        cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+        cliGetOfferActive.enqueue(new CompletionHandler<>(new IResponseListener<OfferActive>() {
             @Override
             public void onSuccess(OfferActive response) {
                 offerActive = response;
@@ -612,7 +611,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS);
         showGetCreditCardTokenProgressBar(VISIBLE);
        Call<CreditCardTokenResponse> creditCardTokenResponseCall =  OneAppService.INSTANCE.getCreditCardToken();
-        creditCardTokenResponseCall.enqueue(new CompletionHandler<>(new RequestListener<CreditCardTokenResponse>() {
+        creditCardTokenResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<CreditCardTokenResponse>() {
             @Override
             public void onSuccess(CreditCardTokenResponse creditCardTokenResponse) {
                 if (getActivity() ==null && !mCreditCardFragmentIsVisible) return;

@@ -5,6 +5,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_product_information.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsInformationFragment
@@ -66,6 +67,9 @@ class ProductInformationActivity : AppCompatActivity() {
                             containerViewId = R.id.fragmentContainer)
                 }
                 ProductInformationType.NUTRITIONAL_INFO -> {
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.NUTRITIONAL_INFORMATION_PRODUCT_ID] = productId
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductNutritionalInformationFragment.newInstance(Utils.toJson(this.nutritionalInformationDetails)),
                             tag = ProductNutritionalInformationFragment::class.java.simpleName,

@@ -49,6 +49,7 @@ class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_PROMO_OFF: String = "GA_Event_ONE_SORTSFILTERS_PROMOOFF"
         const val REFINE_EVENT_SEE_RESULT: String = "GA_Event_ONE_SORTSFILTERS_SEERSB"
         const val REFINE_EVENT_BACK_BUTTON: String = "GA_Event_ONE_SORTSFILTERS_SEERSBB"
+        const val SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION: String = "SHOP_PDP_NI"
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
         const val SHOPMYLISTS: String = "GA_Event_ONE_SHOP_MYLISTS"
@@ -78,6 +79,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_ICR_LINK_START = "MYACCOUNTS_ICR_LINK_START"
         const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
+        const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
     }
 
     class PropertyNames {
@@ -88,6 +90,17 @@ class FirebaseManagerAnalyticsProperties {
             const val ATGId: String = "ATGId"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
             const val DESCRIPTION : String = "DESCRIPTION"
+            const val CANCEL_ORDER_TAP = "Cancel Order Tap"
+            const val CONFIRM_CANCEL = "Confirm Cancel"
+            const val CANCEL_CANCEL = "Cancel Cancel"
+            const val CANCEL_API_SUCCESS = "Cancel API Success"
+            const val CANCEL_API_FAILURE = "Cancel API Failure"
+            const val CLOSE_FAILURE_CANCEL = "Close Failure Cancel"
+            const val CANCEL_FAILURE_CALL_CENTRE = "Cancel Failure Call Centre"
+            const val CANCEL_FAILURE_RETRY = "Cancel Failure Retry"
+            const val ACTION = "ACTION"
+            const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "PRODUCT_ID"
+            const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
         }
     }
 

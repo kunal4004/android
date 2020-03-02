@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -678,7 +678,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			mUpdateMyAccount.swipeToRefreshAccount(true);
 		else
 			showProgressBar();
-		mUpdateMyAccount.make(forceNetworkUpdate, new RequestListener<AccountsResponse>() {
+		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
                 try {

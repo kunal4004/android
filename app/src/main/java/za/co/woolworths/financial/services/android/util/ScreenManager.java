@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -42,6 +43,16 @@ public class ScreenManager {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
 		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
+		activity.startActivityForResult(intent, 0);
+		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		activity.finish();
+	}
+
+	public static void presentMain(Activity activity, String notificationUtils, Uri data) {
+
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
+		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
+		intent.setData(data);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 		activity.finish();

@@ -17,7 +17,7 @@ import com.awfs.coordination.R;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -97,9 +97,10 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 
 	private void transactionAsyncAPI(final String productOfferingId) {
 		mExecuteTransactionRequest = OneAppService.INSTANCE.getAccountTransactionHistory(productOfferingId);
-		mExecuteTransactionRequest.enqueue(new CompletionHandler<>(new RequestListener<TransactionHistoryResponse>() {
+		mExecuteTransactionRequest.enqueue(new CompletionHandler<>(new IResponseListener<TransactionHistoryResponse>() {
 			@Override
 			public void onSuccess(TransactionHistoryResponse transactionHistoryResponse) {
+				dismissProgress();
 				if (WTransactionsActivity.this.getLifecycle().getCurrentState().isAtLeast(STARTED)) {
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:

@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.faq;
 import java.util.List;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
@@ -25,7 +25,7 @@ public class FAQViewModel extends BaseViewModel<FAQNavigator> {
         setIsLoading(true);
 
         Call<FAQ> faqCall = OneAppService.INSTANCE.getFAQ();
-        faqCall.enqueue(new CompletionHandler<>(new RequestListener<FAQ>() {
+        faqCall.enqueue(new CompletionHandler<>(new IResponseListener<FAQ>() {
             @Override
             public void onSuccess(FAQ faq) {
                 switch (faq.httpCode) {

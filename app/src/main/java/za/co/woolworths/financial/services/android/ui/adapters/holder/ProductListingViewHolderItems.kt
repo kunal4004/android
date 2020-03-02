@@ -22,6 +22,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
             setPromotionalImage(promotionImages)
             setProductName(this)
             setSaveText(this)
+            setBrandText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             quickShopAddToCartSwitch(this)
@@ -41,7 +42,12 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         tvSaveText?.text = productList?.saveText ?: ""
     }
 
+    private fun setBrandText(productList: ProductList?) = with(itemView) {
+        brandName?.text = productList?.brandText ?: ""
+    }
+
     private fun setPromotionalImage(imPromo: PromotionImages?) {
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")

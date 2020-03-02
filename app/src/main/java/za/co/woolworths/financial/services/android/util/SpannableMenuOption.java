@@ -38,7 +38,6 @@ public class SpannableMenuOption {
     }
 
     public CharSequence distanceKm(String distance){
-        Log.d("distanceTest",distance);
         Typeface mTypfaceMyriadPro =  Typeface.createFromAsset(mContext.getAssets(), "fonts/WFutura-Medium.ttf");
         int mTextStoreSize = mContext.getResources().getDimensionPixelSize(R.dimen.search_store);
         int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);

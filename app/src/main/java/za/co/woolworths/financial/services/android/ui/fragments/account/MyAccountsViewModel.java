@@ -1,11 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
-import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody;
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
@@ -24,7 +21,7 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 
 	public Call<MessageResponse> loadMessageCount() {
 		Call<MessageResponse> messageRequestCall =  OneAppService.INSTANCE.getMessagesResponse(5, 1);
-		messageRequestCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
+		messageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 			@Override
 			public void onSuccess(MessageResponse messageResponse) {
 				getNavigator().onMessageResponse(messageResponse.unreadCount);

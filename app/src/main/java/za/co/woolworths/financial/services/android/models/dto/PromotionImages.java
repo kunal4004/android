@@ -20,5 +20,8 @@ public class PromotionImages {
     @SerializedName("wRewards")
     @Expose
     public String wRewards;
+    @SerializedName("freeGift")
+    @Expose
+    public String freeGift;
 
 }

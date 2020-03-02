@@ -24,7 +24,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -115,7 +115,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		// TODO: confirm loading when doing this request
 		toggleLoading(true);
 		Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburbResponseCall =  OneAppService.INSTANCE.setSuburb(location.suburb.id);
-		setDeliveryLocationSuburbResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
+		setDeliveryLocationSuburbResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
 			@Override
 			public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
 				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");

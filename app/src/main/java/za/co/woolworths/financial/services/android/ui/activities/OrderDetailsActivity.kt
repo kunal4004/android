@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,6 +18,8 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment.Companion.RESULT_CODE_CANCEL_ORDER_SUCCESS
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
@@ -42,6 +45,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
+        const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
     }
 
     private fun configureUI() {
@@ -74,6 +78,12 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER && resultCode == RESULT_CODE_CANCEL_ORDER_SUCCESS){
+            setResult(RESULT_CODE_CANCEL_ORDER_SUCCESS)
+            finish()
+            return
+        }
+
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
             ToastFactory.buildShoppingListToast(this,fragmentContainer, true, data, this)
             return
