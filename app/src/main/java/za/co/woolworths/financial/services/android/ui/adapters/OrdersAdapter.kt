@@ -50,6 +50,7 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
             itemView.setOnClickListener {
                 presentOrderDetailsPage(item)
             }
+            itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
         }
 
     }
@@ -80,7 +81,7 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
     private fun presentOrderDetailsPage(item: Order) {
         val intent = Intent(context, OrderDetailsActivity::class.java)
         intent.putExtra("order", item)
-        (context as? Activity)?.startActivityForResult(intent, ADD_TO_SHOPPING_LIST_REQUEST_CODE)
+        (context as? Activity)?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
         (context as? Activity)?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
 }

@@ -25,7 +25,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
@@ -197,7 +197,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private Call<VoucherResponse> getWRewards() {
 
 		Call<VoucherResponse> voucherRequestCall =  OneAppService.INSTANCE.getVouchers();
-		voucherRequestCall.enqueue(new CompletionHandler<>(new RequestListener<VoucherResponse>() {
+		voucherRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<VoucherResponse>() {
 			@Override
 			public void onSuccess(VoucherResponse voucherResponse) {
 				handleVoucherResponse((voucherResponse));
@@ -277,7 +277,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void loadCardDetails() {
 
 		wRewardsCardDetails = OneAppService.INSTANCE.getCardDetails();
-		wRewardsCardDetails.enqueue(new CompletionHandler<>(new RequestListener<CardDetailsResponse>() {
+		wRewardsCardDetails.enqueue(new CompletionHandler<>(new IResponseListener<CardDetailsResponse>() {
 			@Override
 			public void onSuccess(CardDetailsResponse response) {
 				cardDetailsResponse = response;

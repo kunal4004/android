@@ -39,7 +39,6 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
 			mBottomNavigator = (BottomNavigator) getActivity();
 			mBottomNavigator.setTitle(getActivity().getResources().getString(R.string.contact_us_myschool));
 		} catch (ClassCastException ex) {
-			Log.d("Interface", ex.toString());
 		}
 		return view;
 	}

@@ -1165,4 +1165,19 @@ interface ApiInterface {
             @Query("npc") npc: Boolean
     ): Call<LocationResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("order/cancelOrder")
+    fun queryServiceCancelOrder(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("orderId") orderId: String): Call<CancelOrderResponse>
+
 }

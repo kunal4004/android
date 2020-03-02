@@ -42,13 +42,11 @@ public class TooltipHelper {
 				.onDisplay(new ViewTooltip.ListenerDisplay() {
 					@Override
 					public void onDisplay(View view) {
-						Log.d("ViewTooltip", "onDisplay");
 					}
 				})
 				.onHide(new ViewTooltip.ListenerHide() {
 					@Override
 					public void onHide(View view) {
-						Log.d("ViewTooltip", "onHide");
 					}
 				});
 	}

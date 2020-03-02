@@ -25,7 +25,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
@@ -98,7 +98,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 
 	private Call<ProvincesResponse> getProvinces() {
 		Call<ProvincesResponse> provincesResponseCall = OneAppService.INSTANCE.getProvinces();
-		provincesResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ProvincesResponse>() {
+		provincesResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ProvincesResponse>() {
 			@Override
 			public void onSuccess(ProvincesResponse provincesResponse) {
 				Log.i("ProvinceSelection", "getRegions Succeeded");

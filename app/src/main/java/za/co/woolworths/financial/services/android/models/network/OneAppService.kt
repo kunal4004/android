@@ -320,4 +320,8 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, requestBody)
     }
 
+    fun queryServiceCancelOrder(orderId: String): Call<CancelOrderResponse> {
+        return mApiInterface.queryServiceCancelOrder(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), orderId)
+    }
+
 }

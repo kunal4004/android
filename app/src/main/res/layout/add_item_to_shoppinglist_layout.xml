@@ -5,11 +5,6 @@
     android:background="@color/orders_bg"
     android:orientation="vertical">
 
-    <View
-        android:id="@+id/fakeDivider"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sixteen_dp" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/seventy_dp"

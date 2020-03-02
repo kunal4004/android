@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="343dp"
+    android:layout_height="375dp"
     android:background="@drawable/card_shadow">
 
     <ImageView
@@ -30,6 +30,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.60" />
 
+    <ImageView
+        android:id="@+id/imFreeGiftImage"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_newPromotionalImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imNewImage"
@@ -40,7 +50,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/plp_newPromotionalImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imFreeGiftImage" />
 
     <ImageView
         android:id="@+id/imSave"
@@ -85,6 +95,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageGuideLine" />
 
+    <TextView
+        android:id="@+id/brandName"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator" />
+
 
     <TextView
         android:id="@+id/tvProductName"
@@ -105,7 +125,7 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator"
+        app:layout_constraintTop_toBottomOf="@+id/brandName"
         tools:ignore="HardcodedText"
         android:contentDescription="@string/plp_textViewProductName"
         tools:targetApi="lollipop" />

@@ -11,7 +11,7 @@ android {
     def minor = "2"
     def fix = "0"
 
-    def jobNumber = 397
+    def jobNumber = 400
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -74,7 +74,7 @@ android {
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 124
+            jobNumber = 126
         }
 
         defaultConfig {
