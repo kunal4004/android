@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.cancel_order_progress_fragment.*
 import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.CancelOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -77,7 +77,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
             R.id.retry -> orderId?.let { retryCancelOrder() }
             R.id.callTheCallCenter -> activity?.apply {
                 CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_FAILURE_CALL_CENTRE)
-                Utils.makeCall(this, "0861 50 20 20") }
+                Utils.makeCall("0861 50 20 20") }
         }
     }
 
@@ -95,7 +95,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         cancelOrderProcessingLayout?.visibility = View.VISIBLE
 
         val orderDetailRequest = OneAppService.queryServiceCancelOrder(orderId)
-        orderDetailRequest.enqueue(CompletionHandler(object : RequestListener<CancelOrderResponse> {
+        orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<CancelOrderResponse> {
             override fun onSuccess(cancelOrderResponse: CancelOrderResponse?) {
                 cancelOrderResponse?.apply {
                     when (httpCode) {
