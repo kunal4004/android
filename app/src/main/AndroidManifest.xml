@@ -491,9 +491,14 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension"
-            android:screenOrientation="portrait" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension" android:screenOrientation="portrait"/>
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+            android:windowSoftInputMode="adjustResize"
+            />
+
     </application>
 
 </manifest>
