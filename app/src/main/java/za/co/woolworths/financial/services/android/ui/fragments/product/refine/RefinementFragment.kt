@@ -115,9 +115,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState, refinementNavigation?.displayName)
     }
 
-    private fun seeResults() {
-        listener.onSeeResults(getNavigationState(), refinementNavigation?.displayName ?: "")
-    }
+    private fun seeResults() =// Prevent creation of new product listing page when user did not multi-select a brand or category
+            when(refinementNavigation?.multiSelect == true &&  !isAnyRefinementSelected()){
+                true ->  listener.onSeeResults("", "")
+                else  ->   listener.onSeeResults(getNavigationState(), refinementNavigation?.displayName ?: "")
+            }
 
     private fun getNavigationState(): String {
         dataList.forEach {
@@ -159,7 +161,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         val list = navigationState.substringAfter("Z").split("Z")
         var navigation = refinedNavigateState.substringAfter("Z")
         list.forEachIndexed { index, it ->
-            if (index == 0) navigation = navigation.replace(it, "") else navigation = navigation.replace("Z".plus(it), "")
+            navigation = if (index == 0) navigation.replace(it, "") else navigation.replace("Z".plus(it), "")
         }
         return navigation
     }

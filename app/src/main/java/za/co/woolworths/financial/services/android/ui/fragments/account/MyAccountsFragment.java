@@ -40,7 +40,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -717,7 +717,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			mUpdateMyAccount.swipeToRefreshAccount(true);
 		else
 			showProgressBar();
-		mUpdateMyAccount.make(forceNetworkUpdate, new RequestListener<AccountsResponse>() {
+		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
                 try {
@@ -848,7 +848,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				if (SessionUtilities.getInstance().isUserAuthenticated()
 						&& SessionUtilities.getInstance().isC2User()) {
 					messageRequestCall =  OneAppService.INSTANCE.getMessagesResponse(5, 1);
-					messageRequestCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
+					messageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 						@Override
 						public void onSuccess(MessageResponse messageResponse) {
 							onMessageResponse(messageResponse.unreadCount);
@@ -1143,5 +1143,4 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			((BottomNavigationActivity) activity).setToolbarBackgroundColor(color);
 		}
 	}
-
 }

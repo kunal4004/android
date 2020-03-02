@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail;
 import android.text.TextUtils;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
@@ -38,7 +38,7 @@ public abstract class InventoryForStore {
 		setOnConnectFailure(false);
 
 	Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall =  OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
-		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
+		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 				onInventoryForStoreSuccess(skusInventoryForStoreResponse);

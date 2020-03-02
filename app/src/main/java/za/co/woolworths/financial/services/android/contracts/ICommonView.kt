@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
-interface ICommonView<T> : RequestListener<T> {
+interface ICommonView<T> : IResponseListener<T> {
     fun showProgress() {}
     fun hideProgress() {}
 }

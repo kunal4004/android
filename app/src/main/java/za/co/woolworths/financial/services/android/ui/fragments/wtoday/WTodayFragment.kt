@@ -133,7 +133,6 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {
-        Log.d("onAddIngredientsToShop", ingredients)
     }
 
     override fun onShowProductDetail(productId: String, skuId: String) {

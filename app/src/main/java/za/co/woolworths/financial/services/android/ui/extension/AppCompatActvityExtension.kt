@@ -23,7 +23,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.ICommonView
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import java.security.acl.Group
 
@@ -215,7 +215,7 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
 inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: ICommonView<Any>? = null): Call<RESPONSE_OBJECT>? {
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
-    call?.enqueue(CompletionHandler(object : RequestListener<RESPONSE_OBJECT> {
+    call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
         override fun onSuccess(response: RESPONSE_OBJECT) {
             requestListener?.hideProgress()
             requestListener?.onSuccess(response)

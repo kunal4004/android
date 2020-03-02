@@ -224,7 +224,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		try {
 			tv.setText(text);
 		} catch (IllegalStateException ex) {
-			Log.d("setTextExc", ex.getMessage());
 		}
 	}
 
@@ -241,7 +240,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		try {
 			tv.setText(text);
 		} catch (IllegalStateException ex) {
-			Log.d("setTextExc", ex.getMessage());
 		}
 	}
 

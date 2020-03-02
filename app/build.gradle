@@ -11,8 +11,7 @@ android {
     def minor = "2"
     def fix = "0"
 
-    def jobNumber = 3917
-
+    def jobNumber = 400
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -63,20 +62,19 @@ android {
     // configs for MS App Center goes here...
     // MS App Center doesn't currently support productFlavors, only supports release/debug.
     if (isAppCenter) {
-
         def host = System.getenv("WigroupServer_API_URL").toString()
         def hash = System.getenv("WigroupServer_API_HASH").toString()
 
         String env = ""
 
-            if (host.contains("-qa") || host.contains("feature-")){
-                defaultConfig.applicationIdSuffix = ".qa"
-                defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q"]
-                env = "QA"
-            }else{
-                //assume prod
-                jobNumber = 124
-            }
+        if (host.contains("-qa")){
+            defaultConfig.applicationIdSuffix = ".qa"
+            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q"]
+            env = "QA"
+        }else{
+            //assume prod
+            jobNumber = 126
+        }
 
             defaultConfig {
             versionCode jobNumber
@@ -177,7 +175,7 @@ dependencies {
     implementation 'com.google.android:flexbox:1.1.0'
     //noinspection GradleCompatible
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
@@ -201,6 +199,7 @@ dependencies {
     api 'com.google.zxing:core:3.3.3'
 
     api 'com.google.zxing:android-core:3.3.0'
+    //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
     implementation 'me.relex:circleindicator:2.1.0@aar'
 
@@ -221,9 +220,10 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.1'
     implementation "com.google.android.gms:play-services-auth-api-phone:17.3.0"
 
-    implementation "androidx.navigation:navigation-fragment-ktx:2.2.0"
-    implementation "androidx.navigation:navigation-ui-ktx:2.2.0"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.2.1"
+    implementation "androidx.navigation:navigation-ui-ktx:2.2.1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.fragment:fragment-ktx:1.2.2'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.25.0'
