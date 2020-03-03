@@ -75,6 +75,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         tvSearchProduct.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner.setOnClickListener { checkCameraPermission() }
         fragmentManager?.let {  shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)}
+        viewpager_main.offscreenPageLimit = 2
         viewpager_main.adapter = shopPagerAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
