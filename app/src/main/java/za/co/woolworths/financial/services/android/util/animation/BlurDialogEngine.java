@@ -348,13 +348,6 @@ public class BlurDialogEngine {
             statusBarHeight = 0;
         }
 
-        // check if status bar is translucent to remove status bar offset in order to provide blur
-        // on content bellow the status.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && isStatusBarTranslucent()) {
-            statusBarHeight = 0;
-        }
-
         final int topOffset = -(actionBarHeight + statusBarHeight);
         //final int topOffset = 0;
 
@@ -390,8 +383,7 @@ public class BlurDialogEngine {
             overlay = Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.RGB_565);
         }
         try {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-                    || mHoldingActivity instanceof AppCompatActivity) {
+            if (mHoldingActivity instanceof AppCompatActivity) {
                 //add offset as top margin since actionBar height must also considered when we display
                 // the blurred background. Don't want to draw on the actionBar.
                 mBlurredBackgroundLayoutParams.setMargins(0, actionBarHeight, 0, 0);
@@ -460,21 +452,6 @@ public class BlurDialogEngine {
 //        }
 //        return result;
 //    }
-
-    /**
-     * Used to check if the status bar is translucent.
-     *
-     * @return true if the status bar is translucent.
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private boolean isStatusBarTranslucent() {
-        TypedValue typedValue = new TypedValue();
-        int[] attribute = new int[]{android.R.attr.windowTranslucentStatus};
-        TypedArray array = mHoldingActivity.obtainStyledAttributes(typedValue.resourceId, attribute);
-        boolean isStatusBarTranslucent = array.getBoolean(0, false);
-        array.recycle();
-        return isStatusBarTranslucent;
-    }
 
     /**
      * Removed the blurred view from the view hierarchy.
@@ -557,15 +534,13 @@ public class BlurDialogEngine {
                     mBlurredBackgroundLayoutParams
             );
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                mBlurredBackgroundView.setAlpha(0f);
-                mBlurredBackgroundView
-                        .animate()
-                        .alpha(1f)
-                        .setDuration(mAnimationDuration)
-                        .setInterpolator(new LinearInterpolator())
-                        .start();
-            }
+            mBlurredBackgroundView.setAlpha(0f);
+            mBlurredBackgroundView
+                    .animate()
+                    .alpha(1f)
+                    .setDuration(mAnimationDuration)
+                    .setInterpolator(new LinearInterpolator())
+                    .start();
             mBackgroundView = null;
             mBackground = null;
         }
