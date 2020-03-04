@@ -87,8 +87,5 @@ public class ProductDetails {
 	@SerializedName("brandText")
 	@Expose
 	public String brandText;
-	@SerializedName("rangeText")
-	@Expose
-	public String rangeText;
 
 }
