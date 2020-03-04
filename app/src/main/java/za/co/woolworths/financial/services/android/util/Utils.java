@@ -398,7 +398,6 @@ public class Utils {
 			return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
 		} catch (Settings.SettingNotFoundException e) {
-			e.printStackTrace();
 			return false;
 		}
 	}
