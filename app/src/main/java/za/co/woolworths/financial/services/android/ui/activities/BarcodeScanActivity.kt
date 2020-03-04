@@ -8,7 +8,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_scan_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity.Companion.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeScanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE
