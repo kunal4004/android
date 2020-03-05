@@ -39,7 +39,7 @@ interface AvailableFundsContract {
     }
 
     interface AvailableFundsModel {
-        fun queryABSAServiceGetUserCreditCardToken(requestListener: ICommonView<Any>): Call<CreditCardTokenResponse>?
+        fun queryABSAServiceGetUserCreditCardToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>?
     }
 }
 
@@ -95,7 +95,7 @@ interface AccountCardDetailsContract {
     }
 
     interface AccountCardDetailModel {
-        fun queryServiceGetAccountStoreCardCards(storeCardsRequestBody: StoreCardsRequestBody?, requestListener: ICommonView<Any>): Call<StoreCardsResponse>?
-        fun queryServiceGetUserCLIOfferActive(productOfferingId: String, requestListener: ICommonView<Any>): Call<OfferActive>?
+        fun queryServiceGetAccountStoreCardCards(storeCardsRequestBody: StoreCardsRequestBody?, requestListener: IGenericAPILoaderView<Any>): Call<StoreCardsResponse>?
+        fun queryServiceGetUserCLIOfferActive(productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<OfferActive>?
     }
 }

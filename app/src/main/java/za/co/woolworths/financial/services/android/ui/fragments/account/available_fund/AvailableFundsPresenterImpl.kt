@@ -6,14 +6,14 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.woolworths.financial.services.android.contracts.AvailableFundsContract
-import za.co.woolworths.financial.services.android.contracts.ICommonView
+import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 
-class AvailableFundsPresenterImpl(private var mainView: AvailableFundsContract.AvailableFundsView?, private var model: AvailableFundsContract.AvailableFundsModel?) : AvailableFundsContract.AvailableFundsPresenter, ICommonView<Any> {
+class AvailableFundsPresenterImpl(private var mainView: AvailableFundsContract.AvailableFundsView?, private var model: AvailableFundsContract.AvailableFundsModel?) : AvailableFundsContract.AvailableFundsPresenter, IGenericAPILoaderView<Any> {
 
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null

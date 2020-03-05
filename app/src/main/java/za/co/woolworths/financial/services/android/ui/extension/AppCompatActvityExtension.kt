@@ -7,7 +7,6 @@ import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -22,10 +21,9 @@ import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.ICommonView
+import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import java.security.acl.Group
 
 
 /**
@@ -212,7 +210,7 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
     }
 }
 
-inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: ICommonView<Any>? = null): Call<RESPONSE_OBJECT>? {
+inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: IGenericAPILoaderView<Any>? = null): Call<RESPONSE_OBJECT>? {
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
     call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {

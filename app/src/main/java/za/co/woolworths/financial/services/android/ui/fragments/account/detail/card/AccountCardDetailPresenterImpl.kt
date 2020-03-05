@@ -10,7 +10,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
-import za.co.woolworths.financial.services.android.contracts.ICommonView
+import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsContract.AccountCardDetailView?, private var model: AccountCardDetailsContract.AccountCardDetailModel?) : AccountCardDetailsContract.AccountCardDetailPresenter, ICommonView<Any> {
+class AccountCardDetailPresenterImpl(private var mainView: AccountCardDetailsContract.AccountCardDetailView?, private var model: AccountCardDetailsContract.AccountCardDetailModel?) : AccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
 
     companion object {
         private const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
