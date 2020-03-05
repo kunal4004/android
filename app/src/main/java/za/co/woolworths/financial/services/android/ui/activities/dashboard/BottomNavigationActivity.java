@@ -44,6 +44,7 @@ import java.util.Set;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.IMyAccountInterface;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -111,7 +112,7 @@ import static za.co.woolworths.financial.services.android.util.FuseLocationAPISi
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer, IMyAccountInterface {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;
     public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -1317,5 +1318,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (getCurrentFragment() instanceof ProductListingFragment) {
             ((ProductListingFragment) getCurrentFragment()).onResetFilter();
         }
+    }
+
+    @Override
+    public void onRetryMyAccountCall() {
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof  MyAccountsFragment)
+            ((MyAccountsFragment) fragment).refreshMyAccount();
     }
 }

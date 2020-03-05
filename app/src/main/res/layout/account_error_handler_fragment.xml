@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="@string/loan_request_high_desc"
+        android:textColor="@color/description_color"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/retryButtonSeparator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/link_cancel"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/end_margin_guideline"
+        app:layout_constraintStart_toStartOf="@+id/start_margin_guideline"
+        tools:targetApi="lollipop" />
+
+    <Button
+        android:id="@+id/retryButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/retry_label"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/cancelButtonSeparator"
+        app:layout_constraintEnd_toStartOf="@+id/end_margin_guideline"
+        app:layout_constraintStart_toStartOf="@+id/start_margin_guideline"
+        tools:targetApi="lollipop" />
+
+    <View
+        android:id="@+id/retryButtonSeparator"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:background="@color/horizontal_line"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/retryButton"
+        app:layout_constraintEnd_toStartOf="@+id/end_margin_guideline"
+        app:layout_constraintStart_toStartOf="@+id/start_margin_guideline" />
+
+    <View
+        android:id="@+id/cancelButtonSeparator"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:background="@color/horizontal_line"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/cancelButton"
+        app:layout_constraintEnd_toStartOf="@+id/end_margin_guideline"
+        app:layout_constraintStart_toStartOf="@+id/start_margin_guideline" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/start_margin_guideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/end_margin_guideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

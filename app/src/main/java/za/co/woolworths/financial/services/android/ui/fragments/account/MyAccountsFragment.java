@@ -57,6 +57,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSection
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.MyAccountErrorHandlerFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -130,6 +132,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private ImageView imRefreshAccount;
 	private RelativeLayout storeLocatorRelativeLayout;
 	private RelativeLayout helpSectionRelativeLayout;
+	private int httpCode = 0;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -386,7 +389,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			}
 		}
 
-		if (!sc && !cc && !pl) {
+		if (!sc && !cc && !pl && httpCode != 502) {
 			hideView(linkedAccountsLayout);
 			disableRefresh();
 		}
@@ -681,12 +684,16 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
-                try {
-                    int httpCode = accountsResponse.httpCode;
+            	Activity activity =  getActivity();
+            	if (activity == null) return;
+                 try {
+                 	httpCode = accountsResponse.httpCode;
                     switch (httpCode) {
+						case 502:
                         case 200:
                             mAccountResponse = accountsResponse;
                             List<Account> accountList = accountsResponse.accountList;
+                            if (accountList == null) accountList = new ArrayList<>();
                             for (Account p : accountList) {
                                 accounts.put(p.productGroupCode.toUpperCase(), p);
                                 int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
@@ -700,19 +707,23 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                             }
                             isAccountsCallMade = true;
                             configureView();
+
+                            // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
+							if (httpCode == 502) {
+								MyAccountErrorHandlerFragment myAccountErrorHandlerFragment = MyAccountErrorHandlerFragment.Companion.newInstance(accountsResponse.response.desc);
+								myAccountErrorHandlerFragment.show(((AppCompatActivity) activity).getSupportFragmentManager(), MyAccountErrorHandlerFragment.class.getSimpleName());
+							}
                             break;
                         case 440:
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
-							if (activity != null)
-								onSessionExpired(activity);
+							onSessionExpired(activity);
 							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
 								mUpdateMyAccount.swipeToRefreshAccount(false);
-								if (activity != null)
-									Utils.alertErrorMessage(activity, accountsResponse.response.desc);
+								Utils.alertErrorMessage(activity, accountsResponse.response.desc);
                             }
 
                             break;
@@ -1056,5 +1067,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			preferenceRelativeLayout.setContentDescription(getString(R.string.mypreferences_layout));
 			signOutRelativeLayout.setContentDescription(getString(R.string.sign_out_layout));
 		}
+	}
+
+	public void refreshMyAccount(){
+		imRefreshAccount.performClick();
 	}
 }
