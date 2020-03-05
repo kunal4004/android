@@ -80,41 +80,21 @@ public class NotificationUtils {
     }
 
     public void sendBundledNotification(String title, String body, int badgeCount) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Notification notification = buildKitKatNotification(title, body);
-            ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
-            notificationManager.notify(getNotificationId(), notification);
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                        CHANNEL_NAME,
-                        NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
-            }
-            Notification notification = buildNotification(title, body, GROUP_KEY).build();
-            ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
-            notificationManager.notify(getNotificationId(), notification);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
         }
+        Notification notification = buildNotification(title, body, GROUP_KEY).build();
+        ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
+        notificationManager.notify(getNotificationId(), notification);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             NotificationCompat.Builder summary = buildSummary(GROUP_KEY);
             notificationManager.notify(SUMMARY_ID, summary.build());
         }
-    }
-
-    private Notification buildKitKatNotification(String title, String body) {
-        return new NotificationCompat.Builder(mContext)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
-                .setContentIntent(contentIntent)
-                .setShowWhen(true)
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .build();
     }
 
     private NotificationCompat.Builder buildNotification(String title, String body, String groupKey) {
@@ -162,25 +142,17 @@ public class NotificationUtils {
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-			if (runningProcesses == null) {
-				return false;
-			}
-            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String activeProcess : processInfo.pkgList) {
-                        if (activeProcess.equals(context.getPackageName())) {
-                            isInBackground = false;
-                        }
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+        if (runningProcesses == null) {
+            return false;
+        }
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String activeProcess : processInfo.pkgList) {
+                    if (activeProcess.equals(context.getPackageName())) {
+                        isInBackground = false;
                     }
                 }
-            }
-        } else {
-            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-            ComponentName componentInfo = taskInfo.get(0).topActivity;
-            if (componentInfo.getPackageName().equals(context.getPackageName())) {
-                isInBackground = false;
             }
         }
 

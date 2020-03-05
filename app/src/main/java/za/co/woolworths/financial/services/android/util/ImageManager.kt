@@ -62,5 +62,17 @@ class ImageManager {
                         .into(image)
             }
         }
+
+        fun loadImage(productImage: ImageView?, img_location: String) = productImage?.let { image ->
+            productImage.visibility = if (img_location.isEmpty()) View.GONE else View.VISIBLE
+            productImage.context?.apply {
+                Glide.with(this)
+                        .load(img_location)
+                        .format(DecodeFormat.PREFER_ARGB_8888)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .dontAnimate()
+                        .into(image)
+            }
+        }
     }
 }

@@ -17,7 +17,7 @@ class CancelOrderProgressActivity : AppCompatActivity() {
         setContentView(R.layout.cancel_order_progress_activity)
         Utils.updateStatusBarBackground(this)
         Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
-        actionBar()
+        configureActionBar()
 
         intent?.extras?.apply { orderId = getString(CancelOrderProgressFragment.ORDER_ID, "") }
 
@@ -27,7 +27,7 @@ class CancelOrderProgressActivity : AppCompatActivity() {
                 containerViewId = R.id.fragmentContainer)
     }
 
-    private fun actionBar() {
+    private fun configureActionBar() {
         setSupportActionBar(tbMyCard)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)

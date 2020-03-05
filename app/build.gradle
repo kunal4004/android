@@ -11,7 +11,7 @@ android {
     def minor = "2"
     def fix = "0"
 
-    def jobNumber = 400
+    def jobNumber = 402
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths"]
-        minSdkVersion 19 //kitkat 4.4
+        minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 28
         compileSdkVersion 28
         multiDexEnabled true

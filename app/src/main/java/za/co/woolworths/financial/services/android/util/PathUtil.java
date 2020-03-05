@@ -22,11 +22,9 @@ public class PathUtil {
 		 */
 	@SuppressLint("NewApi")
 	public static String getPath(Context context, Uri uri) throws URISyntaxException {
-		final boolean needToCheckUri = Build.VERSION.SDK_INT >= 19;
 		String selection = null;
 		String[] selectionArgs = null;
-		// Uri is different in versions after KITKAT (Android 4.4), we need to deal with different Uris.
-		if (needToCheckUri && DocumentsContract.isDocumentUri(context.getApplicationContext(), uri)) {
+		if (DocumentsContract.isDocumentUri(context.getApplicationContext(), uri)) {
 			if (isExternalStorageDocument(uri)) {
 				final String docId = DocumentsContract.getDocumentId(uri);
 				final String[] split = docId.split(":");

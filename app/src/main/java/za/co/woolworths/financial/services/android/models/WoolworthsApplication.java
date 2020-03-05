@@ -20,7 +20,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
-import androidx.multidex.MultiDex;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -358,12 +357,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 			mTracker = instance.newTracker(R.xml.global_tracker);
 		}
 		return mTracker;
-	}
-
-	@Override
-	protected void attachBaseContext(Context base) {
-		super.attachBaseContext(base);
-		MultiDex.install(this);
 	}
 
 	public boolean isOther() {
