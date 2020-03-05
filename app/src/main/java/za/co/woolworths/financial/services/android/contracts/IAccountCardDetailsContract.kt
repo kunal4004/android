@@ -10,40 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 
-interface AvailableFundsContract {
-
-    interface AvailableFundsView {
-        fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean)
-        fun displayCardNumberNotFound()
-        fun handleUnknownHttpResponse(desc: String?)
-        fun handleSessionTimeOut(stsParams: String)
-        fun showABSAServiceGetUserCreditCardTokenProgressBar()
-        fun hideABSAServiceGetUserCreditCardTokenProgressBar()
-        fun navigateToRecentTransactionActivity(cardType: String)
-        fun navigateToLoanWithdrawalActivity()
-        fun navigateToPaymentOptionActivity()
-        fun navigateToStatementActivity()
-        fun setPushViewDownAnimation(view: View)
-        fun onABSACreditCardFailureHandler(error: Throwable?)
-        fun navigateToABSAStatementActivity()
-    }
-
-    interface AvailableFundsPresenter {
-        fun setBundle(bundle: Bundle?)
-        fun getBundle(): Pair<ApplyNowState, Account>?
-        fun queryABSAServiceGetUserCreditCardToken()
-        fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse)
-        fun getCreditCardNumber(cards: ArrayList<Card>?): String
-        fun getAccount(): Account?
-        fun onDestroy()
-    }
-
-    interface AvailableFundsModel {
-        fun queryABSAServiceGetUserCreditCardToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>?
-    }
-}
-
-interface AccountCardDetailsContract {
+interface IAccountCardDetailsContract {
 
     interface AccountCardDetailView {
         fun handleUnknownHttpCode(description: String?)

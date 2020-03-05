@@ -3,14 +3,14 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.content.Intent
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import za.co.woolworths.financial.services.android.contracts.PaymentOptionContract
+import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.HeaderDrawable
 import java.lang.RuntimeException
 
-class PaymentOptionPresenterImpl(private var mainView: PaymentOptionContract.PaymentOptionView?, private var model: PaymentOptionContract.PaymentOptionModel) : PaymentOptionContract.PaymentOptionPresenter, PaymentOptionContract.PaymentOptionModel {
+class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.PaymentOptionView?, private var model: IPaymentOptionContract.PaymentOptionModel) : IPaymentOptionContract.PaymentOptionPresenter, IPaymentOptionContract.PaymentOptionModel {
 
     companion object {
         const val ACCOUNT_INFO = "ACCOUNT_INFO"

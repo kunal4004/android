@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_card_header.*
 import kotlinx.android.synthetic.main.account_sign_out_activity.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
-import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
+import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
-class AccountSalesActivity : AppCompatActivity(), AccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
+class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null

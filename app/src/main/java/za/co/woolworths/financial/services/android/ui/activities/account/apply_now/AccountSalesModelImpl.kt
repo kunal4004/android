@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.apply_
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
+import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CardBenefit
 import za.co.woolworths.financial.services.android.models.dto.account.CardCollection
@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.MoreBenefit
 import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 
-class AccountSalesModelImpl : AccountSalesContract.AccountSalesModel {
+class AccountSalesModelImpl : IAccountSalesContract.AccountSalesModel {
 
     private val calendarIcon = R.drawable.icon_calendar
     private val cardsIcon = R.drawable.icon_cards

@@ -7,7 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.AccountSignedInContract
+import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AccountSignedInPresenterImpl(private var mainView: AccountSignedInContract.MyAccountView?, private var model: AccountSignedInContract.MyAccountModel) : AccountSignedInContract.MyAccountPresenter {
+class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContract.MyAccountView?, private var model: IAccountSignedInContract.MyAccountModel) : IAccountSignedInContract.MyAccountPresenter {
 
     private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null

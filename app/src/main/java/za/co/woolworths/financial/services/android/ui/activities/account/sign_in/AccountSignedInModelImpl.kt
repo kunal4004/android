@@ -2,11 +2,11 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.AccountSignedInContract
+import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 
-class AccountSignedInModelImpl : AccountSignedInContract.MyAccountModel {
+class AccountSignedInModelImpl : IAccountSignedInContract.MyAccountModel {
 
     private val defaultInformation =
             mutableListOf(AccountHelpInformation(getString(R.string.info_available_funds_title), getString(R.string.black_credit_card_available_fund_information_desc)),

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -17,7 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
-import za.co.woolworths.financial.services.android.contracts.AccountSignedInContract
+import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -30,7 +31,7 @@ interface BottomSheetBehaviourPeekHeightListener {
     fun onBottomSheetPeekHeight(pixel: Int)
 }
 
-class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyAccountView, BottomSheetBehaviourPeekHeightListener, View.OnClickListener {
+class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, BottomSheetBehaviourPeekHeightListener, View.OnClickListener {
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
@@ -42,6 +43,7 @@ class AccountSignedInActivity : AppCompatActivity(), AccountSignedInContract.MyA
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

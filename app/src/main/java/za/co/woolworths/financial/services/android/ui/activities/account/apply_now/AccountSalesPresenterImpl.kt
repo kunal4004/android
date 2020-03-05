@@ -7,14 +7,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.AccountSalesContract
+import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AccountSalesPresenterImpl(private var mainView: AccountSalesContract.AccountSalesView?, private var model: AccountSalesContract.AccountSalesModel) : AccountSalesContract.AccountSalesPresenter, AccountSalesContract.AccountSalesModel {
+class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.AccountSalesView?, private var model: IAccountSalesContract.AccountSalesModel) : IAccountSalesContract.AccountSalesPresenter, IAccountSalesContract.AccountSalesModel {
 
     private var mApplyNowState: ApplyNowState? = null
 

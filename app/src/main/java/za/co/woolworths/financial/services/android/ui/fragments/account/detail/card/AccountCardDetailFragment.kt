@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.android.synthetic.main.common_account_detail.*
-import za.co.woolworths.financial.services.android.contracts.AccountCardDetailsContract
+import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRe
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountCardDetailFragment : Fragment(), View.OnClickListener, AccountCardDetailsContract.AccountCardDetailView {
+open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null

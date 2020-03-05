@@ -2,11 +2,11 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.PaymentOptionContract
+import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.HeaderDrawable
 
-class PaymentOptionModelImpl : PaymentOptionContract.PaymentOptionModel {
+class PaymentOptionModelImpl : IPaymentOptionContract.PaymentOptionModel {
 
     override fun getAccountDetailValues(): HashMap<String, String?> {
         return hashMapOf("AccountHolder" to getString(R.string.account_details_account_holder), "AccountNumber" to getString(R.string.account_details_account_number), "Bank" to getString(R.string.account_details_bank), "BranchCode" to getString(R.string.account_details_branch_code), "ReferenceNumber" to getString(R.string.account_details_reference_number), "SwiftCode" to getString(R.string.account_details_swift_code))

@@ -9,14 +9,14 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.PaymentOptionContract
+import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.HeaderDrawable
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, PaymentOptionContract.PaymentOptionView {
+class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymentOptionContract.PaymentOptionView {
 
     private var mPaymentOptionPresenterImpl: PaymentOptionPresenterImpl? = null
 

@@ -15,9 +15,8 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
-import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import kotlinx.android.synthetic.main.view_statement_button.*
-import za.co.woolworths.financial.services.android.contracts.AvailableFundsContract
+import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -33,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import java.net.ConnectException
 
 
-open class AvailableFundsFragment : Fragment(), AvailableFundsContract.AvailableFundsView {
+open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: BottomSheetBehaviourPeekHeightListener? =
             null
