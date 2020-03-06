@@ -52,6 +52,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String downLoadUserAgent;
 	private String downLoadConntentDisposition;
 
+	@Override
+	protected void onStart() {
+		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		super.onStart();
+	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -243,7 +243,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
                 mToastUtils.setGravity(Gravity.BOTTOM);
                 mToastUtils.setCartText(R.string.cart);
                 mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
-                mToastUtils.setPixel(Utils.dp2px(this, 105));
+                mToastUtils.setPixel(Utils.dp2px(105));
                 mToastUtils.setMessage(R.string.added_to);
                 mToastUtils.setViewState(false);
                 mToastUtils.build();

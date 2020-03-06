@@ -21,9 +21,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import io.fabric.sdk.android.services.common.CommonUtils;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel;
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -36,6 +39,36 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
+	private FirebaseAnalytics mFirebaseAnalytics = null;
+
+	private String appVersion = "";
+	private String environment = "";
+
+	private static final String APP_IS_EXPIRED_KEY = "app_isExpired";
+	private static final String APP_SERVER_ENVIRONMENT_KEY = "app_server_environment";
+	private static final String APP_VERSION_KEY = "app_version";
+
+	private boolean mVideoPlayerShouldPlay = true;
+	private boolean isVideoPlaying = false;
+	private boolean isMinimized = false;
+	private boolean isServerMessageShown = false;
+
+	private boolean splashScreenDisplay = false;
+	private boolean splashScreenPersist = false;
+	private String splashScreenText = "";
+
+	private WVideoView videoView;
+	private String TAG = this.getClass().getSimpleName();
+	private LinearLayout errorLayout;
+	private View noVideoView;
+	private View serverMessageView;
+	private WTextView serverMessageLabel;
+	private RelativeLayout videoViewLayout;
+	private ProgressBar pBar;
+	private WGlobalState mWGlobalState;
+	private String mPushNotificationUpdate;
+	private String mDeepLinkUrl = null;
+	private String bodyDecrypted;
     private StartupViewModel startupViewModel;
 
     @Override
@@ -302,15 +335,4 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     public String testGetRandomVideos() {
         return startupViewModel.getRandomVideoPath();
     }
-
-//    private void openDeepLinkBackgroundActivity(String isFirstTime) {
-//        if (isFirstTime == null || Utils.isAppUpdated(this)) {
-//            ScreenManager.presentOnboarding(StartupActivity.this);
-//        } else {
-//            Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);
-//            openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "");
-//            startActivity(openBottomActivity);
-//            overridePendingTransition(0, 0);
-//        }
-//    }
 }

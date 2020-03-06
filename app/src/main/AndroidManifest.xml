@@ -233,10 +233,6 @@
                 android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity" />
         </activity>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyAccountCards" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:theme="@style/SSOActivity" />
         <activity
@@ -270,6 +266,12 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity"
             android:screenOrientation="portrait"
@@ -491,7 +493,30 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />
+
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension" android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity"
             android:screenOrientation="portrait"

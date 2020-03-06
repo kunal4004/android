@@ -28,7 +28,7 @@ class WRewardsLoggedInAndNotLinkedFragment : WRewardOnBoardingFragment() {
         hideToolbar()
         underlineText(tvRewardLinkAccount)
         setUpPager(vpJoinRewardInfo, tabIndicator)
-        applyForWRewards?.setOnClickListener { activity?.let { activity -> Utils.openExternalLink(activity, WoolworthsApplication.getWrewardsLink()) } }
+        applyForWRewards?.setOnClickListener {  Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsLink()) }
         tvRewardLinkAccount?.setOnClickListener { activity?.let { activity -> ScreenManager.presentSSOLinkAccounts(activity) }; }
         uniqueIdsForWRewardsLoggedInNotLinkAutomation()
     }
