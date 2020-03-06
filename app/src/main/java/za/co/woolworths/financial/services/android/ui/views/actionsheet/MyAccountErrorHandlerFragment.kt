@@ -45,7 +45,7 @@ class MyAccountErrorHandlerFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvDescription?.text = mDescription
+        descriptionTextView?.text = mDescription
 
         retryButton?.setOnClickListener {
             myAccountInterface?.onRetryMyAccountCall()

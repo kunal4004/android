@@ -96,6 +96,10 @@
     <color name="input_error_color_code">#D0021B</color>
     <color name="input_error_color_code_05">#05D0021B</color>
     <color name="input_error_box_color">#59FBEAE5</color>
+    <color name="account_card_desc_grey_color">#777777</color>
+    <color name="light_gray_background">#60D8D8D8</color>
+    <color name="bullet_gray_color">#7F7F7F</color>
+    <color name="semi_transparent">#20ffffff</color>
     <color name="transparent_4d">#4D000000</color>
     <color name="searchBarHintColor">#20000000</color>
 </resources>

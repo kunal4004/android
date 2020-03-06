@@ -32,9 +32,7 @@ abstract class WRewardOnBoardingFragment : Fragment() {
             offscreenPageLimit = joinRewardBenefitList.size
         }
 
-        TabLayoutMediator(tabIndicator, vpJoinRewardInfo, TabLayoutMediator.OnConfigureTabCallback { tab, _ ->
-            tab.text = ""
-        }).attach()
+        TabLayoutMediator(tabIndicator, vpJoinRewardInfo) {  tab, _ -> tab.text = "" }.attach()
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
