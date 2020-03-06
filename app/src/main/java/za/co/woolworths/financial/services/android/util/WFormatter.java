@@ -80,7 +80,7 @@ public class WFormatter {
             sAmount = sAmount.replace(",", ".");
         }
         double mAmount = Double.valueOf(sAmount);
-        int mIntAmount = (int) (mAmount * 100);
+        int mIntAmount = (int) Math.round(mAmount * 100);
         String[] split = String.valueOf((mIntAmount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
