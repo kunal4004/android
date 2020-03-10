@@ -43,9 +43,6 @@ public class AnimationHandler extends Handler {
         if (msgType == AnimationMsg.TICK) {
             removeMessages(AnimationMsg.TICK.ordinal()); // necessary to remove concurrent ticks.
         }
-
-        //if (msgType != AnimationMsg.TICK)
-        //    Log.d("JaGr", TAG + "LOG00099: State:" + circleView.mAnimationState + "     Received: " + msgType);
         mFrameStartTime = SystemClock.uptimeMillis();
         switch (circleView.mAnimationState) {
 

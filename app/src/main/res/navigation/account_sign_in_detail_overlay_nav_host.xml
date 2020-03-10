@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/account_sign_in_detail_overlay_nav_host"
+    app:startDestination="@id/accountCardDetail">
+
+    <fragment
+        android:id="@+id/accountCardDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailFragment"
+        android:label="AccountCardDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+    <fragment
+        android:id="@+id/silverCreditCardDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.SilverCreditCardDetailFragment"
+        android:label="Silver Credit Card"
+        tools:layout="@layout/account_card_detail_fragment" />
+    <fragment
+        android:id="@+id/blackCreditCardDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.BlackCreditCardDetailFragment"
+        android:label="BlackCreditCardDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+    <fragment
+        android:id="@+id/goldCreditCardDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.GoldCreditCardDetailFragment"
+        android:label="GoldCreditCardDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+    <fragment
+        android:id="@+id/storeCardDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardDetailFragment"
+        android:label="StoreCardDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+    <fragment
+        android:id="@+id/personalLoanDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.PersonalLoanDetailFragment"
+        android:label="PersonalLoanDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+</navigation>

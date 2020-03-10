@@ -1,52 +1,33 @@
 package za.co.woolworths.financial.services.android.ui.activities;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.awfs.coordination.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import io.fabric.sdk.android.services.common.CommonUtils;
-import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel;
+import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
-import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
-import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
-import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.activities.deep_link.RetrieveProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
@@ -54,7 +35,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
@@ -89,387 +69,270 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	private String mPushNotificationUpdate;
 	private String mDeepLinkUrl = null;
 	private String bodyDecrypted;
+    private StartupViewModel startupViewModel;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.activity_startup);
-		Toolbar toolbar = findViewById(R.id.mToolbar);
-		setSupportActionBar(toolbar);
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.hide();
-		}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_startup);
+        setSupportActionBar(findViewById(R.id.mToolbar));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		try {
-			this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-			this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.hide();
 
-		if (mFirebaseAnalytics == null)
-			mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        startupViewModel = new StartupViewModelImpl(this);
+        startupViewModel.setIntent(getIntent());
+        Bundle bundle = startupViewModel.getIntent().getExtras();
+        if (bundle != null)
+            startupViewModel.setPushNotificationUpdate(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT));
 
+        try {
+            startupViewModel.setAppVersion(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+            startupViewModel.setEnvironment(com.awfs.coordination.BuildConfig.FLAVOR);
+        } catch (PackageManager.NameNotFoundException e) {
+            startupViewModel.setAppVersion("6.1.0");
+            startupViewModel.setEnvironment("QA");
+            e.printStackTrace();
+        }
 
-		Bundle bundle = getIntent().getExtras();
-		if (bundle != null) {
-			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
-		}
+        if (startupViewModel.getFirebaseAnalytics() == null)
+            startupViewModel.setFirebaseAnalytics(FirebaseAnalytics.getInstance(this));
 
-		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
-		mWGlobalState = woolworthsApplication.getWGlobalState();
+        if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_SERVER_ENVIRONMENT_KEY(), startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
+            startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_VERSION_KEY(), startupViewModel.getAppVersion());
 
-		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
-		errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
-		noVideoView = (View) findViewById(R.id.splashNoVideoView);
-		serverMessageView = (View) findViewById(R.id.splashServerMessageView);
-		serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
-		videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
-		pBar = (ProgressBar) findViewById(R.id.progressBar);
+            setupScreen();
+        } else {
+            showNonVideoViewWithErrorLayout();
+        }
 
-		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-		//Mobile Config Server
-		if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
-			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+        findViewById(R.id.retry).setOnClickListener(onRetryButtonTapped);
 
-			setUpScreen();
-		} else {
-			showNonVideoViewWithErrorLayout();
-		}
-		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
+        //Remove old usage of SharedPreferences data.
+        Utils.clearSharedPreferences(StartupActivity.this);
+        AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
+    }
 
-			@Override
-			public void onClick(View v) {
-				if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
-					mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
-					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
-					setUpScreen();
-					executeConfigServer();
-				} else {
-					showNonVideoViewWithErrorLayout();
-				}
-			}
+        startupViewModel.setIntent(intent);
+        initialize();
+    }
 
-		});
+    private void initialize() {
 
-		//Remove old usage of SharedPreferences data.
-		Utils.clearSharedPreferences(StartupActivity.this);
-		AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
-	}
+        startupViewModel.queryServiceGetConfig(new IResponseListener<ConfigResponse>() {
+            @Override
+            public void onSuccess(ConfigResponse response) {
+                startupViewModel.setVideoPlayerShouldPlay(false);
 
+                if (response.configs.enviroment.stsURI == null || response.configs.enviroment.stsURI.isEmpty()) {
+                    showNonVideoViewWithErrorLayout();
+                    return;
+                }
 
-	private void executeConfigServer() {
-		//if app is expired, don't execute MCS.
+                if (!startupViewModel.isVideoPlaying()) {
+                    presentNextScreenOrServerMessage();
+                }
+            }
 
-		Call<ConfigResponse> configResponseCall = OneAppService.INSTANCE.getConfig();
-		configResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ConfigResponse>(){
+            @Override
+            public void onFailure(Throwable throwable) {
+                showNonVideoViewWithErrorLayout();
+            }
+        });
+    }
 
-			@Override
-			public void onSuccess(ConfigResponse configResponse) {
-				if (configResponse.httpCode == 200) {
-					try {
-						StartupActivity.this.mVideoPlayerShouldPlay = false;
+    //video player on completion
+    @Override
+    public void onCompletion(MediaPlayer mp) {
 
-						if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
-							showNonVideoViewWithErrorLayout();
-							return;
-						}
+        startupViewModel.setVideoPlaying(false);
 
-						WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
-						WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
-						WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
-						WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
-						WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
-						WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
-						WoolworthsApplication.setAuthenticVersionReleaseNote(configResponse.configs.enviroment.getAuthenticVersionReleaseNote());
-						WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
-						WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
-						WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
-						WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
-						WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
-						WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
-						WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
-						WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
-						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
-						WoolworthsApplication.setQuickShopDefaultValues(configResponse.configs.quickShopDefaultValues);
-						WoolworthsApplication.setWhitelistedDomainsForQRScanner(configResponse.configs.whitelistedDomainsForQRScanner);
-						WoolworthsApplication.setStsValues(configResponse.configs.sts);
-						WoolworthsApplication.setCreditCardActivation(configResponse.configs.creditCardActivation);
+        if (!startupViewModel.getVideoPlayerShouldPlay()) {
 
-						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
-						if (absaBankingOpenApiServices == null) {
-							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");
-						} else {
-							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinimumSupportedAppBuildNumber()));
-						}
-						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
-						if (presenceInAppChat == null) {
-							presenceInAppChat = new PresenceInAppChat(new ArrayList<TradingHours>(), "", false);
-						} else {
-							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinimumSupportedAppBuildNumber()));
-						}
+            presentNextScreenOrServerMessage();
+            mp.stop();
 
-                        InstantCardReplacement instantCardReplacement = configResponse.configs.instantCardReplacement;
-                        if (instantCardReplacement != null) {
-                            instantCardReplacement.setEnabled(Utils.isFeatureEnabled(instantCardReplacement.getMinimumSupportedAppBuildNumber()));
-                        }
+        } else {
+            showNonVideoViewWithoutErrorLayout();
+        }
+    }
 
-						VirtualTempCard virtualTempCard = configResponse.configs.virtualTempCard;
-						if (virtualTempCard != null) {
-							virtualTempCard.setEnabled(Utils.isFeatureEnabled(virtualTempCard.getMinimumSupportedAppBuildNumber()));
-						}
+    @Override
+    protected void onStop() {
+        super.onStop();
+        startupViewModel.setAppMinimized(true);
+    }
 
-						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
-						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+            ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-						WoolworthsApplication.setInstantCardReplacement(instantCardReplacement);
-						WoolworthsApplication.setVirtualTempCard(virtualTempCard);
+            if (pBar != null)
+                pBar.setVisibility(View.GONE);
 
-						mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
-						mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP);
+            RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+            rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+            return;
+        }
 
-						splashScreenText = configResponse.configs.enviroment.splashScreenText;
-						splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
-						splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
+        if (startupViewModel.isAppMinimized()) {
+            startupViewModel.setAppMinimized(false);
 
-						if (!isVideoPlaying) {
-							presentNextScreenOrServerMessage();
-						}
+            if (startupViewModel.isServerMessageShown()) {
+                showNonVideoViewWithoutErrorLayout();
+                initialize();
+            } else {
+                startActivity(new Intent(this, StartupActivity.class));
+                finish();
+            }
+        } else {
+            initialize();
+        }
+    }
 
-					} catch (NullPointerException ex) {
-						showNonVideoViewWithErrorLayout();
-					}
-				}
-			}
+    private View.OnClickListener onRetryButtonTapped = new View.OnClickListener() {
 
-			@Override
-			public void onFailure(Throwable error) {
-				showNonVideoViewWithErrorLayout();
+        @Override
+        public void onClick(View v) {
+            if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
+                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_SERVER_ENVIRONMENT_KEY(), startupViewModel.getEnvironment().isEmpty() ? "prod" : startupViewModel.getEnvironment().toLowerCase());
+                startupViewModel.getFirebaseAnalytics().setUserProperty(StartupViewModelImpl.Companion.getAPP_VERSION_KEY(), startupViewModel.getAppVersion());
 
-			}
-		},ConfigResponse.class));
-	}
+                setupScreen();
+                initialize();
+            } else {
+                showNonVideoViewWithErrorLayout();
+            }
+        }
+    };
 
+    private void showVideoView() {
+        WVideoView videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
 
+        noVideoView.setVisibility(View.GONE);
+        serverMessageView.setVisibility(View.GONE);
+        videoViewLayout.setVisibility(View.VISIBLE);
+        String randomVideo = startupViewModel.getRandomVideoPath();
+        Uri videoUri = Uri.parse(randomVideo);
 
-	//video player on completion
-	@Override
-	public void onCompletion(MediaPlayer mp) {
+        videoView.setVideoURI(videoUri);
+        videoView.start();
+        videoView.setOnCompletionListener(this);
 
-		isVideoPlaying = false;
+        startupViewModel.setVideoPlaying(true);
+    }
 
-		if (!StartupActivity.this.mVideoPlayerShouldPlay) {
+    private void showNonVideoViewWithErrorLayout() {
+        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-			presentNextScreenOrServerMessage();
-			mp.stop();
+        runOnUiThread(() -> {
+            pBar.setVisibility(View.GONE);
+            videoViewLayout.setVisibility(View.GONE);
+            noVideoView.setVisibility(View.VISIBLE);
+            serverMessageView.setVisibility(View.GONE);
+            errorLayout.setVisibility(View.VISIBLE);
+        });
 
-		} else {
-			showNonVideoViewWithOutErrorLayout();
-		}
-	}
+    }
 
-	@Override
-	protected void onStop() {
-		super.onStop();
-		isMinimized = true;
-	}
+    private void showNonVideoViewWithoutErrorLayout() {
+        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
-			if (pBar != null)
-				pBar.setVisibility(View.GONE);
-			Utils.setScreenName(this,FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP);
-			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
-			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-			return;
-		}
+        pBar.setVisibility(View.VISIBLE);
+        videoViewLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(View.GONE);
+        noVideoView.setVisibility(View.VISIBLE);
+        serverMessageView.setVisibility(View.GONE);
+    }
 
-		FirebaseDynamicLinks.getInstance()
-				.getDynamicLink(getIntent())
-				.addOnSuccessListener(this, pendingDynamicLinkData -> {
-					// Get deep link from result (may be null if no link is found)
-					if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
-						mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
-						Log.e("mDeepLinkUrl",mDeepLinkUrl);
-					}
-				})
-				.addOnFailureListener(this, e -> Log.w(TAG, "getDynamicLink:onFailure", e));
-		if (isMinimized) {
-			isMinimized = false;
-			if (isServerMessageShown) {
-				showNonVideoViewWithOutErrorLayout();
-				executeConfigServer();
-			} else{
-				startActivity(new Intent(this, StartupActivity.class));
-				finish();
-			}
-		}else{
-			executeConfigServer();
-		}
-	}
+    private void showServerMessage() {
+        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        View noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        View serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        WTextView serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
+        RelativeLayout videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-	private String getRandomVideos() {
-		ArrayList<String> listOfVideo = new ArrayList<>();
-		String rawFolderPath = "android.resource://" + getPackageName() + "/";
-		listOfVideo.add(rawFolderPath + R.raw.food_broccoli);
-		listOfVideo.add(rawFolderPath + R.raw.food_chocolate);
-		Collections.shuffle(listOfVideo);
-		return listOfVideo.get(0);
-	}
+        pBar.setVisibility(View.GONE);
+        videoViewLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(View.GONE);
+        noVideoView.setVisibility(View.GONE);
 
-	private void showVideoView() {
-		noVideoView.setVisibility(View.GONE);
-		serverMessageView.setVisibility(View.GONE);
-		videoViewLayout.setVisibility(View.VISIBLE);
-		String randomVideo = getRandomVideos();
-		Log.d("randomVideo", randomVideo);
-		Uri videoUri = Uri.parse(randomVideo);
+        serverMessageLabel.setText(startupViewModel.getSplashScreenText());
+        WButton proceedButton = findViewById(R.id.proceedButton);
+        if (startupViewModel.isSplashScreenPersist()) {
+            proceedButton.setVisibility(View.GONE);
+        } else {
+            proceedButton.setVisibility(View.VISIBLE);
+            proceedButton.setOnClickListener(v -> {
+                showNonVideoViewWithoutErrorLayout();
+                startupViewModel.presentNextScreen();
+            });
+        }
 
-		videoView.setVideoURI(videoUri);
-		videoView.start();
-		videoView.setOnCompletionListener(this);
+        serverMessageView.setVisibility(View.VISIBLE);
 
-		isVideoPlaying = true;
-	}
+        startupViewModel.setServerMessageShown(true);
+    }
 
-	private void showNonVideoViewWithErrorLayout() {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				pBar.setVisibility(View.GONE);
-				videoViewLayout.setVisibility(View.GONE);
-				noVideoView.setVisibility(View.VISIBLE);
-				serverMessageView.setVisibility(View.GONE);
-				errorLayout.setVisibility(View.VISIBLE);
-			}
-		});
+    private boolean isFirstTime() {
+        if (Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
+            return true;
+        } else
+            return false;
+    }
 
-	}
+    private void setupScreen() {
+        if (isFirstTime()) {
+            showVideoView();
+        } else {
+            showNonVideoViewWithoutErrorLayout();
+        }
+    }
 
-	private void showNonVideoViewWithOutErrorLayout() {
-		pBar.setVisibility(View.VISIBLE);
-		videoViewLayout.setVisibility(View.GONE);
-		errorLayout.setVisibility(View.GONE);
-		noVideoView.setVisibility(View.VISIBLE);
-		serverMessageView.setVisibility(View.GONE);
-	}
+    private void presentNextScreenOrServerMessage() {
+        if (startupViewModel.isSplashScreenDisplay()) {
+            showServerMessage();
+        } else {
+            showNonVideoViewWithoutErrorLayout();
+            startupViewModel.presentNextScreen();
+        }
+    }
 
-	private void showServerMessage(String label, boolean persist) {
+    protected void onResume() {
+        super.onResume();
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP);
+        NotificationUtils.clearNotifications(StartupActivity.this);
+    }
 
-		pBar.setVisibility(View.GONE);
-		videoViewLayout.setVisibility(View.GONE);
-		errorLayout.setVisibility(View.GONE);
-		noVideoView.setVisibility(View.GONE);
+    @VisibleForTesting
+    public boolean testIsFirstTime() {
+        return this.isFirstTime();
+    }
 
-		serverMessageLabel.setText(label);
-		WButton proceedButton = findViewById(R.id.proceedButton);
-		if (persist) {
-			proceedButton.setVisibility(View.GONE);
-		} else {
-			proceedButton.setVisibility(View.VISIBLE);
-			proceedButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					presentNextScreen();
-				}
-
-			});
-		}
-
-		serverMessageView.setVisibility(View.VISIBLE);
-
-		isServerMessageShown = true;
-	}
-
-	private boolean isFirstTime() {
-		if (Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
-			return true;
-		} else
-			return false;
-	}
-
-	private void setUpScreen() {
-		if (isFirstTime()) {
-			showVideoView();
-		} else {
-			showNonVideoViewWithOutErrorLayout();
-		}
-	}
-
-	private void presentNextScreenOrServerMessage() {
-		if (splashScreenDisplay) {
-			showServerMessage(splashScreenText, splashScreenPersist);
-		} else {
-			presentNextScreen();
-		}
-	}
-
-	protected void onResume() {
-		super.onResume();
-		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP);
-		NotificationUtils.clearNotifications(StartupActivity.this);
-	}
-
-	@VisibleForTesting
-	public boolean testIsFirstTime(){
-		return this.isFirstTime();
-	}
-
-	@VisibleForTesting
-	public String testGetRandomVideos(){
-		return getRandomVideos();
-	}
-
-	private void presentNextScreen() {
-		try {
-			showNonVideoViewWithOutErrorLayout();
-			String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
-			// DeepLinking redirection
-			if (!TextUtils.isEmpty(mDeepLinkUrl)) {
-				if (mDeepLinkUrl.endsWith("/barcode/")) {// land on barcode activity
-					openDeepLinkBackgroundActivity(isFirstTime);
-					Intent openBarcodeActivity = new Intent(this, BarcodeScanActivity.class);
-					startActivity(openBarcodeActivity);
-					overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				} else if (mDeepLinkUrl.endsWith("/")) { // land on wToday
-					ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
-					finish();
-				} else if ((mDeepLinkUrl.contains("/help/"))) { // land on tips and trick activity
-					openDeepLinkBackgroundActivity(isFirstTime);
-					Intent openTipsAndTrickActivity = new Intent(this, TipsAndTricksViewPagerActivity.class);
-					startActivity(openTipsAndTrickActivity);
-					overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-					finish();
-				} else if ((mDeepLinkUrl.contains("/products/"))) { // land on product detail activity
-					String productIdAndSkuId = mDeepLinkUrl.substring(mDeepLinkUrl.lastIndexOf('/') + 1);
-					String[] arrayOfProductAndSKuId = productIdAndSkuId.split("&sku=");
-					new RetrieveProductDetail(this, arrayOfProductAndSKuId[0], arrayOfProductAndSKuId[1], isFirstTime == null || Utils.isAppUpdated(this)).retrieveProduct();
-				}
-			}else if (isFirstTime == null || Utils.isAppUpdated(this))
-				ScreenManager.presentOnboarding(StartupActivity.this);
-			else {
-				ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
-			}
-		} catch (NullPointerException ex) {
-			if (ex.getMessage() != null)
-				Log.e(TAG, ex.getMessage());
-		}
-	}
-
-	private void openDeepLinkBackgroundActivity(String isFirstTime) {
-		if (isFirstTime == null || Utils.isAppUpdated(this)) {
-			ScreenManager.presentOnboarding(StartupActivity.this);
-		} else {
-			Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);
-			openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "");
-			startActivity(openBottomActivity);
-			overridePendingTransition(0, 0);
-		}
-	}
+    @VisibleForTesting
+    public String testGetRandomVideos() {
+        return startupViewModel.getRandomVideoPath();
+    }
 }

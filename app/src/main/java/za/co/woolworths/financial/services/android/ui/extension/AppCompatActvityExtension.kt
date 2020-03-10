@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
@@ -5,20 +7,23 @@ import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 
 
 /**
@@ -135,7 +140,7 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
 
 }
 
-inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
+inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
@@ -203,5 +208,48 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
             }
         }
     }
+}
 
+inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: IGenericAPILoaderView<Any>? = null): Call<RESPONSE_OBJECT>? {
+    val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
+    requestListener?.showProgress()
+    call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
+        override fun onSuccess(response: RESPONSE_OBJECT) {
+            requestListener?.hideProgress()
+            requestListener?.onSuccess(response)
+        }
+
+        override fun onFailure(error: Throwable?) {
+            requestListener?.hideProgress()
+            requestListener?.onFailure(error)
+        }
+    }, classType))
+
+    return call
+}
+
+inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_OBJECT>?) {
+    call?.apply {
+        if (!isCanceled) {
+            cancel()
+        }
+    }
+}
+
+// Find current fragments in navigation graph
+fun Fragment.getFragmentNavController(@IdRes id: Int) = activity?.let {
+    return@let Navigation.findNavController(it, id)
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
+    val navHostFragment = this.supportFragmentManager.fragments.first() as NavHostFragment
+
+    navHostFragment.childFragmentManager.fragments.forEach {
+        if (fragmentClass.isAssignableFrom(it.javaClass)) {
+            return it as F
+        }
+    }
+
+    return null
 }

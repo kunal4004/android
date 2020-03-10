@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation
 
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -15,7 +15,7 @@ class CreditCardActivationInteractorImpl : CreditCardActivationContract.CreditCa
 
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: CreditCardActivationContract.CreditCardActivationInteractor.OnFinishListener) {
         val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
-        call.enqueue(CompletionHandler(object : RequestListener<RESPONSE_OBJECT> {
+        call.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
             override fun onSuccess(response: RESPONSE_OBJECT) {
                 requestListener?.onSuccess(response)
             }

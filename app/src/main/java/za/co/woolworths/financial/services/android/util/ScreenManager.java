@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -10,16 +11,20 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 
+import kotlin.Pair;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
@@ -42,6 +47,16 @@ public class ScreenManager {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
 		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
+		activity.startActivityForResult(intent, 0);
+		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		activity.finish();
+	}
+
+	public static void presentMain(Activity activity, String notificationUtils, Uri data) {
+
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
+		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
+		intent.setData(data);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 		activity.finish();
@@ -179,9 +194,9 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public static void presentHowToPayActivity(Activity activity, Account account) {
-		Intent howToPayIntent = new Intent(activity, HowToPayActivity.class);
-		howToPayIntent.putExtra("account",Utils.objectToJson(account));
+	public static void presentHowToPayActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
+		Intent howToPayIntent = new Intent(activity, PaymentOptionActivity.class);
+		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO,Utils.objectToJson(mAccountPair));
 		activity.startActivity(howToPayIntent);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}

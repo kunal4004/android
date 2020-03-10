@@ -20,7 +20,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
-import androidx.multidex.MultiDex;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -36,7 +35,6 @@ import com.google.gson.JsonElement;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -45,6 +43,7 @@ import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
@@ -64,7 +63,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Context mContextApplication;
 	private UserManager mUserManager;
 	private Tracker mTracker;
-	private static String applyNowLink;
+	private static ApplyNowLinks applyNowLink;
 	private static String registrationTCLink;
 	private static String faqLink;
 	private static String wrewardsLink;
@@ -178,11 +177,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		WoolworthsApplication.wrewardsTCLink = wrewardsTCLink;
 	}
 
-	public static String getApplyNowLink() {
+	public static ApplyNowLinks getApplyNowLink() {
 		return applyNowLink;
 	}
 
-	public static void setApplyNowLink(String applyNowLink) {
+	public static void setApplyNowLink(ApplyNowLinks applyNowLink) {
 		WoolworthsApplication.applyNowLink = applyNowLink;
 	}
 
@@ -359,12 +358,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 			mTracker = instance.newTracker(R.xml.global_tracker);
 		}
 		return mTracker;
-	}
-
-	@Override
-	protected void attachBaseContext(Context base) {
-		super.attachBaseContext(base);
-		MultiDex.install(this);
 	}
 
 	public boolean isOther() {

@@ -13,6 +13,7 @@ import com.daasuu.bl.BubbleLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_prodcut_nutritional_information.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.NutritionalInformationDetails
 import za.co.woolworths.financial.services.android.models.dto.NutritionalInformationFilterOption
 import za.co.woolworths.financial.services.android.models.dto.NutritionalTableItem
@@ -50,13 +51,15 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        setUniqueIds()
     }
 
     fun initViews() {
         activity?.apply {
             nutritionalInformationList.layoutManager = LinearLayoutManager(this)
         }
-        filterOptionSelector.setOnClickListener { showFilterOption() }
+        filterOptionSelector.setOnClickListener {
+            showFilterOption() }
         configureUI()
     }
 
@@ -96,10 +99,13 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
         return filterOptions
     }
 
-    override fun onOptionSelected(filterOption: NutritionalInformationFilterOption) {
+    override fun onOptionSelected(selectedSortedOption: NutritionalInformationFilterOption) {
+        val arguments = HashMap<String, String>()
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.NUTRITIONAL_INFORMATION_FILTER_OPTION] = selectedSortedOption.name
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION, arguments)
         filterOptionDialog?.dismiss()
-        filterOptionSelector.text = filterOption.name
-        nutritionalDataList[filterOption.name]?.let { adapter.updateData(it) }
+        filterOptionSelector?.text = selectedSortedOption.name
+        nutritionalDataList[selectedSortedOption.name]?.let { adapter.updateData(it) }
     }
 
     private fun showFilterOption() {
@@ -123,6 +129,15 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
             setTitle(null)
             setCancelable(true)
             show()
+        }
+    }
+
+    private fun setUniqueIds() {
+        resources?.apply {
+            pageTitle?.contentDescription = getString(R.string.pdp_nutritionalInformationTitle)
+            description?.contentDescription = getString(R.string.pdp_descriptionTitle)
+            filterOptionSelector?.contentDescription = getString(R.string.pdp_filterOptionSelector)
+            nutritionalInformationList?.contentDescription = getString(R.string.pdp_nutritionLayout)
         }
     }
 

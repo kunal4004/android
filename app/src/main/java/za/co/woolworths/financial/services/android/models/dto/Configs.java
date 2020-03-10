@@ -15,6 +15,7 @@ public class Configs {
     public QuickShopDefaultValues quickShopDefaultValues;
     public InstantCardReplacement instantCardReplacement;
     public VirtualTempCard virtualTempCard;
+    public ApplyNowLinks applyNowLinks;
     public ArrayList<String> whitelistedDomainsForQRScanner;
     public Sts sts;
     public CreditCardActivation creditCardActivation;

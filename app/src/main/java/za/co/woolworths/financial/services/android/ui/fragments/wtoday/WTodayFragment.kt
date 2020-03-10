@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.Utils
 
 @Suppress("DEPRECATION")
@@ -33,7 +34,11 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.let { Utils.updateStatusBarBackground(it) }
+        activity?.let {
+            Utils.updateStatusBarBackground(it)
+            QueryBadgeCounter.getInstance().queryMessageCount()
+        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -128,7 +133,6 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {
-        Log.d("onAddIngredientsToShop", ingredients)
     }
 
     override fun onShowProductDetail(productId: String, skuId: String) {

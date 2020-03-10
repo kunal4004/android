@@ -52,6 +52,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String downLoadUserAgent;
 	private String downLoadConntentDisposition;
 
+	@Override
+	protected void onStart() {
+		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		super.onStart();
+	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -170,7 +175,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
 							webInternalPage.goBackOrForward(index);
 							url = history.getItemAtIndex(-index).getUrl();
-							Log.d("tag", "first non empty" + url);
 							break;
 						}
 						index--;
@@ -225,7 +229,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webInternalPage.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
-					Log.d("tag", "first non empty" + url);
 					break;
 				}
 				index--;

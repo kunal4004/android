@@ -56,6 +56,7 @@
             android:textColor="@color/account_amount_color" />
 
         <TextView
+            android:id="@+id/buttonView"
             style="@style/futura_semi_bold_white_12_text_style"
             android:layout_width="56dp"
             android:layout_height="24dp"

@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import android.content.Context
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 
@@ -38,6 +38,7 @@ interface ProductDetailsContract {
         fun showProductIngredientsInformation()
         fun loadPromotionalImages()
         fun showNutritionalInformation()
+        fun setUniqueIds()
     }
 
     interface ProductDetailsPresenter {
@@ -52,7 +53,7 @@ interface ProductDetailsContract {
 
     interface ProductDetailsInteractor {
 
-        interface OnFinishListener : RequestListener<Any>
+        interface OnFinishListener : IResponseListener<Any>
 
         fun getProductDetails(productRequest: ProductRequest, onFinishListener: OnFinishListener)
         fun getCartSummary(onFinishListener: OnFinishListener)

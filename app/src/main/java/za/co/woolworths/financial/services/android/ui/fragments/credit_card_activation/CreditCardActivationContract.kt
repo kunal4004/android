@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation
 
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 
@@ -23,7 +23,7 @@ interface CreditCardActivationContract {
 
     interface CreditCardActivationInteractor {
 
-        interface OnFinishListener : RequestListener<Any>
+        interface OnFinishListener : IResponseListener<Any>
 
         fun executeCreditCardActivation(requestBody: CreditCardActivationRequestBody, onFinishListener: OnFinishListener)
     }

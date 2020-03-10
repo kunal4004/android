@@ -30,12 +30,12 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
-import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.util.Utils
 
 class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
@@ -263,7 +263,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     override fun onClick(view: View?) {
         activity?.apply {
             when (view?.id) {
-                R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
+                R.id.tvCallCenterNumber -> Utils.makeCall( "0861 50 20 20")
 
                 R.id.btnRetryOnFailure -> onAPIFailureRetry()
 

@@ -1305,6 +1305,220 @@
     <string name="barcode_image">barcode image</string>
     <string name="scan_barcode_regenerate">regenerate barcode</string>
 
+    <!-- storeCardMoreBenefits -->
+
+    <string name="storeCardMoreBenefits_row_1_title">24-Hour Shopping</string>
+    <string name="storeCardMoreBenefits_row_1_desc">Enjoy 24-hour shopping at www.woolworths.co.za or in the Woolies App.</string>
+
+    <string name="storeCardMoreBenefits_row_2_title">Up to 55 Days Interest Free</string>
+    <string name="storeCardMoreBenefits_row_2_desc">As long as you pay your account in full on or before the due date, no interest will be charged.</string>
+
+    <string name="storeCardMoreBenefits_row_3_title">Additional Cards</string>
+    <string name="storeCardMoreBenefits_row_3_desc">Get up to 8 additional Cards for your family at no extra cost. Purchases made with these cards will be billed to your account.</string>
+
+    <string name="storeCardMoreBenefits_row_4_title">Peace of Mind</string>
+    <string name="storeCardMoreBenefits_row_4_desc">Your peace of mind is important to us, so we offer you optional Comprehensive Balance Protection.</string>
+
+    <string name="storeCardMoreBenefits_row_5_title">Mobile Self Service (MSS)</string>
+    <string name="storeCardMoreBenefits_row_5_desc">Apply for limit increases||Access your Woolies vouchers||View your available funds and account info||Access your monthly statements</string>
+
+    <string name="personalLoanMoreBenefits_row_1_title">Revolving Personal Loan</string>
+    <string name="personalLoanMoreBenefits_row_1_desc">We offer optional Balance Protection to cover you for death, retrenchment, critical illness and disability. Find out about your options.</string>
+
+    <string name="personalLoanMoreBenefits_row_2_title">Access Available Funds</string>
+    <string name="personalLoanMoreBenefits_row_2_desc">Do a draw down in the Woolies app or call us on 0861 50 20 20.</string>
+
+    <string name="personalLoanMoreBenefits_row_3_title">Mobile Self Service (MSS)</string>
+    <string name="personalLoanMoreBenefits_row_3_desc">Apply for limit increases||Access your Woolies vouchers||View your available funds and account info||Access your monthly statements</string>
+
+    <string name="goldCreditCardMoreBenefits_row_1_title">Reward Yourself</string>
+    <string name="goldCreditCardMoreBenefits_row_1_desc">As a Woolies Store Cardholder, you’ll automatically become a WRewards member and get access to amazing benefits. Plus, pay with your Woolies card and get an extra 5% off selected WRewards offers.</string>
+
+    <string name="goldCreditCardMoreBenefits_row_2_title">Get More Back Everywhere</string>
+    <string name="goldCreditCardMoreBenefits_row_2_desc">2% back in quarterly vouchers on spend inside Woolworths.</string>
+
+    <string name="goldCreditCardMoreBenefits_row_3_title">Pay for Fuel</string>
+    <string name="goldCreditCardMoreBenefits_row_3_desc">Pay for your fuel with your Woolies Credit Card and get 0.75% back in WRewards quarterly vouchers.</string>
+
+    <string name="goldCreditCardMoreBenefits_row_4_title">Peace of Mind</string>
+    <string name="goldCreditCardMoreBenefits_row_4_desc">We offer optional Balance Protection that benefits you or your loved ones in the event of your death, retrenchment, critical illness or disablility. Find out more.</string>
+
+    <string name="goldCreditCardMoreBenefits_row_5_title">Budget Facility</string>
+    <string name="goldCreditCardMoreBenefits_row_5_desc">Make larger purchases by using the budget facility. Funds from your straight account can be allocted to your budget facility so you can spread the payment of R300 or more over 6 to 60 months.</string>
+
+    <string name="goldCreditCardMoreBenefits_row_6_title">Free Additional Cards</string>
+    <string name="goldCreditCardMoreBenefits_row_6_desc">Up to 8 additional cards for your family or friends, at no extra cost.</string>
+
+    <string name="goldCreditCardMoreBenefits_row_7_title">Medical and Legal Assistance</string>
+    <string name="goldCreditCardMoreBenefits_row_7_desc">Provides you and your immediate family with Assistance Services, when all travelling together on a journey outside your country of residence for a duration to 90 days.</string>
+
+
+    <string name="blackCreditCardMoreBenefits_row_1_title">Shop Anywhere</string>
+    <string name="blackCreditCardMoreBenefits_row_1_desc">Your Woolworths Credit Card is internationally recognised and accepted at 29 million merchants around the world, wherever you see the Visa sign.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_2_title">Get More Back Everywhere</string>
+    <string name="blackCreditCardMoreBenefits_row_2_desc">1% back in quarterly vouchers on all purchases outside of Woolworths and fuel purchases when paying with your card (excludes EFT). Ts&amp;Cs apply.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_3_title">Get More Back Everywhere</string>
+    <string name="blackCreditCardMoreBenefits_row_3_desc">1% back in quarterly vouchers on all purchases outside of Woolworths and fuel purchases when paying with your card (excludes EFT). Ts&amp;Cs apply.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_4_title">Pay for Fuel</string>
+    <string name="blackCreditCardMoreBenefits_row_4_desc">Pay for your fuel with your Woolies Credit Card and get up to 1% back in WRewards quarterly vouchers.</string>
+
+
+    <string name="blackCreditCardMoreBenefits_row_5_title">Reward Yourself</string>
+    <string name="blackCreditCardMoreBenefits_row_5_desc">As a Woolies Store Cardholder, you’ll automatically become a WRewards member and get access to amazing benefits. Plus, pay with your Woolies card and get an extra 5% off selected WRewards offers.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_6_title">Peace of Mind</string>
+    <string name="blackCreditCardMoreBenefits_row_6_desc">We offer optional Balance Protection that benefits you or your loved ones in the event of your death, retrenchment, critical illness or disablility.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_7_title">Budget Facility</string>
+    <string name="blackCreditCardMoreBenefits_row_7_desc">Make larger purchases by using the budget facility. Funds from your straight account can be allocated to your budget facility so you can spread the payment of R300 or more over 6 to 60 months.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_8_title">Free Additional Cards</string>
+    <string name="blackCreditCardMoreBenefits_row_8_desc">Up to 8 additional cards for your family or friends, at no extra cost.</string>
+
+    <string name="blackCreditCardMoreBenefits_row_9_title">Medical and Legal Assistance</string>
+    <string name="blackCreditCardMoreBenefits_row_9_desc">Provides you and your immediate family with Assistance Services, when all travelling together on a journey outside your country of residence for a duration to 90 days.</string>
+
+    <string name="store_card_title">Store Card</string>
+    <string name="store_card_desc">Shop Woolies Food, Fashion, Beauty and Home all on one card.</string>
+
+    <string name="qualify_criteria_title">Qualifying Criteria</string>
+    <string name="storeCardQualifyCriteria_row_1">Be 18 years of age, or older</string>
+    <string name="storeCardQualifyCriteria_row_2">Have a valid RSA ID Number</string>
+    <string name="storeCardQualifyCriteria_row_3">Earn in excess of R2,000 per month</string>
+
+    <string name="card_collection_title">Card Collection</string>
+    <string name="storeCard_card_collection_desc">When collection your Store Card, make sure you bring the following:</string>
+    <string name="storeCardCardCollection_row_1">Valid South African ID</string>
+    <string name="storeCardCardCollection_row_2">Latest three payslips or the last three months\' bank statements.</string>
+
+    <string name="goldCreditCard_title">Gold Credit Card</string>
+    <string name="goldCreditCard_desc">Get 2% back on all Woolies purchases when you pay with your card</string>
+
+    <string name="goldCreditCardQualify_row_1">Be 18 years of age, or older</string>
+    <string name="goldCreditCardQualify_row_2">Have a valid RSA ID Number</string>
+    <string name="goldCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
+
+    <string name="goldCreditCardCollection_desc">When collection your credit card, make sure you bring the following:</string>
+    <string name="goldCreditCardCollection_row_1">Valid South African ID</string>
+    <string name="goldCreditCardCollection_row_2">Provide your latest payslip or bank statements</string>
+    <string name="goldCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
+
+    <string name="blackCreditCard_title">Black Credit Card</string>
+    <string name="blackCreditCard_desc">The most rewarding way to shop at Woolies.</string>
+
+    <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
+    <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
+    <string name="blackCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
+
+    <string name="blackCreditCardCollection_desc">When collection your credit card, make sure you bring the following:</string>
+    <string name="blackCreditCardCollection_row_1">A valid RSA ID number</string>
+    <string name="blackCreditCardCollection_row_2">Latest three payslips or the last three months\' bank statements</string>
+    <string name="blackCreditCardCollection_row_3">Utility bill or original bank statement dated within the last three months, as proof of residence</string>
+
+    <string name="personalLoanCard_title">Personal Loan</string>
+    <string name="personalLoanCard_desc">Access funds again and again</string>
+
+    <string name="personalLoanQualifyingCriteria_row_1">Be 18 years of age, or older</string>
+    <string name="personalLoanQualifyingCriteria_row_2">Have a valid RSA ID Number</string>
+    <string name="personalLoanQualifyingCriteria_row_3">Earn in excess of R2,000 per month</string>
+    <string name="personalLoanQualifyingCriteria_row_4">Latest payslip or the last one months\' bank statements</string>
+    <string name="personalLoanQualifyingCriteria_row_5">Have a bank account in your name</string>
+
+    <string name="cardBenefits_title">Card Benefits</string>
+
+    <string name="storeCardBenefits_row_1_title">Automatic Rewards</string>
+    <string name="storeCardBenefits_row_1_desc">As a Woolies Store Cardholder, you’ll automatically become a WRewards member and get access to amazing benefits. Plus, pay with your Woolies card and get an extra 5% off selected WRewards offers.</string>
+    <string name="storeCardBenefits_row_2_title">Make a Difference</string>
+    <string name="storeCardBenefits_row_2_desc">Shift make a difference to the additional benefits</string>
+    <string name="storeCardBenefits_row_3_title">You\'re in Control</string>
+    <string name="storeCardBenefits_row_3_desc">Take charge of your budget. You decide how much to pay: whether you pay the full instalment, half of the outstanding balance or the full balance on your account.</string>
+    <string name="storeCardBenefits_row_4_title">Easy to Manage</string>
+    <string name="storeCardBenefits_row_4_desc">Convenience all the way. Shop food, fashion, beauty and home and pay utility bills or buy airtime. Also use your card at any Woolies Foodstops at selected Engen.</string>
+
+    <string name="goldCreditCardBenefits_row_1_title">Get More Back at Woolies</string>
+    <string name="goldCreditCardBenefits_row_1_desc">2% back in quarterly vouchers on all your Woolies spend when you pay with your Woolies card.</string>
+    <string name="goldCreditCardBenefits_row_2_title">Cash When You Need It</string>
+    <string name="goldCreditCardBenefits_row_2_desc">Use your Woolworths Credit Card to draw cash at any ATM displaying the Visa logo, worldwide.</string>
+    <string name="goldCreditCardBenefits_row_3_title">Automatic Basic Travel Insurance</string>
+    <string name="goldCreditCardBenefits_row_3_desc">Get basic travel insurance if you are under the age of 75 and purchase an international airline ticket using your card.</string>
+    <string name="goldCreditCardBenefits_row_4_title">Lost Card Protection</string>
+    <string name="goldCreditCardBenefits_row_4_desc">Lost card protection covers you against the fraudulent use of both primary and secondary cards.</string>
+
+    <string name="blackCreditCardBenefits_row_1_title">Get Back More with Woolies Black</string>
+    <string name="blackCreditCardBenefits_row_1_desc">3% back in quarterly vouchers on all Woolies purchases when you PAY with your Woolies Credit Card.</string>
+    <string name="blackCreditCardBenefits_row_2_title">Free Taste Magazine</string>
+    <string name="blackCreditCardBenefits_row_2_desc">Get Back More with Woolies Black</string>
+    <string name="blackCreditCardBenefits_row_3_title">2 Free Woolies Coffees</string>
+    <string name="blackCreditCardBenefits_row_3_desc">Get 2 Free Woolies coffee or tea vouchers monthly</string>
+    <string name="blackCreditCardBenefits_row_4_title">Free Online Delivery</string>
+    <string name="blackCreditCardBenefits_row_4_desc">Get free delivery when you shop Woolworths online or in the app and pay with your Woolies card.</string>
+
+    <string name="personalLoanBenefits_title">Benefits</string>
+    <string name="personalLoanBenefits_row_1_title">Get Up to R120 000</string>
+    <string name="personalLoanBenefits_row_1_desc">With a Woolies Personal Loan you can get up to R120 000 cash in your bank account within 48 hours of approval.</string>
+    <string name="personalLoanBenefits_row_2_title">Access Funds You\'ve Already Paid Back</string>
+    <string name="personalLoanBenefits_row_2_desc">Make use of the funds you\'ve already paid back. You can also apply to increase your limit at any time.</string>
+    <string name="personalLoanBenefits_row_3_title">Easy Payments</string>
+    <string name="personalLoanBenefits_row_3_desc">Pay by a monthly debit order, at any Woolworths store, deposit into any Absa bank branch, or by Electronic Funds Transfer (EFT).</string>
+    <string name="personalLoanBenefits_row_4_title">Up to 60 Months to Repay</string>
+    <string name="personalLoanBenefits_row_4_desc">Flexible repayment terms of up to 60 months and flexibility to make additional payments or settle early.</string>
+
+    <string name="more_benefits_title">More Benefits</string>
+    <string name="credit_card_gold_title">Gold</string>
+    <string name="credit_card_black_title">Black</string>
+
+    <string name="account_in_arrears_title">Account In Arrears</string>
+    <string name="amount_due_title">Amount Due</string>
+    <string name="amount_overdue_title">Amount Overdue</string>
+    <string name="total_amount_due_title">Total Amount Due</string>
+    <string name="next_payment_due_title">Next Payment Due</string>
+    <string name="balance_at_statement_date_title">Balance At Statement Date</string>
+    <string name="current_balance_title">Current Balance</string>
+    <string name="available_funds_title">Available Funds</string>
+    <string name="credit_limit_title">Credit Limit</string>
+    <string name="apply_credit_limit_description">Apply for a limit increase now. It’s quick and easy.</string>
+    <string name="information">Information</string>
+    <string name="WBottomSheetBehavior">za.co.woolworths.financial.services.android.ui.views.bottom_sheet.WBottomSheetBehavior</string>
+    <string name="label_payment_option_header">Payment Option Header</string>
+    <string name="credit_card_payment_options_label">Credit Card Payment Options</string>
+    <string name="payment_option_make_your_life_easier">4 ways we make your life easier</string>
+    <string name="payment_option_pay_woolies_card_label">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="account_options_label">Account Options</string>
+    <string name="withdrawal_options">Withdraw \nFunds</string>
+
+    <string name="black_credit_card_available_fund_information_desc">Funds available for you to use.</string>
+    <string name="black_credit_card_current_balance_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_credit_limit_information_desc">This is the total amount of credit offered to you by Woolies.</string>
+    <string name="black_credit_card_total_amount_due_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
+    <string name="black_credit_card_next_payment_due_desc">This is the date the Total Amount Due is to be paid by.</string>
+    <string name="card_info_view_term_and_condition">View Terms and Conditions</string>
+
+    <string name="black_credit_card_account_in_arrears_information_desc">Account in arrears is when the minimum payment due is not paid in full by the due date.</string>
+    <string name="black_credit_card_amount_due_information_desc">This is the minimum amount that is due for the payment, by the due date for that month.</string>
+    <string name="black_credit_card_amount_overdue_arrears_information_desc">The amount that is outstanding from the previous billing due date</string>
+    <string name="black_credit_card_total_amount_due_arrears_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
+    <string name="black_credit_card_next_payment_due_arrears_desc">This is the date the Total Amount Due is to be paid by.</string>
+    <string name="black_credit_card_balance_at_statement_date_desc">Balance as at the date when you are billed.</string>
+    <string name="black_credit_card_current_balance_arrears_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_available_fund_arrears_information_desc">Funds available for you to use.</string>
+    <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
+    <string name="silver_credit_card">silver credit card</string>
+
+    <string name="label_recent_transactions">Recent\nTransactions</string>
+    <string name="label_view_statements">View\nStatements</string>
+    <string name="label_payment_options">Payment\nOptions</string>
+    <string name="label_payment_options_button">Payment Options</string>
+    <string name="view_card">View Card</string>
+    <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
+    <string name="payment_options_title">Your Account Is In Arrears</string>
+
+    <string name="account_arrears_description">Your account in in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="call_the_call_centre">call the call centre</string>
+    <string name="view_pager_bottom_sheet_behavior" translatable="false">za.co.woolworths.financial.services.android.ui.views.ViewPagerBottomSheetBehavior</string>
+
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
     <string name="transaction_list_layout">Transaction List Layout</string>
@@ -1334,7 +1548,6 @@
     <string name="credit_card_activation_success_title">Your Credit Card Has Successfully Been Activated.</string>
     <string name="credit_card_activation_failure_title">We Are Unable To Activate Your Card</string>
     <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
-    <string name="call_the_call_centre">Call the call centre</string>
     <string name="credit_card_activation_popup_title">Card Activation Unavailable</string>
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 9am - 6pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_action">activate</string>
@@ -1345,6 +1558,48 @@
     <string name="need_help_call_the_center">Need help? call the call center</string>
     <string name="sending_otp_error">There was a Problem  \nSending Your OTP</string>
     <string name="validate_otp_error">There was server or \nnetworking error.</string>
+
+    <!-- Unique Ids for PDP-->
+    <string name="pdp_layout">productLayout</string>
+    <string name="pdp_view_pager_indicator">productImagesViewPagerIndicator</string>
+    <string name="pdp_close_button">buttonClose</string>
+    <string name="pdp_textViewProductName">textViewProductName</string>
+    <string name="pdp_textViewPrice">textViewPrice</string>
+    <string name="pdp_textViewColourPlaceHolder">textViewColourPlaceHolder</string>
+    <string name="pdp_textSelectedColour">textSelectedColour</string>
+    <string name="pdp_colorSelectorRecycleView">colorSelectorRecycleView</string>
+    <string name="pdp_buttonAddToCart">buttonAddToCart</string>
+    <string name="pdp_quantitySelector">quantitySelector</string>
+    <string name="pdp_quantitySelected">quantitySelected</string>
+    <string name="pdp_sizeColourSelectorLayout">sizeColourSelectorLayout</string>
+    <string name="pdp_sizeSelectorRecycleView">sizeSelectorRecycleView</string>
+    <string name="pdp_selectedSizePlaceholder">selectedSizePlaceholder</string>
+    <string name="pdp_textViewSelectedSize">textViewSelectedSize</string>
+    <string name="pdp_stockAvailabilityPlaceholder">stockAvailabilityPlaceholder</string>
+    <string name="pdp_deliveryLocationLayout">deliveryLocationLayout</string>
+    <string name="pdp_defaultLocationPlaceholder">defaultLocationPlaceholder</string>
+    <string name="pdp_txtCurrentDeliveryLocation">txtCurrentDeliveryLocation</string>
+    <string name="pdp_buttoneditDeliveryLocationn">buttoneditDeliveryLocationn</string>
+    <string name="pdp_productDetailOptionsAndInformationLayout">productDetailOptionsAndInformationLayout</string>
+    <string name="pdp_headerProductOptionsLayout">headerProductOptionsLayout</string>
+    <string name="pdp_checkInStoreAvailabilityLayout">checkInStoreAvailabilityLayout</string>
+    <string name="pdp_buttonView">buttonView</string>
+    <string name="pdp_addToShoppingListLayout">addToShoppingListLayout</string>
+    <string name="pdp_headerProductInformationLayout">headerProductInformationLayout</string>
+    <string name="pdp_productDetailsInformationLayout">productDetailsInformationLayout</string>
+    <string name="pdp_productIngredientsInformationLayout">productIngredientsInformationLayout</string>
+    <string name="pdp_nutritionalInformationLayout">nutritionalInformationLayout</string>
+    <string name="pdp_productDetailsTitle">productDetailsTitle</string>
+    <string name="pdp_productCodeTitle">productCodeTitle</string>
+    <string name="pdp_textProductCode">textProductCode</string>
+    <string name="pdp_productIngredientsTitle">productIngredientsTitle</string>
+    <string name="pdp_textViewIngredient">textViewIngredient</string>
+    <string name="pdp_nutritionalInformationTitle">nutritionalInformationTitle</string>
+    <string name="pdp_descriptionTitle">descriptionTitle</string>
+    <string name="pdp_filterOptionSelector">filterOptionSelector</string>
+    <string name="pdp_optionPopupLayout">optionPopupLayout</string>
+    <string name="pdp_sortOptionsList">sortOptionsList</string>
+    <string name="pdp_nutritionLayout">nutritionLayout</string>
 
     <!-- Unique Ids for PLP-->
     <string name="plp_buttonSort">buttonSort</string>
@@ -1377,5 +1632,28 @@
     <string name="plp_savePromotionalImage">savePromotionalImage</string>
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
+    <string name="confirm_cancel_order_dialog_title">Are you sure you wish to \ncancel this order?</string>
+    <string name="cancel_order_failure_title">There was a Problem Cancelling your Order</string>
+    <string name="cancel_order_failure_desc">Unfortunately we are not able to cancel your order. Please try again later.</string>
+    <string name="need_help_call_the_call_centre">Need Help? Call The Call Centre</string>
+    <string name="cancel_order_success_title">Your order has been \nsuccessfully cancelled.</string>
+
+    <!-- Unique Ids for Transactions-->
+    <string name="cancel_order_popup_layout">layoutCancelOrderPopup</string>
+    <string name="cancel_order_popup_image">imgCancelOrder</string>
+    <string name="cancel_order_popup_confirmation_message">tvConfirmCancelOrder</string>
+    <string name="cancel_order_popup_button_cancel">btnCancel</string>
+    <string name="cancel_order_popup_no_thanks_link">linkNoThanks</string>
+    <string name="cancel_order_error_title">labelProblemTitle</string>
+    <string name="cancel_order_error_desc">LableProblemDesct</string>
+    <string name="cancel_order_retry">btnRetry</string>
+    <string name="cancel_order_need_help">linkHelp</string>
+    <string name="how_to_use0">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature.  Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="temp_store_card_engine_service_stations_desc">Your temp card cannot be used at Engen service stations.</string>
+    <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
+    <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
+    <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
 
 </resources>

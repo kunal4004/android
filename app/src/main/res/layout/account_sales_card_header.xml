@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/cardBackImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:cropToPadding="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/store_card_back"
+        app:layout_constraintBottom_toBottomOf="@+id/cardFrontImageView"
+        app:layout_constraintEnd_toEndOf="@+id/cardFrontImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cardFrontImageView"
+        tools:ignore="ContentDescription" />
+
+
+    <ImageView
+        android:id="@+id/cardFrontImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:paddingTop="?attr/actionBarSize"
+        android:scaleType="fitEnd"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/store_card_front"
+        tools:ignore="ContentDescription"
+        tools:srcCompat="@drawable/store_card_front" />
+
+    <ImageView
+        android:id="@+id/cardFrontBlackImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:scaleType="fitEnd"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/black_credit_card_front"
+        tools:ignore="ContentDescription" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

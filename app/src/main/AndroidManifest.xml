@@ -6,6 +6,7 @@
     <permission
         android:name="${applicationId}.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -98,24 +99,25 @@
 
     <application
         android:name="za.co.woolworths.financial.services.android.models.WoolworthsApplication"
-        android:hardwareAccelerated="true"
-        android:icon="@drawable/appicon"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:label="${appLabel}"
-        android:largeHeap="true"
-        android:theme="@style/AppTheme"
         android:allowBackup="false"
         android:fullBackupOnly="false"
-        tools:replace="android:label"
-        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/appicon"
+        android:label="${appLabel}"
+        android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
+        tools:replace="android:label">
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="wfs_channel_id"/>
+            android:value="wfs_channel_id" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -134,18 +136,28 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter
-                android:autoVerify="true"
-                tools:targetApi="m">
+            <intent-filter android:order="1"
+                android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="www.woolworths.co.za"
-                    android:pathPrefix="/cat"
-                    android:scheme="https" />
+                    android:scheme="https"
+                    android:host="www-win-qa.woolworths.co.za"
+                    android:path="/cat" />
+            </intent-filter>
+            <intent-filter android:order="2">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="www-win-qa.woolworths.co.za"
+                    android:path="/fragments/common/dimension-search-results.jsp" />
             </intent-filter>
         </activity>
         <activity
@@ -166,9 +178,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="za.co.woolworths.financial.services.android.util.SMSReceiver" android:exported="true">
+        <receiver
+            android:name="za.co.woolworths.financial.services.android.util.SMSReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED"/>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
         <receiver
@@ -219,10 +233,6 @@
                 android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity" />
         </activity>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyAccountCards" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:theme="@style/SSOActivity" />
         <activity
@@ -256,6 +266,12 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity"
             android:screenOrientation="portrait"
@@ -371,75 +387,79 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/TaxInvoiceActivityStyle"/>
+            android:theme="@style/TaxInvoiceActivityStyle" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity"
-            android:theme="@style/ABSAOnlineBankingToDeviceStyle"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle"
+            android:theme="@style/ABSAOnlineBankingToDeviceStyle"
+            android:windowSoftInputMode="adjustResize" />
 
-            />
-
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle"
-            />
+            android:theme="@style/ShoppingListDetailActivityStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle"
-            />
+            android:theme="@style/ShoppingListDetailActivityStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
-            />
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity"
-            android:theme="@style/ErrorHandlerActivityStyle"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BarcodeScanActivityStyle"
-            />
+            android:theme="@style/ErrorHandlerActivityStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BarcodeScanActivityStyle" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WChatActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.WChatActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/ChatActivityStyle" />
+            android:theme="@style/ChatActivityStyle"
+            android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity"
             android:theme="@style/RewardBenefitDetailStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
-            android:theme="@style/StoreLocatorActivityStyle"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
             android:screenOrientation="portrait"
-            />
+            android:theme="@style/StoreLocatorActivityStyle" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.ScanStoreCardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreLocatorActivityStyle" />
+
         <provider
             android:name="za.co.woolworths.financial.services.android.util.WFileProvider"
             android:authorities="${applicationId}.WFileProvider"
@@ -451,27 +471,28 @@
                 android:resource="@xml/fileprovider" />
         </provider>
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle"
-            />
+            android:theme="@style/ShoppingListDetailActivityStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
-            android:windowSoftInputMode="adjustResize"
-            />
+            android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
-            />
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />
+
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension" android:screenOrientation="portrait"/>
 
         <activity
@@ -479,6 +500,34 @@
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+            android:windowSoftInputMode="adjustResize"
+            />
     </application>
 
 </manifest>

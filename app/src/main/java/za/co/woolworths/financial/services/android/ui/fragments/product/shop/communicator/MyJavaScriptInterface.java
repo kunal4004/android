@@ -29,7 +29,6 @@ public class MyJavaScriptInterface {
 
 	@JavascriptInterface
 	public void performClick() throws Exception {
-		Log.d("LOGIN::", "Clicked");
 		Toast.makeText(ctx, "Login clicked", Toast.LENGTH_LONG).show();
 	}
 }
