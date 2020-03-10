@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
@@ -23,8 +23,8 @@ class StoreLocatorViewModel : ViewModel() {
             override fun onLocationChange(location: Location?) {
                 FuseLocationAPISingleton.stopLocationUpdate()
                 WoolworthsApplication.getAppContext()?.let { context -> Utils.saveLastLocation(location, context) }
-                val requestLocationCall =  OneAppService.queryServiceGetStore(location?.latitude ?: 0.0, location?.longitude ?: 0.0, "", true)
-                requestLocationCall.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+                val requestLocationCall =  OneAppService.queryServiceGetStore(location?.latitude ?: 0.0, location?.longitude ?: 0.0, "")
+                requestLocationCall.enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
                     override fun onSuccess(locationResponse: LocationResponse?) {
                         locationResult.postValue(locationResponse?.Locations ?: mutableListOf())
                     }

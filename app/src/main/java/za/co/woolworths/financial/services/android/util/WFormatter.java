@@ -39,6 +39,20 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
+        return String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100);
+    }
+
+    public static String newRandAmountFormatWithoutSpace(int amount) {
+        String[] split = String.valueOf((amount / 100)).split("");
+        StringBuilder stringBuilder = new StringBuilder();
+        int counter = 0;
+        for (int i = split.length - 1; i > 0; i--) {
+            if (counter != 0 && counter % 3 == 0) {
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append(split[i]);
+            counter++;
+        }
         return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
     }
 
@@ -66,7 +80,7 @@ public class WFormatter {
             sAmount = sAmount.replace(",", ".");
         }
         double mAmount = Double.valueOf(sAmount);
-        int mIntAmount = (int) (mAmount * 100);
+        int mIntAmount = (int) Math.round(mAmount * 100);
         String[] split = String.valueOf((mIntAmount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;

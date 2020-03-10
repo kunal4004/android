@@ -8,7 +8,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fifty_dp"
+        android:layout_height="?attr/actionBarSize"
         android:paddingStart="@dimen/twenty_four_dp"
         android:paddingEnd="@dimen/sixteen_dp">
 

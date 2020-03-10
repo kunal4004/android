@@ -45,7 +45,7 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
             R.id.activateCardButton -> {
                 navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("absaCardToken" to absaCardToken))
             }
-            R.id.callCallCenter -> activity?.apply { Utils.makeCall(this, "0861 50 20 20") }
+            R.id.callCallCenter -> activity?.apply { Utils.makeCall("0861 50 20 20") }
             R.id.inEnvelope -> {
                 inEnvelopeCheck.isChecked = !inEnvelopeCheck.isChecked
                 validateSecurityCheck()

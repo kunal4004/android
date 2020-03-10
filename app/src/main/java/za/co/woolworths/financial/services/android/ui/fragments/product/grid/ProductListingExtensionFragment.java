@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 import java.util.List;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -65,7 +65,7 @@ public class ProductListingExtensionFragment extends Fragment {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
         retrieveProduct =  OneAppService.INSTANCE.getProducts(requestParams);
-        retrieveProduct.enqueue(new CompletionHandler<>(new RequestListener<ProductView>() {
+        retrieveProduct.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {
                 if (productView.httpCode == 200) {

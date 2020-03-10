@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -53,13 +54,22 @@
             app:srcCompat="@drawable/store_card_temp" />
 
         <CheckBox
-            android:id="@+id/howToUse1"
+            android:id="@+id/howToUse"
             style="@style/how_to_pay_text_style"
             android:layout_marginTop="@dimen/sixty_dp"
-            android:text="@string/temp_card_how_to_use1"
+            android:text="@string/how_to_use0"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/imTempCard" />
+
+        <CheckBox
+            android:id="@+id/howToUse1"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use1"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse" />
 
         <CheckBox
             android:id="@+id/howToUse2"
@@ -100,13 +110,31 @@
         <CheckBox
             android:id="@+id/howToUse6"
             style="@style/how_to_pay_text_style"
-            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginTop="24dp"
             android:text="@string/temp_card_how_to_use6"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/howToUse5"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse5" />
+
+        <CheckBox
+            android:id="@+id/howToUse7"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_store_card_engine_service_stations_desc"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse6" />
+
+        <CheckBox
+            android:id="@+id/howToUse8"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_store_card_contact_customer_service_desc"
             app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
-            />
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse7" />
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"

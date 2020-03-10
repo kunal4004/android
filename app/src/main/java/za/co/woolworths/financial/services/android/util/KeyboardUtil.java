@@ -90,7 +90,7 @@ public class KeyboardUtil {
 			int height = decorView.getContext().getResources().getDisplayMetrics().heightPixels;
 			int diff = height - r.bottom + bottomViewHeight;
 
-			int removePadding = height / 10 - Utils.dp2px(act, 8);
+			int removePadding = height / 10 - Utils.dp2px( 8);
 			//if it could be a keyboard add the padding to the view
 			if (diff != 0) {
 				// if the use-able screen height differs from the total screen height we assume that it shows a keyboard now

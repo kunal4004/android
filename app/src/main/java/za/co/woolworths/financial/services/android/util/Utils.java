@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -109,6 +110,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -392,23 +394,13 @@ public class Utils {
 	}
 
 	public static boolean isLocationEnabled(Context context) {
-		int locationMode = 0;
-		String locationProviders;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			try {
-				locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-
-			} catch (Settings.SettingNotFoundException e) {
-				e.printStackTrace();
-				return false;
-			}
-
+		try {
+			int locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
 			return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-		} else {
-			locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-			return !TextUtils.isEmpty(locationProviders);
+		} catch (Settings.SettingNotFoundException e) {
+			return false;
 		}
 	}
 
@@ -488,12 +480,27 @@ public class Utils {
 		return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
 	}
 
-	public static void openExternalLink(Context context, String url) {
+	public static void openLinkInInternalWebView(String url) {
+		Context context = WoolworthsApplication.getAppContext();
 		Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
+		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		openInternalWebView.putExtra("externalLink", url);
 		context.startActivity(openInternalWebView);
-		((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
+
+		public static void openBrowserWithUrl(Context context, String urlString) {
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+			context.startActivity(intent);
+		}
+
+	public static void openInternalWebView(String url) {
+		Context context = WoolworthsApplication.getAppContext();
+		Intent openInternalWebView = new Intent(context, InternalWebViewActivity.class);
+		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		openInternalWebView.putExtra("externalLink", url);
+		context.startActivity(openInternalWebView);
+	}
+
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
@@ -508,11 +515,12 @@ public class Utils {
 		return mBroadcastReceiver;
 	}
 
-	public static void makeCall(Context context, String number) {
+	public static void makeCall(String number) {
+		Context context = WoolworthsApplication.getInstance().getApplicationContext();
 		Uri call = Uri.parse("tel:" + number);
 		Intent openNumericKeypad = new Intent(Intent.ACTION_DIAL, call);
+		openNumericKeypad.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(openNumericKeypad);
-		((Activity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
 	public static String getScope(String scope) {
@@ -791,13 +799,15 @@ public class Utils {
 		return null;
 	}
 
-	public static void sendEmail(String email, FragmentActivity activity) {
+	public static void sendEmail(String email) {
+		Context context = WoolworthsApplication.getAppContext();
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		Uri data = Uri.parse("mailto:"
 				+ email
 				+ "?subject=" + "" + "&body=" + "");
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.setData(data);
-		activity.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	public static Badge addBadgeAt(Context context, WBottomNavigationView mBottomNav, int position, int number) {
@@ -876,8 +886,8 @@ public class Utils {
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
 	}
 
-	public static int dp2px(Context context, float dpValue) {
-		if (context == null) return 0;
+	public static int dp2px(float dpValue) {
+		Context context = WoolworthsApplication.getAppContext();
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
 	}
@@ -1348,7 +1358,7 @@ public class Utils {
 	private static String formatAmount(String currentAmount) {
 		if (currentAmount.contains("-")) {
 			currentAmount = currentAmount.replaceAll("-", "");
-			currentAmount = currentAmount.replace("R", "- R");
+			currentAmount = currentAmount.replace("R", "R -");
 		}
 		return currentAmount;
 	}

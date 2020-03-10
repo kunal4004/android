@@ -44,6 +44,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
+import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -428,6 +429,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            brandName.apply {
+                if (!it.brandText.isNullOrEmpty()) {
+                    text = it.brandText
+                    visibility = View.VISIBLE
+                }
+            }
+            if (!it.freeGiftText.isNullOrEmpty()) {
+                freeGiftText.text = it.freeGiftText
+                freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+                activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, it.freeGift) }
+                freeGiftImage.visibility = View.VISIBLE
+            }
         }
 
         if (isAllProductsOutOfStock()) {

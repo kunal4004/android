@@ -43,7 +43,7 @@ public class MyAccountOverViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View cView=mContext.getLayoutInflater().inflate(R.layout.my_account_fragment_header_logged_out_item,container,false);
-        ImageView boardingImage=(ImageView)cView.findViewById(R.id.boardingImage);
+        ImageView boardingImage=(ImageView)cView.findViewById(R.id.boardingImageView);
         WTextView title=(WTextView)cView.findViewById(R.id.accountsWalkthroughTitle);
         WTextView description=(WTextView)cView.findViewById(R.id.accountsWalkthroughDescription);
         boardingImage.setImageResource(images.getResourceId(position,-1));

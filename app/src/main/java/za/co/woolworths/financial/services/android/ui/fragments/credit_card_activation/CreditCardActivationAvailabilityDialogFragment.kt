@@ -24,7 +24,7 @@ class CreditCardActivationAvailabilityDialogFragment : WBottomSheetDialogFragmen
         super.onViewCreated(view, savedInstanceState)
         callUsOnButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener { activity?.apply { Utils.makeCall(this, "0861 50 20 20") } }
+            setOnClickListener { activity?.apply { Utils.makeCall("0861 50 20 20") } }
         }
     }
 

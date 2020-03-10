@@ -67,7 +67,7 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 			public void onClick(View v) {
 				String terms = vouchers.get(mSwipeStack.getCurrentPosition()).termsAndConditions;
 				if (TextUtils.isEmpty(terms)) {
-					Utils.openExternalLink(WRewardsVoucherDetailsActivity.this, WoolworthsApplication
+					Utils.openLinkInInternalWebView( WoolworthsApplication
 							.getWrewardsTCLink());
 				} else {
 					startActivity(new Intent(WRewardsVoucherDetailsActivity.this, WRewardsVoucherTermAndConditions.class).putExtra("TERMS", terms));

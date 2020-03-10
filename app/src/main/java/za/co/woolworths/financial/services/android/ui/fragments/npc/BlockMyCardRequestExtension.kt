@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -15,7 +15,7 @@ abstract class BlockMyCardRequestExtension : MyCardExtension() {
     fun blockMyCardRequest(blockMyCardRequest: BlockCardRequestBody, productOfferingId: String?) {
         productOfferingId?.let {
             mPostBlockMyCard = OneAppService.postBlockMyCard(blockMyCardRequest, it)
-            mPostBlockMyCard?.enqueue(CompletionHandler(object : RequestListener<BlockMyCardResponse> {
+            mPostBlockMyCard?.enqueue(CompletionHandler(object : IResponseListener<BlockMyCardResponse> {
                 override fun onSuccess(blockMyCardResponse: BlockMyCardResponse?) {
                     blockCardSuccessResponse(blockMyCardResponse)
                 }
