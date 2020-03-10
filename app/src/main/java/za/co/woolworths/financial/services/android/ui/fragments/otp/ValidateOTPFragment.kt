@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.validate_otp_fragment.*
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
@@ -49,7 +49,7 @@ class ValidateOTPFragment : Fragment() {
     }
 
     private fun initValidateOTP() {
-        OneAppService.validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : RequestListener<ValidateOTPResponse> {
+        OneAppService.validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
             override fun onSuccess(validateOTPResponse: ValidateOTPResponse?) {
                 validateOTPResponse?.apply {
                     when (httpCode) {

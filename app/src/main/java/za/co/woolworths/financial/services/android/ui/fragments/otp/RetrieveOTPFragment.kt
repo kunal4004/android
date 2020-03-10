@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -44,7 +44,7 @@ class RetrieveOTPFragment : Fragment() {
     }
 
     private fun initRetrieveOTP(otpMethodType: OTPMethodType) {
-        OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : RequestListener<RetrieveOTPResponse> {
+        OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 retrieveOTPResponse?.apply {
                     when (httpCode) {
