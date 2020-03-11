@@ -161,8 +161,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun animateButtonOut() {
-        val animate =
-                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
+        val animate = TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
         animate.duration = 500
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
@@ -172,8 +171,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     private fun animateButtonIn() {
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
         animate.duration = 500
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)

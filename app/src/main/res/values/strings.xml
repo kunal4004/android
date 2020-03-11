@@ -1636,4 +1636,11 @@
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
 
+    <!-- OnBoarding screen items -->
+    <string name="on_boarding_screen_title_1">Welcome to the world of Woolies. It’s the next level in shopping, rewards and financial services.</string>
+    <string name="on_boarding_screen_title_2">Get inspired with the newest products and trends, find items in store and shop your favourites anytime, anywhere.</string>
+    <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers and promotions on the go.</string>
+    <string name="on_boarding_screen_title_4">Access all your Woolworths financial products right here. View your balances, check your transaction history or apply for something new.</string>
+    <string name="on_boarding_lets_go">let\'s go</string>
 </resources>
+

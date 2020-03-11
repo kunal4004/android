@@ -76,14 +76,14 @@ public class AuthenticateUtils {
 
 	public void enableBiometricForCurrentSession(boolean value) {
 		try {
-			Utils.sessionDaoSave(mContext, SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION, value ? "1" : "0");
+			Utils.sessionDaoSave(SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION, value ? "1" : "0");
 		} catch (Exception e) {
 			Log.i(TAG, e.getMessage());
 		}
 	}
 
 	public boolean isBiometricsEnabledForCurrentSession() {
-		String result = Utils.getSessionDaoValue(mContext, SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION);
+		String result = Utils.getSessionDaoValue(SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION);
 		boolean isEnabled;
 		if (result == null)
 			isEnabled = true;

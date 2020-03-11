@@ -20,8 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
-import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionPresenterImpl;

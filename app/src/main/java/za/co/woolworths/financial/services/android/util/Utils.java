@@ -180,16 +180,16 @@ public class Utils {
 			locationJson.put("lat", loc.getLatitude());
 			locationJson.put("lon", loc.getLongitude());
 
-			sessionDaoSave(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
+			sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
 		} catch (JSONException e) {
 		}
 
 	}
 
-	public static Location getLastSavedLocation(Context mContext) {
+	public static Location getLastSavedLocation() {
 
 		try {
-			String json = getSessionDaoValue(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION);
+			String json = getSessionDaoValue(SessionDao.KEY.LAST_KNOWN_LOCATION);
 
 			if (json != null) {
 				JSONObject locationJson = new JSONObject(json);
@@ -356,15 +356,6 @@ public class Utils {
 		return new Gson().fromJson(value, token.getType());
 	}
 
-
-	public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
-		sessionDaoSave(key,value);
-	}
-
-    public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
-        return getSessionDaoValue(key);
-    }
-
 	public static void setBadgeCounter(int badgeCount) {
 
 		if (badgeCount == 0) {
@@ -380,7 +371,7 @@ public class Utils {
 			BadgeUtils.setBadge(context, badgeCount);
 		}
 
-		sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+		sessionDaoSave(SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
 	}
 
 	public static void removeBadgeCounter() {
@@ -558,10 +549,10 @@ public class Utils {
 
 	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key) {
 		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
+			String firstTime = Utils.getSessionDaoValue(key);
 			if (firstTime == null) {
 				Utils.displayValidationMessage(context, message_key, "");
-				Utils.sessionDaoSave(context, key, "1");
+				Utils.sessionDaoSave(key, "1");
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -569,10 +560,10 @@ public class Utils {
 
 	public static void showOneTimeTooltip(Context context, SessionDao.KEY key, View view, String message) {
 		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
+			String firstTime = Utils.getSessionDaoValue(key);
 			if (firstTime == null) {
 				showTooltip(context, view, message);
-				Utils.sessionDaoSave(context, key, "1");
+				Utils.sessionDaoSave(key, "1");
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -724,10 +715,10 @@ public class Utils {
 	public static String getUniqueDeviceID(Context context) {
 		String deviceID = null;
 		if (deviceID == null) {
-			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
+			deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
 			if (deviceID == null) {
 				deviceID = FirebaseInstanceId.getInstance().getId();
-				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
+				sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
 			}
 		}
 
@@ -1186,10 +1177,10 @@ public class Utils {
 
 	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key, String message) {
 		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
+			String firstTime = Utils.getSessionDaoValue(key);
 			if (firstTime == null) {
 				Utils.displayValidationMessage(context, message_key, message);
-				Utils.sessionDaoSave(context, key, "1");
+				Utils.sessionDaoSave(key, "1");
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -1408,7 +1399,7 @@ public class Utils {
         return absaSecureCredentials.getDeviceId();
     }
 
-    private static void sessionDaoSave(SessionDao.KEY key, String value) {
+    public static void sessionDaoSave(SessionDao.KEY key, String value) {
         SessionDao sessionDao = SessionDao.getByKey(key);
         sessionDao.value = value;
         try {
@@ -1418,7 +1409,7 @@ public class Utils {
         }
     }
 
-    private static String getSessionDaoValue(SessionDao.KEY key) {
+    public static String getSessionDaoValue(SessionDao.KEY key) {
         SessionDao sessionDao = SessionDao.getByKey(key);
         return sessionDao.value;
     }
@@ -1579,7 +1570,7 @@ public class Utils {
 		if (context == null){
 			context = WoolworthsApplication.getAppContext();
 		}
-		String appVersionFromDB = Utils.getSessionDaoValue(context, SessionDao.KEY.APP_VERSION);
+		String appVersionFromDB = Utils.getSessionDaoValue(SessionDao.KEY.APP_VERSION);
 		String appLatestVersion = null;
 		try {
 			appLatestVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;

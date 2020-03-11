@@ -27,9 +27,9 @@ class AnimationUtilExtension {
         }
 
         fun animateViewPushDown(view: View?) {
-            view?.let { view ->
-                PushDownAnim.setPushDownAnimTo(view)
-                        .setScale(PushDownAnim.MODE_STATIC_DP, 3f)
+            view?.let { v ->
+                PushDownAnim.setPushDownAnimTo(v)
+                        .setScale(PushDownAnim.MODE_STATIC_DP, 4.5f)
                         .setDurationPush(PushDownAnim.DEFAULT_PUSH_DURATION)
                         ?.setDurationRelease(PushDownAnim.DEFAULT_RELEASE_DURATION)
                         ?.setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
