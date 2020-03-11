@@ -107,6 +107,7 @@
                             android:indeterminateTint="@color/black"
                             android:visibility="gone" />
 
+
                         <CheckBox
                             android:id="@+id/btnDeleteRow"
                             android:layout_width="wrap_content"

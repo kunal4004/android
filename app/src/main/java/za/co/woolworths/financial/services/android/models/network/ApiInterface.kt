@@ -9,6 +9,8 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
@@ -1146,7 +1148,6 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/locations")
     fun getStoresForNPC(
             @Header("apiId") apiId: String,
@@ -1179,5 +1180,20 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Query("orderId") orderId: String): Call<CancelOrderResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("absa/activateCardAccount")
+    fun activateCreditCard(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse>
 
 }
