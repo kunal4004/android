@@ -28,7 +28,7 @@ class RetrieveOTPErrorFragment : Fragment() {
         retry.setOnClickListener { navController?.navigate(R.id.action_to_retrieveOTPFragment, bundleOf("bundle" to bundle)) }
         needHelp?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener { activity?.apply { Utils.makeCall(this, "0861 50 20 20") } }
+            setOnClickListener { activity?.apply { Utils.makeCall("0861 50 20 20") } }
         }
     }
 
