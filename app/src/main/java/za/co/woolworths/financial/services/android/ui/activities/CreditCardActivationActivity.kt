@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,19 +13,16 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardActivationActivity : AppCompatActivity() {
 
-    var absaCardToken: String = "4103752306880391"
+    var bundle: Bundle? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.credit_card_activation_activity)
         Utils.updateStatusBarBackground(this)
-        Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
+        bundle = intent.getBundleExtra("bundle")
         actionBar()
-        findNavController(R.id.nav_host_fragment)
-                .setGraph(
-                        R.navigation.nav_graph_credit_card_activation,
-                        bundleOf("absaCardToken" to absaCardToken)
-                )
+        loadNavHostFragment()
     }
 
     private fun actionBar() {
@@ -48,7 +46,16 @@ class CreditCardActivationActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    private fun loadNavHostFragment() {
+        findNavController(R.id.nav_host_fragment)
+                .setGraph(
+                        R.navigation.nav_graph_credit_card_activation,
+                        bundleOf("bundle" to bundle)
+                )
     }
 }

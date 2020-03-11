@@ -11,12 +11,13 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_security_check_fragment.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListener {
 
     var navController: NavController? = null
-    lateinit var absaCardToken: String
+    var bundle: Bundle? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_activation_security_check_fragment, container, false)
@@ -37,13 +38,16 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        absaCardToken = arguments?.getString("absaCardToken").toString()
+        bundle = arguments?.getBundle("bundle")
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.activateCardButton -> {
-                navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("absaCardToken" to absaCardToken))
+                navController?.navigate(if (WoolworthsApplication.getCreditCardActivation().otpEnabledForCreditCardActivation)
+                    R.id.action_to_RetrieveOTPFragment
+                else
+                    R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
             }
             R.id.callCallCenter -> activity?.apply { Utils.makeCall("0861 50 20 20") }
             R.id.inEnvelope -> {

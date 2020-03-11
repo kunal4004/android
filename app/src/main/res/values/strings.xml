@@ -1552,6 +1552,12 @@
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 9am - 6pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_action">activate</string>
     <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
+    <string name="sending_otp_title">Sending OTP</string>
+    <string name="sending_otp_desc">An One-time PIN is being sent to you. It should arrive shortly.</string>
+    <string name="validating_otp">Validating OTP</string>
+    <string name="need_help_call_the_center">Need help? call the call center</string>
+    <string name="sending_otp_error">There was a Problem  \nSending Your OTP</string>
+    <string name="validate_otp_error">There was server or \nnetworking error.</string>
 
     <!-- Unique Ids for PDP-->
     <string name="pdp_layout">productLayout</string>
