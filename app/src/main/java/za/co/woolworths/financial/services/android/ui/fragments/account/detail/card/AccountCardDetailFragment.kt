@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -53,6 +54,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
+    private  val REQUEST_CREDIT_CARD_ACTIVATION = 1983
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,6 +106,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 })
 
         autoConnectToNetwork()
+        executeCreditCardTokenService()
     }
 
     private fun autoConnectToNetwork() {
@@ -314,6 +317,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     override fun executeCreditCardTokenService() {
+        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true)) return
         activity?.apply {
             includeAccountDetailHeaderView.visibility = GONE
             creditCardActivationView.visibility = GONE
@@ -359,11 +363,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true))
-            executeCreditCardTokenService()
-    }
 
     override fun stopCardActivationShimmer(){
         creditCardActivationPlaceHolder.apply {
@@ -379,13 +378,24 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
             mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)
             mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
             mIntent.putExtra("bundle", mBundle)
-            startActivityForResult(mIntent, 0)
+            startActivityForResult(mIntent, REQUEST_CREDIT_CARD_ACTIVATION)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 
     private fun showCreditCardActivationUnavailableDialog(){
         activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance().show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CREDIT_CARD_ACTIVATION -> {
+                    executeCreditCardTokenService()
+                }
+            }
+        }
     }
 }
 
