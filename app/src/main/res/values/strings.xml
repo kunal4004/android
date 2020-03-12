@@ -1549,7 +1549,7 @@
     <string name="credit_card_activation_failure_title">We Are Unable To Activate Your Card</string>
     <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
     <string name="credit_card_activation_popup_title">Card Activation Unavailable</string>
-    <string name="credit_card_activation_popup_desc">The card activation service is only available between 9am - 6pm, Monday to Saturday.</string>
+    <string name="credit_card_activation_popup_desc">The card activation service is only available between 6am - 9pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_action">activate</string>
     <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
     <string name="sending_otp_title">Sending OTP</string>
@@ -1655,5 +1655,6 @@
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
+    <string name="activate_new_credit_card">Activate New Credit Card</string>
 
 </resources>

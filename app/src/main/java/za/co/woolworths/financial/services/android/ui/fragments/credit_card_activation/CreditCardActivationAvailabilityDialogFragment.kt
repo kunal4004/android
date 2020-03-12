@@ -26,6 +26,7 @@ class CreditCardActivationAvailabilityDialogFragment : WBottomSheetDialogFragmen
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener { activity?.apply { Utils.makeCall("0861 50 20 20") } }
         }
+        gotItButton?.setOnClickListener { dismissAllowingStateLoss() }
     }
 
 }
