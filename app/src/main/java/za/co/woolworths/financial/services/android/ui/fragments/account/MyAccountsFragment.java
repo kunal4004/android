@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,10 +18,12 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -138,11 +141,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private ImageView imRefreshAccount;
 	private RelativeLayout storeLocatorRelativeLayout;
 	private RelativeLayout helpSectionRelativeLayout;
+	private int httpCode = 0;
 	private ImageView messagesRightArrow;
 	private ProgressBar pbAccount;
 	private FrameLayout imgCreditCardLayout;
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
+	private ConstraintLayout mTroubleRetrieveAccountLayout;
+	private TextView descriptionTextView;
+	private Button retrieveAccountCallButton;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -187,7 +194,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			linkedPersonalCardView = view.findViewById(R.id.linkedPersonalLoan);
 			linkedAccountsLayout = view.findViewById(R.id.linkedLayout);
 			mScrollView = view.findViewById(R.id.nest_scrollview);
+			retrieveAccountCallButton = view.findViewById(R.id.retrieveAccountCallButton);
 			applyNowAccountsLayout = view.findViewById(R.id.applyNowLayout);
+			mTroubleRetrieveAccountLayout = view.findViewById(R.id.troubleRetrieveAccountLayout);
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
@@ -200,6 +209,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
 			cc_available_funds = view.findViewById(R.id.cc_available_funds);
 			pl_available_funds = view.findViewById(R.id.pl_available_funds);
+			descriptionTextView = view.findViewById(R.id.descriptionTextView);
 			messagesRightArrow = view.findViewById(R.id.messagesRightArrow);
 			messageCounter = view.findViewById(R.id.messageCounter);
 			userName = view.findViewById(R.id.user_name);
@@ -234,6 +244,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			updatePasswordRelativeLayout.setOnClickListener(this);
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
+			retrieveAccountCallButton.setOnClickListener(this);
 			adapter = new MyAccountOverViewPagerAdapter(getActivity());
 			viewPager.addOnPageChangeListener(this);
 			setUiPageViewController();
@@ -405,7 +416,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 		}
 
-		if (!sc && !cc && !pl) {
+		if (!sc && !cc && !pl && httpCode != 502) {
 			hideView(linkedAccountsLayout);
 			disableRefresh();
 		}
@@ -679,7 +690,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
 				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
+			case R.id.retrieveAccountCallButton:
 			case R.id.imRefreshAccount:
+				mTroubleRetrieveAccountLayout.setVisibility(View.GONE);
+				applyNowAccountsLayout.setVisibility(View.VISIBLE);
 				mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.CLICK_TO_REFRESH);
 				loadAccounts(true);
 				break;
@@ -720,12 +734,16 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
-                try {
-                    int httpCode = accountsResponse.httpCode;
+            	Activity activity =  getActivity();
+            	if (activity == null) return;
+                 try {
+                 	httpCode = accountsResponse.httpCode;
                     switch (httpCode) {
+						case 502:
                         case 200:
                             mAccountResponse = accountsResponse;
                             List<Account> accountList = accountsResponse.accountList;
+                            if (accountList == null) accountList = new ArrayList<>();
                             for (Account p : accountList) {
                                 accounts.put(p.productGroupCode.toUpperCase(), p);
                                 int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
@@ -739,19 +757,25 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             }
                             isAccountsCallMade = true;
                             configureView();
+
+                            // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
+							if (httpCode == 502) {
+								applyNowAccountsLayout.setVisibility(View.GONE);
+								mTroubleRetrieveAccountLayout.setVisibility(View.VISIBLE);
+								if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc))
+									descriptionTextView.setText(mAccountResponse.response.desc);
+							}
                             break;
                         case 440:
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
-							if (activity != null)
-								onSessionExpired(activity);
+							onSessionExpired(activity);
 							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
 								mUpdateMyAccount.swipeToRefreshAccount(false);
-								if (activity != null)
-									Utils.alertErrorMessage(activity, accountsResponse.response.desc);
+								Utils.alertErrorMessage(activity, accountsResponse.response.desc);
                             }
 
                             break;
