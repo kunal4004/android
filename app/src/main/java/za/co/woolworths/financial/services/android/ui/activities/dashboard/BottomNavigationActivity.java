@@ -241,8 +241,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         addDrawerFragment();
 
-        Intent onBoardingIntent = new Intent(this, OnBoardingActivity.class);
-        startActivity(onBoardingIntent);
     }
 
     private void initBadgeCounter() {
