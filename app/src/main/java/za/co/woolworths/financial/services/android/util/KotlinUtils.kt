@@ -7,17 +7,20 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.os.Bundle
 import android.text.*
-import android.text.style.*
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.NavController
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-
-
-enum class LinkType { PHONE, EMAIL }
+import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
+import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 
 class KotlinUtils {
     companion object {
@@ -53,12 +56,10 @@ class KotlinUtils {
         }
 
         fun setTransparentStatusBar(appCompatActivity: AppCompatActivity?) {
-            if (Build.VERSION.SDK_INT in 19..20) {
-                appCompatActivity?.setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true)
-            }
+
             if (Build.VERSION.SDK_INT >= 19) {
                 appCompatActivity?.window?.decorView?.systemUiVisibility =
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             }
             if (Build.VERSION.SDK_INT >= 21) {
                 appCompatActivity?.setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
@@ -147,6 +148,12 @@ class KotlinUtils {
 
         fun pxToDpConverter(px: Int): Int {
             return (px / Resources.getSystem().displayMetrics.density).toInt()
+        }
+
+        fun setAccountNavigationGraph(navigationController: NavController, screenType: OnBoardingScreenType) {
+            val bundle = Bundle()
+            bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
+            navigationController.setGraph(navigationController.graph, bundle)
         }
     }
 }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto
 
+import com.awfs.coordination.R
 import java.io.Serializable
 
-data class OnBoardingModel(val title: Int, val image_drawable_id: Int) : Serializable
+data class OnBoardingModel(val title: Int, val cardImageId: Int, val colorId: Int = R.color.white) : Serializable

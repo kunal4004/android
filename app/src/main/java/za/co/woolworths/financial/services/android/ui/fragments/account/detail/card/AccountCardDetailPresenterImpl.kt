@@ -63,8 +63,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -212,4 +211,5 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     override fun onFailure(error: Throwable?) {
         mainView?.hideAccountStoreCardProgress()
     }
+
 }

@@ -12,8 +12,9 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
@@ -60,14 +61,15 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -75,13 +77,14 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
+public class MyAccountsFragment extends Fragment implements View.OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -101,9 +104,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private RelativeLayout signOutRelativeLayout;
 	private RelativeLayout profileRelativeLayout;
 	private RelativeLayout preferenceRelativeLayout;
-	private ViewPager viewPager;
-	private MyAccountOverViewPagerAdapter adapter;
-	private LinearLayout pager_indicator;
 
 	private WTextView sc_available_funds;
 	private WTextView cc_available_funds;
@@ -119,8 +119,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private List<String> unavailableAccounts;
 	private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
 
-	private int dotsCount;
-	private ImageView[] dots;
 	private NestedScrollView mScrollView;
 	private ErrorHandlerView mErrorHandlerView;
 	private LinearLayout allUserOptionsLayout;
@@ -195,8 +193,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			profileRelativeLayout = view.findViewById(R.id.rlProfile);
             updatePasswordRelativeLayout = view.findViewById(R.id.rlUpdatePassword);
             preferenceRelativeLayout = view.findViewById(R.id.rlMyPreferences);
-			viewPager = view.findViewById(R.id.pager);
-			pager_indicator = view.findViewById(R.id.viewPagerCountDots);
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
 			cc_available_funds = view.findViewById(R.id.cc_available_funds);
 			pl_available_funds = view.findViewById(R.id.pl_available_funds);
@@ -234,9 +230,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			updatePasswordRelativeLayout.setOnClickListener(this);
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
-			adapter = new MyAccountOverViewPagerAdapter(getActivity());
-			viewPager.addOnPageChangeListener(this);
-			setUiPageViewController();
+
+			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
+			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
 
 			imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
 			imRefreshAccount.setOnClickListener(this);
@@ -335,7 +331,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	// add negative sign before currency value
-	public String removeNegativeSymbol(SpannableString amount) {
+	private String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
 			currentAmount = currentAmount.replace("R - ","- R ");
@@ -418,8 +414,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		}
 
 		allUserOptionsLayout.setVisibility(View.VISIBLE);
-		viewPager.setAdapter(adapter);
-		viewPager.setCurrentItem(0);
 		showFeatureWalkthroughPrompts();
 	}
 
@@ -491,8 +485,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		}
 
 		showView(allUserOptionsLayout);
-		viewPager.setAdapter(adapter);
-		viewPager.setCurrentItem(0);
 		// prompts when user not linked
 		isAccountsCallMade = true;
         showFeatureWalkthroughPrompts();
@@ -524,13 +516,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				//but signed in
 				mUpdateMyAccount.swipeToRefreshAccount(true);
 				showView(unlinkedLayout);
-				setUiPageViewController();
 			}
 		} else {
 			//user is signed out
 			mUpdateMyAccount.swipeToRefreshAccount(false);
 			showView(loggedOutHeaderLayout);
-			setUiPageViewController();
 		}
 	}
 
@@ -546,35 +536,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(unlinkedLayout);
 		hideView(loginUserOptionsLayout);
 		hideView(preferenceRelativeLayout);
-	}
-
-	private void setUiPageViewController() {
-		try {
-			Activity activity = getActivity();
-			pager_indicator.removeAllViews();
-			dotsCount = adapter.getCount();
-			dots = new ImageView[dotsCount];
-
-			for (int i = 0; i < dotsCount; i++) {
-				dots[i] = new ImageView(getActivity());
-				if (activity != null)
-					dots[i].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_default));
-
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT
-				);
-
-				params.setMargins(10, 0, 10, 0);
-
-				pager_indicator.addView(dots[i], params);
-			}
-
-			if (activity != null)
-				dots[0].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_selected));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -687,24 +648,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				break;
 
 		}
-	}
-
-	@Override
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-	}
-
-	@Override
-	public void onPageSelected(int position) {
-		Activity activity  = getActivity();
-		if (activity == null) return;
-		for (int i = 0; i < dotsCount; i++) {
-			dots[i].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_default));
-		}
-		dots[position].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_selected));
-	}
-
-	@Override
-	public void onPageScrollStateChanged(int state) {
 	}
 
     private void loadAccounts(boolean forceNetworkUpdate) {

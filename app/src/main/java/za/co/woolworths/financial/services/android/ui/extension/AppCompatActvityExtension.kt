@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.graphics.Typeface
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +16,7 @@ import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.tabs.TabLayout
@@ -24,6 +26,8 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
+import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 
 
 /**
@@ -193,21 +197,6 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
             }.start()
         }
     })
-
-    fun TabLayout.applyFont(typeface: Typeface) {
-        val viewGroup = getChildAt(0) as ViewGroup
-        val tabsCount = viewGroup.childCount
-        for (j in 0 until tabsCount) {
-            val viewGroupChildAt = viewGroup.getChildAt(j) as ViewGroup
-            val tabChildCount = viewGroupChildAt.childCount
-            for (i in 0 until tabChildCount) {
-                val tabViewChild = viewGroupChildAt.getChildAt(i)
-                if (tabViewChild is TextView) {
-                    tabViewChild.typeface = typeface
-                }
-            }
-        }
-    }
 }
 
 inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: IGenericAPILoaderView<Any>? = null): Call<RESPONSE_OBJECT>? {
@@ -253,3 +242,10 @@ fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
 
     return null
 }
+
+fun <T : Fragment> AppCompatActivity.setAccountNavigationGraph(navigationController: NavController, screenType: OnBoardingScreenType) {
+    val bundle = Bundle()
+    bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
+    navigationController.setGraph(navigationController.graph, bundle)
+}
+

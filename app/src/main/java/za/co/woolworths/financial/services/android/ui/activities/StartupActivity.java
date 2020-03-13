@@ -297,7 +297,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
     private boolean isFirstTime() {
-        if (Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
+        if (Utils.getSessionDaoValue(SessionDao.KEY.SPLASH_VIDEO) == null) {
             return true;
         } else
             return false;

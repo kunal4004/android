@@ -1,96 +1,81 @@
 package za.co.woolworths.financial.services.android.ui.activities.onboarding
 
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.on_boarding_activity.*
-import za.co.woolworths.financial.services.android.models.dto.OnBoardingModel
+import za.co.woolworths.financial.services.android.contracts.IViewPagerSwipeListener
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.OnBoardingFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 
-class OnBoardingActivity : AppCompatActivity(), IOnBoardingContract.View, View.OnClickListener {
-
-    private var onBoardingViewModelImpl: OnBoardingViewModelImpl? = null
+class OnBoardingActivity : AppCompatActivity(), IViewPagerSwipeListener, View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.on_boarding_activity)
         KotlinUtils.setTransparentStatusBar(this)
-        onBoardingViewModelImpl = OnBoardingViewModelImpl(this, OnBoardingModelImpl())
+
+        val onBoardingNavigationGraph = findNavController(R.id.on_boarding_navigation_graph)
+        KotlinUtils.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.START_UP)
 
         AnimationUtilExtension.animateViewPushDown(signInButton)
         AnimationUtilExtension.animateViewPushDown(registerButton)
         AnimationUtilExtension.animateViewPushDown(letsGoButton)
         AnimationUtilExtension.animateViewPushDown(skipButton)
 
+        skipButton?.paintFlags = skipButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
         skipButton?.setOnClickListener(this)
-    }
-
-    override fun showOnBoardingItems(onBoardingItems: MutableList<OnBoardingModel>) {
-        with(onBoardingItems) {
-            val onBoardingViewPagerAdapter = onBoardingViewPagerAdapter(this)
-            with(onBoardingViewPager) {
-                val onBoardingItemSize = onBoardingItems.size
-
-                adapter = onBoardingViewPagerAdapter
-                clipToPadding = false
-                clipChildren = false
-                offscreenPageLimit = onBoardingItems.size
-
-                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                    override fun onPageSelected(position: Int) {
-                        super.onPageSelected(position)
-                        when (position) {
-                            (onBoardingItemSize - 1) -> {
-                                skipButton?.visibility = GONE
-                                letsGoButton?.visibility = VISIBLE
-                            }
-                            else -> {
-                                skipButton?.visibility = VISIBLE
-                                letsGoButton?.visibility = GONE
-                            }
-                        }
-                    }
-                })
-            }
-            configurePageIndicator(this)
-        }
-    }
-
-    override fun onBoardingViewPagerAdapter(onBoardingItems: MutableList<OnBoardingModel>): FragmentStateAdapter {
-        return object : FragmentStateAdapter(this) {
-            override fun createFragment(position: Int): Fragment = OnBoardingFragment.newInstance(onBoardingItems[position])
-            override fun getItemCount(): Int = onBoardingItems.size
-        }
-    }
-
-    override fun configurePageIndicator(onBoardingItems: MutableList<OnBoardingModel>) {
-        viewPagerIndicatorTabLayout?.let { tabLayout ->
-            onBoardingViewPager?.let { viewPager ->
-                TabLayoutMediator(tabLayout, viewPager) { tab, _ -> tab.text = "" }.attach()
-            }
-        }
-    }
-
-    override fun navigateToOnBoardingScreen() {
-        startActivityForResult(Intent(this, BottomNavigationActivity::class.java), 0)
-        finish()
-        overridePendingTransition(R.anim.stay, R.anim.fade_out)
+        signInButton?.setOnClickListener(this)
+        letsGoButton?.setOnClickListener(this)
+        registerButton?.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.skipButton, R.id.letsGoButton -> onBoardingViewModelImpl?.navigateToMain()
+            R.id.skipButton, R.id.letsGoButton -> navigateToBottomNavigationActivity()
+            R.id.registerButton -> ScreenManager.presentSSORegister(this@OnBoardingActivity)
+            R.id.signInButton -> ScreenManager.presentSSOSignin(this@OnBoardingActivity)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
+                navigateToBottomNavigationActivity()
+            }
+        }
+    }
+
+    private fun navigateToBottomNavigationActivity() {
+        Utils.sessionDaoSave(SessionDao.KEY.ON_BOARDING_SCREEN, "1")
+        val bottomNavigationActivityIntent = Intent(this, BottomNavigationActivity::class.java)
+        startActivityForResult(bottomNavigationActivityIntent, 0)
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.fade_out)
+    }
+
+    override fun onPagerSwipe(position: Int, listSize: Int) {
+        when (position) {
+            (listSize - 1) -> {
+                skipButton?.visibility = View.GONE
+                letsGoButton?.visibility = View.VISIBLE
+            }
+            else -> {
+                skipButton?.visibility = View.VISIBLE
+                letsGoButton?.visibility = View.GONE
+            }
         }
     }
 }
