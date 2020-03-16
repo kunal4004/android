@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.contracts.IAccountCardDetails
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -108,6 +110,11 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
     }
 
+    override fun getCreditCardToken() {
+        if (!getAccount()?.productGroupCode.equals("CC", true)) return
+        model?.queryServiceGetCreditCartToken(this)
+    }
+
     override fun onSuccess(apiResponse: Any?) {
         with(apiResponse) {
             when (this) {
@@ -135,6 +142,18 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                         else -> {
                             mainView?.hideUserOfferActiveProgress()
                             handleUnknownHttpResponse(response?.desc)
+                        }
+                    }
+                }
+
+                is CreditCardTokenResponse->{
+                    when (httpCode) {
+                        200 -> {
+                            mainView?.onGetCreditCArdTokenSuccess(this)
+                        }
+                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> {
+                            mainView?.onGetCreditCardTokenFailure()
                         }
                     }
                 }
@@ -211,5 +230,14 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun onFailure(error: Throwable?) {
         mainView?.hideAccountStoreCardProgress()
+    }
+
+    override fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
+        var cardWithPLCState: Card? = null
+        cards?.filter { card -> card.cardStatus.trim { it <= ' ' } == "PLC" }?.apply {
+            if (this.isNotEmpty())
+                cardWithPLCState = this[0]
+        }
+        return cardWithPLCState
     }
 }

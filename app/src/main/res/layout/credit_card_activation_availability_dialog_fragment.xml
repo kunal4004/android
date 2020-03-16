@@ -49,7 +49,7 @@
 
 
     <Button
-        android:id="@+id/activate"
+        android:id="@+id/gotItButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="50dp"
@@ -58,11 +58,10 @@
         android:background="@drawable/order_add_to_cart_button_bg"
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.13"
-        android:text="@string/credit_card_activation_popup_action"
+        android:text="@string/cli_got_it"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
-        android:enabled="false"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/description" />
@@ -75,7 +74,7 @@
         android:text="@string/credit_card_activation_popup_call_us"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/activate"
+        app:layout_constraintTop_toBottomOf="@+id/gotItButton"
         />
 
     <androidx.constraintlayout.widget.Guideline
