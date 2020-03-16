@@ -107,11 +107,6 @@
                         layout="@layout/account_apply_layout"
                         android:visibility="visible" />
 
-                    <include
-                        android:id="@+id/troubleRetrieveAccountLayout"
-                        layout="@layout/trouble_retry_account_layout"
-                        android:visibility="gone" />
-
                     <LinearLayout
                         android:id="@+id/parentOptionsLayout"
                         android:layout_width="match_parent"
