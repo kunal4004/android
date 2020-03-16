@@ -8,13 +8,13 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.root_device_info_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
-class OkButtonErrorHandlerFragment : WBottomSheetDialogFragment() {
+class AccountsErrorHandlerFragment : WBottomSheetDialogFragment() {
 
     private var mDescription: String? = null
 
     companion object {
         private const val DESCRIPTION = "DESCRIPTION"
-        fun newInstance(description: String) = OkButtonErrorHandlerFragment().withArgs {
+        fun newInstance(description: String) = AccountsErrorHandlerFragment().withArgs {
             putString(DESCRIPTION, description)
         }
     }

@@ -68,7 +68,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSection
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.OkButtonErrorHandlerFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -752,8 +752,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
 							if (httpCode == 502) {
 								if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)){
-									OkButtonErrorHandlerFragment okButtonErrorHandlerFragment = OkButtonErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
-									okButtonErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+									AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
+									accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
 								}
 							}
                             break;
