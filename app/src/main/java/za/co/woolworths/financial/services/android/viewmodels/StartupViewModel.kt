@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.viewmodels
 
 import android.content.Intent
+import android.view.View
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -24,6 +25,6 @@ interface StartupViewModel {
     var firebaseAnalytics: FirebaseAnalytics?
     var intent: Intent?
 
-    fun queryServiceGetConfig(responseListener: IResponseListener<ConfigResponse>)
+    fun queryServiceGetConfig(responseListener: IResponseListener<ConfigResponse?>)
     fun presentNextScreen()
 }
