@@ -12,6 +12,7 @@ public class CartItemGroup {
 
 	public String suburbName;
 	public String provinceName;
+	public boolean isGWP = false;
 
 	public ArrayList<CommerceItem> commerceItems;
 

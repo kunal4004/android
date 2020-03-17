@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
 import kotlinx.android.synthetic.main.root_device_info_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
@@ -34,7 +35,7 @@ class RootedDeviceInfoFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         tvDescription?.text = mDescription
 
-        okButtonTapped?.setOnClickListener { finishActivity() }
+        okGotItButton?.setOnClickListener { finishActivity() }
     }
 
     override fun onDetach() {

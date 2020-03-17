@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+   android:id="@+id/giftRootContainerConstraintLayout"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/outside_border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/giftItemImageView"
+        android:layout_width="84dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/placeholder"
+        android:minHeight="@dimen/sixty_dp"
+        app:layout_constraintEnd_toStartOf="@+id/productNameTextView"
+        app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+        app:layout_constraintTop_toTopOf="@+id/startTopGuideLine" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="28dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startTopGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="31dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startTop27dpGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="27dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="21dp" />
+
+
+    <TextView
+        android:id="@+id/productNameTextView"
+        style="@style/style_cart_item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+        app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
+        app:layout_constraintTop_toTopOf="@+id/startTop27dpGuideLine"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/brandProductDescriptionTextView"
+        style="@style/style_cart_item_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+        app:layout_constraintStart_toEndOf="@+id/giftItemImageView"
+        app:layout_constraintTop_toBottomOf="@+id/productNameTextView"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/giftBadgeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:background="@color/black"
+        android:textColor="@color/white"
+        android:textAllCaps="true"
+        android:textSize="8sp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:text="@string/free_gift"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+        app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
+        app:srcCompat="@drawable/ic_gift_with_purchase" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -609,7 +609,7 @@ interface ApiInterface {
             @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("cart")
+    @GET("cartV2")
     fun getShoppingCart(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,

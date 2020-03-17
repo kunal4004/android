@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.error_dialog_with_ok_button_fragment.*
 import kotlinx.android.synthetic.main.root_device_info_fragment.*
+import kotlinx.android.synthetic.main.root_device_info_fragment.tvDescription
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class AccountsErrorHandlerFragment : WBottomSheetDialogFragment() {
@@ -34,7 +36,7 @@ class AccountsErrorHandlerFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         tvDescription?.text = mDescription
 
-        okButtonTapped?.setOnClickListener { dismiss() }
+        okButton?.setOnClickListener { dismiss() }
     }
 
 

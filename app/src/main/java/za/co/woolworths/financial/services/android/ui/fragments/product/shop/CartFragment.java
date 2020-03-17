@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
@@ -77,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -361,6 +363,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartActivity.openProductDetailFragment("", productList);
 	}
 
+	@Override
+	public void onGiftItemClicked(CommerceItem commerceItem) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		GiftWithPurchaseDialogDetailFragment giftWithPurchaseDialogDetailFragment = new GiftWithPurchaseDialogDetailFragment();
+		giftWithPurchaseDialogDetailFragment.show(((AppCompatActivity) activity).getSupportFragmentManager(), GiftWithPurchaseDialogDetailFragment.class.getSimpleName());
+	}
+
 	public boolean toggleEditMode() {
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
 		if (isAllInventoryAPICallSucceed)
@@ -403,7 +413,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.showEditCart();
 			}
+
 			cartItems = cartResponse.cartItems;
+
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
             queryServiceInventoryCall(cartResponse.cartItems);
@@ -841,6 +853,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 				if (key.contains("default"))
 					cartItemGroup.setType("GENERAL");
+				else if (key.contains("gwpCommerceItem"))
+					cartItemGroup.setType("GIFT");
 				else if (key.contains("homeCommerceItem"))
 					cartItemGroup.setType("HOME");
 				else if (key.contains("foodCommerceItem"))
@@ -867,7 +881,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 
 			cartResponse.cartItems = cartItemGroups;
-
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -1027,7 +1040,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			String fulfilmentStoreId = commerceItemCollectionMap.getKey().replaceAll("[^0-9]", "");
 			List<String> skuIds = new ArrayList<>();
 			for (CommerceItem commerceItem : commerceItemCollectionValue) {
-				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
+				CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
+				if (!commerceItemInfo.isGWP)
+					skuIds.add(commerceItemInfo.catalogRefId);
 			}
 			String groupBySkuIds = TextUtils.join("-", skuIds);
 
