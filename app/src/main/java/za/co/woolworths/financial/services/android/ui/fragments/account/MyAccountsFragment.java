@@ -337,6 +337,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		isActivityInForeground = true;
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
+
+		if (NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
+			initialize();
+		}
 	}
 
 	// add negative sign before currency value
