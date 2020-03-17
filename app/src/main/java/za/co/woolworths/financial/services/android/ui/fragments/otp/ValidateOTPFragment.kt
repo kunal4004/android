@@ -25,6 +25,7 @@ class ValidateOTPFragment : Fragment() {
     lateinit var productOfferingId: String
     lateinit var otpMethodType: OTPMethodType
     lateinit var otpSentTo: String
+    var validateOTPResponse: ValidateOTPResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.validate_otp_fragment, container, false)
@@ -52,16 +53,8 @@ class ValidateOTPFragment : Fragment() {
         OneAppService.validateOTP(ValidateOTPRequest(otpMethodType.name, otpValue), productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
             override fun onSuccess(validateOTPResponse: ValidateOTPResponse?) {
                 validateOTPResponse?.apply {
-                    when (httpCode) {
-                        200 -> navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
-                        502 -> {
-                            if (response?.code.equals("1060"))
-                                navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to bundle))
-                            else
-                                navigateToValidateOTPErrorFragment()
-                        }
-                        else -> navigateToValidateOTPErrorFragment()
-                    }
+                    this@ValidateOTPFragment.validateOTPResponse = this
+                    handleValidateOTPResponse(this)
                 }
             }
 
@@ -73,5 +66,27 @@ class ValidateOTPFragment : Fragment() {
 
     fun navigateToValidateOTPErrorFragment() {
         navController?.navigate(R.id.action_to_validateOTPErrorFragment, bundleOf("bundle" to bundle))
+    }
+
+    fun handleValidateOTPResponse(validateOTPResponse: ValidateOTPResponse?) {
+        validateOTPResponse?.apply {
+            when (httpCode) {
+                200 -> navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
+                502 -> {
+                    if (response?.code.equals("1060"))
+                        navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to bundle))
+                    else
+                        navigateToValidateOTPErrorFragment()
+                }
+                else -> navigateToValidateOTPErrorFragment()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        validateOTPResponse?.apply {
+            handleValidateOTPResponse(this)
+        }
     }
 }

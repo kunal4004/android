@@ -51,7 +51,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     fun configureUI() {
-        enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
+        enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
         didNotReceiveOTPTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         if (otpValue.isNotEmpty())
             showWrongOTP()

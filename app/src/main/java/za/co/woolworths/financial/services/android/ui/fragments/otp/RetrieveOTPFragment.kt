@@ -22,6 +22,7 @@ class RetrieveOTPFragment : Fragment() {
     lateinit var productOfferingId: String
     var bundle: Bundle? = null
     lateinit var otpMethodType: OTPMethodType
+    var retrieveOTPResponse: RetrieveOTPResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.retrieve_otp_fragment, container, false)
@@ -47,20 +48,9 @@ class RetrieveOTPFragment : Fragment() {
         OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 retrieveOTPResponse?.apply {
-                    when (httpCode) {
-                        200 -> {
-                            bundle?.apply {
-                                putString("otpSentTo", otpSentTo)
-                                putString("otpMethodType", otpMethodType.name)
-                                if (otpMethodType == OTPMethodType.SMS)
-                                    putString("numberToOTPSent", otpSentTo)
-                                navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to this))
-                            }
-                        }
-                        else -> navController?.navigate(R.id.action_to_retrieveOTPErrorFragment, bundleOf("bundle" to bundle))
-                    }
+                    this@RetrieveOTPFragment.retrieveOTPResponse = this
+                    handleRetrieveOTPResponse(this)
                 }
-
             }
 
             override fun onFailure(error: Throwable) {
@@ -68,4 +58,29 @@ class RetrieveOTPFragment : Fragment() {
             }
         }, RetrieveOTPResponse::class.java))
     }
+
+    override fun onResume() {
+        super.onResume()
+        retrieveOTPResponse?.apply {
+            handleRetrieveOTPResponse(this)
+        }
+    }
+
+    private fun handleRetrieveOTPResponse(response: RetrieveOTPResponse?) {
+        response?.apply {
+            when (httpCode) {
+                200 -> {
+                    bundle?.apply {
+                        putString("otpSentTo", otpSentTo)
+                        putString("otpMethodType", otpMethodType.name)
+                        if (otpMethodType == OTPMethodType.SMS)
+                            putString("numberToOTPSent", otpSentTo)
+                        navController?.navigate(R.id.action_to_enterOTPFragment, bundleOf("bundle" to this))
+                    }
+                }
+                else -> navController?.navigate(R.id.action_to_retrieveOTPErrorFragment, bundleOf("bundle" to bundle))
+            }
+        }
+    }
+
 }

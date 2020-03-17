@@ -1539,12 +1539,12 @@
     <string name="button_confirm">Button Confirm</string>
     <string name="email_statement_popup_layout">Email Statement Popup Layout</string>
     <string name="cc_activation_security_check_title">Security Check - Card Activation</string>
-    <string name="cc_activation_security_check_description">Check the below boxes if the information is true and correct. Should you experience any problems please call us on 0861 50 20 20.</string>
+    <string name="cc_activation_security_check_description">Tick the below boxes if the information is true and correct. Should you experience any problems please call us on 0861 50 20 20.</string>
     <string name="cc_activation_security_check_action">Activate My Card</string>
     <string name="cc_activation_security_check_contact">Call us on 0861 50 20 20</string>
     <string name="cc_activation_security_check_1">My card was in a sealed envelope</string>
     <string name="cc_activation_security_check_2">My card details are correct</string>
-    <string name="cc_activation_security_check_3">My PIN seal is in tact</string>
+    <string name="cc_activation_security_check_3">My PIN seal is intact</string>
     <string name="credit_card_activation_success_title">Your Credit Card Has Successfully Been Activated.</string>
     <string name="credit_card_activation_failure_title">We Are Unable To Activate Your Card</string>
     <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
@@ -1656,5 +1656,6 @@
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
     <string name="activate_new_credit_card">Activate New Credit Card</string>
+    <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
 
 </resources>
