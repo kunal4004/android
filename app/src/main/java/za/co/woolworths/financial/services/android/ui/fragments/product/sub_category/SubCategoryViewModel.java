@@ -25,8 +25,8 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 		super(schedulerProvider);
 	}
 
-	public void executeSubCategory(String category_id) {
-		mProductSubCategoryRequest = OneAppService.INSTANCE.getSubCategory(category_id);
+	public void executeSubCategory(String category_id, String version) {
+		mProductSubCategoryRequest = OneAppService.INSTANCE.getSubCategory(category_id, version);
 		mProductSubCategoryRequest.enqueue(new CompletionHandler<>(new IResponseListener<SubCategories>() {
 			@Override
 			public void onSuccess(SubCategories subCategories) {
