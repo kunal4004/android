@@ -1,9 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
-import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -14,9 +13,6 @@ class PriceItem {
         val price: String? = productList?.price?.toString() ?: ""
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
         val priceType = productList?.priceType
-        if (productList?.productName?.toLowerCase()?.contains("skinless chicken breast avg 400g") == true) {
-            Log.e("productListValue", "productListValue")
-        }
         with(itemView) {
             fromPriceLabelTextView?.text = ""
             if (wasPrice.isNullOrEmpty()) {
@@ -78,7 +74,7 @@ class PriceItem {
         }
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint("DefaultLocale", "SetTextI18n")
     private fun View.showFromPriceLabel(priceType: String?) {
         priceType?.let {
             if (it.toLowerCase().contains("from", true)) {

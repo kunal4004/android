@@ -3,116 +3,76 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="375dp"
+    android:layout_height="365dp"
     android:background="@drawable/card_shadow">
 
-    <ImageView
-        android:id="@+id/imProductImage"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:contentDescription="@string/plp_productImageLayout"
-        android:gravity="center"
-        android:paddingStart="24dp"
-        android:paddingTop="44dp"
-        android:paddingEnd="17dp"
-        android:paddingBottom="34dp"
-        android:scaleType="centerInside"
-        app:layout_collapseMode="parallax"
-        app:layout_constraintBottom_toTopOf="@+id/imageGuideLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/imageGuideLine"
+        android:id="@+id/detailContentStartGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.60" />
+        app:layout_constraintGuide_end="147dp" />
 
-    <ImageView
-        android:id="@+id/imFreeGiftImage"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_newPromotionalImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
 
-    <ImageView
-        android:id="@+id/imNewImage"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_newPromotionalImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imFreeGiftImage" />
 
-    <ImageView
-        android:id="@+id/imSave"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_savePromotionalImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imNewImage" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/promotionalImageGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="12dp" />
 
-    <ImageView
-        android:id="@+id/imReward"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:adjustViewBounds="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imSave"
-        android:contentDescription="@string/plp_rewardsPromotionalImage"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
 
-    <ImageView
-        android:id="@+id/imVitality"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:adjustViewBounds="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imReward"
-        android:contentDescription="@string/plp_vitalityPromotionalImage"/>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/detailContentEndGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="3dp" />
 
     <View
         android:id="@+id/horizontalProductSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/horizontal_line"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/recent_search_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageGuideLine" />
+        app:layout_constraintTop_toTopOf="@+id/detailContentStartGuideline" />
 
     <TextView
         android:id="@+id/brandName"
         style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
-        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="@string/brands"
         android:textAllCaps="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator" />
-
 
     <TextView
         android:id="@+id/tvProductName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="17dp"
         android:alpha="0.9"
+        android:contentDescription="@string/plp_textViewProductName"
         android:ellipsize="end"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="top|start"
@@ -123,145 +83,125 @@
         android:text="Original Free Range Venison Droëwors Nibbles 25g"
         android:textColor="@color/black"
         android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/brandName"
         tools:ignore="HardcodedText"
-        android:contentDescription="@string/plp_textViewProductName"
         tools:targetApi="lollipop" />
-
 
     <TextView
         android:id="@+id/tvSaveText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="19dp"
+        android:contentDescription="@string/plp_textViewPromotion"
         android:ellipsize="end"
         android:fontFamily="@font/futura_medium_ttf"
-        android:gravity="bottom|start"
+        android:gravity="center|start"
         android:letterSpacing="0.08"
         android:lines="2"
         android:maxLines="2"
+        android:minLines="2"
         android:text="BUY 6 AND SAVE 10% ONLINE ONLY"
         android:textColor="@color/promo_text_color"
         android:textSize="12sp"
-        android:contentDescription="@string/plp_textViewPromotion"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/tvProductName"
         tools:ignore="HardcodedText,UnusedAttribute" />
 
-
-    <ImageView
-        android:id="@+id/imQuickShopAddToCartIcon"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/includeProductListingPriceLayout"
+        layout="@layout/product_listing_price_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="9dp"
-        android:contentDescription="@string/plp_buttonAddToCart"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/detailContentEndGuideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
-        app:srcCompat="@drawable/quick_shop_add_to_cart_button_state" />
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
+
+    <ImageView
+        android:id="@+id/imProductImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_productImageLayout"
+        android:gravity="center"
+        android:paddingStart="24dp"
+        android:paddingTop="44dp"
+        android:paddingEnd="17dp"
+        android:paddingBottom="34dp"
+        app:layout_constraintBottom_toTopOf="@+id/detailContentStartGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-    <View
-        android:id="@+id/bottomSpace"
-        android:layout_width="0dp"
-        android:layout_height="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imQuickShopAddToCartIcon"
-        app:layout_constraintVertical_bias="0.0" />
+    <ImageView
+        android:id="@+id/imFreeGiftImage"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_newPromotionalImage"
+        android:minWidth="24dp"
+        app:layout_constraintStart_toStartOf="@+id/promotionalImageGuideline"
+        app:layout_constraintTop_toTopOf="@+id/promotionalImageTopGuideline" />
+
+    <ImageView
+        android:id="@+id/imNewImage"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_newPromotionalImage"
+        android:minWidth="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imFreeGiftImage" />
+
+    <ImageView
+        android:id="@+id/imSave"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_savePromotionalImage"
+        android:minWidth="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imNewImage" />
+
+    <ImageView
+        android:id="@+id/imReward"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_rewardsPromotionalImage"
+        android:minWidth="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imSave" />
+
+    <ImageView
+        android:id="@+id/imVitality"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/plp_vitalityPromotionalImage"
+        android:minWidth="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imReward" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/fromPriceGuideline"
+        android:id="@+id/promotionalImageTopGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="10dp"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <TextView
-        android:id="@+id/fromPriceLabelTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:text="From"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/bottomSpace"
-        app:layout_constraintStart_toStartOf="@+id/fromPriceGuideline"
-        tools:ignore="HardcodedText" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/bottomSpace"
-        app:layout_constraintStart_toEndOf="@+id/fromPriceLabelTextView">
-
-        <TextView
-            android:id="@+id/tvWasPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:autoSizeMaxTextSize="14sp"
-            android:autoSizeMinTextSize="10sp"
-            android:autoSizeStepGranularity="0.5sp"
-            android:autoSizeTextType="uniform"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:gravity="bottom|start"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:visibility="visible"
-            android:contentDescription="@string/plp_textViewWasPrice"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute"
-            tools:text="R 99.99 (R 99.99/kg)" />
-
-
-        <View
-            android:id="@+id/fromPriceStrikeThrough"
-            android:layout_width="0dp"
-            android:layout_height="1.5dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/tvWasPrice"
-            app:layout_constraintStart_toStartOf="@+id/tvWasPrice"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <TextView
-        android:id="@+id/tvPrice"
-        android:layout_width="0dp"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
-        android:autoSizeMaxTextSize="14sp"
-        android:autoSizeMinTextSize="10sp"
-        android:autoSizeStepGranularity="0.5sp"
-        android:autoSizeTextType="uniform"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:gravity="bottom|start"
-        android:text="R 99.99 (R 99.99/kg)"
-        android:textColor="@color/red"
-        android:textSize="14sp"
-        app:layout_alignSelf="flex_end"
-        android:contentDescription="@string/plp_textViewPrice"
-        app:layout_constraintBottom_toTopOf="@+id/bottomSpace"
-        app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
-        tools:ignore="HardcodedText,UnusedAttribute" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="12dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
