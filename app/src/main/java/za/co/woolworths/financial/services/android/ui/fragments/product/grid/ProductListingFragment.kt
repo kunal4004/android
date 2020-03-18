@@ -163,6 +163,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         ?: false)
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
+                productView?.history?.apply {
+                    mSubCategoryName = if (categoryDimensions.isNotEmpty()) {
+                        categoryDimensions.let { it[it.size - 1].label }
+                    } else {
+                        searchCrumbs.let { it[it.size - 1].terms }
+                    }
+                    setTitle()
+                }
             } else {
                 loadMoreData(productLists)
             }
@@ -786,8 +794,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    fun onRefined(navigationState: String, categoryName: String?) {
-        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState, productRequestBody.sortOption))
+    fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
+        if (isMultiSelectCategoryRefined) {
+            updateProductRequestBodyForRefinement(navigationState)
+            reloadProductsWithSortAndFilter()
+        } else {
+            (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState, productRequestBody.sortOption))
+        }
     }
 
     fun onResetFilter() {
