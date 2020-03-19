@@ -13,6 +13,9 @@
         android:layout_gravity="center"
         android:contentDescription="@string/plp_productImageLayout"
         android:gravity="center"
+        android:minWidth="24dp"
+        android:adjustViewBounds="true"
+        android:minHeight="24dp"
         android:paddingStart="24dp"
         android:paddingTop="44dp"
         android:paddingEnd="17dp"
@@ -21,7 +24,9 @@
         app:layout_collapseMode="parallax"
         app:layout_constraintBottom_toTopOf="@+id/imageGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/imVitality"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/imageGuideLine"
@@ -32,7 +37,7 @@
 
     <ImageView
         android:id="@+id/imFreeGiftImage"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
@@ -43,7 +48,7 @@
 
     <ImageView
         android:id="@+id/imNewImage"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
@@ -54,7 +59,7 @@
 
     <ImageView
         android:id="@+id/imSave"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
@@ -65,7 +70,7 @@
 
     <ImageView
         android:id="@+id/imReward"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
@@ -76,7 +81,7 @@
 
     <ImageView
         android:id="@+id/imVitality"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
