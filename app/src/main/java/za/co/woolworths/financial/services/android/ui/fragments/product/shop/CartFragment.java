@@ -1178,7 +1178,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		}
 
-		//updateItemQuantityToMatchStock();
+		updateItemQuantityToMatchStock();
 
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(this.cartItems);
