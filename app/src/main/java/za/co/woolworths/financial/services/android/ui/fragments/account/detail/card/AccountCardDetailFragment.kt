@@ -384,7 +384,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     private fun showCreditCardActivationUnavailableDialog(){
-        activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance().show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
+        activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(mCardPresenterImpl?.getAccount()?.accountNumberBin).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
