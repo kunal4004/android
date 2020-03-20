@@ -261,6 +261,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private void queryServiceChangeQuantity() {
 		mChangeQuantityList.add(mChangeQuantity);
 		changeQuantityAPI(mChangeQuantityList.get(0));
+		mChangeQuantityList.remove(0);
 	}
 
 	private void emptyCartUI(View view) {
@@ -777,14 +778,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			public void onFailure(Throwable error) {
 				Activity activity = getActivity();
 				if (activity != null) {
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mRemoveAllItemFailed = true;
-							mToggleItemRemoved.onRemoveItem(false);
-							mErrorHandlerView.hideErrorHandler();
-							mErrorHandlerView.showToast();
-						}
+					activity.runOnUiThread(() -> {
+						mRemoveAllItemFailed = true;
+						mToggleItemRemoved.onRemoveItem(false);
+						mErrorHandlerView.hideErrorHandler();
+						mErrorHandlerView.showToast();
 					});
 				}
 			}
@@ -967,12 +965,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								Activity activity = getActivity();
 								if (activity == null || error.getMessage() == null)return;
 
-								activity.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										loadShoppingCartAndSetDeliveryLocation();
-									}
-								});
+								activity.runOnUiThread(() -> loadShoppingCartAndSetDeliveryLocation());
 
 							}
 						},SetDeliveryLocationSuburbResponse.class));
