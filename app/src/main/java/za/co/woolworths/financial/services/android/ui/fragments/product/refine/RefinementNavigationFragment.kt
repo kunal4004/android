@@ -113,7 +113,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     private fun seeResults() {
-        listener.onSeeResults(emptyNavigationState, (parentFragment as RefinementDrawerFragment).categoryNameForPageTitle)
+        listener.onSeeResults(emptyNavigationState, (parentFragment as RefinementDrawerFragment).isMultiSelectCategoryRefined)
     }
 
     private fun updateToolBarMenuText() {
