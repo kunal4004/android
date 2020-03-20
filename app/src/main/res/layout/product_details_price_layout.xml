@@ -16,18 +16,18 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/fromPricePlaceHolder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="top|start"
                 android:letterSpacing="-0.01"
-                android:paddingRight="2dp"
+                android:paddingEnd="2dp"
                 android:textColor="@color/black"
-                android:textSize="20sp"
-                app:WTextView_font="medium_bold"/>
+                android:textSize="22sp"
+                android:fontFamily="@font/futura_medium_ttf" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/textActualPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,21 +36,21 @@
                 android:letterSpacing="-0.01"
                 android:textAllCaps="true"
                 android:textColor="@color/red"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:visibility="visible"
-                app:WTextView_font="medium_bold"/>
+                android:fontFamily="@font/futura_medium_ttf" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/textPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="top|start"
                 android:letterSpacing="-0.01"
-                android:paddingRight="2dp"
+                android:paddingEnd="2dp"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
-                android:textSize="20sp"
-                app:WTextView_font="medium_bold"/>
+                android:textSize="22sp"
+                android:fontFamily="@font/futura_medium_ttf" />
 
         </LinearLayout>
 
@@ -75,8 +75,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="@dimen/default_margin"
-            android:gravity="right"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:gravity="end"
             android:orientation="horizontal"/>
 
 

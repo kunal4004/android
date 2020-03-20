@@ -132,8 +132,8 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken())
     }
 
-    fun getSubCategory(category_id: String): Call<SubCategories> {
-        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), category_id)
+    fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
+        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), category_id, version)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
