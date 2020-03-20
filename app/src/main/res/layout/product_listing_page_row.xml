@@ -20,7 +20,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="16dp" />
 
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/promotionalImageGuideline"
         android:layout_width="wrap_content"
@@ -34,7 +33,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/detailContentEndGuideline"
