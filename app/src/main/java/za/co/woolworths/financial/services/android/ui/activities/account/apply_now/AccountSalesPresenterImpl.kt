@@ -36,7 +36,7 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
 
     fun onApplyNowButtonTapped() {
         val applyNowLinks = WoolworthsApplication.getApplyNowLink()
-        Utils.openInternalWebView(when (getApplyNowState()) {
+        Utils.openBrowserWithUrl(when (getApplyNowState()) {
             ApplyNowState.STORE_CARD -> applyNowLinks.storeCard
             ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD ->  applyNowLinks.creditCard
             ApplyNowState.PERSONAL_LOAN -> applyNowLinks.personalLoan
