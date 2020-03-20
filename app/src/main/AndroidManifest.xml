@@ -143,21 +143,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="https"
-                    android:host="www-win-qa.woolworths.co.za"
-                    android:path="/cat" />
-            </intent-filter>
-            <intent-filter android:order="2">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:scheme="https"
-                    android:host="www-win-qa.woolworths.co.za"
-                    android:path="/fragments/common/dimension-search-results.jsp" />
+                <data android:scheme="https" />
+                <data android:host="www-win-qa.woolworths.co.za" />
+                <data android:pathPattern="/cat.*" />
+                <data android:pathPattern="/dept.*" />
+                <data android:path="/fragments/common/dimension-search-results.jsp" />
             </intent-filter>
         </activity>
         <activity
