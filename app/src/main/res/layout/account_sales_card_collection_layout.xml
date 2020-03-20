@@ -38,7 +38,7 @@
         style="@style/account_sales_card_benefits_bottom_margin_style"
         android:layout_width="match_parent"
         android:layout_height="22dp"
-        android:background="@color/light_gray_background"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardCollectionItemLinearLayout" />
