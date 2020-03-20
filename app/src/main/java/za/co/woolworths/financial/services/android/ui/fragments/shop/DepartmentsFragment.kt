@@ -32,6 +32,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
+    private var version:String = ""
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -64,6 +65,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                 override fun onSuccess(rootCategories: RootCategories) {
                     when (rootCategories.httpCode) {
                         200 -> {
+                            version = rootCategories.response.version
                             parentFragment?.setCategoryResponseData(rootCategories)
                             bindDepartment()
                         }
@@ -112,6 +114,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             // navigate to drill down of categories
             true -> {
                 bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory))
+                bundle.putString("VERSION", version)
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
