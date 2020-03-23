@@ -99,7 +99,7 @@
                             android:gravity="center"
                             android:minHeight="@dimen/eighty_dp">
 
-                            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+                            <ImageView
                                 android:id="@+id/cartProductImage"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -107,8 +107,7 @@
                                 android:adjustViewBounds="true"
                                 android:contentDescription="@string/placeholder"
                                 android:minHeight="@dimen/sixty_dp"
-                                fresco:failureImage="@drawable/woolworth_logo_icon"
-                                fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
+                                />
                         </RelativeLayout>
 
                         <LinearLayout
