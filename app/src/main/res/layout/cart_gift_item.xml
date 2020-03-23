@@ -82,24 +82,11 @@
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/giftBadgeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:background="@color/black"
-        android:textColor="@color/white"
-        android:textAllCaps="true"
-        android:textSize="8sp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:id="@+id/freeGiftTextView"
         android:text="@string/free_gift"
-        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintTop_toBottomOf="@+id/giftItemImageView"
-        app:srcCompat="@drawable/ic_gift_with_purchase" />
+        style="@style/gift_item_textView_style" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
