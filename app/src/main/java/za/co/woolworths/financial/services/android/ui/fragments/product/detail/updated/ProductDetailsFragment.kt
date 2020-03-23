@@ -43,7 +43,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
+import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -164,7 +164,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateStockAvailabilityLocation()
 
         productDetails?.let {
-            productName.text = it.productName
+            productName?.text = it.productName
+            brandName?.apply {
+                if (!it.brandText.isNullOrEmpty()) {
+                    text = it.brandText
+                    visibility = View.VISIBLE
+                }
+            }
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
@@ -445,6 +451,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (isAllProductsOutOfStock()) {
             showProductOutOfStock()
+        }
+    }
+
+    private fun setBrandText(it: ProductDetails) {
+        brandName.apply {
+            if (!it.brandText.isNullOrEmpty()) {
+                text = it.brandText
+                visibility = View.VISIBLE
+            }
         }
     }
 

@@ -22,14 +22,14 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     private var mAdapterIsClickable: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
-        when (viewType) {
+        return when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
-                return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+                HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
             }
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
-                return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
+                OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
             }
-            else -> return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+            else -> HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
         }
     }
 
@@ -238,5 +238,4 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
         }
     }
-
 }

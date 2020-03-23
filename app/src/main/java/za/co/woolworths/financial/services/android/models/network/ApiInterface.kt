@@ -430,7 +430,8 @@ interface ApiInterface {
             @Header("deviceVersion") deviceVersion: String,
             @Header("apiKey") apiKey: String,
             @Header("sessionToken") sessionToken: String,
-            @Path("cat") category: String): Call<SubCategories>
+            @Path("cat") category: String,
+            @Query("version") version: String): Call<SubCategories>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip")

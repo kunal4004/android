@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 open class BaseProductUtils {
     companion object {
 
-        public fun displayPrice(fromPricePlaceHolder:TextView, tvPrice: TextView, tvWasPrice: TextView, price: String?, wasPrice: String?, priceType: String? = "", kilogramPrice: String? = "") {
+        fun displayPrice(fromPricePlaceHolder:TextView, tvPrice: TextView, tvWasPrice: TextView, price: String?, wasPrice: String?, priceType: String? = "", kilogramPrice: String? = "") {
             val wasPrice: String? = wasPrice ?: ""
             val price: String? = price ?: ""
             val kilogramPrice: String = kilogramPrice ?: ""

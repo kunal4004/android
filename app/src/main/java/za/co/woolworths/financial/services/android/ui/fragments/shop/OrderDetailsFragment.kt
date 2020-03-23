@@ -130,7 +130,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
                         val commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), CommerceItem::class.java)
                         val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                         commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                        dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                        if (commerceItem.isGWP)
+                            dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.GIFT))
+                        else
+                            dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
                     } catch (e: Exception) {
                         when (e) {
                             is IllegalStateException,

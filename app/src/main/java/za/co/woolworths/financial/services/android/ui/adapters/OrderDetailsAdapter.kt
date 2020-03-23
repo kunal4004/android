@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_item_to_shoppinglist_layout.view.*
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
+import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
@@ -33,6 +33,11 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT.value -> {
                 return AddToListViewHolder(LayoutInflater.from(context).inflate(R.layout.add_item_to_shoppinglist_layout, parent, false))
             }
+
+            OrderDetailsItem.ViewType.GIFT.value -> {
+                return GiftViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_gift_commerce_item, parent, false))
+            }
+
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
                 return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_commerce_item, parent, false))
             }
@@ -80,12 +85,23 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     }
 
+    inner class GiftViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+        override fun bind(position: Int) {
+            val item = dataList[position].item as CommerceItem
+            with(itemView){
+                with(item.commerceItemInfo) {
+                    setProductImage(freeGiftImageView, externalImageURL)
+                    giftItemTextView?.text = "$quantity x $productDisplayName"
+                }
+            }
+        }
+    }
+
     inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as String
             itemView.header.text = item
         }
-
     }
 
     inner class AddToListViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
