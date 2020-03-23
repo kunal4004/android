@@ -12,11 +12,13 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +68,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSection
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -138,6 +142,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private ImageView imRefreshAccount;
 	private RelativeLayout storeLocatorRelativeLayout;
 	private RelativeLayout helpSectionRelativeLayout;
+	private int httpCode = 0;
 	private ImageView messagesRightArrow;
 	private ProgressBar pbAccount;
 	private FrameLayout imgCreditCardLayout;
@@ -332,6 +337,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		isActivityInForeground = true;
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
+
+		if (NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
+			initialize();
+		}
 	}
 
 	// add negative sign before currency value
@@ -405,7 +414,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 		}
 
-		if (!sc && !cc && !pl) {
+		if (!sc && !cc && !pl && httpCode != 502) {
 			hideView(linkedAccountsLayout);
 			disableRefresh();
 		}
@@ -720,12 +729,16 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
-                try {
-                    int httpCode = accountsResponse.httpCode;
+            	FragmentActivity activity =  getActivity();
+            	if (activity == null) return;
+                 try {
+                 	httpCode = accountsResponse.httpCode;
                     switch (httpCode) {
+						case 502:
                         case 200:
                             mAccountResponse = accountsResponse;
                             List<Account> accountList = accountsResponse.accountList;
+                            if (accountList == null) accountList = new ArrayList<>();
                             for (Account p : accountList) {
                                 accounts.put(p.productGroupCode.toUpperCase(), p);
                                 int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
@@ -739,19 +752,25 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             }
                             isAccountsCallMade = true;
                             configureView();
+
+                            // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
+							if (httpCode == 502) {
+								if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)){
+									AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
+									accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+								}
+							}
                             break;
                         case 440:
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
-							if (activity != null)
-								onSessionExpired(activity);
+							onSessionExpired(activity);
 							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
 								mUpdateMyAccount.swipeToRefreshAccount(false);
-								if (activity != null)
-									Utils.alertErrorMessage(activity, accountsResponse.response.desc);
+								Utils.alertErrorMessage(activity, accountsResponse.response.desc);
                             }
 
                             break;

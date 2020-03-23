@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication

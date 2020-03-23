@@ -488,19 +488,12 @@ public class Utils {
 		context.startActivity(openInternalWebView);
 	}
 
-		public static void openBrowserWithUrl(Context context, String urlString) {
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
-			context.startActivity(intent);
-		}
-
-	public static void openInternalWebView(String url) {
+	public static void openBrowserWithUrl(String urlString) {
 		Context context = WoolworthsApplication.getAppContext();
-		Intent openInternalWebView = new Intent(context, InternalWebViewActivity.class);
-		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		openInternalWebView.putExtra("externalLink", url);
-		context.startActivity(openInternalWebView);
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
 	}
-
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
