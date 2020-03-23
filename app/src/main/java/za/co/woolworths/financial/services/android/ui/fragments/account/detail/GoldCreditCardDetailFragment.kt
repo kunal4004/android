@@ -17,7 +17,7 @@ class GoldCreditCardDetailFragment : AccountCardDetailFragment() {
         // No Debit order for credit cards
         debitOrderViewGroup?.visibility = View.GONE
         myCardDetailTextView?.visibility = View.GONE
-        includeAccountDetailHeaderView?.visibility = View.GONE
+        //includeAccountDetailHeaderView?.visibility = View.GONE
         cardImage.setBackgroundResource(R.drawable.gold_cc_envelope)
     }
 }

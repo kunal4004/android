@@ -18,7 +18,7 @@ class SilverCreditCardDetailFragment : AccountCardDetailFragment() {
         // No Debit order for credit cards
         debitOrderViewGroup?.visibility = GONE
         myCardDetailTextView?.visibility = GONE
-        includeAccountDetailHeaderView?.visibility = GONE
+        //includeAccountDetailHeaderView?.visibility = GONE
         cardImage.setBackgroundResource(R.drawable.silver_cc_envelope)
     }
 }

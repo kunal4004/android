@@ -106,7 +106,14 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 })
 
         autoConnectToNetwork()
-        executeCreditCardTokenService()
+
+        /*
+         ==============   Uncomment Below to enable credit card activation feature  =======
+         1. executeCreditCardTokenService()
+         2.( includeAccountDetailHeaderView?.visibility = View.GONE ) in all Credit Card Detail Fragments
+        */
+
+        //executeCreditCardTokenService()
     }
 
     private fun autoConnectToNetwork() {
