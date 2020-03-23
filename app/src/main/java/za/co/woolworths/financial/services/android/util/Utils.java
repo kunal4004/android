@@ -1351,7 +1351,7 @@ public class Utils {
 	private static String formatAmount(String currentAmount) {
 		if (currentAmount.contains("-")) {
 			currentAmount = currentAmount.replaceAll("-", "");
-			currentAmount = currentAmount.replace("R", "- R");
+			currentAmount = currentAmount.replace("R", "-R");
 		}
 		return currentAmount;
 	}
