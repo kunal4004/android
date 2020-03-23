@@ -29,6 +29,9 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
                 return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
             }
+            OrderDetailsItem.ViewType.GIFT.value -> {
+                return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.product_details_gift_with_purchase, parent, false))
+            }
             else -> return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
         }
     }
