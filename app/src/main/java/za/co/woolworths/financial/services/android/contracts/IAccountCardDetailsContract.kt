@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.contracts
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
@@ -31,6 +29,7 @@ interface IAccountCardDetailsContract {
         fun hideProductNotInGoodStanding()
         fun onOfferActiveSuccessResult()
         fun navigateToLoanWithdrawalActivity()
+        fun navigateToPaymentOptionActivity()
     }
 
     interface AccountCardDetailPresenter {
@@ -59,6 +58,7 @@ interface IAccountCardDetailsContract {
         fun navigateToBalanceProtectionInsuranceOnButtonTapped()
         fun cliProductOfferingGoodStanding(): Boolean
         fun creditLimitIncrease(): CreditLimitIncreaseStatus?
+        fun navigateToPaymentOptionActivity()
     }
 
     interface AccountCardDetailModel {

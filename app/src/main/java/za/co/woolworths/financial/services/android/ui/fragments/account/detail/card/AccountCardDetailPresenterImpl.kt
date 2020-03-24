@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
@@ -32,7 +33,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     var mOfferActiveCall: Call<OfferActive>? = null
     var mStoreCardCall: Call<StoreCardsResponse>? = null
     private var mOfferActive: OfferActive? = null
-    private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
+    var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: CreditLimitIncreaseStatus? = null
 
@@ -63,8 +64,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -204,12 +204,15 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun creditLimitIncrease(): CreditLimitIncreaseStatus? = mIncreaseLimitController
 
-
     override fun onDestroy() {
         mainView = null
     }
 
     override fun onFailure(error: Throwable?) {
         mainView?.hideAccountStoreCardProgress()
+    }
+
+    override fun navigateToPaymentOptionActivity() {
+        mainView?.navigateToPaymentOptionActivity()
     }
 }
