@@ -1048,14 +1048,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			List<String> skuIds = new ArrayList<>();
 			for (CommerceItem commerceItem : commerceItemCollectionValue) {
 				CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
-				Log.e("#113CommerceItemIdSku", commerceItemInfo.productDisplayName + " " + commerceItemInfo.getCommerceId()+ " "+commerceItemInfo.isGWP);
 				if (!commerceItemInfo.isGWP)
 					skuIds.add(commerceItemInfo.catalogRefId);
-
 			}
 			String groupBySkuIds = TextUtils.join("-", skuIds);
-
-			Log.e("#11CommerceItemIdSkuIds", new Gson().toJson(skuIds) + " " + groupBySkuIds);
 
 			/***
 			 * Handles products with  no fulfilmentStoreId
