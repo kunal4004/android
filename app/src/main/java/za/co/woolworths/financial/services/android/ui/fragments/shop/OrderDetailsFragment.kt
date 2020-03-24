@@ -101,6 +101,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
 
     private fun buildDataForOrderDetailsView(ordersResponse: OrderDetailsResponse): ArrayList<OrderDetailsItem> {
         val dataList = arrayListOf<OrderDetailsItem>()
+
         dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
         order?.apply {
             if (taxNoteNumbers.isNotEmpty())
@@ -112,32 +113,34 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
         while ((keys.hasNext())) {
-            val key = keys?.next()?.apply {
-                when {
-                    contains("default") -> dataList.add(OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER))
-                    contains("homeCommerceItem") -> dataList.add(OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER))
-                    contains("foodCommerceItem") -> dataList.add(OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER))
-                    contains("clothingCommerceItem") -> dataList.add(OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER))
-                    contains("premiumBrandCommerceItem") -> dataList.add(OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER))
-                    else -> dataList.add(OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER))
-                }
+            val key = keys.next()
+            val productsArray = itemsObject.getJSONArray(key)
+            val orderItemLength = productsArray.length()
+            val orderDetailsItem = when {
+                key.contains("default") -> OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                else -> OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
             }
 
-            val productsArray = itemsObject.getJSONArray(key)
-            if (productsArray.length() > 0) {
-                for (i in 0 until productsArray.length()) {
+            dataList.add(orderDetailsItem)
+
+            if (orderItemLength > 0) {
+                for (i in 0 until orderItemLength) {
                     try {
                         val commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), CommerceItem::class.java)
                         val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                         commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         if (commerceItem.isGWP)
-                            dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.GIFT))
+                            dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.GIFT, orderItemLength))
                         else
-                            dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                            dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
                     } catch (e: Exception) {
                         when (e) {
                             is IllegalStateException,
-                            is JsonSyntaxException -> dataList.add(OrderDetailsItem(CommerceItem(), OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                            is JsonSyntaxException -> dataList.add(OrderDetailsItem(CommerceItem(), OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
                         }
                     }
                 }

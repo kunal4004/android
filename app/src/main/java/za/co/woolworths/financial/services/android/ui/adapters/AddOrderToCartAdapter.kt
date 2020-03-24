@@ -33,9 +33,8 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
         }
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
+    override fun getItemCount(): Int = dataList.size
+
 
     override fun onBindViewHolder(holder: OrdersBaseViewHolder, position: Int) {
         holder.bind(position)
@@ -162,8 +161,9 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
     inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            val item = dataList[position].item as String
-            itemView.header.text = item
+            val orderDetailsItem  = dataList[position] as? OrderDetailsItem
+            val headerText  = "${orderDetailsItem?.item}${if (orderDetailsItem?.orderItemLength!! > 0) "S" else "" }"
+            itemView.header?.text =headerText
         }
 
     }

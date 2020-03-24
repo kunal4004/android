@@ -132,25 +132,30 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         val dataList = arrayListOf<OrderDetailsItem>()
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
+
         while ((keys.hasNext())) {
             val key = keys.next()
-            when {
-                key.contains("default") -> dataList.add(OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER))
-                key.contains("homeCommerceItem")-> dataList.add(OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER))
-                key.contains("foodCommerceItem") -> dataList.add(OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER))
-                key.contains("clothingCommerceItem") -> dataList.add(OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER))
-                key.contains("premiumBrandCommerceItem") -> dataList.add(OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER))
-                else -> dataList.add(OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER))
+            val productsArray = itemsObject.getJSONArray(key)
+            val orderItemLength = productsArray.length()
+
+            val orderDetailsItem = when {
+                key.contains("default") -> OrderDetailsItem("YOUR GENERAL ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                else -> OrderDetailsItem("YOUR OTHER ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
             }
 
-            val productsArray = itemsObject.getJSONArray(key)
-            if (productsArray.length() > 0) {
-                for (i in 0 until productsArray.length()) {
+            dataList.add(orderDetailsItem)
+
+            if (orderItemLength > 0) {
+                for (i in 0 until orderItemLength) {
                     val commerceItem: OrderHistoryCommerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), OrderHistoryCommerceItem::class.java)
                     val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                     commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
                     if (!commerceItem.isGWP)
-                        dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                        dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
                 }
             }
         }
