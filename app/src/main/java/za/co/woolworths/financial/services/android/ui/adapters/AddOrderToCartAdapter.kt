@@ -162,7 +162,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val orderDetailsItem  = dataList[position] as? OrderDetailsItem
-            val headerText  = "${orderDetailsItem?.item}${if (orderDetailsItem?.orderItemLength!! > 0) "S" else "" }"
+            val headerText  = "${orderDetailsItem?.item}${if (orderDetailsItem?.orderItemLength!! > 1) "S" else "" }"
             itemView.header?.text =headerText
         }
 

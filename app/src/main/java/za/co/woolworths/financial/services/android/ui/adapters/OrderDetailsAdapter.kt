@@ -99,8 +99,9 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            val item = dataList[position].item as String
-            itemView.header.text = item
+            val orderItemDetail = dataList[position] as? OrderDetailsItem
+            val headerText = "${orderItemDetail?.item}${if (orderItemDetail?.orderItemLength!! > 1) "S" else ""}"
+            itemView.header?.text = headerText
         }
     }
 

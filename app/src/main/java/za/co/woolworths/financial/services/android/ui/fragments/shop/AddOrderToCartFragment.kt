@@ -136,28 +136,31 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         while ((keys.hasNext())) {
             val key = keys.next()
             val productsArray = itemsObject.getJSONArray(key)
-            val orderItemLength = productsArray.length()
+            val orderItemsLength = productsArray.length()
 
-            val orderDetailsItem = when {
-                key.contains("default") -> OrderDetailsItem("YOUR GENERAL ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                else -> OrderDetailsItem("YOUR OTHER ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+            val orderDetailsHeaderItem = when {
+                key.contains("default") -> OrderDetailsItem("YOUR GENERAL ITEM", OrderDetailsItem.ViewType.HEADER, orderItemsLength)
+                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEM", OrderDetailsItem.ViewType.HEADER, orderItemsLength)
+                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEM", OrderDetailsItem.ViewType.HEADER, orderItemsLength)
+                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEM", OrderDetailsItem.ViewType.HEADER, orderItemsLength)
+                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEM", OrderDetailsItem.ViewType.HEADER, orderItemsLength)
+                else -> OrderDetailsItem("YOUR OTHER ITEM", OrderDetailsItem.ViewType.HEADER, orderItemsLength)
             }
 
-            dataList.add(orderDetailsItem)
-
-            if (orderItemLength > 0) {
-                for (i in 0 until orderItemLength) {
+            val orderDetailCommerceItem = arrayListOf<OrderDetailsItem>()
+            if (orderItemsLength > 0) {
+                for (i in 0 until orderItemsLength) {
                     val commerceItem: OrderHistoryCommerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), OrderHistoryCommerceItem::class.java)
                     val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                     commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
                     if (!commerceItem.isGWP)
-                        dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
+                        orderDetailCommerceItem.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemsLength))
                 }
             }
+
+            orderDetailsHeaderItem.orderItemLength = orderDetailCommerceItem.size
+            dataList.add(orderDetailsHeaderItem)
+            orderDetailCommerceItem.forEach { orderDetailsItem -> dataList.add(orderDetailsItem)}
         }
         return dataList
     }

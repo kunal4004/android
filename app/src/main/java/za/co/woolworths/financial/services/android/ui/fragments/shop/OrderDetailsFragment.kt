@@ -117,12 +117,12 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
             val productsArray = itemsObject.getJSONArray(key)
             val orderItemLength = productsArray.length()
             val orderDetailsItem = when {
-                key.contains("default") -> OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                else -> OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("Odefault") -> OrderDetailsItem("YOUR GENERAL ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                else -> OrderDetailsItem("YOUR OTHER ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
             }
 
             dataList.add(orderDetailsItem)
