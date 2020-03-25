@@ -6,13 +6,13 @@ import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.roundCornerDrawable
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 enum class CreditLimitIncreaseStates(private val status: String) {
     CONSENTS("Consents"),
@@ -27,7 +27,7 @@ enum class CreditLimitIncreaseStates(private val status: String) {
     COMPLETE("complete");
 
     val type: String
-        get() = status
+        get() = status.toLowerCase(Locale.getDefault())
 }
 
 class CreditLimitIncreaseStatus {
@@ -53,7 +53,7 @@ class CreditLimitIncreaseStatus {
         var nextStepColour = ""
 
         offerActive?.let { offer ->
-            nextStep = offer.nextStep
+            nextStep = offer.nextStep.toLowerCase(Locale.getDefault())
             messageSummary = offer.messageSummary
             messageDetail = offer.messageDetail
             activeOffer = offer.offerActive
@@ -132,7 +132,7 @@ class CreditLimitIncreaseStatus {
                 llCommonLayer?.visibility = GONE
                 tvIncreaseLimitDescription?.visibility = GONE
                 messageSummary = getString(R.string.status_unavailable) ?: ""
-                setTagBackgroundAndTitle(messageSummary, tvApplyNowIncreaseLimit)
+                setTagBackgroundAndTitle(messageSummary, nextStepColour,tvApplyNowIncreaseLimit)
             }
 
         }
@@ -141,16 +141,7 @@ class CreditLimitIncreaseStatus {
     private fun setTagBackgroundAndTitle(messageSummary: String, nextStepColour: String?, tvApplyNowIncreaseLimit: TextView?) {
         tvApplyNowIncreaseLimit?.apply {
             visibility = VISIBLE
-            roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour)
-            text = messageSummary
-        }
-    }
-
-    private fun setTagBackgroundAndTitle(messageSummary: String, tvApplyNowIncreaseLimit: TextView?) {
-        tvApplyNowIncreaseLimit?.apply {
-            visibility = VISIBLE
-            background =
-                    ContextCompat.getDrawable(tvApplyNowIncreaseLimit.context, R.drawable.status_grey)
+            roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour ?: "#b2b2b2")
             text = messageSummary
         }
     }
@@ -185,7 +176,8 @@ class CreditLimitIncreaseStatus {
 
     fun nextStep(offerActive: OfferActive?, productOfferingId: String?) {
         val cliStatus = offerActive?.cliStatus ?: ""
-        if (nextStep == CreditLimitIncreaseStates.IN_PROGRESS.type ||
+        if (nextStep.isEmpty() ||
+                nextStep == CreditLimitIncreaseStates.IN_PROGRESS.type ||
                 nextStep == CreditLimitIncreaseStates.DECLINE.type ||
                 nextStep == CreditLimitIncreaseStates.CONTACT_US.type ||
                 nextStep == CreditLimitIncreaseStates.UNAVAILABLE.type ||
