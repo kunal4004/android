@@ -305,7 +305,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="0dp"
                     android:layout_toEndOf="@+id/logoIncreaseLimit"
-                    android:text="@string/increase_limit"
+                    android:text="@string/cli_credit_limit_increase"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     app:WTextView_font="myriadpro_semibold" />

@@ -22,7 +22,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical"
-            android:paddingStart="@dimen/sixteen_dp"
+            android:paddingStart="16dp"
             android:paddingTop="@dimen/twenty_four_dp"
             android:paddingEnd="@dimen/ten_dp">
 
@@ -48,10 +48,11 @@
                     style="@style/style_loan_title"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="0dp"
                     android:layout_toEndOf="@+id/logoIncreaseLimit"
                     android:textColor="@color/black"
+                    android:gravity="start"
                     android:textSize="15sp"
+                    android:layout_marginStart="0dp"
                     android:fontFamily="@font/myriad_pro_semi_bold_otf" />
 
                 <LinearLayout
