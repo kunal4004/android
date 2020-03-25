@@ -8,13 +8,17 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.text.*
-import android.text.style.*
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 enum class LinkType { PHONE, EMAIL }
@@ -147,6 +151,16 @@ class KotlinUtils {
 
         fun pxToDpConverter(px: Int): Int {
             return (px / Resources.getSystem().displayMetrics.density).toInt()
+        }
+
+        fun convertFromDateToDate(date: String?): String? {
+            date?.apply {
+                val fromDateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val toDateFormat = SimpleDateFormat("MMMM yyyy")
+                val fromDate = fromDateFormat.parse(date)
+                return toDateFormat.format(fromDate)
+            }
+            return ""
         }
     }
 }

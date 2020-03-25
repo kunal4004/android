@@ -1637,5 +1637,6 @@
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
     <string name="retry_label">Retry</string>
     <string name="error_occured">Error Occured</string>
+    <string name="recent_transactions_title">Recent Transactions</string>
 
 </resources>
