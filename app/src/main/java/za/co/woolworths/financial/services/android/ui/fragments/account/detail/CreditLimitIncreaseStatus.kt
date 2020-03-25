@@ -69,7 +69,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.OFFER.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 showDescription(tvIncreaseLimitDescription, messageDetail)
