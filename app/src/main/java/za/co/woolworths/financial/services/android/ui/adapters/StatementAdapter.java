@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import android.view.LayoutInflater;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -67,8 +68,6 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	public void onBindViewHolder(StatementViewHolder holder, int position) {
 		UserStatement statement = mItems.get(position);
 		switch (getItemViewType(position)) {
-			case HEADER_VIEW:
-				break;
 			case CONTENT_VIEW:
 				holder.populateMonth(statement, holder.tvStatementName);
 				holder.showLoading(statement, holder.imCheckItem, holder.pbLoading, holder.tvViewStatement);
@@ -81,24 +80,18 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	}
 
 	private void onClickListener(final StatementViewHolder holder) {
-		holder.itemView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (!viewClicked()) {  // disable click
-					return;
-				}
-				statementListener.onItemClicked(v, holder.getAdapterPosition());
+		holder.itemView.setOnClickListener(v -> {
+			if (!viewClicked()) {  // disable click
+				return;
 			}
+			statementListener.onItemClicked(v, holder.getAdapterPosition());
 		});
-		holder.tvViewStatement.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (!viewClicked()) {  // disable click
-					return;
-				}
-				int position = holder.getAdapterPosition();
-				statementListener.onViewClicked(v, position, mItems.get(position));
+		holder.tvViewStatement.setOnClickListener(v -> {
+			if (!viewClicked()) {  // disable click
+				return;
 			}
+			int position = holder.getAdapterPosition();
+			statementListener.onViewClicked(v, position, mItems.get(position));
 		});
 	}
 
@@ -109,30 +102,30 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 
 	public class StatementViewHolder extends RecyclerView.ViewHolder {
 		private final ProgressBar pbLoading;
-		private WTextView tvStatementName, tvViewStatement;
+		private TextView tvStatementName, tvViewStatement;
 		private ImageView imCheckItem;
 
 		public StatementViewHolder(View itemView) {
 			super(itemView);
-			tvStatementName = (WTextView) itemView.findViewById(R.id.tvStatementName);
-			tvViewStatement = (WTextView) itemView.findViewById(R.id.tvViewStatement);
+			tvStatementName = (TextView) itemView.findViewById(R.id.tvStatementName);
+			tvViewStatement = (TextView) itemView.findViewById(R.id.tvViewStatement);
 			imCheckItem = (ImageView) itemView.findViewById(R.id.imCheckItem);
 			pbLoading = (ProgressBar) itemView.findViewById(R.id.pbLoading);
 		}
 
-		public void populateMonth(UserStatement statement, WTextView view) {
+		public void populateMonth(UserStatement statement, TextView view) {
 			view.setText(formatDate(statement.docDesc));
 		}
 
 
-		public void updateViewStatementUI(UserStatement statement, WTextView view, ProgressBar pbLoading) {
+		public void updateViewStatementUI(UserStatement statement, TextView view, ProgressBar pbLoading) {
 			if (statement.getStatementView()) {
 				hideView(view);
 				hideView(pbLoading);
 			}
 		}
 
-		public void showLoading(UserStatement statement, ImageView im, ProgressBar pb, WTextView tv) {
+		public void showLoading(UserStatement statement, ImageView im, ProgressBar pb, TextView tv) {
 			if (statement.getStatementView()) {
 				hideView(pb);
 				hideView(tv);
