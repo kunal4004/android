@@ -1,11 +1,10 @@
 package za.co.woolworths.financial.services.android.contracts
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
@@ -31,6 +30,11 @@ interface IAccountCardDetailsContract {
         fun hideProductNotInGoodStanding()
         fun onOfferActiveSuccessResult()
         fun navigateToLoanWithdrawalActivity()
+        fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse)
+        fun onGetCreditCardTokenFailure()
+        fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
+        fun executeCreditCardTokenService()
+        fun stopCardActivationShimmer()
     }
 
     interface AccountCardDetailPresenter {
@@ -59,10 +63,13 @@ interface IAccountCardDetailsContract {
         fun navigateToBalanceProtectionInsuranceOnButtonTapped()
         fun cliProductOfferingGoodStanding(): Boolean
         fun creditLimitIncrease(): CreditLimitIncreaseStatus?
+        fun getCreditCardToken()
+        fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
     }
 
     interface AccountCardDetailModel {
         fun queryServiceGetAccountStoreCardCards(storeCardsRequestBody: StoreCardsRequestBody?, requestListener: IGenericAPILoaderView<Any>): Call<StoreCardsResponse>?
         fun queryServiceGetUserCLIOfferActive(productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<OfferActive>?
+        fun queryServiceGetCreditCartToken(requestListener: IGenericAPILoaderView<Any>):Call<CreditCardTokenResponse>?
     }
 }

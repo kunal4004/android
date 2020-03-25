@@ -35,7 +35,6 @@ import com.google.gson.JsonElement;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -43,6 +42,7 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
@@ -99,6 +99,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static VirtualTempCard virtualTempCard;
 	private static ArrayList<String> whitelistedDomainsForQRScanner;
 	private static Sts stsValues;
+	private static CreditCardActivation creditCardActivation;
 
 	private Activity mCurrentActivity = null;
 
@@ -511,5 +512,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setStsValues(Sts stsValues) {
 		WoolworthsApplication.stsValues = stsValues;
+	}
+
+	public static CreditCardActivation getCreditCardActivation() {
+		return creditCardActivation;
+	}
+
+	public static void setCreditCardActivation(CreditCardActivation creditCardActivation) {
+		WoolworthsApplication.creditCardActivation = creditCardActivation;
 	}
 }
