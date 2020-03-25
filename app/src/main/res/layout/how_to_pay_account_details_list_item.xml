@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
     android:orientation="vertical">
 
     <View
@@ -12,6 +13,8 @@
         style="@style/layout_without_top_border"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="19dp"
         android:paddingRight="@dimen/twenty_four_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
