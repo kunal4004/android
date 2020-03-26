@@ -52,8 +52,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
         startupViewModel = StartupViewModelImpl(this)
         startupViewModel?.apply {
-            this.intent = intent
-            val bundle = intent?.extras
+            this.intent = getIntent()
+            val bundle = getIntent()?.extras
 
             pushNotificationUpdate = bundle?.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT)
 
