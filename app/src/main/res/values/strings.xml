@@ -1513,7 +1513,7 @@
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
-    <string name="account_arrears_description">Your account in in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_pager_bottom_sheet_behavior" translatable="false">za.co.woolworths.financial.services.android.ui.views.ViewPagerBottomSheetBehavior</string>
 
@@ -1657,6 +1657,7 @@
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="retry_label">Retry</string>
     <string name="error_occured">Error Occured</string>
+    <string name="recent_transactions_title">Recent Transactions</string>
 
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
     <string name="store_card_payment_options_desc">You can pay your woolworths store card account in any of the following ways</string>

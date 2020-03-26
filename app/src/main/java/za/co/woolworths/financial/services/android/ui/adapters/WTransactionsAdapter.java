@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -17,8 +18,8 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
@@ -79,8 +80,15 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
 			convertView = infalInflater.inflate(R.layout.transaction_list_parent_item, null);
 		}
 
-		WTextView transactionMonth = (WTextView) convertView.findViewById(R.id.transactionMonth);
-		transactionMonth.setText(transactionParentObjList.get(groupPosition).getMonth());
+		TextView transactionMonth = (TextView) convertView.findViewById(R.id.transactionMonth);
+		TransactionParentObj transaction = transactionParentObjList.get(groupPosition);
+
+		if (transaction.getTransactionList().size() > 0) {
+			String date = KotlinUtils.Companion.convertFromDateToDate(transaction.getTransactionList().get(0).date);
+			transactionMonth.setText(date);
+		} else {
+			transactionMonth.setText(transaction.getMonth());
+		}
 
 		ExpandableListView eLV = (ExpandableListView) parent;
 		eLV.expandGroup(groupPosition);
@@ -119,9 +127,9 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = infalInflater.inflate(R.layout.transaction_list_child_item, null);
 		}
-		WTextView transactionDate = (WTextView) convertView.findViewById(R.id.transactionDate);
-		WTextView transactionAmount = (WTextView) convertView.findViewById(R.id.transactionAmount);
-		WTextView transactionDescription = (WTextView) convertView.findViewById(R.id.transactionDescription);
+		TextView transactionDate = (TextView) convertView.findViewById(R.id.transactionDate);
+		TextView transactionAmount = (TextView) convertView.findViewById(R.id.transactionAmount);
+		TextView transactionDescription = (TextView) convertView.findViewById(R.id.transactionDescription);
 
 		//Setting Date to the format dd/MM/yyyy
 		String actualDate = transaction.date;

@@ -102,4 +102,6 @@
     <color name="semi_transparent">#20ffffff</color>
     <color name="transparent_4d">#4D000000</color>
     <color name="searchBarHintColor">#20000000</color>
+    <color name="transaction_date_color">#66030303</color>
+    <color name="accounts_sales_page_bg">#F8F8F8</color>
 </resources>
