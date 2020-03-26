@@ -47,6 +47,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	private int mSelectedHeaderPosition;
 	private ParentSubCategoryViewHolder mParentViewHolder;
 	private List<SubCategoryModel> mSubCategoryListModel;
+	private String version;
 
 	@Override
 	public int getLayoutId() {
@@ -63,6 +64,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		mSubCategories = new ArrayList<>();
 		if (bundle != null) {
 			String rootCategory = bundle.getString("ROOT_CATEGORY");
+			version = bundle.getString("VERSION","");
 			if (rootCategory != null)
 				mRootCategory = new Gson().fromJson(rootCategory, RootCategory.class);
 			mRootCategory = new Gson().fromJson(rootCategory, RootCategory.class);
@@ -86,7 +88,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		setHeader(mRootCategory);
 		rvCategoryDrill.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-		onRetryConnectionClicked(mRootCategory.categoryId, false);
+		onRetryConnectionClicked(mRootCategory.categoryId, false,  version);
 		getViewDataBinding().btnRetry.setOnClickListener(this);
 	}
 
@@ -198,7 +200,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	public void retrieveChildItem(ParentSubCategoryViewHolder holder, SubCategory subCategory, int selectedHeaderPosition) {
 		this.mSelectedHeaderPosition = selectedHeaderPosition;
 		this.mParentViewHolder = holder;
-		onRetryConnectionClicked(subCategory.categoryId, true);
+		onRetryConnectionClicked(subCategory.categoryId, true, version);
 	}
 
 	@Override
@@ -221,19 +223,19 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 				popFragmentSlideDown();
 				break;
 			case R.id.btnRetry:
-				onRetryConnectionClicked(mRootCategory.categoryId, false);
+				onRetryConnectionClicked(mRootCategory.categoryId, false, version);
 				break;
 			default:
 				break;
 		}
 	}
 
-	private void onRetryConnectionClicked(String categoryId, boolean childItem) {
+	private void onRetryConnectionClicked(String categoryId, boolean childItem, String version) {
 		if (isNetworkConnected()) {
 			mErrorHandlerView.hideErrorHandler();
 			//ChildItem params determine whether to perform header or child operation
 			getViewModel().setChildItem(childItem);
-			getViewModel().executeSubCategory(categoryId);
+			getViewModel().executeSubCategory(categoryId, version);
 		} else {
 			if (!getViewModel().childItem()) {
 				connectionFailureUI("e");

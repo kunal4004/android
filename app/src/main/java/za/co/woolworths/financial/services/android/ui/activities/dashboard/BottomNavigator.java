@@ -122,7 +122,7 @@ public interface BottomNavigator {
 
 	void addDrawerFragment();
 
-	void onRefined(String navigationState, String categoryName);
+	void onRefined(String navigationState, Boolean isMultiSelectCategoryRefined);
 
 	void onResetFilter();
 }

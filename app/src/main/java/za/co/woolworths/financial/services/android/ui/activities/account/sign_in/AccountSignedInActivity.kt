@@ -165,4 +165,19 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             configureBottomSheetDialog()
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        supportFragmentManager.fragments.apply {
+            if (this.isNotEmpty()) {
+                this[1].let {
+                    it.childFragmentManager.fragments.let { childFragments ->
+                        if (childFragments.isNotEmpty()) {
+                            childFragments[0].onActivityResult(requestCode, resultCode, data)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

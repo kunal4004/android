@@ -7,7 +7,12 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
+import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
+import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
+import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -132,8 +137,8 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken())
     }
 
-    fun getSubCategory(category_id: String): Call<SubCategories> {
-        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), category_id)
+    fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
+        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), category_id, version)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
@@ -318,6 +323,18 @@ object OneAppService : RetrofitConfig() {
 
     fun unblockStoreCard(productOfferingId: String, requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse> {
         return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, requestBody)
+    }
+
+    fun activateCreditCardRequest(requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse> {
+        return mApiInterface.activateCreditCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), requestBody)
+    }
+
+    fun retrieveOTP(otpMethodType: OTPMethodType, productOfferingId: String): Call<RetrieveOTPResponse> {
+        return mApiInterface.retrieveOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethodType.name, productOfferingId)
+    }
+
+    fun validateOTP(validateOTPRequest: ValidateOTPRequest, productOfferingId: String): Call<ValidateOTPResponse> {
+        return mApiInterface.validateOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), validateOTPRequest, productOfferingId)
     }
 
     fun queryServiceCancelOrder(orderId: String): Call<CancelOrderResponse> {

@@ -34,10 +34,10 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
     private var productsRequestParams: ProductsRequestParams? = null
     private var updatedProductsRequestParams: ProductsRequestParams? = null
     private val emptyNavigationState = ""
-    var categoryNameForPageTitle = ""
     private val ERROR_REQUEST_CODE = 755
     var selectedNavigationState: String? = null
     var isResetFilterSelected = false
+    var isMultiSelectCategoryRefined = false
 
     companion object {
         const val TAG_NAVIGATION_FRAGMENT: String = "OptionsFragment"
@@ -72,7 +72,7 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
                     if(isResetFilterSelected)
                         (activity as? BottomNavigationActivity)?.onResetFilter()
                     if (!selectedNavigationState.isNullOrEmpty())
-                        (activity as? BottomNavigationActivity)?.onRefined(selectedNavigationState, categoryNameForPageTitle)
+                        (activity as? BottomNavigationActivity)?.onRefined(selectedNavigationState, isMultiSelectCategoryRefined)
                 }
 
                 override fun onDrawerStateChanged(newState: Int) {
@@ -113,8 +113,8 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         replaceChildFragmentSafely(fragment, tag, false, true, R.id.fragment_container, R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
 
-    override fun onBackPressedWithRefinement(navigationState: String, categoryName: String?) {
-        categoryNameForPageTitle = categoryName ?: ""
+    override fun onBackPressedWithRefinement(navigationState: String, isMultiSelect: Boolean) {
+        isMultiSelectCategoryRefined = isMultiSelect
         executeRefineProducts(navigationState)
     }
 
@@ -155,8 +155,8 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, message, ERROR_REQUEST_CODE)
     }
 
-    override fun onSeeResults(navigationState: String, categoryName: String?) {
-        categoryNameForPageTitle = categoryName?:""
+    override fun onSeeResults(navigationState: String, isMultiSelect: Boolean) {
+        isMultiSelectCategoryRefined = isMultiSelect
         if (!TextUtils.isEmpty(navigationState)) {
             setResultForProductListing(navigationState)
         } else if (!TextUtils.isEmpty(getRefinedNavigationState())) {
@@ -174,21 +174,17 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
     }
 
     private fun hideProgressBar() {
+        progressBar.visibility = View.INVISIBLE
         activity?.apply {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            runOnUiThread {
-                progressBar.visibility = View.INVISIBLE
-            }
         }
     }
 
     private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
         activity?.apply {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            runOnUiThread {
-                progressBar.visibility = View.VISIBLE
-            }
         }
     }
 
@@ -258,8 +254,8 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         return if (TextUtils.isEmpty(getRefinedNavigationState())) getBaseNavigationState() else getRefinedNavigationState()
     }
 
-    override fun onCategorySelected(refinement: Refinement, categoryName: String?) {
-        onSeeResults(refinement.navigationState, categoryName)
+    override fun onCategorySelected(refinement: Refinement, isMultiSelect: Boolean) {
+        onSeeResults(refinement.navigationState, isMultiSelect)
     }
 
     override fun hideBackButton() {
@@ -305,8 +301,8 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         productsRequestParams = null
         updatedProductsRequestParams = null
         selectedNavigationState = null
-        categoryNameForPageTitle = ""
         isResetFilterSelected = false
+        isMultiSelectCategoryRefined = false
     }
 
     fun setUniqueIds(){

@@ -1308,9 +1308,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void onRefined(String navigationState, String categoryName) {
+    public void onRefined(String navigationState, Boolean isMultiSelectCategoryRefined) {
         if (getCurrentFragment() instanceof ProductListingFragment) {
-            ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState, categoryName);
+            ((ProductListingFragment) getCurrentFragment()).onRefined(navigationState, isMultiSelectCategoryRefined);
         }
     }
 
