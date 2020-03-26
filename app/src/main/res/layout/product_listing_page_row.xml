@@ -54,16 +54,14 @@
         android:id="@+id/brandName"
         style="@style/futura_semi_bold_black_12_text_style"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
+        android:maxLines="2"
+        android:minLines="2"
         android:text="@string/brands"
         android:textAllCaps="true"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator" />
+        app:layout_constraintTop_toBottomOf="@+id/brandMarginTopView" />
 
     <TextView
         android:id="@+id/tvProductName"
@@ -201,5 +199,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="12dp" />
+
+    <View
+        android:id="@+id/brandMarginTopView"
+        android:layout_width="wrap_content"
+        android:layout_height="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
