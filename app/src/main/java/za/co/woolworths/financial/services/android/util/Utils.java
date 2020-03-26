@@ -1585,4 +1585,18 @@ public class Utils {
 			return false;
 		}
 	}
+
+	public static Boolean isCreditCardActivationEndpointAvailable() {
+		String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+		String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
+		int minute = now.get(Calendar.MINUTE);
+
+		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
+		Date openingTime = WFormatter.parseDate(startTime);
+		Date closingTime = WFormatter.parseDate(endTime);
+
+		return (currentTime.after(openingTime) && currentTime.before(closingTime));
+	}
 }

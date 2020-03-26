@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.contracts.IAccountCardDetails
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -20,7 +22,6 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
@@ -108,6 +109,11 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
     }
 
+    override fun getCreditCardToken() {
+        if (!getAccount()?.productGroupCode.equals("CC", true)) return
+        model?.queryServiceGetCreditCartToken(this)
+    }
+
     override fun onSuccess(apiResponse: Any?) {
         with(apiResponse) {
             when (this) {
@@ -135,6 +141,18 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                         else -> {
                             mainView?.hideUserOfferActiveProgress()
                             handleUnknownHttpResponse(response?.desc)
+                        }
+                    }
+                }
+
+                is CreditCardTokenResponse->{
+                    when (httpCode) {
+                        200 -> {
+                            mainView?.onGetCreditCArdTokenSuccess(this)
+                        }
+                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> {
+                            mainView?.onGetCreditCardTokenFailure()
                         }
                     }
                 }
@@ -214,5 +232,14 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun navigateToPaymentOptionActivity() {
         mainView?.navigateToPaymentOptionActivity()
+    }
+
+    override fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
+        var cardWithPLCState: Card? = null
+        cards?.filter { card -> card.cardStatus.trim { it <= ' ' } == "PLC" }?.apply {
+            if (this.isNotEmpty())
+                cardWithPLCState = this[0]
+        }
+        return cardWithPLCState
     }
 }
