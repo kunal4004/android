@@ -28,6 +28,7 @@ class PersonalLoanDetailFragment : AccountCardDetailFragment() {
         }
         myCardDetailTextView?.visibility = GONE
 
+        paymentOptionGroup?.visibility  = VISIBLE
         val displayMetrics = DisplayMetrics()
         activity?.apply {
             windowManager?.defaultDisplay?.getMetrics(displayMetrics)

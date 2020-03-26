@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/twenty_four_dp">
+
+    <TextView
+        android:id="@+id/pageTitle"
+        style="@style/futura_semi_bold_black"
+        android:text="@string/enter_otp_title"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/body_text_style"
+        android:layout_marginTop="@dimen/twelve_dp"
+        android:gravity="start"
+        android:text="@string/sending_otp_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pageTitle" />
+
+    <include
+        android:id="@+id/progress_bar"
+        layout="@layout/circle_progress_layout"
+        android:layout_width="@dimen/eighty_dp"
+        android:layout_height="@dimen/eighty_dp"
+        android:layout_marginTop="@dimen/eighty_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
+
+    <TextView
+        android:id="@+id/progressTitle"
+        style="@style/futura_semi_bold_black"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/thirty_dp"
+        android:text="@string/validating_otp"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+    <TextView
+        android:id="@+id/progressDescription"
+        style="@style/body_text_style"
+        android:layout_marginTop="@dimen/twelve_dp"
+        android:gravity="center"
+        android:textColor="@color/gray"
+        android:text="@string/processing_your_request_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

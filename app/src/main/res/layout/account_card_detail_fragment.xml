@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:fillViewport="true">
 
@@ -12,8 +13,21 @@
 
         <include
             android:id="@+id/includeAccountDetailHeaderView"
+            android:visibility="visible"
             layout="@layout/account_detail_header_fragment" />
+        <include
+            android:id="@+id/creditCardActivationView"
+            android:visibility="gone"
+            layout="@layout/account_activate_credit_card_layout" />
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/creditCardActivationPlaceHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:shimmer_duration="800"
+            android:visibility="gone">
+            <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
         <LinearLayout
             android:id="@+id/llIncreaseLimitContainer"
             android:layout_width="match_parent"
