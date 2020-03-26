@@ -34,7 +34,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     var mOfferActiveCall: Call<OfferActive>? = null
     var mStoreCardCall: Call<StoreCardsResponse>? = null
     private var mOfferActive: OfferActive? = null
-    private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
+    var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: CreditLimitIncreaseStatus? = null
 
@@ -65,8 +65,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun setAccountDetailBundle(arguments: Bundle?) {
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-        mApplyNowAccountKeyPair =
-                Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? = mApplyNowAccountKeyPair?.second
@@ -223,13 +222,16 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun creditLimitIncrease(): CreditLimitIncreaseStatus? = mIncreaseLimitController
 
-
     override fun onDestroy() {
         mainView = null
     }
 
     override fun onFailure(error: Throwable?) {
         mainView?.hideAccountStoreCardProgress()
+    }
+
+    override fun navigateToPaymentOptionActivity() {
+        mainView?.navigateToPaymentOptionActivity()
     }
 
     override fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
