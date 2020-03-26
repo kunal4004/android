@@ -25,6 +25,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         KotlinUtils.setTransparentStatusBar(this)
         setContentView(R.layout.payment_options_activity)
         initViews()
+        hideABSAInfo()
     }
 
     override fun onResume() {
@@ -53,7 +54,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             val view = View.inflate(this, R.layout.how_to_pay_account_details_list_item, null)
             val paymentName: WTextView? = view?.findViewById(R.id.paymentName)
             val paymentValue: WTextView? = view?.findViewById(R.id.paymentvalue)
-            paymentName?.text = paymentItem.key
+            paymentName?.text = KotlinUtils.capitaliseFirstLetter(paymentItem.key + ":")
             paymentValue?.text = paymentItem.value
             howToPayAccountDetails?.addView(view)
         }
@@ -69,7 +70,6 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun showABSAInfo() {
         llAbsaAccount?.visibility = VISIBLE
         llCreditCardDetail?.visibility = VISIBLE
-        tvHowToPayTitle?.text = getString(R.string.how_to_pay_credit_card_title)
     }
 
     override fun hideABSAInfo() {
