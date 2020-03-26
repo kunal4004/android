@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:fillViewport="true">
 
@@ -12,8 +13,21 @@
 
         <include
             android:id="@+id/includeAccountDetailHeaderView"
+            android:visibility="visible"
             layout="@layout/account_detail_header_fragment" />
+        <include
+            android:id="@+id/creditCardActivationView"
+            android:visibility="gone"
+            layout="@layout/account_activate_credit_card_layout" />
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/creditCardActivationPlaceHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:shimmer_duration="800"
+            android:visibility="gone">
+            <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
         <LinearLayout
             android:id="@+id/llIncreaseLimitContainer"
             android:layout_width="match_parent"
@@ -22,7 +36,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical"
-            android:paddingStart="@dimen/sixteen_dp"
+            android:paddingStart="16dp"
             android:paddingTop="@dimen/twenty_four_dp"
             android:paddingEnd="@dimen/ten_dp">
 
@@ -48,10 +62,11 @@
                     style="@style/style_loan_title"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="0dp"
                     android:layout_toEndOf="@+id/logoIncreaseLimit"
                     android:textColor="@color/black"
+                    android:gravity="start"
                     android:textSize="15sp"
+                    android:layout_marginStart="0dp"
                     android:fontFamily="@font/myriad_pro_semi_bold_otf" />
 
                 <LinearLayout

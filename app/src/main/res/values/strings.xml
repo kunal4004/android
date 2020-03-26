@@ -71,7 +71,6 @@
     <string name="nav_item_products">PRODUCTS</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">MY ACCOUNTS</string>
-    <string name="increase_limit">Increase Limit</string>
     <string name="apply_now">APPLY NOW</string>
     <string name="the_benefits">The benefits:</string>
     <string name="shop_anywhere">Shop anywhere</string>
@@ -1537,6 +1536,26 @@
     <string name="link_send_to_differentemail">Link Send To DifferentEmail</string>
     <string name="button_confirm">Button Confirm</string>
     <string name="email_statement_popup_layout">Email Statement Popup Layout</string>
+    <string name="cc_activation_security_check_title">Security Check - Card Activation</string>
+    <string name="cc_activation_security_check_description">Tick the below boxes if the information is true and correct. Should you experience any problems please call us on 0861 50 20 20.</string>
+    <string name="cc_activation_security_check_action">Activate My Card</string>
+    <string name="cc_activation_security_check_contact">Call us on 0861 50 20 20</string>
+    <string name="cc_activation_security_check_1">My card was in a sealed envelope</string>
+    <string name="cc_activation_security_check_2">My card details are correct</string>
+    <string name="cc_activation_security_check_3">My PIN seal is intact</string>
+    <string name="credit_card_activation_success_title">Your Credit Card Has Successfully Been Activated.</string>
+    <string name="credit_card_activation_failure_title">We Are Unable To Activate Your Card</string>
+    <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="credit_card_activation_popup_title">Card Activation Unavailable</string>
+    <string name="credit_card_activation_popup_desc">The card activation service is only available between 6am - 9pm, Monday to Saturday.</string>
+    <string name="credit_card_activation_popup_action">activate</string>
+    <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
+    <string name="sending_otp_title">Sending OTP</string>
+    <string name="sending_otp_desc">An One-time PIN is being sent to you. It should arrive shortly.</string>
+    <string name="validating_otp">Validating OTP</string>
+    <string name="need_help_call_the_center">Need help? call the call center</string>
+    <string name="sending_otp_error">There was a Problem  \nSending Your OTP</string>
+    <string name="validate_otp_error">There was server or \nnetworking error.</string>
 
     <!-- Unique Ids for PDP-->
     <string name="pdp_layout">productLayout</string>
@@ -1634,6 +1653,8 @@
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
+    <string name="activate_new_credit_card">Activate New Credit Card</string>
+    <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="retry_label">Retry</string>
     <string name="error_occured">Error Occured</string>
 

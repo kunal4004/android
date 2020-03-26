@@ -52,8 +52,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
         startupViewModel = StartupViewModelImpl(this)
         startupViewModel?.apply {
-            this.intent = intent
-            val bundle = intent?.extras
+            this.intent = getIntent()
+            val bundle = getIntent()?.extras
 
             pushNotificationUpdate = bundle?.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT)
 
@@ -216,12 +216,12 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     override fun onStart() {
         super.onStart()
-//        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this)) {
-//            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
-//            val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
-//            rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
-//            return
-//        }
+        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this)) {
+            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
+            val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
+            rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
+            return
+        }
         startupViewModel?.apply {
             if (isAppMinimized) {
                 isAppMinimized = false
