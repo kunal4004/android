@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.views.tick_animation.Anima
 
 class ProgressStateFragment : Fragment() {
 
-    private var mCardIsBlocked: Boolean = false
+    private var isSuccess: Boolean = false
     private var stateAnimation: IProgressAnimationState? = null
 
     companion object {
@@ -32,7 +32,7 @@ class ProgressStateFragment : Fragment() {
         circularProgressIndicator?.setOnAnimationStateChangedListener { _animationState ->
             _animationState?.apply {
                 if (this == AnimationState.ANIMATING) {
-                    if (mCardIsBlocked) {
+                    if (isSuccess) {
                         success_tick?.apply {
                             visibility = VISIBLE
                             startTickAnim()
@@ -40,7 +40,7 @@ class ProgressStateFragment : Fragment() {
                     } else {
                         imFailureIcon?.visibility = VISIBLE
                     }
-                    stateAnimation?.onAnimationEnd(mCardIsBlocked)
+                    stateAnimation?.onAnimationEnd(isSuccess)
 
                 }
             }
@@ -54,8 +54,8 @@ class ProgressStateFragment : Fragment() {
         }
     }
 
-    fun animateSuccessEnd(cardIsBlocked: Boolean) {
-        this.mCardIsBlocked = cardIsBlocked
+    fun animateSuccessEnd(isSuccess: Boolean) {
+        this.isSuccess = isSuccess
         circularProgressIndicator?.apply {
             stopSpinning()
             setValueAnimated(100f)
