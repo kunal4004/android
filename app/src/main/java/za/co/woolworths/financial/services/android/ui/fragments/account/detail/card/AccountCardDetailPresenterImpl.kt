@@ -97,8 +97,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
         val productOfferingId = account?.productOfferingId
         mainView?.showUserOfferActiveProgress()
-        mOfferActiveCall =
-                productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
+        mOfferActiveCall = productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
     }
 
     override fun getStoreCardResponse(): StoreCardsResponse? {
@@ -166,8 +165,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary =
-                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()

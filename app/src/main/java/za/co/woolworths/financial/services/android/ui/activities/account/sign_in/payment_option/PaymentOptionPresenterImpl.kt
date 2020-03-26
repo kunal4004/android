@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContr
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.account.HeaderDrawable
+import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
 import java.lang.RuntimeException
 
 class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.PaymentOptionView?, private var model: IPaymentOptionContract.PaymentOptionModel) : IPaymentOptionContract.PaymentOptionPresenter, IPaymentOptionContract.PaymentOptionModel {
@@ -38,7 +38,7 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
         return model.getAccountDetailValues()
     }
 
-    override fun getDrawableHeader(): List<HeaderDrawable> {
+    override fun getDrawableHeader(): List<PaymentOptionHeaderItem> {
         return model.getDrawableHeader()
     }
 
