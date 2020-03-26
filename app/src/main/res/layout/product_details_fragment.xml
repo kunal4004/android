@@ -105,7 +105,6 @@
                     android:id="@+id/productName"
                     style="@style/futura_semi_bold_black_24_text_style"
                     android:layout_marginTop="8dp"
-                    android:background="@color/red"
                     android:lineSpacingMultiplier="1.33"
                     android:text="@string/product_information"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
