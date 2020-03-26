@@ -30,6 +30,7 @@ interface IAccountCardDetailsContract {
         fun hideProductNotInGoodStanding()
         fun onOfferActiveSuccessResult()
         fun navigateToLoanWithdrawalActivity()
+        fun navigateToPaymentOptionActivity()
         fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse)
         fun onGetCreditCardTokenFailure()
         fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
@@ -63,6 +64,7 @@ interface IAccountCardDetailsContract {
         fun navigateToBalanceProtectionInsuranceOnButtonTapped()
         fun cliProductOfferingGoodStanding(): Boolean
         fun creditLimitIncrease(): CreditLimitIncreaseStatus?
+        fun navigateToPaymentOptionActivity()
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
     }

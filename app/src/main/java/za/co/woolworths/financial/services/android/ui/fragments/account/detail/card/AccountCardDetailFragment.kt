@@ -77,6 +77,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
+        viewPaymentOptions?.setOnClickListener(this)
         activateCreditCard?.setOnClickListener(this)
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
@@ -177,6 +178,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
                 }
+                R.id.viewPaymentOptions -> { mCardPresenterImpl?.navigateToPaymentOptionActivity()}
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
                         navigateToCreditCardActivation()
@@ -317,6 +319,10 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
             startActivityForResult(intentWithdrawalActivity, 0)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
+    }
+
+    override fun navigateToPaymentOptionActivity() {
+        activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
     }
 
     private fun hideCLIView() {

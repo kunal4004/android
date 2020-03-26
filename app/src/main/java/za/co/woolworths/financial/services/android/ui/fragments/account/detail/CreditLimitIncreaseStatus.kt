@@ -40,7 +40,7 @@ class CreditLimitIncreaseStatus {
     }
 
     fun showCLIProgress(logoIncreaseLimit: ImageView?, llCommonLayer: LinearLayout?, tvIncreaseLimit: TextView?) {
-        logoIncreaseLimit?.visibility = VISIBLE
+        logoIncreaseLimit?.visibility = GONE
         llCommonLayer?.visibility = GONE
         tvIncreaseLimit?.visibility = GONE
     }
@@ -48,8 +48,7 @@ class CreditLimitIncreaseStatus {
     fun cliStatus(llCommonLayer: LinearLayout?, tvIncreaseLimit: TextView?, tvApplyNowIncreaseLimit: TextView?, tvIncreaseLimitDescription: TextView?, logoIncreaseLimit: ImageView?, offerActive: OfferActive?) {
         llCommonLayer?.visibility = GONE
         tvIncreaseLimitDescription?.visibility = GONE
-        tvIncreaseLimit?.text = getString(R.string.increase_limit)
-
+        tvIncreaseLimit?.text = getString(R.string.cli_credit_limit_increase)
         var nextStepColour = ""
 
         offerActive?.let { offer ->
@@ -70,7 +69,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.OFFER.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 showDescription(tvIncreaseLimitDescription, messageDetail)
@@ -102,7 +101,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.IN_PROGRESS.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 tvIncreaseLimitDescription?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
@@ -111,7 +110,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.INCOME_AND_EXPENSE.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 cliIcon(logoIncreaseLimit)
                 llCommonLayer?.visibility = GONE
                 showDescription(tvIncreaseLimitDescription, messageDetail)
@@ -119,7 +118,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.COMPLETE.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 setTagBackgroundAndTitle(messageSummary, nextStepColour, tvApplyNowIncreaseLimit)
@@ -127,7 +126,7 @@ class CreditLimitIncreaseStatus {
             }
 
             else -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 llCommonLayer?.visibility = GONE
                 tvIncreaseLimitDescription?.visibility = GONE
