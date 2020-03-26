@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.apply_now
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,6 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.NestedScrollingChild
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -92,6 +92,7 @@ class AccountSalesFragment : Fragment() {
     private fun displayCartCollection(cartCollection: MutableList<CardCollection>) {
         if (cartCollection.isEmpty()) {
             cardCollectionConstraintLayout?.visibility = GONE
+            qualifyCriteriaSpaceView?.setBackgroundColor(Color.WHITE)
             return
         }
         activity?.let { activity ->
@@ -102,33 +103,5 @@ class AccountSalesFragment : Fragment() {
                 cardCollectionItemLinearLayout?.addView(view)
             }
         }
-    }
-
-    fun onStateExpanded() {
-        activity?.runOnUiThread {
-        }
-    }
-
-    fun onStateCollapsed() {
-        activity?.runOnUiThread {
-        }
-    }
-
-    private fun findScrollingChild(view: View): View? {
-        if (view is NestedScrollingChild) {
-            return view
-        }
-        if (view is ViewGroup) {
-            var i = 0
-            val count = view.childCount
-            while (i < count) {
-                val scrollingChild = findScrollingChild(view.getChildAt(i))
-                if (scrollingChild != null) {
-                    return scrollingChild
-                }
-                i++
-            }
-        }
-        return null
     }
 }
