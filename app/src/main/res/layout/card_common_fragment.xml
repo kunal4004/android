@@ -305,7 +305,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="0dp"
                     android:layout_toEndOf="@+id/logoIncreaseLimit"
-                    android:text="@string/increase_limit"
+                    android:text="@string/cli_credit_limit_increase"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     app:WTextView_font="myriadpro_semibold" />
@@ -466,12 +466,32 @@
                     android:id="@+id/imMyCardNextArrow"
                     style="@style/style_loan_img" />
 
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvCreditCardActivationState"
+                    style="@style/style_loan_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/cli_round_apply_now_tag"
+                    android:gravity="center"
+                    android:letterSpacing="0.12"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="@string/retry"
+                    app:WTextView_font="medium" />
+
                 <ProgressBar
                     android:id="@+id/pbGetCardToken"
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="@dimen/bank_spacing_width"
+                    android:indeterminateTint="@color/black"
                     android:visibility="gone" />
             </LinearLayout>
 

@@ -18,7 +18,6 @@ import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import java.text.SimpleDateFormat
-import java.util.*
 
 
 enum class LinkType { PHONE, EMAIL }
@@ -161,6 +160,15 @@ class KotlinUtils {
                 return toDateFormat.format(fromDate)
             }
             return ""
+        }
+
+        fun capitaliseFirstLetter(str: String): CharSequence? {
+            val words = str.split(" ").toMutableList()
+            var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
         }
     }
 }

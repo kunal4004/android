@@ -26,7 +26,7 @@ open class AnimatedProgressBarFragment : MyCardExtension(), IProgressAnimationSt
 
     fun progressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
 
-    override fun onAnimationEnd(cardIsBlocked: Boolean) {
+    override fun onAnimationEnd(isAnimationFinished: Boolean) {
     }
 
     override fun onDestroy() {

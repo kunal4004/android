@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:tag="nested"
     android:layout_height="match_parent"
-    android:background="@color/light_gray_background"
     android:fillViewport="true"
     android:scrollbars="none"
     >
@@ -14,7 +13,6 @@
         android:id="@+id/accountSalesContainerLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_gray_background"
         android:orientation="vertical">
 
         <include
@@ -37,7 +35,7 @@
             style="@style/account_sales_card_benefits_bottom_margin_style"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/light_gray_background"
+            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view3" />
