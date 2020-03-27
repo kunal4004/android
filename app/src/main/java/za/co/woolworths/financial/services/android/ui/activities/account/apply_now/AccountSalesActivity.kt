@@ -107,6 +107,9 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     override fun displayCreditCard(fragmentList: Map<String, Fragment>?, position: Int) {
         nav_host_fragment?.view?.visibility = GONE
         blackAndGoldCreditCardViewPager?.visibility = VISIBLE
+        tabLinearLayout?.visibility = VISIBLE
+        tabLayout?.visibility= VISIBLE
+        blackAndGoldCreditCardViewPager?.offscreenPageLimit  = fragmentList?.size ?: 0
         SetUpViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
         invoke(position)
     }
