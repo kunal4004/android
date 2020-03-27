@@ -1209,5 +1209,4 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
             }
     }
-
 }
