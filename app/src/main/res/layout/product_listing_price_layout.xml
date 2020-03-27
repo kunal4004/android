@@ -30,73 +30,28 @@
         tools:ignore="HardcodedText" />
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fromPriceLabelTextView"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tvWasPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:gravity="center|start"
-            android:maxLines="1"
-            android:minLines="1"
-            android:paddingStart="0dp"
-            android:paddingEnd="2dp"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:visibility="visible"
-            app:autoSizeMaxTextSize="13sp"
-            app:autoSizeMinTextSize="10sp"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute"
-            tools:text="R 99.99 (R 99.99/kg)" />
-
-        <View
-            android:id="@+id/fromPriceStrikeThrough"
-            android:layout_width="0dp"
-            android:layout_height="1.5dp"
-            android:layout_gravity="center"
-            android:background="@color/black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/tvWasPrice"
-            app:layout_constraintStart_toStartOf="@+id/tvWasPrice"
-            app:layout_constraintTop_toTopOf="@+id/tvWasPrice" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <TextView
-        android:id="@+id/tvPrice"
+        android:id="@+id/priceTextView"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
         android:contentDescription="@string/plp_textViewPrice"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
         android:maxLines="1"
+        android:layout_marginEnd="2dp"
         android:minLines="1"
         android:text="R 99.99 (R 99.99/kg)"
         android:textColor="@color/red"
         android:textSize="14sp"
-        app:autoSizeMaxTextSize="13sp"
-        app:autoSizeMinTextSize="10sp"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeMinTextSize="9sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+        app:layout_constraintStart_toEndOf="@+id/fromPriceLabelTextView"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText,UnusedAttribute" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
