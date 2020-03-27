@@ -25,7 +25,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100);
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
     }
 
     public static String newAmountFormat(int amount) {
@@ -39,7 +39,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100);
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
     }
 
     public static String newRandAmountFormatWithoutSpace(int amount) {
@@ -53,7 +53,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
+        return Utils.removeNegativeSymbol(String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100));
     }
 
     public static String addSpaceToDate(String value) {
@@ -71,7 +71,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R%s", stringBuilder.reverse().toString(), amount);
+        return Utils.removeNegativeSymbol(String.format("R%s", stringBuilder.reverse().toString(), amount));
     }
 
     public static String formatAmount(double amount) {
@@ -91,7 +91,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100);
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
     }
 
     public static String formatAmount(String amount) {
@@ -111,11 +111,11 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100);
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
     }
 
     public static String formatAmountNoDecimal(int amount) {
-        return String.format("R%d", amount / 100);
+        return Utils.removeNegativeSymbol(String.format("R%d", amount / 100));
     }
 
     public static String escapeDecimalFormat(int amount) {
