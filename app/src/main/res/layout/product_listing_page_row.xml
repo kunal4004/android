@@ -91,6 +91,7 @@
         android:id="@+id/tvSaveText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:contentDescription="@string/plp_textViewPromotion"
         android:ellipsize="end"
         android:fontFamily="@font/futura_medium_ttf"
@@ -114,7 +115,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="9dp"
-        android:layout_marginBottom="2dp"
         app:layout_constraintBottom_toTopOf="@+id/detailContentEndGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
