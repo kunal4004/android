@@ -171,6 +171,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     visibility = View.VISIBLE
                 }
             }
+
+            it.promotionImages?.apply {
+               if (!freeGift.isNullOrEmpty()){
+                   freeGiftImage?.visibility = View.VISIBLE
+                   activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, freeGift) }
+               }
+            }
+
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
