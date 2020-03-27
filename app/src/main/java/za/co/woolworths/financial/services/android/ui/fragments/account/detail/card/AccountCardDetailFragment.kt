@@ -108,13 +108,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
 
         autoConnectToNetwork()
 
-        /*
-         ==============   Uncomment Below to enable credit card activation feature  =======
-         1. executeCreditCardTokenService()
-         2.( includeAccountDetailHeaderView?.visibility = View.GONE ) in all Credit Card Detail Fragments
-        */
-
-        //executeCreditCardTokenService()
+        initCreditCardActivation()
     }
 
     private fun autoConnectToNetwork() {
@@ -408,6 +402,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                     executeCreditCardTokenService()
                 }
             }
+        }
+    }
+
+    private fun initCreditCardActivation() {
+        if (WoolworthsApplication.getCreditCardActivation().isEnabled) {
+            includeAccountDetailHeaderView?.visibility = GONE
+            executeCreditCardTokenService()
         }
     }
 }

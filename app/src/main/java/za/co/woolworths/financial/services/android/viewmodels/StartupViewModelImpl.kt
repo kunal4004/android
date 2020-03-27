@@ -150,7 +150,11 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
         WoolworthsApplication.getInstance().wGlobalState.startRadius = response.configs.enviroment.getStoreStockLocatorConfigStartRadius()
         WoolworthsApplication.getInstance().wGlobalState.endRadius = response.configs.enviroment.getStoreStockLocatorConfigEndRadius()
-        WoolworthsApplication.setCreditCardActivation(response.configs.creditCardActivation)
+        val creditCardActivation = response.configs.creditCardActivation
+        creditCardActivation?.apply {
+            isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+        }
+        WoolworthsApplication.setCreditCardActivation(creditCardActivation)
     }
 
     companion object {
