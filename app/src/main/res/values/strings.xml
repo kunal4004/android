@@ -1667,5 +1667,20 @@
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="manage_delivery">Manage Delivery</string>
+    <string name="too_late_to_edit_tiitle">Too Late To Edit</string>
+    <string name="too_late_to_edit_desc">Unfortunately it\'s too late to edit your delivery details now. Please call us on 0861 50 50 20 for assistance.</string>
+    <string name="credit_card_cancel_delivery_title">Cancel Delivery</string>
+    <string name="credit_card_cancel_delivery_desc">Please call us on 0861 50 50 20 to cancel delivery.</string>
+    <string name="no_timeslots_available_title">No Timeslots Available</string>
+    <string name="no_timeslots_available_desc">There are no available timeslots for your address. Please get in touch with our courier partner directly to schedule delivery.</string>
+    <string name="call_courier_partners">Call Courier Partners</string>
+    <string name="invalid_address_title">Invalid Address</string>
+    <string name="invalid_address_desc">We are unable to find the address entered, please re-enter your address and submit. Alternatively contact the courier.</string>
+    <string name="contact_courier">Contact Courier</string>
+    <string name="address_date_time">Address, Date &amp; Time</string>
+    <string name="recipient">Recipient</string>
+    <string name="created">created</string>
+    <string name="recipient">Recipient</string>
 
 </resources>
