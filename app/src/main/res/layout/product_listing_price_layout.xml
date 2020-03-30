@@ -32,7 +32,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fromPriceLabelTextView"
@@ -58,7 +58,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
             tools:ignore="UnusedAttribute"
             tools:text="R 99.99 (R 99.99/kg)" />
 
@@ -76,27 +76,27 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tvPrice"
+        android:id="@+id/priceTextView"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
         android:contentDescription="@string/plp_textViewPrice"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
         android:maxLines="1"
+        android:layout_marginEnd="2dp"
         android:minLines="1"
         android:text="R 99.99 (R 99.99/kg)"
         android:textColor="@color/red"
         android:textSize="14sp"
-        app:autoSizeMaxTextSize="13sp"
-        app:autoSizeMinTextSize="10sp"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeMinTextSize="9sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+        app:layout_constraintStart_toEndOf="@+id/fromPriceLabelTextView"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText,UnusedAttribute" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

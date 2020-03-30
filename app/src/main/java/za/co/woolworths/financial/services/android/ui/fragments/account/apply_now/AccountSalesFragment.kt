@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.adapters.MoreBenefitAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
-
 class AccountSalesFragment : Fragment() {
 
     companion object {
