@@ -30,7 +30,7 @@
                 android:letterSpacing="0.02"
                 android:text="@string/information"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="12sp"
                 tools:ignore="UnusedAttribute" />
 
             <ImageButton
