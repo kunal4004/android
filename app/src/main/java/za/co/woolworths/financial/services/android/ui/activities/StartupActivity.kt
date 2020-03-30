@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
-import io.fabric.sdk.android.services.common.CommonUtils
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
@@ -216,12 +215,12 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     override fun onStart() {
         super.onStart()
-        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this)) {
-            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
-            val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
-            rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
-            return
-        }
+//        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this)) {
+//            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
+//            val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
+//            rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
+//            return
+//        }
         startupViewModel?.apply {
             if (isAppMinimized) {
                 isAppMinimized = false

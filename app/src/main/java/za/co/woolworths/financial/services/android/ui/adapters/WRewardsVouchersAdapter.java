@@ -54,40 +54,40 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
-            holder.validFromDate = (TextView) convertView.findViewById(R.id.validFrom);
-            holder.validUntilDate = (TextView) convertView.findViewById(R.id.validUntil);
-            holder.voucherValue = (TextView) convertView.findViewById(R.id.voucherValue);
-            holder.message = (TextView) convertView.findViewById(R.id.message);
-            holder.voucherNumber = (TextView) convertView.findViewById(R.id.voucherNumber);
-            holder.minimumSpend = (TextView) convertView.findViewById(R.id.minSpend);
-            holder.barCode = (ImageView) convertView.findViewById(R.id.barcode);
+//            holder.validFromDate = (TextView) convertView.findViewById(R.id.validFrom);
+//            holder.validUntilDate = (TextView) convertView.findViewById(R.id.validUntil);
+//            holder.voucherValue = (TextView) convertView.findViewById(R.id.voucherValue);
+//            holder.message = (TextView) convertView.findViewById(R.id.message);
+//            holder.voucherNumber = (TextView) convertView.findViewById(R.id.voucherNumber);
+//            holder.minimumSpend = (TextView) convertView.findViewById(R.id.minSpend);
+//            holder.barCode = (ImageView) convertView.findViewById(R.id.barcode);
             convertView.setTag(holder);
 
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        try {
-            holder.validFromDate.setText(WFormatter.formatDate(vouchers.get(position).validFromDate));
-            holder.validUntilDate.setText(WFormatter.formatDate(vouchers.get(position).validToDate));
-        } catch (ParseException e) {
-            holder.validFromDate.setText(String.valueOf(vouchers.get(position).validFromDate));
-            holder.validUntilDate.setText(String.valueOf(vouchers.get(position).validToDate));
-        }
-
-        if ("PERCENTAGE".equals(vouchers.get(position).type)) {
-            holder.voucherValue.setText(String.valueOf(WFormatter.formatPercent(vouchers.get(position).amount)));
-        } else {
-            holder.voucherValue.setText(String.valueOf(WFormatter.formatAmountNoDecimal(vouchers.get(position).amount)));
-        }
-        holder.message.setText(vouchers.get(position).description);
-        holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));
-        holder.minimumSpend.setText(String.valueOf(WFormatter.formatAmount(vouchers.get(position).minimumSpend)));
-        try {
-            holder.barCode.setImageBitmap(Utils.encodeAsBitmap(vouchers.get(position).voucherNumber, BarcodeFormat.CODE_128, convertView.getWidth(), 60));
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            holder.validFromDate.setText(WFormatter.formatDate(vouchers.get(position).validFromDate));
+//            holder.validUntilDate.setText(WFormatter.formatDate(vouchers.get(position).validToDate));
+//        } catch (ParseException e) {
+//            holder.validFromDate.setText(String.valueOf(vouchers.get(position).validFromDate));
+//            holder.validUntilDate.setText(String.valueOf(vouchers.get(position).validToDate));
+//        }
+//
+//        if ("PERCENTAGE".equals(vouchers.get(position).type)) {
+//            holder.voucherValue.setText(String.valueOf(WFormatter.formatPercent(vouchers.get(position).amount)));
+//        } else {
+//            holder.voucherValue.setText(String.valueOf(WFormatter.formatAmountNoDecimal(vouchers.get(position).amount)));
+//        }
+//        holder.message.setText(vouchers.get(position).description);
+//        holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));
+//        holder.minimumSpend.setText(String.valueOf(WFormatter.formatAmount(vouchers.get(position).minimumSpend)));
+//        try {
+//            holder.barCode.setImageBitmap(Utils.encodeAsBitmap(vouchers.get(position).voucherNumber, BarcodeFormat.CODE_128, convertView.getWidth(), 60));
+//        } catch (WriterException e) {
+//            e.printStackTrace();
+//        }
         return convertView;
     }
 

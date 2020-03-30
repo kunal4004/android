@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#cc000000"
-              android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:background="#cc000000"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -22,17 +22,17 @@
             android:id="@+id/termsCondition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="right"
             android:layout_marginRight="@dimen/terms_and_conditions_margin"
             android:gravity="center"
-            android:layout_gravity="right"
+            android:letterSpacing="0.1"
             android:text="@string/view_terms_conditions"
             android:textAllCaps="true"
             android:textColor="#b3ffffff"
             android:textSize="12sp"
-            android:letterSpacing="0.1"
             app:WTextView_font="medium"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
             tools:ignore="UnusedAttribute" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -48,11 +48,11 @@
             android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
             android:paddingStart="@dimen/voucher_card_layout_padding"
+            android:paddingTop="16dp"
             android:paddingEnd="@dimen/voucher_card_layout_padding"
             app:stack_rotation="0"
             app:stack_size="3"
-            app:stack_spacing="-10dp"
-            />
+            app:stack_spacing="-10dp" />
     </RelativeLayout>
 
 </LinearLayout>
