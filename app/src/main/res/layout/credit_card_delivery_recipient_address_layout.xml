@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/submitAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@drawable/next_button_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toTopOf="@id/submitAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/thirty_two_dp">
+
+            <EditText
+                android:id="@+id/complex"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/complexPlaceHolder" />
+
+            <EditText
+                android:id="@+id/businessName"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/businessNamePlaceHolder" />
+
+            <EditText
+                android:id="@+id/streetAddress"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/streetAddressPlaceHolder" />
+
+
+            <EditText
+                android:id="@+id/suburb"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder" />
+
+            <EditText
+                android:id="@+id/cityOrTown"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/cityPlaceHolder" />
+
+            <EditText
+                android:id="@+id/province"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />
+
+            <EditText
+                android:id="@+id/postalCode"
+                style="@style/credi_card_delivery_edittext_style"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/postalCodePlaceHolder" />
+
+            <RadioGroup
+                android:id="@+id/addressOption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/thirty_two_dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/deliveryDetailsDesc">
+
+                <RadioButton
+                    android:id="@+id/radioButton1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/shopping_list_item_selector"
+                    android:checked="true"
+                    android:fontFamily="@font/myriad_pro_regular"
+                    android:paddingStart="@dimen/sixteen_dp"
+                    android:text="@string/residential"
+                    android:textSize="@dimen/sixteen_sp" />
+
+                <RadioButton
+                    android:id="@+id/radioButton2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fifty_dp"
+                    android:button="@drawable/shopping_list_item_selector"
+                    android:fontFamily="@font/myriad_pro_regular"
+                    android:paddingStart="@dimen/sixteen_dp"
+                    android:text="@string/business"
+                    android:textSize="@dimen/sixteen_sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/deliveryDetailsDesc"
+                style="@style/myriad_pro_regular"
+                android:layout_marginTop="@dimen/eight_dp"
+                android:lineSpacingMultiplier="1.40"
+                android:text="@string/delivery_details_desc"
+                android:textColor="#50333333"
+                android:textSize="@dimen/fifteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/deliveryDetailsTitle" />
+
+            <TextView
+                android:id="@+id/complexPlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/thirty_two_dp"
+                android:text="@string/complex_building"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/addressOption" />
+
+            <TextView
+                android:id="@+id/deliveryDetailsTitle"
+                style="@style/futura_medium_black"
+                android:letterSpacing="0.1"
+                android:text="@string/delivery_details"
+                android:textSize="@dimen/twenty_sp"
+                app:layout_constraintRight_toRightOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toTopOf="@id/top_guideline" />
+
+            <TextView
+                android:id="@+id/businessNamePlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/business_name"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/complex" />
+
+            <TextView
+                android:id="@+id/streetAddressPlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/street_address"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/businessName" />
+
+            <TextView
+                android:id="@+id/suburbPlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/suburb"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/streetAddress" />
+
+            <TextView
+                android:id="@+id/cityPlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/city_town"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/suburb" />
+
+            <TextView
+                android:id="@+id/provincePlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/province"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/cityOrTown" />
+
+            <TextView
+                android:id="@+id/postalCodePlaceHolder"
+                style="@style/myriad_pro_regular_black"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:text="@string/postal_code"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/province" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/left_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/right_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

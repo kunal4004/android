@@ -19,7 +19,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.credit_card_delivery_activity)
-        Utils.updateStatusBarBackground(this)
+        Utils.updateStatusBarBackground(this,R.color.grey_bg)
         bundle = intent.getBundleExtra("bundle")
         actionBar()
         loadNavHostFragment()
@@ -30,20 +30,10 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_item, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_search -> onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
     override fun onBackPressed() {
         setResult(Activity.RESULT_CANCELED)
@@ -54,7 +44,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     private fun loadNavHostFragment() {
         findNavController(R.id.nav_host_fragment)
                 .setGraph(
-                        R.navigation.nav_graph_credit_card_activation,
+                        R.navigation.nav_graph_credit_card_delivery,
                         bundleOf("bundle" to bundle)
                 )
     }

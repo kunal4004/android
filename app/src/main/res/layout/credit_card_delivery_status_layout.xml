@@ -120,7 +120,7 @@
         style="@style/myriad_pro_regular"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:lineSpacingMultiplier="1.33"
-        android:text="You will need to give the courier a copy of your SA Identity Document (ID), when taking delivery of your new credit card."
+        android:text="@string/documet_requied_at_delivery"
         android:textColor="#50333333"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"

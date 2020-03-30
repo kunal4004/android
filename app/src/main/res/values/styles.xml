@@ -2254,4 +2254,17 @@
         <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
+
+    <style name="credi_card_delivery_edittext_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
+        <item name="android:layout_marginTop">@dimen/six_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+    </style>
 </resources>

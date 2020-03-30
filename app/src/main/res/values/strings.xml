@@ -1685,5 +1685,23 @@
     <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know \nwhen and where to send your card.</string>
     <string name="set_up_delivery_nowt">set up delivery nowt</string>
     <string name="already_have_card_activate_it_now">Already have card? Activate it now</string>
+    <string name="recipient_details">Recipient Details</string>
+    <string name="recipient_details_desc">Please enter the details of the person we will be delivering to below:</string>
+    <string name="documet_requied_at_delivery">You will need to give the courier a copy of your SA Identity Document (ID), when taking delivery of your new credit card.</string>
+    <string name="recipient_name">Recipient Name</string>
+    <string name="id_number">ID Number</string>
+    <string name="cellphone_number">Cellphone Number</string>
+    <string name="alternate_contact_numberr">Alternate Contact Numberr</string>
+    <string name="delivery_details">Delivery Details</string>
+    <string name="delivery_details_desc">Please complete your delivery details below:</string>
+    <string name="residential">Residential</string>
+    <string name="business">Business</string>
+    <string name="complex_building">Complex/Building</string>
+    <string name="business_name">Business Name</string>
+    <string name="street_address">Street Address</string>
+    <string name="suburb">Suburb</string>
+    <string name="city_town">City/Town</string>
+    <string name="province">Province</string>
+    <string name="postal_code">Postal Code</string>
 
 </resources>

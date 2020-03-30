@@ -175,5 +175,6 @@
     <dimen name="voucher_off_text_size">20sp</dimen>
     <dimen name="voucher_description_text_size">15sp</dimen>
     <dimen name="voucher_barcode_text_size">20sp</dimen>
+    <dimen name="fourty_eight_dp">48dp</dimen>
 </resources>
 
