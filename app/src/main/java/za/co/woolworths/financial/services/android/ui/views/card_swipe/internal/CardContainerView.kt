@@ -71,13 +71,14 @@ class CardContainerView @JvmOverloads constructor(context: Context?, attrs: Attr
             return true
         }
         when (MotionEventCompat.getActionMasked(event)) {
+
             MotionEvent.ACTION_DOWN -> {
                 handleActionDown(event)
-                parent.parent.requestDisallowInterceptTouchEvent(true)
+                parent.parent.requestDisallowInterceptTouchEvent(false)
             }
             MotionEvent.ACTION_UP -> {
                 handleActionUp(event)
-                parent.parent.requestDisallowInterceptTouchEvent(false)
+                parent.parent.requestDisallowInterceptTouchEvent(true)
             }
             MotionEvent.ACTION_CANCEL -> parent.parent.requestDisallowInterceptTouchEvent(false)
             MotionEvent.ACTION_MOVE -> handleActionMove(event)

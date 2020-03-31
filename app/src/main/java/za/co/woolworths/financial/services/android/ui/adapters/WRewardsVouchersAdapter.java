@@ -72,7 +72,6 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-
         int fromUntilContainerColor = (position == 0) ? R.color.status_green : R.color.status_dark_green;
         holder.validFromContainer.setBackgroundColor(ContextCompat.getColor(mContext, fromUntilContainerColor));
 
