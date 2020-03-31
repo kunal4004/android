@@ -148,7 +148,7 @@ class CreditLimitIncreaseStatus {
     private fun getString(resourceId: Int) = WoolworthsApplication.getAppContext()?.getString(resourceId)
 
     private fun showDescription(textView: TextView?, messageDetail: String?) {
-        textView?.visibility = VISIBLE
+        textView?.visibility = if (messageDetail.isNullOrEmpty()) GONE else VISIBLE
         textView?.text = messageDetail
     }
 
