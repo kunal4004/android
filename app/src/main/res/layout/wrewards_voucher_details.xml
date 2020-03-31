@@ -25,7 +25,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="right"
-            android:layout_marginRight="@dimen/terms_and_conditions_margin"
+            android:layout_marginEnd="@dimen/terms_and_conditions_margin"
             android:gravity="center"
             android:letterSpacing="0.1"
             android:text="@string/view_terms_conditions"
@@ -41,18 +41,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <za.co.woolworths.financial.services.android.ui.views.SwipeStack
+        <za.co.woolworths.financial.services.android.ui.views.card_swipe.CardStackView
             android:id="@+id/swipeStack"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            android:paddingStart="@dimen/voucher_card_layout_padding"
-            android:paddingTop="16dp"
-            android:paddingEnd="@dimen/voucher_card_layout_padding"
-            app:stack_rotation="0"
-            app:stack_size="3"
-            app:stack_spacing="-10dp" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="32dp"
+            android:paddingBottom="10dp"
+            app:scaleDiff="0.02"
+            app:stackFrom="top"
+            app:swipeDirection="freedom_no_bottom"
+            app:swipeEnabled="true"
+            app:swipeThreshold="0.75"
+            app:topOverlay="@layout/overlay_top"
+            app:translationDiff="16"
+            app:visibleCount="3" />
     </RelativeLayout>
 
 </LinearLayout>

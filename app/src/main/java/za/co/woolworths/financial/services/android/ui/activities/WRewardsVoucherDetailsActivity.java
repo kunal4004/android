@@ -1,12 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -17,19 +14,19 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVouchersAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SwipeStack;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.card_swipe.CardStackView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
 public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements SwipeStack.SwipeStackListener {
 
 	public Toolbar toolbar;
-	private SwipeStack mSwipeStack;
+	private CardStackView mSwipeStack;
 	WRewardsVouchersAdapter mAdapter;
 	VoucherCollection voucherCollection;
 	public WTextView termsAndCondtions;
@@ -44,7 +41,7 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 		setContentView(R.layout.wrewards_voucher_details);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		termsAndCondtions = (WTextView) findViewById(R.id.termsCondition);
-		mSwipeStack = (SwipeStack) findViewById(R.id.swipeStack);
+		mSwipeStack = (CardStackView) findViewById(R.id.swipeStack);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
@@ -60,20 +57,17 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 			mSwipeStack.setAdapter(mAdapter);
 		}
 
-		mSwipeStack.setListener(this);
-		this.tagVoucherDescription(mSwipeStack.getCurrentPosition());
-		termsAndCondtions.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String terms = vouchers.get(mSwipeStack.getCurrentPosition()).termsAndConditions;
-				if (TextUtils.isEmpty(terms)) {
-					Utils.openLinkInInternalWebView( WoolworthsApplication
-							.getWrewardsTCLink());
-				} else {
-					startActivity(new Intent(WRewardsVoucherDetailsActivity.this, WRewardsVoucherTermAndConditions.class).putExtra("TERMS", terms));
-					overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
-			}
+//		mSwipeStack.setListener(this);
+		//this.tagVoucherDescription(mSwipeStack.getCurrentPosition());
+		termsAndCondtions.setOnClickListener(v -> {
+//			String terms = vouchers.get(mSwipeStack.getCurrentPosition()).termsAndConditions;
+//			if (TextUtils.isEmpty(terms)) {
+//				Utils.openLinkInInternalWebView( WoolworthsApplication
+//						.getWrewardsTCLink());
+//			} else {
+//				startActivity(new Intent(WRewardsVoucherDetailsActivity.this, WRewardsVoucherTermAndConditions.class).putExtra("TERMS", terms));
+//				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+//			}
 		});
 
 	}

@@ -27,7 +27,7 @@
     <dimen name="voucher_min_spend_margintop">18dp</dimen>
     <dimen name="voucher_min_spend_padding">16dp</dimen>
     <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
-    <dimen name="voucher_barcode_number_text_size">17.5dp</dimen>
+    <dimen name="voucher_barcode_number_text_size">17.5sp</dimen>
     <dimen name="terms_and_conditions_margin">16dp</dimen>
     <dimen name="voucher_card_layout_padding">8dp</dimen>
     <dimen name="ten_dp">10dp</dimen>

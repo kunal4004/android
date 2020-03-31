@@ -1,18 +1,297 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingStart="10dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="10dp"
-    android:paddingBottom="10dp">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="12dp"
+    app:cardUseCompatPadding="true">
 
-    <View
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/com_facebook_blue"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@android:color/transparent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+            android:id="@+id/validFromContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@color/status_green"
+            app:layout_constraintBottom_toTopOf="@+id/validDateGuideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/validFromLabelTextView"
+            style="@style/wRewardValidDateLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/valid_from"
+            app:layout_constraintBottom_toBottomOf="@+id/validFromContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/validFromContainer" />
+
+        <TextView
+            android:id="@+id/validFromTextTextView"
+            style="@style/wRewardValidDateTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="1dp"
+            android:text="01/07/2018"
+            app:layout_constraintBottom_toBottomOf="@+id/validFromContainer"
+            app:layout_constraintStart_toEndOf="@+id/validFromLabelTextView"
+            app:layout_constraintTop_toTopOf="@+id/validFromContainer"
+            app:layout_goneMarginStart="1dp" />
+
+
+        <TextView
+            android:id="@+id/validUntilLabelTextView"
+            style="@style/wRewardValidDateLabelStyle"
+            android:layout_width="0dp"
+            android:layout_marginEnd="1dp"
+            android:text="@string/valid_until"
+            app:layout_constraintBottom_toBottomOf="@+id/validFromContainer"
+            app:layout_constraintEnd_toStartOf="@+id/validUntilTextTextView"
+            app:layout_constraintTop_toTopOf="@+id/validFromContainer" />
+
+        <TextView
+            android:id="@+id/validUntilTextTextView"
+            style="@style/wRewardValidDateTextStyle"
+            android:layout_width="0dp"
+            android:layout_marginEnd="12dp"
+            android:text="12/08/2019"
+            app:layout_constraintBottom_toBottomOf="@+id/validFromContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/validFromContainer" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/validDateGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="42dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/voucherValueGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.30" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="32dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="32dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/voucherDescriptionGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.60" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/barcodeBeginGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/barcodeEndGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <View
+            android:id="@+id/contentInfoView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/minimumSpendView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/validFromContainer" />
+
+        <View
+            android:id="@+id/voucherSeparator"
+            android:layout_width="0dp"
+            android:layout_height="1.2dp"
+            android:background="@color/description_color"
+            app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+            app:layout_constraintStart_toStartOf="@+id/startGuideline"
+            app:layout_constraintTop_toTopOf="@+id/voucherValueGuideline" />
+
+
+        <TextView
+            android:id="@+id/voucherValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:autoSizeMaxTextSize="93sp"
+            android:autoSizeMinTextSize="88sp"
+            android:autoSizeStepGranularity="2sp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center|end"
+            android:text="1000"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="93sp"
+            app:layout_constraintBottom_toTopOf="@+id/voucherValueGuideline"
+            app:layout_constraintEnd_toStartOf="@+id/offDiscountPercentTextView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/contentInfoView"
+            app:layout_constraintTop_toTopOf="@+id/validDateGuideline"
+            tools:ignore="HardcodedText,UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/offDiscountPercentTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="16sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center|start"
+            android:text="@string/off_instantly"
+            android:textAllCaps="true"
+            android:textColor="@color/green"
+            android:textSize="20sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/voucherValueTextView"
+            app:layout_constraintBottom_toTopOf="@+id/voucherValueGuideline"
+            app:layout_constraintEnd_toStartOf="@+id/contentInfoView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/voucherValueTextView"
+            app:layout_constraintTop_toTopOf="@+id/validDateGuideline"
+            tools:ignore="UnusedAttribute" />
+
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="11dp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeStepGranularity="2sp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/futura_medium_ttf"
+            android:gravity="center"
+            android:minHeight="50dp"
+            android:text="free woolies cappuchino coffee valued at R29"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/voucherDescriptionGuideline"
+            app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+            app:layout_constraintStart_toStartOf="@+id/startGuideline"
+            app:layout_constraintTop_toBottomOf="@+id/voucherSeparator"
+            tools:ignore="UnusedAttribute" />
+
+
+        <ImageView
+            android:id="@+id/barcode"
+            android:layout_width="0dp"
+            android:layout_height="57dp"
+            android:layout_marginTop="39dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toStartOf="@+id/barcodeEndGuideline"
+            app:layout_constraintStart_toStartOf="@+id/barcodeBeginGuideline"
+            app:layout_constraintTop_toTopOf="@+id/voucherDescriptionGuideline" />
+
+        <TextView
+            android:id="@+id/voucherNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="19dp"
+            android:fontFamily="@font/futura_medium_ttf"
+            android:gravity="center"
+            android:text="848585868694939920"
+            android:textColor="@color/black"
+            android:textSize="@dimen/voucher_barcode_number_text_size"
+            app:layout_constraintEnd_toStartOf="@+id/barcodeEndGuideline"
+            app:layout_constraintStart_toStartOf="@+id/barcodeBeginGuideline"
+            app:layout_constraintTop_toBottomOf="@+id/barcode" />
+
+        <View
+            android:id="@+id/minimumSpendSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="19dp"
+            android:background="@color/grey_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/voucherNumber" />
+
+        <View
+            android:id="@+id/minimumSpendView"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/voucherNumber" />
+
+        <TextView
+            android:id="@+id/minimumSpendLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:letterSpacing="-0.01"
+            android:text="@string/minimum_spend"
+            android:textColor="#4d000000"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/minimumSpendView"
+            app:layout_constraintStart_toStartOf="@+id/minimumSpendView"
+            app:layout_constraintTop_toBottomOf="@+id/minimumSpendSeparator" />
+
+        <TextView
+            android:id="@+id/minSpend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:text="1500"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/minimumSpendView"
+            app:layout_constraintEnd_toStartOf="@+id/barcodeEndGuideline"
+            app:layout_constraintTop_toBottomOf="@+id/minimumSpendSeparator" />
+
+        <ImageView
+            android:id="@+id/bottomImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="@drawable/voucher_tear_off"
+            android:contentDescription="@string/valid_from"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentInfoView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

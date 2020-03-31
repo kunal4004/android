@@ -104,4 +104,5 @@
     <color name="searchBarHintColor">#20000000</color>
     <color name="transaction_date_color">#66030303</color>
     <color name="accounts_sales_page_bg">#F8F8F8</color>
+    <color name="status_dark_green">#A5B52B</color>
 </resources>
