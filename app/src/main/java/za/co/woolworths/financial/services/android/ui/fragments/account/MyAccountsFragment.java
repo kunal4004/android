@@ -338,7 +338,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
 
-		if (NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
+		if (getBottomNavigationActivity().getCurrentFragment() !=null
+				&& getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
+				&& NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
 			initialize();
 		}
 	}
