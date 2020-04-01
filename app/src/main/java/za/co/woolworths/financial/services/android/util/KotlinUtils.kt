@@ -170,5 +170,11 @@ class KotlinUtils {
             }
             return output.trim()
         }
+
+        fun addSpaceBeforeUppercase(word: String?): String {
+            var newWord = ""
+            word?.forEach {alphabet -> newWord +=  if (alphabet.isUpperCase()) " $alphabet" else alphabet }
+            return newWord
+        }
     }
 }
