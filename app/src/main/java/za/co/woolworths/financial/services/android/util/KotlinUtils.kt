@@ -170,5 +170,13 @@ class KotlinUtils {
             }
             return output.trim()
         }
+
+        fun isNumberPositive(i: Float): Boolean {
+            return when {
+                i < 0 -> true
+                i > 0 -> false
+                else -> false
+            }
+        }
     }
 }

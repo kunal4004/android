@@ -26,11 +26,11 @@ import java.util.*
 
 class CardStackView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attrs, defStyle) {
     interface CardEventListener {
-        fun onCardDragging(percentX: Float, percentY: Float)
-        fun onCardSwiped(direction: SwipeDirection?)
-        fun onCardReversed()
-        fun onCardMovedToOrigin()
-        fun onCardClicked(index: Int)
+        fun onCardDragging(percentX: Float, percentY: Float){}
+        fun onCardSwiped(direction: SwipeDirection?){}
+        fun onCardReversed(){}
+        fun onCardMovedToOrigin(){}
+        fun onCardClicked(index: Int){}
     }
 
     private val option = CardStackOption()
@@ -289,7 +289,7 @@ class CardStackView @JvmOverloads constructor(context: Context, attrs: Attribute
         initializeCardStackPosition()
         state.topIndex++
         if (cardEventListener != null) {
-            cardEventListener!!.onCardSwiped(direction)
+            cardEventListener?.onCardSwiped(direction)
         }
         loadNextView()
         containers.last.setContainerEventListener(null)

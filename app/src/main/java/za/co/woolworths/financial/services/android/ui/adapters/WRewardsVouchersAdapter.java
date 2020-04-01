@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.awfs.coordination.R;
+import com.crashlytics.android.Crashlytics;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
@@ -94,7 +95,7 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         try {
             holder.barCode.setImageBitmap(Utils.encodeAsBitmap(vouchers.get(position).voucherNumber, BarcodeFormat.CODE_128, convertView.getWidth(), 60));
         } catch (WriterException e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         }
         return convertView;
     }

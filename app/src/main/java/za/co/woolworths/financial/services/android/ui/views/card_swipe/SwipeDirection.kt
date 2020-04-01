@@ -7,7 +7,7 @@ enum class SwipeDirection {
         val FREEDOM = listOf(*values())
         val FREEDOM_NO_BOTTOM = listOf(Top, Left, Right)
         val HORIZONTAL = listOf(Left, Right)
-        val VERTICAL = listOf(Top, Bottom)
+        val VERTICAL = listOf(Bottom) // ADD Top to enable top
 
         @JvmStatic
         fun from(value: Int): List<SwipeDirection> {
