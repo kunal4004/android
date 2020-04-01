@@ -32,6 +32,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
 
+    companion object {
+        private const val APPLY_NOW_BUTTON_ANIMATE_DURATION: Long = 300
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
@@ -75,12 +79,12 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                invoke(bottomSheet, newState)
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 transitionBottomSheetBackgroundColor(slideOffset)
                 navigateBackImageButton?.rotation = slideOffset * -90
+                if (slideOffset > 0.2) animateButtonIn() else animateButtonOut()
             }
         })
 
@@ -108,8 +112,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         nav_host_fragment?.view?.visibility = GONE
         blackAndGoldCreditCardViewPager?.visibility = VISIBLE
         tabLinearLayout?.visibility = VISIBLE
-        tabLayout?.visibility= VISIBLE
-        blackAndGoldCreditCardViewPager?.offscreenPageLimit  = fragmentList?.size ?: 0
+        tabLayout?.visibility = VISIBLE
+        blackAndGoldCreditCardViewPager?.offscreenPageLimit = fragmentList?.size ?: 0
         SetUpViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
         invoke(position)
     }
@@ -164,9 +168,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun animateButtonOut() {
+        if (bottomApplyNowButtonRelativeLayout?.visibility == INVISIBLE) return
         val animate =
                 TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
-        animate.duration = 500
+        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
         bottomApplyNowButtonRelativeLayout?.visibility = INVISIBLE
@@ -174,10 +179,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun animateButtonIn() {
+        if (bottomApplyNowButtonRelativeLayout?.visibility == VISIBLE) return
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
-        animate.duration = 500
+        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
         bottomApplyNowButtonRelativeLayout?.isEnabled = true
