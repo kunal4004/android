@@ -22,12 +22,13 @@ import za.co.woolworths.financial.services.android.contracts.IAccountSalesContra
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
+import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
-class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
+class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
@@ -65,17 +66,25 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun setupBottomSheetBehaviour() {
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
-        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
+        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
+        val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
+        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        bottomSheetBehaviourLinearLayout?.requestLayout()
 
-        val anchoredHeight = mAccountSalesModelImpl?.getAnchoredHeight(0f, toolbar) ?: 0
-        incBottomSheetLayout?.setPadding(0, anchoredHeight, 0, 0)
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
 
-        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
+        val overlayAnchoredHeight =  mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                invoke(bottomSheet, newState)
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+//                       val  fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.get(0)
+//                        val accountSalesFragment: AccountSalesFragment? = fragment as? AccountSalesFragment
+//                       // accountSalesFragment?.scrollToTop()
+                    }
+                    else -> return
+                }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -108,8 +117,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         nav_host_fragment?.view?.visibility = GONE
         blackAndGoldCreditCardViewPager?.visibility = VISIBLE
         tabLinearLayout?.visibility = VISIBLE
-        tabLayout?.visibility= VISIBLE
-        blackAndGoldCreditCardViewPager?.offscreenPageLimit  = fragmentList?.size ?: 0
+        tabLayout?.visibility = VISIBLE
+        blackAndGoldCreditCardViewPager?.offscreenPageLimit = fragmentList?.size ?: 0
         SetUpViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
         invoke(position)
     }
@@ -153,13 +162,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
                 blackCreditCard?.cardHeader?.drawables?.get(1)?.let { drawable -> cardFrontBlackImageView?.setImageResource(drawable) }
             }
             else -> throw RuntimeException("Invalid View Pager Page Selected ")
-        }
-    }
-
-    override fun invoke(view: View, position: Int) {
-        when (position) {
-            BottomSheetBehavior.STATE_COLLAPSED -> animateButtonOut()
-            BottomSheetBehavior.STATE_EXPANDED -> animateButtonIn()
         }
     }
 

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -18,6 +17,7 @@ import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_statement_button.*
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -25,7 +25,6 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.BottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -34,8 +33,7 @@ import java.net.ConnectException
 
 open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
-    private var bottomSheetBehaviourPeekHeightListener: BottomSheetBehaviourPeekHeightListener? =
-            null
+    private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +43,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BottomSheetBehaviourPeekHeightListener) {
+        if (context is IBottomSheetBehaviourPeekHeightListener) {
             bottomSheetBehaviourPeekHeightListener = context
         } else {
             throw RuntimeException("AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
@@ -74,7 +72,6 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
             val bottomGuidelineVerticalPosition = location[1]
             val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
-            Log.e("GUIDELINE_TAG_ARRAY", "${location[0]} ${location[1]} height $deviceHeight")
         }
     }
 
