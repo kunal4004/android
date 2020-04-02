@@ -4,16 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.TypedArray
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -21,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlin.properties.Delegates
 
-class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
+ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private var tricksViewPagerAdapter: TipsAndTricksViewPagerAdapter? = null
     private var titles: Array<String>? = null
@@ -100,7 +102,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                 when (viewPager.currentItem) {
                 //NAVIGATION
                     0 -> {
-                        if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().cartCount > 0) {
+                        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().cartCount > 0) {
                             startActivity(Intent(this, CartActivity::class.java))
                         } else {
                             setResult(RESULT_OK_PRODUCTS)
@@ -124,7 +126,11 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     }
                 //MY ACCOUNTS
                     6 -> {
-                        presentAccounts()
+                        if (SessionUtilities.getInstance().isUserAuthenticated) {
+                            presentAccounts()
+                        }else {
+                            redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD)
+                        }
                     }
                 //STATEMENTS
                     7 -> {
@@ -168,14 +174,19 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                 featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
             }
             6 -> {
-                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
+                if (SessionUtilities.getInstance().isUserAuthenticated){
+                    featureTitle?.text =  resources.getString(R.string.tips_tricks_view_your_accounts)
+                    featureActionButton?.text = actionButtonTexts?.get(position)
+                }else {
+                    featureTitle?.text = titles?.get(position)
+                    featureActionButton?.text = resources?.getString(R.string.walkthrough_account_action_no_products)
+                }
                 featureActionButton.visibility = View.VISIBLE
             }
             7 -> {
                 featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
+                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
             }
-
         }
     }
 
@@ -211,7 +222,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     }
 
     private fun presentEditDeliveryLocation() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
             startActivity(Intent(this, DeliveryLocationSelectionActivity::class.java))
             overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
         } else {
@@ -232,26 +243,26 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     private fun presentAccounts() {
         availableAccounts = getAvailableAccounts()
         if (availableAccounts.size == 0) {
-            redirectToMyAccountsCardsActivity(0)
+            redirectToMyAccountLandingPage(0)
         } else {
             if (availableAccounts.contains("SC"))
-                redirectToMyAccountsCardsActivity(0)
+                redirectToMyAccountLandingPage(0)
             else if (availableAccounts.contains("CC"))
-                redirectToMyAccountsCardsActivity(1)
+                redirectToMyAccountLandingPage(1)
             else if (availableAccounts.contains("PL"))
-                redirectToMyAccountsCardsActivity(2)
+                redirectToMyAccountLandingPage(2)
         }
     }
 
     private fun presentAccountStatements() {
         availableAccounts = getAvailableAccounts()
         if (availableAccounts.contains("SC"))
-            redirectToMyAccountsCardsActivity(0)
+            redirectToMyAccountLandingPage(0)
         else if (availableAccounts.contains("PL"))
-            redirectToMyAccountsCardsActivity(2)
+            redirectToMyAccountLandingPage(2)
     }
 
-    private fun redirectToMyAccountsCardsActivity(position: Int) {
+    private fun redirectToMyAccountLandingPage(position: Int) {
         val intent = Intent(this, MyAccountActivity::class.java)
         intent.putExtra("position", position)
         if (accountsResponse != null) {
@@ -266,6 +277,17 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         accountsResponse?.accountList?.forEach() {
             availableAccounts.add(it.productGroupCode.toUpperCase())
         }
-        return availableAccounts;
+        return availableAccounts
     }
-}
+
+     private fun redirectToMyAccountsCardsActivity(applyNowState: ApplyNowState) {
+         val intent = Intent(this@TipsAndTricksViewPagerActivity, AccountSalesActivity::class.java)
+         val bundle = Bundle()
+         bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
+         bundle.putString("ACCOUNT_INFO", Gson().toJson(accountsResponse))
+         intent.putExtras(bundle)
+         startActivity(intent)
+         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+     }
+
+ }
