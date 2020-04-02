@@ -50,70 +50,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/detailContentStartGuideline" />
 
-    <TextView
-        android:id="@+id/brandName"
-        style="@style/futura_semi_bold_black_12_text_style"
-        android:layout_height="wrap_content"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text="@string/brands"
-        android:textAllCaps="true"
-        android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/brandMarginTopView" />
-
-    <TextView
-        android:id="@+id/tvProductName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:alpha="0.9"
-        android:contentDescription="@string/plp_textViewProductName"
-        android:ellipsize="end"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="top|start"
-        android:letterSpacing="0.02"
-        android:lineSpacingExtra="1.6dp"
-        android:maxLines="3"
-        android:minLines="3"
-        android:text="Original Free Range Venison Droëwors Nibbles 25g"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/brandName"
-        tools:ignore="HardcodedText"
-        tools:targetApi="lollipop" />
-
-    <TextView
-        android:id="@+id/tvSaveText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:contentDescription="@string/plp_textViewPromotion"
-        android:ellipsize="end"
-        android:fontFamily="@font/futura_medium_ttf"
-        android:gravity="center|start"
-        android:letterSpacing="0.08"
-        android:lines="2"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text="BUY 6 AND SAVE 10% ONLINE ONLY"
-        android:textColor="@color/promo_text_color"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
-        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
-        tools:ignore="HardcodedText,UnusedAttribute" />
-
     <include
         android:id="@+id/includeProductListingPriceLayout"
         layout="@layout/product_listing_price_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="9dp"
-        app:layout_constraintBottom_toTopOf="@+id/detailContentEndGuideline"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
 
@@ -208,4 +152,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator" />
 
+    <TextView
+        android:id="@+id/brandName"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:minLines="2"
+        android:text="@string/brands"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/brandMarginTopView" />
+
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:alpha="0.9"
+        android:contentDescription="@string/plp_textViewProductName"
+        android:ellipsize="end"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="top|start"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.02"
+        android:lineSpacingExtra="0dp"
+        android:maxLines="3"
+        android:minLines="3"
+        android:text="Original Free Range Venison Droëwors Nibbles 25g"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/brandName"
+        tools:ignore="HardcodedText"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/tvSaveText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="1dp"
+        android:contentDescription="@string/plp_textViewPromotion"
+        android:ellipsize="end"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center|start"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.08"
+        android:maxLines="2"
+        android:minLines="2"
+        android:text="BUY 6 AND SAVE 10% ONLINE ONLY UY 6"
+        android:textColor="@color/promo_text_color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        tools:ignore="HardcodedText,UnusedAttribute" />
 </androidx.constraintlayout.widget.ConstraintLayout>
