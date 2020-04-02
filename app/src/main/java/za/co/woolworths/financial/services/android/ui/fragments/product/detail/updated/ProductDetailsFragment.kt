@@ -172,13 +172,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-            it.promotionImages?.apply {
-               if (!freeGift.isNullOrEmpty()){
-                   freeGiftImage?.visibility = View.VISIBLE
-                   activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, freeGift) }
-               }
-            }
-
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
@@ -452,8 +445,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
-                activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, it.freeGift) }
-                freeGiftImage.visibility = View.VISIBLE
             }
         }
 
@@ -1126,6 +1117,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
                 if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
                 if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
+                if (!it.freeGift.isNullOrEmpty()) images.add(it.freeGift)
                 promotionalImages?.removeAllViews()
                 DrawImage(this).let { dImage ->
                     images.forEach { image ->
