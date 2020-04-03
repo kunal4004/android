@@ -43,9 +43,6 @@ class PriceItem {
                 } else {
                     // Create a span that will strikeThrough the text
                     val strikeThroughSpan = StrikethroughSpan()
-                    val textPaint = TextPaint()
-                    textPaint.textSize = 100f
-                    strikeThroughSpan.updateDrawState(textPaint)
                     priceText = WFormatter.formatAmount(price)
                     wasPriceText =  getMassPrice(wasPrice ?: "0", priceType, kilogramPrice, shopFromItem)
 
