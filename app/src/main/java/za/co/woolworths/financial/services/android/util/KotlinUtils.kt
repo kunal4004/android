@@ -167,9 +167,15 @@ class KotlinUtils {
             val tv = TypedValue()
             var actionBarHeight = 0
             if (appCompatActivity?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
-                actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, appCompatActivity.resources?.displayMetrics)
+                actionBarHeight =
+                        TypedValue.complexToDimensionPixelSize(tv.data, appCompatActivity.resources?.displayMetrics)
             }
             return actionBarHeight
+        }
+        fun addSpaceBeforeUppercase(word: String?): String {
+            var newWord = ""
+            word?.forEach {alphabet -> newWord +=  if (alphabet.isUpperCase()) " $alphabet" else alphabet }
+            return newWord
         }
     }
 }

@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.contracts.IAccountSalesContra
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
-import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -32,6 +31,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
+
+    companion object {
+        private const val APPLY_NOW_BUTTON_ANIMATE_DURATION: Long = 300
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,19 +80,12 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-//                       val  fragment = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.get(0)
-//                        val accountSalesFragment: AccountSalesFragment? = fragment as? AccountSalesFragment
-//                       // accountSalesFragment?.scrollToTop()
-                    }
-                    else -> return
-                }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 transitionBottomSheetBackgroundColor(slideOffset)
                 navigateBackImageButton?.rotation = slideOffset * -90
+                if (slideOffset > 0.2) animateButtonIn() else animateButtonOut()
             }
         })
 
@@ -166,9 +162,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun animateButtonOut() {
+        if (bottomApplyNowButtonRelativeLayout?.visibility == INVISIBLE) return
         val animate =
                 TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
-        animate.duration = 500
+        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
         bottomApplyNowButtonRelativeLayout?.visibility = INVISIBLE
@@ -176,10 +173,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun animateButtonIn() {
+        if (bottomApplyNowButtonRelativeLayout?.visibility == VISIBLE) return
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
-        animate.duration = 500
+        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
         bottomApplyNowButtonRelativeLayout?.isEnabled = true

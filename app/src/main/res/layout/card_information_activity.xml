@@ -30,7 +30,7 @@
                 android:letterSpacing="0.02"
                 android:text="@string/information"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="12sp"
                 tools:ignore="UnusedAttribute" />
 
             <ImageButton
@@ -75,13 +75,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
-
-            <TextView
-                android:id="@+id/termsAndConditionsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/card_info_view_term_and_condition" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
