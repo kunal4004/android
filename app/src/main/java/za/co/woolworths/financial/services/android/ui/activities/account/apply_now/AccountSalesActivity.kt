@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
-class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
+class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
@@ -69,13 +69,14 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun setupBottomSheetBehaviour() {
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
-        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
+        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
+        val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
+        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        bottomSheetBehaviourLinearLayout?.requestLayout()
 
-        val anchoredHeight = mAccountSalesModelImpl?.getAnchoredHeight(0f, toolbar) ?: 0
-        incBottomSheetLayout?.setPadding(0, anchoredHeight, 0, 0)
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
 
-        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
+        val overlayAnchoredHeight =  mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -157,13 +158,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
                 blackCreditCard?.cardHeader?.drawables?.get(1)?.let { drawable -> cardFrontBlackImageView?.setImageResource(drawable) }
             }
             else -> throw RuntimeException("Invalid View Pager Page Selected ")
-        }
-    }
-
-    override fun invoke(view: View, position: Int) {
-        when (position) {
-            BottomSheetBehavior.STATE_COLLAPSED -> animateButtonOut()
-            BottomSheetBehavior.STATE_EXPANDED -> animateButtonIn()
         }
     }
 
