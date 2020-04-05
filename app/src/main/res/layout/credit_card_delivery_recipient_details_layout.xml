@@ -10,7 +10,7 @@
         android:paddingBottom="@dimen/thirty_two_dp">
 
         <Button
-            android:id="@+id/activateMyCArd"
+            android:id="@+id/confirm"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
@@ -43,6 +43,8 @@
         <EditText
             android:id="@+id/cellphoneNumber"
             style="@style/credi_card_delivery_edittext_style"
+            android:inputType="number"
+            android:maxLength="10"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/cellphoneNumberPlaceHolder" />
@@ -50,6 +52,8 @@
         <EditText
             android:id="@+id/alternativeNumber"
             style="@style/credi_card_delivery_edittext_style"
+            android:inputType="number"
+            android:maxLength="10"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/alternativeNumberPlaceHolder" />

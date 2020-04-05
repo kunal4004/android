@@ -97,8 +97,6 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
                     overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                 }
             }
-            R.id.okGotItButton, R.id.cancel -> activity?.onBackPressed()
-            R.id.callTheCallCenter -> activity?.apply { Utils.makeCall("0861 50 20 20") }
         }
     }
 

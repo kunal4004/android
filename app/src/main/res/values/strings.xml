@@ -1703,5 +1703,8 @@
     <string name="city_town">City/Town</string>
     <string name="province">Province</string>
     <string name="postal_code">Postal Code</string>
-
+    <string name="schedule_your_delivery">Schedule Your Delivery</string>
+    <string name="manage_my_delivery">Manage My Delivery</string>
+    <string name="confirm_address">Confirm Address</string>
+    <string name="edit_address">Edit Address</string>
 </resources>

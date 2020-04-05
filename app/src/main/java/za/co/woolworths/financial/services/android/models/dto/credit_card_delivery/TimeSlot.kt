@@ -1,3 +1,3 @@
 package za.co.woolworths.financial.services.android.models.dto.credit_card_delivery
 
-data class Address(val name: String, val x: String, val y: String)
+data class TimeSlot(val date: String?, val availableTimeslots: List<String>?)

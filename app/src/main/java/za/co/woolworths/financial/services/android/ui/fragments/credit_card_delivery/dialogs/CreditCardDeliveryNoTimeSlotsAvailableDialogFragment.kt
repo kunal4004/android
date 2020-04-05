@@ -1,0 +1,33 @@
+package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.dialogs
+
+import android.graphics.Paint
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.credit_card_delivery_no_time_slots_available_dialog.*
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.Utils
+
+class CreditCardDeliveryNoTimeSlotsAvailableDialogFragment : WBottomSheetDialogFragment() {
+
+    companion object {
+        fun newInstance() = CreditCardDeliveryNoTimeSlotsAvailableDialogFragment()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.credit_card_delivery_no_time_slots_available_dialog, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        cancel?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener { dismissAllowingStateLoss() }
+        }
+        callCourierPartner.setOnClickListener {
+            activity?.apply { Utils.makeCall("0861 50 20 20") }
+        }
+    }
+}

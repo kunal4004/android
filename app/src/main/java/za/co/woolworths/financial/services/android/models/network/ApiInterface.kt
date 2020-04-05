@@ -11,7 +11,10 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -1250,7 +1253,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<CreditCardDeliveryStatusResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/cardDelivery/status")
+    @GET("accounts/cardDelivery/address")
     fun possibleAddress(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1263,6 +1266,40 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Query("searchPhrase") searchPhrase: String,
-            @Query("productOfferingId") productOfferingId: String): Call<CreditCardDeliveryStatusResponse>
+            @Query("productOfferingId") productOfferingId: String): Call<PossibleAddressResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("accounts/cardDelivery/timeslots")
+    fun availableTimeSlots(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("envelopeNumber") envelopeNumber: String,
+            @Query("productOfferingId") productOfferingId: String,
+            @Query("x") x: String,
+            @Query("y") y: String,
+            @Query("shipByDate") shipByDate: String): Call<AvailableTimeSlotsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/cardDelivery/scheduleDelivery")
+    fun scheduleDelivery(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("productOfferingId") productOfferingId: String,
+            @Body requestBody: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse>
 }
