@@ -16,4 +16,7 @@
     <dimen name="store_card_next_button_size_48_dp">48sp</dimen>
     <dimen name="voucher_description_text_size">15sp</dimen>
     <dimen name="voucher_barcode_text_size">17sp</dimen>
+    <dimen name="voucher_date_text_size_11sp">11sp</dimen>
+    <dimen name="voucher_value_text_size_93sp">93sp</dimen>
+    <dimen name="voucher_off_value_20sp">20sp</dimen>
 </resources>

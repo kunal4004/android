@@ -41,4 +41,7 @@
     <dimen name="voucher_off_text_size">18sp</dimen>
     <dimen name="voucher_description_text_size">13sp</dimen>
     <dimen name="voucher_barcode_text_size">16sp</dimen>
+    <dimen name="voucher_date_text_size_11sp">10.2sp</dimen>
+    <dimen name="voucher_value_text_size_93sp">70sp</dimen>
+    <dimen name="voucher_off_value_20sp">16sp</dimen>
 </resources>
