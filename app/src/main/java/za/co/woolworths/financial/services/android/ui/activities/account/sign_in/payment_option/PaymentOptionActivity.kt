@@ -54,7 +54,8 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             val view = View.inflate(this, R.layout.how_to_pay_account_details_list_item, null)
             val paymentName: WTextView? = view?.findViewById(R.id.paymentName)
             val paymentValue: WTextView? = view?.findViewById(R.id.paymentvalue)
-            paymentName?.text = KotlinUtils.capitaliseFirstLetter(paymentItem.key)
+            val accountLabel = KotlinUtils.capitaliseFirstLetter(KotlinUtils.addSpaceBeforeUppercase(paymentItem.key) + ":")
+            paymentName?.text = accountLabel
             paymentValue?.text = paymentItem.value
             howToPayAccountDetails?.addView(view)
         }

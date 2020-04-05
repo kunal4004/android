@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -16,7 +15,6 @@ class CardInformationHelpActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         const val HELP_INFORMATION = "HELP_INFORMATION"
-        const val  TERMS_AND_CONDITION_URL = "https://www.woolworths.co.za/corporate/cmp100103"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,14 +35,11 @@ class CardInformationHelpActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         closeIcon?.setOnClickListener(this)
-        termsAndConditionsTextView?.setOnClickListener(this)
-        termsAndConditionsTextView?.paintFlags = termsAndConditionsTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeIcon -> onBackPressed()
-            R.id.termsAndConditionsTextView -> Utils.openBrowserWithUrl(TERMS_AND_CONDITION_URL)
         }
     }
 

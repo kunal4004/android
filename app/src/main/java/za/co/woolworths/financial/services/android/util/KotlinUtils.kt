@@ -11,6 +11,7 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
+import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -81,12 +82,6 @@ class KotlinUtils {
             }
         }
 
-        fun getBottomSheetBehaviorDefaultAnchoredHeight(): Int? {
-            val activity = WoolworthsApplication.getInstance()?.currentActivity
-            val height: Int? = activity?.resources?.displayMetrics?.heightPixels ?: 0
-            return height?.div(3)?.plus(Utils.dp2px(18f)) ?: 0
-        }
-
         fun getStatusBarHeight(actionBarHeight: Int): Int {
             val activity = WoolworthsApplication.getInstance()?.currentActivity
             val resId: Int =
@@ -99,14 +94,13 @@ class KotlinUtils {
             return statusBarHeight + actionBarHeight
         }
 
-
-        fun getStatusBarHeight(activity: Activity?): Int {
+        fun getStatusBarHeight(appCompatActivity: AppCompatActivity?): Int {
             var result = 0
-            val resourceId: Int =
-                    activity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
-                            ?: result
+            val resourceId =
+                    appCompatActivity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
+                            ?: 0
             if (resourceId > 0) {
-                result = activity?.resources?.getDimensionPixelSize(resourceId) ?: result
+                result = appCompatActivity?.resources?.getDimensionPixelSize(resourceId) ?: 0
             }
             return result
         }
@@ -177,6 +171,22 @@ class KotlinUtils {
                 i > 0 -> false
                 else -> false
             }
+        }
+
+        fun getToolbarHeight(appCompatActivity: AppCompatActivity?): Int {
+            val tv = TypedValue()
+            var actionBarHeight = 0
+            if (appCompatActivity?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
+                actionBarHeight =
+                        TypedValue.complexToDimensionPixelSize(tv.data, appCompatActivity.resources?.displayMetrics)
+            }
+            return actionBarHeight
+        }
+
+        fun addSpaceBeforeUppercase(word: String?): String {
+            var newWord = ""
+            word?.forEach { alphabet -> newWord += if (alphabet.isUpperCase()) " $alphabet" else alphabet }
+            return newWord
         }
     }
 }

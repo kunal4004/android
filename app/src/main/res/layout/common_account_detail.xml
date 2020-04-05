@@ -81,12 +81,4 @@
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/accountOptionHeaderDivider" />
 
-    <View
-        android:id="@+id/bottomSpaceView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accountOptionBackgroundView" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
