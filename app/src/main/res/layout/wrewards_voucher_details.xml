@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true">
 
     <za.co.woolworths.financial.services.android.ui.views.card_swipe.CardStackView
-        android:id="@+id/swipeStack"
+        android:id="@+id/cardSwipeStackView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
@@ -66,5 +66,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.95" />
+        app:layout_constraintGuide_percent="@dimen/termsAndConditionsGuideLine_percent_90" />
 </androidx.constraintlayout.widget.ConstraintLayout>
