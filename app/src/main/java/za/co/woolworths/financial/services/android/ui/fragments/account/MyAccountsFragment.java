@@ -756,10 +756,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             configureView();
 
                             // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
-							if (httpCode == 502) {
-								if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)){
-									AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
-									accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+							if (activity instanceof BottomNavigationActivity) {
+								if (httpCode == 502 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+									if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)) {
+										AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
+										accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+									}
 								}
 							}
                             break;
