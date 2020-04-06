@@ -7,4 +7,24 @@
     <dimen name="account_sales_apply_now_button_text_size">12sp</dimen>
     <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
     <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
+    <dimen name="voucher_date_text_size_11sp">11sp</dimen>
+    <dimen name="voucher_value_text_size_93sp">93sp</dimen>
+    <dimen name="voucher_off_value_20sp">20sp</dimen>
+    <dimen name="voucher_card_stack_view_padding_top_80dp">80dp</dimen>
+    <dimen name="voucher_card_stack_view_padding_bottom_10dp">10dp</dimen>
+    <dimen name="barcode_voucher_top_margin_39dp">39dp</dimen>
+    <dimen name="barcode_voucher_height_57dp">57dp</dimen>
+    <dimen name="voucher_number_top_margin_20dp">20dp</dimen>
+    <dimen name="voucher_number_bottom_margin_19dp">19sp</dimen>
+    <dimen name="valid_date_guideline_begin_42dp">42dp</dimen>
+    <dimen name="voucher_number_top_margin_19dp">19dp</dimen>
+    <dimen name="minimum_spend_label_text_size_15sp">15sp</dimen>
+    <dimen name="minimum_spend_view_height_45dp">45dp</dimen>
+    <dimen name="minimum_spend_top_margin_16dp">16dp</dimen>
+    <dimen name="voucher_number_barcode_value_text_size_17sp">17sp</dimen>
+    <dimen name="voucher_off_value_25sp">25sp</dimen>
+    <item name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</item>
+    <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
+    <item name="voucher_stack_scale_difference" type="dimen" format="float">0.2</item>
+    <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
 </resources>

@@ -96,7 +96,9 @@ class KotlinUtils {
 
         fun getStatusBarHeight(appCompatActivity: AppCompatActivity?): Int {
             var result = 0
-            val resourceId = appCompatActivity?.resources?.getIdentifier("status_bar_height", "dimen", "android") ?: 0
+            val resourceId =
+                    appCompatActivity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
+                            ?: 0
             if (resourceId > 0) {
                 result = appCompatActivity?.resources?.getDimensionPixelSize(resourceId) ?: 0
             }
@@ -163,6 +165,14 @@ class KotlinUtils {
             return output.trim()
         }
 
+        fun isNumberPositive(i: Float): Boolean {
+            return when {
+                i < 0 -> true
+                i > 0 -> false
+                else -> false
+            }
+        }
+
         fun getToolbarHeight(appCompatActivity: AppCompatActivity?): Int {
             val tv = TypedValue()
             var actionBarHeight = 0
@@ -172,9 +182,10 @@ class KotlinUtils {
             }
             return actionBarHeight
         }
+
         fun addSpaceBeforeUppercase(word: String?): String {
             var newWord = ""
-            word?.forEach {alphabet -> newWord +=  if (alphabet.isUpperCase()) " $alphabet" else alphabet }
+            word?.forEach { alphabet -> newWord += if (alphabet.isUpperCase()) " $alphabet" else alphabet }
             return newWord
         }
     }
