@@ -545,7 +545,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             otherSku = it
                             return@forEach
                         }
-
                     }
                     setSelectedSku(otherSku)
                     if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
@@ -1115,21 +1114,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun loadPromotionalImages() {
+        val images = ArrayList<String>()
         activity?.apply {
             productDetails?.promotionImages?.let {
-                val images = ArrayList<String>()
                 if (!it.save.isNullOrEmpty()) images.add(it.save)
                 if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
                 if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
                 if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
-                mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
-                promotionalImages?.removeAllViews()
-                DrawImage(this).let { dImage ->
-                    images.forEach { image ->
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            dImage.displaySmallImage(view.promotionImage, image)
-                            promotionalImages?.addView(view)
-                        }
+            }
+
+            promotionalImages?.removeAllViews()
+
+            mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
+
+            DrawImage(this).let { dImage ->
+                images.forEach { image ->
+                    layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                        dImage.displaySmallImage(view.promotionImage, image)
+                        promotionalImages?.addView(view)
                     }
                 }
             }
