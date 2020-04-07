@@ -127,7 +127,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
    override fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?): Int {
         appCompatActivity?.apply {
             val height = resources?.displayMetrics?.heightPixels ?: 0
-            return ((height / 100) * 36)
+            return (height.div(100)).times(23)
         }
         return 0
     }

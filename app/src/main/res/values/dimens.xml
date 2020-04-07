@@ -195,5 +195,6 @@
     <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
     <item name="voucher_stack_scale_difference" type="dimen" format="float">0.2</item>
     <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
+    <item name="availableFundMaximumHeight" type="dimen" format="float">0.7</item>
 </resources>
 
