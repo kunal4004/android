@@ -1668,4 +1668,6 @@
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
 
+    <string name="payment_made_from_other_acc_title">payments made from other accounts</string>
+
 </resources>

@@ -25,7 +25,6 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         KotlinUtils.setTransparentStatusBar(this)
         setContentView(R.layout.payment_options_activity)
         initViews()
-        hideABSAInfo()
     }
 
     override fun onResume() {
@@ -45,6 +44,18 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
+        }
+    }
+
+    override fun setPaymentOption(paymentMethods: MutableList<PaymentMethod>?) {
+        howToPayOptionsList?.removeAllViews()
+        paymentMethods?.forEachIndexed { index, paymentMethod ->
+            val view = View.inflate(this, R.layout.how_to_pay_options_list_item, null)
+            val count: WTextView? = view.findViewById(R.id.count)
+            val howToPayOption: WTextView? = view.findViewById(R.id.howToPayOption)
+            count?.text = (index + 1).toString()
+            howToPayOption?.text = paymentMethod.description
+            howToPayOptionsList?.addView(view)
         }
     }
 
@@ -71,24 +82,15 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     }
 
     override fun showABSAInfo() {
+        tvHowToPayTitle?.text  = getString(R.string.payment_made_from_other_acc_title)
         llAbsaAccount?.visibility = VISIBLE
-        llCreditCardDetail?.visibility = VISIBLE
+        tvPaymentOtherAccountDesc?.visibility = VISIBLE
     }
 
     override fun hideABSAInfo() {
         llAbsaAccount?.visibility = GONE
-    }
+        tvPaymentOtherAccountDesc?.visibility = GONE
 
-    override fun setPaymentOption(paymentMethods: MutableList<PaymentMethod>?) {
-        howToPayOptionsList?.removeAllViews()
-        paymentMethods?.forEachIndexed { index, paymentMethod ->
-            val view = View.inflate(this, R.layout.how_to_pay_options_list_item, null)
-            val count: WTextView? = view.findViewById(R.id.count)
-            val howToPayOption: WTextView? = view.findViewById(R.id.howToPayOption)
-            count?.text = (index + 1).toString()
-            howToPayOption?.text = paymentMethod.description
-            howToPayOptionsList?.addView(view)
-        }
     }
 
     override fun onBackPressed() {

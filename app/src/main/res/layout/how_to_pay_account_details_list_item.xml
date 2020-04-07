@@ -21,7 +21,7 @@
             android:id="@+id/paymentName"
             style="@style/contact_us_item_header_textview"
             android:layout_width="0dp"
-            android:layout_marginRight="@dimen/five_dp"
+            android:layout_marginEnd="@dimen/five_dp"
             android:layout_weight="1"
             android:text="Account Holder:"
             android:textColor="@color/black_50" />
@@ -30,7 +30,7 @@
             android:id="@+id/paymentvalue"
             style="@style/contact_us_item_header_textview"
             android:layout_width="0dp"
-            android:layout_marginLeft="@dimen/five_dp"
+            android:layout_marginStart="@dimen/five_dp"
             android:layout_weight="1.1"
             android:gravity="end"
             android:singleLine="false"
