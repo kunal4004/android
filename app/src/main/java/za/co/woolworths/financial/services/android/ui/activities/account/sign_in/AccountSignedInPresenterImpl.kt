@@ -187,8 +187,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         appCompatActivity?.apply {
             val displayMetrics: DisplayMetrics = resources.displayMetrics
             val height = displayMetrics.heightPixels
-            val toolbarHeight = KotlinUtils.getToolbarHeight(appCompatActivity)
-            return height.minus(toolbarHeight)
+            val toolbarHeight = KotlinUtils.getToolbarHeight(this)
+            return height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight(this).div(2))
         }
         return 0
     }
