@@ -35,7 +35,6 @@
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
-        android:id="@+id/linProductSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
@@ -47,7 +46,6 @@
             android:visibility="gone"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textNoProductFound"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="left|center"

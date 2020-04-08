@@ -89,7 +89,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
 
     private fun bindDepartment() {
-        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()!!.rootCategories)
+        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
     }
 

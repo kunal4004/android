@@ -41,7 +41,6 @@
             android:paddingEnd="@dimen/ten_dp">
 
             <RelativeLayout
-                android:id="@+id/relApplyNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/twenty_dp">
@@ -70,7 +69,6 @@
                     android:fontFamily="@font/futura_semi_bold_ttf" />
 
                 <LinearLayout
-                    android:id="@+id/linContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -126,7 +124,6 @@
                         android:src="@drawable/cli" />
 
                     <TextView
-                        android:id="@+id/tvIncreaseMyLimit"
                         style="@style/style_loan_title"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="14dp"
@@ -134,7 +131,6 @@
                         android:text="@string/increase_my_limit" />
 
                     <ImageView
-                        android:id="@+id/imgFindOutMoreArrow"
                         style="@style/style_loan_img"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_caret_black" />
@@ -147,9 +143,7 @@
 
         </LinearLayout>
 
-        <include
-            android:id="@+id/incCommonAccountDetailLayout"
-            layout="@layout/common_account_detail" />
+        <include layout="@layout/common_account_detail" />
 
     </LinearLayout>
 

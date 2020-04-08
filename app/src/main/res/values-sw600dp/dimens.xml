@@ -19,13 +19,8 @@
     <dimen name="store_card_text_field_height_50_dp">50dp</dimen>
     <dimen name="store_card_text_field_text_size_14_dp">14sp</dimen>
     <dimen name="store_card_next_button_size_48_dp">48sp</dimen>
-    <dimen name="voucher_description_text_size">15sp</dimen>
-    <dimen name="voucher_barcode_text_size">17sp</dimen>
     <dimen name="voucher_date_text_size_11sp">11sp</dimen>
     <dimen name="voucher_value_text_size_93sp">93sp</dimen>
-    <dimen name="voucher_off_value_20sp">20sp</dimen>
-    <dimen name="voucher_card_stack_view_padding_top_80dp">80dp</dimen>
-    <dimen name="voucher_card_stack_view_padding_bottom_10dp">10dp</dimen>
     <dimen name="barcode_voucher_top_margin_39dp">39dp</dimen>
     <dimen name="barcode_voucher_height_57dp">57dp</dimen>
     <dimen name="voucher_number_top_margin_20dp">20dp</dimen>
@@ -39,6 +34,5 @@
     <dimen name="voucher_off_value_25sp">25sp</dimen>
     <item name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</item>
     <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
-    <item name="voucher_stack_scale_difference" type="dimen" format="float">0.2</item>
     <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
 </resources>

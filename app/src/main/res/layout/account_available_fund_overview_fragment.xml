@@ -177,6 +177,20 @@
         style="@style/accountSalesTextViewAmountStyle"
         android:text="@string/credit_card_gold_title"
         app:layout_constraintBottom_toTopOf="@+id/creditLimitAmountTextView"
-        app:layout_constraintEnd_toStartOf="@+id/endGuide" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/currentBalanceTextView" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/availableFundTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

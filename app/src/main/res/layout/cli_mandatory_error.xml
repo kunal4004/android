@@ -16,7 +16,6 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:background="@color/white"
-            android:id="@+id/linConfidentialPopUp"
             android:orientation="vertical"
             android:paddingLeft="@dimen/bank_spacing_width"
             android:paddingRight="@dimen/bank_spacing_width"
@@ -64,7 +63,6 @@
 
 
             <LinearLayout
-                android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
                 android:layout_marginBottom="@dimen/default_margin"

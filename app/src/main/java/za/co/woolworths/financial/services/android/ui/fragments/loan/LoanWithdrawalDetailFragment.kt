@@ -7,11 +7,6 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.loan_confirmation_layout.*
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.btnConfirm
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.mConfirmProgressBar
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvAdditionalMonthlyRepayment
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvDrawnDownSelectedAmount
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvRepaymentPeriod
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan

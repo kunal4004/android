@@ -67,7 +67,6 @@
                             app:navGraph="@navigation/on_boarding_graph" />
 
                         <LinearLayout
-                            android:id="@+id/loginRegisterBtnLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -188,7 +187,6 @@
                             </RelativeLayout>
 
                             <RelativeLayout
-                                android:id="@+id/orderHistory"
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background"
                                 android:visibility="gone">
@@ -209,7 +207,6 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/allUserOptionsLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"

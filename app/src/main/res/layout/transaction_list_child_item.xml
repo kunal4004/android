@@ -58,7 +58,6 @@
         app:layout_constraintGuide_end="24dp" />
 
     <View
-        android:id="@+id/bottomSeparator"
         android:layout_width="0dp"
         android:layout_height="17dp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"

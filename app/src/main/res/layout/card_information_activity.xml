@@ -54,7 +54,6 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbarContainer" />
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/informationNestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"

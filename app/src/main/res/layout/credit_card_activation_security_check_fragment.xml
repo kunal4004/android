@@ -43,7 +43,6 @@
             app:srcCompat="@drawable/ic_envelope" />
 
         <TextView
-            android:id="@+id/tvEnvelope"
             style="@style/card_item_regular_text_style"
             android:layout_toEndOf="@+id/logoEnvelope"
             android:text="@string/cc_activation_security_check_1"
@@ -81,7 +80,6 @@
             app:srcCompat="@drawable/ic_card" />
 
         <TextView
-            android:id="@+id/tvCardDetailsCorrect"
             style="@style/card_item_regular_text_style"
             android:layout_toEndOf="@+id/logoCard"
             android:text="@string/cc_activation_security_check_2"
@@ -119,7 +117,6 @@
             app:srcCompat="@drawable/ic_lock" />
 
         <TextView
-            android:id="@+id/tvLogoPinSeal"
             style="@style/card_item_regular_text_style"
             android:layout_toEndOf="@+id/logoPinSeal"
             android:text="@string/cc_activation_security_check_3"
