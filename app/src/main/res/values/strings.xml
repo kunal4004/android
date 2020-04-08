@@ -1671,4 +1671,6 @@
     <string name="blackCreditCardMoreBenefits_row_3_title">Cash when you need it</string>
     <string name="blackCreditCardMoreBenefits_row_3_desc">Withdraw cash at any ATM displaying the Visa logo. Withdrawals at any Absa ATM is free for Woolworths Black Credit Cardholders. Ts&amp;Cs apply.</string>
 
+    <string name="payment_made_from_other_acc_title">payments made from other accounts</string>
+
 </resources>
