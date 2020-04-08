@@ -174,13 +174,8 @@ import kotlin.properties.Delegates
                 featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
             }
             6 -> {
-                if (SessionUtilities.getInstance().isUserAuthenticated){
-                    featureTitle?.text =  resources.getString(R.string.tips_tricks_view_your_accounts)
-                    featureActionButton?.text = actionButtonTexts?.get(position)
-                }else {
-                    featureTitle?.text = titles?.get(position)
-                    featureActionButton?.text = resources?.getString(R.string.walkthrough_account_action_no_products)
-                }
+                featureTitle?.text =  if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
+                featureActionButton?.text = resources?.getString(R.string.walkthrough_account_action_no_products)
                 featureActionButton.visibility = View.VISIBLE
             }
             7 -> {
