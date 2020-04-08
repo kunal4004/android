@@ -1664,6 +1664,9 @@
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
+    <string name="account_in_arrears_layout">Account In Arrears Layout</string>
+    <string name="account_six_month_arrear_toolbar">Account Six Month In Arrear Toolbar</string>
 
     <string name="blackCreditCardMoreBenefits_row_3_title">Cash when you need it</string>
     <string name="blackCreditCardMoreBenefits_row_3_desc">Withdraw cash at any ATM displaying the Visa logo. Withdrawals at any Absa ATM is free for Woolworths Black Credit Cardholders. Ts&amp;Cs apply.</string>
