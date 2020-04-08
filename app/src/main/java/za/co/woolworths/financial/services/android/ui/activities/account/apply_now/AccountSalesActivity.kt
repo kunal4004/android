@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
@@ -26,12 +28,17 @@ import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTa
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
-class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit, (View, Int) -> Unit {
+class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
 
+    companion object {
+        private const val APPLY_NOW_BUTTON_ANIMATE_DURATION: Long = 300
+        const val SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION: Long = 500
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
@@ -65,25 +72,40 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun setupBottomSheetBehaviour() {
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
-        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetLayout)
+        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
+        val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
+        layoutParams?.height =
+                mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        bottomSheetBehaviourLinearLayout?.requestLayout()
 
-        val anchoredHeight = mAccountSalesModelImpl?.getAnchoredHeight(0f, toolbar) ?: 0
-        incBottomSheetLayout?.setPadding(0, anchoredHeight, 0, 0)
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
 
-        val overlayAnchoredHeight = mAccountSalesModelImpl?.getOverlayAnchoredHeight() ?: 0
+        val overlayAnchoredHeight =
+                mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
+                        ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                invoke(bottomSheet, newState)
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> smoothScrollToTop()
+                    else -> return
+                }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 transitionBottomSheetBackgroundColor(slideOffset)
                 navigateBackImageButton?.rotation = slideOffset * -90
+                if (slideOffset > 0.2) animateButtonIn() else animateButtonOut()
             }
         })
+    }
 
+    private fun smoothScrollToTop() {
+        scrollableView?.apply {
+            post {
+                ObjectAnimator.ofInt(this, "scrollY", 0).setDuration(SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION).start()
+            }
+        }
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
@@ -107,6 +129,9 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     override fun displayCreditCard(fragmentList: Map<String, Fragment>?, position: Int) {
         nav_host_fragment?.view?.visibility = GONE
         blackAndGoldCreditCardViewPager?.visibility = VISIBLE
+        tabLinearLayout?.visibility = VISIBLE
+        tabLayout?.visibility = VISIBLE
+        blackAndGoldCreditCardViewPager?.offscreenPageLimit = fragmentList?.size ?: 0
         SetUpViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
         invoke(position)
     }
@@ -115,9 +140,9 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         // Collapse overlay view if view is opened, else navigate to previous screen
         if (sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
             sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+            smoothScrollToTop()
             return
         }
-
         mAccountSalesModelImpl?.onBackPressed(this@AccountSalesActivity)
     }
 
@@ -153,16 +178,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         }
     }
 
-    override fun invoke(view: View, position: Int) {
-        when (position) {
-            BottomSheetBehavior.STATE_COLLAPSED -> animateButtonOut()
-            BottomSheetBehavior.STATE_EXPANDED -> animateButtonIn()
-        }
-    }
-
     private fun animateButtonOut() {
+        if (bottomApplyNowButtonRelativeLayout?.visibility == INVISIBLE) return
         val animate = TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
-        animate.duration = 500
+        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
         bottomApplyNowButtonRelativeLayout?.visibility = INVISIBLE
@@ -170,9 +189,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun animateButtonIn() {
+        if (bottomApplyNowButtonRelativeLayout?.visibility == VISIBLE) return
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
         val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
-        animate.duration = 500
+        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
         bottomApplyNowButtonRelativeLayout?.isEnabled = true

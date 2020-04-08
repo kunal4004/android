@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:contentDescription="@string/transaction_months_layout"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:contentDescription="@string/transaction_months_layout">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/transactionMonth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#efefef"
-        android:gravity="center_vertical"
-        android:paddingTop="@dimen/bank_spacing_width"
-        android:paddingBottom="@dimen/recent_search_margin"
-        android:paddingLeft="@dimen/default_margin"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="start"
         android:letterSpacing="0.1"
-        android:paddingRight="@dimen/default_margin"
+        android:paddingEnd="24dp"
+        android:paddingTop="@dimen/bank_spacing_width"
+        android:paddingStart="24dp"
+        android:paddingBottom="@dimen/recent_search_margin"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="12sp"
-        app:WTextView_font="medium_bold" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view5" />
 
-</LinearLayout>
+    <View
+        android:id="@+id/view5"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:background="@color/default_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

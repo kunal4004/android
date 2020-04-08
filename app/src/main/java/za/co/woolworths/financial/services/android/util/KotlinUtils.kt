@@ -12,6 +12,8 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
+
+import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +23,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
+import java.text.SimpleDateFormat
 
 class KotlinUtils {
     companion object {
@@ -79,12 +82,6 @@ class KotlinUtils {
             }
         }
 
-        fun getBottomSheetBehaviorDefaultAnchoredHeight(): Int? {
-            val activity = WoolworthsApplication.getInstance()?.currentActivity
-            val height: Int? = activity?.resources?.displayMetrics?.heightPixels ?: 0
-            return height?.div(3)?.plus(Utils.dp2px(18f)) ?: 0
-        }
-
         fun getStatusBarHeight(actionBarHeight: Int): Int {
             val activity = WoolworthsApplication.getInstance()?.currentActivity
             val resId: Int =
@@ -97,14 +94,13 @@ class KotlinUtils {
             return statusBarHeight + actionBarHeight
         }
 
-
-        fun getStatusBarHeight(activity: Activity?): Int {
+        fun getStatusBarHeight(appCompatActivity: AppCompatActivity?): Int {
             var result = 0
-            val resourceId: Int =
-                    activity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
-                            ?: result
+            val resourceId =
+                    appCompatActivity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
+                            ?: 0
             if (resourceId > 0) {
-                result = activity?.resources?.getDimensionPixelSize(resourceId) ?: result
+                result = appCompatActivity?.resources?.getDimensionPixelSize(resourceId) ?: 0
             }
             return result
         }
@@ -148,6 +144,49 @@ class KotlinUtils {
 
         fun pxToDpConverter(px: Int): Int {
             return (px / Resources.getSystem().displayMetrics.density).toInt()
+        }
+
+        fun convertFromDateToDate(date: String?): String? {
+            date?.apply {
+                val fromDateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val toDateFormat = SimpleDateFormat("MMMM yyyy")
+                val fromDate = fromDateFormat.parse(date)
+                return toDateFormat.format(fromDate)
+            }
+            return ""
+        }
+
+        fun capitaliseFirstLetter(str: String): CharSequence? {
+            val words = str.split(" ").toMutableList()
+            var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+
+        fun isNumberPositive(i: Float): Boolean {
+            return when {
+                i < 0 -> true
+                i > 0 -> false
+                else -> false
+            }
+        }
+
+        fun getToolbarHeight(appCompatActivity: AppCompatActivity?): Int {
+            val tv = TypedValue()
+            var actionBarHeight = 0
+            if (appCompatActivity?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
+                actionBarHeight =
+                        TypedValue.complexToDimensionPixelSize(tv.data, appCompatActivity.resources?.displayMetrics)
+            }
+            return actionBarHeight
+        }
+
+        fun addSpaceBeforeUppercase(word: String?): String {
+            var newWord = ""
+            word?.forEach { alphabet -> newWord += if (alphabet.isUpperCase()) " $alphabet" else alphabet }
+            return newWord
         }
 
         fun setAccountNavigationGraph(navigationController: NavController, screenType: OnBoardingScreenType) {

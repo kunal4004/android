@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
 import android.net.Uri
 import za.co.woolworths.financial.services.android.ui.views.alert.OnHideAlertListener
+import za.co.woolworths.financial.services.android.util.DeepLinkingUtils
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 
@@ -30,8 +31,6 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
     companion object {
         fun newInstance() = BarcodeScanFragment()
         private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 10
-        const val DOMAIN_WOOLWORTHS = "woolworths.co.za"
-        const val WHITE_LISTED_DOMAIN = "WHITE_LISTED_DOMAIN"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,13 +61,13 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
                                                 if (!getProductDetailAsyncTaskIsRunning) {
                                                     when (result.barcodeFormat) {
                                                         BarcodeFormat.QR_CODE -> {
-                                                            getProductSearchTypeAndSearchTerm(this).let { it->
+                                                            DeepLinkingUtils.getProductSearchTypeAndSearchTerm(this).let { it->
                                                                 with(it.searchTerm) {
                                                                     when {
                                                                         isEmpty() -> {
                                                                             ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code),this@BarcodeScanFragment)
                                                                         }
-                                                                        contains(WHITE_LISTED_DOMAIN) -> {
+                                                                        contains(DeepLinkingUtils.WHITE_LISTED_DOMAIN) -> {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
                                                                             finish()
                                                                             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

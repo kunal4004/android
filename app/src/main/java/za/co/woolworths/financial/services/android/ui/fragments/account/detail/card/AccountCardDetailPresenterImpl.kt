@@ -13,6 +13,8 @@ import za.co.woolworths.financial.services.android.contracts.IAccountCardDetails
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -32,7 +34,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     var mOfferActiveCall: Call<OfferActive>? = null
     var mStoreCardCall: Call<StoreCardsResponse>? = null
     private var mOfferActive: OfferActive? = null
-    private var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
+    var mApplyNowAccountKeyPair: Pair<ApplyNowState, Account>? = null
     private var mStoreCardResponse: StoreCardsResponse? = null
     private var mIncreaseLimitController: CreditLimitIncreaseStatus? = null
 
@@ -95,8 +97,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
         val productOfferingId = account?.productOfferingId
         mainView?.showUserOfferActiveProgress()
-        mOfferActiveCall =
-                productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
+        mOfferActiveCall = productOfferingId?.let { offering_id -> model?.queryServiceGetUserCLIOfferActive(offering_id.toString(), this) }
     }
 
     override fun getStoreCardResponse(): StoreCardsResponse? {
@@ -105,6 +106,11 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
             storeCardsData?.productOfferingId = accountInfo?.productOfferingId.toString()
             storeCardsData?.visionAccountNumber = accountInfo?.accountNumber.toString()
         }
+    }
+
+    override fun getCreditCardToken() {
+        if (!getAccount()?.productGroupCode.equals("CC", true)) return
+        model?.queryServiceGetCreditCartToken(this)
     }
 
     override fun onSuccess(apiResponse: Any?) {
@@ -138,6 +144,18 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                     }
                 }
 
+                is CreditCardTokenResponse->{
+                    when (httpCode) {
+                        200 -> {
+                            mainView?.onGetCreditCArdTokenSuccess(this)
+                        }
+                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> {
+                            mainView?.onGetCreditCardTokenFailure()
+                        }
+                    }
+                }
+
                 else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
             }
         }
@@ -147,8 +165,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     private fun handleUserOfferActiveSuccessResult(offerActive: OfferActive) {
         val activity = getAppCompatActivity() ?: return
         this.mOfferActive = offerActive
-        val messageSummary =
-                if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
+        val messageSummary = if (offerActive.messageSummary.isNullOrEmpty()) "" else offerActive.messageSummary
 
         if (messageSummary.equals(activity.resources?.getString(R.string.status_consents), ignoreCase = true)) {
             mainView?.disableContentStatusUI()
@@ -203,7 +220,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun creditLimitIncrease(): CreditLimitIncreaseStatus? = mIncreaseLimitController
 
-
     override fun onDestroy() {
         mainView = null
     }
@@ -212,4 +228,16 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         mainView?.hideAccountStoreCardProgress()
     }
 
+    override fun navigateToPaymentOptionActivity() {
+        mainView?.navigateToPaymentOptionActivity()
+    }
+
+    override fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
+        var cardWithPLCState: Card? = null
+        cards?.filter { card -> card.cardStatus.trim { it <= ' ' } == "PLC" }?.apply {
+            if (this.isNotEmpty())
+                cardWithPLCState = this[0]
+        }
+        return cardWithPLCState
+    }
 }

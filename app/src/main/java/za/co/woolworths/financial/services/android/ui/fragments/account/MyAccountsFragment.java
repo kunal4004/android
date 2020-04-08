@@ -10,11 +10,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -66,10 +65,11 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -145,9 +145,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private FrameLayout imgCreditCardLayout;
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
-	private ConstraintLayout mTroubleRetrieveAccountLayout;
-	private TextView descriptionTextView;
-	private Button retrieveAccountCallButton;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -192,9 +189,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			linkedPersonalCardView = view.findViewById(R.id.linkedPersonalLoan);
 			linkedAccountsLayout = view.findViewById(R.id.linkedLayout);
 			mScrollView = view.findViewById(R.id.nest_scrollview);
-			retrieveAccountCallButton = view.findViewById(R.id.retrieveAccountCallButton);
 			applyNowAccountsLayout = view.findViewById(R.id.applyNowLayout);
-			mTroubleRetrieveAccountLayout = view.findViewById(R.id.troubleRetrieveAccountLayout);
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
@@ -205,7 +200,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
 			cc_available_funds = view.findViewById(R.id.cc_available_funds);
 			pl_available_funds = view.findViewById(R.id.pl_available_funds);
-			descriptionTextView = view.findViewById(R.id.descriptionTextView);
 			messagesRightArrow = view.findViewById(R.id.messagesRightArrow);
 			messageCounter = view.findViewById(R.id.messageCounter);
 			userName = view.findViewById(R.id.user_name);
@@ -338,6 +332,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		isActivityInForeground = true;
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
+
+		if (getBottomNavigationActivity().getCurrentFragment() !=null
+				&& getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
+				&& NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
+			initialize();
+		}
 	}
 
 	// add negative sign before currency value
@@ -650,10 +650,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
 				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
-			case R.id.retrieveAccountCallButton:
 			case R.id.imRefreshAccount:
-				mTroubleRetrieveAccountLayout.setVisibility(View.GONE);
-				applyNowAccountsLayout.setVisibility(View.VISIBLE);
 				mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.CLICK_TO_REFRESH);
 				loadAccounts(true);
 				break;
@@ -676,7 +673,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
-            	Activity activity =  getActivity();
+            	FragmentActivity activity =  getActivity();
             	if (activity == null) return;
                  try {
                  	httpCode = accountsResponse.httpCode;
@@ -701,11 +698,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             configureView();
 
                             // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
-							if (httpCode == 502) {
-								applyNowAccountsLayout.setVisibility(View.GONE);
-								mTroubleRetrieveAccountLayout.setVisibility(View.VISIBLE);
-								if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc))
-									descriptionTextView.setText(mAccountResponse.response.desc);
+							if (activity instanceof BottomNavigationActivity) {
+								if (httpCode == 502 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+									if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)) {
+										AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
+										accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+									}
+								}
 							}
                             break;
                         case 440:

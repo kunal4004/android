@@ -5,11 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 
-import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 
 import java.util.ArrayList
-import java.util.Collections
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -44,13 +42,12 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         get() {
             val listOfVideo = ArrayList<String>()
             val rawFolderPath = "android.resource://" + mContext.packageName + "/"
-            listOfVideo.add(rawFolderPath + R.raw.food_broccoli)
-            listOfVideo.add(rawFolderPath + R.raw.food_chocolate)
-            Collections.shuffle(listOfVideo)
+           // listOfVideo.add(rawFolderPath + R.raw.food_broccoli)
+            listOfVideo.shuffle()
             return listOfVideo[0]
         }
 
-    override fun queryServiceGetConfig(responseListener: IResponseListener<ConfigResponse>) {
+    override fun queryServiceGetConfig(responseListener: IResponseListener<ConfigResponse?>) {
 
         val configResponseCall = OneAppService.getConfig()
         configResponseCall.enqueue(CompletionHandler(object : IResponseListener<ConfigResponse> {
@@ -73,9 +70,9 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override fun presentNextScreen() {
 
         val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
-        val appLinkData = intent!!.data
+        val appLinkData = intent?.data
 
-        if (Intent.ACTION_VIEW == intent!!.action && appLinkData != null) {
+        if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
             handleAppLink(appLinkData)
 
         } else {
@@ -153,6 +150,11 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
         WoolworthsApplication.getInstance().wGlobalState.startRadius = response.configs.enviroment.getStoreStockLocatorConfigStartRadius()
         WoolworthsApplication.getInstance().wGlobalState.endRadius = response.configs.enviroment.getStoreStockLocatorConfigEndRadius()
+        val creditCardActivation = response.configs.creditCardActivation
+        creditCardActivation?.apply {
+            isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+        }
+        WoolworthsApplication.setCreditCardActivation(creditCardActivation)
     }
 
     companion object {

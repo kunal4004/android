@@ -479,19 +479,12 @@ public class Utils {
 		context.startActivity(openInternalWebView);
 	}
 
-		public static void openBrowserWithUrl(Context context, String urlString) {
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
-			context.startActivity(intent);
-		}
-
-	public static void openInternalWebView(String url) {
+	public static void openBrowserWithUrl(String urlString) {
 		Context context = WoolworthsApplication.getAppContext();
-		Intent openInternalWebView = new Intent(context, InternalWebViewActivity.class);
-		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		openInternalWebView.putExtra("externalLink", url);
-		context.startActivity(openInternalWebView);
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
 	}
-
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
@@ -1349,7 +1342,7 @@ public class Utils {
 	private static String formatAmount(String currentAmount) {
 		if (currentAmount.contains("-")) {
 			currentAmount = currentAmount.replaceAll("-", "");
-			currentAmount = currentAmount.replace("R", "R -");
+			currentAmount = currentAmount.replace("R", "- R");
 		}
 		return currentAmount;
 	}
@@ -1582,5 +1575,19 @@ public class Utils {
 		} else {
 			return false;
 		}
+	}
+
+	public static Boolean isCreditCardActivationEndpointAvailable() {
+		String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+		String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
+		int minute = now.get(Calendar.MINUTE);
+
+		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
+		Date openingTime = WFormatter.parseDate(startTime);
+		Date closingTime = WFormatter.parseDate(endTime);
+
+		return (currentTime.after(openingTime) && currentTime.before(closingTime));
 	}
 }

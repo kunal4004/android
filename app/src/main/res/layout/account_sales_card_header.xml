@@ -39,7 +39,7 @@
         android:layout_height="0dp"
         android:scaleType="fitEnd"
         android:visibility="gone"
-        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintDimensionRatio="H,1:0.96"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/black_credit_card_front"

@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
-import za.co.woolworths.financial.services.android.models.dto.account.HeaderDrawable
+import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -25,6 +25,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         KotlinUtils.setTransparentStatusBar(this)
         setContentView(R.layout.payment_options_activity)
         initViews()
+        hideABSAInfo()
     }
 
     override fun onResume() {
@@ -53,14 +54,17 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             val view = View.inflate(this, R.layout.how_to_pay_account_details_list_item, null)
             val paymentName: WTextView? = view?.findViewById(R.id.paymentName)
             val paymentValue: WTextView? = view?.findViewById(R.id.paymentvalue)
-            paymentName?.text = paymentItem.key
+            val accountLabel = KotlinUtils.capitaliseFirstLetter(KotlinUtils.addSpaceBeforeUppercase(paymentItem.key) + ":")
+            paymentName?.text = accountLabel
             paymentValue?.text = paymentItem.value
             howToPayAccountDetails?.addView(view)
         }
     }
 
-    override fun setHowToPayLogo(headerDrawable: HeaderDrawable?) {
-        headerDrawable?.apply {
+    override fun setHowToPayLogo(paymentOptionHeaderItem: PaymentOptionHeaderItem?) {
+        paymentOptionHeaderItem?.apply {
+            creditCardPaymentOptionTextView?.text = getString(title)
+            payWooliesCardTextView?.text = getString(description)
             cardOptionImageView?.setImageResource(card)
             viewBackground?.setBackgroundResource(background)
         }
@@ -69,7 +73,6 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun showABSAInfo() {
         llAbsaAccount?.visibility = VISIBLE
         llCreditCardDetail?.visibility = VISIBLE
-        tvHowToPayTitle?.text = getString(R.string.how_to_pay_credit_card_title)
     }
 
     override fun hideABSAInfo() {

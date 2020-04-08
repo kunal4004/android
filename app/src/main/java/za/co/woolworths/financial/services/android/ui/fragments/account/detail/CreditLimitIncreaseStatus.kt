@@ -6,13 +6,13 @@ import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.roundCornerDrawable
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 enum class CreditLimitIncreaseStates(private val status: String) {
     CONSENTS("Consents"),
@@ -27,7 +27,7 @@ enum class CreditLimitIncreaseStates(private val status: String) {
     COMPLETE("complete");
 
     val type: String
-        get() = status
+        get() = status.toLowerCase(Locale.getDefault())
 }
 
 class CreditLimitIncreaseStatus {
@@ -40,7 +40,7 @@ class CreditLimitIncreaseStatus {
     }
 
     fun showCLIProgress(logoIncreaseLimit: ImageView?, llCommonLayer: LinearLayout?, tvIncreaseLimit: TextView?) {
-        logoIncreaseLimit?.visibility = VISIBLE
+        logoIncreaseLimit?.visibility = GONE
         llCommonLayer?.visibility = GONE
         tvIncreaseLimit?.visibility = GONE
     }
@@ -48,12 +48,11 @@ class CreditLimitIncreaseStatus {
     fun cliStatus(llCommonLayer: LinearLayout?, tvIncreaseLimit: TextView?, tvApplyNowIncreaseLimit: TextView?, tvIncreaseLimitDescription: TextView?, logoIncreaseLimit: ImageView?, offerActive: OfferActive?) {
         llCommonLayer?.visibility = GONE
         tvIncreaseLimitDescription?.visibility = GONE
-        tvIncreaseLimit?.text = getString(R.string.increase_limit)
-
+        tvIncreaseLimit?.text = getString(R.string.cli_credit_limit_increase)
         var nextStepColour = ""
 
         offerActive?.let { offer ->
-            nextStep = offer.nextStep
+            nextStep = offer.nextStep.toLowerCase(Locale.getDefault())
             messageSummary = offer.messageSummary
             messageDetail = offer.messageDetail
             activeOffer = offer.offerActive
@@ -70,7 +69,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.OFFER.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 showDescription(tvIncreaseLimitDescription, messageDetail)
@@ -102,7 +101,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.IN_PROGRESS.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 tvIncreaseLimitDescription?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
@@ -111,7 +110,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.INCOME_AND_EXPENSE.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 cliIcon(logoIncreaseLimit)
                 llCommonLayer?.visibility = GONE
                 showDescription(tvIncreaseLimitDescription, messageDetail)
@@ -119,7 +118,7 @@ class CreditLimitIncreaseStatus {
             }
 
             CreditLimitIncreaseStates.COMPLETE.type -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 llCommonLayer?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 setTagBackgroundAndTitle(messageSummary, nextStepColour, tvApplyNowIncreaseLimit)
@@ -127,12 +126,12 @@ class CreditLimitIncreaseStatus {
             }
 
             else -> {
-                logoIncreaseLimit?.visibility = VISIBLE
+                logoIncreaseLimit?.visibility = GONE
                 logoIncreaseLimit?.setImageResource(R.drawable.cli)
                 llCommonLayer?.visibility = GONE
                 tvIncreaseLimitDescription?.visibility = GONE
                 messageSummary = getString(R.string.status_unavailable) ?: ""
-                setTagBackgroundAndTitle(messageSummary, tvApplyNowIncreaseLimit)
+                setTagBackgroundAndTitle(messageSummary, nextStepColour,tvApplyNowIncreaseLimit)
             }
 
         }
@@ -141,16 +140,7 @@ class CreditLimitIncreaseStatus {
     private fun setTagBackgroundAndTitle(messageSummary: String, nextStepColour: String?, tvApplyNowIncreaseLimit: TextView?) {
         tvApplyNowIncreaseLimit?.apply {
             visibility = VISIBLE
-            roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour)
-            text = messageSummary
-        }
-    }
-
-    private fun setTagBackgroundAndTitle(messageSummary: String, tvApplyNowIncreaseLimit: TextView?) {
-        tvApplyNowIncreaseLimit?.apply {
-            visibility = VISIBLE
-            background =
-                    ContextCompat.getDrawable(tvApplyNowIncreaseLimit.context, R.drawable.status_grey)
+            roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour ?: "#b2b2b2")
             text = messageSummary
         }
     }
@@ -158,7 +148,7 @@ class CreditLimitIncreaseStatus {
     private fun getString(resourceId: Int) = WoolworthsApplication.getAppContext()?.getString(resourceId)
 
     private fun showDescription(textView: TextView?, messageDetail: String?) {
-        textView?.visibility = VISIBLE
+        textView?.visibility = if (messageDetail.isNullOrEmpty()) GONE else VISIBLE
         textView?.text = messageDetail
     }
 
@@ -185,7 +175,8 @@ class CreditLimitIncreaseStatus {
 
     fun nextStep(offerActive: OfferActive?, productOfferingId: String?) {
         val cliStatus = offerActive?.cliStatus ?: ""
-        if (nextStep == CreditLimitIncreaseStates.IN_PROGRESS.type ||
+        if (nextStep.isEmpty() ||
+                nextStep == CreditLimitIncreaseStates.IN_PROGRESS.type ||
                 nextStep == CreditLimitIncreaseStates.DECLINE.type ||
                 nextStep == CreditLimitIncreaseStates.CONTACT_US.type ||
                 nextStep == CreditLimitIncreaseStates.UNAVAILABLE.type ||

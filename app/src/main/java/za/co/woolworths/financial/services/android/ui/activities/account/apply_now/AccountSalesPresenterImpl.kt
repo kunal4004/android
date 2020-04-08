@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.ui.activities.account.apply_
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -32,13 +34,11 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
 
     override fun getPersonalLoan(): AccountSales = model.getPersonalLoan()
 
-    fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()
-
     fun onApplyNowButtonTapped() {
         val applyNowLinks = WoolworthsApplication.getApplyNowLink()
-        Utils.openInternalWebView(when (getApplyNowState()) {
+        Utils.openBrowserWithUrl(when (getApplyNowState()) {
             ApplyNowState.STORE_CARD -> applyNowLinks.storeCard
-            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD ->  applyNowLinks.creditCard
+            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> applyNowLinks.creditCard
             ApplyNowState.PERSONAL_LOAN -> applyNowLinks.personalLoan
             else -> throw RuntimeException("OnApplyNowButtonTapped:: Invalid ApplyNowState ## : ${getApplyNowState()}")
         })
@@ -92,4 +92,22 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
     }
 
     override fun getApplyNowState(): ApplyNowState? = mApplyNowState
+
+    override fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?): Int {
+        appCompatActivity?.apply {
+            val height = resources?.displayMetrics?.heightPixels ?: 0
+            return ((height / 100) * 38)
+        }
+        return 0
+    }
+
+    override fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int {
+        appCompatActivity?.apply {
+            val displayMetrics: DisplayMetrics = resources.displayMetrics
+            val height = displayMetrics.heightPixels
+            val toolbarHeight = KotlinUtils.getToolbarHeight(appCompatActivity)
+            return height.minus(toolbarHeight)
+        }
+        return 0
+    }
 }

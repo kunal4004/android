@@ -19,6 +19,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
+import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -27,11 +28,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-interface BottomSheetBehaviourPeekHeightListener {
-    fun onBottomSheetPeekHeight(pixel: Int)
-}
-
-class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, BottomSheetBehaviourPeekHeightListener, View.OnClickListener {
+class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, IBottomSheetBehaviourPeekHeightListener, View.OnClickListener {
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
@@ -74,12 +71,11 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     private fun configureBottomSheetDialog() {
         val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
-        val statusBarHeight = mAccountSignedInPresenter?.getStatusBarHeight(0f, toolbarContainer) ?: 0
-        bottomSheetBehaviourLinearLayout?.setPadding(0, statusBarHeight, 0, 0)
-
-        sheetBehavior = BottomSheetBehavior.from<LinearLayout>(bottomSheetBehaviourLinearLayout)
-        sheetBehavior?.peekHeight = mPeekHeight.plus(statusBarHeight).minus(KotlinUtils.dpToPxConverter(12))
-
+        val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
+        layoutParams?.height = mAccountSignedInPresenter?.bottomSheetBehaviourHeight(this@AccountSignedInActivity)
+        bottomSheetBehaviourLinearLayout?.requestLayout()
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
+        sheetBehavior?.peekHeight = mAccountSignedInPresenter?.bottomSheetBehaviourPeekHeight(this@AccountSignedInActivity) ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -163,6 +159,21 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         runOnUiThread {
             mPeekHeight = pixel
             configureBottomSheetDialog()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        supportFragmentManager.fragments.apply {
+            if (this.isNotEmpty()) {
+                this[1].let {
+                    it.childFragmentManager.fragments.let { childFragments ->
+                        if (childFragments.isNotEmpty()) {
+                            childFragments[0].onActivityResult(requestCode, resultCode, data)
+                        }
+                    }
+                }
+            }
         }
     }
 }

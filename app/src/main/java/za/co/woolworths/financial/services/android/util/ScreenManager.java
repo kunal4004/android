@@ -47,7 +47,7 @@ public class ScreenManager {
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
 		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		activity.startActivityForResult(intent, 0);
-		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 		activity.finish();
 	}
 
@@ -57,7 +57,7 @@ public class ScreenManager {
 		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		intent.setData(data);
 		activity.startActivityForResult(intent, 0);
-		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 		activity.finish();
 	}
 
