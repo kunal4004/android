@@ -7,11 +7,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
@@ -34,7 +32,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private var sheetBehavior: BottomSheetBehavior<*>? = null
 
     companion object {
-        private const val APPLY_NOW_BUTTON_ANIMATE_DURATION: Long = 300
         const val SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION: Long = 500
     }
 
@@ -74,15 +71,12 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun setupBottomSheetBehaviour() {
         val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
-        layoutParams?.height =
-                mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
 
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
-
-        val overlayAnchoredHeight =
-                mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
-                        ?: 0
+        val overlayAnchoredHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
+                ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -93,9 +87,9 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                transitionBottomSheetBackgroundColor(slideOffset)
+                AnimationUtilExtension.transitionBottomSheetBackgroundColor(dimView,slideOffset)
                 navigateBackImageButton?.rotation = slideOffset * -90
-                if (slideOffset > 0.2) animateButtonIn() else animateButtonOut()
+                if (slideOffset > 0.2) AnimationUtilExtension.animateButtonIn(bottomApplyNowButtonRelativeLayout) else AnimationUtilExtension.animateButtonOut(bottomApplyNowButtonRelativeLayout)
             }
         })
     }
@@ -176,33 +170,5 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             }
             else -> throw RuntimeException("Invalid View Pager Page Selected ")
         }
-    }
-
-    private fun animateButtonOut() {
-        if (bottomApplyNowButtonRelativeLayout?.visibility == INVISIBLE) return
-        val animate =
-                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
-        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
-        animate.fillAfter = true
-        bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
-        bottomApplyNowButtonRelativeLayout?.visibility = INVISIBLE
-        bottomApplyNowButtonRelativeLayout?.isEnabled = false
-    }
-
-    private fun animateButtonIn() {
-        if (bottomApplyNowButtonRelativeLayout?.visibility == VISIBLE) return
-        bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
-        animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
-        animate.fillAfter = true
-        bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
-        bottomApplyNowButtonRelativeLayout?.isEnabled = true
-    }
-
-    private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
-        val colorFrom = ContextCompat.getColor(this, android.R.color.transparent)
-        val colorTo = ContextCompat.getColor(this, R.color.black_99)
-        dimView?.setBackgroundColor(KotlinUtils.interpolateColor(slideOffset, colorFrom, colorTo))
     }
 }
