@@ -69,7 +69,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
     override fun presentNextScreen() {
 
-        val isFirstTime = Utils.getSessionDaoValue(mContext, SessionDao.KEY.ON_BOARDING_SCREEN)
+        val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
         val appLinkData = intent?.data
 
         if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {

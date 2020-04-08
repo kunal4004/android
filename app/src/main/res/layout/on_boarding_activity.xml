@@ -1,76 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/drawer_color"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity">
+    android:layout_height="match_parent">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/onBoardingPager"
+    <fragment
+        android:id="@+id/on_boarding_navigation_graph"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="0dp"
+        android:fitsSystemWindows="true"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@+id/registerButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/on_boarding_graph" />
 
-    <RelativeLayout
-        android:id="@+id/footerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        >
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/skip"
-            android:layout_width="72dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:gravity="center"
-            android:letterSpacing="0.1"
-            android:text="@string/skip"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            />
-
-        <LinearLayout
-            android:id="@+id/viewPagerCountDots"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:orientation="horizontal"
-            />
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/next"
-            android:layout_width="72dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:letterSpacing="0.1"
-            android:text="@string/next"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            />
-    </RelativeLayout>
-
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/getStarted"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        android:background="@color/white"
-        android:gravity="center"
-        android:letterSpacing=".2"
-        android:text="@string/get_started"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="13sp"
+    <Button
+        android:id="@+id/letsGoButton"
+        style="@style/onBoardingButtonBlackStyle"
+        android:layout_width="0dp"
+        android:text="@string/on_boarding_lets_go"
         android:visibility="gone"
-        app:WButton_font="medium_bold"
-        />
+        app:layout_constraintBottom_toTopOf="@+id/skipLetsGoButtonGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/marginEndGuideline"
+        app:layout_constraintStart_toStartOf="@+id/marginStartGuideline" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/skipButton"
+        style="@style/onBoardingButtonStyle"
+        android:layout_width="0dp"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:text="@string/skip"
+        app:layout_constraintBottom_toTopOf="@+id/skipLetsGoButtonGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/marginEndGuideline"
+        app:layout_constraintStart_toStartOf="@+id/marginStartGuideline" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/skipLetsGoButtonGuideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="32dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginStartGuideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="32dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEndGuideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="32dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/skipGuideLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="82dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/skipLetsGoBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="letsGoButton,skipButton,skipGuideLine"
+        tools:layout_editor_absoluteY="451dp" />
+
+    <Button
+        android:id="@+id/signInButton"
+        style="@style/onBoardingButtonStyle"
+        android:layout_width="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/sign_in"
+        app:layout_constraintBottom_toTopOf="@+id/skipGuideLine"
+        app:layout_constraintEnd_toStartOf="@+id/registerButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/marginStartGuideline" />
+
+    <Button
+        android:id="@+id/registerButton"
+        style="@style/onBoardingButtonStyle"
+        android:layout_width="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/register"
+        app:layout_constraintBottom_toTopOf="@+id/skipGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/marginEndGuideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/signInButton" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

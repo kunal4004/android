@@ -63,7 +63,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incViewPaymentOptionButton)
 
-        accountOverviewRootLayout?.post {
+        availableFundBackground?.post {
             val dm = DisplayMetrics()
             (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
             val deviceHeight = dm.heightPixels

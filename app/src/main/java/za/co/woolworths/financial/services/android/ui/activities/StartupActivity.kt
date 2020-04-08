@@ -48,7 +48,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
 
         // Disable first time launch splash video screen, remove to enable video on startup
-        Utils.sessionDaoSave(this@StartupActivity, SessionDao.KEY.SPLASH_VIDEO, "1")
+        Utils.sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1")
 
         startupViewModel = StartupViewModelImpl(this)
         startupViewModel?.apply {
@@ -95,7 +95,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     private fun isFirstTime(): Boolean {
-        return Utils.getSessionDaoValue(this@StartupActivity, SessionDao.KEY.SPLASH_VIDEO) == null
+        return Utils.getSessionDaoValue(SessionDao.KEY.SPLASH_VIDEO) == null
     }
 
     private fun showVideoView() {

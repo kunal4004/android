@@ -297,15 +297,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public void initLocationCheck() {
 		boolean locationServiceIsEnabled = Utils.isLocationServiceEnabled(getActivity());
-		boolean lastKnownLocationIsNull = (Utils.getLastSavedLocation(getActivity()) == null);
+		boolean lastKnownLocationIsNull = (Utils.getLastSavedLocation() == null);
 
 		if (!locationServiceIsEnabled & lastKnownLocationIsNull) {
 			checkLocationServiceAndSetLayout(false);
 		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
 			checkLocationServiceAndSetLayout(true);
 			startLocationUpdates();
-		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
-			updateMap(Utils.getLastSavedLocation(getActivity()));
+		} else if (!locationServiceIsEnabled) {
+			updateMap(Utils.getLastSavedLocation());
 		} else {
 			startLocationUpdates();
 		}
@@ -655,8 +655,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					startActivity(new Intent(getActivity(), SearchStoresActivity.class));
 				break;
 			case R.id.action_locate:
-				if (Utils.getLastSavedLocation(getActivity()) != null) {
-					Location location = Utils.getLastSavedLocation(getActivity());
+				if (Utils.getLastSavedLocation() != null) {
+					Location location = Utils.getLastSavedLocation();
 					zoomToLocation(location);
 				}
 				break;

@@ -13,7 +13,7 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        accountOverviewRootLayout?.setBackgroundResource(R.drawable.store_card_background)
+        availableFundBackground?.setBackgroundResource(R.drawable.store_card_background)
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)

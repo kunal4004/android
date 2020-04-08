@@ -1160,9 +1160,6 @@
     <string name="blackCreditCardMoreBenefits_row_2_title">Get More Back Everywhere</string>
     <string name="blackCreditCardMoreBenefits_row_2_desc">1% back in quarterly vouchers on all purchases outside of Woolworths and fuel purchases when paying with your card (excludes EFT). Ts&amp;Cs apply.</string>
 
-    <string name="blackCreditCardMoreBenefits_row_3_title">Get More Back Everywhere</string>
-    <string name="blackCreditCardMoreBenefits_row_3_desc">1% back in quarterly vouchers on all purchases outside of Woolworths and fuel purchases when paying with your card (excludes EFT). Ts&amp;Cs apply.</string>
-
     <string name="blackCreditCardMoreBenefits_row_4_title">Pay for Fuel</string>
     <string name="blackCreditCardMoreBenefits_row_4_desc">Pay for your fuel with your Woolies Credit Card and get up to 1% back in WRewards quarterly vouchers.</string>
 
@@ -1453,5 +1450,20 @@
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
+    <string name="account_in_arrears_layout">Account In Arrears Layout</string>
+    <string name="account_six_month_arrear_toolbar">Account Six Month In Arrear Toolbar</string>
 
+    <string name="blackCreditCardMoreBenefits_row_3_title">Cash when you need it</string>
+    <string name="blackCreditCardMoreBenefits_row_3_desc">Withdraw cash at any ATM displaying the Visa logo. Withdrawals at any Absa ATM is free for Woolworths Black Credit Cardholders. Ts&amp;Cs apply.</string>
+
+    <string name="payment_made_from_other_acc_title">payments made from other accounts</string>
+
+    <!-- OnBoarding screen items -->
+    <string name="on_boarding_screen_title_1">Welcome to the world of Woolies. It’s the next level in shopping, rewards and financial services.</string>
+    <string name="on_boarding_screen_title_2">Get inspired with the newest products and trends, find items in store and shop your favourites anytime, anywhere.</string>
+    <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers and promotions on the go.</string>
+    <string name="on_boarding_screen_title_4">Access all your Woolworths financial products right here. View your balances, check your transaction history or apply for something new.</string>
+    <string name="on_boarding_lets_go">let\'s go</string>
 </resources>
+

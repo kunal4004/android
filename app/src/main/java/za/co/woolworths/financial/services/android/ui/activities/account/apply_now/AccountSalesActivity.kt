@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -35,7 +34,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     companion object {
         private const val APPLY_NOW_BUTTON_ANIMATE_DURATION: Long = 300
-        const val SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION: Long = 500
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -74,15 +72,12 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun setupBottomSheetBehaviour() {
         val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
-        layoutParams?.height =
-                mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
 
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
 
-        val overlayAnchoredHeight =
-                mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
-                        ?: 0
+        val overlayAnchoredHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -101,11 +96,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun smoothScrollToTop() {
-        scrollableView?.apply {
-            post {
-                ObjectAnimator.ofInt(this, "scrollY", 0).setDuration(SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION).start()
-            }
-        }
+        scrollableView?.smoothScrollTo(0,0)
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
@@ -180,8 +171,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     private fun animateButtonOut() {
         if (bottomApplyNowButtonRelativeLayout?.visibility == INVISIBLE) return
-        val animate =
-                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
+        val animate = TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
         animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
@@ -192,8 +182,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun animateButtonIn() {
         if (bottomApplyNowButtonRelativeLayout?.visibility == VISIBLE) return
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
         animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)

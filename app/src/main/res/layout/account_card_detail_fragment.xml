@@ -63,6 +63,7 @@
                     android:layout_toEndOf="@+id/logoIncreaseLimit"
                     android:textColor="@color/black"
                     android:gravity="start"
+                    android:letterSpacing="0.1"
                     android:textSize="12sp"
                     android:layout_marginStart="0dp"
                     android:fontFamily="@font/futura_semi_bold_ttf" />

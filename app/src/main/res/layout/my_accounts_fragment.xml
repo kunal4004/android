@@ -42,24 +42,34 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <androidx.viewpager.widget.ViewPager
-                            android:id="@+id/pager"
+                        <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="360dp"
-                            android:nestedScrollingEnabled="false" />
-
-                        <LinearLayout
-                            android:id="@+id/viewPagerCountDots"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="32dp"
+                            android:layout_height="?attr/actionBarSize"
+                            android:fontFamily="@font/futura_semi_bold_ttf"
                             android:gravity="center"
-                            android:orientation="horizontal" />
+                            android:letterSpacing="0.2"
+                            android:text="@string/my_accounts"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+
+                        <fragment
+                            android:id="@+id/on_boarding_navigation_graph"
+                            android:name="androidx.navigation.fragment.NavHostFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="430dp"
+                            android:fitsSystemWindows="true"
+                            app:defaultNavHost="true"
+                            app:layout_constraintBottom_toTopOf="@+id/registerButton"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:navGraph="@navigation/on_boarding_graph" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="28dp"
+                            android:layout_marginTop="8dp"
                             android:background="@color/white"
                             android:focusableInTouchMode="false"
                             android:minHeight="48dp"
