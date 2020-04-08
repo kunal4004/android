@@ -27,7 +27,7 @@
                 android:fontFamily="@font/futura_semi_bold_ttf"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:letterSpacing="0.02"
+                android:letterSpacing="0.11"
                 android:text="@string/information"
                 android:textColor="@color/black"
                 android:textSize="12sp"
