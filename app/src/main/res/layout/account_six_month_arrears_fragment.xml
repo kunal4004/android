@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:contentDescription="@string/account_in_arrears_layout"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
@@ -10,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="top"
+        android:contentDescription="@string/account_six_month_arrear_toolbar"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1667,5 +1667,8 @@
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
+    <string name="account_in_arrears_layout">Account In Arrears Layout</string>
+    <string name="account_six_month_arrear_toolbar">Account Six Month In Arrear Toolbar</string>
 
 </resources>
