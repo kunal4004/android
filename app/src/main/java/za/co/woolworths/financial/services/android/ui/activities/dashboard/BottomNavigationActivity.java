@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.service.event.BadgeSta
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;

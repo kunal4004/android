@@ -182,8 +182,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun animateButtonIn() {
         if (bottomApplyNowButtonRelativeLayout?.visibility == VISIBLE) return
         bottomApplyNowButtonRelativeLayout?.visibility = VISIBLE
-        val animate =
-                TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
+        val animate = TranslateAnimation(0f, 0F, bottomApplyNowButtonRelativeLayout.height.toFloat(), 0f)
         animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)

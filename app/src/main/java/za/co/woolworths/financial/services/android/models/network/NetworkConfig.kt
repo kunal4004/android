@@ -43,6 +43,6 @@ open class NetworkConfig {
         return if (sessionToken.isEmpty()) "." else sessionToken
     }
 
-    fun getMyLocation(): Location = Utils.getLastSavedLocation(appContext())
+    fun getMyLocation(): Location = Utils.getLastSavedLocation()
             ?: Location("myLocation")
 }

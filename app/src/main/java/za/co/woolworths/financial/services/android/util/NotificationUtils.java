@@ -130,12 +130,12 @@ public class NotificationUtils {
 
     private int getNotificationId() {
 
-        String bundleId = Utils.getSessionDaoValue(mContext, SessionDao.KEY.NOTIFICATION_ID);
+        String bundleId = Utils.getSessionDaoValue(SessionDao.KEY.NOTIFICATION_ID);
         int id = bundleId == null ? SUMMARY_ID + 1 : Integer.parseInt(bundleId) + 1;
         while (id == SUMMARY_ID) {
             id++;
         }
-        Utils.sessionDaoSave(mContext, SessionDao.KEY.NOTIFICATION_ID, String.valueOf(id));
+        Utils.sessionDaoSave(SessionDao.KEY.NOTIFICATION_ID, String.valueOf(id));
         return id;
     }
 

@@ -102,6 +102,13 @@
     <color name="semi_transparent">#20ffffff</color>
     <color name="transparent_4d">#4D000000</color>
     <color name="searchBarHintColor">#20000000</color>
+    <color name="walk_through_welcome">#FFEADF</color>
+    <color name="bottom_shop_background">#9cb9af</color>
+    <color name="top_shop_background">#9cb9af</color>
+    <color name="onBoarding_1">#FFEADF</color>
+    <color name="onBoarding_2">#BED3CA</color>
+    <color name="onBoarding_3">#F7F8EC</color>
+    <color name="onBoarding_4">#D6DADD</color>
     <color name="transaction_date_color">#66030303</color>
     <color name="accounts_sales_page_bg">#F8F8F8</color>
     <color name="status_dark_green">#A5B52B</color>
