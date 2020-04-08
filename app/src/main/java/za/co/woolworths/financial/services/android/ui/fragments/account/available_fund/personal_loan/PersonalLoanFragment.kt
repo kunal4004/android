@@ -14,7 +14,7 @@ class PersonalLoanFragment : AvailableFundsFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        accountOverviewRootLayout?.setBackgroundResource(R.drawable.personal_loan_background)
+        availableFundBackground?.setBackgroundResource(R.drawable.personal_loan_background)
         viewPaymentOptionTextView?.text = getString(R.string.withdrawal_options)
 
         incRecentTransactionButton?.setOnClickListener(this)
