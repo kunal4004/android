@@ -178,12 +178,11 @@
         android:id="@+id/viewPaymentOptionTextView"
         style="@style/style_loan_title"
         android:layout_width="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/label_payment_options_button"
         app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
         app:layout_constraintEnd_toStartOf="@+id/viewPaymentOptionNext"
-        app:layout_constraintStart_toEndOf="@+id/debitOrderLogoImageView"
+        app:layout_constraintStart_toEndOf="@+id/paymentOptionLogoImageView"
         app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
 
     <ImageView
