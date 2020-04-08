@@ -30,7 +30,6 @@
                 android:paddingBottom="70dp">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvSelectYourBank"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/twenty_dp"
@@ -226,9 +225,7 @@
                             style="@style/textViewLabelStyle"
                             android:text="@string/enter_account_number"/>
 
-                        <LinearLayout
-                            android:id="@+id/llNetMonthlyIncome"
-                            style="@style/currencyStyleLayout">
+                        <LinearLayout style="@style/currencyStyleLayout">
 
                             <za.co.woolworths.financial.services.android.ui.views.WEditTextView
                                 android:id="@+id/etAccountNumber"
@@ -293,7 +290,6 @@
                             />
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rclDocumentsList"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="1dp"

@@ -26,7 +26,6 @@
 
 
     <TextView
-        android:id="@+id/failureDescriptionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"

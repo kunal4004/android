@@ -6,13 +6,11 @@
     android:background="@color/default_background">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/materialUp.appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/main.collapsing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:elevation="0dp"
@@ -76,7 +74,6 @@
                 android:visibility="gone">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvPaymentABSATitle"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/fifty_dp"
                     android:background="@color/white"
@@ -94,7 +91,6 @@
                 <View style="@style/horizontal_divider_how_to_pay" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvPaymentABSADesc"
                     style="@style/contact_us_item_header_textview"
                     android:layout_width="match_parent"
                     android:layout_marginStart="@dimen/twenty_four_dp"
@@ -107,7 +103,6 @@
                     android:textColor="@color/black_50" />
 
                 <View
-                    android:id="@+id/absaBottomView"
                     android:layout_width="match_parent"
                     android:layout_height="16dp"
                     android:background="@color/default_background" />
@@ -142,7 +137,6 @@
                 android:visibility="gone">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvPaymentOtherAccountDesc"
                     style="@style/contact_us_item_header_textview"
                     android:layout_width="match_parent"
                     android:background="@color/white"

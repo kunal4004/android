@@ -46,7 +46,6 @@
             </androidx.appcompat.widget.Toolbar>
 
             <View
-                android:id="@+id/view_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:color="#D3D3D3" />
@@ -90,7 +89,6 @@
             app:WTextView_font="myriadpro_regular" />
 
         <ProgressBar
-            android:id="@+id/kmsiProgressBar"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"

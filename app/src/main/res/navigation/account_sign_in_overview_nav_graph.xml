@@ -2,7 +2,6 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/account_store_card_fragment"
     android:label="store_card_fragment"
     app:startDestination="@+id/storeCardFragment">
 
@@ -36,9 +35,7 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.AvailableFundsFragment"
         android:label="AvailableFundFragment"
         tools:layout="@layout/account_available_fund_overview_fragment">
-        <action
-            android:id="@+id/action_availableFundFragment_to_accountInArrearsFragmentDialog"
-            app:destination="@id/accountInArrearsFragmentDialog" />
+        <action app:destination="@id/accountInArrearsFragmentDialog" />
     </fragment>
     <fragment
         android:id="@+id/silverCreditCardFragment"

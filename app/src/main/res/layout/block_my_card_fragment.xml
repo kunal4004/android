@@ -85,7 +85,6 @@
         tools:targetApi="lollipop" />
 
     <ProgressBar
-        android:id="@+id/pbBlockUI"
         style="?android:attr/progressBarStyle"
         android:layout_width="32dp"
         android:layout_height="32dp"

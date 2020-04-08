@@ -60,7 +60,6 @@
             swipe:tag="hover">
 
             <RelativeLayout
-                android:id="@+id/swipeLeft"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@color/white"
@@ -79,7 +78,6 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/llHoverContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -95,7 +93,6 @@
                     android:paddingBottom="32dp">
 
                     <RelativeLayout
-                        android:id="@+id/llSelectedCheckBox"
                         android:layout_width="@dimen/thirty_two_dp"
                         android:layout_height="match_parent">
 
@@ -139,7 +136,6 @@
                             fresco:failureImage="@drawable/woolworth_logo_icon" />
 
                         <LinearLayout
-                            android:id="@+id/llProductInfo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="26dp"
@@ -158,7 +154,6 @@
                                 android:layout_height="wrap_content" />
 
                             <RelativeLayout
-                                android:id="@+id/llQuantityContainer"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
@@ -179,7 +174,6 @@
                                     app:WTextView_font="myriadpro_semibold" />
 
                                 <FrameLayout
-                                    android:id="@+id/flQuantityLoader"
                                     android:layout_width="40dp"
                                     android:layout_height="32dp"
                                     android:layout_alignParentStart="true"
@@ -222,7 +216,6 @@
 
 
                                 <LinearLayout
-                                    android:id="@+id/llPriceLayout"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_alignParentEnd="true"
@@ -259,7 +252,6 @@
                                                 android:textColor="@color/was_price_color" />
 
                                             <View
-                                                android:id="@+id/fromPriceStrikeThrough"
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="1.5dp"
                                                 android:layout_gravity="center|end"

@@ -177,7 +177,6 @@
         app:layout_constraintStart_toEndOf="@+id/currentBalanceTextView" />
 
     <View
-        android:id="@+id/availableFundTopView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="40dp"

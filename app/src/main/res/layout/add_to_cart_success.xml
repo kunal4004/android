@@ -6,7 +6,6 @@
               android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/rlAddToCartRoot"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_two_dp"
         android:layout_marginBottom="@dimen/eight_dp"

@@ -56,7 +56,6 @@
 
 
             <TextView
-                android:id="@+id/validUntilLabelTextView"
                 style="@style/wRewardValidDateLabelStyle"
                 android:layout_width="0dp"
                 android:layout_marginEnd="1dp"
@@ -254,7 +253,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/voucherNumber" />
 
             <TextView
-                android:id="@+id/minimumSpendLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/myriad_pro_regular_otf"
@@ -280,7 +278,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/minimumSpendSeparator" />
 
             <ImageView
-                android:id="@+id/bottomImageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"

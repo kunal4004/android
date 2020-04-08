@@ -14,14 +14,12 @@
         android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/constEmailLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/hundred_dp">
 
             <ImageView
-                android:id="@+id/imEmailSent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/email_bottom_margin"
@@ -29,7 +27,6 @@
                 android:src="@drawable/process_complete_email_logo"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvDocumentSentTo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"

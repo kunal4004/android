@@ -45,13 +45,10 @@
                 style="@style/editTextLayoutContainerStyle">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvLabelGrossMonthlyIncome"
                     style="@style/textViewLabelStyle"
                     android:text="@string/income_gross_monthly_title"/>
 
-                <LinearLayout
-                    android:id="@+id/llCurrencyContainer"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvGrossMonthlyIncome"
@@ -75,9 +72,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/income_net_monthly_title"/>
 
-                <LinearLayout
-                    android:id="@+id/llNetMonthlyIncome"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvNetMonthlyIncome"
@@ -101,9 +96,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/income_additional_monthly_title"/>
 
-                <LinearLayout
-                    android:id="@+id/llAdditionalMonthlyIncome"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvAdditionalMonthlyIncome"
