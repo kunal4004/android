@@ -30,7 +30,12 @@ class CreditCardDeliveryPresenterImpl(var mainView: CreditCardDeliveryContract.C
                 }
                 is AvailableTimeSlotsResponse -> {
                     when (httpCode) {
-                        200 -> mainView?.onAvailableTimeSlotsSuccess(this)
+                        200 -> {
+                            if (this.timeslots.isNullOrEmpty())
+                                mainView?.onNoTimeSlotsAvailable()
+                            else
+                                mainView?.onAvailableTimeSlotsSuccess(this)
+                        }
                         440 -> mainView?.onSessionTimeout()
                         else -> mainView?.onAvailableTimeSlotsFailure()
                     }

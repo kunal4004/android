@@ -11,6 +11,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.UserDetailsForCreditCardDelivery
+import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListener {
 
@@ -25,6 +26,11 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            if (containsKey("UserDetails")) {
+                userDetails = Utils.jsonStringToObject(getString("UserDetails"), UserDetailsForCreditCardDelivery::class.java) as UserDetailsForCreditCardDelivery
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,7 +41,15 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
     }
 
     private fun configureUI() {
-
+        userDetails?.let {
+            complex.setText(it.complexOrBuildingName ?: "")
+            businessName.setText(it.businessName ?: "")
+            streetAddress.setText(it.street ?: "")
+            suburb.setText(it.suburb ?: "")
+            cityOrTown.setText(it.city ?: "")
+            province.setText(it.province ?: "")
+            postalCode.setText(it.postalCode ?: "")
+        }
     }
 
     override fun onClick(v: View?) {

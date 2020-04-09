@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/icon_block_card"
         android:layout_marginBottom="32dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -68,8 +68,30 @@
 
 
     <include
-        android:id="@+id/failureView"
+        android:id="@+id/validateAddressFailureView"
         layout="@layout/credit_card_delivery_validate_address_failure_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <include
+        android:id="@+id/timeSlotsFailureView"
+        layout="@layout/credit_card_delivery_get_time_slots_failure_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <include
+        android:id="@+id/noTimeSlotsAvailableView"
+        layout="@layout/credit_card_delivery_no_time_slots_available_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"

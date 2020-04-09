@@ -19,7 +19,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.credit_card_delivery_activity)
-        Utils.updateStatusBarBackground(this,R.color.grey_bg)
+        Utils.updateStatusBarBackground(this, R.color.grey_bg)
         bundle = intent.getBundleExtra("bundle")
         actionBar()
         loadNavHostFragment()
@@ -31,15 +31,10 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 
-
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_CANCELED)
-        finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-    }
 
     private fun loadNavHostFragment() {
         findNavController(R.id.nav_host_fragment)
@@ -47,5 +42,15 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
                         R.navigation.nav_graph_credit_card_delivery,
                         bundleOf("bundle" to bundle)
                 )
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return false
     }
 }

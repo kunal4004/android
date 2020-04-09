@@ -293,4 +293,89 @@
         <attr name="fab_status_indicator_icon" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="WheelView">
+        
+        <attr name="wv_textSize" format="dimension"/>
+
+        <attr name="wv_autoFitTextSize" format="boolean"/>
+
+        <attr name="wv_textAlign" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+
+        <attr name="wv_textBoundaryMargin" format="dimension"/>
+
+        <attr name="wv_normalItemTextColor" format="color"/>
+
+        <attr name="wv_selectedItemTextColor" format="color"/>
+
+        <attr name="wv_lineSpacing" format="dimension"/>
+
+        <attr name="wv_integerNeedFormat" format="boolean"/>
+
+        <attr name="wv_integerFormat" format="string"/>
+
+
+        <attr name="wv_visibleItems" format="integer"/>
+
+        <attr name="wv_selectedItemPosition" format="integer"/>
+
+        <attr name="wv_cyclic" format="boolean"/>
+
+
+        <attr name="wv_showDivider" format="boolean"/>
+
+        <attr name="wv_dividerType" format="enum">
+            <enum name="fill" value="0"/>
+            <enum name="wrap" value="1"/>
+        </attr>
+
+        <attr name="wv_dividerColor" format="color"/>
+
+        <attr name="wv_dividerHeight" format="dimension"/>
+
+        <attr name="wv_dividerPaddingForWrap" format="dimension"/>
+
+
+
+        <attr name="wv_curved" format="boolean"/>
+
+        <attr name="wv_curvedArcDirection" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+
+        <attr name="wv_curvedArcDirectionFactor" format="float"/>
+
+        <attr name="wv_refractRatio" format="float"/>
+
+        <attr name="wv_curvedRefractRatio" format="float"/>
+
+
+        <attr name="wv_drawSelectedRect" format="boolean"/>
+        <attr name="wv_selectedRectColor" format="color"/>
+        <attr name="wv_dividerOffset" format="dimension"/>
+
+        <attr name="wv_textFont" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="medium" value="1"/>
+            <enum name="medium_bold" value="2"/>
+            <enum name="bold" value="3"/>
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
+        </attr>
+
+        <attr name="wv_selectedTextFont" format="enum">
+            <enum name="light" value="0"/>
+            <enum name="medium" value="1"/>
+            <enum name="medium_bold" value="2"/>
+            <enum name="bold" value="3"/>
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
+        </attr>
+    </declare-styleable>
+
 </resources>

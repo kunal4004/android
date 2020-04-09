@@ -18,7 +18,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
 
     var navController: NavController? = null
     var bundle: Bundle? = null
-    var userDetails: UserDetailsForCreditCardDelivery = UserDetailsForCreditCardDelivery()
+    private var userDetails: UserDetailsForCreditCardDelivery? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
@@ -27,6 +27,11 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            if (containsKey("UserDetails")) {
+                userDetails = Utils.jsonStringToObject(getString("UserDetails"), UserDetailsForCreditCardDelivery::class.java) as UserDetailsForCreditCardDelivery
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,12 +43,18 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
 
     fun configureUI() {
         recipientName.setText(SessionUtilities.getInstance().jwt?.name?.get(0))
+        userDetails?.let {
+            cellphoneNumber.setText(it.phoneNumber ?: "")
+            alternativeNumber.setText(it.alternativeNumber ?: "")
+        }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirm -> {
-                userDetails.let {
+                if (userDetails == null)
+                    userDetails = UserDetailsForCreditCardDelivery()
+                userDetails?.let {
                     it.name = recipientName.text.toString()
                     it.phoneNumber = cellphoneNumber.text.toString()
                     it.alternativeNumber = alternativeNumber.text.toString()

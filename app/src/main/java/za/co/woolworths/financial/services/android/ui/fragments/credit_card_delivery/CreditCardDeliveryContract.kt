@@ -11,7 +11,7 @@ interface CreditCardDeliveryContract {
 
     interface CreditCardDeliveryView {
         fun startProgress()
-        fun stopProgress()
+        fun stopProgress(isFailed: Boolean = false)
         fun onValidateAddressSuccess(possibleAddressResponse: PossibleAddressResponse)
         fun onValidateAddressFailure()
         fun onInvalidAddress()
@@ -20,7 +20,9 @@ interface CreditCardDeliveryContract {
         fun onAvailableTimeSlotsSuccess(availableTimeSlotsResponse: AvailableTimeSlotsResponse)
         fun onAvailableTimeSlotsFailure()
         fun onNoTimeSlotsAvailable()
-        fun initValidateAddress()
+        fun getValidateAddress()
+        fun getAvailableTimeSlots()
+        fun restartProgress()
     }
 
     interface CreditCardDeliveryPresenter {

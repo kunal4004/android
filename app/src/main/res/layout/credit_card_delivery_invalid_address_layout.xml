@@ -28,7 +28,7 @@
 
 
     <Button
-        android:id="@+id/retry"
+        android:id="@+id/retryOnInvalidAddress"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="50dp"

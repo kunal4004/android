@@ -1707,4 +1707,9 @@
     <string name="manage_my_delivery">Manage My Delivery</string>
     <string name="confirm_address">Confirm Address</string>
     <string name="edit_address">Edit Address</string>
+    <string name="time_slots_page_title">When Would Like Your \nCard Delivered?</string>
+    <string name="time_slots_page_desc">Choose a date and select a prefered timeslot for when you would like your card delivered.</string>
+    <string name="processing_error">Processing Error</string>
+    <string name="time_slots_error_desc">We were unable to find available time slots.</string>
+    <string name="validate_address_error_desc">We were unable to confirm your \nrequest at this time.</string>
 </resources>
