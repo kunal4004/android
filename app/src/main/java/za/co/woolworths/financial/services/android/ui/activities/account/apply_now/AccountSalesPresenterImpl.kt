@@ -106,7 +106,7 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
             val displayMetrics: DisplayMetrics = resources.displayMetrics
             val height = displayMetrics.heightPixels
             val toolbarHeight = KotlinUtils.getToolbarHeight(appCompatActivity)
-            return height.minus(toolbarHeight)
+            return height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight(this).div(4))
         }
         return 0
     }

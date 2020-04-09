@@ -18,7 +18,7 @@
     <View
         style="@style/account_sales_card_benefits_bottom_margin_style"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="65dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

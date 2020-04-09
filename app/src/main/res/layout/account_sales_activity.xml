@@ -50,7 +50,7 @@
     <!-- Adding bottom sheet after main content -->
     <include
         android:id="@+id/incBottomSheetLayout"
-        layout="@layout/bottom_sheet"
+        layout="@layout/account_details_bottom_sheet_overlay"
         app:elevation="5dp" />
 
     <RelativeLayout

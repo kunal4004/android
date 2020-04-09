@@ -16,12 +16,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
 import kotlinx.android.synthetic.main.account_sales_card_header.*
 import kotlinx.android.synthetic.main.account_sign_out_activity.*
-import kotlinx.android.synthetic.main.bottom_sheet.*
+import kotlinx.android.synthetic.main.account_details_bottom_sheet_overlay.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
-import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTab
+import za.co.woolworths.financial.services.android.ui.views.ConfigureViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -69,12 +69,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         layoutParams?.height =
                 mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
-
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
-        val overlayAnchoredHeight =
-                mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
-                        ?: 0
-        sheetBehavior?.peekHeight = overlayAnchoredHeight
+        sheetBehavior?.peekHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
@@ -115,11 +111,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     override fun displayCreditCard(fragmentList: Map<String, Fragment>?, position: Int) {
         nav_host_fragment?.view?.visibility = GONE
-        blackAndGoldCreditCardViewPager?.visibility = VISIBLE
         tabLinearLayout?.visibility = VISIBLE
-        tabLayout?.visibility = VISIBLE
-        blackAndGoldCreditCardViewPager?.offscreenPageLimit = fragmentList?.size ?: 0
-        SetUpViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
+        ConfigureViewPagerWithTab(this, blackAndGoldCreditCardViewPager, tabLayout, fragmentList, position, this).create()
         invoke(position)
     }
 
