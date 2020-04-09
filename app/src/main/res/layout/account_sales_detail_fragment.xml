@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/accountSalesContainerLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/cardBenefitConstraintLayout"
-        layout="@layout/account_sales_card_benefit_layout" />
+    <include layout="@layout/account_sales_card_benefit_layout" />
 
-    <include
-        android:id="@+id/moreBenefitConstraintLayout"
-        layout="@layout/account_sales_more_benefit_layout" />
+    <include layout="@layout/account_sales_more_benefit_layout" />
 
-    <include
-        android:id="@+id/qualifyingCriteriaConstraintLayout"
-        layout="@layout/account_sales_qualify_criteria_layout" />
+    <include layout="@layout/account_sales_qualify_criteria_layout" />
 
     <include
         android:id="@+id/cardCollectionConstraintLayout"

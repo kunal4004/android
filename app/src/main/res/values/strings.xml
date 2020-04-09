@@ -7,45 +7,22 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
-    <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available Funds</string>
-    <string name="next_payment_date">Next Payment Due:</string>
     <string name="total_amount_due">Total Amount Due</string>
-    <string name="amount_overdue">Amount Overdue:</string>
-    <string name="balance_at_statement_date">Balance At Statement Date:</string>
     <string name="deduction_day">Deduction Day:</string>
     <string name="amount_to_be_debited">Amount to be Debited:</string>
-    <string name="account_status">ACCOUNT STATUS</string>
-    <string name="how_to_pay">HOW TO PAY</string>
     <string name="active">ACTIVE</string>
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
-    <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
-    <string name="minimum_amount_due">Min Amount Due</string>
     <string name="next">NEXT</string>
-    <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
     <string name="submit">SUBMIT</string>
-    <string name="tier_status">TIER STATUS</string>
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
     <string name="ok">OK</string>
     <string name="retry">RETRY</string>
     <string name="debit_order_title">DEBIT ORDER debit_order_status</string>
     <string name="debit_order_description">Your Debit Order is currently debit_order_status. See your debit order details below.</string>
-    <string name="account_in_arrears_info_title">YOUR ACCOUNT IS IN ARREARS</string>
-    <string name="account_in_arrears_info_description">Your Woolies card_name is in arrears, please make an immediate minimum payment of minimum_payment in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20</string>
 
-    <string name="valued">VALUED</string>
-    <string name="loyal">LOYAL</string>
-    <string name="reward_status_info_1">Swipe your Woolies or MySchool card and get an extra 10\% off selected items.  Pay with your Woolies card and get a further 5\%.</string>
-    <string name="reward_status_info_2">Invitations to preview sales</string>
-    <string name="reward_status_info_3">WRewards Green</string>
-    <string name="reward_status_info_4">Free WMagazine</string>
-    <string name="reward_status_info_5">Exclusive WRewards savings vouchers throughout the year</string>
-    <string name="reward_status_info_6">Birthday savings voucher</string>
-    <string name="w_reward_line_1">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
-    <string name="w_reward_line_2">Your spend updates are refreshed on the 12th day after each specified month end date.</string>
-    <string name="w_reward_line_3">Your WRewards tier status is updated at the end of each month.</string>
     <string name="stores_nearby">STORES NEARBY</string>
     <string name="wrewards">WREWARDS</string>
     <string name="recent_search">RECENT SEARCHES</string>
@@ -67,30 +44,8 @@
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="off_instantly">OFF</string>
 
-    <string name="nav_item_today">TODAY</string>
-    <string name="nav_item_products">PRODUCTS</string>
     <string name="nav_item_wrewards">WREWARDS</string>
-    <string name="nav_item_accounts">MY ACCOUNTS</string>
     <string name="apply_now">APPLY NOW</string>
-    <string name="the_benefits">The benefits:</string>
-    <string name="shop_anywhere">Shop anywhere</string>
-    <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million merchants around the world, wherever you see the Visa sign.</string>
-    <string name="cc_to_qualify">To qualify, you have to:</string>
-    <string name="bring_following_while_collecting">Bring the following when you collect your Store Card:</string>
-    <string name="cash_when_you_need_it">Cash when you need it:</string>
-    <string name="funds_within_48_hours">Funds within 48 hours</string>
-    <string name="funds_within_48_hours_description">Once your application has been approved the cash will be in your account within 48 hours.</string>
-    <string name="easy_access">Easy access</string>
-    <string name="easy_access_description">Withdraw funds 24/7 in the app using the personal loan withdrawal.</string>
-    <string name="wrewards_gives_more">WRewards gives you more</string>
-    <string name="wrewards_gives_more_description">As a Woolworths Store Cardholder, you’re automatically part of our WRewards programme. That means you’ll get exclusive access to great benefits and special offers on selected WRewards items.</string>
-    <string name="make_difference">Make a difference</string>
-    <string name="make_difference_description">Link your Store Card to our MySchool MyVillage MyPlanet fundraising programme and we\'ll donate up to 1% of the value of every Woolworths purchase you make to the organisation of your choice.</string>
-    <string name="your_in_control">You\'re in control</string>
-    <string name="your_in_control_description">With a Woolworths Store Card you decide how much you want to repay each month and your preferred payment method.</string>
-    <string name="easy_payment_methods">Easy payment methods</string>
-    <string name="easy_payment_methods_description">You could pay your account using one of the following methods:</string>
-    <string name="convenient">It’s Convenient</string>
     f
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
@@ -204,28 +159,14 @@
     <string name="loan_request_high">Loan request too high</string>
     <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
 
-    <string name="wrewards_unlinked_tag_line">We see that your Woolies Card is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your Woolies Card now.</string>
     <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
-    <string name="get_more">Get more</string>
-    <string name="wrewards_three_levels">There are three tiers to WRewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued tier, and we\'ll upgrade your status automatically as you qualify for the next tier.</string>
-    <string name="member">MEMBER</string>
-    <string name="swipe_and_save_instantly">SWIPE AND SAVE INSTANTLY</string>
-    <string name="spend_30000">SPEND R30 000 OR MORE ANNUALLY</string>
-    <string name="vip">VIP</string>
-    <string name="spend_between_10000_29000annually">SPEND BETWEEN R10 000 - R29 999 ANNUALLY</string>
     <string name="savings">SAVINGS</string>
-    <string name="to_next_tier">TO NEXT TIER</string>
-    <string name="info_valued_header">SWIPE AND SAVE INSTANTLY</string>
-    <string name="info_loyal_header">SPEND BETWEEN R10 000 AND R29 999 PER YEAR at woolworths</string>
-    <string name="info_vip_header">SPEND OVER R30 000 PER YEAR AT WOOLWORTHS</string>
     <string name="overview">OVERVIEW</string>
     <string name="vouchers">VOUCHERS</string>
     <string name="year">YEAR</string>
     <string name="to_date">TO DATE</string>
-    <string name="tier_status1">Tier Status</string>
     <string name="wrewards_instant_savings">WRewards Instant Savings</string>
-    <string name="wrewards_green_earned">WRewards Green Earned</string>
     <string name="quarterly_voucher_earned">Quarterly Voucher Earned</string>
     <string name="year_to_date_spend">Year to Date Spend</string>
     <string name="value">VALUE</string>
@@ -236,47 +177,10 @@
     <string name="featured_promotions">featured promotions</string>
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
     <string name="bullet">\u2022</string>
-    <string name="sc_points_bring_following_while_collecting_1">A valid South African ID</string>
-    <string name="sc_points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
-    <string name="sc_points_to_qualify_1">Be 18 or older</string>
-    <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
-    <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
 
-    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Foodstops at selected Engen garages </string>
-    <string name="points_convinent_3">Pay utility bills</string>
-    <string name="points_convinent_4">Buy airtime</string>
-    <string name="points_convinent_5">Shop Woolies online 24/7</string>
-
-    <string name="points_easy_payment_method_1">At a Woolies store</string>
-    <string name="points_easy_payment_method_2">Debit order</string>
-    <string name="points_easy_payment_method_3">At an ABSA ATM</string>
-    <string name="points_easy_payment_method_4">Cellphone or internet banking</string>
-
-    <string name="points_cash_when_you_need_it_1">Flexible repayment terms of up to 60 months</string>
-    <string name="points_cash_when_you_need_it_2">Re-use the money that’s been paid back towards your loan</string>
-    <string name="points_cash_when_you_need_it_3">Low initiation and monthly service fees</string>
-    <string name="points_cash_when_you_need_it_4">Easily apply to increase your limit if needed</string>
-    <string name="points_cash_when_you_need_it_5">Settle your account early without penalties</string>
-    <string name="points_cash_when_you_need_it_6">Make additional payments towards your loan</string>
-    <string name="points_cash_when_you_need_it_7">Easily access your cash using our mobi app or our interactive voice message system</string>
-
-    <string name="personal_loan_points_to_qualify_1">Be 18 years of age or older</string>
-    <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
-    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2 000 per month</string>
-    <string name="personal_loan_points_to_qualify_4">Provide your latest payslip or bank statements</string>
-    <string name="personal_loan_points_to_qualify_5">Have a bank account in your own name</string>
-    <string name="points_to_qualify_1">Be 18 years of age or older</string>
-    <string name="points_to_qualify_2">Have a valid RSA ID number</string>
-    <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
-
-    <string name="points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
-    <string name="points_bring_following_while_collecting_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
     <string name="terms_conditions">terms &amp; conditions</string>
     <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
     <string name="wrewards_monthly_spend">Monthly Spend</string>
-
-    <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
-    <string name="collect_credit_card_desc_1">Valid South African ID </string>
 
     <string name="product_search_hint">Search products, product codes, brands</string>
     <string name="no_product_found">0 ITEMS FOUND</string>
@@ -285,7 +189,6 @@
     <string name="set_info_detail">Place the barcode or qr code within the guidelines &amp; remain steady</string>
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
-    <string name="no_messages_to_display">No messages to display</string>
     <string name="no_results_to_show">NO RESULTS TO SHOW</string>
     <string name="no_result_found">NO RESULTS FOUND</string>
     <string name="search_error_message">Try searching a different area or turning Location Services on in Settings so we can find the store closest to your location.</string>
@@ -298,27 +201,13 @@
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
-    <string name="product_size">Size</string>
     <string name="add_to_cart">add to cart</string>
-    <string name="add_to_shopping_list">Add to shopping list</string>
     <string name="add_to_list">ADD TO LIST</string>
     <string name="edit">EDIT</string>
     <string name="done">DONE</string>
     <string name="remove_all">REMOVE ALL</string>
     <string name="checkout">CHECKOUT</string>
-    <string name="product_code">Product Code</string>
-    <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
-    <string name="get_more_back_at_woolies">Get more back at Woolies</string>
-    <string name="get_more_description">Get up to 3\% back in WRewards quarterly vouchers when shopping at Woolies.</string>
-    <string name="cc_cash_when_you_need_it">Cash When You Need It</string>
-    <string name="cc_cash_when_you_need_it_description">Use your Woolworths Credit Card to draw cash at any ATM displaying the Visa logo, worldwide.</string>
-    <string name="pay_for_fuel">Pay for Fuel</string>
-    <string name="pay_fuel_description">Pay for your fuel with your Woolies Credit Card and get up to 1\% back in WRewards quarterly vouchers.</string>
-    <string name="plus_for_black_credit_card_only">PLUS (for Black Credit Card only)</string>
-    <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
-    <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
-    <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
     <string name="added_to_shopping_list">added to shopping list</string>
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
@@ -346,14 +235,11 @@
     <string name="ingredients">Ingredients</string>
     <string name="savings_since">Savings Since</string>
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
-    <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
-    <string name="loading_product_info">Loading info</string>
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
-    <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
 
     <string name="no_connection">NO CONNECTION</string>
     <string name="no_connection_desc">OOPS. SOMETHING WENT WRONG</string>
@@ -402,7 +288,6 @@
     <string name="session_expired_desc">Your session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
-    <string name="view_transactions">View Transactions</string>
     <string name="view_statements">View Statements</string>
     <string name="balance_protection_insurance">Balance Protection Insurance</string>
     <string name="balance_protection_insurance_overview">Balance Protection Insurance Overview</string>
@@ -467,7 +352,6 @@
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>
     <string name="stock_finder_btn_label">find in-store</string>
-    <string name="product_loading_color_size">Loading size &amp; colour</string>
     <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
     <string name="confirm_color_desc">select your colour</string>
     <string name="confirm_size_desc">select your size</string>
@@ -500,7 +384,6 @@
     <string name="cli_step_indicator_income">Income</string>
     <string name="cli_step_indicator_expense">Expenses</string>
     <string name="cli_step_indicator_offer">Offer</string>
-    <string name="cli_step_indicator_documents">Documents</string>
     <string name="cli_step_indicator_complete">Complete</string>
     <string name="increase_limit_supply_detail">please supply your income details</string>
     <string name="increase_supply_supply_detail">please supply your expense details</string>
@@ -526,7 +409,6 @@
     <string name="decline">Decline</string>
     <string name="decline_title">Decline offer?</string>
     <string name="decline_desc">Are you sure you would like to decline the offer of  #R?</string>
-    <string name="find_out_more">Find Out More</string>
     <string name="status_unavailable">unavailable</string>
     <string name="status_i_n_e">I \u0026 E</string>
     <string name="status_offer">Offer</string>
@@ -600,11 +482,9 @@
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
     <string name="store_locator">Store Locator</string>
-    <string name="my_lists">My Shopping Lists</string>
     <string name="messages">Messages</string>
     <string name="order_history">Order History</string>
     <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
-    <string name="cart_free_delivery_first_order">WRewards members get instant savings on selected items. Pay with your Woolies Store or Credit Card and get an extra 5% off</string>
 
     <!-- Bottom navigation activity -->
 
@@ -614,7 +494,6 @@
     <string name="bottom_title_cart">My Cart</string>
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
-    <string name="title_activity_main">ShoppingListActivity</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you – we can request your electronic bank statement directly from your bank at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
@@ -626,7 +505,6 @@
     <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
     <string name="start_shopping">start shopping</string>
     <string name="delete">delete</string>
-    <string name="title_my_list">My Shopping Lists</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
@@ -636,8 +514,6 @@
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
-    <string name="out_of_stock_desc">Unfortunately this item is currently out of stock.</string>
-    <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
     <string name="promotional_text">You saved </string>
     <string name="enter_list_name">Enter list name</string>
     <string name="select_all">SELECT ALL</string>
@@ -648,8 +524,6 @@
     <string name="title_no_shopping_lists">You have no lists</string>
     <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get your favourite Woolworths products.</string>
     <string name="button_no_shopping_lists">create a list</string>
-    <string name="single_item_text">item</string>
-    <string name="multiple_item_text">items</string>
     <string name="shopping_list">shopping list</string>
     <string name="select">select</string>
     <string name="product_unavailable">product unavailable</string>
@@ -672,15 +546,12 @@
     <string name="text_new">NEW</string>
     <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
-    <string name="walkthrough_barcode_title">Barcode Scanning</string>
-    <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="previous">previous</string>
     <string name="need_help">Need Help</string>
     <string name="tips_tricks">Tips &amp; Tricks</string>
     <string name="tips_tricks_titles_vouchers">Vouchers</string>
     <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
     <string name="tips_tricks_titles_barcode">Barcode Scanning</string>
-    <string name="tips_tricks_titles_refine">Filter Your Search</string>
     <string name="tips_tricks_titles_delivery">Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
     <string name="tips_tricks_titles_my_accounts">Accounts</string>
@@ -696,33 +567,19 @@
     <string name="tips_tricks_desc_my_accounts">See all your active Woolworths accounts and check your available balance, amount due and credit limit.</string>
     <string name="tips_tricks_desc_statements">View and send your latest statements for your Woolworths accounts.</string>
     <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
-    <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
     <string name="tips_tricks_button_refine">Refine</string>
-    <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
     <string name="tips_tricks_button_navigation">LET’S GO</string>
-    <string name="tips_tricks_button_my_accounts">check your account status</string>
-    <string name="tips_tricks_button_statements">view your statements</string>
-    <string name="tips_tricks_button_shopping_list">start creating shopping lists</string>
     <string name="Dont_show_these_tips">Don’t show these tips</string>
     <string name="new_feature_tutorials">New Feature Tutorials</string>
-    <string name="scan_your_first_product">SCAN a PRODUCT</string>
-    <string name="check_in_store_availability">check in-store availability</string>
-    <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
     <string name="navigation">Navigation</string>
     <string name="my_accounts">My Accounts</string>
     <string name="ways_to_pay_your_account_cc_sc">There are 4 easy ways to pay your account:</string>
     <string name="how_to_pay_1">By Debit Order</string>
-    <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
-    <string name="how_to_pay_3">At any Woolworths store</string>
-    <string name="how_to_pay_4">At any Absa Bank branch</string>
 
     <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
     <string name="title_how_to_pay">How To Pay</string>
-    <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
-    <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
-    <string name="title_activity_debit_order">DebitOrderActivity</string>
     <string name="ways_to_pay_your_account_pl">You can pay your Woolworths Personal Loan in any of the following ways:</string>
     <string name="account_details_account_holder">Account Holder:</string>
     <string name="account_details_account_number">Account Number:</string>
@@ -730,11 +587,8 @@
     <string name="account_details_branch_code">Branch Code:</string>
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="refine">REFINE</string>
     <string name="sort_by">SORT BY</string>
-    <string name="refine_reset">reset</string>
-    <string name="refinement_clear">clear</string>
     <string name="refinement_show_me">show me</string>
     <string name="refinement_filter_by">filter by</string>
     <string name="see_results_count_start">SEE RESULTS (</string>
@@ -806,17 +660,8 @@
     <string name="walkthrough_refine_title">Filter Your Search</string>
     <string name="walkthrough_refine_desc">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
     <string name="walkthrough_refine_action">REFINE NOW</string>
-    <string name="walkthrough_account_title">account</string>
-    <string name="walkthrough_account_desc">See all your active financial products available balance, amount due and credit limit.</string>
     <string name="walkthrough_account_action_no_products">apply for an account today</string>
-    <string name="walkthrough_account_action">check account status</string>
     <string name="app_maintenance_message">Oops… something went wrong.\nPlease try again later</string>
-    <string name="walkthrough_shopping_list_title">Shopping lists</string>
-    <string name="walkthrough_shopping_list_desc">Create and manage your shopping lists, and add a list to your cart.</string>
-    <string name="walkthrough_shopping_list_action">create a shopping list</string>
-    <string name="walkthrough_statement_title">Access Your Statements</string>
-    <string name="walkthrough_statement_desc">View and send your latest statements for your Woolworths accounts.</string>
-    <string name="walkthrough_statement_action">TAKE ME THERE</string>
     <string name="set_delivery_location">Your Delivery Location</string>
     <string name="tips_edit_delivery_location">EDIT DELIVERY LOCATION</string>
     <string name="tips_create_shopping_list">create a shopping list</string>
@@ -829,7 +674,6 @@
     <string name="tips_tricks_view_your_accounts">VIEW YOUR ACCOUNTS</string>
     <string name="tips_tricks_take_me_there">TAKE ME THERE</string>
     <string name="tips_tricks_access_your_statements">ACCESS YOUR STATEMENTS</string>
-    <string name="walkthrough_in_store_desc">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
@@ -839,23 +683,15 @@
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
     <string name="info_total_amount_due_title">Total Amount Due</string>
-    <string name="info_total_amount_due_desc">This is the sum of your current instalment, including any overdue amount and interest.</string>
     <string name="info_next_payment_due_title">Next Payment Due</string>
-    <string name="info_next_payment_due_desc">This is the date that the Total Amount Due is to be paid by.</string>
     <string name="info_current_balance_title">Current Balance</string>
-    <string name="info_current_balance_desc">This is the total amount currently owed to Woolies.</string>
     <string name="info_credit_limit_title">Credit Limit</string>
-    <string name="info_credit_limit_desc">This is the total amount of credit offered to you by Woolies</string>
-    <string name="info_amount_overdue_title">Amount Overdue</string>
-    <string name="info_amount_overdue_desc">This is the shortfall amount that was not paid by the specified payment due date.</string>
     <string name="info_available_funds_title">Available Funds</string>
     <string name="info_available_funds_desc">Funds available to be used</string>
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
-    <string name="absa_link_banking_to_device_title">Link Online Banking to this Device</string>
     <string name="absa_biometric_please_enter_your_pin">Enter Woolies Credit Card PIN</string>
-    <string name="absa_biometric_please_card_number">Card number %1$s</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_desc"> Please call on 0861 50 20 20 or  email queries@wfs.co.za for assistance</string>
@@ -867,8 +703,6 @@
     <string name="absa_biometric_skip_step">Skip this Step</string>
     <string name="absa_enable_biometric">Enable Biometrics</string>
     <string name="absa_success_title">Thanks %1$s</string>
-    <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
-    <string name="online_banking">Online Banking</string>
     <string name="absa_passcode">Enter Passcode</string>
     <string name="shop_department_title_category">DEPARTMENTS</string>
     <string name="shop_department_title_list">my lists</string>
@@ -909,16 +743,11 @@
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
-    <string name="card_detail_title">Card Details</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
     <string name="block_card_title">Block Card</string>
     <string name="block_card_desc">Please select the reason for blocking your card.</string>
-    <string name="Damaged">Damaged</string>
-    <string name="rad_lost">Lost</string>
-    <string name="radStolen">Stolen</string>
-    <string name="rad_not_received">Not Received</string>
     <string name="permanent_card_block_title">Permanent Card Block</string>
     <string name="permanent_card_block_desc">Are you sure you want to permanently block this card? You will need to collect a replacement card at a participating Woolworths store; or call us.</string>
     <string name="yes_block_it">yes, block it</string>
@@ -928,7 +757,6 @@
     <string name="no_active_card">No Active Card</string>
     <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
     <string name="card_block_replacement_card_disabled_desc">Your card has been blocked and can no longer be used. Call 0861 50 20 20 to arrange for delivery.</string>
-    <string name="link_a_card">link a card</string>
     <string name="get_replacement_card">get replacement card</string>
     <string name="get_a_replacement_card">Get A Replacement Card</string>
     <string name="already_have_a_card_title">ALREADY HAVE CARD? LINK IT NOW</string>
@@ -938,7 +766,6 @@
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below.</string>
     <string name="invalid_card_number">Invalid card number</string>
-    <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
     <string name="enter_otp_title">Enter OTP</string>
@@ -1072,17 +899,13 @@
     <string name="how_it_works">How it Works</string>
     <string name="how_to_use">how to use</string>
     <string name="invalid_qr_code"><b>OOPS.</b> INVALID QR CODE, PLEASE TRY AGAIN</string>
-    <string name="cd_store_card_layout">store card layout</string>
     <string name="cd_store_card_text">store card text</string>
     <string name="cd_store_card_apply_now_text">store card apply now text</string>
     <string name="cd_store_card_available_funds_text">store card available funds text</string>
-    <string name="cd_sign_out">sign out</string>
     <string name="call_the_call_center">Call the Call Centre (0861 50 20 20)</string>
     <string name="link_card_failure">Try linking your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
-    <string name="enter_sequence_number" tools:ignore="ExtraTranslation">Enter sequence number</string>
     <string name="sequence_number">Sequence Number</string>
     <string name="sequence_number_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
-    <string name="oops_err_message">Oops, something went wrong.</string>
     <string name="oops_err_title">Error</string>
     <string name="request_timeout_error">Your request timed out, please try again later</string>
     <string name="product_options">Product Options</string>
@@ -1115,8 +938,6 @@
     <string name="rlt_BlockCard"> Block Card</string>
 
     <!-- Block Card -->
-    <string name="label_blockCard">Block Card</string>
-    <string name="label_blockCardDescription">Block card Description</string>
     <string name="rlt_BlockReason">Block Reason Layout</string>
     <string name="label_manage_layout">Manage</string>
     <string name="button_blockCard">Block Card</string>
@@ -1125,7 +946,6 @@
     <string name="label_permanent_block_card">Permanent Block Card</string>
     <string name="button__yes_block_card">yes, Block Card</string>
     <string name="link_cancel">Cancel</string>
-    <string name="label_permanent_block_card_description">Permanent Block Card Description</string>
 
     <!-- My Card (Blocked) -->
     <string name="label_noActiveCard">No Active Card</string>
@@ -1144,7 +964,6 @@
     <string name="label_linkICR"> Link ICR Card</string>
     <string name="label_linkICRCardDescription"> Link ICR Description</string>
     <string name="text_carddetails"> Card Number Textbox</string>
-    <string name="text_seqNumber"> Seq Number Textbox</string>
     <string name="button_next">Next button</string>
 
     <string name="linked_store_card_layout">Linked Store Card</string>
@@ -1175,31 +994,16 @@
     <string name="icr_wrong_otp_error">The OTP entered is incorrect. Please try again.</string>
 
     <string name="toolbar_layout">Toolbar</string>
-    <string name="active_account_layout">Active Account</string>
 
     <!-- Unique Ids for store card -->
-    <string name="charged_off_account">Charged Off Account</string>
-    <string name="card_detail_container_layout">Card Detail Container</string>
-    <string name="funds_layout_layout">Funds Layout</string>
-    <string name="accounts_status_layout">Accounts Status</string>
-    <string name="next_payment_due_layout">Next Payment Due</string>
     <string name="current_balance_layout">Current Balance</string>
-    <string name="credit_limit_layout">Credit Limit</string>
-    <string name="increase_limit_container_layout">Increase Limit Container</string>
-    <string name="view_transaction_layout">View Transaction</string>
-    <string name="view_statement_layout">View Statement</string>
-    <string name="balance_protection_layout">Balance Protection</string>
-    <string name="debit_order_layout">Debit Order</string>
-    <string name="my_card_layout">My Card</string>
 
     <!-- Unique Ids for personal loan -->
-    <string name="drawn_down_amount_layout">Drawn Down Amount</string>
 
     <!-- Unique Ids for PLDD Enter Drawn Down Amount Layout-->
     <string name="PLDD_toolbar_layout">Toolbar</string>
     <string name="loan_withdrawal_drawn_down_amount_layout">Loan Withdrawal Drawn Down Amount</string>
     <string name="enter_drawn_down_amount_layout">Enter Drawn Down Amount layout</string>
-    <string name="enter_drawn_down_amount_desc">Drawn Down Amount Description</string>
     <string name="available_funds_layout">Available Funds Layout</string>
     <string name="pldd_credit_limit_layout">Credit Limit Layout</string>
 
@@ -1245,11 +1049,9 @@
     <string name="tvBenefitRewardLayout">BenefitReward</string>
     <string name="savingsLayout">Savings layout</string>
     <string name="toNextTireLayout">To Get To VIP</string>
-    <string name="promotionsLayout">FEATURED PROMOTIONS</string>
     <string name="vipLogoLayout">VIP Logo</string>
 
     <!-- Unique Ids for WReward Savings-->
-    <string name="savingsLayout_savings">Savings Layout</string>
     <string name="tvWRewardInstantSavingLayout">WRewards Instant Savings</string>
     <string name="savingSinceLayout">Saving Since Layout</string>
     <string name="quarterlyVouchersEarnedLayout">Quarterly Vouchers Earned</string>
@@ -1358,9 +1160,6 @@
     <string name="blackCreditCardMoreBenefits_row_2_title">Get More Back Everywhere</string>
     <string name="blackCreditCardMoreBenefits_row_2_desc">1% back in quarterly vouchers on all purchases outside of Woolworths and fuel purchases when paying with your card (excludes EFT). Ts&amp;Cs apply.</string>
 
-    <string name="blackCreditCardMoreBenefits_row_3_title">Get More Back Everywhere</string>
-    <string name="blackCreditCardMoreBenefits_row_3_desc">1% back in quarterly vouchers on all purchases outside of Woolworths and fuel purchases when paying with your card (excludes EFT). Ts&amp;Cs apply.</string>
-
     <string name="blackCreditCardMoreBenefits_row_4_title">Pay for Fuel</string>
     <string name="blackCreditCardMoreBenefits_row_4_desc">Pay for your fuel with your Woolies Credit Card and get up to 1% back in WRewards quarterly vouchers.</string>
 
@@ -1400,7 +1199,6 @@
     <string name="goldCreditCardQualify_row_2">Have a valid RSA ID Number</string>
     <string name="goldCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
 
-    <string name="goldCreditCardCollection_desc">When collection your credit card, make sure you bring the following:</string>
     <string name="goldCreditCardCollection_row_1">Valid South African ID</string>
     <string name="goldCreditCardCollection_row_2">Provide your latest payslip or bank statements</string>
     <string name="goldCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
@@ -1412,7 +1210,6 @@
     <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
     <string name="blackCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
 
-    <string name="blackCreditCardCollection_desc">When collection your credit card, make sure you bring the following:</string>
     <string name="blackCreditCardCollection_row_1">A valid RSA ID number</string>
     <string name="blackCreditCardCollection_row_2">Latest three payslips or the last three months\' bank statements</string>
     <string name="blackCreditCardCollection_row_3">Utility bill or original bank statement dated within the last three months, as proof of residence</string>
@@ -1478,9 +1275,7 @@
     <string name="current_balance_title">Current Balance</string>
     <string name="available_funds_title">Available Funds</string>
     <string name="credit_limit_title">Credit Limit</string>
-    <string name="apply_credit_limit_description">Apply for a limit increase now. It’s quick and easy.</string>
     <string name="information">Information</string>
-    <string name="WBottomSheetBehavior">za.co.woolworths.financial.services.android.ui.views.bottom_sheet.WBottomSheetBehavior</string>
     <string name="label_payment_option_header">Payment Option Header</string>
     <string name="payment_option_make_your_life_easier">4 ways we make your life easier</string>
     <string name="payment_option_pay_woolies_card_label">You can pay your woolworths credit card account in any of the following ways</string>
@@ -1492,7 +1287,6 @@
     <string name="black_credit_card_credit_limit_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="black_credit_card_total_amount_due_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="black_credit_card_next_payment_due_desc">This is the date the Total Amount Due is to be paid by.</string>
-    <string name="card_info_view_term_and_condition">View Terms and Conditions</string>
 
     <string name="black_credit_card_account_in_arrears_information_desc">Account in arrears is when the minimum payment due is not paid in full by the due date.</string>
     <string name="black_credit_card_amount_due_information_desc">This is the minimum amount that is due for the payment, by the due date for that month.</string>
@@ -1509,13 +1303,11 @@
     <string name="label_view_statements">View\nStatements</string>
     <string name="label_payment_options">Payment\nOptions</string>
     <string name="label_payment_options_button">Payment Options</string>
-    <string name="view_card">View Card</string>
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
-    <string name="view_pager_bottom_sheet_behavior" translatable="false">za.co.woolworths.financial.services.android.ui.views.ViewPagerBottomSheetBehavior</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -1548,7 +1340,6 @@
     <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
     <string name="credit_card_activation_popup_title">Card Activation Unavailable</string>
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 6am - 9pm, Monday to Saturday.</string>
-    <string name="credit_card_activation_popup_action">activate</string>
     <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
     <string name="sending_otp_title">Sending OTP</string>
     <string name="sending_otp_desc">An One-time PIN is being sent to you. It should arrive shortly.</string>
@@ -1559,8 +1350,6 @@
 
     <!-- Unique Ids for PDP-->
     <string name="pdp_layout">productLayout</string>
-    <string name="pdp_view_pager_indicator">productImagesViewPagerIndicator</string>
-    <string name="pdp_close_button">buttonClose</string>
     <string name="pdp_textViewProductName">textViewProductName</string>
     <string name="pdp_textViewPrice">textViewPrice</string>
     <string name="pdp_textViewColourPlaceHolder">textViewColourPlaceHolder</string>
@@ -1618,14 +1407,10 @@
     <string name="plp_buttonEnablePromotiont">buttonEnablePromotiont</string>
     <string name="plp_seeResultsButtonLayout">seeResultsButtonLayout</string>
     <string name="plp_textViewSeeResults">textViewSeeResults</string>
-    <string name="plp_viewListSubRefinement">viewListSubRefinement</string>
-    <string name="plp_seeResultsLayout">seeResultsLayout</string>
-    <string name="plp_textViewAllCategory">textViewAllCategory</string>
     <string name="plp_productListLayout">productListLayout</string>
     <string name="plp_textViewProductName">textViewProductName</string>
     <string name="plp_textViewPromotion">textViewPromotion</string>
     <string name="plp_textViewPrice">textViewPrice</string>
-    <string name="plp_textViewWasPrice">textViewWasPrice</string>
     <string name="plp_newPromotionalImage">newPromotionalImage</string>
     <string name="plp_savePromotionalImage">savePromotionalImage</string>
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
@@ -1655,8 +1440,6 @@
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
     <string name="activate_new_credit_card">Activate New Credit Card</string>
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
-    <string name="retry_label">Retry</string>
-    <string name="error_occured">Error Occured</string>
     <string name="recent_transactions_title">Recent Transactions</string>
 
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
@@ -1667,5 +1450,20 @@
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
+    <string name="account_in_arrears_layout">Account In Arrears Layout</string>
+    <string name="account_six_month_arrear_toolbar">Account Six Month In Arrear Toolbar</string>
 
+    <string name="blackCreditCardMoreBenefits_row_3_title">Cash when you need it</string>
+    <string name="blackCreditCardMoreBenefits_row_3_desc">Withdraw cash at any ATM displaying the Visa logo. Withdrawals at any Absa ATM is free for Woolworths Black Credit Cardholders. Ts&amp;Cs apply.</string>
+
+    <string name="payment_made_from_other_acc_title">payments made from other accounts</string>
+
+    <!-- OnBoarding screen items -->
+    <string name="on_boarding_screen_title_1">Welcome to the world of Woolies. It’s the next level in shopping, rewards and financial services.</string>
+    <string name="on_boarding_screen_title_2">Get inspired with the newest products and trends, find items in store and shop your favourites anytime, anywhere.</string>
+    <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers and promotions on the go.</string>
+    <string name="on_boarding_screen_title_4">Access all your Woolworths financial products right here. View your balances, check your transaction history or apply for something new.</string>
+    <string name="on_boarding_lets_go">let\'s go</string>
 </resources>
+

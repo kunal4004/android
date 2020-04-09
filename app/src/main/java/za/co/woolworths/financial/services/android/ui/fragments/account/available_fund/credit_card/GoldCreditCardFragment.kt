@@ -12,7 +12,7 @@ class GoldCreditCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        accountOverviewRootLayout?.setBackgroundResource(R.drawable.gold_credit_card_background)
+        availableFundBackground?.setBackgroundResource(R.drawable.gold_credit_card_background)
 
         incViewStatementButton?.visibility = if (WoolworthsApplication.getAbsaBankingOpenApiServices()?.isEnabled == true) View.VISIBLE else View.GONE
         incRecentTransactionButton?.setOnClickListener(this)

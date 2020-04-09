@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollContainerLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/transparent"
@@ -10,7 +9,6 @@
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <View
-        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:background="@drawable/rounded_view_bg"

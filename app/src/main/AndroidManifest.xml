@@ -248,10 +248,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity"
             android:screenOrientation="portrait"
@@ -518,6 +515,12 @@
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize"
             />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
     </application>
 
 </manifest>

@@ -31,7 +31,6 @@
         app:WTextView_font="myriadpro_regular"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvNoResult"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"

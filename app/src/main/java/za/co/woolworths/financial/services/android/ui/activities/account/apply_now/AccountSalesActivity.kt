@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.apply_now
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -30,10 +29,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
-
-    companion object {
-        const val SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION: Long = 500
-    }
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,12 +66,14 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun setupBottomSheetBehaviour() {
         val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
-        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        layoutParams?.height =
+                mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
 
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
-        val overlayAnchoredHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
-                ?: 0
+        val overlayAnchoredHeight =
+                mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity)
+                        ?: 0
         sheetBehavior?.peekHeight = overlayAnchoredHeight
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -87,7 +84,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                AnimationUtilExtension.transitionBottomSheetBackgroundColor(dimView,slideOffset)
+                AnimationUtilExtension.transitionBottomSheetBackgroundColor(dimView, slideOffset)
                 navigateBackImageButton?.rotation = slideOffset * -90
                 if (slideOffset > 0.2) AnimationUtilExtension.animateButtonIn(bottomApplyNowButtonRelativeLayout) else AnimationUtilExtension.animateButtonOut(bottomApplyNowButtonRelativeLayout)
             }
@@ -95,11 +92,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun smoothScrollToTop() {
-        scrollableView?.apply {
-            post {
-                ObjectAnimator.ofInt(this, "scrollY", 0).setDuration(SMOOTH_SCROLL_SCROLLVIEW_TO_DEFAULT_POSITION).start()
-            }
-        }
+        scrollableView?.smoothScrollTo(0, 0)
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {

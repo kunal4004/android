@@ -10,8 +10,7 @@ android {
     def major = "6"
     def minor = "2"
     def fix = "0"
-
-    def jobNumber = 410
+    def jobNumber = 411
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -185,8 +184,8 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:2.0.0'
     implementation 'com.facebook.fresco:animated-gif:2.0.0'
     implementation 'com.facebook.android:facebook-android-sdk:5.1.1'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
 
     implementation(name: 'utils-1.1.8', ext: 'aar')
     implementation(name: 'Logger-1', ext: 'aar')
@@ -208,9 +207,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
     implementation "com.github.skydoves:balloon:1.0.4"
-    implementation 'cards.pay:paycardsrecognizer:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'

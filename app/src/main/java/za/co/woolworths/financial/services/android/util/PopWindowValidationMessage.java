@@ -175,7 +175,7 @@ public class PopWindowValidationMessage {
 				nativeMap.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Location location = Utils.getLastSavedLocation(mContext);
+						Location location = Utils.getLastSavedLocation();
 						String uri = null;
 						if (location != null) {
 							uri = "http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();

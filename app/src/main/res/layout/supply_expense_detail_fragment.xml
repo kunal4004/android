@@ -47,13 +47,10 @@
                 style="@style/editTextLayoutContainerStyle">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvLabelMortgagePayments"
                     style="@style/textViewLabelStyle"
                     android:text="@string/expenses_mortgage_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llCurrencyContainer"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMortgagePayments"
@@ -77,9 +74,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/expenses_rental_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llNetMonthlyIncome"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvRentalPayments"
@@ -103,9 +98,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/expenses_maintenance_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llAdditionalMonthlyIncome"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMaintainanceExpenses"
@@ -129,9 +122,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/expense_monthly_credit_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llMonthlyCreditPaymentsContainer"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMonthlyCreditPayments"
@@ -155,9 +146,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/cli_other_expenses"/>
 
-                <LinearLayout
-                    android:id="@+id/llOtherExpenses"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvOtherExpenses"

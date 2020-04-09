@@ -46,7 +46,6 @@
         app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
     <TextView
-        android:id="@+id/progressDescription"
         style="@style/body_text_style"
         android:layout_marginTop="@dimen/twelve_dp"
         android:gravity="center"

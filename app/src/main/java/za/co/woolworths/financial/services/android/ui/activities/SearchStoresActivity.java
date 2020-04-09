@@ -242,7 +242,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 	}
 
 	public Call<LocationResponse> startSearch(final String searchTextField) {
-		Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
+		Location location = Utils.getLastSavedLocation();
 
 		double latitude = (location == null) ? 0.0 : location.getLatitude();
 		double longitude = (location == null) ? 0.0 : location.getLongitude();

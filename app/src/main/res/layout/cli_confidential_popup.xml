@@ -14,7 +14,6 @@
         android:layout_alignParentTop="true">
 
         <LinearLayout
-            android:id="@+id/linConfidentialPopUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -76,7 +75,6 @@
 
 
             <LinearLayout
-                android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
                 android:layout_marginBottom="@dimen/default_margin"

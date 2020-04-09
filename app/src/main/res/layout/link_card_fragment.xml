@@ -68,7 +68,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLinkNewCardDesc" />
 
     <ImageButton
-        android:id="@+id/cameraIconImageButton"
         style="@style/instantStoreCardReplacementImageButtonStyle"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/cardNumberEditText"

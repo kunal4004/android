@@ -9,12 +9,6 @@
         <item>fonts/MyriadPro-Semibold.otf</item>
     </string-array>
     <!-- navigation drawer item labels  -->
-    <string-array name="nav_drawer_labels">
-        <item>@string/nav_item_today</item>
-        <item>@string/nav_item_products</item>
-        <item>@string/nav_item_wrewards</item>
-        <item>@string/nav_item_accounts</item>
-    </string-array>
 
     <string-array name="accounts_walkthrough_descriptions">
         <item>@string/accounts_walkthrough_desc_1</item>
@@ -33,13 +27,6 @@
         <item>@drawable/accounts_walkthrough_2</item>
         <item>@drawable/accounts_walkthrough_3</item>
         <item>@drawable/accounts_walkthrough_4</item>
-    </integer-array>
-
-    <integer-array name="nav_drawer_images">
-        <item>@drawable/ic_drw_tww</item>
-        <item>@drawable/ic_drw_products</item>
-        <item>@drawable/ic_drw_wrewards</item>
-        <item>@drawable/ic_drw_accounts</item>
     </integer-array>
 
     <integer-array name="empty_state_icon">
@@ -314,11 +301,4 @@
         <item>@string/tips_tricks_titles_shopping_list</item>
     </string-array>
 
-    <array name="auto_size_text_sizes">
-        <item>10sp</item>
-        <item>11sp</item>
-        <item>12sp</item>
-        <item>13sp</item>
-        <item>14sp</item>
-    </array>
 </resources>

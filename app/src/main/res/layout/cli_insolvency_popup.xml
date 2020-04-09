@@ -73,7 +73,6 @@
                 android:background="@color/recent_search_bg" />
 
             <LinearLayout
-                android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
                 android:layout_marginTop="@dimen/default_margin"

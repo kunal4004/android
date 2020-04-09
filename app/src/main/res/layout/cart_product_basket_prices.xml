@@ -21,7 +21,6 @@
         android:paddingRight="24dp">
 
         <RelativeLayout
-            android:id="@+id/rlTotalItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/eighteen_dp"
@@ -55,7 +54,6 @@
 
 
         <RelativeLayout
-            android:id="@+id/rlEstimatedDelivery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/fifteen_dp"
@@ -158,7 +156,6 @@
             app:WTextView_font="myriadpro_regular"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvDeliveryCostConfirmationDesc"
             style="@style/style_cart_basket_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

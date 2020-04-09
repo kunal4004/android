@@ -33,7 +33,6 @@
         tools:targetApi="lollipop" />
 
     <TextView
-        android:id="@+id/balanceProtectionInsuranceTextView"
         style="@style/style_loan_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -91,6 +90,7 @@
         android:id="@+id/debitOrderViewGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:constraint_referenced_ids="debitOrderView,debitOrderLogoImageView,debitOrderIsActiveTextView,debitOrderTextView,debitOrderDivider"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +145,7 @@
         android:layout_width="0dp"
         android:visibility="gone"
         android:layout_height="0dp"
-        app:constraint_referenced_ids="withdrawCashView,loanWithdrawalLogoImageView,iconDrawnDownAmount,withdrawCashTextView,withdrawCashDivider"
+        app:constraint_referenced_ids="creditLimitDividerStyle,withdrawCashView,loanWithdrawalLogoImageView,iconDrawnDownAmount,withdrawCashTextView,withdrawCashDivider"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -158,7 +158,7 @@
 
 
     <View
-        android:id="@+id/viewPaymentOption"
+        android:id="@+id/creditLimitDividerStyle"
         style="@style/creditLimitDividerStyle"
         android:layout_height="1dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -178,12 +178,11 @@
         android:id="@+id/viewPaymentOptionTextView"
         style="@style/style_loan_title"
         android:layout_width="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/label_payment_options_button"
         app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
         app:layout_constraintEnd_toStartOf="@+id/viewPaymentOptionNext"
-        app:layout_constraintStart_toEndOf="@+id/debitOrderLogoImageView"
+        app:layout_constraintStart_toEndOf="@+id/paymentOptionLogoImageView"
         app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
 
     <ImageView
@@ -202,7 +201,7 @@
         android:id="@+id/paymentOptionGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="paymentOptionLogoImageView,viewPaymentOption,viewPaymentOptionTextView,viewPaymentOptionNext,viewPaymentOptionNext,viewPaymentOptions"
+        app:constraint_referenced_ids="paymentOptionLogoImageView,viewPaymentOptions,viewPaymentOptionTextView,viewPaymentOptionNext,viewPaymentOptions"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"

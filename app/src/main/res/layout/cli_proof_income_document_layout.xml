@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constProofOfIncomeDocument"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -74,12 +73,10 @@
         tools:ignore="MissingConstraints">
 
         <ImageView
-            android:id="@+id/imClearPhotoLogo"
             style="@style/upload_document_image"
             android:contentDescription="@string/uploading_clear_scan_photo"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvClearScanPhoto"
             style="@style/proof_of_income_requirement_style"
             android:text="@string/uploading_clear_scan_photo"/>
     </LinearLayout>
@@ -90,12 +87,10 @@
         app:layout_constraintTop_toBottomOf="@+id/llClearPhotoScanDocument">
 
         <ImageView
-            android:id="@+id/imNameAdressVisibility"
             style="@style/upload_document_image"
             android:contentDescription="@string/uploading_name_address"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvNameAddressVisibility"
             style="@style/proof_of_income_requirement_style"
             android:text="@string/uploading_name_address"/>
     </LinearLayout>
@@ -110,12 +105,10 @@
         app:layout_constraintTop_toBottomOf="@+id/llNameAddressVisibility">
 
         <ImageView
-            android:id="@+id/imStatementPeriod"
             style="@style/upload_document_image"
             android:contentDescription="@string/uploading_statement_period"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvStatementPeriod"
             style="@style/proof_of_income_requirement_style"
             android:text="@string/uploading_statement_period"/>
     </LinearLayout>
@@ -130,12 +123,10 @@
         app:layout_constraintTop_toBottomOf="@+id/llStatementPeriod">
 
         <ImageView
-            android:id="@+id/imOlderMonth"
             style="@style/upload_document_image"
             android:contentDescription="@string/uploading_older_month"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvOlderMonth"
             style="@style/proof_of_income_requirement_style"
             android:text="@string/uploading_older_month"/>
     </LinearLayout>
@@ -162,7 +153,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvProceedDescription"/>
 
     <View
-        android:id="@+id/vBottomHorizontalLine"
         style="@style/bottom_line"
         app:layout_constraintTop_toBottomOf="@+id/vSpace"/>
 

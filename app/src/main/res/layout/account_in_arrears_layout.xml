@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:contentDescription="@string/account_in_arrears_toolbar"
     android:layout_height="match_parent">
 
     <ImageButton

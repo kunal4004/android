@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
+import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
