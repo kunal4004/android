@@ -27,10 +27,12 @@ import za.co.woolworths.financial.services.android.ui.views.SetUpViewPagerWithTa
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
+    private var isBlockedScrollView = true
 
     companion object {
         private const val APPLY_NOW_BUTTON_ANIMATE_DURATION: Long = 300
@@ -60,6 +62,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         AnimationUtilExtension.animateViewPushDown(navigateBackImageButton)
         AnimationUtilExtension.animateViewPushDown(cardFrontImageView)
         AnimationUtilExtension.animateViewPushDown(cardBackImageView)
+
+        scrollableView?.setOnTouchListener { _, _ -> isBlockedScrollView }
     }
 
     private fun setupToolbarTopMargin() {
@@ -74,7 +78,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
         layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
-
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
 
         val overlayAnchoredHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
@@ -82,7 +85,14 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> smoothScrollToTop()
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        isBlockedScrollView = true
+                        smoothScrollToTop()
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        isBlockedScrollView = false
+                    }
+
                     else -> return
                 }
             }
@@ -96,7 +106,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     }
 
     private fun smoothScrollToTop() {
-        scrollableView?.smoothScrollTo(0,0)
+        scrollableView?.smoothScrollTo(0, 0)
     }
 
     override fun displayAccountSalesBlackInfo(storeCard: AccountSales) {
@@ -171,7 +181,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
     private fun animateButtonOut() {
         if (bottomApplyNowButtonRelativeLayout?.visibility == INVISIBLE) return
-        val animate = TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
+        val animate =
+                TranslateAnimation(0f, 0f, 0f, bottomApplyNowButtonRelativeLayout.height.toFloat())
         animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
         animate.fillAfter = true
         bottomApplyNowButtonRelativeLayout?.startAnimation(animate)
