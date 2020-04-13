@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDelivery;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
@@ -100,6 +101,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static ArrayList<String> whitelistedDomainsForQRScanner;
 	private static Sts stsValues;
 	private static CreditCardActivation creditCardActivation;
+	private static CreditCardDelivery creditCardDelivery;
 
 	private Activity mCurrentActivity = null;
 
@@ -520,5 +522,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setCreditCardActivation(CreditCardActivation creditCardActivation) {
 		WoolworthsApplication.creditCardActivation = creditCardActivation;
+	}
+
+	public static CreditCardDelivery getCreditCardDelivery() {
+		return creditCardDelivery;
+	}
+
+	public static void setCreditCardDelivery(CreditCardDelivery creditCardDelivery) {
+		WoolworthsApplication.creditCardDelivery = creditCardDelivery;
 	}
 }

@@ -73,7 +73,7 @@ interface IAccountCardDetailsContract {
         fun navigateToPaymentOptionActivity()
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
-        fun getCreditCardDeliveryStatus()
+        fun getCreditCardDeliveryStatus(envelopeNumber: String?)
     }
 
     interface AccountCardDetailModel {

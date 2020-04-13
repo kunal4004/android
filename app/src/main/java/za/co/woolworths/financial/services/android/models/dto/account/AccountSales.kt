@@ -28,3 +28,7 @@ data class AccountSales(var cardHeader: CardHeader, var cardBenefit: MutableList
 enum class CreditCardActivationState(val value: String) {
     FAILED("FAILED"), AVAILABLE("ACTIVATE"), ACTIVATED("ACTIVATED"), UNAVAILABLE("ACTIVATE")
 }
+
+enum class CreditCardDeliveryStatus {
+    CARD_RECEIVED, CARD_DELIVERED, APPOINTMENT_SCHEDULED, AWAITING_INSTRUCTION, CANCELLED, CARD_SHREDDED, CARD_NOT_RECEIVED, DEFAULT
+}

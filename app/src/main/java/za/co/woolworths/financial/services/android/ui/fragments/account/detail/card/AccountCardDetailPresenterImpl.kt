@@ -254,7 +254,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return cardWithPLCState
     }
 
-    override fun getCreditCardDeliveryStatus() {
-        model?.queryServiceGetCreditCardDeliveryStatus(getProductOfferingId().toString(), "35780", this)
+    override fun getCreditCardDeliveryStatus(envelopeNumber: String?) {
+        envelopeNumber?.let { model?.queryServiceGetCreditCardDeliveryStatus(getProductOfferingId().toString(), it, this) }
     }
 }

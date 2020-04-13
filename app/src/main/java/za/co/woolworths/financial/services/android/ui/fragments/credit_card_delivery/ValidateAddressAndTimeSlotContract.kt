@@ -7,9 +7,9 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.UserDetailsForCreditCardDelivery
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 
-interface CreditCardDeliveryContract {
+interface ValidateAddressAndTimeSlotContract {
 
-    interface CreditCardDeliveryView {
+    interface ValidateAddressAndTimeSlotView {
         fun startProgress()
         fun stopProgress(isFailed: Boolean = false)
         fun onValidateAddressSuccess(possibleAddressResponse: PossibleAddressResponse)
@@ -25,13 +25,13 @@ interface CreditCardDeliveryContract {
         fun restartProgress()
     }
 
-    interface CreditCardDeliveryPresenter {
+    interface ValidateAddressAndTimeSlotPresenter {
         fun onDestroy()
         fun initValidateAddress(searchPhrase: String, productOfferingId: String)
         fun initAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String)
     }
 
-    interface CreditCardDeliveryInteractor {
+    interface ValidateAddressAndTimeSlotInteractor {
         fun queryServiceValidateAddress(searchPhrase: String, productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<PossibleAddressResponse>?
         fun queryServiceAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String, requestListener: IGenericAPILoaderView<Any>): Call<AvailableTimeSlotsResponse>?
     }

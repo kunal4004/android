@@ -46,8 +46,7 @@
         <action
             android:id="@+id/action_to_creditCardDeliveryValidateAddressRequestFragment"
             app:destination="@id/creditCardDeliveryValidateAddressRequestFragment"
-            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment"
-            />
+            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/creditCardDeliveryRecipientDetailsFragment"
@@ -66,7 +65,8 @@
     <fragment
         android:id="@+id/creditCardDeliveryValidateAddressRequestFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryValidateAddressRequestFragment"
-        android:label="CreditCardDeliveryValidateAddressRequestFragment">
+        android:label="CreditCardDeliveryValidateAddressRequestFragment"
+        tools:layout="@layout/credit_card_delivery_validate_address_request_layout">
 
         <action
             android:id="@+id/action_to_creditCardDeliveryPreferedTimeslotFragment"
@@ -76,9 +76,23 @@
     <fragment
         android:id="@+id/creditCardDeliveryPreferedTimeslotFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryPreferedTimeslotFragment"
-        android:label="CreditCardDeliveryPreferedTimeslotFragment">
+        android:label="CreditCardDeliveryPreferedTimeslotFragment"
+        tools:layout="@layout/credit_card_delivery_prefered_time_slots_layout">
         <action
-            android:id="@+id/action_creditCardDeliveryPreferedTimeslotFragment_to_creditCardDeliveryStatusFragment"
-            app:destination="@id/creditCardDeliveryStatusFragment" />
+            android:id="@+id/action_to_creditCardDeliveryScheduleDeliveryFragment"
+            app:destination="@id/creditCardDeliveryScheduleDeliveryFragment"
+            app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/creditCardDeliveryScheduleDeliveryFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryScheduleDeliveryFragment"
+        android:label="CreditCardDeliveryScheduleDeliveryFragment"
+        tools:layout="@layout/credit_card_delivery_schedule_delivery_layout">
+        <action
+            android:id="@+id/action_to_creditCardDeliveryStatusFragment"
+            app:destination="@id/creditCardDeliveryStatusFragment"
+            app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

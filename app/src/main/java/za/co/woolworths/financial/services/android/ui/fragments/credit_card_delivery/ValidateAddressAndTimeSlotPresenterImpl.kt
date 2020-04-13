@@ -4,7 +4,7 @@ import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderVi
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
 
-class CreditCardDeliveryPresenterImpl(var mainView: CreditCardDeliveryContract.CreditCardDeliveryView?, var getInteractor: CreditCardDeliveryContract.CreditCardDeliveryInteractor) : CreditCardDeliveryContract.CreditCardDeliveryPresenter, IGenericAPILoaderView<Any> {
+class ValidateAddressAndTimeSlotPresenterImpl(var mainView: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView?, var getInteractor: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotInteractor) : ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter, IGenericAPILoaderView<Any> {
 
     override fun onDestroy() {
         mainView = null

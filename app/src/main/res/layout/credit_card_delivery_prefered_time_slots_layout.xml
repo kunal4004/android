@@ -33,7 +33,7 @@
 
 
         <za.co.woolworths.financial.services.android.util.picker.WheelView
-            android:id="@+id/wheelview"
+            android:id="@+id/datePicker"
             android:layout_width="0dp"
             android:layout_height="220dp"
             android:layout_weight="1"
@@ -60,7 +60,7 @@
             android:background="#12000000" />
 
         <za.co.woolworths.financial.services.android.util.picker.WheelView
-            android:id="@+id/wheelview1"
+            android:id="@+id/timePicker"
             android:layout_width="0dp"
             android:layout_height="220dp"
             android:layout_weight="1"

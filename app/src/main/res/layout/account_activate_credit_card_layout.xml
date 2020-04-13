@@ -93,12 +93,12 @@
         android:layout_height="@dimen/sixteen_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scheduleCreditCardDelivery"
+        app:layout_constraintTop_toBottomOf="@+id/scheduleOrManageCreditCardDelivery"
         android:background="@color/light_gray_background"
         />
 
     <RelativeLayout
-        android:id="@+id/scheduleCreditCardDelivery"
+        android:id="@+id/scheduleOrManageCreditCardDelivery"
         style="@style/card_item_click_no_pad_style"
         android:layout_marginTop="@dimen/ten_dp"
         android:visibility="gone"

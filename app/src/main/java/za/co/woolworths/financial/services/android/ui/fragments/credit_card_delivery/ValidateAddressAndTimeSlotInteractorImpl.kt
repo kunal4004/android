@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
 
-class CreditCardDeliveryInteractorImpl : CreditCardDeliveryContract.CreditCardDeliveryInteractor {
+class ValidateAddressAndTimeSlotInteractorImpl : ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotInteractor {
 
     override fun queryServiceValidateAddress(searchPhrase: String, productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<PossibleAddressResponse>? {
         return request(OneAppService.getPossibleAddress(searchPhrase, productOfferingId), requestListener)

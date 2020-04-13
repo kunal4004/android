@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDelivery;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 
 public class Configs {
@@ -19,4 +20,5 @@ public class Configs {
     public ArrayList<String> whitelistedDomainsForQRScanner;
     public Sts sts;
     public CreditCardActivation creditCardActivation;
+    public CreditCardDelivery creditCardDelivery;
 }

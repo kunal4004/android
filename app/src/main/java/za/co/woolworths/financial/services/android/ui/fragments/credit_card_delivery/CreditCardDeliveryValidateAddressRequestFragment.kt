@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_no_time_slots_availab
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -24,11 +25,11 @@ import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTa
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), CreditCardDeliveryContract.CreditCardDeliveryView, IProgressAnimationState, View.OnClickListener {
+class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView, IProgressAnimationState, View.OnClickListener {
 
     private var navController: NavController? = null
     var bundle: Bundle? = null
-    var presenter: CreditCardDeliveryContract.CreditCardDeliveryPresenter? = null
+    var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
     var possibleAddressResponse: PossibleAddressResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,7 +38,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), CreditCardD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = CreditCardDeliveryPresenterImpl(this, CreditCardDeliveryInteractorImpl())
+        presenter = ValidateAddressAndTimeSlotPresenterImpl(this, ValidateAddressAndTimeSlotInteractorImpl())
         bundle = arguments?.getBundle("bundle")
     }
 
@@ -65,7 +66,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), CreditCardD
                 activity?.onBackPressed()
             }
             R.id.contactCourier, R.id.callCourierPartner -> {
-                activity?.apply { Utils.makeCall("0861 50 20 20") }
+                activity?.apply { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
             }
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
@@ -141,6 +142,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), CreditCardD
     override fun onAvailableTimeSlotsSuccess(availableTimeSlotsResponse: AvailableTimeSlotsResponse) {
         activity?.apply {
             stopProgress()
+            bundle?.putString("available_time_slots", Utils.toJson(availableTimeSlotsResponse.timeslots))
             navController?.navigate(R.id.action_to_creditCardDeliveryPreferedTimeslotFragment, bundleOf("bundle" to bundle))
         }
     }
@@ -173,7 +175,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), CreditCardD
         validateAddressFailureView.visibility = View.GONE
         invalidAddressView.visibility = View.GONE
         confirmAddressView.visibility = View.GONE
-        addressSuccessIcon.visibility = View.GONE
+        successIcon.visibility = View.GONE
         noTimeSlotsAvailableView.visibility = View.GONE
     }
 
@@ -185,24 +187,33 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), CreditCardD
     private fun showInvalidAddressView() {
         stopProgress()
         invalidAddressView.visibility = View.VISIBLE
-        addressSuccessIcon.visibility = View.VISIBLE
+        successIcon?.apply {
+            visibility = View.VISIBLE
+            setBackgroundResource(R.drawable.icon_location)
+        }
     }
 
-    fun showValidateAddressFailureView() {
+    private fun showValidateAddressFailureView() {
         stopProgress(true)
         validateAddressFailureView.visibility = View.VISIBLE
     }
 
-    fun showConfirmAddressView() {
+    private fun showConfirmAddressView() {
         stopProgress()
         confirmAddressView.visibility = View.VISIBLE
-        addressSuccessIcon.visibility = View.VISIBLE
+        successIcon?.apply {
+            visibility = View.VISIBLE
+            setBackgroundResource(R.drawable.icon_location)
+        }
     }
 
-    fun showNoTimeSlotsAvailableView() {
+    private fun showNoTimeSlotsAvailableView() {
         stopProgress()
         noTimeSlotsAvailableView.visibility = View.VISIBLE
-        addressSuccessIcon.visibility = View.VISIBLE
+        successIcon?.apply {
+            visibility = View.VISIBLE
+            setBackgroundResource(R.drawable.ic_delivery)
+        }
     }
 
     override fun onDestroyView() {
