@@ -101,4 +101,5 @@
     <color name="transaction_date_color">#66030303</color>
     <color name="status_dark_green">#A5B52B</color>
     <color name="lighter_gray_background">#30D8D8D8</color>
+    <color name="arrears_red_color_code">#F43F37</color>
 </resources>
