@@ -1465,5 +1465,7 @@
     <string name="on_boarding_screen_title_3">Instantly save more. Sign up for WRewards on your phone, and access your virtual card, vouchers and promotions on the go.</string>
     <string name="on_boarding_screen_title_4">Access all your Woolworths financial products right here. View your balances, check your transaction history or apply for something new.</string>
     <string name="on_boarding_lets_go">let\'s go</string>
+    <string name="credit_limit_label">Credit Limit</string>
+    <string name="available_funds_label">Available funds</string>
 </resources>
 
