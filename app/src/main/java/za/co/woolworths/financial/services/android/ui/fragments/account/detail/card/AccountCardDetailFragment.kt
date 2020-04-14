@@ -407,7 +407,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
 
     private fun initCreditCardActivation() {
         if (WoolworthsApplication.getCreditCardActivation().isEnabled) {
-            includeAccountDetailHeaderView?.visibility = GONE
             executeCreditCardTokenService()
         }
     }

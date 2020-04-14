@@ -100,4 +100,5 @@
     <color name="onBoarding_4">#D6DADD</color>
     <color name="transaction_date_color">#66030303</color>
     <color name="status_dark_green">#A5B52B</color>
+    <color name="lighter_gray_background">#30D8D8D8</color>
 </resources>

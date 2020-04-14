@@ -59,8 +59,8 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
-            holder.validFromDate = convertView.findViewById(R.id.validFromTextTextView);
-            holder.validUntilDate = convertView.findViewById(R.id.validFromTextTextView);
+            holder.validFromTextTextView = convertView.findViewById(R.id.validFromTextTextView);
+            holder.validUntilTextTextView = convertView.findViewById(R.id.validUntilTextTextView);
             holder.voucherValue = convertView.findViewById(R.id.voucherValueTextView);
             holder.message = convertView.findViewById(R.id.message);
             holder.voucherNumber = convertView.findViewById(R.id.voucherNumber);
@@ -77,11 +77,11 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         holder.validFromContainer.setBackgroundColor(ContextCompat.getColor(mContext, fromUntilContainerColor));
 
         try {
-            holder.validFromDate.setText(WFormatter.formatDate(vouchers.get(position).validFromDate));
-            holder.validUntilDate.setText(WFormatter.formatDate(vouchers.get(position).validToDate));
+            holder.validFromTextTextView.setText(WFormatter.formatDate(vouchers.get(position).validFromDate));
+            holder.validUntilTextTextView.setText(WFormatter.formatDate(vouchers.get(position).validToDate));
         } catch (ParseException e) {
-            holder.validFromDate.setText(String.valueOf(vouchers.get(position).validFromDate));
-            holder.validUntilDate.setText(String.valueOf(vouchers.get(position).validToDate));
+            holder.validFromTextTextView.setText(String.valueOf(vouchers.get(position).validFromDate));
+            holder.validUntilTextTextView.setText(String.valueOf(vouchers.get(position).validToDate));
         }
 
         if ("PERCENTAGE".equals(vouchers.get(position).type)) {
@@ -101,8 +101,8 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
     }
 
     public static class ViewHolder {
-        TextView validFromDate;
-        TextView validUntilDate;
+        TextView validFromTextTextView;
+        TextView validUntilTextTextView;
         TextView voucherValue;
         TextView message;
         TextView voucherNumber;

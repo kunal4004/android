@@ -7,8 +7,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/appbar_background"
     android:gravity="center"
-    android:minHeight="?attr/actionBarSize"
-   >
+    android:minHeight="?attr/actionBarSize">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvToolbar"

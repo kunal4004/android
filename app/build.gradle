@@ -217,16 +217,16 @@ dependencies {
 
     implementation 'com.android.volley:volley:1.1.1'
     implementation "com.google.android.gms:play-services-auth-api-phone:17.3.0"
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
 
     implementation "androidx.navigation:navigation-fragment-ktx:2.2.1"
     implementation "androidx.navigation:navigation-ui-ktx:2.2.1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.fragment:fragment-ktx:1.2.2'
+    implementation 'androidx.fragment:fragment-ktx:1.2.4'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.25.0'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:3.2.4'
     testImplementation 'org.powermock:powermock-core:1.7.0RC2'
     testImplementation 'org.powermock:powermock-module-junit4:1.7.0RC2'
     testImplementation 'org.powermock:powermock-api-mockito2:1.7.0RC2'

@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.loan
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -11,28 +13,28 @@ import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.loan_withdrawal.*
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import java.util.*
-import android.content.Context
-import android.os.Handler
-import android.view.inputmethod.InputMethodManager
-import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.DialogManager
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
-
-class LoanWithdrawalFragment : LoanBaseFragment() {
+class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     private var mMenu: Menu? = null
     private var mPostLoanIssue: Call<IssueLoanResponse>? = null
@@ -53,32 +55,23 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
         setHasOptionsMenu(true)
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.loan_withdrawal, container, false)
+        return inflater.inflate(R.layout.loan_withdrawal, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mErrorHandlerView = ErrorHandlerView(activity)
         configureEditText()
+        menuItemVisible(false)
         populatePersonalLoanView()
-        uniqueIdForPLDDModule()
-    }
-
-    private fun uniqueIdForPLDDModule() {
-        activity?.resources?.let {
-            relLoanWithdrawal?.contentDescription = getString(R.string.loan_withdrawal_drawn_down_amount_layout)
-            relWithdrawalAmount?.contentDescription = getString(R.string.enter_drawn_down_amount_layout)
-            availableFundsLinearLayout?.contentDescription = getString(R.string.available_funds_layout)
-            credit_limit_layout?.contentDescription = getString(R.string.pldd_credit_limit_layout)
-        }
     }
 
     private fun populatePersonalLoanView() {
         val activity = activity ?: return
-        tvAvailableFunds.setText(currencyFormatter(getAvailableFund(), activity))
-        tvCreditLimit.setText(currencyFormatter(getCreditLimit(), activity))
+        tvAvailableFunds?.text = currencyFormatter(getAvailableFund(), activity)
+        tvCreditLimit?.text = currencyFormatter(getCreditLimit(), activity)
+        nexImageView?.setOnClickListener(this)
     }
 
     private fun configureEditText() {
@@ -97,27 +90,10 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.loan_withdrawal_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        this.mMenu = menu
-        menuItemVisible(menu, false)
-        super.onPrepareOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                activity?.let { finishActivity(it) }
-                return true
-            }
-            R.id.itemNextArrow -> {
-                confirmDrawnDownAmount()
-                return true
-            }
+            android.R.id.home ->  activity?.let { finishActivity(it) }
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -127,18 +103,16 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
         return if (TextUtils.isEmpty(mCurrentDrawnAmount)) 0 else mCurrentDrawnAmount.toInt()
     }
 
-    fun menuItemVisible(menu: Menu, isVisible: Boolean) {
+    fun menuItemVisible(isVisible: Boolean) {
         arrowIsVisible = isVisible
-        try {
-            val menuItem = menu.findItem(R.id.itemNextArrow)
+        nexImageView?.apply {
             if (isVisible) {
-                menuItem.isEnabled = true
-                menuItem.icon.alpha = 255
+                isEnabled = true
+                alpha = 1f
             } else {
-                menuItem.isEnabled = false
-                menuItem.icon.alpha = 50
+                isEnabled = false
+                alpha = 0.5f
             }
-        } catch (ignored: Exception) {
         }
     }
 
@@ -152,7 +126,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
             //If s is empty disable next arrow,else enable s arrow
-            mMenu?.let { menuItemVisible(it, !TextUtils.isEmpty(s)) }
+          menuItemVisible(!TextUtils.isEmpty(s))
         }
 
         @SuppressLint("SetTextI18n")
@@ -174,7 +148,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
                     if (TextUtils.isEmpty(loanAmount)) {
                         edtLoanWithdrawal.setText("")
                         backSpace = false
-                        mMenu?.let { menuItemVisible(it, false) }
+                        menuItemVisible(false)
                         edtLoanWithdrawal.addTextChangedListener(this)
                         return
                     }
@@ -263,19 +237,15 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
 
     private fun confirmDrawnDownAmount() {
         if (getDrawnDownAmount() < getMinDrawnAmountWithoutCent()) {
-            Utils.displayValidationMessage(activity,
-                    CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT,
-                    getDrawnDownAmount().toString())
+            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT, getDrawnDownAmount().toString())
         } else if (getDrawnDownAmount() >= getMinDrawnAmountWithoutCent() && getDrawnDownAmount() <= getAvailableFundWithoutCent()) {
             val productOfferingId = getProductOfferingId()
             val drawnDownAmountInCent = getDrawnDownAmount() * 100
             val creditLimit = getCreditLimit()
-            val issueLoanRequest = IssueLoan(productOfferingId,
-                    drawnDownAmountInCent, repaymentPeriod(drawnDownAmountInCent), creditLimit)
+            val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(drawnDownAmountInCent), creditLimit)
             showProgressDialog(true)
-
-            mPostLoanIssue =  OneAppService.issueLoan(issueLoanRequest)
-            mPostLoanIssue?.enqueue(CompletionHandler(object: IResponseListener<IssueLoanResponse> {
+            mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
+            mPostLoanIssue?.enqueue(CompletionHandler(object : IResponseListener<IssueLoanResponse> {
                 override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
                     activity?.let { activity ->
                         issueLoanResponse?.apply {
@@ -314,10 +284,10 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
                     }
                 }
 
-            },IssueLoanResponse::class.java))
+            }, IssueLoanResponse::class.java))
 
         } else {
-            activity?.let {  Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "")}
+            activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "") }
         }
     }
 
@@ -327,7 +297,8 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
 
     private fun showProgressDialog(isVisible: Boolean) {
         mLoanWithdrawalProgress?.visibility = if (isVisible) VISIBLE else GONE
-        llDrawndownAmount?.visibility = if (isVisible) GONE else VISIBLE
+        currencyType?.visibility = if (isVisible) GONE else VISIBLE
+        edtWithdrawAmount?.visibility = if (isVisible) GONE else VISIBLE
     }
 
     override fun onDestroy() {
@@ -354,7 +325,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
             activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
             if (!drawnDownAmountIsEmpty)
                 setText(drawnDownAmount)
-            Handler().postDelayed({ mMenu?.let { menuItemVisible(it, !drawnDownAmountIsEmpty) } }, MILIS)
+            Handler().postDelayed({ mMenu?.let { menuItemVisible( drawnDownAmountIsEmpty) } }, MILIS)
             showKeyboard()
         }
     }
@@ -390,6 +361,13 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
                 showProgressDialog(false)
                 mErrorHandlerView?.showToast()
             }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.nexImageView ->  confirmDrawnDownAmount()
+            else -> throw IllegalStateException("Unknown Id : $v")
         }
     }
 }
