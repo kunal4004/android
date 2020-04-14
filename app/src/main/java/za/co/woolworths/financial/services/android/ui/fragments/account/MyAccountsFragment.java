@@ -333,7 +333,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
 
-		if (getBottomNavigationActivity().getCurrentFragment() !=null
+
+		if (getBottomNavigationActivity()!=null && getBottomNavigationActivity().getCurrentFragment() !=null
 				&& getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
 				&& NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
 			initialize();
@@ -699,7 +700,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
                             // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
 							if (activity instanceof BottomNavigationActivity) {
-								if (httpCode == 502 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+								if (httpCode == 502 && getBottomNavigationActivity()!=null&&getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
 									if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)) {
 										AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
 										accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
