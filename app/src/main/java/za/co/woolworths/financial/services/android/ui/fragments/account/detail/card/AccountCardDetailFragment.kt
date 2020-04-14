@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.account_activate_credit_card_layout.*
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
+import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.android.synthetic.main.common_account_detail.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
@@ -248,14 +249,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
         when (coveredText) {
             true -> {
-                balanceProtectInsuranceTextView?.text =
-                        activity?.resources?.getString(R.string.bpi_covered)
-                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView, "#bad110")
+                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, "#bad110")
+                bpiNotCoveredGroup?.visibility = GONE
+
             }
             false -> {
-                balanceProtectInsuranceTextView?.text =
-                        activity?.resources?.getString(R.string.bpi_not_covered)
-                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView, "#4c000000")
+                bpiCoveredTextView?.visibility = GONE
+                bpiNotCoveredGroup?.visibility = VISIBLE
             }
         }
     }
@@ -406,8 +406,10 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     private fun initCreditCardActivation() {
-        if (WoolworthsApplication.getCreditCardActivation().isEnabled) {
-            executeCreditCardTokenService()
+        WoolworthsApplication.getCreditCardActivation()?.apply {
+            if (isEnabled) {
+                executeCreditCardTokenService()
+            }
         }
     }
 }
