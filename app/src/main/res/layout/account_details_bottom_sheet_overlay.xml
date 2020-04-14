@@ -50,12 +50,12 @@
         android:id="@+id/tabLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:visibility="gone"
-        android:background="@color/light_gray" />
+        android:background="@color/light_gray"
+        android:visibility="gone" />
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
         android:id="@+id/scrollableView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 

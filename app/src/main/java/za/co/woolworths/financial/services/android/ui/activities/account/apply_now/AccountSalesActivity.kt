@@ -25,10 +25,12 @@ import za.co.woolworths.financial.services.android.ui.views.ConfigureViewPagerWi
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
+    private var isBlockedScrollView = true
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +56,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         AnimationUtilExtension.animateViewPushDown(navigateBackImageButton)
         AnimationUtilExtension.animateViewPushDown(cardFrontImageView)
         AnimationUtilExtension.animateViewPushDown(cardBackImageView)
+
+        scrollableView?.setOnTouchListener { _, _ -> isBlockedScrollView }
     }
 
     private fun setupToolbarTopMargin() {
@@ -74,7 +78,14 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> smoothScrollToTop()
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        isBlockedScrollView = true
+                        smoothScrollToTop()
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        isBlockedScrollView = false
+                    }
+
                     else -> return
                 }
             }
