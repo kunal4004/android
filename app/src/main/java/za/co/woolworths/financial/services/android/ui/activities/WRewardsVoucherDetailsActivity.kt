@@ -44,7 +44,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
             vouchers = voucherCollection?.vouchers
             Collections.rotate(vouchers, -position)
         }
-
+        termsCondition?.setOnClickListener(this)
         setVoucherAdapter()
         cardSwipeStackView?.setCardEventListener(object : CardEventListener {
             override fun onCardDragging(percentX: Float, percentY: Float) {
