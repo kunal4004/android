@@ -19,8 +19,11 @@
     <ImageView
         android:id="@+id/bulletImageView"
         style="@style/rounded_bullets_style"
+        android:layout_width="3dp"
+        android:layout_height="3dp"
         android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/bulletTitleTextView"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bulletTitleTextView" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>
