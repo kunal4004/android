@@ -61,9 +61,9 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     RelativeLayout makeCall;
     RelativeLayout relBrandLayout;
     RelativeLayout storeTimingView;
-    WTextView storeName;
-    WTextView storeOfferings;
-    WTextView storeAddress;
+    TextView storeName;
+    TextView storeOfferings;
+    TextView storeAddress;
     TextView storeDistance;
     TextView storeNumber;
     WTextView nativeMap;
@@ -86,10 +86,10 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        storeName = (WTextView) findViewById(R.id.storeName);
-        storeOfferings = (WTextView) findViewById(R.id.offerings);
-        storeDistance = findViewById(R.id.distance);
-        storeAddress = (WTextView) findViewById(R.id.storeAddress);
+        storeName = (TextView) findViewById(R.id.storeNameTextView);
+        storeOfferings = (TextView) findViewById(R.id.offeringsTextView);
+        storeDistance = findViewById(R.id.distanceTextView);
+        storeAddress = (TextView) findViewById(R.id.storeAddressTextView);
         timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
         storeTimingView = (RelativeLayout) findViewById(R.id.storeTimingView);
         brandsLayout = (LinearLayout) findViewById(R.id.brandsLayout);

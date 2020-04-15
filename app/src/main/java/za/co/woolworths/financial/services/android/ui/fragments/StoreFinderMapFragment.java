@@ -105,9 +105,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	LinearLayout timeingsLayout;
 	LinearLayout brandsLayout;
 	RelativeLayout storeTimingView;
-	WTextView storeName;
-	WTextView storeOfferings;
-	WTextView storeAddress;
+	TextView storeName;
+	TextView storeOfferings;
+	TextView storeAddress;
 	TextView storeDistance;
 	TextView storeNumber;
 
@@ -160,10 +160,10 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		close = (ImageView) v.findViewById(R.id.close);
-		storeName = (WTextView) v.findViewById(R.id.storeName);
-		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
-		storeDistance = v.findViewById(R.id.distance);
-		storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
+		storeName = (TextView) v.findViewById(R.id.storeNameTextView);
+		storeOfferings = (TextView) v.findViewById(R.id.offeringsTextView);
+		storeDistance = v.findViewById(R.id.distanceTextView);
+		storeAddress = (TextView) v.findViewById(R.id.storeAddressTextView);
 		storeNumber = (TextView) v.findViewById(R.id.storeNumberTextView);
 		timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
 		storeTimingView = (RelativeLayout) v.findViewById(R.id.storeTimingView);

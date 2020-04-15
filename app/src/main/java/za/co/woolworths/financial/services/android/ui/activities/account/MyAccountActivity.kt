@@ -10,6 +10,9 @@ import kotlinx.android.synthetic.main.my_account_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MyAccountActivity : AppCompatActivity() {
@@ -53,12 +56,22 @@ class MyAccountActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val fragment = supportFragmentManager.findFragmentById(R.id.accountContainerFrameLayout)
+        val fragment = supportFragmentManager.findFragmentByTag(StoresNearbyFragment1::class.java.simpleName)
         fragment?.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onBackPressed() {
         with(supportFragmentManager) {
+            // Hide store detail if expanded
+            val fragment = findFragmentByTag(StoresNearbyFragment1::class.java.simpleName)
+            if (fragment is StoresNearbyFragment1) {
+                when ((fragment as? StoresNearbyFragment1)?.getSlidingPanelState()) {
+                    SlidingUpPanelLayout.PanelState.EXPANDED, SlidingUpPanelLayout.PanelState.ANCHORED -> {
+                        (fragment as? StoresNearbyFragment1)?.collapseSlidingPanel()
+                        return
+                    }
+                }
+            }
             if (backStackEntryCount > 0) {
                 popBackStack()
             } else {
@@ -80,5 +93,12 @@ class MyAccountActivity : AppCompatActivity() {
             }
         }
         return false
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val fragment = supportFragmentManager.findFragmentByTag(StoresNearbyFragment1::class.java.simpleName)
+        (fragment as? StoresNearbyFragment1)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+                ?: (fragment as? ShopFragment)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

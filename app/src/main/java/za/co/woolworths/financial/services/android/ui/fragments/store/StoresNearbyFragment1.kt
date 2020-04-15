@@ -152,8 +152,13 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                             true
                         })
                         mBottomNavigator?.showBottomNavigationMenu()
+                        (activity as? MyAccountActivity)?.supportActionBar?.show()
                     }
-                    PanelState.DRAGGING -> mBottomNavigator?.hideBottomNavigationMenu()
+                    PanelState.DRAGGING -> {
+                        mBottomNavigator?.hideBottomNavigationMenu()
+                        (activity as? MyAccountActivity)?.supportActionBar?.hide()
+
+                    }
                     else -> {
                     }
                 }
@@ -183,7 +188,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         }
         activity.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
         if (activity is MyAccountActivity) {
-            if ((activity as? MyAccountActivity)?.supportActionBar != null) (activity as? MyAccountActivity?)?.supportActionBar?.show()
+            (activity as? MyAccountActivity?)?.supportActionBar?.show()
         }
     }
 
@@ -302,7 +307,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         val northMap = googleMap?.projection?.visibleRegion?.latLngBounds?.northeast?.latitude
         val diff = northMap?.let { center?.minus(it) }
         val newLat = markers?.get(position)?.position?.latitude?.plus(diff?.div(1.5)!!)
-        val centerCam = CameraUpdateFactory.newLatLng(markers?.get(position)?.position?.longitude?.let { newLat?.let { latitude -> LatLng(latitude, it) } })
+        val centerCam =
+                CameraUpdateFactory.newLatLng(markers?.get(position)?.position?.longitude?.let { newLat?.let { latitude -> LatLng(latitude, it) } })
         googleMap?.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null)
         googleMap?.uiSettings?.isScrollGesturesEnabled = false
         if (sliding_layout?.anchorPoint == 1.0f) {
@@ -345,11 +351,15 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         timeingsLayout?.removeAllViews()
         brandsLayout?.removeAllViews()
         storeNameTextView?.text = storeDetail.name
-        storeAddressTextView?.text = if (TextUtils.isEmpty(storeDetail.address)) "" else storeDetail.address
-        storeNumberTextView?.text = if (TextUtils.isEmpty(storeDetail.phoneNumber)) "" else storeDetail.phoneNumber
-        distanceTextView?.text = activity.resources?.getString(R.string.distance_per_km, WFormatter.formatMeter(storeDetail.distance))
+        storeAddressTextView?.text =
+                if (TextUtils.isEmpty(storeDetail.address)) "" else storeDetail.address
+        storeNumberTextView?.text =
+                if (TextUtils.isEmpty(storeDetail.phoneNumber)) "" else storeDetail.phoneNumber
+        distanceTextView?.text =
+                activity.resources?.getString(R.string.distance_per_km, WFormatter.formatMeter(storeDetail.distance))
         if (storeDetail.offerings != null) {
-            offeringsTextView?.text = WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department"))
+            offeringsTextView?.text =
+                    WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department"))
             val brandsList = getOfferingByType(storeDetail.offerings, "Brand")
             if (brandsList.isNotEmpty()) {
                 var textView: WTextView
@@ -369,7 +379,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         if (storeDetail.times != null && storeDetail.times.size != 0) {
             storeTimingView?.visibility = View.VISIBLE
             var textView: TextView
-            val typeface: Typeface? = ResourcesCompat.getFont(activity, R.font.myriad_pro_semi_bold_otf)
+            val typeface: Typeface? =
+                    ResourcesCompat.getFont(activity, R.font.myriad_pro_semi_bold_otf)
             for (i in storeDetail.times.indices) {
                 val v = activity.layoutInflater.inflate(R.layout.opening_hours_textview, null)
                 textView = v?.findViewById<View>(R.id.openingHoursTextView) as TextView
@@ -469,7 +480,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             val longitude = location?.longitude ?: 0.0
 
             if (myLocation == null) {
-                myLocation = googleMap?.addMarker(MarkerOptions().position(LatLng(latitude, longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)))
+                myLocation =
+                        googleMap?.addMarker(MarkerOptions().position(LatLng(latitude, longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)))
                 googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
             } else {
                 myLocation?.position = LatLng(latitude, longitude)
@@ -666,10 +678,14 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     private fun setupToolbar() {
+        val toolbarTitle = activity?.resources?.getString(R.string.stores_nearby) ?: ""
         mBottomNavigator?.apply {
-            setTitle(getString(R.string.stores_nearby))
+            setTitle(toolbarTitle)
             showBackNavigationIcon(true)
             displayToolbar()
+        }
+        if (activity is MyAccountActivity) {
+            (activity as? MyAccountActivity?)?.setToolbarTitle(toolbarTitle)
         }
     }
 
@@ -690,4 +706,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     override fun onPopUpLocationDialogMethod() {
         hideProgressBar()
     }
+
+    fun collapseSlidingPanel() { sliding_layout.panelState = PanelState.COLLAPSED }
+
+    fun getSlidingPanelState() = sliding_layout?.panelState
 }
