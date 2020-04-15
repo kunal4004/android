@@ -31,7 +31,6 @@ import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenRes
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
-import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
@@ -190,6 +189,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     activity?.apply {
+                        if(creditCardDeliveryStatusResponse?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT) ==CARD_RECEIVED )
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY)
                         val intent = Intent(this, CreditCardDeliveryActivity::class.java)
                         val mBundle = Bundle()
                         mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)

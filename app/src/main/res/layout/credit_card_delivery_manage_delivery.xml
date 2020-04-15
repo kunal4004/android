@@ -199,7 +199,7 @@
         app:layout_constraintTop_toBottomOf="@id/createdDate" />
 
     <RelativeLayout
-        android:id="@+id/manageDelivery"
+        android:id="@+id/cancelDelivery"
         style="@style/card_item_click_no_pad_style"
         android:layout_width="0dp"
         android:layout_marginTop="@dimen/ten_dp"

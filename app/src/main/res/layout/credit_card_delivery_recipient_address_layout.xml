@@ -30,7 +30,7 @@
             android:paddingBottom="@dimen/thirty_two_dp">
 
             <EditText
-                android:id="@+id/complex"
+                android:id="@+id/complexOrBuildingName"
                 style="@style/credi_card_delivery_edittext_style"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -112,7 +112,7 @@
             </RadioGroup>
 
             <TextView
-                android:id="@+id/buildingOrComplexErrorMsg"
+                android:id="@+id/complexOrBuildingNameErrorMsg"
                 style="@style/myriad_pro_regular"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
@@ -122,7 +122,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/complex" />
+                app:layout_constraintTop_toBottomOf="@id/complexOrBuildingName" />
 
             <TextView
                 android:id="@+id/businessNameErrorMsg"
@@ -242,7 +242,7 @@
                 android:textSize="@dimen/fourteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/buildingOrComplexErrorMsg" />
+                app:layout_constraintTop_toBottomOf="@id/complexOrBuildingNameErrorMsg" />
 
             <TextView
                 android:id="@+id/streetAddressPlaceHolder"

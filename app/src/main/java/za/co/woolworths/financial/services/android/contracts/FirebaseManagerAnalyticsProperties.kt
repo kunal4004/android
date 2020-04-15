@@ -80,6 +80,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
         const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
+        const val MYACCOUNTS_BLK_CC_DELIVERY = "MyAcc_Blk_CC_Delivery"
+        const val MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM = "MyAcc_Blk_CC_Delivery_Confirm"
+        const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY = "MyAcc_Blk_CC_Manage_Delivery"
+        const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL = "MyAcc_Blk_CC_Manage_Delivery_Cancel"
     }
 
     class PropertyNames {

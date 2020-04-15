@@ -1725,4 +1725,5 @@
     <string name="city_or_town_error_msg">Please enter a City/Town</string>
     <string name="province_error_msg">Please enter a Province</string>
     <string name="postalcode_error_msg">Please enter a Postal code</string>
+    <string name="please_confirm_your_address">Please Confirm Your Address</string>
 </resources>

@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryStatusFragment : Fragment() {
+class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
 
     var bundle: Bundle? = null
     var statusResponse: StatusResponse? = null
@@ -62,5 +63,13 @@ class CreditCardDeliveryStatusFragment : Fragment() {
             }
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.manageDelivery -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
+            }
+        }
     }
 }

@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_invalid_address_layou
 import kotlinx.android.synthetic.main.credit_card_delivery_no_time_slots_available_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
@@ -60,6 +61,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmAddress -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM)
                 getAvailableTimeSlots()
             }
             R.id.editAddress -> {
@@ -116,7 +118,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
     override fun onValidateAddressSuccess(possibleAddressResponse: PossibleAddressResponse) {
         this.possibleAddressResponse = possibleAddressResponse
         activity?.apply {
-            showConfirmAddressView()
+            showConfirmAddressView(possibleAddressResponse.address?.name)
         }
 
     }
@@ -198,9 +200,10 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
         validateAddressFailureView.visibility = View.VISIBLE
     }
 
-    private fun showConfirmAddressView() {
+    private fun showConfirmAddressView(address: String?) {
         stopProgress()
         confirmAddressView.visibility = View.VISIBLE
+        addressToConfirm.text = address
         successIcon?.apply {
             visibility = View.VISIBLE
             setBackgroundResource(R.drawable.icon_location)
