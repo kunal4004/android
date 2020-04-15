@@ -109,7 +109,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	WTextView storeOfferings;
 	WTextView storeAddress;
 	TextView storeDistance;
-	WTextView storeNumber;
+	TextView storeNumber;
 
 	RelativeLayout layoutLocationServiceOn;
 	RelativeLayout relBrandLayout;
@@ -164,7 +164,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
 		storeDistance = v.findViewById(R.id.distance);
 		storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
-		storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
+		storeNumber = (TextView) v.findViewById(R.id.storeNumberTextView);
 		timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
 		storeTimingView = (RelativeLayout) v.findViewById(R.id.storeTimingView);
 		brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
@@ -413,11 +413,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
 			if (brandslist != null) {
 				if (brandslist.size() > 0) {
-					WTextView textView;
+					TextView textView;
 					relBrandLayout.setVisibility(View.VISIBLE);
 					for (int i = 0; i < brandslist.size(); i++) {
 						View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-						textView = (WTextView) v.findViewById(R.id.openingHours);
+						textView = (TextView) v.findViewById(R.id.openingHoursTextView);
 						textView.setText(brandslist.get(i).offering);
 						brandsLayout.addView(textView);
 					}
@@ -432,10 +432,10 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		}
 		if (storeDetail.times != null && storeDetail.times.size() != 0) {
 			storeTimingView.setVisibility(View.VISIBLE);
-			WTextView textView;
+			TextView textView;
 			for (int i = 0; i < storeDetail.times.size(); i++) {
 				View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-				textView = (WTextView) v.findViewById(R.id.openingHours);
+				textView = (TextView) v.findViewById(R.id.openingHoursTextView);
 				textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
 				if (i == 0)
 					textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));

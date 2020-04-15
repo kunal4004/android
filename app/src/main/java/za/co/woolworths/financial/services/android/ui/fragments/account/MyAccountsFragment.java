@@ -660,7 +660,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
 			case R.id.storeLocator:
 				if (activity instanceof BottomNavigationActivity){
+					if (getBottomNavigationActivity()!=null)
 					getBottomNavigationActivity().pushFragment(new StoresNearbyFragment1());
+					return;
+				}
+
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(new StoresNearbyFragment1());
 				}
 				break;
 			case R.id.rlMyPreferences:
