@@ -29,8 +29,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
-        app:layout_constraintEnd_toEndOf="@+id/balanceProtectionInsuranceView"
-        app:layout_constraintStart_toEndOf="@+id/balanceLabelTextView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance" />
 
     <TextView
@@ -38,8 +37,10 @@
         style="@style/style_loan_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
         android:text="@string/balance_protection_insurance"
         app:layout_constraintBottom_toBottomOf="@+id/logoProtectionInsurance"
+        app:layout_constraintEnd_toStartOf="@+id/includeBPICoveredTag"
         app:layout_constraintStart_toEndOf="@+id/logoProtectionInsurance"
         app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance" />
 

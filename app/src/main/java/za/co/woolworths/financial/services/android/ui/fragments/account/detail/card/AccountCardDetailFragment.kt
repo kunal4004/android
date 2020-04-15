@@ -250,6 +250,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         when (coveredText) {
             true -> {
                 KotlinUtils.roundCornerDrawable(bpiCoveredTextView, "#bad110")
+                bpiCoveredTextView?.visibility = VISIBLE
                 bpiNotCoveredGroup?.visibility = GONE
 
             }
