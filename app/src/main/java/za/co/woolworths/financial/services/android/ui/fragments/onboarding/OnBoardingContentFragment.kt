@@ -3,11 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.onboarding
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.on_boarding_content_fragment.*
@@ -34,15 +31,11 @@ class OnBoardingContentFragment : Fragment() {
         (onBoardingModel?.second as? OnBoardingModel)?.apply {
             when (onBoardingModel.first) {
                 OnBoardingScreenType.START_UP -> {
-                    onBoardingImageView?.setImageResource(cardImageId)
-                    onBoardingImageView?.visibility = VISIBLE
-                    singleImageView?.visibility = GONE
+                    singleImageView?.setImageResource(cardImageId)
                     onBoardingItemTitleTextView?.text = activity?.resources?.getString(title)
-                    imageBackgroundView?.setBackgroundResource(colorId)
                 }
                 OnBoardingScreenType.ACCOUNT -> {
                     singleImageView?.setImageResource(cardImageId)
-                    onBoardingImageView?.visibility = GONE
                     singleImageView?.visibility = VISIBLE
                     onBoardingItemTitleTextView?.text = activity?.resources?.getString(title)
                     singleImageView?.setImageResource(cardImageId)

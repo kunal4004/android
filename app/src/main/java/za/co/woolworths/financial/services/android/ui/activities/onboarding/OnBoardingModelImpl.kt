@@ -9,10 +9,10 @@ class OnBoardingModelImpl : IOnBoardingContract.ModelInteractor {
 
         val onBoardingLists = mutableListOf<OnBoardingModel>()
         with(onBoardingLists) {
-            add(OnBoardingModel(R.string.on_boarding_screen_title_1, R.drawable.walkthrough_1,R.color.onBoarding_1))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_2, R.drawable.walkthrough_2,R.color.onBoarding_2))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_3, R.drawable.walkthrough_3,R.color.onBoarding_3))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_4, R.drawable.walkthrough_4,R.color.onBoarding_4))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_1, R.drawable.walkthrough_welcome))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_2, R.drawable.walkthrough_shop))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_3, R.drawable.welcome_wrewards))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_4, R.drawable.walkthrough_wrewards))
         }
 
         return onBoardingLists

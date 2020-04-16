@@ -1467,5 +1467,6 @@
     <string name="on_boarding_lets_go">let\'s go</string>
     <string name="credit_limit_label">Credit Limit</string>
     <string name="available_funds_label">Available funds</string>
+    <string name="onboarding_image_view_layout">on-boarding layout</string>
 </resources>
 

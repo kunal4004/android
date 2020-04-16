@@ -102,4 +102,5 @@
     <color name="status_dark_green">#A5B52B</color>
     <color name="lighter_gray_background">#30D8D8D8</color>
     <color name="arrears_red_color_code">#F43F37</color>
+    <color name="sign_in_register_button_border">#E5E5E5</color>
 </resources>
