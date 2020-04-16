@@ -146,8 +146,6 @@
                 <data android:scheme="https" />
                 <data android:host="www-win-qa.woolworths.co.za" />
                 <data android:pathPattern="/cat.*" />
-                <data android:pathPattern="/dept.*" />
-                <data android:path="/fragments/common/dimension-search-results.jsp" />
             </intent-filter>
         </activity>
         <activity
