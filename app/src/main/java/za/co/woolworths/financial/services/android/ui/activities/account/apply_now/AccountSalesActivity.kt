@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
@@ -31,6 +33,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var isBlockedScrollView = true
+    private var blackCardScroll: Triple<Int, Int, Int>? = null
+    private var goldCardScroll: Triple<Int, Int, Int>? = null
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +62,24 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         AnimationUtilExtension.animateViewPushDown(cardBackImageView)
 
         scrollableView?.setOnTouchListener { _, _ -> isBlockedScrollView }
+        scrollableView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, oldScrollX, oldScrollY ->
+            when (blackAndGoldCreditCardViewPager?.currentItem) {
+                0 -> goldCardScroll = Triple(0, oldScrollX, oldScrollY)
+                1 -> blackCardScroll = Triple(1, oldScrollX, oldScrollY)
+            }
+        })
+
+        blackAndGoldCreditCardViewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                blackAndGoldCreditCardViewPager?.invalidate()
+                blackAndGoldCreditCardViewPager?.requestLayout()
+                when (position) {
+                    0 -> {scrollableView?.scrollTo(goldCardScroll?.second ?: 0, goldCardScroll?.third ?: 0)}
+                    1 -> {scrollableView?.scrollTo(blackCardScroll?.second ?: 0, blackCardScroll?.third ?: 0)}
+                }
+            }
+        })
     }
 
     private fun setupToolbarTopMargin() {
