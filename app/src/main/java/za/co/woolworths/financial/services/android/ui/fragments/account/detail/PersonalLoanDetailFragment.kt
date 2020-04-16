@@ -19,6 +19,7 @@ class PersonalLoanDetailFragment : AccountCardDetailFragment() {
 
         includeAccountDetailHeaderView?.visibility = GONE
         if (mCardPresenterImpl?.isDebitOrderActive() == VISIBLE) {
+            debitOrderViewGroup?.visibility = VISIBLE
             KotlinUtils.roundCornerDrawable(debitOrderIsActiveTextView, "#bad110")
         } else {
             debitOrderViewGroup?.visibility = GONE
