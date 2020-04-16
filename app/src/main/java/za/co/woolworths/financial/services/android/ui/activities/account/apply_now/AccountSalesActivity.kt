@@ -63,12 +63,10 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         scrollableView?.setOnTouchListener { _, _ -> isBlockedScrollView }
 
         scrollableView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, scrollX, scrollY, _, oldScrollY ->
-            if (scrollY !in oldScrollY..oldScrollY) {
                 when (val currentTabPosition = tabLayout?.selectedTabPosition) {
                     0 -> goldCardScroll = saveScrollXYCoordinate(currentTabPosition, scrollX, scrollY)
                     1 -> blackCardScroll = saveScrollXYCoordinate(currentTabPosition, scrollX, scrollY)
                 }
-            }
         })
 
         blackAndGoldCreditCardViewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
