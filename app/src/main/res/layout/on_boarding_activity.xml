@@ -36,9 +36,11 @@
         android:background="@android:color/transparent"
         android:fontFamily="@font/futura_medium_ttf"
         android:text="@string/skip"
+        android:textSize="11sp"
         app:layout_constraintBottom_toTopOf="@+id/skipLetsGoButtonGuideline"
         app:layout_constraintEnd_toStartOf="@+id/marginEndGuideline"
-        app:layout_constraintStart_toStartOf="@+id/marginStartGuideline" />
+        app:layout_constraintStart_toStartOf="@+id/marginStartGuideline"
+        tools:ignore="SmallSp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/skipLetsGoButtonGuideline"
