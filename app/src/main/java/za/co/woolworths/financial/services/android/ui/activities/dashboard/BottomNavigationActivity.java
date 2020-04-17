@@ -241,7 +241,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         addDrawerFragment();
-
     }
 
     private void initBadgeCounter() {

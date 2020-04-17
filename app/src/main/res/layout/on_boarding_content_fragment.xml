@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:contentDescription="@string/onboarding_image_view_layout"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.Guideline
@@ -10,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.7" />
+        app:layout_constraintGuide_percent="0.66" />
 
 
     <TextView
@@ -35,8 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/onBoardingImageItemGuideline"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/onBoardingImageItemGuideline" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -53,36 +53,17 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.94" />
 
-    <View
-        android:id="@+id/imageBackgroundView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/onBoardingImageItemGuideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/onBoardingImageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="fitEnd"
-        android:adjustViewBounds="true"
-        app:layout_constraintBottom_toTopOf="@+id/onBoardingImageItemGuideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
-
     <ImageView
         android:id="@+id/singleImageView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/placeholder"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/onBoardingImageItemGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
