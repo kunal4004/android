@@ -587,6 +587,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
+        if (incCenteredProgress?.visibility == VISIBLE) return // ensure one api runs at a time
         this.mStoreId = storeId
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
