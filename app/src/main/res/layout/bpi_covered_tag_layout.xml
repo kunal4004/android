@@ -8,8 +8,8 @@
     <TextView
         android:id="@+id/bpiCoveredTextView"
         style="@style/tag_badge_style"
-        android:layout_width="65dp"
-        android:layout_height="33dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/bpi_covered"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,11 +22,13 @@
         android:layout_width="0dp"
         android:gravity="start"
         android:text="@string/bpi_not_covered"
-        android:textColor="@color/black"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:textColor="@color/offer_title_50"
         android:textSize="11sp"
         app:layout_constraintEnd_toStartOf="@+id/notCoveredImageView"
         app:layout_constraintTop_toBottomOf="@+id/bpiCoveredTextView"
-        tools:targetApi="lollipop" />
+        tools:targetApi="lollipop"
+        tools:ignore="SmallSp" />
 
     <ImageView
         android:id="@+id/notCoveredImageView"

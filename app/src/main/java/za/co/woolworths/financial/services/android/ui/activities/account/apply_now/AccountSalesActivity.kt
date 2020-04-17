@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.viewpager2.widget.ViewPager2.*
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.account_sales_activity.*
@@ -25,12 +27,13 @@ import za.co.woolworths.financial.services.android.ui.views.ConfigureViewPagerWi
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
     private var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var isBlockedScrollView = true
+    private var blackCardScroll: Triple<Int, Int, Int>? = null
+    private var goldCardScroll: Triple<Int, Int, Int>? = null
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +61,25 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         AnimationUtilExtension.animateViewPushDown(cardBackImageView)
 
         scrollableView?.setOnTouchListener { _, _ -> isBlockedScrollView }
+
+        scrollableView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, scrollX, scrollY, _, oldScrollY ->
+                when (val currentTabPosition = tabLayout?.selectedTabPosition) {
+                    0 -> goldCardScroll = saveScrollXYCoordinate(currentTabPosition, scrollX, scrollY)
+                    1 -> blackCardScroll = saveScrollXYCoordinate(currentTabPosition, scrollX, scrollY)
+                }
+        })
+
+        blackAndGoldCreditCardViewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                blackAndGoldCreditCardViewPager?.adapter?.notifyDataSetChanged()
+                when (position) {
+                    0 -> { scrollableView?.scrollTo(goldCardScroll?.second ?: 0, goldCardScroll?.third ?: 0) }
+                    1 -> { scrollableView?.scrollTo(blackCardScroll?.second ?: 0, blackCardScroll?.third ?: 0) }
+                }
+            }
+        })
     }
 
     private fun setupToolbarTopMargin() {
@@ -70,8 +92,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun setupBottomSheetBehaviour() {
         val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
-        layoutParams?.height =
-                mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
         sheetBehavior?.peekHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
@@ -79,14 +100,15 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
+                        goldCardScroll = saveScrollXYCoordinate(0, 0, 0)
+                        blackCardScroll = saveScrollXYCoordinate(1, 0, 0)
                         isBlockedScrollView = true
                         smoothScrollToTop()
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         isBlockedScrollView = false
                     }
-
-                    else -> return
+                    else -> {}
                 }
             }
 
@@ -97,6 +119,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             }
         })
     }
+
+    private fun saveScrollXYCoordinate(currentTabPosition: Int, scrollX: Int, scrollY: Int): Triple<Int, Int, Int> = Triple(currentTabPosition, scrollX, scrollY)
 
     private fun smoothScrollToTop() {
         scrollableView?.smoothScrollTo(0, 0)
