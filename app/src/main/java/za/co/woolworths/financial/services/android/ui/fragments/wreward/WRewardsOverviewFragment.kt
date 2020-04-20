@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.Utils.triggerFireBaseEvents
@@ -277,6 +278,21 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        hideBackButtonAndToolbarBorder()
         activity?.apply { Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_OVERVIEW) }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            hideBackButtonAndToolbarBorder()
+        }
+    }
+
+    private fun hideBackButtonAndToolbarBorder() {
+        (activity as? BottomNavigationActivity)?.apply {
+            showBackNavigationIcon(false)
+            setToolbarBackgroundColor(R.color.white)
+        }
     }
 }
