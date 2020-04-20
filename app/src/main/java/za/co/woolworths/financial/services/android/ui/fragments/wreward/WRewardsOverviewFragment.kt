@@ -291,8 +291,10 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     private fun hideBackButtonAndToolbarBorder() {
         (activity as? BottomNavigationActivity)?.apply {
-            showBackNavigationIcon(false)
-            setToolbarBackgroundColor(R.color.white)
+            if (currentFragment is WRewardsFragment) {
+                showBackNavigationIcon(false)
+                setToolbarBackgroundColor(R.color.white)
+            }
         }
     }
 }
