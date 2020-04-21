@@ -165,12 +165,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
                 productView?.history?.apply {
-                    mSubCategoryName = if (categoryDimensions.isNotEmpty()) {
-                        categoryDimensions.let { it[it.size - 1].label }
-                    } else {
-                        searchCrumbs.let { it[it.size - 1].terms }
+                    if (categoryDimensions.isNotEmpty()) {
+                        mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
+                    } else if (searchCrumbs.isNotEmpty()){
+                        mSubCategoryName =  searchCrumbs.let { it[it.size - 1].terms }
                     }
-                    setTitle()
+                    if (!mSubCategoryName.isNullOrEmpty())
+                        setTitle()
                 }
             } else {
                 loadMoreData(productLists)
