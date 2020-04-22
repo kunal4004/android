@@ -46,7 +46,6 @@
         tools:srcCompat="@drawable/icon_email" />
 
     <View
-        android:id="@+id/callHorizontalView"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="32dp"

@@ -851,7 +851,6 @@ public class BottomNavigationViewInner extends BottomNavigationView {
             final BottomNavigationViewInner bnve = mBnveRef.get();
             if (null != bnve && !isNavigationItemClicking)
                 bnve.setCurrentItem(position);
-//            Log.d("onPageSelected", "--------- position " + position + " ------------");
         }
     }
 
@@ -892,7 +891,6 @@ public class BottomNavigationViewInner extends BottomNavigationView {
             if (previousPosition == position) {
                 return true;
             }
-//            Log.d("onNavigationItemSelecte", "position:"  + position);
             // user listener
             if (null != listener) {
                 boolean bool = listener.onNavigationItemSelected(item);

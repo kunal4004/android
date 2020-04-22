@@ -60,7 +60,7 @@ import java.util.List;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
@@ -297,15 +297,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public void initLocationCheck() {
 		boolean locationServiceIsEnabled = Utils.isLocationServiceEnabled(getActivity());
-		boolean lastKnownLocationIsNull = (Utils.getLastSavedLocation(getActivity()) == null);
+		boolean lastKnownLocationIsNull = (Utils.getLastSavedLocation() == null);
 
 		if (!locationServiceIsEnabled & lastKnownLocationIsNull) {
 			checkLocationServiceAndSetLayout(false);
 		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
 			checkLocationServiceAndSetLayout(true);
 			startLocationUpdates();
-		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
-			updateMap(Utils.getLastSavedLocation(getActivity()));
+		} else if (!locationServiceIsEnabled) {
+			updateMap(Utils.getLastSavedLocation());
 		} else {
 			startLocationUpdates();
 		}
@@ -529,7 +529,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		double longitude = (location == null) ? 0.0 : location.getLongitude();
 
 		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, "");
-		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
+		locationResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {
 				enableSearchMenu();
@@ -655,8 +655,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					startActivity(new Intent(getActivity(), SearchStoresActivity.class));
 				break;
 			case R.id.action_locate:
-				if (Utils.getLastSavedLocation(getActivity()) != null) {
-					Location location = Utils.getLastSavedLocation(getActivity());
+				if (Utils.getLastSavedLocation() != null) {
+					Location location = Utils.getLastSavedLocation();
 					zoomToLocation(location);
 				}
 				break;

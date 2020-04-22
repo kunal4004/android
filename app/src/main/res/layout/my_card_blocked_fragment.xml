@@ -36,7 +36,6 @@
 
 
     <View
-        android:id="@+id/cardViewBackground"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:background="@color/grey_bg"
@@ -57,7 +56,6 @@
         app:srcCompat="@drawable/w_store_card" />
 
     <TextView
-        android:id="@+id/tvActive"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"

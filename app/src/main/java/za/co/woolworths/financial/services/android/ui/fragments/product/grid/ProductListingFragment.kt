@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductL
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import java.lang.IllegalStateException
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -163,6 +164,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         ?: false)
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
+                productView?.history?.apply {
+                    if (categoryDimensions.isNotEmpty()) {
+                        mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
+                    } else if (searchCrumbs.isNotEmpty()){
+                        mSubCategoryName =  searchCrumbs.let { it[it.size - 1].terms }
+                    }
+                    if (!mSubCategoryName.isNullOrEmpty())
+                        setTitle()
+                }
             } else {
                 loadMoreData(productLists)
             }
@@ -178,8 +188,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? AppCompatActivity)?.let { if (hasOpenedDialogs(it)) return }
 
         // show sortOptionDialog
-        val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc)
-        fragmentTransaction?.let { singleButtonDialogFragment.show(fragmentTransaction, SingleButtonDialogFragment::class.java.simpleName) }
+        try {
+            val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc)
+            fragmentTransaction?.let { singleButtonDialogFragment.show(fragmentTransaction, SingleButtonDialogFragment::class.java.simpleName) }
+        }catch (ex: IllegalStateException){
+            Crashlytics.logException(ex)
+        }
     }
 
     private fun hasOpenedDialogs(activity: AppCompatActivity?): Boolean {
@@ -574,6 +588,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
+        if (incCenteredProgress?.visibility == VISIBLE) return // ensure one api runs at a time
         this.mStoreId = storeId
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
@@ -596,7 +611,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         showProgressBar()
         OneAppService.getInventorySkuForStore(storeId, addItemToCart?.catalogRefId
-                ?: "").enqueue(CompletionHandler(object : RequestListener<SkusInventoryForStoreResponse> {
+                ?: "").enqueue(CompletionHandler(object : IResponseListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
                 if (!isAdded) return
                 dismissProgressBar()
@@ -613,8 +628,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                 val cartItem = AddItemToCart(addItemToCart?.productId
                                         ?: "", addItemToCart?.catalogRefId
                                         ?: "", skuInventoryList[0].quantity)
-                                val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
-                                selectYourQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
+                                try {
+                                    val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
+                                    selectYourQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
+                                }catch (ex: IllegalStateException){
+                                    Crashlytics.logException(ex)
+                                }
                             }
                         }
 
@@ -665,7 +684,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         mAddItemsToCart = mutableListOf()
         addItemToCart?.let { cartItem -> mAddItemsToCart?.add(cartItem) }
         PostItemToCart().make(mAddItemsToCart
-                ?: mutableListOf(), object : RequestListener<AddItemToCartResponse> {
+                ?: mutableListOf(), object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse) {
                 if (!isAdded) return
                 activity?.apply {
@@ -708,9 +727,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
 
                         417 -> resources?.let { resources ->
-                            val errorMessage = addItemToCartResponse.response?.desc?.let { desc -> ErrorMessageDialogFragment.newInstance(desc, resources.getString(R.string.set_delivery_location_button)) }
-                            activity?.supportFragmentManager?.let { supportManager -> errorMessage?.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
-                        }
+                            try {
+                                val errorMessage = addItemToCartResponse.response?.desc?.let { desc -> ErrorMessageDialogFragment.newInstance(desc, resources.getString(R.string.set_delivery_location_button)) }
+                                activity?.supportFragmentManager?.let { supportManager -> errorMessage?.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
+                            }catch (ex: IllegalStateException){
+                                Crashlytics.logException(ex)
+                            }
+                            }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             ScreenManager.presentSSOSignin(this)
@@ -729,9 +752,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun productOutOfStockErrorMessage(skuId: String) {
-        activity?.supportFragmentManager?.beginTransaction()?.apply {
-            val productListingFindInStoreNoQuantityFragment = ProductListingFindInStoreNoQuantityFragment.newInstance(skuId, this@ProductListingFragment)
-            productListingFindInStoreNoQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
+        try {
+            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                val productListingFindInStoreNoQuantityFragment =
+                        ProductListingFindInStoreNoQuantityFragment.newInstance(skuId, this@ProductListingFragment)
+                productListingFindInStoreNoQuantityFragment.show(this, ProductListingFindInStoreNoQuantityFragment::class.java.simpleName)
+            }
+        }catch (ex: IllegalStateException){
+            Crashlytics.logException(ex)
         }
     }
 
@@ -747,7 +775,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
             OneAppService.getLocationsItem(mSelectedProductList?.sku
-                    ?: "", startRadius.toString(), endRadius.toString()).enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+                    ?: "", startRadius.toString(), endRadius.toString()).enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
                 override fun onSuccess(locationResponse: LocationResponse) {
                     if (!isAdded) return
                     dismissProgressBar()
@@ -786,8 +814,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    fun onRefined(navigationState: String, categoryName: String?) {
-        (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState, productRequestBody.sortOption))
+    fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
+        if (isMultiSelectCategoryRefined) {
+            updateProductRequestBodyForRefinement(navigationState)
+            reloadProductsWithSortAndFilter()
+        } else {
+            (activity as? BottomNavigationActivity)?.pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, navigationState, productRequestBody.sortOption))
+        }
     }
 
     fun onResetFilter() {

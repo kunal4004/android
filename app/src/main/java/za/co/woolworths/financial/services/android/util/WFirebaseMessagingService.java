@@ -39,7 +39,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         //Push Notification Message Handler down onward i.e no data message
-        String unreadCountString = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+        String unreadCountString = Utils.getSessionDaoValue(SessionDao.KEY.UNREAD_MESSAGE_COUNT);
         int unreadCountValue;
         try{
             unreadCountValue = Integer.parseInt(unreadCountString);

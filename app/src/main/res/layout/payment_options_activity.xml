@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/payment_options_header" />
+
+        <LinearLayout
+            android:id="@+id/howToPayOptionsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="6dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp" />
+
+        <LinearLayout
+            android:id="@+id/llAbsaAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:background="@color/default_background" />
+
+            <TextView
+                android:id="@+id/tvPaymentABSATitle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fifty_dp"
+                android:background="@color/white"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="center_vertical"
+                android:letterSpacing="0.15"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingRight="@dimen/twenty_four_dp"
+                android:singleLine="true"
+                android:text="@string/how_to_pay_absa_payment_title"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <View style="@style/horizontal_divider_how_to_pay" />
+
+            <TextView
+                android:id="@+id/tvPaymentABSADesc"
+                style="@style/contact_us_item_header_textview"
+                android:layout_width="match_parent"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:lineSpacingMultiplier="1.40"
+                android:paddingTop="@dimen/seventeen_dp"
+                android:paddingBottom="@dimen/twenty_four_dp"
+                android:singleLine="false"
+                android:text="@string/how_to_pay_absa_payment_desc"
+                android:textColor="@color/black_50" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/absaBottomView"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:background="@color/default_background" />
+
+            <TextView
+                android:id="@+id/tvHowToPayTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="center_vertical"
+                android:letterSpacing="0.1"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingTop="16dp"
+                android:paddingRight="@dimen/twenty_four_dp"
+                android:paddingBottom="14dp"
+                android:singleLine="true"
+                android:text="@string/how_to_pay_bank_details"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:background="@color/default_background" />
+
+            <TextView
+                android:id="@+id/tvPaymentOtherAccountDesc"
+                style="@style/contact_us_item_header_textview"
+                android:layout_width="match_parent"
+                android:background="@color/white"
+                android:lineSpacingMultiplier="1.40"
+                android:paddingStart="@dimen/twenty_four_dp"
+                android:paddingTop="17dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="@dimen/twenty_two_dp"
+                android:singleLine="false"
+                android:text="@string/how_to_pay_other_account_desc"
+                android:textColor="@color/black_50"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/howToPayAccountDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/six_dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:background="@color/default_background" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

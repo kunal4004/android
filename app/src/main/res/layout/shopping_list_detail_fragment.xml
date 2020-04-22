@@ -26,7 +26,6 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/rlShoppingListSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/default_background"
@@ -41,7 +40,6 @@
 
 
                     <ImageView
-                        android:id="@+id/imProductSearch"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_alignBottom="@+id/textProductSearch"
@@ -73,7 +71,6 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:id="@+id/relEmptyView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/recent_search_bg"

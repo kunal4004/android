@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:background="@color/white"
+        android:layout_marginBottom="@dimen/sixteen_dp"
         android:orientation="vertical"
         android:padding="@dimen/twenty_four_dp">
 

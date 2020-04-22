@@ -62,9 +62,8 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
                 notifyDataSetChanged()
                 val navigationItem = refinementSelectableItem.item as RefinementNavigation
                 val navigationState = if (navigationItem.multiSelect) navigationItem.refinements[0].navigationState else navigationItem.refinementCrumbs[0].navigationState
-                val categoryName =  if (navigationItem.multiSelect) navigationItem.refinements[0].displayName else navigationItem.refinementCrumbs[0].displayName
                 Utils.triggerFireBaseEvents(if (navigationItem.multiSelect) FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_ON else FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_OFF)
-                listner.onBackPressedWithRefinement(navigationState, categoryName)
+                listner.onBackPressedWithRefinement(navigationState, false)
             }
         }
     }

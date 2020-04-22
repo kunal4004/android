@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relLoanWithdrawal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:background="@color/purple"
+    android:orientation="vertical">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/txtWithdrawAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="32dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="1.2dp"
+        android:text="@string/please_enter_the_amount"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:WTextView_font="medium_bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#10FFFFFF"
+        android:minHeight="80dp">
+
+        <LinearLayout
+            android:id="@+id/availableFundsLinearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="80dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Available funds"
+                android:textColor="#99ffffff"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvAvailableFunds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="R20 000.00"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:WTextView_font="medium_bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#7a4183" />
+
+        <LinearLayout
+            android:id="@+id/credit_limit_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="80dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Credit Limit"
+                android:textColor="#99ffffff"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvCreditLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:letterSpacing="0.05"
+                android:text="R30 000.00"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:WTextView_font="medium" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/relWithdrawalAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtWithdrawAmount"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="21dp"
+        android:gravity="center"
+        android:minHeight="92dp">
+
+        <ProgressBar
+            android:id="@+id/mLoanWithdrawalProgress"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:indeterminateTint="@color/white"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/llDrawndownAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/currencyType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:text="R"
+                android:textColor="@color/white"
+                android:textSize="45sp"
+                app:WTextView_font="light" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+                android:id="@+id/edtWithdrawAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:digits="0123456789., "
+                android:gravity="start"
+                android:hint=" "
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal|numberSigned"
+                android:maxLength="13"
+                android:maxLines="1"
+                android:paddingLeft="8dp"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textColorHint="@color/recent_search_bg"
+                android:textCursorDrawable="@drawable/colorcursor"
+                android:textSize="45sp"
+                android:visibility="visible"
+                app:WEditTextView_font="light">
+
+                <requestFocus />
+            </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

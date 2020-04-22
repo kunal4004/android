@@ -45,7 +45,7 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(), View.OnClickListe
     override fun onClick(view: View?) {
         activity?.apply {
             when (view?.id) {
-                R.id.applyForWRewards -> Utils.openExternalLink(this, WoolworthsApplication.getWrewardsLink())
+                R.id.applyForWRewards -> Utils.openLinkInInternalWebView( WoolworthsApplication.getWrewardsLink())
                 R.id.tvSignIn -> {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN)
                     ScreenManager.presentSSOSignin(this)

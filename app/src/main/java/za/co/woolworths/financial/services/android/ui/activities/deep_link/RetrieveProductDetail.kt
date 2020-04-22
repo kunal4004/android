@@ -6,7 +6,7 @@ import android.os.Bundle
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -21,7 +21,7 @@ import java.util.HashMap
 
 open class RetrieveProductDetail(private val activity: Activity?, private val productId: String, private val skuId: String, private val presentScreenIsFirstTime: Boolean) {
     fun retrieveProduct() {
-        OneAppService.productDetail(productId, skuId).enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
+        OneAppService.productDetail(productId, skuId).enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
             override fun onSuccess(response: ProductDetailResponse?) {
                 if (WoolworthsApplication.isApplicationInForeground() && activity != null) {
                     when (response?.httpCode) {

@@ -67,7 +67,6 @@
                 android:layout_height="12dp" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textView2"

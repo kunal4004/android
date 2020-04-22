@@ -34,7 +34,7 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
 		viewGeneralTermsAndCondtions.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utils.openExternalLink(WRewardsVoucherTermAndConditions.this, WoolworthsApplication.getWrewardsTCLink());
+				Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink());
 			}
 		});
 	}

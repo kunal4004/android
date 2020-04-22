@@ -4,7 +4,6 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/rewards"
         style="@style/listStyle"
         android:background="@drawable/stores_details_background">
         <ImageView

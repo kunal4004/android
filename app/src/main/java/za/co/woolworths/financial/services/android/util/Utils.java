@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -109,6 +110,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -178,16 +180,16 @@ public class Utils {
 			locationJson.put("lat", loc.getLatitude());
 			locationJson.put("lon", loc.getLongitude());
 
-			sessionDaoSave(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
+			sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
 		} catch (JSONException e) {
 		}
 
 	}
 
-	public static Location getLastSavedLocation(Context mContext) {
+	public static Location getLastSavedLocation() {
 
 		try {
-			String json = getSessionDaoValue(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION);
+			String json = getSessionDaoValue(SessionDao.KEY.LAST_KNOWN_LOCATION);
 
 			if (json != null) {
 				JSONObject locationJson = new JSONObject(json);
@@ -354,15 +356,6 @@ public class Utils {
 		return new Gson().fromJson(value, token.getType());
 	}
 
-
-	public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
-		sessionDaoSave(key,value);
-	}
-
-    public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
-        return getSessionDaoValue(key);
-    }
-
 	public static void setBadgeCounter(int badgeCount) {
 
 		if (badgeCount == 0) {
@@ -378,7 +371,7 @@ public class Utils {
 			BadgeUtils.setBadge(context, badgeCount);
 		}
 
-		sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+		sessionDaoSave(SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
 	}
 
 	public static void removeBadgeCounter() {
@@ -392,23 +385,13 @@ public class Utils {
 	}
 
 	public static boolean isLocationEnabled(Context context) {
-		int locationMode = 0;
-		String locationProviders;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			try {
-				locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-
-			} catch (Settings.SettingNotFoundException e) {
-				e.printStackTrace();
-				return false;
-			}
-
+		try {
+			int locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
 			return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-		} else {
-			locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-			return !TextUtils.isEmpty(locationProviders);
+		} catch (Settings.SettingNotFoundException e) {
+			return false;
 		}
 	}
 
@@ -488,16 +471,19 @@ public class Utils {
 		return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
 	}
 
-	public static void openBrowserWithUrl(Context context, String urlString) {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
-		context.startActivity(intent);
-	}
-
-	public static void openExternalLink(Context context, String url) {
+	public static void openLinkInInternalWebView(String url) {
+		Context context = WoolworthsApplication.getAppContext();
 		Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
+		openInternalWebView.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		openInternalWebView.putExtra("externalLink", url);
 		context.startActivity(openInternalWebView);
-		((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static void openBrowserWithUrl(String urlString) {
+		Context context = WoolworthsApplication.getAppContext();
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
 	}
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
@@ -556,10 +542,10 @@ public class Utils {
 
 	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key) {
 		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
+			String firstTime = Utils.getSessionDaoValue(key);
 			if (firstTime == null) {
 				Utils.displayValidationMessage(context, message_key, "");
-				Utils.sessionDaoSave(context, key, "1");
+				Utils.sessionDaoSave(key, "1");
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -567,10 +553,10 @@ public class Utils {
 
 	public static void showOneTimeTooltip(Context context, SessionDao.KEY key, View view, String message) {
 		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
+			String firstTime = Utils.getSessionDaoValue(key);
 			if (firstTime == null) {
 				showTooltip(context, view, message);
-				Utils.sessionDaoSave(context, key, "1");
+				Utils.sessionDaoSave(key, "1");
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -722,10 +708,10 @@ public class Utils {
 	public static String getUniqueDeviceID(Context context) {
 		String deviceID = null;
 		if (deviceID == null) {
-			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
+			deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
 			if (deviceID == null) {
 				deviceID = FirebaseInstanceId.getInstance().getId();
-				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
+				sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
 			}
 		}
 
@@ -884,8 +870,8 @@ public class Utils {
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
 	}
 
-	public static int dp2px(Context context, float dpValue) {
-		if (context == null) return 0;
+	public static int dp2px(float dpValue) {
+		Context context = WoolworthsApplication.getAppContext();
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
 	}
@@ -1184,10 +1170,10 @@ public class Utils {
 
 	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key, String message) {
 		try {
-			String firstTime = Utils.getSessionDaoValue(context, key);
+			String firstTime = Utils.getSessionDaoValue(key);
 			if (firstTime == null) {
 				Utils.displayValidationMessage(context, message_key, message);
-				Utils.sessionDaoSave(context, key, "1");
+				Utils.sessionDaoSave(key, "1");
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -1406,7 +1392,7 @@ public class Utils {
         return absaSecureCredentials.getDeviceId();
     }
 
-    private static void sessionDaoSave(SessionDao.KEY key, String value) {
+    public static void sessionDaoSave(SessionDao.KEY key, String value) {
         SessionDao sessionDao = SessionDao.getByKey(key);
         sessionDao.value = value;
         try {
@@ -1416,7 +1402,7 @@ public class Utils {
         }
     }
 
-    private static String getSessionDaoValue(SessionDao.KEY key) {
+    public static String getSessionDaoValue(SessionDao.KEY key) {
         SessionDao sessionDao = SessionDao.getByKey(key);
         return sessionDao.value;
     }
@@ -1577,7 +1563,7 @@ public class Utils {
 		if (context == null){
 			context = WoolworthsApplication.getAppContext();
 		}
-		String appVersionFromDB = Utils.getSessionDaoValue(context, SessionDao.KEY.APP_VERSION);
+		String appVersionFromDB = Utils.getSessionDaoValue(SessionDao.KEY.APP_VERSION);
 		String appLatestVersion = null;
 		try {
 			appLatestVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
@@ -1589,5 +1575,19 @@ public class Utils {
 		} else {
 			return false;
 		}
+	}
+
+	public static Boolean isCreditCardActivationEndpointAvailable() {
+		String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+		String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
+		int minute = now.get(Calendar.MINUTE);
+
+		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
+		Date openingTime = WFormatter.parseDate(startTime);
+		Date closingTime = WFormatter.parseDate(endTime);
+
+		return (currentTime.after(openingTime) && currentTime.before(closingTime));
 	}
 }

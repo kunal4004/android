@@ -69,7 +69,7 @@ public class BalanceInsuranceDetailFragment extends Fragment implements View.OnC
 	public void onClick(View v) {
 		switch (v.getId()){
 			case R.id.btnGetDocument:
-				Utils.openExternalLink(getActivity(),externalURL);
+				Utils.openLinkInInternalWebView(externalURL);
 				break;
 			default:
 				break;

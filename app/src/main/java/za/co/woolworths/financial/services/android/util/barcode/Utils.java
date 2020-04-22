@@ -154,11 +154,7 @@ final class Utils {
     }
 
     public static boolean isLaidOut(@NonNull View view) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return view.isLaidOut();
-        } else {
-            return view.getWidth() > 0 && view.getHeight() > 0;
-        }
+        return view.isLaidOut();
     }
 
     @NonNull

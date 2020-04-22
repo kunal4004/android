@@ -19,7 +19,7 @@ import com.google.zxing.WriterException
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.wrewards_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse
 import za.co.woolworths.financial.services.android.models.dto.TierInfo
@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.Utils.triggerFireBaseEvents
@@ -248,7 +249,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private fun loadPromotionsAPI() {
         mErrorHandlerView?.hideErrorHandlerLayout()
         val promotionsResponseCall = OneAppService.getPromotions()
-        promotionsResponseCall.enqueue(CompletionHandler(object : RequestListener<PromotionsResponse> {
+        promotionsResponseCall.enqueue(CompletionHandler(object : IResponseListener<PromotionsResponse> {
             override fun onSuccess(promotionsResponse: PromotionsResponse) {
                 handlePromotionResponse(promotionsResponse)
             }
@@ -277,6 +278,23 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        hideBackButtonAndToolbarBorder()
         activity?.apply { Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_OVERVIEW) }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            hideBackButtonAndToolbarBorder()
+        }
+    }
+
+    private fun hideBackButtonAndToolbarBorder() {
+        (activity as? BottomNavigationActivity)?.apply {
+            if (currentFragment is WRewardsFragment) {
+                showBackNavigationIcon(false)
+                setToolbarBackgroundColor(R.color.white)
+            }
+        }
     }
 }

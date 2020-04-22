@@ -7,10 +7,10 @@
     <solid android:color="@color/status_green"/>
 
     <padding
-        android:bottom="@dimen/four_dp"
-        android:left="@dimen/left_right_padding"
-        android:right="@dimen/left_right_padding"
-        android:top="@dimen/four_dp"/>
+        android:bottom="6dp"
+        android:left="6dp"
+        android:right="6dp"
+        android:top="6dp"/>
 
-    <corners android:radius="@dimen/offering_radius"/>
+    <corners android:radius="10dp"/>
 </shape>

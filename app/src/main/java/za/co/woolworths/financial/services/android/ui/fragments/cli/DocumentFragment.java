@@ -34,7 +34,7 @@ import java.util.Random;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
@@ -196,7 +196,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private void cliDeaBankRequest() {
 		onLoad(pbDeaBank);
 		cliGetDeaBank = OneAppService.INSTANCE.getDeaBanks();
-		cliGetDeaBank.enqueue(new CompletionHandler<>(new RequestListener<DeaBanks>() {
+		cliGetDeaBank.enqueue(new CompletionHandler<>(new IResponseListener<DeaBanks>() {
 			@Override
 			public void onSuccess(DeaBanks deaBanks) {
 				switch (deaBanks.httpCode) {
@@ -251,7 +251,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 
 		cliGetBankAccountTypes = OneAppService.INSTANCE.getBankAccountTypes();
-		cliGetBankAccountTypes.enqueue(new CompletionHandler<>(new RequestListener<BankAccountTypes>() {
+		cliGetBankAccountTypes.enqueue(new CompletionHandler<>(new IResponseListener<BankAccountTypes>() {
 			@Override
 			public void onSuccess(BankAccountTypes bankAccountTypes) {
 				switch (bankAccountTypes.httpCode) {
@@ -623,7 +623,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
 		cliUpdateBankDetails = OneAppService.INSTANCE.cliUpdateBankDetail(bankDetail);
-		cliUpdateBankDetails.enqueue(new CompletionHandler<>(new RequestListener<UpdateBankDetailResponse>() {
+		cliUpdateBankDetails.enqueue(new CompletionHandler<>(new IResponseListener<UpdateBankDetailResponse>() {
 			@Override
 			public void onSuccess(UpdateBankDetailResponse updateBankDetailResponse) {
 				enableSubmitButton();
@@ -664,7 +664,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void initSendEmailRequest() {
 		disableSubmitButton();
 		cliSendEmail = OneAppService.INSTANCE.cliEmailResponse();
-		cliSendEmail.enqueue(new CompletionHandler<>(new RequestListener<CLIEmailResponse>() {
+		cliSendEmail.enqueue(new CompletionHandler<>(new IResponseListener<CLIEmailResponse>() {
 			@Override
 			public void onSuccess(CLIEmailResponse cliEmailResponse) {
 				if (cliEmailResponse.httpCode == 200) {

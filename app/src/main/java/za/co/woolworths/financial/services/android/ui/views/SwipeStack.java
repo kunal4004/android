@@ -91,28 +91,15 @@ public class SwipeStack extends ViewGroup {
         TypedArray attrs = getContext().obtainStyledAttributes(attributeSet, R.styleable.SwipeStack);
 
         try {
-            mAllowedSwipeDirections =
-                    attrs.getInt(R.styleable.SwipeStack_allowed_swipe_directions,
-                            SWIPE_DIRECTION_BOTH);
-            mAnimationDuration =
-                    attrs.getInt(R.styleable.SwipeStack_animation_duration,
-                            DEFAULT_ANIMATION_DURATION);
-            mNumberOfStackedViews =
-                    attrs.getInt(R.styleable.SwipeStack_stack_size, DEFAULT_STACK_SIZE);
-            mViewSpacing =
-                    attrs.getDimensionPixelSize(R.styleable.SwipeStack_stack_spacing,
-                            getResources().getDimensionPixelSize(R.dimen.default_stack_spacing));
-            mViewRotation =
-                    attrs.getInt(R.styleable.SwipeStack_stack_rotation, DEFAULT_STACK_ROTATION);
-            mSwipeRotation =
-                    attrs.getFloat(R.styleable.SwipeStack_swipe_rotation, DEFAULT_SWIPE_ROTATION);
-            mSwipeOpacity =
-                    attrs.getFloat(R.styleable.SwipeStack_swipe_opacity, DEFAULT_SWIPE_OPACITY);
-            mScaleFactor =
-                    attrs.getFloat(R.styleable.SwipeStack_scale_factor, DEFAULT_SCALE_FACTOR);
-            mDisableHwAcceleration =
-                    attrs.getBoolean(R.styleable.SwipeStack_disable_hw_acceleration,
-                            DEFAULT_DISABLE_HW_ACCELERATION);
+            mAllowedSwipeDirections = attrs.getInt(R.styleable.SwipeStack_allowed_swipe_directions, SWIPE_DIRECTION_BOTH);
+            mAnimationDuration = attrs.getInt(R.styleable.SwipeStack_animation_duration, DEFAULT_ANIMATION_DURATION);
+            mNumberOfStackedViews = attrs.getInt(R.styleable.SwipeStack_stack_size, DEFAULT_STACK_SIZE);
+            mViewSpacing = attrs.getDimensionPixelSize(R.styleable.SwipeStack_stack_spacing, getResources().getDimensionPixelSize(R.dimen.default_stack_spacing));
+            mViewRotation = attrs.getInt(R.styleable.SwipeStack_stack_rotation, DEFAULT_STACK_ROTATION);
+            mSwipeRotation = attrs.getFloat(R.styleable.SwipeStack_swipe_rotation, DEFAULT_SWIPE_ROTATION);
+            mSwipeOpacity = attrs.getFloat(R.styleable.SwipeStack_swipe_opacity, DEFAULT_SWIPE_OPACITY);
+            mScaleFactor = attrs.getFloat(R.styleable.SwipeStack_scale_factor, DEFAULT_SCALE_FACTOR);
+            mDisableHwAcceleration = attrs.getBoolean(R.styleable.SwipeStack_disable_hw_acceleration, DEFAULT_DISABLE_HW_ACCELERATION);
         } finally {
             attrs.recycle();
         }

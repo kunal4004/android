@@ -17,6 +17,8 @@
 <resources>
     <color name="black_50">#7f000000</color>
     <color name="grey_bg">#efefef</color>
+    <color name="grey_90_bg">#90efefef</color>
+    <color name="black_99">#99000000</color>
     <!--<color name="black">#000000</color>-->
     <color name="purple">#7a4183</color>
     <!--<color name="black_off">#343434</color>-->
@@ -29,5 +31,6 @@
     <color name="tooltip_bg_color">#e5242424</color>
     <color name="account_label_color">#7f030303</color>
     <color name="statement_title">#80000000</color>
+    <color name="button_click_ripple_bg">#45efefef</color>
 
 </resources>

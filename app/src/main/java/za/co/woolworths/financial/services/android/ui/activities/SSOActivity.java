@@ -168,7 +168,6 @@ public class SSOActivity extends WebViewActivity {
 						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
 							webView.goBackOrForward(index);
 							url = history.getItemAtIndex(-index).getUrl();
-							Log.d("tag", "first non empty" + url);
 							break;
 						}
 						index--;
@@ -193,10 +192,6 @@ public class SSOActivity extends WebViewActivity {
 
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
 		String link = this.constructAndGetAuthorisationRequestURL(scope);
-
-		Log.d("SSOActivity.TAG", String.format("Authorization Link: %s", link));
-
-		Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
 		bundle.putString("title", "SIGN IN");
 		bundle.putString("link", link);
