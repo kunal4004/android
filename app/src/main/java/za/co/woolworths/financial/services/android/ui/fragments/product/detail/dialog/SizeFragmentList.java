@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -145,7 +145,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 
 	private Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
 		Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
-		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
+		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 				switch (skusInventoryForStoreResponse.httpCode) {

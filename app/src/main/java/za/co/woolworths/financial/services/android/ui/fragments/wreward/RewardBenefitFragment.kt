@@ -31,7 +31,7 @@ class RewardBenefitFragment : Fragment() {
                 text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
                 movementMethod = LinkMovementMethod.getInstance()
                 setOnClickListener {
-                    Utils.openExternalLink(this, WoolworthsApplication.getWrewardsTCLink())
+                    Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink())
                 }
             }
         }

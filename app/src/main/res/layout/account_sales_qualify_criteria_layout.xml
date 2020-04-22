@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/qualifyingCriteriaTextView"
+        style="@style/account_sales_card_title_benefit_style"
+        android:paddingTop="25dp"
+        android:text="@string/qualify_criteria_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <LinearLayout
+        android:id="@+id/qualifyCriteriaLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qualifyingCriteriaTextView" />
+
+
+    <View
+        android:id="@+id/qualifyCriteriaSpaceView"
+        style="@style/account_sales_card_benefits_bottom_margin_style"
+        android:layout_marginTop="22dp"
+        android:background="@color/light_gray_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qualifyCriteriaLinearLayout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -104,12 +104,16 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void hideToolbar() {
-		mActivity.hideToolbar();
+		if (getActivity() instanceof BottomNavigationActivity) {
+			mActivity.hideToolbar();
+		}
 	}
 
 	public void showToolbar() {
-		statusBarColor();
-		mActivity.showToolbar();
+		if (getActivity() instanceof BottomNavigationActivity) {
+			statusBarColor();
+			mActivity.showToolbar();
+		}
 	}
 
 	public interface Callback {
@@ -151,27 +155,30 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void showBackNavigationIcon(boolean visibility) {
-		if (bottomNavigator != null)
+		if (bottomNavigator != null && (getActivity() instanceof BottomNavigationActivity))
 			bottomNavigator.showBackNavigationIcon(visibility);
 	}
 
 	public void setTitle(String title) {
-		if (bottomNavigator != null)
+		if (bottomNavigator != null && (getActivity() instanceof BottomNavigationActivity))
 			bottomNavigator.setTitle(title);
 	}
 
 	public void setTitle(String title, int color) {
-		if (bottomNavigator != null)
+		if (bottomNavigator != null && (getActivity() instanceof BottomNavigationActivity))
 			bottomNavigator.setTitle(title, color);
 	}
 
 	public void setToolbarBackgroundDrawable(int drawable) {
-		if (mActivity != null)
+		if (mActivity != null && (getActivity() instanceof BottomNavigationActivity)) {
 			mActivity.setToolbarBackgroundDrawable(drawable);
+		}
 	}
 
 	public void setToolbarBackgroundColor(int color) {
-		mActivity.setToolbarBackgroundColor(color);
+		if (getActivity() instanceof BottomNavigationActivity) {
+			mActivity.setToolbarBackgroundColor(color);
+		}
 	}
 
 	public BottomNavigator getBottomNavigator() {
@@ -217,7 +224,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		try {
 			tv.setText(text);
 		} catch (IllegalStateException ex) {
-			Log.d("setTextExc", ex.getMessage());
 		}
 	}
 
@@ -234,7 +240,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		try {
 			tv.setText(text);
 		} catch (IllegalStateException ex) {
-			Log.d("setTextExc", ex.getMessage());
 		}
 	}
 

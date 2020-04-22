@@ -11,10 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.LinkType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
+import za.co.woolworths.financial.services.android.util.wenum.LinkType
 
 
 class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {

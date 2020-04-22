@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop_department.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -16,7 +15,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -33,6 +32,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
+    private var version:String = ""
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -61,10 +61,11 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
             rootCategoryCall = OneAppService.getRootCategory()
-            rootCategoryCall?.enqueue(CompletionHandler(object : RequestListener<RootCategories> {
+            rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(rootCategories: RootCategories) {
                     when (rootCategories.httpCode) {
                         200 -> {
+                            version = rootCategories.response.version
                             parentFragment?.setCategoryResponseData(rootCategories)
                             bindDepartment()
                         }
@@ -88,7 +89,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
 
     private fun bindDepartment() {
-        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()!!.rootCategories)
+        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
     }
 
@@ -113,6 +114,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             // navigate to drill down of categories
             true -> {
                 bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory))
+                bundle.putString("VERSION", version)
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }

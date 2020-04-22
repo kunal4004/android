@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -35,7 +35,7 @@ abstract class BarcodeScanExtension : Fragment() {
         networkConnectivityStatus()
         asyncTaskIsRunning(true)
         mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService.getProducts(it) }
-        mRetrieveProductDetail?.enqueue(CompletionHandler(object : RequestListener<ProductView> {
+        mRetrieveProductDetail?.enqueue(CompletionHandler(object : IResponseListener<ProductView> {
             override fun onSuccess(response: ProductView) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response.httpCode) {
@@ -83,7 +83,7 @@ abstract class BarcodeScanExtension : Fragment() {
 
         val productDetailRequestCall = OneAppService.productDetail(productRequest.productId, productRequest.skuId)
 
-        productDetailRequestCall.enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
+        productDetailRequestCall.enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
             override fun onSuccess(response: ProductDetailResponse?) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response?.httpCode) {
@@ -159,43 +159,6 @@ abstract class BarcodeScanExtension : Fragment() {
         }
     }
 
-    fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
-        val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
-        val uri = Uri.parse(urlString)
-        uri?.host?.replace("www.", "")?.let { domain ->
-            WoolworthsApplication.getWhitelistedDomainsForQRScanner()?.apply {
-                if (domain in this) {
-                    when {
-                        domain.contains(BarcodeScanFragment.DOMAIN_WOOLWORTHS, true) -> {
-                            var searchTerm = uri.getQueryParameter("Ntt")
-                            if (searchTerm.isNullOrEmpty())
-                                searchTerm = uri.getQueryParameter("searchTerm")
-
-                            if (!searchTerm.isNullOrEmpty()) {
-                                productSearchTypeAndTerm.searchTerm = searchTerm
-                                productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
-                            } else {
-                                searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
-                                if (!searchTerm.isNullOrEmpty()) {
-                                    productSearchTypeAndTerm.searchTerm = searchTerm
-                                    productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
-                                }else{
-                                    productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.WHITE_LISTED_DOMAIN
-                                }
-                            }
-                        }
-                        else -> {
-                            productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.WHITE_LISTED_DOMAIN
-                        }
-                    }
-
-                }
-            }
-        }
-
-        return productSearchTypeAndTerm
-    }
-
     fun sendResultBack(searchType: String, searchTerm: String) {
         activity?.apply {
             Intent().apply {
@@ -206,6 +169,5 @@ abstract class BarcodeScanExtension : Fragment() {
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
         }
-
     }
 }

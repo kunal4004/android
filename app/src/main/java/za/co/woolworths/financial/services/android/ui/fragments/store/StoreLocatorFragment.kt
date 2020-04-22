@@ -136,7 +136,7 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private fun bindDataWithUI(storeDetailsList: MutableList<StoreDetails>) {
         mGoogleMap.let {
             if (storeDetailsList.size >= 0) {
-                activity?.let { activity -> updateMyCurrentLocationOnMap(Utils.getLastSavedLocation(activity)) }
+                activity?.let { activity -> updateMyCurrentLocationOnMap(Utils.getLastSavedLocation()) }
                 for (i in storeDetailsList.indices) {
                     if (i == 0) {
                         selectedIcon?.let { selectedIcon -> drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), selectedIcon, i) }

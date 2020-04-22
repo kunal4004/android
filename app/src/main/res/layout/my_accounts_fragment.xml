@@ -1,29 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeToRefreshAccount"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:clickable="true"
-    android:focusable="true"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment">
+    android:enabled="false"
+    android:focusable="true">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment" />
-
-        <variable
-            name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel" />
-    </data>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeToRefreshAccount"
-        android:layout_width="match_parent"
-        android:enabled = "false"
-        android:layout_height="wrap_content">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -58,25 +42,34 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <androidx.viewpager.widget.ViewPager
-                            android:id="@+id/pager"
+                        <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="360dp"
-                            android:nestedScrollingEnabled="false" />
-
-                        <LinearLayout
-                            android:id="@+id/viewPagerCountDots"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="32dp"
+                            android:layout_height="?attr/actionBarSize"
+                            android:fontFamily="@font/futura_semi_bold_ttf"
                             android:gravity="center"
-                            android:orientation="horizontal" />
+                            android:letterSpacing="0.2"
+                            android:text="@string/my_accounts"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+
+                        <fragment
+                            android:id="@+id/on_boarding_navigation_graph"
+                            android:name="androidx.navigation.fragment.NavHostFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="430dp"
+                            android:fitsSystemWindows="true"
+                            app:defaultNavHost="true"
+                            app:layout_constraintBottom_toTopOf="@+id/registerButton"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:navGraph="@navigation/on_boarding_graph" />
 
                         <LinearLayout
-                            android:id="@+id/loginRegisterBtnLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="28dp"
+                            android:layout_marginTop="8dp"
                             android:background="@color/white"
                             android:focusableInTouchMode="false"
                             android:minHeight="48dp"
@@ -139,7 +132,7 @@
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 style="@style/accountsItem"
-                                android:drawableLeft="@{@drawable/ic_link_account}"
+                                android:drawableLeft="@drawable/ic_link_account"
                                 android:text="@string/link_your_woolies_card_today" />
 
                             <ImageView
@@ -154,15 +147,14 @@
                             android:id="@+id/loginUserOptionsLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
                             android:orientation="vertical"
                             android:visibility="visible">
 
                             <RelativeLayout
                                 android:id="@+id/openMessageActivity"
-                                android:contentDescription="@string/messages_layout"
                                 style="@style/listStyle"
-                                android:background="@drawable/stores_details_background">
+                                android:background="@drawable/stores_details_background"
+                                android:contentDescription="@string/messages_layout">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
@@ -194,7 +186,6 @@
                             </RelativeLayout>
 
                             <RelativeLayout
-                                android:id="@+id/orderHistory"
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background"
                                 android:visibility="gone">
@@ -215,7 +206,6 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/allUserOptionsLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
@@ -228,7 +218,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@{@drawable/ic_store_locator}"
+                                    android:drawableLeft="@drawable/ic_store_locator"
                                     android:text="@string/store_locator" />
 
                                 <ImageView
@@ -246,7 +236,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@{@drawable/ic_faq}"
+                                    android:drawableLeft="@drawable/ic_faq"
                                     android:text="@string/need_help" />
 
                                 <ImageView
@@ -260,8 +250,8 @@
                             <RelativeLayout
                                 android:id="@+id/contactUs"
                                 style="@style/listStyle"
-                                android:contentDescription="@string/contact_us_layout"
-                                android:background="@drawable/stores_details_background">
+                                android:background="@drawable/stores_details_background"
+                                android:contentDescription="@string/contact_us_layout">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
@@ -288,7 +278,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_my_details}"
+                            android:drawableLeft="@drawable/ic_my_details"
                             android:text="@string/acc_profile" />
 
                         <ImageView
@@ -308,7 +298,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableStart="@{@drawable/account_update_password_icon}"
+                            android:drawableStart="@drawable/account_update_password_icon"
                             android:text="@string/acc_update_password" />
 
                         <ImageView
@@ -327,7 +317,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_my_preferences}"
+                            android:drawableLeft="@drawable/ic_my_preferences"
                             android:text="@string/acc_my_preferences" />
 
                         <ImageView
@@ -346,7 +336,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_signout}"
+                            android:drawableLeft="@drawable/ic_signout"
                             android:text="@string/sign_out" />
 
                         <ImageView
@@ -372,5 +362,4 @@
 
         <include layout="@layout/no_connection_handler" />
     </FrameLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</layout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

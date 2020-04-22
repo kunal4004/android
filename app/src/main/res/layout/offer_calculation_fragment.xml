@@ -117,7 +117,6 @@
                     android:layout_marginTop="@dimen/acc_fifteen_dp">
 
                     <ProgressBar
-                        android:id="@+id/circleView"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:layout_gravity="center"
@@ -136,12 +135,9 @@
 
                 <View style="@style/bottom_line"/>
 
-                <RelativeLayout
-                    android:id="@+id/relCurrentCreditLimit"
-                    style="@style/offer_relative_rowtype_style">
+                <RelativeLayout style="@style/offer_relative_rowtype_style">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvCurrentCreditLimit"
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPCurrentCreditLimit"
                         android:text="@string/request_loan_amount"/>
@@ -166,12 +162,9 @@
 
                 <View style="@style/bottom_line_with_margin"/>
 
-                <RelativeLayout
-                    android:id="@+id/relAdditionalCreditLimit"
-                    style="@style/offer_relative_rowtype_style">
+                <RelativeLayout style="@style/offer_relative_rowtype_style">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvAdditionalCreditLimit"
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPAdditionalCreditLimit"
                         android:text="@string/approximate_repayments"/>
@@ -195,12 +188,9 @@
 
                 <View style="@style/bottom_line_with_margin"/>
 
-                <RelativeLayout
-                    android:id="@+id/relNewCreditlimit"
-                    style="@style/offer_relative_rowtype_style">
+                <RelativeLayout style="@style/offer_relative_rowtype_style">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvNewCreditLimit"
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPNewCreditLimit"
                         android:text="@string/term"/>

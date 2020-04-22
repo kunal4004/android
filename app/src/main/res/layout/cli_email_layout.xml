@@ -21,7 +21,6 @@
             android:paddingRight="@dimen/bank_spacing_width">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textEmailSent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"

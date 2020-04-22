@@ -4,10 +4,10 @@ import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import java.io.InputStreamReader
 
-open class CompletionHandler<T>(private val requestListener: RequestListener<T>?, private val typeParameterClass: Class<T>) : Callback<T> {
+open class CompletionHandler<T>(private val requestListener: IResponseListener<T>?, private val typeParameterClass: Class<T>) : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>?) {
         this.requestListener?.apply {

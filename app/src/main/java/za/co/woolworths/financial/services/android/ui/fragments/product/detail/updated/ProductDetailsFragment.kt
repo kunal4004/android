@@ -43,7 +43,10 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.product_deatils_delivery_location_layout.*
+import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
+import kotlinx.android.synthetic.main.product_details_fragment.brandName
+import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
+import kotlinx.android.synthetic.main.product_listing_page_row.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -85,6 +88,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
     private var defaultGroupKey: String? = null
+    private var mFreeGiftPromotionalImage: String? = null
 
 
     companion object {
@@ -163,12 +167,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateStockAvailabilityLocation()
 
         productDetails?.let {
-            productName.text = it.productName
+            productName?.text = it.productName
+            brandName?.apply {
+                if (!it.brandText.isNullOrEmpty()) {
+                    text = it.brandText
+                    visibility = View.VISIBLE
+                }
+            }
+
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
         }
+
+        mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
 
         loadPromotionalImages()
 
@@ -428,10 +441,29 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            brandName.apply {
+                if (!it.brandText.isNullOrEmpty()) {
+                    text = it.brandText
+                    visibility = View.VISIBLE
+                }
+            }
+            if (!it.freeGiftText.isNullOrEmpty()) {
+                freeGiftText.text = it.freeGiftText
+                freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+            }
         }
 
         if (isAllProductsOutOfStock()) {
             showProductOutOfStock()
+        }
+    }
+
+    private fun setBrandText(it: ProductDetails) {
+        brandName.apply {
+            if (!it.brandText.isNullOrEmpty()) {
+                text = it.brandText
+                visibility = View.VISIBLE
+            }
         }
     }
 
@@ -513,7 +545,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             otherSku = it
                             return@forEach
                         }
-
                     }
                     setSelectedSku(otherSku)
                     if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
@@ -1083,20 +1114,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun loadPromotionalImages() {
+        val images = ArrayList<String>()
         activity?.apply {
             productDetails?.promotionImages?.let {
-                val images = ArrayList<String>()
                 if (!it.save.isNullOrEmpty()) images.add(it.save)
                 if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
                 if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
                 if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
-                promotionalImages?.removeAllViews()
-                DrawImage(this).let { dImage ->
-                    images.forEach { image ->
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            dImage.displaySmallImage(view.promotionImage, image)
-                            promotionalImages?.addView(view)
-                        }
+            }
+
+            promotionalImages?.removeAllViews()
+
+            mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
+
+            DrawImage(this).let { dImage ->
+                images.forEach { image ->
+                    layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                        dImage.displaySmallImage(view.promotionImage, image)
+                        promotionalImages?.addView(view)
                     }
                 }
             }
@@ -1181,5 +1216,4 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
             }
     }
-
 }

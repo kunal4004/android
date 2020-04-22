@@ -1,9 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.graphics.Color
+import android.text.*
+import android.text.style.ForegroundColorSpan
+import android.text.style.StrikethroughSpan
 import android.view.View
-import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import androidx.core.content.ContextCompat
+import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
+import kotlinx.android.synthetic.main.product_listing_price_layout.view.fromPriceLabelTextView
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -14,45 +23,36 @@ class PriceItem {
         val price: String? = productList?.price?.toString() ?: ""
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
         val priceType = productList?.priceType
-        if (productList?.productName?.toLowerCase()?.contains("skinless chicken breast avg 400g") == true) {
-            Log.e("productListValue", "productListValue")
-        }
+
+        var spannableItemPrice: SpannableStringBuilder
+        var priceText: String
+        var wasPriceText : String
         with(itemView) {
-            fromPriceLabelTextView?.text = ""
-            if (wasPrice.isNullOrEmpty()) {
-                if (price!!.isEmpty()) {
-                    tvPrice?.text = ""
-                } else {
-                    tvPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
-                }
-                tvPrice?.setTextColor(android.graphics.Color.BLACK)
-                tvWasPrice?.text = ""
-                fromPriceLabelTextView?.visibility = View.GONE
-                fromPriceStrikeThrough?.visibility = View.GONE
-                if (shopFromItem && kilogramPrice.isEmpty()) {
-                    tvPrice?.text = ""
-                    tvWasPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
-                    tvWasPrice?.setTextColor(android.graphics.Color.BLACK)
-                }
+            fromPriceLabelTextView?.visibility =  GONE
+            if (TextUtils.isEmpty(wasPrice)) {
+                priceText = if (TextUtils.isEmpty(price) && !(shopFromItem && kilogramPrice.isEmpty())) "" else getMassPrice(price ?: "0", priceType, kilogramPrice, shopFromItem)
+                spannableItemPrice = SpannableStringBuilder(priceText)
+                spannableItemPrice.setSpan(ForegroundColorSpan(Color.BLACK),0, priceText.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                priceTextView?.text = spannableItemPrice
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
-                    if (price!!.isEmpty()) {
-                        tvPrice?.text = WFormatter.formatAmount(wasPrice)
-                    } else {
-                        tvPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
-                    }
-                    tvPrice?.setTextColor(android.graphics.Color.BLACK)
-                    fromPriceLabelTextView?.visibility = View.GONE
-                    fromPriceStrikeThrough?.visibility = View.GONE
-                    tvWasPrice?.text = ""
+                    priceText = if (TextUtils.isEmpty(price))  WFormatter.formatAmount(wasPrice) else getMassPrice(price ?: "0", priceType, kilogramPrice, shopFromItem)
+                    spannableItemPrice = SpannableStringBuilder(priceText)
+                    spannableItemPrice.setSpan(ForegroundColorSpan(Color.BLACK),0, priceText.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                    priceTextView?.text = spannableItemPrice
                 } else {
-                    tvPrice?.text = WFormatter.formatAmount(price)
-                    tvPrice?.setTextColor(androidx.core.content.ContextCompat.getColor(za.co.woolworths.financial.services.android.models.WoolworthsApplication.getAppContext(), com.awfs.coordination.R.color.was_price_color))
-                    wasPrice.let {
-                        tvWasPrice?.text = getMassPrice(it, priceType, kilogramPrice, shopFromItem)
-                        fromPriceLabelTextView?.visibility = View.GONE
-                        fromPriceStrikeThrough?.visibility = View.VISIBLE
-                        tvWasPrice?.setTextColor(android.graphics.Color.BLACK)
+                    // Create a span that will strikeThrough the text
+                    val strikeThroughSpan = StrikethroughSpan()
+                    priceText = WFormatter.formatAmount(price)
+                    wasPriceText =  getMassPrice(wasPrice ?: "0", priceType, kilogramPrice, shopFromItem)
+
+                    val fromWasPrice = "$wasPriceText $priceText"
+                    spannableItemPrice = SpannableStringBuilder(fromWasPrice)
+                    with(spannableItemPrice) {
+                        setSpan(ForegroundColorSpan(Color.BLACK), 0, wasPriceText.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                        setSpan(strikeThroughSpan, 0, wasPriceText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        setSpan(ForegroundColorSpan(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color)), wasPriceText.length, fromWasPrice.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                        priceTextView?.text = this
                     }
                 }
             }
@@ -78,14 +78,14 @@ class PriceItem {
         }
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint("DefaultLocale", "SetTextI18n")
     private fun View.showFromPriceLabel(priceType: String?) {
         priceType?.let {
             if (it.toLowerCase().contains("from", true)) {
-                fromPriceLabelTextView?.visibility = View.VISIBLE
+                fromPriceLabelTextView?.visibility = VISIBLE
                 fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
             } else {
-                fromPriceLabelTextView?.visibility = View.GONE
+                fromPriceLabelTextView?.visibility = GONE
                 fromPriceLabelTextView?.text = ""
             }
         }

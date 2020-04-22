@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/popup_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
@@ -9,7 +8,6 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/relAddToList"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/bottom_divider">
@@ -38,7 +36,6 @@
     </RelativeLayout>
 
     <FrameLayout
-        android:id="@+id/flAddToListContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -60,7 +57,6 @@
             android:visibility="gone">
 
             <ProgressBar
-                android:id="@+id/pbLoadShoppingList"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
                 android:indeterminateTint="@color/black" />
@@ -157,7 +153,6 @@
     </FrameLayout>
 
     <RelativeLayout
-        android:id="@+id/relEmptyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/recent_search_bg"

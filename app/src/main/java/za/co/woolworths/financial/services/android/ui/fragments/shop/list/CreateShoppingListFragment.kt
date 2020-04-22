@@ -15,7 +15,7 @@ import android.view.inputmethod.EditorInfo
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.create_new_list.*
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -265,7 +265,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
         mCreateShoppingList = OneAppService.createList(createListRequest)
-        mCreateShoppingList?.enqueue(CompletionHandler(object:RequestListener<ShoppingListsResponse>{
+        mCreateShoppingList?.enqueue(CompletionHandler(object: IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {
                 response?.apply {
                     when (httpCode) {
@@ -338,7 +338,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
         mPostShoppingList = listId?.let {listID -> mAddToListRequest?.let { listItem -> OneAppService.addToList(listItem, listID) } }
 
-        mPostShoppingList?.enqueue(CompletionHandler(object:RequestListener<ShoppingListItemsResponse>{
+        mPostShoppingList?.enqueue(CompletionHandler(object: IResponseListener<ShoppingListItemsResponse> {
             override fun onSuccess(shoppingListsResponse: ShoppingListItemsResponse?) {
                 shoppingListsResponse?.apply {
                     when (httpCode) {
@@ -421,7 +421,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         orderId?.let {
              orderID ->
            val addOrderToListRequest =  OneAppService.addOrderToList(orderID, orderRequestList)
-            addOrderToListRequest.enqueue(CompletionHandler(object:RequestListener<OrderToListReponse>{
+            addOrderToListRequest.enqueue(CompletionHandler(object: IResponseListener<OrderToListReponse> {
                 override fun onSuccess(orderToListReponse: OrderToListReponse?) {
                     orderToListReponse?.apply {
                         response.apply {

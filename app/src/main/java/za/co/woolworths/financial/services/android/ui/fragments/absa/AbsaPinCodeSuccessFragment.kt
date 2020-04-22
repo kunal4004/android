@@ -82,7 +82,6 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
 
                         override fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
-                            Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
                                     val absaSecureCredentials = AbsaSecureCredentials()
@@ -97,7 +96,6 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            Log.d("onSuccess", "onFailure")
                             showErrorScreen(ErrorHandlerActivity.COMMON)
                         }
 

@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.sub_cat
 import androidx.databinding.ObservableBoolean;
 
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
@@ -25,9 +25,9 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 		super(schedulerProvider);
 	}
 
-	public void executeSubCategory(String category_id) {
-		mProductSubCategoryRequest = OneAppService.INSTANCE.getSubCategory(category_id);
-		mProductSubCategoryRequest.enqueue(new CompletionHandler<>(new RequestListener<SubCategories>() {
+	public void executeSubCategory(String category_id, String version) {
+		mProductSubCategoryRequest = OneAppService.INSTANCE.getSubCategory(category_id, version);
+		mProductSubCategoryRequest.enqueue(new CompletionHandler<>(new IResponseListener<SubCategories>() {
 			@Override
 			public void onSuccess(SubCategories subCategories) {
 				switch (subCategories.httpCode) {

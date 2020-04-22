@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.utils
 import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
@@ -12,7 +14,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 open class BaseProductUtils {
     companion object {
 
-        public fun displayPrice(fromPricePlaceHolder:TextView, tvPrice: TextView, tvWasPrice: TextView, price: String?, wasPrice: String?, priceType: String? = "", kilogramPrice: String? = "") {
+        fun displayPrice(fromPricePlaceHolder:TextView, tvPrice: TextView, tvWasPrice: TextView, price: String?, wasPrice: String?, priceType: String? = "", kilogramPrice: String? = "") {
             val wasPrice: String? = wasPrice ?: ""
             val price: String? = price ?: ""
             val kilogramPrice: String = kilogramPrice ?: ""
@@ -23,17 +25,22 @@ open class BaseProductUtils {
                 tvPrice.text = if (price!!.isEmpty()) "" else getMassPrice(price, priceType, kilogramPrice)
                 tvPrice.setTextColor(android.graphics.Color.BLACK)
                 tvWasPrice.text = ""
+                tvWasPrice.visibility = GONE
+
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
                     tvPrice.text = if (price!!.isEmpty()) WFormatter.formatAmount(wasPrice) else getMassPrice(price, priceType, kilogramPrice)
                     tvPrice.setTextColor(android.graphics.Color.BLACK)
                     tvWasPrice.text = ""
+                    tvWasPrice.visibility = GONE
                 } else {
                     tvPrice.text = WFormatter.formatAmount(price)
                     tvPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
                     tvWasPrice.text = wasPrice?.let { getMassPrice(it, priceType, kilogramPrice) }
                     tvWasPrice.paintFlags = tvWasPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     tvWasPrice.setTextColor(android.graphics.Color.BLACK)
+                    tvWasPrice.visibility = VISIBLE
+
                 }
             }
 

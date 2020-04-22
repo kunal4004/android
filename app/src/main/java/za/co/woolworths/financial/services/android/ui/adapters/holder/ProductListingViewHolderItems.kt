@@ -6,6 +6,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
+import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
@@ -22,6 +24,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
             setPromotionalImage(promotionImages)
             setProductName(this)
             setSaveText(this)
+            setBrandText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             quickShopAddToCartSwitch(this)
@@ -41,7 +44,13 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         tvSaveText?.text = productList?.saveText ?: ""
     }
 
+    private fun setBrandText(productList: ProductList?) = with(itemView) {
+        brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
+        brandName?.text = productList?.brandText ?: ""
+    }
+
     private fun setPromotionalImage(imPromo: PromotionImages?) {
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")
@@ -71,7 +80,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
             var defaultStoreId = ""
             if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null || !SessionUtilities.getInstance().isUserAuthenticated) {
                 quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
-                    if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfilmentTypeId, ignoreCase = true)) {
+                    if (fulfillmentType.fulfilmentTypeId.equals(fulfilmentTypeId, ignoreCase = true)) {
                         defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
                         return@forEach
                     }
