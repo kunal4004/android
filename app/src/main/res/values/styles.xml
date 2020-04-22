@@ -606,7 +606,6 @@
         <item name="android:contentDescription">@string/placeholder</item>
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:src">@drawable/icon_info</item>
-        <item name="android:alpha">0.2</item>
     </style>
 
     <style name="increase_limit_relative_style" parent="android:Theme">
