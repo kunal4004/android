@@ -10,48 +10,22 @@
 
     <ImageView
         android:id="@+id/imFreeGiftImage"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginBottom="4dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_newPromotionalImage"
-        android:minWidth="24dp" />
+        style="@style/promotionLayoutStyle" />
 
     <ImageView
         android:id="@+id/imNewImage"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginBottom="4dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_newPromotionalImage"
-        android:minWidth="24dp" />
+        style="@style/promotionLayoutStyle" />
 
     <ImageView
         android:id="@+id/imSave"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginBottom="4dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_savePromotionalImage"
-        android:minWidth="24dp" />
+        style="@style/promotionLayoutStyle" />
 
     <ImageView
         android:id="@+id/imReward"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginBottom="4dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_rewardsPromotionalImage"
-        android:minWidth="24dp" />
-
+        style="@style/promotionLayoutStyle"/>
 
     <ImageView
         android:id="@+id/imVitality"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/plp_vitalityPromotionalImage"
-        android:minWidth="24dp" />
-
+        style="@style/promotionLayoutStyle" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
