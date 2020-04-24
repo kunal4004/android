@@ -23,7 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/titleGuideLine"
         android:layout_width="wrap_content"
@@ -67,13 +66,12 @@
         android:layout_below="@+id/description"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
+        android:layout_marginBottom="12dp"
         android:visibility="gone"
-        android:layout_marginBottom="11dp"
         app:layout_constraintBottom_toTopOf="@+id/progressGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/descriptionGuideLine" />
-
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
         android:id="@+id/edtEnterATMPin"
@@ -103,10 +101,6 @@
         android:text="@string/absa_biometric_forgot_atm_pin_code"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        app:autoSizeMaxTextSize="@dimen/fifteen_sp"
-        app:autoSizeMinTextSize="14sp"
-        app:autoSizeStepGranularity="1sp"
-        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@+id/ivNavigateToDigitFragment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivNavigateToDigitFragment" />
