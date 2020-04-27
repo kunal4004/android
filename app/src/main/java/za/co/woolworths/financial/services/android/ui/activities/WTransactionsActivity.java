@@ -3,16 +3,19 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+
+import org.jetbrains.annotations.NotNull;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -22,20 +25,21 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.AccountTransactionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.FloatingActionButtonExpandable;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static androidx.lifecycle.Lifecycle.State.STARTED;
 
-public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener {
+public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener{
 
-	public ExpandableListView transactionListview;
+	public RecyclerView transactionListView;
 	public String productOfferingId;
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar pbTransaction;
@@ -44,7 +48,6 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	private String accountNumber;
 	private int lastPosition = -1;
 	private String cardType;
-	private ImageButton mCloseTransactionImageButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,24 +62,24 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 				(WTextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
 
-		mCloseTransactionImageButton = (ImageButton)findViewById(R.id.closeTransactionImageButton);
+		ImageButton mCloseTransactionImageButton = (ImageButton) findViewById(R.id.closeTransactionImageButton);
 		mCloseTransactionImageButton.setOnClickListener(this);
 
-		transactionListview = findViewById(R.id.transactionListView);
+		transactionListView = (RecyclerView) findViewById(R.id.transactionListView);
+		LinearLayoutManager linearLayoutManager = new  LinearLayoutManager(this);
+		linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		transactionListView.setLayoutManager(linearLayoutManager);
+
 		pbTransaction = findViewById(R.id.pbTransaction);
 		chatIcon = findViewById(R.id.chatIcon);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
 		accountNumber = getIntent().getStringExtra("accountNumber");
 		cardType = getIntent().getStringExtra("cardType");
 		loadTransactionHistory(productOfferingId);
-		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (NetworkManager.getInstance().isConnectedToNetwork(WTransactionsActivity.this)) {
-					loadTransactionHistory(productOfferingId);
-				}
+		findViewById(R.id.btnRetry).setOnClickListener(v -> {
+			if (NetworkManager.getInstance().isConnectedToNetwork(WTransactionsActivity.this)) {
+				loadTransactionHistory(productOfferingId);
 			}
-
 		});
 		initInAppChat();
 	}
@@ -103,10 +106,11 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
 								mErrorHandlerView.hideEmpyState();
-								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
-								transactionListview.setVisibility(View.VISIBLE);
+								AccountTransactionAdapter transactionsAdapter = new AccountTransactionAdapter(KotlinUtils.Companion.getListOfTransaction(transactionHistoryResponse.transactions));
+								transactionListView.setAdapter(transactionsAdapter);
+								transactionListView.setVisibility(View.VISIBLE);
 							} else {
-								transactionListview.setVisibility(View.GONE);
+								transactionListView.setVisibility(View.GONE);
 								mErrorHandlerView.showEmptyState(3);
 							}
 							showChatBubble();
@@ -187,34 +191,43 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 		}
 	}
 
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-	}
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (lastPosition == firstVisibleItem) {
-            return;
-        }
-
-        if (firstVisibleItem > lastPosition) {
-            if (transactionListview.getVisibility() == View.VISIBLE)
-                chatIcon.collapse(true);
-        } else {
-            if (transactionListview.getVisibility() == View.VISIBLE)
-                chatIcon.expand(true);
-        }
-
-        lastPosition = firstVisibleItem;
-
-    }
-
     private void initInAppChat() {
+		cardType = "cc";
         if (cardType.equalsIgnoreCase("CC") && chatIsEnabled()) {
             chatIcon.expand(true);
             chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
-            transactionListview.setOnScrollListener(this);
+			transactionListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+				@Override
+				public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
+					super.onScrollStateChanged(recyclerView, newState);
+
+				}
+
+				@Override
+				public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
+					super.onScrolled(recyclerView, dx, dy);
+					LinearLayoutManager layoutManager = ((LinearLayoutManager) transactionListView.getLayoutManager());
+					int firstVisibleItem = 0;
+					if (layoutManager != null) {
+						firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+					}
+
+					if (lastPosition == firstVisibleItem) {
+						return;
+					}
+
+					if (firstVisibleItem > lastPosition) {
+						if (transactionListView.getVisibility() == View.VISIBLE)
+							chatIcon.collapse(true);
+					} else {
+						if (transactionListView.getVisibility() == View.VISIBLE)
+							chatIcon.expand(true);
+					}
+
+					lastPosition = firstVisibleItem;
+				}
+			});
             chatIcon.setOnClickListener(this);
         }
     }
@@ -227,7 +240,8 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	private boolean chatIsEnabled() {
 		boolean chatIsEnabled;
 		try {
-			chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
+			//chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
+			chatIsEnabled = true;
 		} catch (NullPointerException npe) {
 			chatIsEnabled = false;
 		}

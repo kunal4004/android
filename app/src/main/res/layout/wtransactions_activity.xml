@@ -69,7 +69,7 @@
             android:layout_height="0.1dp"
             android:background="@color/black_desc_opacity" />
 
-        <ExpandableListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transactionListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
