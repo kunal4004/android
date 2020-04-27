@@ -240,8 +240,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	private boolean chatIsEnabled() {
 		boolean chatIsEnabled;
 		try {
-			//chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
-			chatIsEnabled = true;
+			chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
 		} catch (NullPointerException npe) {
 			chatIsEnabled = false;
 		}
