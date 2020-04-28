@@ -8,9 +8,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.ui.adapters.holder.TransactionHeaderViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.TransactionItemViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.TransactionViewHolder
-import java.lang.NullPointerException
 
-class AccountTransactionAdapter(private val transactionList: MutableList<Transaction>?) : RecyclerView.Adapter<TransactionViewHolder>() {
+class WTransactionAdapter(private val transactionList: MutableList<Transaction>?) : RecyclerView.Adapter<TransactionViewHolder>() {
 
     override fun getItemViewType(position: Int): Int = if (transactionList?.get(position) is TransactionItem) 1 else 0
 
@@ -22,7 +21,7 @@ class AccountTransactionAdapter(private val transactionList: MutableList<Transac
         return when (viewType) {
             0 -> TransactionHeaderViewHolder(parent)
             1 -> TransactionItemViewHolder(parent)
-            else -> throw NullPointerException("Invalid WTransaction viewType found $viewType")
+            else -> throw IllegalStateException("Invalid WTransaction viewType found $viewType")
         }
     }
 
@@ -31,6 +30,7 @@ class AccountTransactionAdapter(private val transactionList: MutableList<Transac
             when (this) {
                 is TransactionHeader -> (holder as? TransactionHeaderViewHolder)?.setTransactionHeader(this as? TransactionHeader)
                 is TransactionItem -> (holder as? TransactionItemViewHolder)?.setTransactionContent(this as? TransactionItem)
+                else -> throw IllegalStateException("Invalid item type $this")
             }
         }
     }
