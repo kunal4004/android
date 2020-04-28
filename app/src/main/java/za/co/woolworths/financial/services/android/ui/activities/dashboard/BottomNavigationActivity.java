@@ -37,6 +37,7 @@ import com.google.gson.JsonParser;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -241,7 +242,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         addDrawerFragment();
-
     }
 
     private void initBadgeCounter() {
@@ -296,6 +296,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (appLinkData != null) {
             ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(appLinkData.toString());
             if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
+                Map<String, String> arguments = new HashMap<>();
+                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
+                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, appLinkData.toString());
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
                 pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
             }
         }

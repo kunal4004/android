@@ -7,7 +7,15 @@
     android:clickable="true"
     android:focusableInTouchMode="true">
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:text="@string/only_rands_no_cents"
+            style="@style/cli_only_cents_banner" />
+
+        <androidx.core.widget.NestedScrollView
         android:id="@+id/nsSupplyExpense"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,10 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:text="@string/only_rands_no_cents"
-                style="@style/cli_only_cents_banner" />
 
             <View
                 style="@style/top_view_style_income_expenses"/>
@@ -170,6 +174,7 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
 
     <include

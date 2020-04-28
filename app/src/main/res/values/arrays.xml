@@ -54,12 +54,6 @@
         <item>@string/on_boarding_title_3</item>
         <item>@string/on_boarding_title_4</item>
     </string-array>
-    <integer-array name="on_boarding_walkthrough_images">
-        <item>@drawable/walkthrough_1</item>
-        <item>@drawable/walkthrough_2</item>
-        <item>@drawable/walkthrough_3</item>
-        <item>@drawable/walkthrough_4</item>
-    </integer-array>
 
     <string-array name="death_cover_required_forms">
         <item>@string/balance_protection_claim_form</item>

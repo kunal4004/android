@@ -18,7 +18,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/walkthrough_1">
+            android:src="@drawable/walkthrough_welcome">
         </ImageView>
 
         <LinearLayout

@@ -32,8 +32,8 @@
     <TextView
         android:id="@+id/freeGiftText"
         style="@style/myriad_pro_regular_black"
-        android:textSize="@dimen/eleven_sp"
-        android:lineSpacingMultiplier="1.45"
+        android:textSize="@dimen/fifteen_sp"
+        android:lineSpacingMultiplier="1.40"
         app:layout_constraintTop_toBottomOf="@id/freeGiftTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,12 +42,12 @@
 
     <TextView
         style="@style/myriad_pro_regular_black"
-        android:textSize="@dimen/eleven_sp"
+        android:textSize="@dimen/twelve_sp"
         android:text="@string/free_gift_with_purchase_availabilty"
         app:layout_constraintTop_toBottomOf="@id/freeGiftText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/black40"
+        android:textColor="@color/gray"
         android:layout_marginTop="@dimen/eight_dp"
         />
 
