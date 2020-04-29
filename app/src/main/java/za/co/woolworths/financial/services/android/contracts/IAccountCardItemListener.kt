@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
 interface IAccountCardItemListener {
-    fun onLinkedAccountClicked(productGroup: String)
+    fun onLinkedAccountItemClicked(productGroup: String)
+    fun onApplyNowAccountItemClicked(productGroup: String)
 }

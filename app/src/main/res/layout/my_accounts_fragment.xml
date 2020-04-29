@@ -106,11 +106,10 @@
                         layout="@layout/my_account_fragment_header_logged_in"
                         android:visibility="visible" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/accountProductRecyclerview"
-                        android:layout_width="match_parent"
-                        android:nestedScrollingEnabled="true"
-                        android:layout_height="wrap_content"/>
+                    <include
+                        android:id="@+id/linkedLayout"
+                        layout="@layout/account_linked_layout"
+                        android:visibility="visible" />
 
                     <include
                         android:id="@+id/applyNowLayout"
