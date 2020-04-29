@@ -11,32 +11,33 @@
         android:layout_height="wrap_content"
         android:background="@drawable/stores_details_background"
         android:minHeight="95dp"
-        android:paddingRight="16dp"
+        android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
-        android:orientation="vertical"
-        >
+        android:paddingRight="16dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/storeName"
+            <TextView
+                android:id="@+id/storeNameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/distance"
-                android:paddingRight="10dp"
-                android:layout_marginRight="2dp"
-                android:textAllCaps="true"
+                android:layout_marginEnd="2dp"
+                android:layout_toStartOf="@+id/distanceTextView"
+                android:fontFamily="@font/futura_semi_bold_ttf"
                 android:letterSpacing="0.02"
+                android:paddingEnd="10dp"
+                android:text="@string/placeholder"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="17sp"
-                app:WTextView_font="medium_bold" />
+                tools:ignore="RtlSymmetry" />
 
             <TextView
-                android:id="@+id/distance"
+                android:id="@+id/distanceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -48,20 +49,17 @@
                 tools:ignore="UnusedAttribute" />
         </RelativeLayout>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/offerings"
+        <TextView
+            android:id="@+id/offeringsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textAllCaps="true"
+            android:fontFamily="@font/futura_medium_ttf"
             android:letterSpacing="0.08"
-            android:textColor="@color/black"
-            android:textSize="13sp"
             android:lineSpacingExtra="2dp"
-            app:WTextView_font="medium"
-
-
-            />
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="13sp" />
     </LinearLayout>
 
     <ScrollView
@@ -71,7 +69,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -85,27 +83,27 @@
                     android:id="@+id/imgDirection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:background="@drawable/ic_directions" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/storeAddress"
+                <TextView
+                    android:id="@+id/storeAddressTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/default_width"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/imgcaret1"
-                    android:layout_toRightOf="@+id/imgDirection"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:layout_marginStart="@dimen/default_width"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toStartOf="@+id/imgcaret1"
+                    android:layout_toEndOf="@+id/imgDirection"
+                    android:fontFamily="@font/myriad_pro_regular_otf"
                     android:lineSpacingExtra="4sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:id="@+id/imgcaret1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:background="@drawable/ic_caret_black" />
 
             </RelativeLayout>
@@ -115,64 +113,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/stores_details_background"
-                android:padding="16dp"
-                >
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/imgCall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/ic_call24" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/storeNumber"
+                <TextView
+                    android:id="@+id/storeNumberTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/default_width"
-                    android:layout_marginRight="16dp"
-                    android:layout_toLeftOf="@+id/imgcaret2"
-                    android:layout_toRightOf="@+id/imgCall"
+                    android:layout_marginStart="@dimen/default_width"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@+id/imgcaret2"
+                    android:layout_toEndOf="@+id/imgCall"
+                    android:fontFamily="@font/myriad_pro_regular_otf"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:id="@+id/imgcaret2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/ic_caret_black" />
 
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/storeTimingView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:paddingBottom="19dp"
                 android:padding="16dp"
-                android:id="@+id/storeTimingView"
-                >
+                android:paddingBottom="19dp">
 
                 <ImageView
                     android:id="@+id/imgTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:background="@drawable/ic_time24" />
 
                 <LinearLayout
                     android:id="@+id/timeingsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/default_width"
-                    android:layout_toRightOf="@+id/imgTime"
-                    android:orientation="vertical"
-                    ></LinearLayout>
+                    android:layout_marginStart="@dimen/default_width"
+                    android:layout_toEndOf="@+id/imgTime"
+                    android:orientation="vertical" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -180,16 +175,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/store_details_background_border_on_top"
-                android:paddingBottom="19dp"
                 android:paddingLeft="@dimen/default_margin"
+                android:paddingTop="10dp"
                 android:paddingRight="@dimen/default_margin"
-                android:paddingTop="10dp">
+                android:paddingBottom="19dp">
 
                 <ImageView
                     android:id="@+id/imgW"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:background="@drawable/ic_maps_w" />
 
                 <LinearLayout
@@ -197,35 +192,34 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/BrandsLabel"
-                    android:paddingLeft="@dimen/default_width"
-                    android:layout_toRightOf="@+id/imgW"
-                    android:orientation="vertical">
+                    android:layout_toEndOf="@+id/imgW"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/default_width"
+                    tools:ignore="RtlSymmetry">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:paddingLeft="@dimen/default_width"
+                        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+                        android:paddingStart="@dimen/default_width"
                         android:textColor="@color/black"
-                        app:WTextView_font="myriadpro_semibold"
-                        />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/BrandsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="3dp"
-                    android:textSize="15sp"
-                    android:paddingLeft="@dimen/default_width"
-                    android:textColor="@color/black"
-                    android:text="@string/brands"
-                    app:WTextView_font="myriadpro_semibold"
                     android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/imgW" />
-
+                    android:layout_toEndOf="@+id/imgW"
+                    android:fontFamily="@font/myriad_pro_semi_bold_otf"
+                    android:paddingStart="@dimen/default_width"
+                    android:paddingTop="3dp"
+                    android:text="@string/brands"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    tools:ignore="RtlSymmetry" />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

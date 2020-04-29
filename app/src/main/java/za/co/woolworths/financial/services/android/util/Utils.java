@@ -556,6 +556,16 @@ public class Utils {
 		}
 	}
 
+	public static void setBackgroundColor(TextView textView, int drawableId, int value) {
+		Context context = textView.getContext();
+		textView.setText(context.getResources().getString(value));
+		textView.setTextColor(WHITE);
+		textView.setBackgroundResource(drawableId);
+		Typeface futuraFont = Typeface.createFromAsset(context.getAssets(), "fonts/WFutura-SemiBold.ttf");
+		textView.setTypeface(futuraFont);
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
+	}
+
 	public static void setBackgroundColor(WTextView textView, int drawableId, int value) {
 		Context context = textView.getContext();
 		textView.setText(context.getResources().getString(value));
@@ -585,7 +595,7 @@ public class Utils {
 		return resources.getString(id);
 	}
 
-	public static void setRagRating(Context context, WTextView storeOfferings, String status) {
+	public static void setRagRating(Context context, TextView storeOfferings, String status) {
 		Resources resources = context.getResources();
 		if (status.equalsIgnoreCase(resources.getString(R.string.status_red))) {
 			setBackgroundColor(storeOfferings, R.drawable.round_red_corner, R.string.status_red_desc);
