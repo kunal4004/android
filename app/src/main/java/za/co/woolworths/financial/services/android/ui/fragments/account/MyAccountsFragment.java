@@ -398,6 +398,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 
 		}
+		
 		//hide content for unavailable products
 		boolean sc = true, cc = true, pl = true;
 		for (String s : unavailableAccounts) {
