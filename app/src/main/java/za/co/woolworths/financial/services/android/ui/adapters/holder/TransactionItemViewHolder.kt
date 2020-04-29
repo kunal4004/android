@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.WFormatter
 import kotlin.math.roundToInt
 
-class TransactionItemViewHolder(parent: ViewGroup) : TransactionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.transaction_list_child_item, parent, false)) {
+class TransactionItemViewHolder(parent: ViewGroup) : WParentItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.transaction_list_child_item, parent, false)) {
 
     fun setTransactionContent(transactionItem: TransactionItem?) {
 
