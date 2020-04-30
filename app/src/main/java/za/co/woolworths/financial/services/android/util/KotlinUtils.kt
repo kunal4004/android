@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
@@ -12,7 +13,6 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -21,6 +21,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.account.Transaction
+import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
+import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
@@ -193,6 +196,41 @@ class KotlinUtils {
             val bundle = Bundle()
             bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
             navigationController.setGraph(navigationController.graph, bundle)
+        }
+
+        /***
+         * Convert response to a list of transactions with TransactionHeader()
+         * and TransactionItem() that inherits Transaction
+         */
+        @SuppressLint("SimpleDateFormat")
+        fun getListOfTransaction(transactionItemList: MutableList<TransactionItem>?): MutableList<Transaction> {
+
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd")
+            val outputFormat = SimpleDateFormat("MMMM yyyy")
+
+            //Setting Date to the format dd/MM/yyyy
+            val timeFormat = SimpleDateFormat("dd / MM / yyyy")
+
+            transactionItemList?.forEach { transactionItem ->
+                val transactionDate = transactionItem.date
+                val inputDate = transactionDate?.let { date -> inputFormat.parse(date) }
+                val outputMonthYear = inputDate?.let { date -> outputFormat.format(date) }
+                transactionItem.month = outputMonthYear
+
+                val formattedDate = timeFormat.format(inputDate)
+                transactionItem.date = formattedDate
+            }
+
+            val groupTransactionsByMonth = transactionItemList?.groupBy { it.month }
+
+            val transactionList: MutableList<Transaction> = mutableListOf()
+
+            groupTransactionsByMonth?.forEach { transactionMap ->
+                transactionList.add(TransactionHeader(transactionMap.key))
+                transactionMap.value.forEach { transactionItem -> transactionList.add(transactionItem) }
+            }
+
+            return transactionList
         }
     }
 }

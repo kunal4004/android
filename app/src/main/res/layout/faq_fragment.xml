@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:clickable="true"
-        android:focusable="true"
-        tools:context="za.co.woolworths.financial.services.android.ui.fragments.CategoryFragment">
-
-    <data>
-
-        <import type="android.view.View"/>
-
-        <variable
-            name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment"/>
-
-        <variable
-            name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.faq.FAQViewModel"/>
-    </data>
-
-    <FrameLayout
+ <FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:clickable="true"
+    android:focusable="true"
         android:id="@+id/search_store_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,12 +60,106 @@
 
         </LinearLayout>
 
-        <include
-            android:id="@+id/incProgressBar"
-            layout="@layout/progress_layout"/>
+    <ProgressBar
+        android:id="@+id/progressCreditLimit"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/black" />
 
-        <include
-            android:id="@+id/incConnectionHandler"
-            layout="@layout/no_connection_handler"/>
-    </FrameLayout>
-</layout>
+    <RelativeLayout
+        android:id="@+id/no_connection_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@color/recent_search_bg"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgNoConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:alpha="0.4"
+            android:background="@color/transparent"
+            android:src="@drawable/emptyoopssomethingwentwrong"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtConnectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/imgNoConnection"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.03"
+            android:lineSpacingExtra="2sp"
+            android:text="@string/no_connection_desc"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/transparent"
+            app:WTextView_font="medium_bold"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvConnectionSubTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/txtConnectionTitle"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.03"
+            android:lineSpacingExtra="2sp"
+            android:text="@string/no_connection_desc"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:WTextView_font="medium_bold"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtWWDescription"
+            style="@style/TableLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvConnectionSubTitle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="44dp"
+            android:gravity="center"
+            android:text="@string/no_connection_desc_1"
+            android:textColor="@color/semi_transparent_black"
+            android:background="@color/transparent"
+            app:WTextView_font="myriadpro_regular"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnRetry"
+            style="@style/whiteButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/txtWWDescription"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:letterSpacing="0.15"
+            android:text="@string/retry"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:WButton_font="medium_bold"/>
+    </RelativeLayout>
+
+</FrameLayout>

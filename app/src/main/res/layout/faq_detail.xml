@@ -1,73 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:clickable="true"
-        android:focusable="true"
-        tools:context="za.co.woolworths.financial.services.android.ui.fragments.faq.detail.FAQDetailFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_store_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
-    <data>
-
-        <import type="android.view.View"/>
-
-        <variable
-            name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.faq.detail.FAQDetailFragment"/>
-
-        <variable
-            name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.faq.detail.FAQDetailViewModel"/>
-    </data>
-
-    <LinearLayout
-        android:id="@+id/search_store_activity"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nest_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nest_scrollview"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/default_margin"
+            tools:ignore="RtlSymmetry">
 
-            <LinearLayout
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/default_margin"
-                android:layout_marginTop="30dp"
-                android:orientation="vertical"
-                android:paddingEnd="@dimen/default_margin">
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10dp"
+                android:layout_toStartOf="@+id/imgNextRow"
+                android:gravity="start"
+                android:text="@string/placeholder"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_semibold"
+                tools:ignore="ObsoleteLayoutParam" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginBottom="10dp"
-                    android:layout_toStartOf="@+id/imgNextRow"
-                    android:gravity="start"
-                    android:text="@string/placeholder"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_semibold"/>
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/bank_spacing_width"
+                android:gravity="start"
+                android:lineSpacingExtra="2.2dp"
+                android:text="@string/placeholder"
+                android:textColor="@color/black_desc_opacity"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/bank_spacing_width"
-                    android:gravity="start"
-                    android:lineSpacingExtra="2.2dp"
-                    android:text="@string/placeholder"
-                    android:textColor="@color/black_desc_opacity"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular"/>
-
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </LinearLayout>
-</layout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
