@@ -14,7 +14,7 @@
     sothree:umanoScrollableView="@+id/list"
     sothree:umanoShadowHeight="0dp">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:id="@+id/mapLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

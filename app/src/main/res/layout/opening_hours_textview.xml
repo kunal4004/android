@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<za.co.woolworths.financial.services.android.ui.views.WTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/openingHoursTextView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="15sp"
+    android:fontFamily="@font/myriad_pro_regular_otf"
     android:lineSpacingExtra="4sp"
     android:paddingBottom="4dp"
     android:textColor="@color/black"
-    android:id="@+id/openingHours"
-    app:WTextView_font="myriadpro_regular">
-
-</za.co.woolworths.financial.services.android.ui.views.WTextView>
+    android:textSize="15sp" />

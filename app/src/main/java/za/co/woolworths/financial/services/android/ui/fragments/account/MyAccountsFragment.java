@@ -63,7 +63,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -174,6 +174,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		if (getActivity() instanceof MyAccountActivity){
+			if (getActivity() !=null) {
+				if (((MyAccountActivity) getActivity()).getSupportActionBar() != null)
+					((MyAccountActivity) getActivity()).getSupportActionBar().hide();
+			}
+		}
 		if (savedInstanceState == null) {
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
@@ -618,8 +624,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
 				break;
 			case R.id.contactUs:
-				if (activity instanceof BottomNavigationActivity){
-					getBottomNavigationActivity().pushFragment(new ContactUsFragment());
+				if (activity instanceof BottomNavigationActivity) {
+					if (getBottomNavigationActivity() != null)
+						getBottomNavigationActivity().pushFragment(new ContactUsFragment());
+					return;
+				}
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(new ContactUsFragment());
 				}
 				break;
 			case R.id.helpSection:
@@ -631,6 +642,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				}
 				if (activity instanceof BottomNavigationActivity){
 					getBottomNavigationActivity().pushFragment(helpSectionFragment);
+					return;
+				}
+
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(helpSectionFragment);
 				}
 				break;
 			case R.id.signOutBtn:
@@ -644,7 +660,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
 			case R.id.storeLocator:
 				if (activity instanceof BottomNavigationActivity){
+					if (getBottomNavigationActivity()!=null)
 					getBottomNavigationActivity().pushFragment(new StoresNearbyFragment1());
+					return;
+				}
+
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(new StoresNearbyFragment1());
 				}
 				break;
 			case R.id.rlMyPreferences:
