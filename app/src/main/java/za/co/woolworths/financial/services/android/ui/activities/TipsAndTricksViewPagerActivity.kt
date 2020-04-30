@@ -16,7 +16,10 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -249,13 +252,14 @@ import kotlin.properties.Delegates
         }
     }
 
-    private fun presentAccountStatements() {
-        availableAccounts = getAvailableAccounts()
-        if (availableAccounts.contains("SC"))
-            redirectToMyAccountLandingPage(0)
-        else if (availableAccounts.contains("PL"))
-            redirectToMyAccountLandingPage(2)
-    }
+     private fun presentAccountStatements() {
+         availableAccounts = getAvailableAccounts()
+         redirectToAccountSignInActivity( when(availableAccounts[0]){
+             "SC" -> ApplyNowState.STORE_CARD
+             "PL" -> ApplyNowState.PERSONAL_LOAN
+             else -> ApplyNowState.STORE_CARD
+         })
+     }
 
     private fun redirectToMyAccountLandingPage(position: Int) {
         val intent = Intent(this, MyAccountActivity::class.java)
@@ -269,7 +273,7 @@ import kotlin.properties.Delegates
 
     private fun getAvailableAccounts(): ArrayList<String> {
         availableAccounts.clear()
-        accountsResponse?.accountList?.forEach() {
+        accountsResponse?.accountList?.forEach {
             availableAccounts.add(it.productGroupCode.toUpperCase())
         }
         return availableAccounts
@@ -281,6 +285,14 @@ import kotlin.properties.Delegates
          bundle.putSerializable("APPLY_NOW_STATE", applyNowState)
          bundle.putString("ACCOUNT_INFO", Gson().toJson(accountsResponse))
          intent.putExtras(bundle)
+         startActivity(intent)
+         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+     }
+
+     private fun redirectToAccountSignInActivity(applyNowState: ApplyNowState) {
+         val intent = Intent(this@TipsAndTricksViewPagerActivity, AccountSignedInActivity::class.java)
+         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
+         intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(accountsResponse))
          startActivity(intent)
          overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
      }

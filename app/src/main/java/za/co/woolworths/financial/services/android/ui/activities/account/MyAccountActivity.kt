@@ -8,11 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_account_activity.*
-import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
-import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
@@ -38,23 +33,6 @@ class MyAccountActivity : AppCompatActivity() {
                     fragment = MyAccountsFragment(),
                     tag = MyAccountsFragment::class.java.simpleName,
                     containerViewId = R.id.accountContainerFrameLayout)
-        }
-
-        intent?.extras?.apply {
-            val accounts: String? = getString("accounts", "")
-            accounts?.apply {
-                val accountResponse = Gson().fromJson(this, AccountsResponse::class.java)
-                accountResponse?.accountList?.get(0)?.apply {
-                    if (productGroupCode.toLowerCase() != "cc") {
-                        WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId)
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
-                        val openStatement =
-                                Intent(this@MyAccountActivity, StatementActivity::class.java)
-                        startActivityForResult(openStatement, REQUEST_CODE_OPEN_STATEMENT)
-                        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                    }
-                }
-            }
         }
     }
 
