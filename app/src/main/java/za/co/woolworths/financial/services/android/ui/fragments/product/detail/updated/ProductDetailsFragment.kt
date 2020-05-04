@@ -1127,15 +1127,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
 
-            DrawImage(this).let { dImage ->
                 images.forEach { image ->
                     layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                        dImage.displaySmallImage(view.promotionImage, image)
+                        ImageManager.loadImage(view.promotionImage, image)
                         promotionalImages?.addView(view)
-                    }
                 }
             }
-
         }
 
     }
