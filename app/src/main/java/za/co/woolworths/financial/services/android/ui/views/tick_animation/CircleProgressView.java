@@ -186,9 +186,7 @@ public class CircleProgressView extends View {
                 R.styleable.CircleProgressView));
 
         if (!isInEditMode()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            }
+            setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
 
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -711,27 +709,6 @@ public class CircleProgressView extends View {
     public void setBarColor(@ColorInt int... barColors) {
         this.mBarColors = barColors;
         setupBarPaint();
-    }
-
-    /**
-     * @param _clippingBitmap The bitmap used for clipping. Set to null to disable clipping.
-     *                        Default: No clipping.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void setClippingBitmap(Bitmap _clippingBitmap) {
-
-        if (getWidth() > 0 && getHeight() > 0) {
-            mClippingBitmap = Bitmap.createScaledBitmap(_clippingBitmap, getWidth(), getHeight(), false);
-        } else {
-            mClippingBitmap = _clippingBitmap;
-        }
-        if (mClippingBitmap == null) {
-            // enable HW acceleration
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        } else {
-            // disable HW acceleration
-            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
     }
 
     /**

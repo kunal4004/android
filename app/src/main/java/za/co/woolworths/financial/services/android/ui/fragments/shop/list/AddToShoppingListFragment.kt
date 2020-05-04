@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_list_content.*
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -108,7 +108,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun retrieveShoppingList() {
         loadShoppingList(true)
         val shoppingListRequest = OneAppService.getShoppingLists()
-        shoppingListRequest.enqueue(CompletionHandler(object : RequestListener<ShoppingListsResponse> {
+        shoppingListRequest.enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(shoppingListResponse: ShoppingListsResponse?) {
                 activity?.let {
                     shoppingListResponse?.apply {
@@ -277,7 +277,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>, listId: String) {
         shoppingListPostProgress(true)
        val shoppingListResponseCall =  OneAppService.addToList(addToListRequest, listId)
-        shoppingListResponseCall.enqueue(CompletionHandler(object :RequestListener<ShoppingListItemsResponse>{
+        shoppingListResponseCall.enqueue(CompletionHandler(object : IResponseListener<ShoppingListItemsResponse> {
             override fun onSuccess(shoppingListResponse: ShoppingListItemsResponse?) {
                 shoppingListResponse?.apply {
                     addProductResponseHandler(listId, this)
@@ -302,7 +302,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
         val orderRequest =  OneAppService.addOrderToList(orderId,orderRequestList)
-        orderRequest.enqueue(CompletionHandler(object:RequestListener<OrderToListReponse>{
+        orderRequest.enqueue(CompletionHandler(object: IResponseListener<OrderToListReponse> {
             override fun onSuccess(orderDetailsResponse: OrderToListReponse?) {
                 orderDetailsResponse?.apply {
                     addOrderResponseHandler(orderRequestList.shoppingListId, this)

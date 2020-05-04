@@ -17,4 +17,7 @@ public class Response {
 	@SerializedName("message")
 	@Expose
 	public String message;
+	@SerializedName("version")
+	@Expose
+	public String version;
 }

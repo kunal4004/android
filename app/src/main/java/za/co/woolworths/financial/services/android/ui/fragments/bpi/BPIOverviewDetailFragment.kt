@@ -108,7 +108,6 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
         try {
             return SimpleDateFormat("dd/MM/yyyy").format(SimpleDateFormat("yyyy-MM-dd").parse(effectiveDate))
         } catch (ex: ParseException) {
-            Log.d("dateParserEx", ex.message)
         }
         return ""
     }

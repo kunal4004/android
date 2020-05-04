@@ -13,15 +13,11 @@
     <color name="black_off">#343434</color>
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#efefef</color>
-    <color name="cli_store_card">#4f5051</color>
-    <color name="cli_credit_card">#2e353b</color>
-    <color name="cli_personal_loan">#312439</color>
     <color name="semi_transparent_black">#50000000</color>
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>
     <color name="mask_opacity">#80000000</color>
-    <color name="black_desc_opacity_light">#85000000</color>
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
     <color name="bg_overlay">#20000000</color>
@@ -30,10 +26,8 @@
 
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>
-    <color name="reward_status_bar_color">#cc000000</color>
     <color name="default_background">#ececec</color>
-    <color name="product_search_hint">#30000000</color>
-    <color name="divider">#B6B6B6</color>
+    <color name="product_search_hint">#40000000</color>
     <color name="product_divider">#22000000</color>
     <color name="barcode_button">#40ffffff</color>
     <color name="barcode_button_light">#25ffffff</color>
@@ -64,7 +58,6 @@
     <color name="toast_background">#CC030303</color>
     <color name="was_price_color">#D0021B</color>
     <color name="unavailable_color">#F9F9F9</color>
-    <color name="disabled_text">#212B36</color>
     <color name="expandable_title_color">#FF212B36</color>
     <color name="expandable_gradient_color">#09000000</color>
     <color name="dark_gray">#4A4A4A</color>
@@ -85,9 +78,7 @@
     <color name="permanent_card_block_desc_color">#7F7F7F</color>
     <color name="no_active_card_title">#FF222222</color>
     <color name="success_stroke_color"> #CC196A</color>
-    <color name="trans_success_stroke_color">#307A4183</color>
     <color name="gray">#FF7F7F7F</color>
-    <color name="button_disabled">#B2B2B2</color>
     <color name="chat_hint">#FFBCBCBC</color>
     <color name="chat_sent_message_text_color">#353535</color>
     <color name="chat_offline_banner_bg_color">#F7747474</color>
@@ -96,5 +87,20 @@
     <color name="input_error_color_code">#D0021B</color>
     <color name="input_error_color_code_05">#05D0021B</color>
     <color name="input_error_box_color">#59FBEAE5</color>
-    <color name="transparent_4d">#4D000000</color>
+    <color name="account_card_desc_grey_color">#777777</color>
+    <color name="light_gray_background">#60D8D8D8</color>
+    <color name="semi_transparent">#20ffffff</color>
+    <color name="searchBarHintColor">#20000000</color>
+    <color name="walk_through_welcome">#FFEADF</color>
+    <color name="bottom_shop_background">#9cb9af</color>
+    <color name="top_shop_background">#9cb9af</color>
+    <color name="onBoarding_1">#FFEADF</color>
+    <color name="onBoarding_2">#BED3CA</color>
+    <color name="onBoarding_3">#F7F8EC</color>
+    <color name="onBoarding_4">#D6DADD</color>
+    <color name="transaction_date_color">#66030303</color>
+    <color name="status_dark_green">#A5B52B</color>
+    <color name="lighter_gray_background">#30D8D8D8</color>
+    <color name="arrears_red_color_code">#F43F37</color>
+    <color name="sign_in_register_button_border">#E5E5E5</color>
 </resources>

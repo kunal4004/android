@@ -40,14 +40,12 @@
                     android:orientation="vertical">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvCurrentLocationTitle"
                         style="@style/style_delivery_location_item_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/set_your_delivery_location"/>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvCurrentLocationDescription"
                         style="@style/style_delivery_location_item_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

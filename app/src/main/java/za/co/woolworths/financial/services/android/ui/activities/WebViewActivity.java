@@ -69,13 +69,10 @@ public class WebViewActivity extends AppCompatActivity {
 		try {
 			Method m = WebSettings.class.getMethod("setMixedContentMode", int.class);
 			if (m == null) {
-				Log.d("WebSettings", "Error getting setMixedContentMode method");
 			} else {
 				m.invoke(webView.getSettings(), 2); // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
-				Log.d("WebSettings", "Successfully set MIXED_CONTENT_COMPATIBILITY_MODE");
 			}
 		} catch (Exception ex) {
-			Log.e("WebSettings", "Error calling setMixedContentMode: " + ex.getMessage(), ex);
 		}
 		//webView.clearCache(true);
 		//webView.clearHistory();

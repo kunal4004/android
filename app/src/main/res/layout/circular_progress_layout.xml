@@ -8,7 +8,6 @@
     android:background="@color/white">
 
     <View
-        android:id="@+id/vSpaceView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sixteen_dp"
         android:background="@color/default_background"

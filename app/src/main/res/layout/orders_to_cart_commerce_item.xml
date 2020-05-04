@@ -36,7 +36,6 @@
                 android:paddingBottom="32dp">
 
                 <RelativeLayout
-                    android:id="@+id/llSelectedCheckBox"
                     android:layout_width="@dimen/thirty_two_dp"
                     android:layout_height="match_parent">
 
@@ -79,7 +78,6 @@
                         fresco:failureImage="@drawable/woolworth_logo_icon" />
 
                     <LinearLayout
-                        android:id="@+id/llProductInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="26dp"
@@ -98,7 +96,6 @@
                             android:layout_height="wrap_content" />
 
                         <RelativeLayout
-                            android:id="@+id/llQuantityContainer"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
@@ -149,7 +146,6 @@
                             </RelativeLayout>
 
                             <LinearLayout
-                                android:id="@+id/llPriceLayout"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_alignParentEnd="true"

@@ -870,7 +870,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
 			mFirstLayout = false;
 		} catch (Exception exception){
-			Log.d("slidingUpPanelLayout", "IndexOutOfBoundsException: Inconsistency detected. Invalid view holder adapter");
 		}
 	}
 

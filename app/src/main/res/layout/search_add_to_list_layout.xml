@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/rlShoppingListSearch"
-              android:layout_width="match_parent"
+    android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@color/default_background"
               android:orientation="vertical">
@@ -17,7 +16,6 @@
 
 
         <ImageView
-            android:id="@+id/imProductSearch"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignBottom="@+id/textProductSearch"
@@ -36,12 +34,10 @@
             android:clickable="false"
             android:gravity="start|center"
             android:hint="@string/shopping_search_hint"
-            android:inputType="textNoSuggestions"
             android:maxLines="1"
-            android:paddingLeft="@dimen/fifty_dp"
-            android:paddingRight="@dimen/default_margin"
-            android:textColor="@color/black"
-            android:textColorHint="@color/product_search_hint"
+            android:paddingStart="@dimen/fifty_dp"
+            android:paddingEnd="@dimen/default_margin"
+            android:textColor="@color/searchBarHintColor"
             android:textSize="16sp"
             app:WTextView_font="myriadpro_regular"/>
 

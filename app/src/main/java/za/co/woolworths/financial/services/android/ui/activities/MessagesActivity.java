@@ -27,7 +27,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
@@ -150,7 +150,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 		mCurrentPage = 1;
 		mIsLastPage = false;
 		Call<MessageResponse> messageResponseCall = OneAppService.INSTANCE.getMessagesResponse(PAGE_SIZE, mCurrentPage);
-		messageResponseCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
+		messageResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 			@Override
 			public void onSuccess(MessageResponse messageResponse) {
 				messsageListview.setVisibility(View.GONE);
@@ -184,7 +184,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 		mErrorHandlerView.hideErrorHandlerLayout();
 		mIsLoading = true;
 		Call<MessageResponse> moreMessageRequestCall = OneAppService.INSTANCE.getMessagesResponse(PAGE_SIZE,mCurrentPage);
-		moreMessageRequestCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
+		moreMessageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<MessageResponse>() {
 			@Override
 			public void onSuccess(MessageResponse messageResponse) {
 				int httpCode = messageResponse.httpCode;
@@ -228,7 +228,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 
 	public void setMeassagesAsRead(final List<MessageDetails> readMessages) {
 	    OneAppService.INSTANCE.getReadMessagesResponse(getJsonString(readMessages)).enqueue(
-	            new CompletionHandler<>(new RequestListener<ReadMessagesResponse>() {
+	            new CompletionHandler<>(new IResponseListener<ReadMessagesResponse>() {
                     @Override
                     public void onSuccess(ReadMessagesResponse response) {
 
@@ -312,7 +312,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 						messageList = messageResponse.messagesList;
 						unreadMessageCount = messageResponse.unreadCount;
 						bindDataWithUI(messageList);
-						String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+						String unreadCountValue = Utils.getSessionDaoValue(
 								SessionDao.KEY.UNREAD_MESSAGE_COUNT);
 						if (!TextUtils.isEmpty(unreadCountValue) && TextUtils.isDigitsOnly(unreadCountValue)) {
 							int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
@@ -389,7 +389,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	public Call<DeleteMessageResponse>  deleteMessage(final String id) {
 
 		Call<DeleteMessageResponse> deleteMessageRequestCall = OneAppService.INSTANCE.getDeleteMessagesResponse(id);
-		deleteMessageRequestCall.enqueue(new CompletionHandler<>(new RequestListener<DeleteMessageResponse>() {
+		deleteMessageRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<DeleteMessageResponse>() {
 			@Override
 			public void onSuccess(DeleteMessageResponse response) {
 

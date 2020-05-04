@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +45,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -116,7 +115,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private int mNumberOfListSelected;
 	private List<ChangeQuantity> mChangeQuantityList;
 	private boolean mRemoveAllItemFromCartTapped = false;
-
+	private HashMap<String, List<SkuInventory>> mSkuInventories;
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
 
@@ -147,6 +146,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private boolean isAllInventoryAPICallSucceed;
 	private ImageView imgDeliveryLocation;
 	private TextView upSellMessageTextView;
+	private Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -167,7 +167,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				mToggleItemRemoved = (ToggleRemoveItem) activity;
 			}
 		} catch (IllegalStateException ex) {
-			Log.d("mToggleItemRemoved", ex.toString());
 		}
 		mMapStoreId = new HashMap<>();
 		mChangeQuantityList = new ArrayList<>();
@@ -396,6 +395,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void bindCartData(CartResponse cartResponse) {
 		parentLayout.setVisibility(View.VISIBLE);
+		mSkuInventories = new HashMap<>();
 		if (cartResponse.cartItems.size() > 0) {
 			rlCheckOut.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
@@ -406,7 +406,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
-            loadInventoryRequest(cartResponse.cartItems);
+            queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
@@ -588,7 +588,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.getShoppingCart();
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -652,7 +652,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartProductAdapter.onChangeQuantityLoad();
 		fadeCheckoutButton(true);
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.getChangeQuantity(changeQuantity);
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -687,7 +687,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void removeItem(CommerceItem commerceItem) {
-		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.commerceId).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse response) {
 			}
@@ -702,7 +702,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public Call<ShoppingCartResponse> removeCartItem(final CommerceItem commerceItem) {
 		mCommerceItem = commerceItem;
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeCartItem(commerceItem.commerceItemInfo.getCommerceId());
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -749,7 +749,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mToggleItemRemoved.onRemoveItem(true);
 		updateCartSummary(0);
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeAllCartItems();
-		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingCartResponse>() {
+		shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
@@ -925,7 +925,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							cartActivity.hideEditCart();
 						}
 						Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.suburb.id);
-						setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
+						setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
 							@Override
 							public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
 								if(setDeliveryLocationSuburbResponse.httpCode == 200) {
@@ -1011,58 +1011,60 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		removeCartItem(mCommerceItem);
 	}
 
-	public void loadInventoryRequest(ArrayList<CartItemGroup> items) {
-		MultiMap<String, CommerceItem> multiListItems = MultiMap.create();
+	private void queryServiceInventoryCall(ArrayList<CartItemGroup> items) {
+		MultiMap<String, CommerceItem> multiMapCommerceItem = MultiMap.create();
 		fadeCheckoutButton(true);
 		for (CartItemGroup cartItemGroup : items) {
 			for (CommerceItem commerceItem : cartItemGroup.getCommerceItems()) {
-				multiListItems.put(commerceItem.fulfillmentStoreId, commerceItem);
+				multiMapCommerceItem.put(commerceItem.fulfillmentStoreId, commerceItem);
 			}
 		}
-		Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems = multiListItems.getEntries();
-		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : mapStoreIdWithCommerceItems.entrySet()) {
-			Collection<CommerceItem> collection = collectionEntry.getValue();
-			String fullfilmentStoreId = collectionEntry.getKey();
-			fullfilmentStoreId = fullfilmentStoreId.replaceAll("\"", "");
+
+		mapStoreIdWithCommerceItems = multiMapCommerceItem.getEntries();
+
+		for (Map.Entry<String, Collection<CommerceItem>> commerceItemCollectionMap : mapStoreIdWithCommerceItems.entrySet()) {
+			Collection<CommerceItem> commerceItemCollectionValue = commerceItemCollectionMap.getValue();
+			String fulfilmentStoreId = commerceItemCollectionMap.getKey().replaceAll("[^0-9]", "");
 			List<String> skuIds = new ArrayList<>();
-			for (CommerceItem commerceItem : collection) {
+			for (CommerceItem commerceItem : commerceItemCollectionValue) {
 				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
 			}
-			String multiSKUS = TextUtils.join("-", skuIds);
-			mMapStoreId.put("storeId", fullfilmentStoreId);
+			String groupBySkuIds = TextUtils.join("-", skuIds);
 
-            /***
-             * Handles products with  no fullfilmentStoreId
-             * quantity = -2 is required to prevent change quantity api call
-             * triggered when commerceItemInfo.quantity > quantityInStock
-             */
-            if (TextUtils.isEmpty(fullfilmentStoreId)) {
-                ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
-                for (CartItemGroup cartItemGroup : cartItems) {
-                    for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+			/***
+			 * Handles products with  no fulfilmentStoreId
+			 * quantity = -2 is required to prevent change quantity api call
+			 * triggered when commerceItemInfo.quantity > quantityInStock
+			 */
+			if (TextUtils.isEmpty(fulfilmentStoreId)) {
+				ArrayList<CartItemGroup> cartItems = cartProductAdapter.getCartItems();
+				for (CartItemGroup cartItemGroup : cartItems) {
+					for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 						if (commerceItem.fulfillmentStoreId.isEmpty()) {
 							commerceItem.quantityInStock = 0;
 							commerceItem.commerceItemInfo.quantity = -2;
 							commerceItem.isStockChecked = true;
 							removeItem(commerceItem);
 						}
-                    }
-                }
-                this.cartItems = cartItems;
-            } else {
-                initInventoryRequest(fullfilmentStoreId, multiSKUS);
-            }
+					}
+				}
+				this.cartItems = cartItems;
+			} else {
+				initInventoryRequest(fulfilmentStoreId, groupBySkuIds);
+			}
 		}
 	}
 
 	public Call<SkusInventoryForStoreResponse> initInventoryRequest(String storeId, String multiSku) {
 		Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
-		skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
+		skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 				if (skusInventoryForStoreResponse.httpCode == 200) {
-					mStoreId = skusInventoryForStoreResponse.storeId;
-					updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory, skusInventoryForStoreResponse.storeId);
+					mSkuInventories.put(skusInventoryForStoreResponse.storeId, skusInventoryForStoreResponse.skuInventory);
+					if (mSkuInventories.size() == mapStoreIdWithCommerceItems.size()){
+						updateCartListWithAvailableStock(mSkuInventories);
+					}
 				} else {
 					isAllInventoryAPICallSucceed = false;
 					if (!errorMessageWasPopUp) {
@@ -1121,36 +1123,30 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		});
 	}
 
-	public void updateCartListWithAvailableStock(List<SkuInventory> inventories, String storeID) {
+	private void updateCartListWithAvailableStock(HashMap<String, List<SkuInventory>> mSkuInventories) {
 		isAllInventoryAPICallSucceed = true;
-		HashMap<String, Integer> inventoryMap = new HashMap<>();
-		for (SkuInventory skuInventory : inventories) {
-			inventoryMap.put(skuInventory.sku, skuInventory.quantity);
-		}
-
-		for (CartItemGroup cartItemGroup : cartItems) {
+		for (CartItemGroup cartItemGroup : this.cartItems) {
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-				if (commerceItem.fulfillmentStoreId.equalsIgnoreCase(storeID)) {
-					String sku = commerceItem.commerceItemInfo.getCatalogRefId();
-					if (inventoryMap.containsKey(sku))
-						commerceItem.quantityInStock = inventoryMap.get(sku);
-					commerceItem.isStockChecked = true;
-				}
-				if (!commerceItem.isStockChecked) {
-					isAllInventoryAPICallSucceed = false;
+				String fulfilmentStoreId = commerceItem.fulfillmentStoreId;
+				String skuId = commerceItem.commerceItemInfo.getCatalogRefId();
+				if (mSkuInventories.containsKey(fulfilmentStoreId)) {
+					List<SkuInventory> skuInventories = mSkuInventories.get(fulfilmentStoreId);
+					if (skuInventories != null) {
+						for (SkuInventory skuInventory : skuInventories) {
+							if (skuInventory.sku.equals(skuId)) {
+								commerceItem.quantityInStock = skuInventory.quantity;
+								commerceItem.isStockChecked = true;
+							}
+						}
+					}
 				}
 			}
 		}
-		/**
-		 * @Method getLastValueInMap() return last stored store Id
-		 * to trigger checkout button only once
-		 */
-        String lastMapValue = getLastValueInMap();
-        if (TextUtils.isEmpty(lastMapValue) || lastMapValue.equalsIgnoreCase(mStoreId)) {
-            updateItemQuantityToMatchStock();
-        }
+
+		updateItemQuantityToMatchStock();
+
 		if (cartProductAdapter != null)
-			cartProductAdapter.updateStockAvailability(cartItems);
+			cartProductAdapter.updateStockAvailability(this.cartItems);
 	}
 
 	// If CommerceItem quantity in cart is more then inStock Update quantity to match stock

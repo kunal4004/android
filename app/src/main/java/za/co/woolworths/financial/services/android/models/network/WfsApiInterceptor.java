@@ -24,13 +24,11 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Log.i(TAG, "inside intercept callback");
 
         Request request = chain.request();
         long t1 = System.nanoTime();
 
         String requestLog = String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers());
-        Log.d(TAG,"request" + "\n" + requestLog);
 
         String cacheTimeHeaderValue = request.header("cacheTime");
         long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds

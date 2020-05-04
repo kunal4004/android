@@ -3,12 +3,11 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -17,7 +16,7 @@ import com.awfs.coordination.R;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -36,7 +35,6 @@ import static androidx.lifecycle.Lifecycle.State.STARTED;
 
 public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
-	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
 	public String productOfferingId;
 	private ErrorHandlerView mErrorHandlerView;
@@ -46,14 +44,13 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	private String accountNumber;
 	private int lastPosition = -1;
 	private String cardType;
+	private ImageButton mCloseTransactionImageButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.wtransactions_activity);
 		Utils.updateStatusBarBackground(this);
-		toolbar = findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WTransactionsActivity.this.getApplication();
 		mErrorHandlerView = new ErrorHandlerView(this, woolworthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
@@ -62,9 +59,9 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 				(WTextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(null);
-		getSupportActionBar().setElevation(0);
+		mCloseTransactionImageButton = (ImageButton)findViewById(R.id.closeTransactionImageButton);
+		mCloseTransactionImageButton.setOnClickListener(this);
+
 		transactionListview = findViewById(R.id.transactionListView);
 		pbTransaction = findViewById(R.id.pbTransaction);
 		chatIcon = findViewById(R.id.chatIcon);
@@ -97,7 +94,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 
 	private void transactionAsyncAPI(final String productOfferingId) {
 		mExecuteTransactionRequest = OneAppService.INSTANCE.getAccountTransactionHistory(productOfferingId);
-		mExecuteTransactionRequest.enqueue(new CompletionHandler<>(new RequestListener<TransactionHistoryResponse>() {
+		mExecuteTransactionRequest.enqueue(new CompletionHandler<>(new IResponseListener<TransactionHistoryResponse>() {
 			@Override
 			public void onSuccess(TransactionHistoryResponse transactionHistoryResponse) {
 				dismissProgress();
@@ -143,14 +140,6 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 		},TransactionHistoryResponse.class));
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			onBackPressed();
-			return true;
-		}
-		return false;
-	}
 
 	@Override
 	public void onBackPressed() {
@@ -183,6 +172,9 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+			case R.id.closeTransactionImageButton:
+				onBackPressed();
+				break;
 			case R.id.chatIcon:
 				Utils.triggerFireBaseEvents(Utils.isOperatingHoursForInAppChat() ? FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE : FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE);
 				Intent intent = new Intent(this, WChatActivity.class);

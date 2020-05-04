@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
@@ -233,7 +233,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         onLoad();
         UserStatement userStatement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
         cliGetStatements = OneAppService.INSTANCE.getStatementResponse(userStatement);
-        cliGetStatements.enqueue(new CompletionHandler<>(new RequestListener<StatementResponse>() {
+        cliGetStatements.enqueue(new CompletionHandler<>(new IResponseListener<StatementResponse>() {
             @Override
             public void onSuccess(StatementResponse statementResponse) {
                 if (statementResponse != null && getActivity() !=null) {
@@ -518,7 +518,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         try {
             Utils.deleteDirectory(new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf"));
         } catch (Exception ex) {
-            Log.d("deleteDirectoryErr", ex.toString());
         }
     }
 }

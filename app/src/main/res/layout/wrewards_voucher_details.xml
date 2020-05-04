@@ -1,57 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#cc000000"
-              android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#cc000000"
+    android:fitsSystemWindows="true">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <za.co.woolworths.financial.services.android.ui.views.card_swipe.CardStackView
+        android:id="@+id/cardSwipeStackView"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="70dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:scaleDiff="0.018"
+        app:stackFrom="top"
+        app:swipeDirection="vertical"
+        app:swipeEnabled="true"
+        app:swipeThreshold="0.75"
+        app:translationDiff="17"
+        app:visibleCount="3" />
+
+    <TextView
+        android:id="@+id/termsCondition"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:background="@android:color/transparent"
-        android:minHeight="?attr/actionBarSize"
-        app:popupTheme="@style/WRewardsVoucherDetails"
-        app:theme="@style/WRewardsVoucherDetails"
-        app:title="">
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:padding="8dp"
+        android:text="@string/view_terms_conditions"
+        android:textAllCaps="true"
+        android:textColor="#b3ffffff"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/termsAndConditionsGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/termsCondition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/terms_and_conditions_margin"
-            android:gravity="center"
-            android:layout_gravity="right"
-            android:text="@string/view_terms_conditions"
-            android:textAllCaps="true"
-            android:textColor="#b3ffffff"
-            android:textSize="12sp"
-            android:letterSpacing="0.1"
-            app:WTextView_font="medium"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/toolbarGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="?attr/actionBarSize" />
 
-    </androidx.appcompat.widget.Toolbar>
+    <ImageButton
+        android:id="@+id/closeVoucherImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@color/transparent"
+        android:padding="16dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/close_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <za.co.woolworths.financial.services.android.ui.views.SwipeStack
-            android:id="@+id/swipeStack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            android:paddingTop="16dp"
-            android:paddingLeft="@dimen/voucher_card_layout_padding"
-            android:paddingRight="@dimen/voucher_card_layout_padding"
-            app:stack_rotation="0"
-            app:stack_size="3"
-            app:stack_spacing="-10dp"
-            />
-    </RelativeLayout>
-
-</LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/termsAndConditionsGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="@dimen/termsAndConditionsGuideLine_percent_90" />
+</androidx.constraintlayout.widget.ConstraintLayout>

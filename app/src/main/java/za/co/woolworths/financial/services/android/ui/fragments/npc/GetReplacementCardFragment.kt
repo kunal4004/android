@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.Manifest
+import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -15,13 +16,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.NonNull
-import androidx.annotation.RequiresApi
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.replace_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
-import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -36,7 +36,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductL
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.Utils
 
-@RequiresApi(Build.VERSION_CODES.M)
 class GetReplacementCardFragment : MyCardExtension() {
 
     companion object {
@@ -95,6 +94,7 @@ class GetReplacementCardFragment : MyCardExtension() {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private fun checkForLocationPermission() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES)
         activity?.apply {
@@ -116,7 +116,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                     ?: 0.0, location?.longitude ?: 0.0, "", true)
             OneAppService.forceNetworkUpdate = true
             progressVisibility(true)
-            locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+            locationRequestRequest.enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
                 override fun onSuccess(locationResponse: LocationResponse?) {
                     if (!isAdded) return
                     activity?.apply {

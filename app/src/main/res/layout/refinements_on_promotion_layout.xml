@@ -17,7 +17,7 @@
             android:textColor="@color/promo_text_color"
             app:WTextView_font="medium_bold"
             android:letterSpacing="0.065"
-            android:layout_marginLeft="0dp"
+            android:layout_marginStart="1dp"
             android:textSize="@dimen/twelve_sp"
             android:contentDescription="@string/plp_textViewOnPromotion"
             android:text="On Promotion" />

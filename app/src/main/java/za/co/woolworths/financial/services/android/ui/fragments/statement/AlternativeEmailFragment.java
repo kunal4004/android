@@ -28,7 +28,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -255,7 +255,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 		onLoad();
 
 		sendUserStatement = OneAppService.INSTANCE.sendStatementRequest(mSendUserStatementRequest);
-		sendUserStatement.enqueue(new CompletionHandler<>(new RequestListener<SendUserStatementResponse>() {
+		sendUserStatement.enqueue(new CompletionHandler<>(new IResponseListener<SendUserStatementResponse>() {
 			@Override
 			public void onSuccess(SendUserStatementResponse sendUserStatementResponse) {
 				if (sendUserStatementResponse != null) {

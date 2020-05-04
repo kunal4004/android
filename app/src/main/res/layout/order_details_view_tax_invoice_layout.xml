@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/orders_bg"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/sixteen_dp">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"

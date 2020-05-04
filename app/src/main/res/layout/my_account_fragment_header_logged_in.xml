@@ -90,7 +90,6 @@
                     app:WTextView_font="medium" />
 
                 <RelativeLayout
-                    android:id="@+id/rlUsernameContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
@@ -140,7 +139,6 @@
                 app:WTextView_font="myriadpro_regular" />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/linkAccountsBtn"
                 style="@style/whiteWButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

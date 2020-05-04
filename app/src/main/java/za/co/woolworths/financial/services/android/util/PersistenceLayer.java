@@ -216,7 +216,6 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         File file = new File(pathToSaveDBFile);
         if(file.exists()) {
             file.delete();
-            Log.d(TAG, "Database deleted.");
         }
     }
     @Override

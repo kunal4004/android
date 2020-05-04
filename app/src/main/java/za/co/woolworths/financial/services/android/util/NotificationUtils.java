@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -21,7 +20,7 @@ import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -81,41 +80,21 @@ public class NotificationUtils {
     }
 
     public void sendBundledNotification(String title, String body, int badgeCount) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Notification notification = buildKitKatNotification(title, body);
-            ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
-            notificationManager.notify(getNotificationId(), notification);
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                        CHANNEL_NAME,
-                        NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
-            }
-            Notification notification = buildNotification(title, body, GROUP_KEY).build();
-            ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
-            notificationManager.notify(getNotificationId(), notification);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
         }
+        Notification notification = buildNotification(title, body, GROUP_KEY).build();
+        ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
+        notificationManager.notify(getNotificationId(), notification);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             NotificationCompat.Builder summary = buildSummary(GROUP_KEY);
             notificationManager.notify(SUMMARY_ID, summary.build());
         }
-    }
-
-    private Notification buildKitKatNotification(String title, String body) {
-        return new NotificationCompat.Builder(mContext)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
-                .setContentIntent(contentIntent)
-                .setShowWhen(true)
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .build();
     }
 
     private NotificationCompat.Builder buildNotification(String title, String body, String groupKey) {
@@ -151,38 +130,29 @@ public class NotificationUtils {
 
     private int getNotificationId() {
 
-        String bundleId = Utils.getSessionDaoValue(mContext, SessionDao.KEY.NOTIFICATION_ID);
+        String bundleId = Utils.getSessionDaoValue(SessionDao.KEY.NOTIFICATION_ID);
         int id = bundleId == null ? SUMMARY_ID + 1 : Integer.parseInt(bundleId) + 1;
         while (id == SUMMARY_ID) {
             id++;
         }
-        Utils.sessionDaoSave(mContext, SessionDao.KEY.NOTIFICATION_ID, String.valueOf(id));
+        Utils.sessionDaoSave(SessionDao.KEY.NOTIFICATION_ID, String.valueOf(id));
         return id;
     }
 
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-			if (runningProcesses == null) {
-				Log.d(TAG, "runningProcesses is null");
-				return false;
-			}
-            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String activeProcess : processInfo.pkgList) {
-                        if (activeProcess.equals(context.getPackageName())) {
-                            isInBackground = false;
-                        }
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+        if (runningProcesses == null) {
+            return false;
+        }
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String activeProcess : processInfo.pkgList) {
+                    if (activeProcess.equals(context.getPackageName())) {
+                        isInBackground = false;
                     }
                 }
-            }
-        } else {
-            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-            ComponentName componentInfo = taskInfo.get(0).topActivity;
-            if (componentInfo.getPackageName().equals(context.getPackageName())) {
-                isInBackground = false;
             }
         }
 
@@ -226,7 +196,7 @@ public class NotificationUtils {
         //Need to be done after Login
 
         Call<CreateUpdateDeviceResponse> createUpdateDeviceCall = OneAppService.INSTANCE.getResponseOnCreateUpdateDevice(device);
-        createUpdateDeviceCall.enqueue(new CompletionHandler<>(new RequestListener<CreateUpdateDeviceResponse>() {
+        createUpdateDeviceCall.enqueue(new CompletionHandler<>(new IResponseListener<CreateUpdateDeviceResponse>() {
             @Override
             public void onSuccess(CreateUpdateDeviceResponse response) {
 
