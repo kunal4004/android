@@ -34,7 +34,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     companion object {
         private val ARG_PARAM = "order"
         fun getInstance(order: Order) = OrderDetailsFragment().withArgs {
-            putSerializable(ARG_PARAM, order)
+            putString(ARG_PARAM, Utils.toJson(order))
         }
     }
 
@@ -52,7 +52,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            order = it.getSerializable(ARG_PARAM) as Order
+            order = Utils.jsonStringToObject(it.getString("order"),Order::class.java) as Order?
         }
     }
 

@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.JsonElement;
+
 /**
  * Created by W7099877 on 2018/02/08.
  */
@@ -16,6 +18,7 @@ public class OrderSummary {
 	public Suburb suburb;
 	public String state;
 	public String submittedDate;
+	public JsonElement deliveryDatesList;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;
