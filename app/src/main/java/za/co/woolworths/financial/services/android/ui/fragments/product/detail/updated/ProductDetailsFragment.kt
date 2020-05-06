@@ -570,7 +570,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             else -> {
                 getSelectedSku()?.quantity?.let {
                     when (it) {
-                        0 -> showFindInStore();
+                        0 -> showFindInStore()
                         else -> {
                             getSelectedQuantity()?.apply {
                                 if (it < this)
@@ -585,13 +585,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-
     private fun showFindInStore() {
-        if (!productDetails?.isnAvailable?.toBoolean()!!) {
-            toCartAndFindInStoreLayout?.visibility = View.GONE
-            checkInStoreAvailability?.visibility = View.GONE
-            return
+        productDetails?.isnAvailable?.toBoolean()?.apply {
+            if (!this) {
+                toCartAndFindInStoreLayout?.visibility = View.GONE
+                checkInStoreAvailability?.visibility = View.GONE
+                return
+            }
         }
+
 
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.GONE
