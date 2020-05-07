@@ -70,7 +70,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String): Call<VoucherResponse>
 
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/vouchers/count")
     fun getVouchersCount(
             @Header("apiId") apiId: String,

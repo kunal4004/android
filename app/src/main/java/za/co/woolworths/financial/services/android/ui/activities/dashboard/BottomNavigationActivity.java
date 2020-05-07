@@ -238,11 +238,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         });
 
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            badgeCount();
+        if (mBundle!=null && mBundle.containsKey("OnBoardingLoginBadge")){
+            QueryBadgeCounter.getInstance().queryCartSummaryCount();
+            QueryBadgeCounter.getInstance().queryVoucherCount();
         }
 
+        queryBadgeCountOnStart();
+
         addDrawerFragment();
+    }
+
+    private void queryBadgeCountOnStart() {
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            mQueryBadgeCounter.queryVoucherCount();
+            mQueryBadgeCounter.queryCartSummaryCount();
+        }
     }
 
     private void initBadgeCounter() {
@@ -1166,12 +1176,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         return mNavController.getCurrentFrag();
     }
 
+    // SSO - After a successful login (and user has C2 ID):
     @Override
     public void badgeCount() {
-        Log.e("currentBadgeCount", "current "+getCurrentSection());
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
+            case R.id.navigation_today:
                 mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
 
             case R.id.navigate_to_shop:
@@ -1181,16 +1193,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                  * in ProductDetailActivity.
                  * It ensure only one cart count call is made on sign in
                  */
+
                 if (Utils.getPreferredDeliveryLocation() != null)
                     mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
             case R.id.navigate_to_wreward:
                 mQueryBadgeCounter.queryCartSummaryCount();
                 break;
             case R.id.navigate_to_cart:
-                break;
-            case R.id.navigation_today:
-                mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
             default:
                 break;

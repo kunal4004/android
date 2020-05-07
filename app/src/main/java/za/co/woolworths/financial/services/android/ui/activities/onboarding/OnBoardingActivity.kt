@@ -61,6 +61,7 @@ class OnBoardingActivity : AppCompatActivity(), IViewPagerSwipeListener, View.On
     private fun navigateToBottomNavigationActivity() {
         Utils.sessionDaoSave(SessionDao.KEY.ON_BOARDING_SCREEN, "1")
         val bottomNavigationActivityIntent = Intent(this, BottomNavigationActivity::class.java)
+        bottomNavigationActivityIntent.putExtra("OnBoardingLoginBadge","OnBoardingLoginBadge")
         startActivityForResult(bottomNavigationActivityIntent, 0)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.fade_out)
