@@ -52,14 +52,14 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         val configResponseCall = OneAppService.getConfig()
         configResponseCall.enqueue(CompletionHandler(object : IResponseListener<ConfigResponse> {
 
-            override fun onSuccess(response: ConfigResponse) {
-                if (response.httpCode == 200) {
+            override fun onSuccess(response: ConfigResponse?) {
+                if (response?.httpCode == 200) {
                     persistGlobalConfig(response)
                     responseListener.onSuccess(response)
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 responseListener.onFailure(error)
 
             }

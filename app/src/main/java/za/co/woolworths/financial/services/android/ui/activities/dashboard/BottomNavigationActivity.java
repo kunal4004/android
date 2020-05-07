@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -1167,6 +1168,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void badgeCount() {
+        Log.e("currentBadgeCount", "current "+getCurrentSection());
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
                 mQueryBadgeCounter.queryCartSummaryCount();

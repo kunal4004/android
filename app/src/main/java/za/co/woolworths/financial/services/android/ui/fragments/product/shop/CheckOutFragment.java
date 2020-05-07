@@ -285,7 +285,7 @@ public class CheckOutFragment extends Fragment {
 
 	public void initPostCheckout()
 	{
-		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+		QueryBadgeCounter.getInstance().setCartCount(0);
 		Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(Utils.getPreferredDeliveryLocation().suburb.id));
 		checkoutSuccess.enqueue(new CompletionHandler<>(new IResponseListener<Void>() {
 			@Override

@@ -19,7 +19,7 @@ class GetCartSummary {
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 response.onFailure(error)
             }
         }, CartSummaryResponse::class.java))

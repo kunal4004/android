@@ -20,7 +20,7 @@ class StoreCardAPIRequest {
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 response.onFailure(error)
             }
         }, LinkNewCardOTP::class.java))
@@ -34,7 +34,7 @@ class StoreCardAPIRequest {
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 response.onFailure(error)
             }
         }, UnblockStoreCardResponse::class.java))
@@ -48,7 +48,7 @@ class StoreCardAPIRequest {
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 response.onFailure(error)
             }
         }, BlockMyCardResponse::class.java))
