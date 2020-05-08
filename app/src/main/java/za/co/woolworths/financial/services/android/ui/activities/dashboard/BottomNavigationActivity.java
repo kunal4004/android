@@ -52,12 +52,10 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
-import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
-import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -208,12 +206,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     String searchProduct = ((LoadState) object).getSearchProduct();
                     if (!TextUtils.isEmpty((searchProduct))) {
                         pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
-                    }
-                } else if (object instanceof AuthenticationState) {
-                    AuthenticationState auth = ((AuthenticationState) object);
-                    if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-                        clearBadgeCount();
-                        ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
                     }
                 } else if (object instanceof CartSummaryResponse) {
                     // product item successfully added to cart
@@ -1324,5 +1316,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (getCurrentFragment() instanceof ProductListingFragment) {
             ((ProductListingFragment) getCurrentFragment()).onResetFilter();
         }
+    }
+
+    public void onSignedOut(){
+        clearBadgeCount();
+        ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
     }
 }
