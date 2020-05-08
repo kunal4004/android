@@ -92,7 +92,8 @@
                     style="@style/my_orders_textview_style_2"
                     android:layout_alignParentLeft="true"
                     android:textSize="@dimen/thirteen_sp"
-                    android:text="Delivery  Date:" />
+                    android:contentDescription="@string/delivery_date_title"
+                    android:text="@string/delivery_date" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/deliveryDate"
@@ -104,6 +105,7 @@
                     android:textSize="@dimen/thirteen_sp"
                     android:gravity="right"
                     android:layout_marginLeft="@dimen/sixteen_dp"
+                    android:contentDescription="@string/delivery_date_value"
                     app:WTextView_font="myriadpro_semibold" />
             </RelativeLayout>
 
