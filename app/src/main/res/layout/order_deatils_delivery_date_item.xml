@@ -12,14 +12,19 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/deliveryItemsType"
             style="@style/my_orders_textview_style_2"
+            android:textSize="@dimen/thirteen_sp"
             android:layout_alignParentLeft="true" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/dateOfDelivery"
             style="@style/my_orders_textview_style_2"
+            android:layout_width="match_parent"
+            android:layout_toEndOf="@+id/deliveryItemsType"
             android:layout_alignParentRight="true"
             android:textColor="@color/black"
             android:textSize="@dimen/thirteen_sp"
+            android:gravity="right"
+            android:layout_marginLeft="@dimen/sixteen_dp"
             app:WTextView_font="myriadpro_semibold" />
     </RelativeLayout>
 </LinearLayout>
