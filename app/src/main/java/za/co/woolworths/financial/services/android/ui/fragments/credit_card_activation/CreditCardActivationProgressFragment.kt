@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.credit_card_activation_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_progress_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_success_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_success_layout.okGotItButton
+import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
@@ -43,6 +44,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         activateCreditCard()
         okGotItButton?.setOnClickListener(this)
         callTheCallCenter?.setOnClickListener(this)
+        processingLayoutTitle?.text = resources.getString(R.string.credit_card_activation_processing_title)
         cancel?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener(this@CreditCardActivationProgressFragment)
