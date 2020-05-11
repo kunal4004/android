@@ -780,14 +780,16 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 							break;
 						default:
 							if (accountsResponse.response != null) {
-								mUpdateMyAccount.swipeToRefreshAccount(false);
+								configureView();
+								mUpdateMyAccount.enableSwipeToRefreshAccount(true);
+								mUpdateMyAccount.swipeToRefreshAccount(true);
+								imRefreshAccount.setEnabled(true);
 								Utils.alertErrorMessage(activity, accountsResponse.response.desc);
 							}
-
 							break;
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 				hideProgressBar();
 				mUpdateMyAccount.swipeToRefreshAccount(false);
