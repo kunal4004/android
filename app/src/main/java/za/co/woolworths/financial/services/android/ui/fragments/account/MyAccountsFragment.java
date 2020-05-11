@@ -147,7 +147,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
 	private View linkedAccountBottomDivider;
-	private NavController onBoardingNavigationGraph;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -245,7 +244,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
 
-			onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
+			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
 			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
 
 			imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
