@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -52,6 +51,7 @@ import kotlin.properties.Delegates
         Utils.updateStatusBarBackground(this, R.color.unavailable_color)
         initViews()
         setActionBar()
+        QueryBadgeCounter.instance.queryVoucherCount()
     }
 
     override fun onResume() {
@@ -205,6 +205,7 @@ import kotlin.properties.Delegates
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            QueryBadgeCounter.instance.queryVoucherCount()
             when (requestCode) {
                 REQUEST_CODE_DELIVERY_LOCATION -> {
                     presentEditDeliveryLocation()
@@ -230,7 +231,7 @@ import kotlin.properties.Delegates
 
 
     private fun presentShoppingList() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
             setResult(RESULT_OK_ACCOUNTS)
             onBackPressed()
         } else {
