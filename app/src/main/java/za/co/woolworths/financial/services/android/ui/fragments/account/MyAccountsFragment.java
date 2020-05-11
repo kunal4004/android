@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.fragment.app.FragmentActivity;
@@ -146,6 +147,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
 	private View linkedAccountBottomDivider;
+	private NavController onBoardingNavigationGraph;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -243,7 +245,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
 
-			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
+			onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
 			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
 
 			imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
@@ -289,7 +291,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
 		if (getActivity() instanceof MyAccountActivity){
 			//hide all views, load accounts may occur
-			MyAccountsFragment.this.initialize();
+			initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			messageCounterRequest();
@@ -340,7 +342,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		isActivityInForeground = true;
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
-
 
 		if (getBottomNavigationActivity()!=null && getBottomNavigationActivity().getCurrentFragment() !=null
 				&& getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
@@ -932,7 +933,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		//Check if view hierarchy was created
 		if (!hidden) {
 			//hide all views, load accounts may occur
-			MyAccountsFragment.this.initialize();
+			initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			messageCounterRequest();
@@ -964,9 +965,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			//One time biometricsWalkthrough
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-			onSignOut();
-			clearActivityStoryStack();
-			initialize();
+			if ((getActivity() instanceof MyAccountActivity)) {
+				MyAccountActivity.Companion.setUserHasSignedOut(true);
+				onSignOut();
+				initialize();
+			} else {
+				onSignOut();
+				clearActivityStoryStack();
+				initialize();
+			}
 		} else {
 			initialize();
 		}
