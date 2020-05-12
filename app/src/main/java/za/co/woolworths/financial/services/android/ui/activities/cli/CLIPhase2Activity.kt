@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.cli
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -261,7 +260,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         if (mainFragmentContainer is CLIAllStepsContainerFragment) {
             if (closeButtonEnabled()) {
                 (this@CLIPhase2Activity.application as? WoolworthsApplication)
-                       ?.bus()
+                        ?.bus()
                         ?.send(BusStation(true))
             }
         }
@@ -287,17 +286,11 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     }
 
     fun hideBurgerButton() {
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun hideSoftKeyboard() {
-        val activity: Activity = this@CLIPhase2Activity
-        if (activity.currentFocus != null) {
-            val inputMethodManager =
-                    (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-            inputMethodManager.hideSoftInputFromWindow(activity.currentFocus.windowToken, 0)
-        }
+        currentFocus?.windowToken?.let { (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(it, 0) }
     }
 
     fun showView(v: View?) {
@@ -321,7 +314,8 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     }
 
     override fun onCreditDecreaseProceedWithMaximum() {
-        val offerCalculationFragment = supportFragmentManager.findFragmentById(R.id.cli_steps_container) as? OfferCalculationFragment?
+        val offerCalculationFragment =
+                supportFragmentManager.findFragmentById(R.id.cli_steps_container) as? OfferCalculationFragment
         offerCalculationFragment?.animSeekBarToMaximum()
     }
 
