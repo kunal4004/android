@@ -49,10 +49,13 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     }
 
     private fun configureUI() {
-        order = Utils.jsonStringToObject(intent.getStringExtra("order"),Order::class.java) as Order?
-        toolbarText.text = getString(R.string.order_page_title_prefix) + order?.orderId
-        btnBack.setOnClickListener { onBackPressed() }
-        replaceOrderDetailsFragment(order!!)
+        intent.getStringExtra("order")?.apply {
+            order = Utils.jsonStringToObject(this, Order::class.java) as? Order
+              val orderText = getString(R.string.order_page_title_prefix) + order?.orderId
+            toolbarText?.text = orderText
+            btnBack?.setOnClickListener { onBackPressed() }
+            order?.let { replaceOrderDetailsFragment(it) }
+        }
     }
 
     private fun replaceOrderDetailsFragment(order: Order) {
