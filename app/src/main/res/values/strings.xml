@@ -1424,6 +1424,10 @@
     <string name="cancel_order_success_title">Your order has been \nsuccessfully cancelled.</string>
 
     <!-- Unique Ids for Transactions-->
+    <string name="delivery_date_title">labelDeliveryDate</string>
+    <string name="delivery_date_value">txtDeliveryDate</string>
+    <string name="delivery_date_for_any_type_item_title">labelAnyItemsDeliveryDate</string>
+    <string name="delivery_date_for_any_type_item_value">txtAnyItemsDeliveryDate</string>
     <string name="cancel_order_popup_layout">layoutCancelOrderPopup</string>
     <string name="cancel_order_popup_image">imgCancelOrder</string>
     <string name="cancel_order_popup_confirmation_message">tvConfirmCancelOrder</string>
@@ -1471,5 +1475,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delivery_date">Delivery Date:</string>
+
 </resources>
 

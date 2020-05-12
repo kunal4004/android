@@ -49,7 +49,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     }
 
     private fun configureUI() {
-        order = intent.getSerializableExtra("order") as Order?
+        order = Utils.jsonStringToObject(intent.getStringExtra("order"),Order::class.java) as Order?
         toolbarText.text = getString(R.string.order_page_title_prefix) + order?.orderId
         btnBack.setOnClickListener { onBackPressed() }
         replaceOrderDetailsFragment(order!!)

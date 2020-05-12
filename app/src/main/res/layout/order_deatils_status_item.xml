@@ -23,6 +23,7 @@
                 android:id="@+id/orderId"
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentLeft="true"
+                android:textSize="@dimen/thirteen_sp"
                 android:text="@string/order_status" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -30,7 +31,7 @@
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="@dimen/thirteen_sp"
                 app:WTextView_font="myriadpro_semibold" />
 
         </RelativeLayout>
@@ -43,6 +44,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentLeft="true"
+                android:textSize="@dimen/thirteen_sp"
                 android:text="@string/number_of_items" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -50,7 +52,7 @@
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="@dimen/thirteen_sp"
                 app:WTextView_font="myriadpro_semibold" />
         </RelativeLayout>
 
@@ -62,6 +64,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentLeft="true"
+                android:textSize="@dimen/thirteen_sp"
                 android:text="@string/purchase_date" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -69,9 +72,51 @@
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="@dimen/thirteen_sp"
                 app:WTextView_font="myriadpro_semibold" />
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/five_dp"
+            android:id="@+id/deliveryDateLayout">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/deliveryItemsType"
+                    style="@style/my_orders_textview_style_2"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="@dimen/thirteen_sp"
+                    android:contentDescription="@string/delivery_date_title"
+                    android:text="@string/delivery_date" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/deliveryDate"
+                    style="@style/my_orders_textview_style_2"
+                    android:layout_width="match_parent"
+                    android:layout_toEndOf="@+id/deliveryItemsType"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/thirteen_sp"
+                    android:gravity="right"
+                    android:layout_marginLeft="@dimen/sixteen_dp"
+                    android:contentDescription="@string/delivery_date_value"
+                    app:WTextView_font="myriadpro_semibold" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/deliveryDateContainer"
+                />
+
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -81,6 +126,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentLeft="true"
+                android:textSize="@dimen/thirteen_sp"
                 android:text="@string/delivery_suburb" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -88,7 +134,7 @@
                 style="@style/my_orders_textview_style_2"
                 android:layout_alignParentRight="true"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="@dimen/thirteen_sp"
                 app:WTextView_font="myriadpro_semibold" />
         </RelativeLayout>
 
