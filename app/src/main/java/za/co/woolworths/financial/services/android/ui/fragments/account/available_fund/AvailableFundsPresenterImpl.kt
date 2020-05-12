@@ -74,8 +74,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     }
 
     override fun getCreditCardNumber(cards: ArrayList<Card>?): String {
-        return cards?.filter { card -> card.cardStatus.trim { it <= ' ' } == "AAA" }?.get(0)?.absaCardToken
-                ?: ""
+        return cards?.filter { card -> card.cardStatus?.trim { it <= ' ' } == "AAA" }?.get(0)?.absaCardToken ?: ""
     }
 
     override fun getAccount(): Account? = mAccount
