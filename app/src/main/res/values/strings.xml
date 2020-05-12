@@ -1336,8 +1336,10 @@
     <string name="cc_activation_security_check_2">My card details are correct</string>
     <string name="cc_activation_security_check_3">My PIN seal is intact</string>
     <string name="credit_card_activation_success_title">Your Credit Card Has Successfully Been Activated.</string>
-    <string name="credit_card_activation_failure_title">We Are Unable To Activate Your Card</string>
+    <string name="credit_card_activation_failure_title">We Are Unable To \nActivate Your Card</string>
+    <string name="credit_card_activation_retry_failure_title">There was a Problem Activating \nYour Card</string>
     <string name="credit_card_activation_failure_desc">Please call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="credit_card_activation_retry_failure_desc">Try activating your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
     <string name="credit_card_activation_popup_title">Card Activation Unavailable</string>
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 6am - 9pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>

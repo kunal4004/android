@@ -20,14 +20,12 @@ import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -63,32 +61,29 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 				.toObservable()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Consumer<Object>() {
-					@Override
-					public void accept(Object object) throws Exception {
-						if (object instanceof BusStation) {
-							BusStation busStation = (BusStation) object;
-							showEmailStatementButton();
-							Bundle alternativeEmailBundle = new Bundle();
-							alternativeEmailBundle.putString(SEND_USER_STATEMENT, busStation.getString());
-							AlternativeEmailFragment alternativeEmailFragment = new AlternativeEmailFragment();
-							alternativeEmailFragment.setArguments(alternativeEmailBundle);
-							FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
-							fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), alternativeEmailFragment, R.id.flEStatement);
-						} else if (object instanceof EmailStatementFragment) {
-							showEmailStatementButton();
-							EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
-							FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
-							fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
-						} else if (object instanceof StatementFragment) {
-							finishActivity();
-						}
+				.subscribe(object -> {
+					if (object instanceof BusStation) {
+						BusStation busStation = (BusStation) object;
+						showEmailStatementButton();
+						Bundle alternativeEmailBundle = new Bundle();
+						alternativeEmailBundle.putString(SEND_USER_STATEMENT, busStation.getString());
+						AlternativeEmailFragment alternativeEmailFragment = new AlternativeEmailFragment();
+						alternativeEmailFragment.setArguments(alternativeEmailBundle);
+						FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
+						fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), alternativeEmailFragment, R.id.flEStatement);
+					} else if (object instanceof EmailStatementFragment) {
+						showEmailStatementButton();
+						EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
+						FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
+						fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
+					} else if (object instanceof StatementFragment) {
+						finishActivity();
 					}
 				}));
 	}
 
 	private void actionBar() {
-		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+		Toolbar mToolbar = findViewById(R.id.mToolbar);
 		setSupportActionBar(mToolbar);
 		actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -100,36 +95,18 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 
 	}
 
-	public void showHomeButton() {
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
-		setTitle(getString(R.string.statement));
-		setGravity(Gravity.LEFT);
-		hideCloseIcon();
-	}
-
 	public void showEmailStatementButton() {
 		if (actionBar != null) {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 		}
 		setTitle(getString(R.string.email_statements));
-		setGravity(Gravity.LEFT);
+		setGravity(Gravity.START);
 		hideCloseIcon();
 
 	}
 
-	public void showAccountStatementButton() {
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(false);
-		}
-		setTitle(getString(R.string.account_statement));
-		setGravity(Gravity.CENTER);
-		showCloseIcon();
-	}
-
 	private void initUI() {
-		mToolbarText = (WTextView) findViewById(R.id.toolbarText);
+		mToolbarText = findViewById(R.id.toolbarText);
 	}
 
 	public void setTitle(String title) {
@@ -173,15 +150,10 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
 		if (fragmentId instanceof StatementFragment) {
-			StatementFragment statementFragment = ((StatementFragment) fragmentId);
-			if (statementFragment.isSlideUpPanelEnabled() == SlidingUpPanelLayout.PanelState.EXPANDED) {
-				statementFragment.hideSlideUpPanel();
+			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+				getSupportFragmentManager().popBackStack();
 			} else {
-				if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-					getSupportFragmentManager().popBackStack();
-				} else {
-					finishActivity();
-				}
+				finishActivity();
 			}
 		} else {
 			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -199,14 +171,11 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 
 	@Override
 	public void PermissionGranted(int request_code) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				FragmentManager fm = getSupportFragmentManager();
-				Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
-				if (fragmentId instanceof StatementFragment) {
-					((StatementFragment) fragmentId).getPDFFile();
-				}
+		runOnUiThread(() -> {
+			FragmentManager fm = getSupportFragmentManager();
+			Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
+			if (fragmentId instanceof StatementFragment) {
+				((StatementFragment) fragmentId).getPDFFile();
 			}
 		});
 	}
@@ -255,11 +224,6 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	public void hideCloseIcon() {
 		MenuItem menuItem = mMenu.findItem(R.id.itmIconClose);
 		menuItem.setVisible(false);
-	}
-
-	public void showCloseIcon() {
-		MenuItem menuItem = mMenu.findItem(R.id.itmIconClose);
-		menuItem.setVisible(true);
 	}
 
 }

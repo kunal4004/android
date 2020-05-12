@@ -25,6 +25,7 @@
 
 
     <TextView
+        android:id="@+id/failureDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"
@@ -42,7 +43,7 @@
 
 
     <Button
-        android:id="@+id/callTheCallCenter"
+        android:id="@+id/callToAction"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="50dp"
