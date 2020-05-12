@@ -9,20 +9,17 @@ import java.io.File
 import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
-import android.util.Log
 import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.io.FileOutputStream
 import java.lang.Exception
-
 
 class WPdfViewerActivity : AppCompatActivity() {
 
     var pageTitle: String? = null
     var fileName: String? = null
     var fileData: ByteArray? = null
-    private val TAG = this.javaClass.simpleName
     var cacheFile: File? = null
     var gtmTag: String? = null
 
@@ -37,7 +34,7 @@ class WPdfViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_oreder_tax_invoice)
-        Utils.updateStatusBarBackground(this)
+        KotlinUtils.setTransparentStatusBar(this)
         getBundleArgument()
         initView()
     }
