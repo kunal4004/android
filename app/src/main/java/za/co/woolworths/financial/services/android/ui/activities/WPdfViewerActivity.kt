@@ -11,6 +11,7 @@ import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
 import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
+import kotlinx.android.synthetic.main.wrewards_overview_fragment.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.io.FileOutputStream
 import java.lang.Exception
@@ -34,7 +35,7 @@ class WPdfViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_oreder_tax_invoice)
-        KotlinUtils.setTransparentStatusBar(this)
+        Utils.updateStatusBarBackground(this)
         getBundleArgument()
         initView()
     }
