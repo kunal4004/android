@@ -625,8 +625,11 @@ public class SSOActivity extends WebViewActivity {
 
 	private void setUserATGId(JWTDecodedModel jwtDecodedModel) {
 		FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(SSOActivity.this);
-		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, Utils.getUserATGId((jwtDecodedModel.C2Id == null) ? null : jwtDecodedModel.AtgId));
-		firebaseAnalytics.setUserId(Utils.getUserATGId((jwtDecodedModel.C2Id == null) ? null : jwtDecodedModel.AtgId));
+
+		String atgId = (jwtDecodedModel.AtgId.isJsonArray() ? jwtDecodedModel.AtgId.getAsJsonArray().get(0).getAsString() : jwtDecodedModel.AtgId.getAsString());
+		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId);
+		firebaseAnalytics.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, jwtDecodedModel.C2Id);
+		firebaseAnalytics.setUserId(atgId);
 	}
 
 	private void unknownNetworkFailure(WebView webView, String description) {
