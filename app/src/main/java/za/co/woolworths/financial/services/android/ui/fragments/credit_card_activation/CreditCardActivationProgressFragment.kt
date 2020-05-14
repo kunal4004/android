@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_progress_layout.*
-import kotlinx.android.synthetic.main.credit_card_activation_success_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_success_layout.okGotItButton
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -24,6 +23,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
 
     var presenter: CreditCardActivationContract.CreditCardActivationPresenter? = null
     lateinit var absaCardToken: String
+    var isUserRetried: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_activation_progress_layout, container, false)
@@ -42,7 +42,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         super.onViewCreated(view, savedInstanceState)
         activateCreditCard()
         okGotItButton?.setOnClickListener(this)
-        callTheCallCenter?.setOnClickListener(this)
+        callToAction?.setOnClickListener(this)
         cancel?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener(this@CreditCardActivationProgressFragment)
@@ -75,6 +75,9 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         getProgressState()?.animateSuccessEnd(false)
         activationProcessingLayout?.visibility = View.GONE
         activationFailureView?.visibility = View.VISIBLE
+        failureTitleTextView.text = activity?.resources?.getString(if (isUserRetried) R.string.credit_card_activation_failure_title else R.string.credit_card_activation_retry_failure_title)
+        callToAction.text = activity?.resources?.getString(if (isUserRetried) R.string.call_the_call_centre else R.string.retry)
+        failureDescription.text = activity?.resources?.getString(if (isUserRetried) R.string.credit_card_activation_failure_desc else R.string.credit_card_activation_retry_failure_desc)
     }
 
     override fun onSessionTimeout() {
@@ -89,7 +92,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.cancel -> activity?.onBackPressed()
-            R.id.callTheCallCenter -> activity?.apply { Utils.makeCall("0861 50 20 20") }
+            R.id.callToAction -> if(isUserRetried)activity?.apply { Utils.makeCall("0861 50 20 20") } else onRetryActivation()
             R.id.okGotItButton -> {
                 activity?.apply {
                     setResult(Activity.RESULT_OK)
@@ -100,6 +103,14 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
             R.id.okGotItButton, R.id.cancel -> activity?.onBackPressed()
             R.id.callTheCallCenter -> activity?.apply { Utils.makeCall("0861 50 20 20") }
         }
+    }
+
+    override fun onRetryActivation() {
+        isUserRetried = true
+        getProgressState()?.restartSpinning()
+        activationProcessingLayout?.visibility = View.VISIBLE
+        activationFailureView?.visibility = View.GONE
+        presenter?.initCreditCardActivation(absaCardToken)
     }
 
 }
