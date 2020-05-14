@@ -965,7 +965,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			if ((getActivity() instanceof MyAccountActivity)) {
-				MyAccountActivity.Companion.setUserHasSignedOut(true);
 				onSignOut();
 				initialize();
 			} else {

@@ -317,7 +317,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void addBadge(int position, int number) {
-        Utils.addBadgeAt(this, getBottomNavigationById(), position, number);
+        runOnUiThread(() -> Utils.addBadgeAt(this, getBottomNavigationById(), position, number));
     }
 
     @Override
