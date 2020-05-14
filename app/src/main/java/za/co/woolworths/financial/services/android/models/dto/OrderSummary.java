@@ -18,7 +18,7 @@ public class OrderSummary {
 	public Suburb suburb;
 	public String state;
 	public String submittedDate;
-	public JsonElement deliveryDatesList;
+	public JsonElement deliveryDates;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;

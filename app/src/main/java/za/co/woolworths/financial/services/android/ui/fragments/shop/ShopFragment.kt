@@ -273,4 +273,8 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun openBarcodeScanner() {
         imBarcodeScanner?.performClick()
     }
+
+    fun switchToDepartmentTab(){
+        viewpager_main.currentItem = 0
+    }
 }

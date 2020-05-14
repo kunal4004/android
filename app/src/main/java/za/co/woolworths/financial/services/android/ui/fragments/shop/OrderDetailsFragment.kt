@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -29,7 +30,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Fragm
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import java.lang.IllegalStateException
 
-class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation {
+class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation, OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss {
 
     companion object {
         private val ARG_PARAM = "order"
@@ -80,10 +81,20 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
         orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<OrderDetailsResponse> {
             override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
                 if (!isAdded) return
-                mainLayout.visibility = View.VISIBLE
-                loadingBar.visibility = View.GONE
-                orderDetailsResponse = ordersResponse
-                bindData(orderDetailsResponse!!)
+                when (ordersResponse?.httpCode) {
+                    0 -> {
+                        mainLayout.visibility = View.VISIBLE
+                        loadingBar.visibility = View.GONE
+                        orderDetailsResponse = ordersResponse
+                        bindData(orderDetailsResponse!!)
+                    }
+                    502 -> {
+                        loadingBar.visibility = View.GONE
+                        showErrorDialog(ordersResponse?.response?.desc
+                                ?: getString(R.string.general_error_desc))
+                    }
+                }
+
             }
 
             override fun onFailure(error: Throwable?) {
@@ -195,5 +206,15 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
         }
     }
 
+    fun showErrorDialog(errorMessage: String) {
+        val dialog = OrderHistoryErrorDialogFragment.newInstance(errorMessage)
+        activity?.apply {
+            this@OrderDetailsFragment.childFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, OrderHistoryErrorDialogFragment::class.java.simpleName) }
+        }
+    }
+
+    override fun onErrorDialogDismiss() {
+        activity?.onBackPressed()
+    }
 
 }
