@@ -17,6 +17,10 @@ open class LoanBaseFragment : Fragment() {
         return (arguments?.get(LoanWithdrawalFragment.PERSONAL_LOAN_INFO) as? String)?.let {  Gson().fromJson(it, Account::class.java)}
     }
 
+    private fun getRpCreditLimitThreshold(): Int {
+        return (getPersonalLoanInfo()?.rpCreditLimitThreshold)?.div(100) ?: 0
+    }
+
     fun getAvailableFund(): Int {
         return getPersonalLoanInfo()?.availableFunds ?: return 0
     }
@@ -38,7 +42,7 @@ open class LoanBaseFragment : Fragment() {
         return (getPersonalLoanInfo()?.productOfferingId ?: return 0)
     }
 
-    fun finishActivity(activity: Activity) {
+    fun finishActivity(activity: Activity?) {
         activity?.apply {
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
@@ -49,5 +53,5 @@ open class LoanBaseFragment : Fragment() {
 
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
 
-    fun repaymentPeriod(creditAmount: Int): Int = if (creditAmount >= 10000) 60 else 36
+    fun repaymentPeriod(creditAmount: Int): Int = if (creditAmount >= getRpCreditLimitThreshold()) 60 else 36
 }
