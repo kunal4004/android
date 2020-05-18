@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.cli_next_button.*
-import kotlinx.android.synthetic.main.supply_income_detail_fragment.*
+import kotlinx.android.synthetic.main.supply_income_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
