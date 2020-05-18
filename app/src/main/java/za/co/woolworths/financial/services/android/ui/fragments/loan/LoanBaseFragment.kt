@@ -49,5 +49,5 @@ open class LoanBaseFragment : Fragment() {
 
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
 
-    fun repaymentPeriod(amount: Int): Int = if (amount < 1000000) 36 else 60
+    fun repaymentPeriod(creditAmount: Int): Int = if (creditAmount >= 10000) 60 else 36
 }

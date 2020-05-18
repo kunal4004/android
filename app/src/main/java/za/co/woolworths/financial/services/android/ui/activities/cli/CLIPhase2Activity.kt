@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.cli.*
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface
 import za.co.woolworths.financial.services.android.util.FragmentUtils
@@ -53,6 +53,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         hideDeclineOffer()
         actionBar()
         listener()
+
         intent?.extras?.apply {
             mOfferActivePayload = getString("OFFER_ACTIVE_PAYLOAD")
             mOfferActive = getBoolean("OFFER_IS_ACTIVE")
@@ -72,7 +73,6 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     private fun actionBar() {
         mToolbar?.let { toolbar -> setSupportActionBar(toolbar) }
         supportActionBar?.apply {
-            title = null
             setDisplayHomeAsUpEnabled(false)
         }
     }
@@ -101,7 +101,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         val increaseLimitController = IncreaseLimitController(this@CLIPhase2Activity)
         val offerBundle = Bundle()
         if (nextStep.equals(getString(R.string.status_consents), ignoreCase = true)) {
-            val cLIEligibilityAndPermissionFragment = SupplyIncomeDetailFragment()
+            val cLIEligibilityAndPermissionFragment = SupplyIncomeFragment()
             cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener)
             eventStatus = EventStatus.CREATE_APPLICATION
             openFragment(cLIEligibilityAndPermissionFragment)
@@ -110,7 +110,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         if (nextStep.equals(getString(R.string.status_i_n_e), ignoreCase = true) && offerActive) {
             val incomeHashMap = increaseLimitController.incomeHashMap(mCLICreateOfferResponse)
             val expenseHashMap = increaseLimitController.expenseHashMap(mCLICreateOfferResponse)
-            val supplyIncomeDetailFragment = SupplyIncomeDetailFragment()
+            val supplyIncomeDetailFragment = SupplyIncomeFragment()
             offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, incomeHashMap)
             offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap)
             supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener)
@@ -120,7 +120,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             return
         }
         if (nextStep.equals(getString(R.string.status_i_n_e), ignoreCase = true) && !offerActive) {
-            val supplyIncomeDetailFragment = SupplyIncomeDetailFragment()
+            val supplyIncomeDetailFragment = SupplyIncomeFragment()
             supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener)
             eventStatus = EventStatus.CREATE_APPLICATION
             openFragment(supplyIncomeDetailFragment)
