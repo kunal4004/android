@@ -72,20 +72,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
 
-    <za.co.woolworths.financial.services.android.ui.views.LoadingDots
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="5dp"
-        app:LoadingDots_dots_color="@color/black_desc_opacity"
-        app:LoadingDots_dots_count="3"
-        app:LoadingDots_dots_size="3dp"
-        app:LoadingDots_dots_space="3dp"
-        app:LoadingDots_jump_height="3dp"
-        app:LoadingDots_loop_start_delay="50"
-        app:layout_constraintBottom_toBottomOf="@+id/loadingDotsText"
-        app:layout_constraintStart_toEndOf="@+id/loadingDotsText"
-        app:layout_constraintTop_toTopOf="@+id/loadingDotsText" />
+
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtVerificationCode1"

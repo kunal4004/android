@@ -13,6 +13,7 @@ interface CreditCardActivationContract {
         fun onSessionTimeout()
         fun activateCreditCard()
         fun getProgressState(): ProgressStateFragment?
+        fun onRetryActivation()
 
     }
 

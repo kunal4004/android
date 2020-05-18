@@ -39,7 +39,7 @@
         style="@style/futura_semi_bold_black"
         android:layout_marginTop="@dimen/thirty_dp"
         android:gravity="center"
-        android:text="@string/sending_otp_title"
+        android:text="@string/processing_request"
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
