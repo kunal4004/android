@@ -13,6 +13,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_progress_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_success_layout.okGotItButton
+import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
@@ -42,6 +43,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         super.onViewCreated(view, savedInstanceState)
         activateCreditCard()
         okGotItButton?.setOnClickListener(this)
+        processingLayoutTitle?.text = resources.getString(R.string.credit_card_activation_processing_title)
         callToAction?.setOnClickListener(this)
         cancel?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -101,7 +103,6 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
                 }
             }
             R.id.okGotItButton, R.id.cancel -> activity?.onBackPressed()
-            R.id.callTheCallCenter -> activity?.apply { Utils.makeCall("0861 50 20 20") }
         }
     }
 

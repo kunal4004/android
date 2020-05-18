@@ -116,7 +116,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     fun onCancelOrderSuccess() {
         getProgressState()?.animateSuccessEnd(true)
         tvProcessingYourRequestDuration.visibility = View.GONE
-        tvProcessBlockCardRequestStatus.text = resources.getString(R.string.cancel_order_success_title)
+        processingLayoutTitle.text = resources.getString(R.string.cancel_order_success_title)
         CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
     }
 
