@@ -23,10 +23,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="TextView"
+        android:text="@string/whatsapp_chat_with_us_row_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/whatsAppImageView" />
+
+    <TextView
+        android:id="@+id/chatToUsWhatsappDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/chat_with_us_whatsapp_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatToUsWhatsAppTitleTextView" />
+
+    <ImageView
+        android:id="@+id/whatsAppImageViewIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatToUsWhatsappDescriptionTextView"
+        app:srcCompat="@drawable/icon_tick" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
