@@ -1475,5 +1475,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="processing_request">Processing Request</string>
+    <string name="whatsapp_chat_with_us_row">WhatsApp chat with us row</string>
+    <string name="whatsapp_chat_with_us_row_title">Chat to us on WhatsApp</string>
+    <string name="whatsapp_chat_to_us_title">Chat To Us</string>
 </resources>
 
