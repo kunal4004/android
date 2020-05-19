@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.add_item_to_shoppinglist_layout.view.*
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
@@ -67,10 +66,11 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
             itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
-            if (!item.orderSummary?.deliveryDatesList.isJsonNull) {
+            if (!item.orderSummary?.deliveryDates.isJsonNull) {
+                itemView.deliveryDateContainer.removeAllViews()
                 val deliveryDates: HashMap<String, String> = hashMapOf()
-                for (i in 0 until item.orderSummary?.deliveryDatesList.asJsonArray.size()) {
-                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.orderSummary?.deliveryDatesList.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
+                for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
+                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.orderSummary?.deliveryDates.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
                 }
                 when (deliveryDates.keys.size) {
                     0 -> {
