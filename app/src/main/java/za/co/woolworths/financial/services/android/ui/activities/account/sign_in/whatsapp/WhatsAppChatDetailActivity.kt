@@ -6,15 +6,27 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.app_toolbar.*
 import kotlinx.android.synthetic.main.whatsapp_chat_activity.*
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.APP_SCREEN
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.FEATURE_NAME
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.Utils
 
 class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
+
+    private var featureName: String? = null
+    private var appScreen: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.whatsapp_chat_activity)
         actionBar()
+
+        intent?.extras?.apply {
+            featureName = getString(FEATURE_NAME, "")
+            appScreen = getString(APP_SCREEN, "")
+        }
 
         with(WhatsAppConfig()) {
             whatsappNumberValueTextView?.text = whatsAppNumber
@@ -36,7 +48,8 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.chatWithUsButton -> {
-               Utils.openBrowserWithUrl(WhatsAppConfig().whatsAppChatWithUsUrlBreakout)
+                request(OneAppService.queryServicePostEvent(featureName, appScreen))
+                Utils.openBrowserWithUrl(WhatsAppConfig().whatsAppChatWithUsUrlBreakout)
             }
         }
     }

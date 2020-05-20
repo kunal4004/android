@@ -12,6 +12,8 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.CC_PAYMENT_OPTIONS
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -46,7 +48,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
-            R.id.paymentOptionChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity)
+            R.id.paymentOptionChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)
         }
     }
 

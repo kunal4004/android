@@ -16,6 +16,8 @@ import kotlinx.android.synthetic.main.contact_us_financial_services.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.CONTACT_US
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -81,7 +83,7 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                 R.id.storeCardPesonalLoanQuery -> sendEmail(getString(R.string.email_sc_and_pl_query), getString(R.string.txt_sc_and_pl_query))
                 R.id.proofOfIncome -> sendEmail(getString(R.string.email_proof_of_income), getString(R.string.txt_proof_of_income))
                 R.id.technical -> sendEmail(getString(R.string.email_technical), getString(R.string.txt_technical_problem))
-                R.id.contactUsChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(activity)
+                R.id.contactUsChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(activity,FEATURE_WHATSAPP, CONTACT_US)
             }
         }
     }

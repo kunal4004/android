@@ -5,6 +5,14 @@ import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp
 
 class WhatsAppConfig {
 
+    companion object {
+        const val CC_PAYMENT_OPTIONS = "Payment Options"
+        const val FEATURE_NAME = "FEATURE_NAME"
+        const val APP_SCREEN = "APP_SCREEN"
+        const val CONTACT_US = "Contact Us"
+        const val FEATURE_WHATSAPP ="whatsApp"
+    }
+
     private var whatsAppConfig: WhatsApp? = null
 
     init {
@@ -22,7 +30,7 @@ class WhatsAppConfig {
 
     val contactUsFinancialServicesIsEnabled: Boolean
         get() {
-          return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices!!
+            return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices!!
         }
 
 
