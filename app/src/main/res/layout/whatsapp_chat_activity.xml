@@ -121,7 +121,7 @@
         app:layout_constraintGuide_end="26dp" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/whatsappNumberValueTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -147,7 +147,7 @@
         android:layout_marginStart="11dp"
         android:text="@string/whatsapp_number_label"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
-        app:layout_constraintEnd_toStartOf="@+id/textView5"
+        app:layout_constraintEnd_toStartOf="@+id/whatsappNumberValueTextView"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/whatsappBlackIconImageView" />
 

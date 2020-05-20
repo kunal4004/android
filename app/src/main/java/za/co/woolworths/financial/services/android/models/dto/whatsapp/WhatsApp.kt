@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class WhatsApp(
         var showWhatsAppButton:Boolean= false,
         @SerializedName("baseUrl") val baseUrl: String,
-        @SerializedName("phoneNumber") val phoneNumber: Int,
+        @SerializedName("phoneNumber") val phoneNumber: String,
         @SerializedName("text") val text: String,
         @SerializedName("showWhatsAppIcon") val showWhatsAppIcon: ShowWhatsAppIcon,
         @SerializedName("availabilityTimes") val availabilityTimes: AvailabilityTimes,

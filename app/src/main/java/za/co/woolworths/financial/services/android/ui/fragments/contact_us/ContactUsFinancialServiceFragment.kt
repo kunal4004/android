@@ -13,9 +13,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_financial_services.*
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -63,8 +63,8 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showWhatsAppChatWithUs() {
-        val visibility = WoolworthsApplication.getWhatsAppConfig()?.apply { showWhatsAppButton && showWhatsAppIcon.contactUsFinancialServices }?.let { false } ?: false
-        chatWithUsLinearLayout?.visibility = if (visibility) VISIBLE else GONE
+        val chatWithUsIsEnabled = WhatsAppConfig().contactUsFinancialServicesIsEnabled
+        chatWithUsLinearLayout?.visibility = if (chatWithUsIsEnabled) VISIBLE else GONE
     }
 
     override fun onClick(v: View) {
