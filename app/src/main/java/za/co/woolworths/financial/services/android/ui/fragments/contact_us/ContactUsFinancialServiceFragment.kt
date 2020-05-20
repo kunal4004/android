@@ -15,9 +15,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_financial_services.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.CONTACT_US
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.FEATURE_WHATSAPP
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.CONTACT_US
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -65,7 +65,7 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showWhatsAppChatWithUs() {
-        val chatWithUsIsEnabled = WhatsAppConfig().contactUsFinancialServicesIsEnabled
+        val chatWithUsIsEnabled = WhatsAppImpl().contactUsFinancialServicesIsEnabled
         chatWithUsLinearLayout?.visibility = if (chatWithUsIsEnabled) VISIBLE else GONE
     }
 

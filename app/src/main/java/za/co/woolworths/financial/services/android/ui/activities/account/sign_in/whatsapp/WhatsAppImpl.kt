@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp
 
-class WhatsAppConfig {
+class WhatsAppImpl {
 
     companion object {
         const val CC_PAYMENT_OPTIONS = "Payment Options"

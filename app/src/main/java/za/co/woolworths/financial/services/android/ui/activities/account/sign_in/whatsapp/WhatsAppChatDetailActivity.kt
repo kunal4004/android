@@ -7,8 +7,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.app_toolbar.*
 import kotlinx.android.synthetic.main.whatsapp_chat_activity.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.APP_SCREEN
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig.Companion.FEATURE_NAME
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.APP_SCREEN
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -28,7 +28,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
             appScreen = getString(APP_SCREEN, "")
         }
 
-        with(WhatsAppConfig()) {
+        with(WhatsAppImpl()) {
             whatsappNumberValueTextView?.text = whatsAppNumber
         }
 
@@ -49,7 +49,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.chatWithUsButton -> {
                 request(OneAppService.queryServicePostEvent(featureName, appScreen))
-                Utils.openBrowserWithUrl(WhatsAppConfig().whatsAppChatWithUsUrlBreakout)
+                Utils.openBrowserWithUrl(WhatsAppImpl().whatsAppChatWithUsUrlBreakout)
             }
         }
     }
