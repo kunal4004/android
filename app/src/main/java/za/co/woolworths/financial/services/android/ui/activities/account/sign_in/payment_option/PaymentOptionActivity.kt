@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.PaymentOpt
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymentOptionContract.PaymentOptionView {
 
@@ -39,11 +40,13 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             initView()
         }
         closeButtonImageView?.setOnClickListener(this)
+        paymentOptionChatToUsRelativeLayout?.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
+            R.id.paymentOptionChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity)
         }
     }
 
@@ -57,6 +60,10 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             howToPayOption?.text = paymentMethod.description
             howToPayOptionsList?.addView(view)
         }
+    }
+
+    override fun showWhatsAppChatWithUs(visible: Boolean) {
+        paymentOptionChatToUsRelativeLayout?.visibility = if (visible) VISIBLE else GONE
     }
 
     override fun showPaymentDetail(paymentDetail: Map<String, String>?) {

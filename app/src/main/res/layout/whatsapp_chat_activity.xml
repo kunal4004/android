@@ -3,7 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/paymentNotReflectingTextView"
+        style="@style/whatsapp_how_to_pay_info_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:text="@string/payments_not_reflecting"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toEndOf="@+id/unableToPayWooliesAccountImageViewIcon"
+        app:layout_constraintTop_toBottomOf="@+id/unableToPayWooliesAccountTextView" />
 
     <include
         android:id="@+id/include"
@@ -12,7 +25,8 @@
     <ImageView
         android:id="@+id/whatsAppImageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include"
@@ -20,30 +34,133 @@
 
     <TextView
         android:id="@+id/chatToUsWhatsAppTitleTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        style="@style/chat_with_us_title_style"
         android:text="@string/whatsapp_chat_with_us_row_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
         app:layout_constraintTop_toBottomOf="@+id/whatsAppImageView" />
 
     <TextView
         android:id="@+id/chatToUsWhatsappDescriptionTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/chat_with_us_desc_whatsapp_style"
         android:text="@string/chat_with_us_whatsapp_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
         app:layout_constraintTop_toBottomOf="@+id/chatToUsWhatsAppTitleTextView" />
 
     <ImageView
         android:id="@+id/whatsAppImageViewIcon"
+        style="@style/whatsapp_how_to_pay_info_icon_style"
+        app:layout_constraintBottom_toBottomOf="@+id/howToPayWooliesAccountTextView"
+        app:layout_constraintEnd_toStartOf="@+id/howToPayWooliesAccountTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/guideline7"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toTopOf="@+id/howToPayWooliesAccountTextView"
+        app:srcCompat="@drawable/icon_tick" />
+
+    <TextView
+        android:id="@+id/howToPayWooliesAccountTextView"
+        style="@style/whatsapp_how_to_pay_info_text_style"
+        android:text="@string/whatsapp_how_to_pay_woolies_account"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/whatsAppImageViewIcon"
+        app:layout_constraintTop_toBottomOf="@+id/chatToUsWhatsappDescriptionTextView" />
+
+
+    <ImageView
+        android:id="@+id/unableToPayWooliesAccountImageViewIcon"
+        style="@style/whatsapp_how_to_pay_info_icon_style"
+        app:layout_constraintBottom_toTopOf="@+id/paymentNotReflectingTextView"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/howToPayWooliesAccountTextView"
+        app:srcCompat="@drawable/icon_tick" />
+
+
+    <TextView
+        android:id="@+id/unableToPayWooliesAccountTextView"
+        style="@style/whatsapp_how_to_pay_info_text_style"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:text="@string/whatsapp_unable_to_pay_woolies_account"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toEndOf="@+id/unableToPayWooliesAccountImageViewIcon"
+        app:layout_constraintTop_toBottomOf="@+id/howToPayWooliesAccountTextView" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatToUsWhatsappDescriptionTextView"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+    <ImageView
+        android:id="@+id/paymentNotReflectingIconImageView"
+        style="@style/whatsapp_how_to_pay_info_icon_style"
+        app:layout_constraintBottom_toBottomOf="@+id/paymentNotReflectingTextView"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toTopOf="@+id/paymentNotReflectingTextView"
         app:srcCompat="@drawable/icon_tick" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="26dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="021 411 5000"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
+        app:layout_constraintEnd_toEndOf="@+id/paymentNotReflectingTextView"
+        app:layout_constraintStart_toEndOf="@+id/whatsappNumberLabelTextView" />
+
+    <ImageView
+        android:id="@+id/whatsappBlackIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
+        app:layout_constraintEnd_toStartOf="@+id/whatsappNumberLabelTextView"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:srcCompat="@drawable/icon_whatsapp_black" />
+
+    <TextView
+        android:id="@+id/whatsappNumberLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:text="@string/whatsapp_number_label"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
+        app:layout_constraintEnd_toStartOf="@+id/textView5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/whatsappBlackIconImageView" />
+
+    <Button
+        android:id="@+id/chatWithUsButton"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/chat_with_us_now_button"
+        app:layout_constraintBottom_toTopOf="@+id/whatsappNumberLabelTextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

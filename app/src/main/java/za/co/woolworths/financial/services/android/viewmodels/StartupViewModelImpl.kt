@@ -123,7 +123,11 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
             }
 
-            WoolworthsApplication.setWhatsAppConfig(whatsApp)
+            whatsApp?.apply {
+                showWhatsAppButton  =  Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                WoolworthsApplication.setWhatsAppConfig(this)
+            }
+
             WoolworthsApplication.setQuickShopDefaultValues(quickShopDefaultValues)
             WoolworthsApplication.setWhitelistedDomainsForQRScanner(whitelistedDomainsForQRScanner)
             WoolworthsApplication.setStsValues(sts)
@@ -164,7 +168,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
     companion object {
 
-        val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
-        val APP_VERSION_KEY = "app_version"
+        const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
+        const val APP_VERSION_KEY = "app_version"
     }
 }

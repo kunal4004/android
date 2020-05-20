@@ -58,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActi
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -233,6 +234,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             badgeCount();
         }
 
+        Intent intent = new Intent(this, WhatsAppChatDetailActivity.class);
+        startActivity(intent);
         addDrawerFragment();
     }
 

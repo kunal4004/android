@@ -4,6 +4,7 @@ import android.content.Intent
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -19,7 +20,8 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     private var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
     override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountDetails =
+                Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? {
@@ -68,6 +70,11 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     override fun displayPaymentMethod() {
         val paymentMethod = getPaymentMethod()
         mainView?.setPaymentOption(paymentMethod)
+    }
+
+    override fun showWhatsAppChatWithUs() {
+       val chatWithUsIsEnabled =  WoolworthsApplication.getWhatsAppConfig()?.apply { showWhatsAppButton && showWhatsAppIcon.ccPaymentOptions }?.let { false }?: false
+        mainView?.showWhatsAppChatWithUs(chatWithUsIsEnabled)
     }
 
     override fun initView() {

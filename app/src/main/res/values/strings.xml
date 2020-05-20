@@ -1479,5 +1479,12 @@
     <string name="whatsapp_chat_with_us_row_title">Chat to us on WhatsApp</string>
     <string name="whatsapp_chat_to_us_title">Chat To Us</string>
     <string name="chat_with_us_whatsapp_description">Get in touch with us with any queries related to your Woolies Credit Card, Store Card, Personal Loan or Balance Protection.</string>
+    <string name="whatsapp_how_to_pay_woolies_account">How to pay your Woolies account</string>
+    <string name="whatsapp_unable_to_pay_woolies_account">Unable to pay your Woolies account</string>
+    <string name="payments_not_reflecting">Payments not reflecting</string>
+    <string name="whatsapp_number_label">WhatsApp Number:</string>
+    <string name="chat_with_us_now_button">CHAT WITH US NOW</string>
+    <string name="any_question_label">Any Questions?</string>
+    <string name="chat_with_us_whatsapp">Chat With Us</string>
 </resources>
 

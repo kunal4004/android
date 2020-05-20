@@ -2,24 +2,21 @@
 
 package za.co.woolworths.financial.services.android.ui.extension
 
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.graphics.Typeface
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.TextView
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -242,10 +239,3 @@ fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
 
     return null
 }
-
-fun <T : Fragment> AppCompatActivity.setAccountNavigationGraph(navigationController: NavController, screenType: OnBoardingScreenType) {
-    val bundle = Bundle()
-    bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
-    navigationController.setGraph(navigationController.graph, bundle)
-}
-
