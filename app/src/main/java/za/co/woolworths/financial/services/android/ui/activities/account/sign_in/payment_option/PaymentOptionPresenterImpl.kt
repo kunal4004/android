@@ -53,6 +53,8 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
             ApplyNowState.PERSONAL_LOAN -> drawableHeader[4]
             else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
         })
+
+        showWhatsAppChatWithUs()
     }
 
     override fun loadABSACreditCardInfoIfNeeded() {

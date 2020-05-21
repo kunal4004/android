@@ -30,8 +30,9 @@ class WhatsAppImpl {
         }
 
     val ccPaymentOptionsIsEnabled: Boolean
-        get() = whatsAppConfig?.apply { showWhatsAppButton && showWhatsAppIcon.ccPaymentOptions }?.let { false }
-                ?: false
+        get() {
+            return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.ccPaymentOptions!!
+        }
 
     val contactUsFinancialServicesIsEnabled: Boolean
         get() {

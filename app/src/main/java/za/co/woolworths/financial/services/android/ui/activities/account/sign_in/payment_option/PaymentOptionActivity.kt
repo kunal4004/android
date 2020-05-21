@@ -68,7 +68,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     }
 
     override fun showWhatsAppChatWithUs(visible: Boolean) {
-        paymentOptionChatToUsRelativeLayout?.visibility =  when (mPaymentOptionPresenterImpl?.mAccountDetails?.first){
+        chatWithUsContainerLinearLayout?.visibility =  when (mPaymentOptionPresenterImpl?.mAccountDetails?.first){
             GOLD_CREDIT_CARD,BLACK_CREDIT_CARD,SILVER_CREDIT_CARD ->  if (visible) VISIBLE else GONE
             else -> GONE
         }

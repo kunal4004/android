@@ -134,6 +134,7 @@
             android:background="@color/default_background" />
 
         <LinearLayout
+            android:id="@+id/chatWithUsContainerLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
