@@ -1,15 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp
 
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.widget.Toast
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.app_toolbar.*
+import kotlinx.android.synthetic.main.whatsapp_chat_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-
-class WhatsAppChatDetailActivity : AppCompatActivity() {
+class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,36 +16,11 @@ class WhatsAppChatDetailActivity : AppCompatActivity() {
         setContentView(R.layout.whatsapp_chat_activity)
         actionBar()
 
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        when (displayMetrics.densityDpi) {
-            DisplayMetrics.DENSITY_LOW -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_LOW, Toast.LENGTH_LONG).show()
-            }
-            DisplayMetrics.DENSITY_MEDIUM -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_MEDIUM, Toast.LENGTH_LONG).show()
-
-            }
-            DisplayMetrics.DENSITY_HIGH -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_HIGH, Toast.LENGTH_LONG).show()
-
-            }
-            DisplayMetrics.DENSITY_XHIGH -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_XHIGH, Toast.LENGTH_LONG).show()
-
-            }
-            DisplayMetrics.DENSITY_XXHIGH -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_XXHIGH, Toast.LENGTH_LONG).show()
-
-            }
-            DisplayMetrics.DENSITY_XXXHIGH -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_XXXHIGH, Toast.LENGTH_LONG).show()
-            }
-
-            DisplayMetrics.DENSITY_440 -> {
-                Toast.makeText(this,  DisplayMetrics.DENSITY_440, Toast.LENGTH_LONG).show()
-            }
+        with(WhatsAppConfig()) {
+            whatsappNumberValueTextView?.text = whatsAppNumber
         }
+
+        chatWithUsButton?.setOnClickListener(this)
     }
 
     fun actionBar() {
@@ -56,6 +30,14 @@ class WhatsAppChatDetailActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.chatWithUsButton -> {
+               Utils.openBrowserWithUrl(WhatsAppConfig().whatsAppChatWithUsUrlBreakout)
+            }
         }
     }
 }
