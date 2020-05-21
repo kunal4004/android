@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppConfig
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
 import java.lang.RuntimeException
 
 class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.PaymentOptionView?, private var model: IPaymentOptionContract.PaymentOptionModel) : IPaymentOptionContract.PaymentOptionPresenter, IPaymentOptionContract.PaymentOptionModel {
@@ -73,7 +73,7 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     }
 
     override fun showWhatsAppChatWithUs() {
-       val chatWithUsIsEnabled = WhatsAppConfig().ccPaymentOptionsIsEnabled
+       val chatWithUsIsEnabled = WhatsAppImpl().ccPaymentOptionsIsEnabled
         mainView?.showWhatsAppChatWithUs(chatWithUsIsEnabled)
     }
 

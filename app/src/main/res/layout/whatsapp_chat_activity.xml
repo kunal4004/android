@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fitsSystemWindows="true">
 
     <TextView
@@ -18,9 +19,20 @@
         app:layout_constraintStart_toEndOf="@+id/unableToPayWooliesAccountImageViewIcon"
         app:layout_constraintTop_toBottomOf="@+id/unableToPayWooliesAccountTextView" />
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/app_toolbar" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/whatsAppToolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:showIn="@layout/whatsapp_chat_activity">
+
+        <TextView
+            android:id="@+id/whatsAppTitleToolbar"
+            style="@style/appToolbarStyle"
+            android:text="@string/whatsapp_chat_to_us_title" />
+    </androidx.appcompat.widget.Toolbar>
 
     <ImageView
         android:id="@+id/whatsAppImageView"
@@ -29,7 +41,7 @@
         android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include"
+        app:layout_constraintTop_toBottomOf="@+id/whatsAppToolbar"
         app:srcCompat="@drawable/whatsapp" />
 
     <TextView
@@ -44,6 +56,7 @@
     <TextView
         android:id="@+id/chatToUsWhatsappDescriptionTextView"
         style="@style/chat_with_us_desc_whatsapp_style"
+        android:alpha="0.7"
         android:text="@string/chat_with_us_whatsapp_description"
         app:layout_constraintEnd_toStartOf="@+id/guideline8"
         app:layout_constraintStart_toStartOf="@+id/guideline7"
@@ -125,9 +138,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="021 411 5000"
+        android:textSize="17sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
-        app:layout_constraintEnd_toEndOf="@+id/paymentNotReflectingTextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
         app:layout_constraintStart_toEndOf="@+id/whatsappNumberLabelTextView" />
 
     <ImageView
@@ -145,7 +160,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
         android:text="@string/whatsapp_number_label"
+        android:textSize="17sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/whatsappNumberValueTextView"
         app:layout_constraintHorizontal_bias="0.5"

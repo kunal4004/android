@@ -328,7 +328,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     override fun executeCreditCardTokenService() {
-        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true)) return
+        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true) return
         activity?.apply {
             includeAccountDetailHeaderView.visibility = GONE
             creditCardActivationView.visibility = GONE

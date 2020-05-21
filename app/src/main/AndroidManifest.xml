@@ -521,7 +521,7 @@
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/salesPageMainStyle" />
+            android:theme="@style/ShoppingListDetailActivityStyle" />
 
     </application>
 
