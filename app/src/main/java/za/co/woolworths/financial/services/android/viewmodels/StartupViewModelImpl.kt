@@ -124,7 +124,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             }
 
             whatsApp?.apply {
-                showWhatsAppButton  =  Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                showWhatsAppButton  =  !Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setWhatsAppConfig(this)
             }
 
