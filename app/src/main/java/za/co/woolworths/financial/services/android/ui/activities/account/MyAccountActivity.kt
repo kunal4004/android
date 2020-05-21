@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccoun
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MyAccountActivity : AppCompatActivity() {
@@ -62,7 +63,7 @@ class MyAccountActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val fragment = supportFragmentManager.findFragmentByTag(StoresNearbyFragment1::class.java.simpleName)
+        val fragment = supportFragmentManager.findFragmentByTag(MyAccountsFragment::class.java.simpleName)
         when(requestCode){
             REQUEST_CODE_OPEN_STATEMENT -> {
                 finish()
@@ -114,5 +115,9 @@ class MyAccountActivity : AppCompatActivity() {
         val fragment = supportFragmentManager.findFragmentByTag(StoresNearbyFragment1::class.java.simpleName)
         (fragment as? StoresNearbyFragment1)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
                 ?: (fragment as? ShopFragment)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    fun onSignedOut() {
+        ScreenManager.presentSSOLogout(this@MyAccountActivity)
     }
 }

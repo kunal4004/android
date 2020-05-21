@@ -26,10 +26,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.NotificationUtils
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl.Companion.APP_SERVER_ENVIRONMENT_KEY
@@ -73,6 +70,17 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                 firebaseAnalytics?.apply {
                     setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
                     setUserProperty(APP_VERSION_KEY, appVersion)
+
+                    val token =  SessionUtilities.getInstance().jwt
+                    token.AtgId?.apply {
+                        val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
+                        setUserId(atgId)
+                        setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
+                    }
+
+                    token.C2Id?.apply {
+                        setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
+                    }
                 }
                 setupScreen()
             } else {

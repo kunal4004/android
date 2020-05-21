@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_dialog_with_ok_button_fragment.*
 import kotlinx.android.synthetic.main.root_device_info_fragment.tvDescription
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
@@ -40,7 +41,7 @@ class AccountsErrorHandlerFragment : WBottomSheetDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (activity is WTransactionsActivity) {
+        if (activity is WTransactionsActivity|| activity is StatementActivity) {
             activity?.apply {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
