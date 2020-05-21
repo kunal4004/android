@@ -80,6 +80,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
         const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
+        const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
+        const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
+        const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
+
         const val SHOP_SEARCH = "SHOP_Search"
     }
 

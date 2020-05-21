@@ -49,7 +49,9 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
-            R.id.paymentOptionChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)
+            R.id.paymentOptionChatToUsRelativeLayout -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
+                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)}
         }
     }
 

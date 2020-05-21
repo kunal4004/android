@@ -6,13 +6,15 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.whatsapp_chat_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-
 
 class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -54,8 +56,13 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.chatWithUsButton -> {
-                request(OneAppService.queryServicePostEvent(featureName, appScreen))
-                Utils.openBrowserWithUrl(WhatsAppImpl().whatsAppChatWithUsUrlBreakout)
+                if (NetworkManager.getInstance().isConnectedToNetwork(this@WhatsAppChatDetailActivity)) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
+                    request(OneAppService.queryServicePostEvent(featureName, appScreen))
+                    Utils.openBrowserWithUrl(WhatsAppImpl().whatsAppChatWithUsUrlBreakout)
+                } else {
+                    ErrorHandlerView(this@WhatsAppChatDetailActivity).showToast()
+                }
             }
         }
     }
