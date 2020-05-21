@@ -161,6 +161,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             statement.setSelectedByUser(true);
         }
 
+        boolean arrayContainTrue = false;
         for (UserStatement s : arrStatement) {
             if (s.selectedByUser()) {
                 arrayContainTrue = true;
