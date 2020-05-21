@@ -176,7 +176,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     }
                 }
 
-                override fun onFailure(throwable: Throwable) {
+                override fun onFailure(error: Throwable?) {
                     showNonVideoViewWithErrorLayout()
                 }
             })
