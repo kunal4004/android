@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState.*
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.CC_PAYMENT_OPTIONS
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_WHATSAPP
@@ -48,7 +49,9 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
-            R.id.paymentOptionChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)
+            R.id.paymentOptionChatToUsRelativeLayout -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
+                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)}
         }
     }
 
@@ -65,7 +68,10 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     }
 
     override fun showWhatsAppChatWithUs(visible: Boolean) {
-        paymentOptionChatToUsRelativeLayout?.visibility = if (visible) VISIBLE else GONE
+        paymentOptionChatToUsRelativeLayout?.visibility =  when (mPaymentOptionPresenterImpl?.mAccountDetails?.first){
+            GOLD_CREDIT_CARD,BLACK_CREDIT_CARD,SILVER_CREDIT_CARD ->  if (visible) VISIBLE else GONE
+            else -> GONE
+        }
     }
 
     override fun showPaymentDetail(paymentDetail: Map<String, String>?) {

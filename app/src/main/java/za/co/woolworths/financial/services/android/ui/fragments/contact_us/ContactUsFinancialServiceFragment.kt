@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_financial_services.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
@@ -83,7 +84,9 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                 R.id.storeCardPesonalLoanQuery -> sendEmail(getString(R.string.email_sc_and_pl_query), getString(R.string.txt_sc_and_pl_query))
                 R.id.proofOfIncome -> sendEmail(getString(R.string.email_proof_of_income), getString(R.string.txt_proof_of_income))
                 R.id.technical -> sendEmail(getString(R.string.email_technical), getString(R.string.txt_technical_problem))
-                R.id.contactUsChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(activity,FEATURE_WHATSAPP, CONTACT_US)
+                R.id.contactUsChatToUsRelativeLayout -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CONTACT_US)
+                    ScreenManager.presentWhatsAppChatToUsActivity(activity,FEATURE_WHATSAPP, CONTACT_US)}
             }
         }
     }

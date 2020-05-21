@@ -16,8 +16,7 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     companion object {
         const val ACCOUNT_INFO = "ACCOUNT_INFO"
     }
-
-    private var mAccountDetails: Pair<ApplyNowState, Account>? = null
+    var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
     override fun retrieveAccountBundle(intent: Intent?) {
         mAccountDetails =
