@@ -913,7 +913,7 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String): Call<OrdersResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order/{id}")
     fun getOrderDetails(
             @Header("apiId") apiId: String,
