@@ -257,6 +257,6 @@ public class ScreenManager {
 		openChatToUsWhatsAppActivity.putExtra(FEATURE_NAME, featureName);
 		openChatToUsWhatsAppActivity.putExtra(APP_SCREEN, appScreen);
 		activity.startActivity(openChatToUsWhatsAppActivity);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 	}
 }
