@@ -11,10 +11,14 @@ import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState.*
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.CC_PAYMENT_OPTIONS
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymentOptionContract.PaymentOptionView {
 
@@ -39,11 +43,15 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             initView()
         }
         closeButtonImageView?.setOnClickListener(this)
+        paymentOptionChatToUsRelativeLayout?.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
+            R.id.paymentOptionChatToUsRelativeLayout -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
+                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)}
         }
     }
 
@@ -56,6 +64,13 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             count?.text = (index + 1).toString()
             howToPayOption?.text = paymentMethod.description
             howToPayOptionsList?.addView(view)
+        }
+    }
+
+    override fun showWhatsAppChatWithUs(visible: Boolean) {
+        paymentOptionChatToUsRelativeLayout?.visibility =  when (mPaymentOptionPresenterImpl?.mAccountDetails?.first){
+            GOLD_CREDIT_CARD,BLACK_CREDIT_CARD,SILVER_CREDIT_CARD ->  if (visible) VISIBLE else GONE
+            else -> GONE
         }
     }
 

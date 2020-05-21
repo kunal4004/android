@@ -3,30 +3,233 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/app_toolbar" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/toolbarGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="?attr/actionBarSize" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/whatsAppToolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/toolbarGuideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:showIn="@layout/whatsapp_chat_activity">
+
+        <TextView
+            android:id="@+id/whatsAppTitleToolbar"
+            style="@style/appToolbarStyle"
+            android:layout_width="wrap_content"
+            android:text="@string/whatsapp_chat_to_us_title" />
+    </androidx.appcompat.widget.Toolbar>
+
 
     <ImageView
         android:id="@+id/whatsAppImageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/whatsapp_chat_to_us_title"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/chatToUsImageViewGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarGuideLine"
         app:srcCompat="@drawable/whatsapp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/chatToUsImageViewGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/beginMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
 
     <TextView
         android:id="@+id/chatToUsWhatsAppTitleTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        style="@style/chat_with_us_title_style"
+        android:text="@string/whatsapp_chat_with_us_row_title"
+        app:layout_constraintBottom_toTopOf="@+id/chatToUsTitleGuideLine"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/beginMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/whatsAppImageView" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/chatToUsTitleGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.48" />
 
+    <TextView
+        android:id="@+id/chatToUsWhatsappDescriptionTextView"
+        style="@style/chat_with_us_desc_whatsapp_style"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="11dp"
+        android:text="@string/chat_with_us_whatsapp_description"
+        app:layout_constraintBottom_toTopOf="@+id/chatWithUsDescriptionLayout"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/beginMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/chatToUsTitleGuideLine"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/chatWithUsDescriptionLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <TextView
+        android:id="@+id/howToPayWooliesAccountTextView"
+        style="@style/whatsapp_how_to_pay_info_text_style"
+        android:layout_marginStart="8dp"
+        android:text="@string/whatsapp_how_to_pay_woolies_account"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toEndOf="@+id/whatsAppImageViewIcon"
+        app:layout_constraintTop_toBottomOf="@+id/chatToUsWhatsappDescriptionTextView" />
+
+
+    <TextView
+        android:id="@+id/unableToPayWooliesAccountTextView"
+        style="@style/whatsapp_how_to_pay_info_text_style"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:text="@string/whatsapp_unable_to_pay_woolies_account"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toEndOf="@+id/unableToPayWooliesAccountImageViewIcon"
+        app:layout_constraintTop_toBottomOf="@+id/howToPayWooliesAccountTextView" />
+
+    <TextView
+        android:id="@+id/paymentNotReflectingTextView"
+        style="@style/whatsapp_how_to_pay_info_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:text="@string/payments_not_reflecting"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toEndOf="@+id/paymentNotReflectingIconImageView"
+        app:layout_constraintTop_toBottomOf="@+id/unableToPayWooliesAccountTextView" />
+
+    <ImageView
+        android:id="@+id/whatsAppImageViewIcon"
+        style="@style/whatsapp_how_to_pay_info_icon_style"
+        app:layout_constraintBottom_toBottomOf="@+id/howToPayWooliesAccountTextView"
+        app:layout_constraintStart_toStartOf="@+id/beginMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/howToPayWooliesAccountTextView"
+        app:srcCompat="@drawable/icon_tick" />
+
+    <ImageView
+        android:id="@+id/unableToPayWooliesAccountImageViewIcon"
+        style="@style/whatsapp_how_to_pay_info_icon_style"
+        app:layout_constraintBottom_toTopOf="@+id/paymentNotReflectingTextView"
+        app:layout_constraintStart_toStartOf="@+id/beginMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/howToPayWooliesAccountTextView"
+        app:srcCompat="@drawable/icon_tick" />
+
+
+    <ImageView
+        android:id="@+id/paymentNotReflectingIconImageView"
+        style="@style/whatsapp_how_to_pay_info_icon_style"
+        app:layout_constraintBottom_toBottomOf="@+id/paymentNotReflectingTextView"
+        app:layout_constraintStart_toStartOf="@+id/beginMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/paymentNotReflectingTextView"
+        app:srcCompat="@drawable/icon_tick"
+        tools:ignore="ContentDescription" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/chat_with_us_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layout_end_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="24dp" />
+
+
+    <Button
+        android:id="@+id/chatWithUsButton"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/chat_with_us_now_button"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/beginMarginGuideline"
+        app:layout_constraintTop_toTopOf="@+id/chat_with_us_guideline" />
+
+    <ImageView
+        android:id="@+id/whatsappBlackIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/whatsappNumberLabelTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatWithUsButton"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:srcCompat="@drawable/icon_whatsapp_black" />
+
+    <TextView
+        android:id="@+id/whatsappNumberLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:text="@string/whatsapp_number_label"
+        android:textSize="17sp"
+        android:textColor="#222222"
+        app:layout_constraintBottom_toBottomOf="@+id/whatsappBlackIconImageView"
+        app:layout_constraintEnd_toStartOf="@+id/whatsappNumberValueTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/whatsappBlackIconImageView"
+        app:layout_constraintTop_toTopOf="@+id/whatsappBlackIconImageView"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/whatsappNumberValueTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:text="021 411 5000"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/whatsappNumberLabelTextView"
+        app:layout_constraintTop_toTopOf="@+id/whatsappNumberLabelTextView"
+        app:layout_constraintVertical_chainStyle="packed" />
 </androidx.constraintlayout.widget.ConstraintLayout>

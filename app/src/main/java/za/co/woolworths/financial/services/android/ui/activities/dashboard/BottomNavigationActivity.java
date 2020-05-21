@@ -232,8 +232,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             badgeCount();
         }
-
-        addDrawerFragment();
     }
 
     private void initBadgeCounter() {

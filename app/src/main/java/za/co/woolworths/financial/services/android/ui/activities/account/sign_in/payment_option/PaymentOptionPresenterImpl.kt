@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
 import java.lang.RuntimeException
 
 class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.PaymentOptionView?, private var model: IPaymentOptionContract.PaymentOptionModel) : IPaymentOptionContract.PaymentOptionPresenter, IPaymentOptionContract.PaymentOptionModel {
@@ -15,11 +16,11 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     companion object {
         const val ACCOUNT_INFO = "ACCOUNT_INFO"
     }
-
-    private var mAccountDetails: Pair<ApplyNowState, Account>? = null
+    var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
     override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountDetails =
+                Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? {
@@ -68,6 +69,11 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     override fun displayPaymentMethod() {
         val paymentMethod = getPaymentMethod()
         mainView?.setPaymentOption(paymentMethod)
+    }
+
+    override fun showWhatsAppChatWithUs() {
+       val chatWithUsIsEnabled = WhatsAppImpl().ccPaymentOptionsIsEnabled
+        mainView?.showWhatsAppChatWithUs(chatWithUsIsEnabled)
     }
 
     override fun initView() {

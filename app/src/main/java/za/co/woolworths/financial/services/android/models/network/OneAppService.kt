@@ -341,4 +341,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.queryServiceCancelOrder(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), orderId)
     }
 
+    fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
+        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
+    }
 }
