@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
@@ -246,6 +247,12 @@ public class ScreenManager {
 	public static void presentDeliveryLocationActivity(Activity activity, int requestCode) {
 		Intent openDeliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
 		activity.startActivityForResult(openDeliveryLocationSelectionActivity, requestCode);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
+
+	public static void presentWhatsAppChatToUsActivity(Activity activity) {
+		Intent openDeliveryLocationSelectionActivity = new Intent(activity, WhatsAppChatDetailActivity.class);
+		activity.startActivity(openDeliveryLocationSelectionActivity);
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 }

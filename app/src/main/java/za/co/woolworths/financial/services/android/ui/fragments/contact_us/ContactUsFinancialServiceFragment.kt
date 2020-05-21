@@ -7,14 +7,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_financial_services.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
@@ -42,6 +46,8 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
 
         setupToolbar()
 
+        showWhatsAppChatWithUs()
+
         localCaller?.setOnClickListener(this)
         internationalCaller?.setOnClickListener(this)
         blackCrediCardQuery?.setOnClickListener(this)
@@ -53,6 +59,12 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
         storeCardPesonalLoanQuery?.setOnClickListener(this)
         proofOfIncome?.setOnClickListener(this)
         technical?.setOnClickListener(this)
+        contactUsChatToUsRelativeLayout?.setOnClickListener(this)
+    }
+
+    private fun showWhatsAppChatWithUs() {
+        val visibility = WoolworthsApplication.getWhatsAppConfig()?.apply { showWhatsAppButton && showWhatsAppIcon.contactUsFinancialServices }?.let { false } ?: false
+        chatWithUsLinearLayout?.visibility = if (visibility) VISIBLE else GONE
     }
 
     override fun onClick(v: View) {
@@ -69,6 +81,7 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                 R.id.storeCardPesonalLoanQuery -> sendEmail(getString(R.string.email_sc_and_pl_query), getString(R.string.txt_sc_and_pl_query))
                 R.id.proofOfIncome -> sendEmail(getString(R.string.email_proof_of_income), getString(R.string.txt_proof_of_income))
                 R.id.technical -> sendEmail(getString(R.string.email_technical), getString(R.string.txt_technical_problem))
+                R.id.contactUsChatToUsRelativeLayout -> ScreenManager.presentWhatsAppChatToUsActivity(activity)
             }
         }
     }

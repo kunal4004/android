@@ -14,6 +14,7 @@ interface IPaymentOptionContract {
         fun showABSAInfo()
         fun hideABSAInfo()
         fun setPaymentOption(paymentMethods: MutableList<PaymentMethod>?)
+        fun showWhatsAppChatWithUs(visible: Boolean)
     }
 
     interface PaymentOptionPresenter {
@@ -25,6 +26,7 @@ interface IPaymentOptionContract {
         fun loadABSACreditCardInfoIfNeeded()
         fun getPaymentMethod(): MutableList<PaymentMethod>?
         fun displayPaymentMethod()
+        fun showWhatsAppChatWithUs()
         fun initView()
     }
 
