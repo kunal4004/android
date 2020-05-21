@@ -236,13 +236,14 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun confirmDrawnDownAmount() {
-        if (getDrawnDownAmount() < getMinDrawnAmountWithoutCent()) {
-            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT, getDrawnDownAmount().toString())
-        } else if (getDrawnDownAmount() >= getMinDrawnAmountWithoutCent() && getDrawnDownAmount() <= getAvailableFundWithoutCent()) {
+        val drawnDownAmount = getDrawnDownAmount()
+        if (drawnDownAmount < getMinDrawnAmountWithoutCent()) {
+            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT, drawnDownAmount.toString())
+        } else if (drawnDownAmount >= getMinDrawnAmountWithoutCent() && drawnDownAmount <= getAvailableFundWithoutCent()) {
             val productOfferingId = getProductOfferingId()
             val drawnDownAmountInCent = getDrawnDownAmount() * 100
             val creditLimit = getCreditLimit()
-            val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(drawnDownAmountInCent), creditLimit)
+            val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(drawnDownAmount), creditLimit)
             showProgressDialog(true)
             mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
             mPostLoanIssue?.enqueue(CompletionHandler(object : IResponseListener<IssueLoanResponse> {
