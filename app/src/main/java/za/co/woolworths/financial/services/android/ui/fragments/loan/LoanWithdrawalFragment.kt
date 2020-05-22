@@ -243,7 +243,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
             val productOfferingId = getProductOfferingId()
             val drawnDownAmountInCent = getDrawnDownAmount() * 100
             val creditLimit = getCreditLimit()
-            val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(drawnDownAmount), creditLimit)
+            val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(), creditLimit)
             showProgressDialog(true)
             mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
             mPostLoanIssue?.enqueue(CompletionHandler(object : IResponseListener<IssueLoanResponse> {
