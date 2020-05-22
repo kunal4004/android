@@ -46,14 +46,14 @@ class RetrieveOTPFragment : Fragment() {
 
     private fun initRetrieveOTP(otpMethodType: OTPMethodType) {
         OneAppService.retrieveOTP(otpMethodType, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
-            override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
-                retrieveOTPResponse?.apply {
+            override fun onSuccess(response: RetrieveOTPResponse?) {
+                response?.apply {
                     this@RetrieveOTPFragment.retrieveOTPResponse = this
                     handleRetrieveOTPResponse(this)
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 navController?.navigate(R.id.action_to_retrieveOTPErrorFragment, bundleOf("bundle" to bundle))
             }
         }, RetrieveOTPResponse::class.java))

@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -229,11 +230,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         });
 
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            badgeCount();
+        if (mBundle!=null && mBundle.containsKey("OnBoardingLoginBadge")){
+            QueryBadgeCounter.getInstance().queryCartSummaryCount();
+            QueryBadgeCounter.getInstance().queryVoucherCount();
         }
 
+        queryBadgeCountOnStart();
+
         addDrawerFragment();
+    }
+
+    private void queryBadgeCountOnStart() {
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            mQueryBadgeCounter.queryVoucherCount();
+            mQueryBadgeCounter.queryCartSummaryCount();
+        }
     }
 
     private void initBadgeCounter() {
@@ -1157,15 +1168,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         return mNavController.getCurrentFrag();
     }
 
+    // SSO - After a successful login (and user has C2 ID):
     @Override
     public void badgeCount() {
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
+            case R.id.navigation_today:
                 mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
 
             case R.id.navigate_to_shop:
-                /***
+                /**
                  * Trigger cart count when delivery location address was set
                  * if delivery location is empty or null, cart summary call will occur
                  * in ProductDetailActivity.
@@ -1173,14 +1187,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                  */
                 if (Utils.getPreferredDeliveryLocation() != null)
                     mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
             case R.id.navigate_to_wreward:
                 mQueryBadgeCounter.queryCartSummaryCount();
                 break;
             case R.id.navigate_to_cart:
-                break;
-            case R.id.navigation_today:
-                mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
             default:
                 break;
