@@ -63,17 +63,32 @@
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/subTitle">
 
-        <TextView
+        <ProgressBar
+            android:id="@+id/progressGetProvinces"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+
+        <AutoCompleteTextView
+            android:id="@+id/tvSelectedProvince"
             style="@style/myriad_pro_regular"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:text="Select a Province"
             android:textColor="@color/offer_title"
+            android:background="@color/white"
+            android:layout_toStartOf="@+id/dropdownGetProvinces"
+            android:layout_marginEnd="@dimen/sixteen_dp"
             android:textSize="@dimen/sixteen_sp" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/dropdownGetProvinces"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -93,17 +108,32 @@
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/selectProvince">
 
-        <TextView
+        <ProgressBar
+            android:id="@+id/progressGetSuburb"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+
+        <AutoCompleteTextView
+            android:id="@+id/tvSelectedSuburb"
             style="@style/myriad_pro_regular"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:text="Select a Suburb"
+            android:text="@string/select_a_suburb"
             android:textColor="@color/offer_title"
+            android:background="@color/white"
+            android:layout_toStartOf="@+id/dropdownGetSuburb"
+            android:layout_marginEnd="@dimen/sixteen_dp"
             android:textSize="@dimen/sixteen_sp" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/dropdownGetSuburb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -146,12 +176,13 @@
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
-        android:id="@+id/activateCardButton"
+        android:id="@+id/confirmLocation"
         style="@style/call_to_action_text_style"
         android:layout_height="@dimen/fifty_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/order_add_to_cart_button_bg"
         android:text="@string/confirm"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintHorizontal_bias="0.0"

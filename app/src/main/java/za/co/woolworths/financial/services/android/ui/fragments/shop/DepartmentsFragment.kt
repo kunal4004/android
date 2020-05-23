@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
@@ -44,8 +46,10 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if (isFragmentVisible)
+        if (isFragmentVisible) {
             if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance().show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+        }
 
     }
 
@@ -94,7 +98,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
-        mDepartmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
+        mDepartmentAdapter = DepartmentAdapter(categories, ::departmentItemClicked, ::onEditDeliveryLocation) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
@@ -106,6 +110,8 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private fun departmentItemClicked(rootCategory: RootCategory) {
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openNextFragment(rootCategory))
     }
+
+    fun onEditDeliveryLocation(){}
 
     private fun openNextFragment(rootCategory: RootCategory): Fragment {
         val drillDownCategoryFragment = SubCategoryFragment()

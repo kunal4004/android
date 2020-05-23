@@ -1538,4 +1538,15 @@ public class Utils {
 
 		return (currentTime.after(openingTime) && currentTime.before(closingTime));
 	}
+
+	public static void deliverySelectionModalShown() {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.didShowDeliverySelectionModal = true;
+		currentUserObject.save();
+	}
+
+	public static Boolean isDeliverySelectionModalShown() {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return currentUserObject.didShowDeliverySelectionModal;
+	}
 }
