@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
@@ -24,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
@@ -231,6 +233,23 @@ class KotlinUtils {
             }
 
             return transactionList
+        }
+
+        fun presentEditDeliveryLocationActivity(activity: Activity?, deliveryType: DeliveryType? = null) {
+            var type = deliveryType
+            if (type == null) {
+                if (Utils.getPreferredDeliveryLocation() != null) {
+                    type = if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                }
+            }
+            activity?.apply {
+                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
+                val mBundle = Bundle()
+                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
+                mIntent.putExtra("bundle", mBundle)
+                startActivityForResult(mIntent, EditDeliveryLocationActivity.REQUEST_CODE)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
         }
     }
 }

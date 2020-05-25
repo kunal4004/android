@@ -13,4 +13,8 @@ class EditDeliveryLocationInteractorImpl : EditDeliveryLocationContract.EditDeli
         request(OneAppService.getSuburbs(locationId), requestListener)
     }
 
+    override fun executeSetSuburb(suburbId: String, requestListener: IGenericAPILoaderView<Any>) {
+        request(OneAppService.setSuburb(suburbId), requestListener)
+    }
+
 }

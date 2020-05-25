@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.content.Intent
+import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,26 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delivery_or_click_and_collect_selector_dialog.*
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
-class DeliveryOrClickAndCollectSelectorDialogFragment : WBottomSheetDialogFragment() {
+class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOptionSelection?) : WBottomSheetDialogFragment(), View.OnClickListener {
 
-    private var mDescription: String? = null
 
-    companion object {
-        private const val DESCRIPTION = "DESCRIPTION"
-        fun newInstance() = DeliveryOrClickAndCollectSelectorDialogFragment().withArgs {
-        }
+    interface IDeliveryOptionSelection {
+        fun onDeliveryOptionSelected(deliveryType: DeliveryType)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            mDescription = getString(DESCRIPTION)
-        }
+    companion object {
+        fun newInstance(listener: IDeliveryOptionSelection?) = DeliveryOrClickAndCollectSelectorDialogFragment(listener)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,14 +31,26 @@ class DeliveryOrClickAndCollectSelectorDialogFragment : WBottomSheetDialogFragme
         super.onViewCreated(view, savedInstanceState)
         Utils.deliverySelectionModalShown()
         justBrowsing?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        justBrowsing?.setOnClickListener {
-            activity?.apply {
-                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
-                val mBundle = Bundle()
-                mIntent.putExtra("bundle", mBundle)
-                startActivity(mIntent)
-                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        justBrowsing?.setOnClickListener(this)
+        delivery?.setOnClickListener(this)
+        clickAndCollect?.setOnClickListener(this)
+
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.justBrowsing -> dismissAllowingStateLoss()
+            R.id.delivery -> {
+                dismissDialogWithDeliveryOption(DeliveryType.DELIVERY)
+            }
+            R.id.clickAndCollect -> {
+                dismissDialogWithDeliveryOption(DeliveryType.STORE_PICKUP)
             }
         }
+    }
+
+    private fun dismissDialogWithDeliveryOption(deliveryType: DeliveryType) {
+        listener?.onDeliveryOptionSelected(deliveryType)
+        dismissAllowingStateLoss()
     }
 }

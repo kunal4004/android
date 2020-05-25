@@ -16,6 +16,12 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     var bundle: Bundle? = null
 
 
+    companion object {
+        var REQUEST_CODE = 1515
+        var DELIVERY_TYPE = "DELIVERY_TYPE"
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.edit_delivery_location_activity)

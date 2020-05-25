@@ -2,9 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.click_and_colle
 
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse
+import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
+import za.co.woolworths.financial.services.android.util.DeliveryType
 
 class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContract.EditDeliveryLocationView?, var getInteractor: EditDeliveryLocationContract.EditDeliveryLocationInteractor?) : EditDeliveryLocationContract.EditDeliveryLocationPresenter, IGenericAPILoaderView<Any> {
+    var deliveryType: DeliveryType? = null
+
     override fun onDestroy() {
         mainView = null
     }
@@ -13,8 +18,13 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
         getInteractor?.executeGetProvinces(this)
     }
 
-    override fun initGetSuburbs(locationId: String) {
+    override fun initGetSuburbs(locationId: String, deliveryType: DeliveryType) {
+        this.deliveryType = deliveryType
         getInteractor?.executeGetSuburbs(locationId, this)
+    }
+
+    override fun initSetSuburb(suburbId: String) {
+        getInteractor?.executeSetSuburb(suburbId, this)
     }
 
     override fun onSuccess(response: Any?) {
@@ -28,8 +38,14 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
                 }
                 is SuburbsResponse -> {
                     when (httpCode) {
-                        200 -> mainView?.onGetSuburbsSuccess(suburbs)
+                        200 -> mainView?.onGetSuburbsSuccess(if (deliveryType == DeliveryType.DELIVERY) getDeliverableSuburbs(suburbs) else stores)
                         else -> mainView?.onGetSuburbsFailure()
+                    }
+                }
+                is SetDeliveryLocationSuburbResponse -> {
+                    when (httpCode) {
+                        200 -> mainView?.onSetSuburbSuccess()
+                        else -> mainView?.onSetSuburbFailure()
                     }
                 }
                 else -> throw RuntimeException("onSuccess:: unknown response $response")
@@ -39,6 +55,10 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
 
     override fun onFailure(error: Throwable?) {
         mainView?.onGenericFailure()
+    }
+
+    override fun getDeliverableSuburbs(suburbs: List<Suburb>): List<Suburb> {
+        return suburbs.filter { suburb -> suburb.suburbDeliverable }
     }
 
 }

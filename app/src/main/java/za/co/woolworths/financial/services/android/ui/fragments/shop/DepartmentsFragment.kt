@@ -25,16 +25,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 
-class DepartmentsFragment : DepartmentExtensionFragment() {
+class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version:String = ""
+    private var DEPARTMENT_LOGIN_REQUEST = 1717
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,7 +48,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         setListener()
         if (isFragmentVisible) {
             if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance().show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
         }
 
     }
@@ -111,7 +111,16 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openNextFragment(rootCategory))
     }
 
-    fun onEditDeliveryLocation(){}
+    private fun onEditDeliveryLocation() {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            /* if (Utils.getPreferredDeliveryLocation() != null) {
+                 activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
+             } else*/
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this) }
+        } else {
+            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+        }
+    }
 
     private fun openNextFragment(rootCategory: RootCategory): Fragment {
         val drillDownCategoryFragment = SubCategoryFragment()
@@ -151,6 +160,14 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     fun scrollToTop() {
         if (rclDepartment != null)
             rclDepartment.scrollToPosition(0)
+    }
+
+    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, deliveryType) }
+        } else {
+            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+        }
     }
 
 }

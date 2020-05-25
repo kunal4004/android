@@ -1480,5 +1480,8 @@
     <string name="click_collect">Click &amp; Collect</string>
     <string name="delivery">Delivery</string>
     <string name="select_a_suburb">Select a Suburb</string>
+    <string name="select_a_store">Select a Store</string>
+    <string name="delivery_or_collection">Delivery or Collection?</string>
+    <string name="collecting_from">Collecting From</string>
 </resources>
 
