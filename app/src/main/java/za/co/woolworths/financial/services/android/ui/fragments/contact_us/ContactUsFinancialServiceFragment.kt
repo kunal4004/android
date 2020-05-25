@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_financial_services.*
@@ -21,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -66,8 +69,22 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showWhatsAppChatWithUs() {
-        val chatWithUsIsEnabled = WhatsAppImpl().contactUsFinancialServicesIsEnabled
-        chatWithUsLinearLayout?.visibility = if (chatWithUsIsEnabled) VISIBLE else GONE
+        with(WhatsAppImpl()) {
+            if (isChatWithUsEnabledForContactUs) {
+                chatWithUsLinearLayout?.visibility = VISIBLE
+                if (isCustomerServiceAvailable) {
+                    whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_grey)
+                    whatsAppTitleTextView?.setTextColor(Color.BLACK)
+                    whatsAppNextIconImageView?.alpha = 1f
+                } else {
+                    whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_grey)
+                    whatsAppNextIconImageView?.alpha = 0.4f
+                    activity?.let { activity -> whatsAppTitleTextView?.setTextColor(ContextCompat.getColor(activity, R.color.unavailable)) }
+                }
+            } else {
+                chatWithUsLinearLayout?.visibility = GONE
+            }
+        }
     }
 
     override fun onClick(v: View) {
@@ -85,8 +102,14 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                 R.id.proofOfIncome -> sendEmail(getString(R.string.email_proof_of_income), getString(R.string.txt_proof_of_income))
                 R.id.technical -> sendEmail(getString(R.string.email_technical), getString(R.string.txt_technical_problem))
                 R.id.contactUsChatToUsRelativeLayout -> {
+                    if (!WhatsAppImpl().isCustomerServiceAvailable) {
+                        val whatsAppUnavailableFragment = WhatsAppUnavailableFragment()
+                        activity?.supportFragmentManager?.let { supportFragmentManager -> whatsAppUnavailableFragment.show(supportFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName) }
+                        return
+                    }
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CONTACT_US)
-                    ScreenManager.presentWhatsAppChatToUsActivity(activity,FEATURE_WHATSAPP, CONTACT_US)}
+                    ScreenManager.presentWhatsAppChatToUsActivity(activity, FEATURE_WHATSAPP, CONTACT_US)
+                }
             }
         }
     }

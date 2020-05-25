@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp
 
+import za.co.woolworths.financial.services.android.util.DateTimeUtils
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp
+
+import java.util.*
 
 class WhatsAppImpl {
 
@@ -19,6 +22,25 @@ class WhatsAppImpl {
         whatsAppConfig = WoolworthsApplication.getWhatsAppConfig()
     }
 
+    // Get hour in 24 hour format
+    private val hourMinutesIn24HourFormat: Date?
+        get() {
+            val currentTime = DateTimeUtils().currentDayZoneTime
+//            val hour = currentTime.get(Calendar.HOUR_OF_DAY)
+//            val minute: Int = currentTime.get(Calendar.MINUTE)
+            val hour = "23"
+            val minute = "05"
+            return DateTimeUtils().parseDate("$hour:$minute")
+        }
+
+    private val customerServiceAvailableTimeFrom: Date?
+        get() = whatsAppConfig?.availabilityTimes?.startTime?.let { DateTimeUtils().parseDate(it) }
+                ?: Date(0)
+
+    private val customerServiceAvailableTimeUntil: Date?
+        get() = whatsAppConfig?.availabilityTimes?.endTime?.let { DateTimeUtils().parseDate(it) }
+                ?: Date(0)
+
     val whatsAppNumber: String
         get() {
             whatsAppConfig?.phoneNumber?.apply {
@@ -34,11 +56,15 @@ class WhatsAppImpl {
             return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.ccPaymentOptions!!
         }
 
-    val contactUsFinancialServicesIsEnabled: Boolean
+    val isChatWithUsEnabledForContactUs: Boolean
         get() {
             return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices!!
         }
 
     val whatsAppChatWithUsUrlBreakout: String?
         get() = "${whatsAppConfig?.baseUrl}${whatsAppConfig?.phoneNumber}${whatsAppConfig?.text} "
+
+    val isCustomerServiceAvailable: Boolean
+        get() = customerServiceAvailableTimeFrom?.before(hourMinutesIn24HourFormat) ?: false && customerServiceAvailableTimeUntil?.after(hourMinutesIn24HourFormat) ?: false
+
 }

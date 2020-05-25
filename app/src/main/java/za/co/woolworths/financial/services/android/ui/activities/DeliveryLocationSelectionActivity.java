@@ -53,7 +53,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commitAllowingStateLoss();
 		}
 
-		Utils.displayDialogActionSheet(DeliveryLocationSelectionActivity.this, R.string.delivering_location_popup_message, R.string.cli_got_it);
+		Utils.displayDialogActionSheet(DeliveryLocationSelectionActivity.this, R.string.delivering_location_popup_message, R.string.got_it);
 
 		//One time biometricsWalkthrough
 		ScreenManager.presentBiometricWalkthrough(DeliveryLocationSelectionActivity.this);

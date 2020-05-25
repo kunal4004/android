@@ -125,7 +125,7 @@
     <string name="loading">LOADING…</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
-    <string name="cli_got_it">GOT IT</string>
+    <string name="got_it">GOT IT</string>
     <string name="income_gross_monthly_desc">Gross monthly income refers to your income before deductions.</string>
     <string name="income_net_monthly_desc">Net monthly income refers to your income after deductions.</string>
     <string name="income_additional_monthly_desc">Additional income refers to any income you receive apart from your monthly salary.</string>
@@ -1486,5 +1486,7 @@
     <string name="chat_with_us_now_button">CHAT WITH US NOW</string>
     <string name="any_question_label">Any Questions?</string>
     <string name="chat_with_us_whatsapp">Chat With Us</string>
+    <string name="chat_title_unavailable">Chat on WhatsApp Unavailable</string>
+    <string name="chat_with_us_description">Unfortunately chat to us on WhatsApp is unavailable at the moment. Please try again later.</string>
 </resources>
 

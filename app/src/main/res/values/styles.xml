@@ -2016,7 +2016,7 @@
 
     <style name="chatToUsOnWhatsAppStyle">
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:textSize">15sp</item>
         <item name="android:layout_marginStart">17dp</item>
         <item name="android:layout_width">0dp</item>
