@@ -26,10 +26,8 @@ class WhatsAppImpl {
     private val hourMinutesIn24HourFormat: Date?
         get() {
             val currentTime = DateTimeUtils().currentDayZoneTime
-//            val hour = currentTime.get(Calendar.HOUR_OF_DAY)
-//            val minute: Int = currentTime.get(Calendar.MINUTE)
-            val hour = "23"
-            val minute = "05"
+            val hour = currentTime.get(Calendar.HOUR_OF_DAY)
+            val minute: Int = currentTime.get(Calendar.MINUTE)
             return DateTimeUtils().parseDate("$hour:$minute")
         }
 
@@ -52,14 +50,10 @@ class WhatsAppImpl {
         }
 
     val ccPaymentOptionsIsEnabled: Boolean
-        get() {
-            return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.ccPaymentOptions!!
-        }
+        get() = whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.ccPaymentOptions!!
 
     val isChatWithUsEnabledForContactUs: Boolean
-        get() {
-            return whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices!!
-        }
+        get() = whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices!!
 
     val whatsAppChatWithUsUrlBreakout: String?
         get() = "${whatsAppConfig?.baseUrl}${whatsAppConfig?.phoneNumber}${whatsAppConfig?.text} "
