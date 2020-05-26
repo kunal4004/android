@@ -22,10 +22,12 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -189,6 +191,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
         if (requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
             refreshViewPagerFragment(true)
+        }
+
+        if (requestCode == EditDeliveryLocationActivity.REQUEST_CODE || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+            fragment?.onActivityResult(requestCode, resultCode, data)
         }
     }
 

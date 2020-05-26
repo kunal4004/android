@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -49,7 +48,7 @@ class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOpt
         }
     }
 
-    private fun dismissDialogWithDeliveryOption(deliveryType: DeliveryType) {
+    fun dismissDialogWithDeliveryOption(deliveryType: DeliveryType) {
         listener?.onDeliveryOptionSelected(deliveryType)
         dismissAllowingStateLoss()
     }

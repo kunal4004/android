@@ -1,9 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import androidx.recyclerview.widget.RecyclerView
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
@@ -11,7 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
 import za.co.woolworths.financial.services.android.util.ImageManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -75,24 +76,11 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     inner class HeaderViewHolder(itemView: View) : DepartmentsBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             itemView.locationSelectedLayout.setOnClickListener { onEditDeliveryLocation() }
-            if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
+            if (Utils.getPreferredDeliveryLocation() == null) {
                 itemView.tvDeliveringTo.text = itemView.context.resources.getString(R.string.delivery_or_collection)
                 itemView.tvDeliveryLocation.visibility = View.GONE
             } else {
-                with(Utils.getPreferredDeliveryLocation()) {
-                    when (suburb.storePickup) {
-                        true -> {
-                            itemView.tvDeliveringTo.text = itemView.context.resources.getString(R.string.collecting_from)
-                            itemView.tvDeliveryLocation.text = suburb.name
-                            itemView.tvDeliveryLocation.visibility = View.VISIBLE
-                        }
-                        false -> {
-                            itemView.tvDeliveringTo.text = itemView.context.resources.getString(R.string.delivering_to)
-                            itemView.tvDeliveryLocation.text = suburb.name+","+province.name
-                            itemView.tvDeliveryLocation.visibility = View.VISIBLE
-                        }
-                    }
-                }
+                KotlinUtils.setDeliveryAddressView(itemView.context as Activity,Utils.getPreferredDeliveryLocation(),itemView.tvDeliveringTo,itemView.tvDeliveryLocation,itemView.deliverLocationIcon)
             }
         }
     }
@@ -100,4 +88,5 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     override fun getItemViewType(position: Int): Int {
         return mlRootCategories?.get(position)?.viewType!!.value
     }
+
 }

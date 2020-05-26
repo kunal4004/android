@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +22,8 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
@@ -34,7 +38,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version:String = ""
-    private var DEPARTMENT_LOGIN_REQUEST = 1717
+
+    companion object{
+        var DEPARTMENT_LOGIN_REQUEST = 1717
+    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,7 +55,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         setListener()
         if (isFragmentVisible) {
             if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+            if (!Utils.isDeliverySelectionModalShown()) {
+                showDeliveryOptionDialog()
+            }
         }
 
     }
@@ -116,7 +125,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             /* if (Utils.getPreferredDeliveryLocation() != null) {
                  activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
              } else*/
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this) }
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE) }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }
@@ -164,10 +173,24 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, deliveryType) }
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
+            mDepartmentAdapter?.notifyDataSetChanged()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mDepartmentAdapter?.notifyDataSetChanged()
+    }
+
+    private fun showDeliveryOptionDialog() {
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+    }
 }

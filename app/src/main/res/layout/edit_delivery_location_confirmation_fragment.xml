@@ -5,10 +5,10 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/cardImage"
+        android:id="@+id/deliveryOptionImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/collectingFromTitle"
+        app:layout_constraintBottom_toTopOf="@id/deliveryOption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -16,19 +16,19 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/collectingFromTitle"
+        android:id="@+id/deliveryOption"
         style="@style/futura_medium"
         android:gravity="center_horizontal"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:textSize="@dimen/twenty_sp"
         android:text="Collecting from"
-        app:layout_constraintBottom_toTopOf="@id/collectingFrom"
+        app:layout_constraintBottom_toTopOf="@id/suburbName"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/cardImage" />
+        app:layout_constraintTop_toBottomOf="@+id/deliveryOptionImage" />
 
     <TextView
-        android:id="@+id/collectingFrom"
+        android:id="@+id/suburbName"
         style="@style/futura_semi_bold"
         android:gravity="center_horizontal"
         android:textSize="@dimen/twenty_sp"
@@ -36,7 +36,7 @@
         app:layout_constraintBottom_toTopOf="@id/address"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/collectingFromTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/deliveryOption" />
 
     <TextView
         android:id="@+id/address"
@@ -49,7 +49,7 @@
         app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/collectingFrom" />
+        app:layout_constraintTop_toBottomOf="@id/suburbName" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"

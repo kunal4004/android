@@ -17,16 +17,19 @@ import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
 
@@ -235,7 +238,7 @@ class KotlinUtils {
             return transactionList
         }
 
-        fun presentEditDeliveryLocationActivity(activity: Activity?, deliveryType: DeliveryType? = null) {
+        fun presentEditDeliveryLocationActivity(activity: Activity?, requestCode: Int, deliveryType: DeliveryType? = null) {
             var type = deliveryType
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
@@ -247,8 +250,27 @@ class KotlinUtils {
                 val mBundle = Bundle()
                 mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
                 mIntent.putExtra("bundle", mBundle)
-                startActivityForResult(mIntent, EditDeliveryLocationActivity.REQUEST_CODE)
+                startActivityForResult(mIntent, requestCode)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
+
+        fun setDeliveryAddressView(context: Activity?, shoppingDeliveryLocation: ShoppingDeliveryLocation, tvDeliveringTo: WTextView, tvDeliveryLocation: WTextView, deliverLocationIcon: ImageView?) {
+            with(shoppingDeliveryLocation) {
+                when (suburb.storePickup) {
+                    true -> {
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
+                        tvDeliveryLocation.text = suburb.name
+                        tvDeliveryLocation.visibility = View.VISIBLE
+                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
+                    }
+                    false -> {
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
+                        tvDeliveryLocation.text = suburb.name + if (province?.name.isNullOrEmpty()) "" else "," + province.name
+                        tvDeliveryLocation.visibility = View.VISIBLE
+                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
+                    }
+                }
             }
         }
     }
