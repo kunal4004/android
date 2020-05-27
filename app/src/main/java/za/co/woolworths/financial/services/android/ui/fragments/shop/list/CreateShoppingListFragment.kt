@@ -2,9 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.method.KeyListener
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +12,15 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.create_new_list.*
+import kotlinx.android.synthetic.main.create_list_from_shopping_list_view.*
+import kotlinx.android.synthetic.main.create_new_list.btnCancel
+import kotlinx.android.synthetic.main.create_new_list.etNewList
+import kotlinx.android.synthetic.main.create_new_list.imBack
+import kotlinx.android.synthetic.main.create_new_list.imCloseIcon
+import kotlinx.android.synthetic.main.create_new_list.pbCreateList
+import kotlinx.android.synthetic.main.create_new_list.tvOnErrorLabel
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -24,8 +31,11 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.util.*
-import java.util.HashMap
+import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import java.util.*
 
 class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
 
@@ -39,6 +49,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private var mDialogErrorMessageDidAppear = false
     private var mAutoConnect: AutoConnect? = null
     private var mDisplayCloseIcon: Boolean = false
+    private var mKeyListener: KeyListener? = null
 
     enum class AutoConnect {
         CREATE_LIST,
@@ -88,6 +99,9 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         toolbarIconVisibility()
         clickListener()
         textChangeListener()
+
+        mKeyListener = etNewList?.keyListener
+
         // Disable create list button when tap from create a list row
         if (!mShouldDisplayCreateListOnly) enableCancelButton(true) else enableCancelButton(false)
         networkConnectivityStatus()
@@ -149,10 +163,10 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun clickListener() {
-        imBack.setOnClickListener(this)
-        imCloseIcon.setOnClickListener(this)
-        btnCancel.setOnClickListener(this)
-        etNewList.setOnEditorActionListener { v, actionId, event ->
+        imBack?.setOnClickListener(this)
+        imCloseIcon?.setOnClickListener(this)
+        btnCancel?.setOnClickListener(this)
+        etNewList?.setOnEditorActionListener { v, actionId, event ->
             if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
                 createListRequest()
             }
@@ -168,12 +182,12 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 val isEditTextNotEmpty = etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()
                 if (!mShouldDisplayCreateListOnly) {
                     btnCancel.isEnabled = isEditTextNotEmpty
-                    btnCancel.text = if (isEditTextNotEmpty) getString(R.string.ok) else getString(R.string.cancel)
-                    btnCancel.setTextColor(Color.BLACK)
+                    btnCancel?.text = if (isEditTextNotEmpty) getString(R.string.ok) else getString(R.string.cancel)
+                    btnCancel?.setTextColor(Color.BLACK)
                 } else {
                     enableCancelButton(isEditTextNotEmpty)
                 }
-                tvOnErrorLabel.visibility = GONE
+                tvOnErrorLabel?.visibility = GONE
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -264,9 +278,11 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private fun createShoppingListRequest() {
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
+        etNewList?.keyListener = null
         mCreateShoppingList = OneAppService.createList(createListRequest)
         mCreateShoppingList?.enqueue(CompletionHandler(object: IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {
+                etNewList?.keyListener = mKeyListener
                 response?.apply {
                     when (httpCode) {
                         200 -> {
@@ -311,6 +327,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                             tvOnErrorLabel.text = response.response?.desc ?: ""
                             tvOnErrorLabel.visibility = VISIBLE
                         }
+
                     }
                 }
             }
@@ -318,6 +335,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             override fun onFailure(error: Throwable?) {
                 activity?.let {
                     it.runOnUiThread {
+                        etNewList?.keyListener = mKeyListener
                         if (!networkConnectionAvailable(it)) {
                             mAutoConnect = AutoConnect.CREATE_LIST
                             displayNoConnectionToast()
@@ -394,8 +412,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun enableCancelButton(isEditTextNotEmpty: Boolean) {
-        btnCancel.isEnabled = isEditTextNotEmpty
-        clBottomView.isEnabled = isEditTextNotEmpty
+        btnCancel?.isEnabled = isEditTextNotEmpty
+        clBottomView?.isEnabled = isEditTextNotEmpty
     }
 
     private fun buildFirstRequest(listName: String?): CreateList {
