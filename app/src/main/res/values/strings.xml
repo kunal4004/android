@@ -55,6 +55,7 @@
     <string name="fs_inter_national_caller_number">+27 86 150 2020</string>
     <string name="txt_international_caller">International caller</string>
     <string name="txt_call_center_opening_hours">Call Centre Operating Hours</string>
+    <string name="txt_lockdown_call_center_opening_hours">Lockdown Call Centre Operating Hours</string>
     <string name="fs_call_center_opening_hours">Monday - Friday 8am - 9pm \n\nSaturday 7:30am - 9pm \n\nSunday 7.30am - 9pm \n\nPublic Holidays 7.30am - 9pm</string>
     <string name="email_us">email us</string>
     <string name="txt_black_credit_card_query">Black Credit Card query</string>
@@ -67,7 +68,7 @@
     <string name="txt_technical_problem">Technical</string>
     <string name="online_local_caller_number">0860 100 987</string>
     <string name="online_inter_national_caller_number">+27 21 407 6137</string>
-    <string name="online_call_center_opening_hours">Monday - Friday 8am - 7.30pm \n\nSaturday 8am - 5pm \n\nSunday 8am - 1pm \n\nPublic Holidays 8am - 5pm</string>
+    <string name="online_call_center_opening_hours">Monday - Saturday 9am - 5pm \n\nSunday 9am - 2pm \n\nPublic Holidays 9am - 2pm</string>
     <string name="general_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8am - 5pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
     <string name="online_shop_reg_login">Online shop registration /Login</string>
     <string name="txt_delivery_queries">Delivery queries</string>

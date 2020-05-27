@@ -125,7 +125,7 @@
         android:paddingTop="20dp"
         android:background="@drawable/border_top_and_bottom"
         android:paddingLeft="16dp"
-        android:text="@string/txt_call_center_opening_hours"
+        android:text="@string/txt_lockdown_call_center_opening_hours"
         android:textColor="@color/black"
         app:WTextView_font="medium_bold"
         android:textSize="12sp"
