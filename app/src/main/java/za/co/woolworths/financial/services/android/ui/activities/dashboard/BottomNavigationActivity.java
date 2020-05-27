@@ -105,6 +105,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
@@ -896,7 +897,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
-        //Open shopping from Tips and trick activity requestcode
+        //Open shopping from Tips and trick activity requestCode
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE){
+            if (resultCode == OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE){
+                if (getBottomNavigationById() == null) return;
+                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                Fragment fragment = mNavController.getCurrentFrag();
+                if (fragment instanceof ShopFragment) {
+                    ShopFragment shopFragment = (ShopFragment) fragment;
+                    shopFragment.refreshViewPagerFragment(false);
+                    shopFragment.navigateToMyListFragment();
+                    return;
+                }
+            }
+        }
+
         if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && resultCode == RESULT_OK_ACCOUNTS) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();

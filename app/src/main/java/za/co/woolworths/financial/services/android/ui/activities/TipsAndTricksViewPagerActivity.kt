@@ -40,6 +40,7 @@ import kotlin.properties.Delegates
         const val RESULT_OK_PRODUCTS = 123
         const val RESULT_OK_BARCODE_SCAN = 203
         const val RESULT_OK_ACCOUNTS = 234
+        const val OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE = 3333
         const val RESULT_OK_REWARDS = 345
         const val REQUEST_CODE_DELIVERY_LOCATION = 456
         const val REQUEST_CODE_SHOPPING_LIST = 567
@@ -232,7 +233,7 @@ import kotlin.properties.Delegates
 
     private fun presentShoppingList() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            setResult(RESULT_OK_ACCOUNTS)
+            setResult(OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE)
             onBackPressed()
         } else {
             ScreenManager.presentSSOSignin(this, REQUEST_CODE_SHOPPING_LIST)
@@ -244,12 +245,11 @@ import kotlin.properties.Delegates
         if (availableAccounts.size == 0) {
             redirectToMyAccountLandingPage(0)
         } else {
-            if (availableAccounts.contains("SC"))
-                redirectToMyAccountLandingPage(0)
-            else if (availableAccounts.contains("CC"))
-                redirectToMyAccountLandingPage(1)
-            else if (availableAccounts.contains("PL"))
-                redirectToMyAccountLandingPage(2)
+            when {
+                availableAccounts.contains("SC") -> redirectToMyAccountLandingPage(0)
+                availableAccounts.contains("CC") -> redirectToMyAccountLandingPage(1)
+                availableAccounts.contains("PL") -> redirectToMyAccountLandingPage(2)
+            }
         }
     }
 
