@@ -21,6 +21,10 @@ open class LoanBaseFragment : Fragment() {
         return (getPersonalLoanInfo()?.rpCreditLimitThreshold)?.div(100) ?: 0
     }
 
+    private fun getCreditAmount(): Int {
+        return getPersonalLoanInfo()?.creditLimit?.div(100) ?: 0
+    }
+
     fun getAvailableFund(): Int {
         return getPersonalLoanInfo()?.availableFunds ?: return 0
     }
@@ -53,5 +57,5 @@ open class LoanBaseFragment : Fragment() {
 
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
 
-    fun repaymentPeriod(creditAmount: Int): Int = if (creditAmount >= getRpCreditLimitThreshold()) 60 else 36
+    fun repaymentPeriod(): Int = if (getCreditAmount() >= getRpCreditLimitThreshold()) 60 else 36
 }
