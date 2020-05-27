@@ -1319,7 +1319,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void setUpDrawerFragment(ProductView productsResponse, ProductsRequestParams productsRequestParams) {
         unLockDrawerFragment();
-        drawerFragment.setUpDrawer(getViewDataBinding().drawerLayout, productsResponse, productsRequestParams);
+        if (drawerFragment != null && getViewDataBinding().drawerLayout !=null)
+            drawerFragment.setUpDrawer(getViewDataBinding().drawerLayout, productsResponse, productsRequestParams);
     }
 
     @Override

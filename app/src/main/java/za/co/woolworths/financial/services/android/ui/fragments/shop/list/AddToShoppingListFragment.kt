@@ -55,7 +55,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.add_to_list_content, container, false)
+        return inflater.inflate(R.layout.add_to_list_content, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,9 +69,9 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun initAndConfigureUI() {
         activity?.apply {
-            rclAddToList.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+            rclAddToList?.layoutManager = LinearLayoutManager(this)
             mAddToShoppingListAdapter = AddToShoppingListAdapter(mutableListOf()) { shoppingListItemClicked() }
-            rclAddToList.adapter = mAddToShoppingListAdapter
+            rclAddToList?.adapter = mAddToShoppingListAdapter
         }
     }
 
@@ -420,10 +420,10 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun navigateToCreateShoppingListFragment(state: Boolean, removeFragment: Fragment) {
         // remove current fragment from fragment stack before popping next up
         activity?.let {
-            it.supportFragmentManager?.apply {
+            it.supportFragmentManager.apply {
                 beginTransaction()
-                        ?.remove(removeFragment)
-                        ?.commitAllowingStateLoss()
+                        .remove(removeFragment)
+                        .commitAllowingStateLoss()
                 popBackStack()
             }
 
