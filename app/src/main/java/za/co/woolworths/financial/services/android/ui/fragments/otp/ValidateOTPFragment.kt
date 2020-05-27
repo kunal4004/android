@@ -58,7 +58,7 @@ class ValidateOTPFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 navigateToValidateOTPErrorFragment()
             }
         }, ValidateOTPResponse::class.java))

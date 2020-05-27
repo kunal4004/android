@@ -77,9 +77,9 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         getBundleArguments()
         return if (mShouldDisplayCreateListOnly)
-            inflater?.inflate(R.layout.create_list_from_shopping_list_view, container, false)
+            inflater.inflate(R.layout.create_list_from_shopping_list_view, container, false)
         else
-            inflater?.inflate(R.layout.create_new_list, container, false)
+            inflater.inflate(R.layout.create_new_list, container, false)
 
     }
 

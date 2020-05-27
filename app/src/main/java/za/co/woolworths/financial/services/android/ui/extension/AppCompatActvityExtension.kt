@@ -200,7 +200,7 @@ inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, reque
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
     call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
-        override fun onSuccess(response: RESPONSE_OBJECT) {
+        override fun onSuccess(response: RESPONSE_OBJECT?) {
             requestListener?.hideProgress()
             requestListener?.onSuccess(response)
         }

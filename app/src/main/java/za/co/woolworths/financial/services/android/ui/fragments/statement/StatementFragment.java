@@ -161,16 +161,18 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             statement.setSelectedByUser(true);
         }
 
+        boolean isAtleastOneStatementSelected = false;
         for (UserStatement s : arrStatement) {
             if (s.selectedByUser()) {
-                arrayContainTrue = true;
+                isAtleastOneStatementSelected = true;
+                break;
             }
         }
 
         hideViewProgress();
-        mStatementAdapter.updateStatementViewState(arrayContainTrue);
+        mStatementAdapter.updateStatementViewState(isAtleastOneStatementSelected);
 
-        if (arrayContainTrue) {
+        if (isAtleastOneStatementSelected) {
             enableButton();
         } else {
             disableButton();

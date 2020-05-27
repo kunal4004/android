@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -41,6 +40,7 @@ import kotlin.properties.Delegates
         const val RESULT_OK_PRODUCTS = 123
         const val RESULT_OK_BARCODE_SCAN = 203
         const val RESULT_OK_ACCOUNTS = 234
+        const val OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE = 3333
         const val RESULT_OK_REWARDS = 345
         const val REQUEST_CODE_DELIVERY_LOCATION = 456
         const val REQUEST_CODE_SHOPPING_LIST = 567
@@ -52,6 +52,7 @@ import kotlin.properties.Delegates
         Utils.updateStatusBarBackground(this, R.color.unavailable_color)
         initViews()
         setActionBar()
+        QueryBadgeCounter.instance.queryVoucherCount()
     }
 
     override fun onResume() {
@@ -105,7 +106,7 @@ import kotlin.properties.Delegates
                 when (viewPager.currentItem) {
                 //NAVIGATION
                     0 -> {
-                        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().cartCount > 0) {
+                        if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
                             startActivity(Intent(this, CartActivity::class.java))
                         } else {
                             setResult(RESULT_OK_PRODUCTS)
@@ -166,15 +167,15 @@ import kotlin.properties.Delegates
         when (position) {
             0->{
                 featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
-                featureActionButton.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
-                featureDescription.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
+                featureActionButton.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
+                featureDescription.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
             }
             2, 3 -> {
                 featureActionButton.visibility = View.INVISIBLE
             }
             5 -> {
                 featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_your_vouchers) else titles?.get(position)
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
+                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.voucherCount > 0) View.VISIBLE else View.INVISIBLE
             }
             6 -> {
                 featureTitle?.text =  if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
@@ -205,6 +206,7 @@ import kotlin.properties.Delegates
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            QueryBadgeCounter.instance.queryVoucherCount()
             when (requestCode) {
                 REQUEST_CODE_DELIVERY_LOCATION -> {
                     presentEditDeliveryLocation()
@@ -230,8 +232,8 @@ import kotlin.properties.Delegates
 
 
     private fun presentShoppingList() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            setResult(RESULT_OK_ACCOUNTS)
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            setResult(OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE)
             onBackPressed()
         } else {
             ScreenManager.presentSSOSignin(this, REQUEST_CODE_SHOPPING_LIST)
@@ -243,12 +245,11 @@ import kotlin.properties.Delegates
         if (availableAccounts.size == 0) {
             redirectToMyAccountLandingPage(0)
         } else {
-            if (availableAccounts.contains("SC"))
-                redirectToMyAccountLandingPage(0)
-            else if (availableAccounts.contains("CC"))
-                redirectToMyAccountLandingPage(1)
-            else if (availableAccounts.contains("PL"))
-                redirectToMyAccountLandingPage(2)
+            when {
+                availableAccounts.contains("SC") -> redirectToMyAccountLandingPage(0)
+                availableAccounts.contains("CC") -> redirectToMyAccountLandingPage(1)
+                availableAccounts.contains("PL") -> redirectToMyAccountLandingPage(2)
+            }
         }
     }
 

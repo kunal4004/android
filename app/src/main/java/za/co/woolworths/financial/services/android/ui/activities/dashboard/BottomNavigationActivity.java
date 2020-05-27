@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,6 +105,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
@@ -229,8 +231,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         });
 
+        if (mBundle!=null && mBundle.containsKey("OnBoardingLoginBadge")){
+            QueryBadgeCounter.getInstance().queryCartSummaryCount();
+            QueryBadgeCounter.getInstance().queryVoucherCount();
+        }
+        queryBadgeCountOnStart();
+        addDrawerFragment();
+    }
+
+    private void queryBadgeCountOnStart() {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            badgeCount();
+            mQueryBadgeCounter.queryVoucherCount();
+            mQueryBadgeCounter.queryCartSummaryCount();
         }
     }
 
@@ -883,7 +895,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
-        //Open shopping from Tips and trick activity requestcode
+        //Open shopping from Tips and trick activity requestCode
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE){
+            if (resultCode == OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE){
+                if (getBottomNavigationById() == null) return;
+                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                Fragment fragment = mNavController.getCurrentFrag();
+                if (fragment instanceof ShopFragment) {
+                    ShopFragment shopFragment = (ShopFragment) fragment;
+                    shopFragment.refreshViewPagerFragment(false);
+                    shopFragment.navigateToMyListFragment();
+                    return;
+                }
+            }
+        }
+
         if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && resultCode == RESULT_OK_ACCOUNTS) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
@@ -1155,15 +1181,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         return mNavController.getCurrentFrag();
     }
 
+    // SSO - After a successful login (and user has C2 ID):
     @Override
     public void badgeCount() {
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
+            case R.id.navigation_today:
                 mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
 
             case R.id.navigate_to_shop:
-                /***
+                /**
                  * Trigger cart count when delivery location address was set
                  * if delivery location is empty or null, cart summary call will occur
                  * in ProductDetailActivity.
@@ -1171,14 +1200,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                  */
                 if (Utils.getPreferredDeliveryLocation() != null)
                     mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
             case R.id.navigate_to_wreward:
                 mQueryBadgeCounter.queryCartSummaryCount();
                 break;
             case R.id.navigate_to_cart:
-                break;
-            case R.id.navigation_today:
-                mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryVoucherCount();
                 break;
             default:
                 break;
