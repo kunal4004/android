@@ -60,5 +60,4 @@ class WhatsAppImpl {
 
     val isCustomerServiceAvailable: Boolean
         get() = customerServiceAvailableTimeFrom?.before(hourMinutesIn24HourFormat) ?: false && customerServiceAvailableTimeUntil?.after(hourMinutesIn24HourFormat) ?: false
-
 }
