@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/whatsapp_chat_to_us_nav_host"
+    app:startDestination="@id/whatsAppChatToUsRowFragment">
+
+    <fragment
+        android:id="@+id/whatsAppChatToUsRowFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.whatsapp.WhatsAppChatToUsRowFragment"
+        android:label="WhatsAppChatToUsRowFragment"
+        tools:layout="@layout/whatsapp_chat_to_us_row_fragment">
+        <action
+            android:id="@+id/action_whatsAppChatToUsRowFragment_to_whatsAppChatDetailActivity"
+            app:destination="@id/whatsAppChatDetailActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/whatsAppChatDetailActivity"
+        android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity"
+        android:label="WhatsAppChatDetailActivity"
+        tools:layout="@layout/whatsapp_chat_activity" />
+</navigation>

@@ -110,7 +110,7 @@
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:letterSpacing="0.12"
-                android:text="@string/cli_got_it"
+                android:text="@string/got_it"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:WButton_font="medium_bold"

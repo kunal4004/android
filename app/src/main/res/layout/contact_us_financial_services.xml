@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingTop="?attr/actionBarSize"
     android:background="#efefef"
     android:scrollbars="none">
@@ -13,7 +14,7 @@
         android:orientation="vertical"
         android:paddingBottom="16dp">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -24,7 +25,7 @@
             android:text="@string/call_us"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:WTextView_font="medium_bold" />
+            android:fontFamily="@font/futura_semi_bold_ttf" />
 
         <View
             android:layout_width="match_parent"
@@ -118,20 +119,20 @@
                 app:WTextView_font="myriadpro_regular" />
         </RelativeLayout>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border_top_and_bottom"
             android:gravity="center_vertical"
             android:letterSpacing="0.2"
             android:minHeight="68dp"
-            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
             android:paddingTop="20dp"
             android:text="@string/txt_call_center_opening_hours"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:WTextView_font="medium_bold" />
+            android:fontFamily="@font/futura_semi_bold_ttf" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -139,8 +140,8 @@
             android:background="@color/white"
             android:minHeight="50dp"
             android:orientation="horizontal"
-            android:paddingLeft="16dp"
             android:paddingTop="14dp"
+            android:paddingStart="16dp"
             android:paddingRight="16dp"
             android:paddingBottom="14dp">
 
@@ -164,7 +165,68 @@
                 app:WTextView_font="myriadpro_regular" />
         </RelativeLayout>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <LinearLayout
+            android:id="@+id/chatWithUsLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/chatWithUsTextView"
+                style="@style/anyQuestionLabelStyle"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="33dp"
+                android:layout_marginBottom="17dp"
+                android:text="@string/chat_with_us_whatsapp" />
+
+            <View style="@style/horizontal_divider_how_to_pay" />
+
+            <RelativeLayout
+                android:id="@+id/contactUsChatToUsRelativeLayout"
+                android:layout_width="match_parent"
+                android:paddingTop="16dp"
+                android:background="@color/white"
+                android:paddingBottom="14dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="0dp"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/whatsAppIconImageView"
+                    tools:ignore="ContentDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    app:srcCompat="@drawable/icon_whatsapp_grey" />
+
+                <ImageView
+                    android:id="@+id/whatsAppNextIconImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="16dp"
+                    app:srcCompat="@drawable/ic_caret_black"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/whatsAppTitleTextView"
+                    style="@style/chatToUsOnWhatsAppStyle"
+                    android:layout_width="wrap_content"
+                    android:fontFamily="@font/myriad_pro_regular_otf"
+                    android:layout_centerInParent="true"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/whatsAppIconImageView"
+                    android:text="@string/whatsapp_chat_with_us_row_title"
+                    tools:ignore="RelativeOverlap" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border_top_and_bottom"
@@ -177,7 +239,7 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:WTextView_font="medium_bold" />
+            android:fontFamily="@font/futura_semi_bold_ttf" />
 
         <RelativeLayout
             android:id="@+id/blackCrediCardQuery"
@@ -219,7 +281,7 @@
                 android:id="@+id/img1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/ic_caret_black" />
 

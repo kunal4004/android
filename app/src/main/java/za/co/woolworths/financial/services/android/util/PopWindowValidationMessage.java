@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -88,7 +87,7 @@ public class PopWindowValidationMessage {
 				mLinEmail.setVisibility(View.GONE);
 				mOverlayTitle.setVisibility(View.GONE);
 				mOverlayDescription.setText(description);
-				mOverlayBtn.setText(getString(R.string.cli_got_it));
+				mOverlayBtn.setText(getString(R.string.got_it));
 				setAnimation();
 				mRelPopContainer.setAnimation(mFadeInAnimation);
 				mRelRootContainer.setAnimation(mPopEnterAnimation);

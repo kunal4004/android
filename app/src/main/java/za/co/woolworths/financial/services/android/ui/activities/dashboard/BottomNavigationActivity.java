@@ -235,9 +235,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             QueryBadgeCounter.getInstance().queryCartSummaryCount();
             QueryBadgeCounter.getInstance().queryVoucherCount();
         }
-
         queryBadgeCountOnStart();
-
         addDrawerFragment();
     }
 

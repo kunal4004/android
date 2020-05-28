@@ -182,7 +182,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mLinEmail.setVisibility(View.GONE);
                 mOverlayTitle.setVisibility(View.GONE);
                 mOverlayDescription.setText(description);
-                mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO) ? getString(R.string.ok) : getString(R.string.cli_got_it));
+                mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO) ? getString(R.string.ok) : getString(R.string.got_it));
                 mOverlayBtn.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
