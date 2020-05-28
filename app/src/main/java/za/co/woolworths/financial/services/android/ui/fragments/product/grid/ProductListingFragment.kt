@@ -159,7 +159,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             hideFooterView()
             if (!loadMoreData) {
                 sortAndRefineLayout?.visibility = View.VISIBLE
-                (activity as BottomNavigationActivity)?.setUpDrawerFragment(productView, productRequestBody)
+                (activity as? BottomNavigationActivity)?.setUpDrawerFragment(productView, productRequestBody)
                 setRefinementViewState(productView?.navigation?.let { nav -> getRefinementViewState(nav) }
                         ?: false)
                 bindRecyclerViewWithUI(productLists)
