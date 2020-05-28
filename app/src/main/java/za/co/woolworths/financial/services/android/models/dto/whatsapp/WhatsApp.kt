@@ -7,7 +7,7 @@ data class WhatsApp(
         @SerializedName("baseUrl") val baseUrl: String,
         @SerializedName("phoneNumber") val phoneNumber: String,
         @SerializedName("text") val text: String,
-        @SerializedName("showWhatsAppIcon") val showWhatsAppIcon: ShowWhatsAppIcon,
+        @SerializedName("showWhatsAppIcon") var showWhatsAppIcon: ShowWhatsAppIcon,
         @SerializedName("availabilityTimes") val availabilityTimes: AvailabilityTimes,
         @SerializedName("minimumSupportedAppBuildNumber") val minimumSupportedAppBuildNumber: String
 )

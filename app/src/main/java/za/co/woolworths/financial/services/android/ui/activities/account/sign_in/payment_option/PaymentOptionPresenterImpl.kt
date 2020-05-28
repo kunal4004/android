@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option
 
 import android.content.Intent
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
@@ -8,7 +9,8 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import java.lang.RuntimeException
 
 class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.PaymentOptionView?, private var model: IPaymentOptionContract.PaymentOptionModel) : IPaymentOptionContract.PaymentOptionPresenter, IPaymentOptionContract.PaymentOptionModel {
@@ -16,11 +18,11 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
     companion object {
         const val ACCOUNT_INFO = "ACCOUNT_INFO"
     }
+
     var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
     override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails =
-                Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? {
@@ -54,7 +56,7 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
             else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
         })
 
-        showWhatsAppChatWithUs()
+        (mAccountDetails?.first)?.let { applyNowState -> setWhatsAppChatWithUsVisibility(applyNowState) }
     }
 
     override fun loadABSACreditCardInfoIfNeeded() {
@@ -73,9 +75,23 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
         mainView?.setPaymentOption(paymentMethod)
     }
 
-    override fun showWhatsAppChatWithUs() {
-       val chatWithUsIsEnabled = WhatsAppImpl().ccPaymentOptionsIsEnabled
-        mainView?.showWhatsAppChatWithUs(chatWithUsIsEnabled)
+    override fun setWhatsAppChatWithUsVisibility(applyNowState: ApplyNowState) {
+        with(WhatsAppChatToUs()) {
+            when (applyNowState) {
+                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> mainView?.setWhatsAppChatWithUsVisibility(isCCPaymentOptionsEnabled)
+                ApplyNowState.STORE_CARD -> mainView?.setWhatsAppChatWithUsVisibility(isSCPaymentOptionsEnabled)
+                ApplyNowState.PERSONAL_LOAN -> mainView?.setWhatsAppChatWithUsVisibility(isPLPaymentOptionsEnabled)
+            }
+        }
+    }
+
+    override fun getAppScreenName(): String {
+        return when (mAccountDetails?.first) {
+            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> bindString(R.string.credit_card_payment_option_label)
+            ApplyNowState.STORE_CARD -> bindString(R.string.store_card_payment_option_label)
+            ApplyNowState.PERSONAL_LOAN -> bindString(R.string.personal_loan_payment_option_label)
+            else -> "whatsApp AppScreenName unknown state"
+        }
     }
 
     override fun initView() {

@@ -8,8 +8,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.whatsapp_chat_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.APP_SCREEN
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_NAME
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.APP_SCREEN
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -31,7 +31,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
             appScreen = getString(APP_SCREEN, "")
         }
 
-        with(WhatsAppImpl()) {
+        with(WhatsAppChatToUs()) {
             whatsappNumberValueTextView?.text = whatsAppNumber
         }
 
@@ -59,7 +59,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
                 if (NetworkManager.getInstance().isConnectedToNetwork(this@WhatsAppChatDetailActivity)) {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
                     request(OneAppService.queryServicePostEvent(featureName, appScreen))
-                    Utils.openBrowserWithUrl(WhatsAppImpl().whatsAppChatWithUsUrlBreakout)
+                    Utils.openBrowserWithUrl(WhatsAppChatToUs().whatsAppChatWithUsUrlBreakout)
                 } else {
                     ErrorHandlerView(this@WhatsAppChatDetailActivity).showToast()
                 }

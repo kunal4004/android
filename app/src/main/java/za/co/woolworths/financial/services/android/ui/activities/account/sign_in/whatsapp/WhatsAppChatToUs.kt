@@ -6,10 +6,9 @@ import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp
 
 import java.util.*
 
-class WhatsAppImpl {
+class WhatsAppChatToUs {
 
     companion object {
-        const val CC_PAYMENT_OPTIONS = "Payment Options"
         const val FEATURE_NAME = "FEATURE_NAME"
         const val APP_SCREEN = "APP_SCREEN"
         const val CONTACT_US = "Contact Us"
@@ -49,14 +48,20 @@ class WhatsAppImpl {
             return ""
         }
 
-    val ccPaymentOptionsIsEnabled: Boolean
-        get() = whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.ccPaymentOptions!!
+    val isCCPaymentOptionsEnabled: Boolean
+        get() = whatsAppConfig?.showWhatsAppButton ?: false && whatsAppConfig?.showWhatsAppIcon?.ccPaymentOptions ?: false
+
+    val isSCPaymentOptionsEnabled: Boolean
+        get() = whatsAppConfig?.showWhatsAppButton ?: false && whatsAppConfig?.showWhatsAppIcon?.scPaymentOptions ?: false
+
+    val isPLPaymentOptionsEnabled: Boolean
+        get() = whatsAppConfig?.showWhatsAppButton ?: false && whatsAppConfig?.showWhatsAppIcon?.plPaymentOptions ?: false
 
     val isChatWithUsEnabledForContactUs: Boolean
-        get() = whatsAppConfig?.showWhatsAppButton!! && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices!!
+        get() = whatsAppConfig?.showWhatsAppButton ?: false && whatsAppConfig?.showWhatsAppIcon?.contactUsFinancialServices ?: false
 
     val whatsAppChatWithUsUrlBreakout: String?
-        get() = "${whatsAppConfig?.baseUrl}${whatsAppConfig?.phoneNumber}${whatsAppConfig?.text} "
+        get() = "${whatsAppConfig?.baseUrl}${whatsAppConfig?.phoneNumber}${whatsAppConfig?.text}"
 
     val isCustomerServiceAvailable: Boolean
         get() = customerServiceAvailableTimeFrom?.before(hourMinutesIn24HourFormat) ?: false && customerServiceAvailableTimeUntil?.after(hourMinutesIn24HourFormat) ?: false

@@ -16,11 +16,9 @@ import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState.*
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.CC_PAYMENT_OPTIONS
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_WHATSAPP
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -57,13 +55,14 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         when (v?.id) {
             R.id.closeButtonImageView -> onBackPressed()
             R.id.paymentOptionChatToUsRelativeLayout -> {
-                if (!WhatsAppImpl().isCustomerServiceAvailable) {
+                if (!WhatsAppChatToUs().isCustomerServiceAvailable) {
                     val whatsAppUnavailableFragment = WhatsAppUnavailableFragment()
                     whatsAppUnavailableFragment.show(supportFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName)
                     return
                 }
+
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
-                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, CC_PAYMENT_OPTIONS)
+                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, mPaymentOptionPresenterImpl?.getAppScreenName())
             }
         }
     }
@@ -80,26 +79,21 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         }
     }
 
-    override fun showWhatsAppChatWithUs(visible: Boolean) {
-        when (mPaymentOptionPresenterImpl?.mAccountDetails?.first) {
-            GOLD_CREDIT_CARD, BLACK_CREDIT_CARD, SILVER_CREDIT_CARD -> {
-                if (visible) {
-                    chatWithUsContainerLinearLayout?.visibility = VISIBLE
-                    // Customer service availability
-                    if (WhatsAppImpl().isCustomerServiceAvailable) {
-                        whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_green)
-                        whatsAppTitleTextView?.setTextColor(Color.BLACK)
-                        whatsAppNextIconImageView?.alpha = 1f
-                    } else {
-                        whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_grey)
-                        whatsAppNextIconImageView?.alpha = 0.4f
-                        whatsAppTitleTextView?.setTextColor(ContextCompat.getColor(this@PaymentOptionActivity, R.color.unavailable))
-                    }
-                } else {
-                    chatWithUsContainerLinearLayout?.visibility = GONE
-                }
+    override fun setWhatsAppChatWithUsVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            chatWithUsContainerLinearLayout?.visibility = VISIBLE
+            // Customer service availability
+            if (WhatsAppChatToUs().isCustomerServiceAvailable) {
+                whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_green)
+                whatsAppTitleTextView?.setTextColor(Color.BLACK)
+                whatsAppNextIconImageView?.alpha = 1f
+            } else {
+                whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_grey)
+                whatsAppNextIconImageView?.alpha = 0.4f
+                whatsAppTitleTextView?.setTextColor(ContextCompat.getColor(this@PaymentOptionActivity, R.color.unavailable))
             }
-            else -> chatWithUsContainerLinearLayout?.visibility = GONE
+        } else {
+            chatWithUsContainerLinearLayout?.visibility = GONE
         }
     }
 

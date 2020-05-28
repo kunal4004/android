@@ -18,9 +18,9 @@ import kotlinx.android.synthetic.main.contact_us_financial_services.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.CONTACT_US
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppImpl.Companion.FEATURE_WHATSAPP
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.CONTACT_US
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -69,7 +69,7 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showWhatsAppChatWithUs() {
-        with(WhatsAppImpl()) {
+        with(WhatsAppChatToUs()) {
             if (isChatWithUsEnabledForContactUs) {
                 chatWithUsLinearLayout?.visibility = VISIBLE
                 if (isCustomerServiceAvailable) {
@@ -102,7 +102,7 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                 R.id.proofOfIncome -> sendEmail(getString(R.string.email_proof_of_income), getString(R.string.txt_proof_of_income))
                 R.id.technical -> sendEmail(getString(R.string.email_technical), getString(R.string.txt_technical_problem))
                 R.id.contactUsChatToUsRelativeLayout -> {
-                    if (!WhatsAppImpl().isCustomerServiceAvailable) {
+                    if (!WhatsAppChatToUs().isCustomerServiceAvailable) {
                         val whatsAppUnavailableFragment = WhatsAppUnavailableFragment()
                         activity?.supportFragmentManager?.let { supportFragmentManager -> whatsAppUnavailableFragment.show(supportFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName) }
                         return

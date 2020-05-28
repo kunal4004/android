@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class ShowWhatsAppIcon(
         @SerializedName("contactUsFinancialServices") val contactUsFinancialServices: Boolean,
         @SerializedName("ccPaymentOptions") val ccPaymentOptions: Boolean,
+        @SerializedName("scPaymentOptions") val scPaymentOptions: Boolean,
+        @SerializedName("plPaymentOptions") var plPaymentOptions: Boolean,
         @SerializedName("plLanding") val plLanding: Boolean,
         @SerializedName("ccLandingPage") val ccLandingPage: Boolean,
         @SerializedName("scLandingPage") val scLandingPage: Boolean

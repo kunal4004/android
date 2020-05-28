@@ -41,7 +41,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override val randomVideoPath: String
         get() {
             val listOfVideo = ArrayList<String>()
-            val rawFolderPath = "android.resource://" + mContext.packageName + "/"
+           // val rawFolderPath = "android.resource://" + mContext.packageName + "/"
            // listOfVideo.add(rawFolderPath + R.raw.food_broccoli)
             listOfVideo.shuffle()
             return listOfVideo[0]
@@ -86,7 +86,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     }
 
     private fun handleAppLink(appLinkData: Uri) {
-        val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
+       // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
