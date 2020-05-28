@@ -31,12 +31,10 @@ class WhatsAppChatToUs {
         }
 
     private val customerServiceAvailableTimeFrom: Date?
-        get() = whatsAppConfig?.availabilityTimes?.startTime?.let { DateTimeUtils().parseDate(it) }
-                ?: Date(0)
+        get() = whatsAppConfig?.availabilityTimes?.startTime?.let { DateTimeUtils().parseDate(it) } ?: Date(0)
 
     private val customerServiceAvailableTimeUntil: Date?
-        get() = whatsAppConfig?.availabilityTimes?.endTime?.let { DateTimeUtils().parseDate(it) }
-                ?: Date(0)
+        get() = whatsAppConfig?.availabilityTimes?.endTime?.let { DateTimeUtils().parseDate(it) } ?: Date(0)
 
     val whatsAppNumber: String
         get() {
