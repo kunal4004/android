@@ -96,14 +96,14 @@ import kotlin.properties.Delegates
         when (v?.id) {
             R.id.next -> {
                 var current: Int = viewPager.currentItem + 1
-                if (current < titles!!.size) viewPager.setCurrentItem(current) else onBackPressed()
+                if (current < titles!!.size) viewPager?.currentItem = current else onBackPressed()
             }
             R.id.previous -> {
                 var current: Int = viewPager.currentItem
-                viewPager.setCurrentItem(current - 1)
+                viewPager?.currentItem = current - 1
             }
             R.id.featureActionButton -> {
-                when (viewPager.currentItem) {
+                when (viewPager?.currentItem) {
                 //NAVIGATION
                     0 -> {
                         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
@@ -166,16 +166,16 @@ import kotlin.properties.Delegates
         featureIcon.setBackgroundResource(icons.getResourceId(position, -1))
         when (position) {
             0->{
-                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
-                featureActionButton.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
-                featureDescription.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
+                featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
+                featureActionButton?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
+                featureDescription?.text = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) resources.getString(R.string.tips_tricks_desc_navigation_sign_in) else descriptions?.get(position)
             }
             2, 3 -> {
-                featureActionButton.visibility = View.INVISIBLE
+                featureActionButton?.visibility = View.INVISIBLE
             }
             5 -> {
-                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_your_vouchers) else titles?.get(position)
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.voucherCount > 0) View.VISIBLE else View.INVISIBLE
+                featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_your_vouchers) else titles?.get(position)
+                featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.voucherCount > 0) View.VISIBLE else View.INVISIBLE
             }
             6 -> {
                 featureTitle?.text =  if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
@@ -183,8 +183,8 @@ import kotlin.properties.Delegates
                 featureActionButton.visibility = View.VISIBLE
             }
             7 -> {
-                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
+                featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
+                featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
             }
         }
     }
@@ -206,7 +206,6 @@ import kotlin.properties.Delegates
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            QueryBadgeCounter.instance.queryVoucherCount()
             when (requestCode) {
                 REQUEST_CODE_DELIVERY_LOCATION -> {
                     presentEditDeliveryLocation()
