@@ -12,7 +12,7 @@ class WhatsAppChatToUs {
         const val FEATURE_NAME = "FEATURE_NAME"
         const val APP_SCREEN = "APP_SCREEN"
         const val CONTACT_US = "Contact Us"
-        const val FEATURE_WHATSAPP = "whatsApp"
+        const val FEATURE_WHATSAPP = "WhatsApp"
     }
 
     private var whatsAppConfig: WhatsApp? = null
