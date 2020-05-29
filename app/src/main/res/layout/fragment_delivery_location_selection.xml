@@ -43,7 +43,7 @@
                         style="@style/style_delivery_location_item_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/set_your_delivery_location"/>
+                        android:text="@string/delivery_or_collection"/>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/style_delivery_location_item_description"
