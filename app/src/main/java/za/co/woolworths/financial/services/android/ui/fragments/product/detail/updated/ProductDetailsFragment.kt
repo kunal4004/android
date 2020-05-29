@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
@@ -13,54 +16,51 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
+import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
+import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import kotlinx.android.synthetic.main.promotional_image.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
-import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-import android.graphics.Color
-import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
-import kotlinx.android.synthetic.main.product_details_fragment.brandName
-import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
-import kotlinx.android.synthetic.main.product_listing_page_row.*
-import kotlinx.android.synthetic.main.promotional_image.view.*
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
-import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
-import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
-import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -89,6 +89,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isApiCallInProgress: Boolean = false
     private var defaultGroupKey: String? = null
     private var mFreeGiftPromotionalImage: String? = null
+    private var EDIT_LOCATION_LOGIN_REQUEST = 2020
 
 
     companion object {
@@ -203,6 +204,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 requestSelectColor()
             else
                 requestSelectSize()
+            return
+        }
+
+        if (!Utils.isDeliverySelectionModalShown()) {
+            showDeliveryOptionDialog()
             return
         }
 
@@ -692,7 +698,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
             activity?.apply {
-                ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+                KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE)
             }
         } else confirmDeliveryLocation()
     }
@@ -722,7 +728,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSetNewLocation() {
-        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
@@ -807,7 +813,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         showToastMessage(getActivity(), listSize);*/
                     }
                     SET_DELIVERY_LOCATION_REQUEST_CODE -> {
-                        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
                     }
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
@@ -825,7 +831,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
                 updateStockAvailabilityLocation()
                 when (requestCode) {
-                    SSO_REQUEST_ADD_TO_CART -> {
+                    SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
                         addItemToCart()
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
@@ -834,7 +840,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
                     }
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
-                        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE_FOR_STOCK)
+                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK) }
                     }
                 }
             }
@@ -1046,7 +1052,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun updateDeliveryLocation() {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> ScreenManager.presentDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK)
+                true -> KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK)
                 false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
             }
 
@@ -1214,5 +1220,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 nutritionalInformation?.contentDescription = getString(R.string.pdp_productIngredientsInformationLayout)
                 productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
             }
+    }
+
+    private fun showDeliveryOptionDialog() {
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+    }
+
+    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE, deliveryType) }
+        } else {
+            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
+        }
     }
 }

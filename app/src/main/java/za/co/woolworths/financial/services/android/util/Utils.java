@@ -123,6 +123,7 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 
 public class Utils {
@@ -1537,5 +1538,20 @@ public class Utils {
 		Date closingTime = WFormatter.parseDate(endTime);
 
 		return (currentTime.after(openingTime) && currentTime.before(closingTime));
+	}
+
+	public static void deliverySelectionModalShown() {
+		try {
+			String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
+			if (firstTime == null) {
+				Utils.sessionDaoSave(DELIVERY_OPTION, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
+	public static Boolean isDeliverySelectionModalShown() {
+		String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
+		return (firstTime != null);
 	}
 }

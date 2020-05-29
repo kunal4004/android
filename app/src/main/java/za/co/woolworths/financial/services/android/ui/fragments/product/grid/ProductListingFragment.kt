@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -48,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapte
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
@@ -60,7 +62,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 
-open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
+open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
@@ -80,6 +82,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSearchTerm: String? = null
     private var mNavigationState: String? = null
     private var mSortOption: String = ""
+    private var EDIT_LOCATION_LOGIN_REQUEST = 1919
+    private var isNewUser:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,6 +176,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                     if (!mSubCategoryName.isNullOrEmpty())
                         setTitle()
+                }
+                if (!Utils.isDeliverySelectionModalShown()) {
+                    showDeliveryOptionDialog()
                 }
             } else {
                 loadMoreData(productLists)
@@ -726,14 +733,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             }, 3000)
                         }
 
-                        417 -> resources?.let { resources ->
-                            try {
-                                val errorMessage = addItemToCartResponse.response?.desc?.let { desc -> ErrorMessageDialogFragment.newInstance(desc, resources.getString(R.string.set_delivery_location_button)) }
-                                activity?.supportFragmentManager?.let { supportManager -> errorMessage?.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
-                            }catch (ex: IllegalStateException){
-                                Crashlytics.logException(ex)
-                            }
-                            }
+                        417 -> resources?.let {
+                            isNewUser = true
+                            showDeliveryOptionDialog()
+                        }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             ScreenManager.presentSSOSignin(this)
@@ -864,5 +867,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
+    private fun showDeliveryOptionDialog() {
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+    }
 
+    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (isNewUser) SET_DELIVERY_LOCATION_REQUEST_CODE else EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+        } else {
+            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
+        }
+    }
 }

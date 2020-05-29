@@ -11,4 +11,5 @@ public class SuburbsResponse {
     public int httpCode;
     public Response response;
     public List<Suburb> suburbs;
+    public List<Suburb> stores;
 }
