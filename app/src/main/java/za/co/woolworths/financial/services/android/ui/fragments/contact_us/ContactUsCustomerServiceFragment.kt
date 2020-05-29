@@ -65,7 +65,6 @@ class ContactUsCustomerServiceFragment : Fragment(), View.OnClickListener {
             displayToolbar()
             showBackNavigationIcon(true)
         }
-
         if (activity is MyAccountActivity)
             (activity as? MyAccountActivity)?.setToolbarTitle(activity?.resources?.getString(R.string.contact_us_customer_service))
     }
