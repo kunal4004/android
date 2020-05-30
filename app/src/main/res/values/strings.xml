@@ -1483,5 +1483,7 @@
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
     <string name="collecting_from">Collecting From</string>
+    <string name="select_your_collection_store">Select your collection store:</string>
+    <string name="select_your_delivery_location">Select your delivery location:</string>
 </resources>
 

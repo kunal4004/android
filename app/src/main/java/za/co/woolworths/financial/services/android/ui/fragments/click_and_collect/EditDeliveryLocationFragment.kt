@@ -31,6 +31,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var presenter: EditDeliveryLocationContract.EditDeliveryLocationPresenter? = null
     var selectedProvince: Province? = null
     var selectedSuburb: Suburb? = null
+    var selectedStore: Suburb? = null
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,18 +61,19 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         clickAndCollect?.setOnClickListener(this)
         confirmLocation?.setOnClickListener(this)
         setDeliveryOption(deliveryType)
+        setUsersCurrentDeliveryDetails()
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmLocation -> {
-                selectedSuburb?.id?.let {
+                if (selectedSuburb != null || selectedStore != null) {
                     showSetSuburbProgressBar()
-                    presenter?.initSetSuburb(it)
+                    presenter?.initSetSuburb(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb?.id!! else selectedStore?.id!!)
                 }
             }
             R.id.selectProvince, R.id.tvSelectedProvince -> {
-                if (selectedSuburb != null) resetSuburbSelection()
+                if (selectedSuburb != null || selectedStore != null) resetSuburbSelection()
                 getProvinces()
             }
             R.id.selectSuburb, R.id.tvSelectedSuburb -> {
@@ -116,11 +118,13 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun getProvinces() {
+        if (progressGetSuburb?.visibility == View.VISIBLE) return
         showGetProvincesProgress()
         presenter?.initGetProvinces()
     }
 
     override fun getSuburbs() {
+        if (progressGetProvinces?.visibility == View.VISIBLE) return
         showGetSuburbProgress()
         selectedProvince?.id?.let { presenter?.initGetSuburbs(it, deliveryType) }
     }
@@ -153,9 +157,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun onSetSuburbSuccess() {
         hideSetSuburbProgressBar()
-        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, selectedSuburb))
+        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
         bundle?.putString(DELIVERY_TYPE, deliveryType.name)
-        bundle?.putString("SUBURB", Utils.toJson(selectedSuburb))
+        bundle?.putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
         navController?.navigate(R.id.action_to_editDeliveryLocationConfirmationFragment, bundleOf("bundle" to bundle))
     }
 
@@ -171,7 +175,11 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
-        this.selectedSuburb = suburb
+
+        if (deliveryType == DeliveryType.DELIVERY)
+            this.selectedSuburb = suburb
+        else
+            this.selectedStore = suburb
         tvSelectedSuburb?.setText(suburb?.name)
         tvSelectedSuburb?.dismissDropDown()
         validateConfirmLocationButtonAvailability()
@@ -180,19 +188,19 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun resetSuburbSelection() {
         selectedSuburb = null
+        selectedStore = null
         tvSelectedSuburb.setText(activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store))
     }
 
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
+        subTitle?.setText(activity?.resources?.getString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location))
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
                 delivery?.setBackgroundResource(R.drawable.onde_dp_black_border_bg)
                 if (selectedSuburb != null) {
-                    if (selectedSuburb?.storePickup == true) {
-                        resetSuburbSelection()
-                    }
+                    tvSelectedSuburb.setText(selectedSuburb?.name)
                 } else {
                     tvSelectedSuburb.setText(activity?.resources?.getString(R.string.select_a_suburb))
                 }
@@ -200,10 +208,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             DeliveryType.STORE_PICKUP -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.onde_dp_black_border_bg)
                 delivery?.setBackgroundResource(R.drawable.delivery_type_delivery_un_selected_bg)
-                if (selectedSuburb != null) {
-                    if (selectedSuburb?.storePickup == false) {
-                        resetSuburbSelection()
-                    }
+                if (selectedStore != null) {
+                    tvSelectedSuburb.setText(selectedStore?.name)
                 } else {
                     tvSelectedSuburb.setText(activity?.resources?.getString(R.string.select_a_store))
                 }
@@ -213,7 +219,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun validateConfirmLocationButtonAvailability() {
-        confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null)
+        if (deliveryType == DeliveryType.DELIVERY)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null)
+        else
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null)
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -228,6 +237,18 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         activity?.apply {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
+    private fun setUsersCurrentDeliveryDetails() {
+        Utils.getPreferredDeliveryLocation()?.apply {
+            selectedProvince = province
+            tvSelectedProvince?.setText(selectedProvince?.name)
+            if (suburb.storePickup)
+                selectedStore = suburb
+            else
+                selectedSuburb = suburb
+            setDeliveryOption(deliveryType)
         }
     }
 }
