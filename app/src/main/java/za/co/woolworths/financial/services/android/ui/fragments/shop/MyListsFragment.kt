@@ -146,8 +146,15 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun setYourDeliveryLocation() {
         Utils.getPreferredDeliveryLocation()?.apply {
+            rightArrowDelivery?.visibility = GONE
+            editLocation?.visibility = VISIBLE
             activity?.let {
                 KotlinUtils.setDeliveryAddressView(it, this, tvDeliveringTo, tvDeliveryLocation, deliverLocationIcon)
+            }
+            iconCaretRight?.visibility = GONE
+            editDeliveryLocation?.visibility = VISIBLE
+            activity?.let {
+                KotlinUtils.setDeliveryAddressView(it, this, tvDeliveringEmptyTo, tvDeliveryEmptyLocation, truckIcon)
             }
         }
     }

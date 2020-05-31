@@ -22,13 +22,13 @@
 
         <ImageView
             android:id="@+id/truckIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_delivery_truck"
+            android:background="@drawable/ic_delivery_truck"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +64,7 @@
             android:gravity="center_vertical"
             android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/iconCaretRight"
+            app:layout_constraintEnd_toStartOf="@+id/editDeliveryLocation"
             app:layout_constraintStart_toEndOf="@+id/tvDeliveringEmptyTo"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,6 +81,24 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/editDeliveryLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:letterSpacing="0.1"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
