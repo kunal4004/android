@@ -606,12 +606,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         if (storeId.isEmpty()) {
-            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
-            val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
-            val deliveryLocationName = if (userSelectedDeliveryLocation != null) userSelectedDeliveryLocation.suburb?.name
-                    ?: "" else quickShopDefaultValues?.suburb?.name ?: ""
-            val message = "Unfortunately this item is unavailable in $deliveryLocationName. Try changing your delivery location and try again."
-            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+           addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
             return
         }
 
