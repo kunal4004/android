@@ -52,11 +52,10 @@
     <string name="call_us">CALL US</string>
     <string name="txt_local_caller">Local caller</string>
     <string name="fs_local_caller_number">0861 502 020</string>
-    <string name="fs_inter_national_caller_number">+27 86 150 2020</string>
+    <string name="fs_inter_national_caller_number">+27 21 411 5000</string>
     <string name="txt_international_caller">International caller</string>
     <string name="txt_call_center_opening_hours">Call Centre Operating Hours</string>
-    <string name="txt_lockdown_call_center_opening_hours">Lockdown Call Centre Operating Hours</string>
-    <string name="fs_call_center_opening_hours">Monday - Friday 8am - 9pm \n\nSaturday 7:30am - 9pm \n\nSunday 7.30am - 9pm \n\nPublic Holidays 7.30am - 9pm</string>
+    <string name="fs_call_center_opening_hours">Daily 7.30am - 9pm</string>
     <string name="email_us">email us</string>
     <string name="txt_black_credit_card_query">Black Credit Card query</string>
     <string name="txt_complaint">Complaint</string>
@@ -80,12 +79,12 @@
     <string name="txt_store_query">Store query</string>
     <string name="wrewards_local_caller_number">0861 502 050</string>
     <string name="wrewards_inter_national_caller_number">+27 21 407 7003</string>
-    <string name="wrewards_call_center_opening_hours">Monday - Friday 8am - 5.30pm  \n\nSaturday 8:30am - 2pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
+    <string name="wrewards_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8:30am - 2pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
     <string name="txt_wrewards_card">WRewards card</string>
     <string name="txt_wrewards_loyalty_vouchers">WRewards loyalty vouchers</string>
     <string name="txt_littleworld">Littleworld</string>
     <string name="txt_general">General</string>
-    <string name="myschool_call_center_opening_hours">Monday - Friday 8am - 5pm  \n\nNo Weekends \n\nNo Public Holidays</string>
+    <string name="myschool_call_center_opening_hours">Monday - Friday 8am - 5pm \n\nNo Weekends \n\nNo Public Holidays</string>
     <string name="txt_myschool_card">MySchool card</string>
     <string name="txt_general_enquiry">General enquiries</string>
 
