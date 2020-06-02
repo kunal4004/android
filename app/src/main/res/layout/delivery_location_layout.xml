@@ -18,7 +18,7 @@
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_delivery_truck" />
+            android:background="@drawable/ic_delivery_truck" />
 
         <LinearLayout
             android:layout_width="match_parent"

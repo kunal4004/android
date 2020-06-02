@@ -167,7 +167,7 @@
         android:id="@+id/subTitle"
         style="@style/myriad_pro_regular"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:text="Select your collection store:"
+        android:text="@string/select_your_collection_store"
         android:textColor="@color/gray"
         android:textSize="@dimen/sixteen_sp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"

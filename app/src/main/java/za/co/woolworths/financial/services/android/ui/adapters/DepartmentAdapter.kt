@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.Department
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -76,7 +77,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     inner class HeaderViewHolder(itemView: View) : DepartmentsBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             itemView.locationSelectedLayout.setOnClickListener { onEditDeliveryLocation() }
-            if (Utils.getPreferredDeliveryLocation() == null) {
+            if (Utils.getPreferredDeliveryLocation() == null || !SessionUtilities.getInstance().isUserAuthenticated) {
                 itemView.tvDeliveringTo.text = itemView.context.resources.getString(R.string.delivery_or_collection)
                 itemView.tvDeliveryLocation.visibility = View.GONE
             } else {

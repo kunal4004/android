@@ -83,7 +83,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mNavigationState: String? = null
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
-    private var isNewUser:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -734,8 +733,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
 
                         417 -> resources?.let {
-                            isNewUser = true
-                            showDeliveryOptionDialog()
+                            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,SET_DELIVERY_LOCATION_REQUEST_CODE) }
                         }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
@@ -873,7 +871,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (isNewUser) SET_DELIVERY_LOCATION_REQUEST_CODE else EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
         } else {
             ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
         }
