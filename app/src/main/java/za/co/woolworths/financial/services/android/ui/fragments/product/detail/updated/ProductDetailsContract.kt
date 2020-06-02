@@ -39,6 +39,8 @@ interface ProductDetailsContract {
         fun loadPromotionalImages()
         fun showNutritionalInformation()
         fun setUniqueIds()
+        fun clearSelectedOnLocationChange()
+        fun showProductNotAvailableForCollection()
     }
 
     interface ProductDetailsPresenter {
