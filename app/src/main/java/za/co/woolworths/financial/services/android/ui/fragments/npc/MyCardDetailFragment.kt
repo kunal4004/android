@@ -101,10 +101,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun initListener() {
-        blockCard.setOnClickListener(this)
-        howItWorks.setOnClickListener(this)
-        payWithCard.setOnClickListener(this)
-        expireInfo.setOnClickListener(this)
+        blockCard?.setOnClickListener(this)
+        howItWorks?.setOnClickListener(this)
+        payWithCard?.setOnClickListener(this)
+        expireInfo?.setOnClickListener(this)
     }
 
     private fun populateView() {
@@ -121,17 +121,16 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
         when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
             true -> {
-                blockCardViews.visibility = GONE
-                tvCardNumberHeader.visibility = INVISIBLE
-                cardStatus.text = getString(R.string.store_card_status_temporay)
-                cardExpireDate.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
+                blockCardViews?.visibility = GONE
+                tvCardNumberHeader?.visibility = INVISIBLE
+                cardStatus?.text = getString(R.string.store_card_status_temporay)
+                cardExpireDate?.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
             }
             false -> {
-                virtualCardViews.visibility = GONE
-                cardStatus.text = getString(R.string.active)
+                virtualCardViews?.visibility = GONE
+                cardStatus?.text = getString(R.string.active)
             }
         }
-
     }
 
     override fun onClick(v: View?) {
@@ -262,9 +261,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun showPayWithCardProgressBar(state: Int) {
         activity?.apply {
-            payWithCardTokenProgressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
-            payWithCardTokenProgressBar.visibility = state
-            payWithCardNextArrow.visibility = if (state == VISIBLE) GONE else VISIBLE
+            payWithCardTokenProgressBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
+            payWithCardTokenProgressBar?.visibility = state
+            payWithCardNextArrow?.visibility = if (state == VISIBLE) GONE else VISIBLE
         }
     }
 
@@ -278,6 +277,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun isApiCallInProgress(): Boolean {
-        return payWithCardTokenProgressBar.visibility == VISIBLE
+        return payWithCardTokenProgressBar?.visibility == VISIBLE
     }
 }
