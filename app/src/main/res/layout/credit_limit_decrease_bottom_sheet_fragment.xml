@@ -106,7 +106,7 @@
         android:fontFamily="@font/futura_medium_ttf"
         android:gravity="center"
         android:letterSpacing="0.1"
-        android:text="@string/cli_got_it"
+        android:text="@string/got_it"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"

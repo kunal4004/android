@@ -11,20 +11,18 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.ISelectQuestionListener;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.SimpleViewHolder> {
-	public interface SelectedQuestion {
-		void onQuestionSelected(FAQDetail faqDetail);
-	}
 
-	private SelectedQuestion mSelectedQuestion;
+	private ISelectQuestionListener mSelectedQuestion;
 	private int selectedIndex = -1;
 	private List<FAQDetail> mDataSet;
 
 	public FAQAdapter(List<FAQDetail> userDetail,
-					  SelectedQuestion selectedQuestion) {
+					  ISelectQuestionListener selectedQuestion) {
 		this.mDataSet = userDetail;
 		this.mSelectedQuestion = selectedQuestion;
 	}

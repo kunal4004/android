@@ -250,13 +250,12 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         mErrorHandlerView?.hideErrorHandlerLayout()
         val promotionsResponseCall = OneAppService.getPromotions()
         promotionsResponseCall.enqueue(CompletionHandler(object : IResponseListener<PromotionsResponse> {
-            override fun onSuccess(promotionsResponse: PromotionsResponse) {
-                handlePromotionResponse(promotionsResponse)
+            override fun onSuccess(response: PromotionsResponse?) {
+                response?.let { handlePromotionResponse(it) }
             }
 
-            override fun onFailure(error: Throwable) {
-                if (error.message == null) return
-                mErrorHandlerView?.networkFailureHandler(error.message)
+            override fun onFailure(error: Throwable?) {
+                error?.message?.let {  mErrorHandlerView?.networkFailureHandler(it)}
             }
         }, PromotionsResponse::class.java))
 

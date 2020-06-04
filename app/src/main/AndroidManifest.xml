@@ -519,6 +519,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
 
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle" />
+
     </application>
 
 </manifest>

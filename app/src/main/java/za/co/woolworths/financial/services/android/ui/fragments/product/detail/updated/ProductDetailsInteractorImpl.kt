@@ -25,7 +25,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
                 onFinishListener?.onSuccess(cartSummaryResponse)
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 onFinishListener?.onFailure(error)
             }
         })
@@ -40,7 +40,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
         call.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
-            override fun onSuccess(response: RESPONSE_OBJECT) {
+            override fun onSuccess(response: RESPONSE_OBJECT?) {
                 requestListener?.onSuccess(response)
             }
 
@@ -56,7 +56,7 @@ class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInte
                 requestListener?.onSuccess(cartSummaryResponse)
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 //getNavigator().onTokenFailure(error.toString())
                 requestListener?.onFailure(error)
             }

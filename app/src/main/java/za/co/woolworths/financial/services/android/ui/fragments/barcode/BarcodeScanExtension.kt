@@ -36,9 +36,9 @@ abstract class BarcodeScanExtension : Fragment() {
         asyncTaskIsRunning(true)
         mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService.getProducts(it) }
         mRetrieveProductDetail?.enqueue(CompletionHandler(object : IResponseListener<ProductView> {
-            override fun onSuccess(response: ProductView) {
+            override fun onSuccess(response: ProductView?) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
-                    when (response.httpCode) {
+                    when (response?.httpCode) {
                         200 -> {
                             response.products?.apply {
                                 when (size) {
@@ -58,7 +58,7 @@ abstract class BarcodeScanExtension : Fragment() {
                         else -> {
                             asyncTaskIsRunning(false)
                             progressBarVisibility(false)
-                            response.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
+                            response?.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
                         }
                     }
                 }

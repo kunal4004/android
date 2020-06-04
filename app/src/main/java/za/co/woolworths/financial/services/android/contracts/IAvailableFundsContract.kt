@@ -32,7 +32,7 @@ interface IAvailableFundsContract {
         fun getBundle(): Pair<ApplyNowState, Account>?
         fun queryABSAServiceGetUserCreditCardToken()
         fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse)
-        fun getCreditCardNumber(cards: ArrayList<Card>?): String
+        fun getCreditCardNumber(cards: ArrayList<Card>?): String?
         fun getAccount(): Account?
         fun onDestroy()
     }
