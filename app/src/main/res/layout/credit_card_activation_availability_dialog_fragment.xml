@@ -57,7 +57,7 @@
         android:background="@drawable/order_add_to_cart_button_bg"
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.13"
-        android:text="@string/cli_got_it"
+        android:text="@string/got_it"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"

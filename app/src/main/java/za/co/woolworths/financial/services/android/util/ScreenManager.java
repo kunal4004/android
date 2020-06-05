@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
@@ -29,6 +30,8 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 
@@ -247,5 +250,13 @@ public class ScreenManager {
 		Intent openDeliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
 		activity.startActivityForResult(openDeliveryLocationSelectionActivity, requestCode);
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
+
+	public static void presentWhatsAppChatToUsActivity(Activity activity, String featureName, String appScreen) {
+		Intent openChatToUsWhatsAppActivity = new Intent(activity, WhatsAppChatDetailActivity.class);
+		openChatToUsWhatsAppActivity.putExtra(FEATURE_NAME, featureName);
+		openChatToUsWhatsAppActivity.putExtra(APP_SCREEN, appScreen);
+		activity.startActivity(openChatToUsWhatsAppActivity);
+		activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 	}
 }

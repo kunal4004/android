@@ -1155,10 +1155,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	private void redirectToAccountSignInActivity(ApplyNowState applyNowState) {
-		Intent intent = new Intent(getActivity(), AccountSignedInActivity.class);
+		Activity activity = getActivity();
+		if (activity==null) return;
+		Intent intent = new Intent(activity, AccountSignedInActivity.class);
 		intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
 		intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-		startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+		activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	private void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {
