@@ -8,14 +8,16 @@
     android:paddingRight="@dimen/twenty_four_dp"
     android:paddingBottom="@dimen/twenty_four_dp">
 
-    <TextView
-        android:id="@+id/title"
-        style="@style/dialog_title_text_style"
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/incSwipeCloseIndicator"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/thirty_two_dp"
-        android:text="@string/remove_items_dialog_title" />
+    <ProgressBar
+        android:id="@+id/progressRemoveItems"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:elevation="@dimen/two_dp"
+        android:indeterminateTint="@color/black"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/subTitle"
@@ -46,6 +48,15 @@
         android:layout_centerHorizontal="true"
         android:text="@string/cancel"
         android:textAllCaps="true" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/dialog_title_text_style"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/incSwipeCloseIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:text="@string/remove_items_dialog_title" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvItemsList"

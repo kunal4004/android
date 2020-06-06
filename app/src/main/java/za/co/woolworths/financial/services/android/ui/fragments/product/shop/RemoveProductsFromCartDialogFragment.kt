@@ -3,10 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop
 import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -20,7 +17,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsListToRemoveFromCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.Utils
 
 class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
 
@@ -31,7 +27,7 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
         fun onOutOfStockProductsRemoved()
     }
 
-    var commerceItems: ArrayList<CommerceItem>? = null
+    private var commerceItems: ArrayList<CommerceItem>? = null
 
     companion object {
         fun newInstance(commerceItems: ArrayList<CommerceItem>) = RemoveProductsFromCartDialogFragment().withArgs {
@@ -76,6 +72,7 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
     }
 
     private fun removeItemsFromCart() {
+        showRemoveItemsProgressBar()
         commerceItems?.forEach {
             removeItem(it.commerceItemInfo.commerceId)
         }
@@ -96,6 +93,7 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
         commerceItems?.find { it.commerceItemInfo.commerceId == commerceId }?.isItemRemoved = true
 
         if (commerceItems?.filter { commerceItem -> !commerceItem.isItemRemoved }.isNullOrEmpty()) {
+            hideRemoveItemsProgressBar()
             isItemsRemoved = true
             dismissAllowingStateLoss()
         }
@@ -107,6 +105,21 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
             listener?.onOutOfStockProductsRemoved()
         } else {
             activity?.onBackPressed()
+        }
+    }
+
+    fun hideRemoveItemsProgressBar() {
+        progressRemoveItems?.visibility = View.INVISIBLE
+        activity?.apply {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
+    fun showRemoveItemsProgressBar() {
+        progressRemoveItems?.visibility = View.VISIBLE
+        activity?.apply {
+            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
     }
 

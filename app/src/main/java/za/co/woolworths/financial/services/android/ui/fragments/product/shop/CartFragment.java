@@ -1142,9 +1142,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	// If CommerceItem quantity in cart is more then inStock Update quantity to match stock
 	private void updateItemQuantityToMatchStock() {
 		boolean isAnyItemNeedsQuantityUpdate = false;
+		ArrayList<CommerceItem> itemsTobeRemovedFromCart = new ArrayList<>();
 		for (CartItemGroup cartItemGroup : cartItems) {
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-				if (commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock) {
+				if (commerceItem.quantityInStock == 0) {
+					itemsTobeRemovedFromCart.add(commerceItem);
+				} else if (commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock) {
 					isAnyItemNeedsQuantityUpdate = true;
 					mCommerceItem = commerceItem;
 					mChangeQuantity.setCommerceId(commerceItem.commerceItemInfo.getCommerceId());
@@ -1156,6 +1159,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate)
 			fadeCheckoutButton(false);
+
+		if (itemsTobeRemovedFromCart.size() > 0) {
+			RemoveProductsFromCartDialogFragment fromCartDialogFragment = RemoveProductsFromCartDialogFragment.Companion.newInstance(itemsTobeRemovedFromCart);
+			fromCartDialogFragment.show(this.getChildFragmentManager(), this.getClass().getSimpleName());
+		}
 	}
 
 	/***

@@ -29,9 +29,6 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(commerceItem: CommerceItem) {
-            /*
-       tvColorSize = view.findViewById(R.id.tvSize);
-       */
 
             itemView.swipe.isSwipeEnabled = false
             itemView.tvTitle.text = commerceItem.commerceItemInfo.productDisplayName ?: ""
@@ -48,23 +45,21 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
                 itemView.promotionalText.visibility = View.GONE
             }
 
-            /*
-            // Set Color and Size START
-            if (itemRow.category.equalsIgnoreCase("FOOD")) {
-                producttvColorSize.setVisibility(View.INVISIBLE);
+            if (commerceItem.commerceItemClassType == "foodCommerceItem") {
+                itemView.tvSize.visibility = View.INVISIBLE
             } else {
-                String sizeColor = (commerceItemInfo == null) ? "" : commerceItemInfo.getColor();
-                if (sizeColor == null)
-                    sizeColor = "";
-                if (commerceItemInfo != null) {
-                    if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-                        sizeColor = commerceItemInfo.getSize();
-                    else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-                        sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
+                var sizeAndColor = commerceItem.commerceItemInfo?.color ?: ""
+                commerceItem.commerceItemInfo?.apply {
+                    if (sizeAndColor.isEmpty() && size.isNotEmpty() && !size.equals("NO SZ", true))
+                        sizeAndColor = size
+                    else if (sizeAndColor.isNotEmpty() && size.isNotEmpty() && !size.equals("NO SZ", true)) {
+                        sizeAndColor = "$sizeAndColor, $size"
+                    }
+                    itemView.tvSize.text = sizeAndColor
+                    itemView.tvSize.visibility = View.VISIBLE
                 }
-                producttvColorSize.setText(sizeColor);
-                producttvColorSize.setVisibility(View.VISIBLE);
-            }*/
+            }
+
         }
 
         private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {

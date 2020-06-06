@@ -249,6 +249,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun setUsersCurrentDeliveryDetails() {
         Utils.getPreferredDeliveryLocation()?.apply {
+            if (province?.id.isNullOrEmpty()) return
             selectedProvince = province
             tvSelectedProvince?.setText(selectedProvince?.name)
             if (suburb.storePickup)

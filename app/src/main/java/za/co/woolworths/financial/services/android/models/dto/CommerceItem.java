@@ -20,6 +20,7 @@ public class CommerceItem {
 	public int quantityInStock;
 	public boolean isStockChecked = false;
 	public boolean isItemRemoved = false;
+	public String commerceItemClassType;
 
 	public void setDeleteSingleItem(boolean deleteSingleItem) {
 		this.deleteSingleItem = deleteSingleItem;
