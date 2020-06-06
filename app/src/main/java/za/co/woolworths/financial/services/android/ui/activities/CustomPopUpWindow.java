@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.dto.statement.SendUser
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -94,7 +93,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
     public enum MODAL_LAYOUT {
         CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
+        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, BARCODE_ERROR,
         SHOPPING_LIST_INFO, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
         CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
         STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO
@@ -171,16 +170,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mRelPopContainer.setOnClickListener(this);
                 break;
 
-            case SIGN_OUT:
-                setContentView(R.layout.sign_out);
-                mRelRootContainer = findViewById(R.id.relContainerRootMessage);
-                mRelPopContainer = findViewById(R.id.relPopContainer);
-                mNegativeActionButton = findViewById(R.id.btnSignOutCancel);
-                mPositiveActionButton = findViewById(R.id.btnSignOut);
-                mNegativeActionButton.setOnClickListener(this);
-                mPositiveActionButton.setOnClickListener(this);
-                mRelPopContainer.setOnClickListener(this);
-                break;
             case BIOMETRICS_SECURITY_INFO:
             case INFO:
                 setContentView(R.layout.open_overlay_got_it);
@@ -193,7 +182,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mLinEmail.setVisibility(View.GONE);
                 mOverlayTitle.setVisibility(View.GONE);
                 mOverlayDescription.setText(description);
-                mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO) ? getString(R.string.ok) : getString(R.string.cli_got_it));
+                mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO) ? getString(R.string.ok) : getString(R.string.got_it));
                 mOverlayBtn.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
@@ -544,7 +533,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 setContentView(R.layout.sign_out);
                 mRelRootContainer = findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = findViewById(R.id.relPopContainer);
-                mNegativeActionButton = findViewById(R.id.btnSignOutCancel);
+                mNegativeActionButton = findViewById(R.id.cancelSignOutButton);
                 mPositiveActionButton = findViewById(R.id.btnSignOut);
                 WTextView tvTitle = findViewById(R.id.textSignOut);
                 WTextView tvDescription = findViewById(R.id.overlayDescription);
@@ -741,33 +730,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private void exitAnimation() {
-        if (!viewWasClicked) { // prevent more than one click
-            viewWasClicked = true;
-            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-            animation.setFillAfter(true);
-            animation.setDuration(ANIM_DOWN_DURATION);
-            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    Utils.sendBus(new AuthenticationState(AuthenticationState.SIGN_OUT));
-                    dismissLayout();
-                }
-            });
-            mRelRootContainer.startAnimation(animation);
-        }
-    }
-
-
     private void exitEmailAnimation() {
         if (!viewWasClicked) { // prevent more than one click
             viewWasClicked = true;
@@ -885,7 +847,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
             case R.id.btnCancelDecline:
             case R.id.btnLoanHighOk:
             case R.id.btnOverlay:
-            case R.id.btnSignOutCancel:
+            case R.id.cancelSignOutButton:
             case R.id.btnBarcodeOk:
             case R.id.btnUploadDocuments:
             case R.id.btnShopOk:
@@ -914,10 +876,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.btnSignOut:
-                if (current_view == MODAL_LAYOUT.SIGN_OUT) {
-                    whiteEffectClick(mPositiveActionButton);
-                    exitAnimation();
-                } else if (current_view == MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE) {
+                if (current_view == MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE) {
                     exitSetupBiometricsAnimation();
                 }
                 break;

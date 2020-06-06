@@ -34,14 +34,14 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
         storeOTPService = OneAppService.getLinkNewCardOTP(otpMethodType)
         storeOTPService?.enqueue(
                 CompletionHandler(object : IResponseListener<LinkNewCardOTP> {
-                    override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
-                        with(linkNewCardOTP) {
-                            when (this.httpCode) {
+                    override fun onSuccess(response: LinkNewCardOTP?) {
+                        response?.apply {
+                            when (httpCode) {
                                 200 -> {
                                     requestListener.hideProgress()
-                                    requestListener.onSuccessHandler(linkNewCardOTP)
+                                    requestListener.onSuccessHandler(response)
                                 }
-                                440 -> sessionExpired(linkNewCardOTP.response)
+                                440 -> sessionExpired(response.response)
                                 else -> {
                                     requestListener.hideProgress()
                                     requestListener.onFailureHandler()
@@ -117,9 +117,9 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
     fun getStoreCards(requestListener: IOTPLinkStoreCard<StoreCardsResponse>?, account: Account): Call<StoreCardsResponse> {
         val getStoreCardsRequest = OneAppService.getStoreCards(StoreCardsRequestBody(account.accountNumber, account.productOfferingId))
         getStoreCardsRequest.enqueue(CompletionHandler(object : IResponseListener<StoreCardsResponse> {
-            override fun onSuccess(response: StoreCardsResponse) {
+            override fun onSuccess(response: StoreCardsResponse?) {
                 getCardCallHasFailed = false
-                when (response.httpCode) {
+                when (response?.httpCode) {
                     200 -> requestListener?.onSuccessHandler(response)
                     440 -> sessionExpired(response.response)
                     else -> {

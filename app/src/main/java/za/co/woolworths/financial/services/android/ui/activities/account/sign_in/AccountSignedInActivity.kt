@@ -132,6 +132,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
     }
 
+    override fun bottomSheetIsExpanded(): Boolean {
+        return sheetBehavior?.state ==  BottomSheetBehavior.STATE_EXPANDED
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.accountInArrearsTextView -> mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { account -> showAccountInArrearsDialog(account) }

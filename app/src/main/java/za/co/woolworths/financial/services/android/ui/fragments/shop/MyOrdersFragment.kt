@@ -185,7 +185,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
             440 -> {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                 showSignOutView()
-                QueryBadgeCounter.getInstance().clearBadge()
+                QueryBadgeCounter.instance.clearBadge()
             }
             502->{
                 showErrorDialog(ordersResponse?.response?.desc

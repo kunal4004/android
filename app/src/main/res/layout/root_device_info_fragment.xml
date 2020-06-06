@@ -74,7 +74,7 @@
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:letterSpacing="0.2"
-        android:text="@string/cli_got_it"
+        android:text="@string/got_it"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

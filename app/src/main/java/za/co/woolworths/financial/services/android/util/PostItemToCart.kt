@@ -12,15 +12,15 @@ class PostItemToCart {
     fun make(addItemToCart: MutableList<AddItemToCart>, requestBuilder: IResponseListener<AddItemToCartResponse>): Call<AddItemToCartResponse> {
         val postItemRequest = OneAppService.addItemToCart(addItemToCart)
         postItemRequest.enqueue(CompletionHandler(object : IResponseListener<AddItemToCartResponse> {
-            override fun onSuccess(addItemToCartResponse: AddItemToCartResponse) {
+            override fun onSuccess(response: AddItemToCartResponse?) {
 
                 // Ensure counter is always updated after a successful add to cart
-                when (addItemToCartResponse.httpCode) {
-                    200 -> QueryBadgeCounter.getInstance().queryCartSummaryCount()
+                when (response?.httpCode) {
+                    200 -> QueryBadgeCounter.instance.queryCartSummaryCount()
                     else -> {
                     }
                 }
-                requestBuilder.onSuccess(addItemToCartResponse)
+                requestBuilder.onSuccess(response)
             }
 
             override fun onFailure(error: Throwable?) {

@@ -16,12 +16,12 @@ class CreditCardActivationInteractorImpl : CreditCardActivationContract.CreditCa
     private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: CreditCardActivationContract.CreditCardActivationInteractor.OnFinishListener) {
         val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
         call.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
-            override fun onSuccess(response: RESPONSE_OBJECT) {
-                requestListener?.onSuccess(response)
+            override fun onSuccess(response: RESPONSE_OBJECT?) {
+                requestListener.onSuccess(response)
             }
 
             override fun onFailure(error: Throwable?) {
-                requestListener?.onFailure(error)
+                requestListener.onFailure(error)
             }
         }, classType))
     }

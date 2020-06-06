@@ -413,20 +413,20 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         val longitude = location?.longitude ?: 0.0
         val locationResponseCall = queryServiceGetStore(latitude, longitude, "")
         locationResponseCall.enqueue(CompletionHandler(object : IResponseListener<LocationResponse> {
-            override fun onSuccess(locationResponse: LocationResponse) {
+            override fun onSuccess(locationResponse: LocationResponse?) {
                 enableSearchMenu()
                 hideProgressBar()
                 storeDetailsList = ArrayList()
-                storeDetailsList = locationResponse.Locations
+                storeDetailsList = locationResponse?.Locations
                 storeDetailsList?.let { listDetail -> bindDataWithUI(listDetail) }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 val activity = activity ?: return
                 activity.runOnUiThread {
                     enableSearchMenu()
                     hideProgressBar()
-                    mErrorHandlerView?.networkFailureHandler(error.message)
+                    error?.message?.let{ mErrorHandlerView?.networkFailureHandler(it)}
                 }
             }
         }, LocationResponse::class.java))

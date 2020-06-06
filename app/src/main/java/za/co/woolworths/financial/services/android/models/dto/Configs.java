@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
+import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 
 public class Configs {
     public Environment enviroment;
@@ -19,4 +20,5 @@ public class Configs {
     public ArrayList<String> whitelistedDomainsForQRScanner;
     public Sts sts;
     public CreditCardActivation creditCardActivation;
+    public WhatsApp whatsApp;
 }

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
@@ -59,8 +60,8 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
         when (cards.isNullOrEmpty()) {
             true -> mainView?.displayCardNumberNotFound()
             false -> {
-                val creditCardNumber = getCreditCardNumber(cards)
-                when (creditCardNumber.isEmpty()) {
+                val creditCardNumber: String? = getCreditCardNumber(cards)
+                when (creditCardNumber.isNullOrEmpty()) {
                     true -> mainView?.displayCardNumberNotFound()
                     false -> {
                         val absaSecureCredentials = AbsaSecureCredentials()
@@ -73,9 +74,10 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
         }
     }
 
-    override fun getCreditCardNumber(cards: ArrayList<Card>?): String {
-        return cards?.filter { card -> card.cardStatus.trim { it <= ' ' } == "AAA" }?.get(0)?.absaCardToken
-                ?: ""
+    override fun getCreditCardNumber(cards: ArrayList<Card>?): String? {
+        return cards?.filter { card -> card.cardStatus?.trim { it <= ' ' } == "AAA" }
+                ?.takeIf { it.isNotEmpty() }
+                ?.let {  it[0].absaCardToken}
     }
 
     override fun getAccount(): Account? = mAccount

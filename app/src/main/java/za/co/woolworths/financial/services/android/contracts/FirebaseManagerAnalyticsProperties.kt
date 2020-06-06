@@ -80,6 +80,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
         const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
+        const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
+        const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
+        const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
+
         const val SHOP_SEARCH = "SHOP_Search"
     }
 
@@ -87,7 +91,7 @@ class FirebaseManagerAnalyticsProperties {
         companion object {
             const val SUBURBNAME: String = "SUBURBNAME"
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
-            const val C2ID: String = "c2_id"
+            const val C2ID: String = "C2Id"
             const val ATGId: String = "ATGId"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
             const val DESCRIPTION : String = "DESCRIPTION"

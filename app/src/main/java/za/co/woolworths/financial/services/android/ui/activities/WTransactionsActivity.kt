@@ -89,10 +89,10 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     private fun transactionAsyncAPI(productOfferingId: String?) {
         mExecuteTransactionRequest = productOfferingId?.let { id -> getAccountTransactionHistory(id) }
         mExecuteTransactionRequest?.enqueue(CompletionHandler(object : IResponseListener<TransactionHistoryResponse> {
-            override fun onSuccess(transactionHistoryResponse: TransactionHistoryResponse) {
+            override fun onSuccess(transactionHistoryResponse: TransactionHistoryResponse?) {
                 dismissProgress()
                 if (this@WTransactionsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    when (transactionHistoryResponse.httpCode) {
+                    when (transactionHistoryResponse?.httpCode) {
                         200 -> {
                             if (transactionHistoryResponse.transactions.size > 0) {
                                 mErrorHandlerView?.hideEmpyState()
@@ -106,7 +106,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                         440 -> if (!this@WTransactionsActivity.isFinishing) {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, transactionHistoryResponse.response.stsParams, this@WTransactionsActivity)
                         }
-                        else -> transactionHistoryResponse.response?.desc?.let { desc ->
+                        else -> transactionHistoryResponse?.response?.desc?.let { desc ->
                             try {
                                 val accountsErrorHandlerFragment = AccountsErrorHandlerFragment.newInstance(desc)
                                 accountsErrorHandlerFragment.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName)
@@ -118,9 +118,9 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
 
-            override fun onFailure(error: Throwable) {
+            override fun onFailure(error: Throwable?) {
                 if (this@WTransactionsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    error.message?.let { errorMessage -> networkFailureHandler(errorMessage) }
+                    error?.message?.let { errorMessage -> networkFailureHandler(errorMessage) }
                 }
             }
         }, TransactionHistoryResponse::class.java))
