@@ -99,7 +99,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
-public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
+public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
 	private int mQuantity;
 	private RelativeLayout rlLocationSelectedLayout;
@@ -1261,4 +1261,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		upSellMessageTextView.setText(qualifierMessage);
 		upSellMessageTextView.setVisibility(TextUtils.isEmpty(qualifierMessage) ? View.GONE : View.VISIBLE);
 	}
+
+	@Override
+	public void onOutOfStockProductsRemoved() {
+		loadShoppingCart(false);
+	}
+
 }

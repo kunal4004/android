@@ -15,7 +15,7 @@
         android:layout_below="@+id/incSwipeCloseIndicator"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/thirty_two_dp"
-        android:text="These items will be removed" />
+        android:text="@string/remove_items_dialog_title" />
 
     <TextView
         android:id="@+id/subTitle"
@@ -25,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:gravity="center_horizontal"
-        android:text="We always show you items available at the store closest to your location. When you change this location, the items you see may change too. "
+        android:text="@string/remove_items_dialog_desc"
         android:textColor="@color/gray" />
 
     <TextView
