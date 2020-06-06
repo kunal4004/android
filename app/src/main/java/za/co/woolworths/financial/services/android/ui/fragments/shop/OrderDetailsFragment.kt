@@ -83,8 +83,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
                 if (!isAdded) return
                 when (ordersResponse?.httpCode) {
                     0 -> {
-                        mainLayout.visibility = View.VISIBLE
-                        loadingBar.visibility = View.GONE
+                        mainLayout?.visibility = View.VISIBLE
+                        loadingBar?.visibility = View.GONE
                         orderDetailsResponse = ordersResponse
                         bindData(orderDetailsResponse!!)
                     }
