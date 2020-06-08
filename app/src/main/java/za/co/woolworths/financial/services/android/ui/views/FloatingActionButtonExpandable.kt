@@ -114,6 +114,7 @@ class FloatingActionButtonExpandable @JvmOverloads constructor(
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.toFloat())
         tvContent.text = content
         tvContent.setTextColor(textColor)
+        tvContent.visibility = View.VISIBLE
         tvContent.setPadding(0, 0, paddingTextIcon, 0)
         typeface?.let {
             tvContent.typeface = it

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.crashlytics.android.Crashlytics
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_statement_button.*
@@ -20,16 +21,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
-
 
 open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
@@ -142,7 +142,13 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
 
     override fun displayCardNumberNotFound() {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, activity.resources?.getString(R.string.card_number_not_found)) }
+        if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
+        try{
+        val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
+            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager,AccountsErrorHandlerFragment::class.java.simpleName ) }
+        }catch (ex : IllegalStateException){
+            Crashlytics.logException(ex)
+        }
     }
 
     override fun handleUnknownHttpResponse(desc: String?) {

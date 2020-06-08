@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -25,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,7 +74,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
@@ -97,20 +93,18 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.Transaction;
-import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.account.Transaction;
+import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem;
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.InternalWebViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -279,52 +273,6 @@ public class Utils {
 			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 			window.setStatusBarColor(ContextCompat.getColor(activity, color));
 		}
-	}
-
-	public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
-		List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
-		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-		DateFormat outputFormat = new SimpleDateFormat("MMMM");
-		TransactionParentObj transactionParentObj;
-
-		for (int i = 0; i < transactions.size(); i++) {
-			try {
-				Date date = inputFormat.parse(transactions.get(i).date);
-				String month = outputFormat.format(date);
-				boolean monthFound = false;
-				List<Transaction> transactionList = null;
-				if (transactionParentObjList.size() == 0) {
-					transactionList = new ArrayList<>();
-					transactionParentObj = new TransactionParentObj();
-					transactionParentObj.setMonth(month);
-					transactionList.add(transactions.get(i));
-					transactionParentObj.setTransactionList(transactionList);
-					transactionParentObjList.add(transactionParentObj);
-				} else {
-					for (int j = 0; j < transactionParentObjList.size(); j++) {
-						if (transactionParentObjList.get(j).getMonth().equals(month)) {
-							monthFound = true;
-							transactionParentObjList.get(j).getTransactionList().add(transactions.get(i));
-							break;
-						}
-					}
-
-					if (monthFound == false) {
-						transactionList = new ArrayList<>();
-						transactionParentObj = new TransactionParentObj();
-						transactionParentObj.setMonth(month);
-						transactionList.add(transactions.get(i));
-						transactionParentObj.setTransactionList(transactionList);
-						transactionParentObjList.add(transactionParentObj);
-					}
-				}
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-
-
-		return transactionParentObjList;
 	}
 
 	public static String objectToJson(Object object) {
@@ -608,6 +556,16 @@ public class Utils {
 		}
 	}
 
+	public static void setBackgroundColor(TextView textView, int drawableId, int value) {
+		Context context = textView.getContext();
+		textView.setText(context.getResources().getString(value));
+		textView.setTextColor(WHITE);
+		textView.setBackgroundResource(drawableId);
+		Typeface futuraFont = Typeface.createFromAsset(context.getAssets(), "fonts/WFutura-SemiBold.ttf");
+		textView.setTypeface(futuraFont);
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
+	}
+
 	public static void setBackgroundColor(WTextView textView, int drawableId, int value) {
 		Context context = textView.getContext();
 		textView.setText(context.getResources().getString(value));
@@ -637,7 +595,7 @@ public class Utils {
 		return resources.getString(id);
 	}
 
-	public static void setRagRating(Context context, WTextView storeOfferings, String status) {
+	public static void setRagRating(Context context, TextView storeOfferings, String status) {
 		Resources resources = context.getResources();
 		if (status.equalsIgnoreCase(resources.getString(R.string.status_red))) {
 			setBackgroundColor(storeOfferings, R.drawable.round_red_corner, R.string.status_red_desc);
@@ -1547,16 +1505,6 @@ public class Utils {
 			alternate = !alternate;
 		}
 		return (sum % 10 == 0);
-	}
-
-	public static String getUserATGId(JsonElement atgId) {
-		if (atgId instanceof JsonObject) {
-			return atgId.getAsString();
-		} else if (atgId instanceof JsonArray) {
-			return ((JsonArray) atgId).get(0).getAsString();
-		} else {
-			return "";
-		}
 	}
 
 	public static boolean isAppUpdated(Context context) {

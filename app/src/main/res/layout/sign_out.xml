@@ -76,7 +76,7 @@
                 android:weightSum="1">
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
-                    android:id="@+id/btnSignOutCancel"
+                    android:id="@+id/cancelSignOutButton"
                     style="@style/whiteButtonStyle"
                     android:layout_marginRight="4dp"
                     android:layout_weight="0.5"

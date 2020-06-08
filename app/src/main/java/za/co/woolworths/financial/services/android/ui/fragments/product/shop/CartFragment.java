@@ -549,7 +549,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void updateCartSummary(int cartCount) {
-		QueryBadgeCounter.getInstance().setCartCount(INDEX_CART, cartCount);
+		QueryBadgeCounter.getInstance().setCartCount(cartCount);
 	}
 
 	private void onChangeQuantityComplete() {

@@ -51,11 +51,14 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
+    companion object {
+        private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+    }
+
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
-    private  val REQUEST_CREDIT_CARD_ACTIVATION = 1983
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -325,7 +328,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     override fun executeCreditCardTokenService() {
-        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true)) return
+        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true) return
         activity?.apply {
             includeAccountDetailHeaderView.visibility = GONE
             creditCardActivationView.visibility = GONE

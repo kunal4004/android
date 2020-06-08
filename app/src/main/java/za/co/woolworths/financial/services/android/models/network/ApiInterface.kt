@@ -69,6 +69,21 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String): Call<VoucherResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("user/vouchers/count")
+    fun getVouchersCount(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<VoucherCount>
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/session")
     fun login(
@@ -1232,4 +1247,20 @@ interface ApiInterface {
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("event/{featureName}/{appScreen}")
+    fun postEvent(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("featureName") featureName: String,
+            @Path("appScreen") appScreen: String): Call<Response>
 }

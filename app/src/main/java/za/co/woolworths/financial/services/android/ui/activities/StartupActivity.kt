@@ -18,16 +18,15 @@ import io.fabric.sdk.android.services.common.CommonUtils
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
+import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.NotificationUtils
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl
 import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl.Companion.APP_SERVER_ENVIRONMENT_KEY
@@ -71,6 +70,17 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                 firebaseAnalytics?.apply {
                     setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
                     setUserProperty(APP_VERSION_KEY, appVersion)
+
+                    val token =  SessionUtilities.getInstance().jwt
+                    token.AtgId?.apply {
+                        val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
+                        setUserId(atgId)
+                        setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
+                    }
+
+                    token.C2Id?.apply {
+                        setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
+                    }
                 }
                 setupScreen()
             } else {
@@ -166,7 +176,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     }
                 }
 
-                override fun onFailure(throwable: Throwable) {
+                override fun onFailure(error: Throwable?) {
                     showNonVideoViewWithErrorLayout()
                 }
             })
@@ -216,7 +226,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     override fun onStart() {
         super.onStart()
-        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this)) {
+        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug( WoolworthsApplication.getAppContext())) {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
             val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
             rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)

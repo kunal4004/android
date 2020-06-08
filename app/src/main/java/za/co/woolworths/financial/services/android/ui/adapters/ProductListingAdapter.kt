@@ -27,7 +27,7 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
                 ProductListingViewType.HEADER -> (holder as? ProductListingViewHolderHeader)?.setNumberOfItems(productList)
                 ProductListingViewType.FOOTER -> (holder as? ProductListingViewHolderFooter)?.loadMoreProductProgressBarVisibility()
                 else -> (holder as? ProductListingViewHolderItems)?.let { view ->
-                    navigator?.let { view.setProductItem(productList, it) }
+                    navigator?.let { view.setProductItem(productList, it, if (position % 2 != 0) mProductListItems.getOrNull(position + 1) else null, if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null) }
                     view.itemView.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART)

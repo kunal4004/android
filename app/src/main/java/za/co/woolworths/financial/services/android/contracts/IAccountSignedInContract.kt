@@ -17,6 +17,7 @@ interface IAccountSignedInContract {
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun showAccountChargeOffForMoreThan6Months()
+        fun bottomSheetIsExpanded():Boolean
     }
 
     interface MyAccountPresenter {

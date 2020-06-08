@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.tips_and_tricks_list_item.view.*
-import za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.TipsAndTricksNavigator
+import za.co.woolworths.financial.services.android.contracts.ITipsAndTricksListener
 
-class TipsAndTricksListAdapter(val context: Activity, val listner: TipsAndTricksNavigator) : RecyclerView.Adapter<TipsAndTricksListAdapter.ViewHolder>() {
+class TipsAndTricksListAdapter(val context: Activity, val listner: ITipsAndTricksListener) : RecyclerView.Adapter<TipsAndTricksListAdapter.ViewHolder>() {
 
     var icons: TypedArray = context.resources.obtainTypedArray(R.array.tips_tricks_list_item_icons)
     var names: Array<String> = context.resources.getStringArray(R.array.tips_tricks_item_names)

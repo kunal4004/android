@@ -18,13 +18,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
-    fun setProductItem(productList: ProductList, navigator: IProductListing) {
+
+    fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages)
             setProductName(this)
-            setSaveText(this)
-            setBrandText(this)
+            setSaveText(this, nextProduct, previousProduct)
+            setBrandText(this, nextProduct, previousProduct)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             quickShopAddToCartSwitch(this)
@@ -40,13 +41,34 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         tvProductName?.text = productList?.productName ?: ""
     }
 
-    private fun setSaveText(productList: ProductList?) = with(itemView) {
+    private fun setSaveText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
         tvSaveText?.text = productList?.saveText ?: ""
+        previousProduct?.let {
+            tvSaveText.visibility = if (productList?.saveText.isNullOrEmpty() && it.saveText.isNullOrEmpty()) GONE else VISIBLE
+        }
+        nextProduct?.let {
+            tvSaveText.visibility = if (productList?.saveText.isNullOrEmpty() && it.saveText.isNullOrEmpty()) GONE else VISIBLE
+        }
     }
 
-    private fun setBrandText(productList: ProductList?) = with(itemView) {
-        brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
+    private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
         brandName?.text = productList?.brandText ?: ""
+        previousProduct?.let {
+            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
+                brandName?.visibility = GONE
+            } else {
+                brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
+                brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) VISIBLE else GONE
+            }
+        }
+        nextProduct?.let {
+            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
+                brandName?.visibility = GONE
+            } else {
+                brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
+                brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) VISIBLE else GONE
+            }
+        }
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
@@ -91,5 +113,9 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
 
             return defaultStoreId
         }
+    }
+
+    interface OnDataUpdate{
+        fun onDataUpdate()
     }
 }

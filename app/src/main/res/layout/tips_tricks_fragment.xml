@@ -1,48 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="?attr/actionBarSize"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.TipsAndTricksFragment">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        android:layout_height="match_parent"
+        android:background="@color/default_background"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/default_background"
-            android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/newFeature"
+            style="@style/listStyle"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/stores_details_background">
 
-            <RelativeLayout
-                android:id="@+id/newFeature"
-                style="@style/listStyle"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/stores_details_background">
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/accountsItem"
+                android:text="@string/new_feature_tutorials" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/accountsItem"
-                    android:text="@string/new_feature_tutorials" />
-
-                <Switch
-                    android:id="@+id/featureSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:theme="@style/SwitchTheme" />
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tipsAndTricksList"
-                android:layout_width="match_parent"
+            <Switch
+                android:id="@+id/featureSwitch"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sixteen_dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:theme="@style/SwitchTheme" />
+        </RelativeLayout>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</layout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tipsAndTricksList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

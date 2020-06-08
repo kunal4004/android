@@ -184,7 +184,7 @@ class MyOrdersFragment : Fragment() {
             440 -> {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                 showSignOutView()
-                QueryBadgeCounter.getInstance().clearBadge()
+                QueryBadgeCounter.instance.clearBadge()
             }
             else -> {
                 showErrorView()
