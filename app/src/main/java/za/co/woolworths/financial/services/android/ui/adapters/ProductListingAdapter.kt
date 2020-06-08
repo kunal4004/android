@@ -33,7 +33,7 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART)
                             val fulfilmentTypeId = WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId
                             val storeId = fulfilmentTypeId?.let { it1 -> ProductListingViewHolderItems.getFulFillmentStoreId(it1) }
-                            storeId?.let { id -> navigator?.queryInventoryForStore(id, AddItemToCart(productList.productId, productList.sku, 0), productList) }
+                            fulfilmentTypeId?.let { id -> navigator?.queryInventoryForStore(id, AddItemToCart(productList.productId, productList.sku, 0), productList) }
                         }
                     }
                 }

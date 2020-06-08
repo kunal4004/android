@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,10 +35,6 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        imCloseIcon.setOnClickListener {
-            listener?.onConfirmLocationDialogDismiss()
-            dismissAllowingStateLoss()
-        }
         btnDefaultLocation.setOnClickListener {
             listener?.onConfirmLocation()
             dismissAllowingStateLoss()
@@ -54,7 +49,7 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
     private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
             suburb?.let {
-                tvLocation.setText(it.name + ", " + this.province.name)
+                tvLocation.text = if (it.storePickup) it.name else it.name + ", " + this.province.name
             }
         }
     }

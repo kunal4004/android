@@ -734,10 +734,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         addItemToCart()
     }
 
-    override fun onConfirmLocationDialogDismiss() {
-        //cancel add to cart request
-    }
-
     override fun onSetNewLocation() {
         activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
     }
