@@ -262,6 +262,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun showNoStoresError() {
         noStoresForProvinceMsg?.visibility = View.VISIBLE
+        noStoresForProvinceMsg.text = activity?.resources?.getString(R.string.no_stores_for_province_message)+selectedProvince?.name+"."
         selectProvince?.setBackgroundResource(R.drawable.otp_box_error_background)
         tvSelectedSuburb.setText(activity?.resources?.getString(R.string.no_stores_available))
     }
