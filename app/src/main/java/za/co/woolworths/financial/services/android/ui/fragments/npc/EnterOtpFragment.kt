@@ -26,7 +26,6 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import android.view.WindowManager
-import android.widget.Toast
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -149,8 +148,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
             if (shouldDisableKeyboardOnOTPCall) return@setOnClickListener
             hideKeyboard()
             (activity as? AppCompatActivity)?.apply {
-                mResendOTPFragment =
-                        ResendOTPFragment.newInstance(this@EnterOtpFragment, getSavedNumber())
+                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, getSavedNumber())
                 mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
@@ -215,11 +213,9 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         shouldDisableKeyboardOnOTPCall = true
                         super.showProgress()
                         activity.resources?.let { resources ->
-                            enterOTPDescriptionScreen?.text =
-                                    resources.getString(R.string.sending_otp_text)
+                            enterOTPDescriptionScreen?.text = resources.getString(R.string.sending_otp_text)
                         }
                         loadingProgressIndicatorViewGroup?.visibility = VISIBLE
-                        enterOTPDescriptionScreen?.text = ""
                         disableEditText(edtVerificationCode1)
                         disableEditText(edtVerificationCode2)
                         disableEditText(edtVerificationCode3)
