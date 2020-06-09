@@ -99,7 +99,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
-public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
+public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
 	private int mQuantity;
 	private RelativeLayout rlLocationSelectedLayout;
@@ -1142,9 +1142,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	// If CommerceItem quantity in cart is more then inStock Update quantity to match stock
 	private void updateItemQuantityToMatchStock() {
 		boolean isAnyItemNeedsQuantityUpdate = false;
+		ArrayList<CommerceItem> itemsTobeRemovedFromCart = new ArrayList<>();
 		for (CartItemGroup cartItemGroup : cartItems) {
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-				if (commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock) {
+				if (commerceItem.quantityInStock == 0) {
+					itemsTobeRemovedFromCart.add(commerceItem);
+				} else if (commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock) {
 					isAnyItemNeedsQuantityUpdate = true;
 					mCommerceItem = commerceItem;
 					mChangeQuantity.setCommerceId(commerceItem.commerceItemInfo.getCommerceId());
@@ -1156,6 +1159,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate)
 			fadeCheckoutButton(false);
+
+		if (itemsTobeRemovedFromCart.size() > 0) {
+			RemoveProductsFromCartDialogFragment fromCartDialogFragment = RemoveProductsFromCartDialogFragment.Companion.newInstance(itemsTobeRemovedFromCart);
+			fromCartDialogFragment.show(this.getChildFragmentManager(), this.getClass().getSimpleName());
+		}
 	}
 
 	/***
@@ -1261,4 +1269,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		upSellMessageTextView.setText(qualifierMessage);
 		upSellMessageTextView.setVisibility(TextUtils.isEmpty(qualifierMessage) ? View.GONE : View.VISIBLE);
 	}
+
+	@Override
+	public void onOutOfStockProductsRemoved() {
+		loadShoppingCart(false);
+	}
+
 }

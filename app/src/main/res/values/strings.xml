@@ -1485,5 +1485,13 @@
     <string name="collecting_from">Collecting From</string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
+    <string name="remove_these_items_continue">remove these items &amp; continue</string>
+    <string name="item_not_available_for_collection_title">Item not available for collection</string>
+    <string name="item_not_available_for_collection_desc">To purchase, please try find in-store or change location for delivery.</string>
+    <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
+    <string name="remove_items_dialog_title">These items will be removed</string>
+    <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
+    <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in Western Cape.</string>
+    <string name="no_stores_available">No Stores Available</string>
 </resources>
 

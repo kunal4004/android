@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
@@ -60,7 +61,7 @@ import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -276,9 +277,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded) return
         this.productDetails = productDetails
-        if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
 
+        Utils.getPreferredDeliveryLocation()?.let {
+            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                showProductUnavailable()
+                showProductNotAvailableForCollection()
+                return
+            }
+        }
+
+        if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
             storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
                 false -> {
@@ -314,6 +324,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
         if (isDefaultRequest) {
+            clearSelectedOnLocationChange()
             otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
             updateDefaultUI()
             hideProductDetailsLoading()
@@ -420,7 +431,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
                 this.otherSKUsByGroupKey[groupKey] = ArrayList<OtherSkus>()
             }
-            this.otherSKUsByGroupKey.get(groupKey)!!.add(otherSkuObj)
+            if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(otherSkuObj)
         }
         return otherSKUsByGroupKey
     }
@@ -822,6 +833,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
                         updateStockAvailabilityLocation()
 
+                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType).isNullOrEmpty()) {
+                            storeIdForInventory = ""
+                            showProductUnavailable()
+                            return
+                        }
+
                         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
                             updateStockAvailability(true)
                         }
@@ -1064,8 +1081,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             getDeliveryLocation()?.let {
                 when (it) {
                     is ShoppingDeliveryLocation -> {
-                        currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
-                        defaultLocationPlaceholder.text = getString(R.string.delivering_to_pdp)
+                        when (it.suburb.storePickup) {
+                            true -> {
+                                currentDeliveryLocation.text = it.suburb?.name
+                                defaultLocationPlaceholder.text = getString(R.string.collecting_from)+ " "
+                            }
+                            else -> {
+                                currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
+                                defaultLocationPlaceholder.text = getString(R.string.delivering_to_pdp)
+                            }
+                        }
                     }
                     is QuickShopDefaultValues -> {
                         currentDeliveryLocation.text = it.suburb.name
@@ -1107,7 +1132,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductUnavailable() {
+        colorSelectorLayout.visibility = View.GONE
+        sizeSelectorLayout.visibility = View.GONE
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
+        getSelectedSku()?.quantity = 0
         hideProductDetailsLoading()
         toCartAndFindInStoreLayout.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
@@ -1232,5 +1260,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         } else {
             ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
         }
+    }
+
+    override fun clearSelectedOnLocationChange(){
+        setSelectedSku(null)
+        selectedSize?.text = ""
+        selectedColor?.text = ""
+    }
+
+    override fun showProductNotAvailableForCollection() {
+        activity?.apply {
+            ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
+        }
+    }
+
+    override fun onChangeDeliveryOption() {
+        this.updateDeliveryLocation()
+    }
+
+    override fun onFindInStore() {
+        this.findItemInStore()
     }
 }

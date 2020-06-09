@@ -74,6 +74,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             }
             R.id.selectProvince, R.id.tvSelectedProvince -> {
                 if (selectedSuburb != null || selectedStore != null) resetSuburbSelection()
+                clearNoStoresError()
                 getProvinces()
             }
             R.id.selectSuburb, R.id.tvSelectedSuburb -> {
@@ -100,9 +101,13 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun onGetSuburbsSuccess(suburbs: List<Suburb>) {
         hideGetSuburbProgress()
-        val adapter = activity?.let { SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected) }
-        tvSelectedSuburb.setAdapter(adapter)
-        tvSelectedSuburb.showDropDown()
+        if (suburbs.isNullOrEmpty()) {
+            showNoStoresError()
+        } else {
+            val adapter = activity?.let { SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected) }
+            tvSelectedSuburb.setAdapter(adapter)
+            tvSelectedSuburb.showDropDown()
+        }
     }
 
     override fun onGetSuburbsFailure() {
@@ -194,11 +199,13 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
-        subTitle?.setText(activity?.resources?.getString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location))
+        subTitle?.text = activity?.resources?.getString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
                 delivery?.setBackgroundResource(R.drawable.onde_dp_black_border_bg)
+                noStoresForProvinceMsg?.visibility = View.GONE
+                selectProvince?.setBackgroundResource(R.drawable.input_box_inactive_bg)
                 if (selectedSuburb != null) {
                     tvSelectedSuburb.setText(selectedSuburb?.name)
                 } else {
@@ -242,6 +249,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun setUsersCurrentDeliveryDetails() {
         Utils.getPreferredDeliveryLocation()?.apply {
+            if (province?.id.isNullOrEmpty()) return
             selectedProvince = province
             tvSelectedProvince?.setText(selectedProvince?.name)
             if (suburb.storePickup)
@@ -251,4 +259,20 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             setDeliveryOption(deliveryType)
         }
     }
+
+    private fun showNoStoresError() {
+        noStoresForProvinceMsg?.visibility = View.VISIBLE
+        selectProvince?.setBackgroundResource(R.drawable.otp_box_error_background)
+        tvSelectedSuburb.setText(activity?.resources?.getString(R.string.no_stores_available))
+    }
+
+    private fun clearNoStoresError() {
+        if (noStoresForProvinceMsg?.visibility == View.VISIBLE) {
+            noStoresForProvinceMsg?.visibility = View.GONE
+            selectProvince?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+            tvSelectedSuburb.setText(activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store))
+        }
+    }
+
+
 }
