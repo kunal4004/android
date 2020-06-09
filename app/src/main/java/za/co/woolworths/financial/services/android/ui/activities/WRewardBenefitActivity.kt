@@ -9,7 +9,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +16,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -78,27 +76,8 @@ class WRewardBenefitActivity : AppCompatActivity() {
                 else -> getString(R.string.vip_exclusive)
             }
         }.attach()
+
         vpRewardBenefit?.currentItem = benefitTabPosition
-
-
-        vpRewardBenefit?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                val view = nest_scrollview
-                        view.post {
-                            val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-                            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                            view.measure(wMeasureSpec, hMeasureSpec)
-
-                            if (vpRewardBenefit?.layoutParams?.height != view.measuredHeight) {
-                                // ParentViewGroup is, for example, LinearLayout
-                                // ... or whatever the parent of the ViewPager2 is
-                                vpRewardBenefit?.layoutParams = (vpRewardBenefit?.layoutParams as? ParentViewGroup.LayoutParams).also { lp -> lp.height = view.measuredHeight }
-                            }
-                        }
-            }
-        })
-
 
        updateTabFont (benefitTabPosition, true)
 
