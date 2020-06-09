@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
