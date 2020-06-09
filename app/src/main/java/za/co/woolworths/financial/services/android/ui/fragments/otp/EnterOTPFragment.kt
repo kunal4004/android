@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 
 class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IResendOTPOptionSelection {
 
-    var navController: NavController? = null
+    private var navController: NavController? = null
     private var mResendOTPDialogFragment: ResendOTPDialogFragment? = null
     var bundle: Bundle? = null
     lateinit var otpSentTo: String
@@ -51,8 +51,8 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     fun configureUI() {
-        enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
-        didNotReceiveOTPTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        enterOTPDescriptionScreen?.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
+        didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         if (otpValue.isNotEmpty())
             showWrongOTP()
     }

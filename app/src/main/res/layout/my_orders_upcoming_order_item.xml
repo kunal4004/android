@@ -62,7 +62,7 @@
                     style="@style/my_orders_textview_style_2"
                     android:layout_alignParentRight="true"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/fourteen_sp"
                     app:WTextView_font="myriadpro_semibold" />
             </RelativeLayout>
 
@@ -72,6 +72,53 @@
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:background="@color/bg_light_overlay" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/deliveryDateLayout"
+                android:paddingBottom="@dimen/twenty_four_dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/deliveryItemsType"
+                        style="@style/my_orders_textview_style_2"
+                        android:layout_alignParentLeft="true"
+                        android:contentDescription="@string/delivery_date_title"
+                        android:text="@string/delivery_date" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/deliveryDate"
+                        style="@style/my_orders_textview_style_2"
+                        android:layout_width="match_parent"
+                        android:layout_toEndOf="@+id/deliveryItemsType"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fourteen_sp"
+                        android:gravity="right"
+                        android:contentDescription="@string/delivery_date_value"
+                        android:layout_marginLeft="@dimen/sixteen_dp"
+                        app:WTextView_font="myriadpro_semibold" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/deliveryDateContainer"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/twenty_four_dp"
+                    android:background="@color/bg_light_overlay" />
+
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"

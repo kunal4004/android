@@ -93,12 +93,9 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
 
     override fun getApplyNowState(): ApplyNowState? = mApplyNowState
 
-    override fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?): Int {
-        appCompatActivity?.apply {
-            val height = resources?.displayMetrics?.heightPixels ?: 0
-            return ((height / 100) * 38)
-        }
-        return 0
+    override fun bottomSheetPeekHeight(): Int {
+        val height = WoolworthsApplication.getAppContext()?.resources?.displayMetrics?.heightPixels ?: 0
+        return height.div(3.3).toInt()
     }
 
     override fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int {
