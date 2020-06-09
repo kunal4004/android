@@ -124,6 +124,18 @@ fun EditText.showKeyboard(activity: AppCompatActivity) {
     }
 }
 
+fun EditText.hideKeyboard(activity: AppCompatActivity) {
+    activity.apply {
+        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        // check if no view has focus:
+        val currentFocusedView = currentFocus
+        if (currentFocusedView != null) {
+            inputManager?.hideSoftInputFromWindow(currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        }
+    }
+
+}
+
 inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
