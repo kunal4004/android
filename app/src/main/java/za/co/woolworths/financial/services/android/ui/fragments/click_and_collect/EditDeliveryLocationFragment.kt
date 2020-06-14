@@ -165,6 +165,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
         bundle?.putString(DELIVERY_TYPE, deliveryType.name)
         bundle?.putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
+        bundle?.putString("PROVINCE", Utils.toJson(selectedProvince))
         navController?.navigate(R.id.action_to_editDeliveryLocationConfirmationFragment, bundleOf("bundle" to bundle))
     }
 
