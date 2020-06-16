@@ -108,6 +108,13 @@ class FirebaseManagerAnalyticsProperties {
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
             const val DEEP_LINK_URL = "deepLinkUrl"
+            const val PERSONAL_LOAN_PRODUCT_OFFERING = "Personal_Loan"
+            const val STORE_CARD_PRODUCT_OFFERING = "Store_Card"
+            const val CREDIT_CARD_PRODUCT_OFFERING = "Credit_Card"
+            const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "Gold_Credit_Card"
+            const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "Silver_Credit_Card"
+            const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "Black_Credit_Card"
+
         }
     }
 

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.fragment.app.FragmentActivity;
@@ -749,6 +748,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 							List<Account> accountList = accountsResponse.accountList;
 							if (accountList == null) accountList = new ArrayList<>();
 							for (Account p : accountList) {
+
 								accounts.put(p.productGroupCode.toUpperCase(), p);
 								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
 								if (indexOfUnavailableAccount > -1) {
@@ -759,6 +759,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 									}
 								}
 							}
+
+							setUserPropertiesForCardProducts(accounts);
+
 							isAccountsCallMade = true;
 							configureView();
 
@@ -811,6 +814,55 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
 			}
 		});
+	}
+
+	private void setUserPropertiesForCardProducts(Map<String, Account> accountsMap) {
+
+		Map<String, String> arguments = new HashMap<>();
+
+		for (Map.Entry<String, Account> accounts : accountsMap.entrySet()) {
+			Account account = accounts.getValue();
+			switch (accounts.getKey().toLowerCase()) {
+				case "pl":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, "true");
+					break;
+				case "sc":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, "true");
+					break;
+				case "cc":
+					switch (account.accountNumberBin){
+						case Utils.SILVER_CARD:
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, "true");
+							break;
+						case Utils.GOLD_CARD:
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, "true");
+							break;
+						case Utils.BLACK_CARD:
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, "true");
+							break;
+					}
+					break;
+			}
+		}
+
+		for (String unavailable : unavailableAccounts){
+			switch (unavailable.toLowerCase()){
+				case "pl":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, "false");
+					break;
+
+				case "sc":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, "false");
+					break;
+
+				case "cc":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, "false");
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, "false");
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, "false");
+					break;
+			}
+		}
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ACCOUNTSEVENTSAPPEARED, arguments);
 	}
 
 	@Override
