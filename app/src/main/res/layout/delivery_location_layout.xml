@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"
-            android:layout_toLeftOf="@+id/iconCaretRight"
+            android:layout_toLeftOf="@+id/editLocation"
             android:layout_toRightOf="@+id/deliverLocationIcon"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -59,6 +59,21 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:src="@drawable/ic_caret_black" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/editLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:letterSpacing="0.1"
+            android:visibility="invisible"
+            />
 
     </RelativeLayout>
 </layout>

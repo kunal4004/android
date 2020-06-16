@@ -102,14 +102,13 @@
                     android:layout_height="@dimen/twenty_four_dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="24dp"
                     android:background="@drawable/ic_delivery_truck" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="16dp"
-                    android:layout_toLeftOf="@+id/iconCaretRight"
+                    android:layout_toLeftOf="@+id/editLocation"
                     android:layout_toRightOf="@+id/deliverLocationIcon"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -153,7 +152,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:letterSpacing="0.1"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     />
             </RelativeLayout>
         </LinearLayout>

@@ -147,6 +147,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private TextView upSellMessageTextView;
 	private Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems;
 	private ImageView deliverLocationIcon;
+	private ImageView deliverLocationRightArrow;
+	private WTextView editLocation;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -192,6 +194,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);
 		deliverLocationIcon = view.findViewById(R.id.deliverLocationIcon);
+		editLocation = view.findViewById(R.id.editLocation);
+		deliverLocationRightArrow = view.findViewById(R.id.iconCaretRight);
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (lastDeliveryLocation != null) {
 			setDeliveryLocation(lastDeliveryLocation);
@@ -1215,8 +1219,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void setDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-		if(getActivity()!=null)
-			KotlinUtils.Companion.setDeliveryAddressView(getActivity(),shoppingDeliveryLocation,tvDeliveringToText,tvDeliveryLocation, deliverLocationIcon);
+		if (getActivity() != null) {
+			deliverLocationRightArrow.setVisibility(View.GONE);
+			editLocation.setVisibility(View.VISIBLE);
+			KotlinUtils.Companion.setDeliveryAddressView(getActivity(), shoppingDeliveryLocation, tvDeliveringToText, tvDeliveryLocation, deliverLocationIcon);
+		}
 	}
 
 	private void enableEditCart(boolean enable) {
