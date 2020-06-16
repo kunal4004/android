@@ -19,13 +19,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/cardImage"
+        android:id="@+id/deliverLocationIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/icon_truck"
         app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
 
 
@@ -33,16 +32,16 @@
         android:id="@+id/title"
         style="@style/dialog_title_text_style"
         android:layout_marginTop="@dimen/fifty_dp"
-        android:text="@string/set_your_delivery_location"
+        android:text="@string/set_your_collection_location"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/cardImage" />
+        app:layout_constraintTop_toBottomOf="@+id/deliverLocationIcon" />
 
     <TextView
         android:id="@+id/description"
         style="@style/dialog_description_text_style"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:text="@string/your_delivery_location_is_set_to"
+        android:text="@string/your_collection_location_is_currently_set_to"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/title" />
@@ -52,7 +51,6 @@
         style="@style/myriad_pro_semi_bold_black_15_text_style"
         android:layout_marginTop="@dimen/five_dp"
         android:gravity="center_horizontal"
-        android:text="@string/your_delivery_location_is_set_to"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/description" />
@@ -81,7 +79,7 @@
         style="@style/link_text_style"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/thirty_two_dp"
-        android:text="@string/edit_delivery_location"
+        android:text="@string/edit_collection_location"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/btnDefaultLocation"

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.*
+import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -16,6 +17,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class EditDeliveryLocationConfirmationFragment : Fragment() {
     var selectedSuburb: Suburb? = null
+    var selectedProvince: Province? = null
     var deliveryType: DeliveryType? = null
     var bundle: Bundle? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,6 +30,7 @@ class EditDeliveryLocationConfirmationFragment : Fragment() {
         bundle?.apply {
             deliveryType = DeliveryType.valueOf(getString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name))
             selectedSuburb = Utils.jsonStringToObject(getString("SUBURB"), Suburb::class.java) as Suburb?
+            selectedProvince = Utils.jsonStringToObject(getString("PROVINCE"), Province::class.java) as Province?
         }
     }
 
@@ -35,8 +38,8 @@ class EditDeliveryLocationConfirmationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         deliveryOptionImage?.setBackgroundResource(if (deliveryType == DeliveryType.STORE_PICKUP) R.drawable.icon_basket else R.drawable.icon_delivery)
         deliveryOption?.text = activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.delivering_to else R.string.collecting_from)
-        suburbName?.text = selectedSuburb?.name
-        address?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.storeAddress?.address1 else ""
+        suburbName?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.name else selectedSuburb?.name + "," + selectedProvince?.name
+        address?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.storeAddress?.let { it.address1 + "," + it.address2 } else ""
         dismissActivity()
     }
 

@@ -80,7 +80,11 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             if (Utils.getPreferredDeliveryLocation() == null || !SessionUtilities.getInstance().isUserAuthenticated) {
                 itemView.tvDeliveringTo.text = itemView.context.resources.getString(R.string.delivery_or_collection)
                 itemView.tvDeliveryLocation.visibility = View.GONE
+                itemView.iconCaretRight.visibility = View.VISIBLE
+                itemView.editLocation.visibility = View.INVISIBLE
             } else {
+                itemView.iconCaretRight.visibility = View.GONE
+                itemView.editLocation.visibility = View.VISIBLE
                 KotlinUtils.setDeliveryAddressView(itemView.context as Activity,Utils.getPreferredDeliveryLocation(),itemView.tvDeliveringTo,itemView.tvDeliveryLocation,itemView.deliverLocationIcon)
             }
         }

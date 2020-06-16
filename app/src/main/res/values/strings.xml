@@ -498,7 +498,7 @@
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
     <string name="delivery_location_title">delivery location</string>
-    <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
+    <string name="your_delivery_location_is_set_to">Your delivery location is currently set to</string>
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
     <string name="added_to">added to </string>
@@ -1493,5 +1493,8 @@
     <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
     <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
     <string name="no_stores_available">No Stores Available</string>
+    <string name="set_your_collection_location">Set your Collection Location</string>
+    <string name="your_collection_location_is_currently_set_to">Your collection location is currently set to</string>
+    <string name="edit_collection_location">EDIT Collection LOCATION</string>
 </resources>
 
