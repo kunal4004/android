@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class MyCardBlockedFragment : MyCardExtension() {
@@ -49,16 +50,19 @@ class MyCardBlockedFragment : MyCardExtension() {
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         // Hide Replacement card if MC config is true
-        if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
-            tvNoActiveCardDesc?.text = getString(R.string.card_block_desc)
-            btnGetReplacementCard?.visibility = VISIBLE
-            btnLinkACard?.visibility = VISIBLE
-            callUsNowButton?.visibility = GONE
-        } else {
-            tvNoActiveCardDesc?.text = getString(R.string.card_block_replacement_card_disabled_desc)
-            btnGetReplacementCard?.visibility = GONE
-            btnLinkACard?.visibility = GONE
-            callUsNowButton?.visibility = VISIBLE
+        when (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+            true -> {
+                tvNoActiveCardDesc?.text = bindString(R.string.card_block_desc)
+                btnGetReplacementCard?.visibility = VISIBLE
+                btnLinkACard?.visibility = VISIBLE
+                callUsNowButton?.visibility = GONE
+            }
+            else -> {
+                tvNoActiveCardDesc?.text = bindString(R.string.card_block_replacement_card_disabled_desc)
+                btnGetReplacementCard?.visibility = GONE
+                btnLinkACard?.visibility = GONE
+                callUsNowButton?.visibility = VISIBLE
+            }
         }
 
         callUsNowButton?.setOnClickListener {  Utils.makeCall( "0861502020") }

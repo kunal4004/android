@@ -111,7 +111,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
             }
             edtVerificationCode1?.setSelection(0)
         }
-        otpErrorTextView.visibility = View.VISIBLE
+        otpErrorTextView?.visibility = View.VISIBLE
         setOtpErrorBackground(R.drawable.otp_box_error_background)
     }
 
