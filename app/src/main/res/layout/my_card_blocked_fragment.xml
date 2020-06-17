@@ -38,7 +38,7 @@
     <View
         android:layout_width="wrap_content"
         android:layout_height="150dp"
-        android:background="@color/grey_bg"
+        android:background="@color/grey_background_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

@@ -31,18 +31,17 @@ class MyCardBlockedFragment : MyCardExtension() {
         super.onCreate(savedInstanceState)
         arguments?.apply {
             mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "")
-            activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
         }
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
         return inflater.inflate(R.layout.my_card_blocked_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_background_color) }
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
         btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }

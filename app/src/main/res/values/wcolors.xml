@@ -32,5 +32,6 @@
     <color name="account_label_color">#7f030303</color>
     <color name="statement_title">#80000000</color>
     <color name="button_click_ripple_bg">#45efefef</color>
+    <color name="grey_background_color">#F2F2F2</color>
 
 </resources>
