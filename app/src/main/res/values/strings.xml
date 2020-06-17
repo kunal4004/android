@@ -884,12 +884,12 @@
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can\'t find a participating store close to you? Call 0861 50 20 20 to arrange for delivery.</string>
-    <string name="temp_card_how_to_use1">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
-    <string name="temp_card_how_to_use2">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
-    <string name="temp_card_how_to_use3">This temporary card is valid for 30 days.</string>
-    <string name="temp_card_how_to_use4">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
-    <string name="temp_card_how_to_use5">Your temp store card can only be used in store and not online.</string>
-    <string name="temp_card_how_to_use6">Your temp store card will be removed after your first purchase in-store using your plastic store card.</string>
+    <string name="temp_card_how_to_use1">This Virtual temporary In-Store Card (temp store card) is valid for 30 days.</string>
+    <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not on-line purchases.</string>
+    <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card</string>
+    <string name="temp_card_how_to_use4">Unfortunately, you will not be able to pay your account in-store using a virtual card. Online payments, like EFT, are available.</string>
+    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="temp_card_how_to_use6">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
     <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
@@ -1440,7 +1440,7 @@
     <string name="cancel_order_error_desc">LableProblemDesct</string>
     <string name="cancel_order_retry">btnRetry</string>
     <string name="cancel_order_need_help">linkHelp</string>
-    <string name="how_to_use0">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature.  Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="how_to_use0">Stay safe - inform the till operator that you will scan your own phone and please do not share your phone with any of our staff.</string>
     <string name="temp_store_card_engine_service_stations_desc">Your temp card cannot be used at Engen service stations.</string>
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
@@ -1496,5 +1496,9 @@
     <string name="credit_card_payment_option_label">Credit Card Payment Options</string>
     <string name="personal_loan_payment_option_label">Personal Loan Payment Options</string>
     <string name="chat_with_us_description">Unfortunately chat to us on WhatsApp is unavailable at the moment. Please try again later.</string>
+    <string name="temp_card_how_to_use7">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
+    <string name="temp_card_how_to_use8">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
+    <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
+    <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
 </resources>
 
