@@ -33,5 +33,6 @@
     <color name="statement_title">#80000000</color>
     <color name="button_click_ripple_bg">#45efefef</color>
     <color name="grey_background_color">#F2F2F2</color>
+    <color name="semi_transparent_grey">#99F2F2F2</color>
 
 </resources>

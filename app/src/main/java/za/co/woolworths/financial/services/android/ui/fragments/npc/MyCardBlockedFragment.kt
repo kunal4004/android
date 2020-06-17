@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class MyCardBlockedFragment : MyCardExtension() {
 
@@ -42,6 +43,9 @@ class MyCardBlockedFragment : MyCardExtension() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_background_color) }
+
+        AnimationUtilExtension.animateViewPushDown(btnGetReplacementCard)
+        AnimationUtilExtension.animateViewPushDown(btnLinkACard)
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
         btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
