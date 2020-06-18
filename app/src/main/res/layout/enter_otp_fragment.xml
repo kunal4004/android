@@ -107,7 +107,6 @@
         android:background="@drawable/otp_box_background_focus_selector"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:imeOptions="actionNext"
-
         android:importantForAutofill="no"
         android:nextFocusForward="@+id/edtVerificationCode3"
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
@@ -198,7 +197,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
