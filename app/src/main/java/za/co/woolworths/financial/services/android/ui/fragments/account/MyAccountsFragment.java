@@ -862,7 +862,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 					break;
 			}
 		}
-		Utils.triggerFireBaseEvent(FirebaseManagerAnalyticsProperties.ACCOUNTS_LANDING_PRODUCT_OFFERING, arguments);
+		Utils.triggerFireBaseEvent(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PRODUCT_OFFERING, arguments);
 	}
 
 	@Override
