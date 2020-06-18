@@ -92,7 +92,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                     edtVerificationCode1?.setSelection(0)
                     showOTPErrorOnOTPFragment()
                     setOTPDescription(getSavedOTP())
-                    enterOTPDescriptionScreen?.visibility = VISIBLE
+                    enterOTPDescriptionScreenTextView?.visibility = VISIBLE
                 }
             }
         }
@@ -103,7 +103,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     private fun uniqueIdsForEnterOTPScreen() {
         activity?.resources?.apply {
             tvEnterOtpTitle?.contentDescription = getString(R.string.enter_otp_title)
-            enterOTPDescriptionScreen?.contentDescription = getString(R.string.icr_enter_otp_description)
+            enterOTPDescriptionScreenTextView?.contentDescription = getString(R.string.icr_enter_otp_description)
             viewOTPBackground?.contentDescription = getString(R.string.verification_code_container)
             loadingProgressIndicatorViewGroup?.contentDescription = getString(R.string.load_otp_description)
             vLinkBottomNavigation?.contentDescription = getString(R.string.did_not_receive_title)
@@ -122,7 +122,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
             val otpDescription = activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel as CharSequence?), type, false) } }
 
-            enterOTPDescriptionScreen?.apply {
+            enterOTPDescriptionScreenTextView?.apply {
                 text = otpDescription
                 movementMethod = LinkMovementMethod.getInstance()
                 visibility = VISIBLE
@@ -211,7 +211,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         shouldDisableKeyboardOnOTPCall = true
                         super.showProgress()
                         activity.resources?.let { resources ->
-                            enterOTPDescriptionScreen?.text = resources.getString(R.string.sending_otp_text)
+                            enterOTPDescriptionScreenTextView?.text = resources.getString(R.string.sending_otp_text)
                         }
                         loadingProgressIndicatorViewGroup?.visibility = VISIBLE
                         disableEditText(edtVerificationCode1)
@@ -258,7 +258,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         setIsOtpApiInProgress(false)
                         if (error is ConnectException || error is UnknownHostException) {
                             activity.resources?.let { resources ->
-                                enterOTPDescriptionScreen?.text = resources.getString(R.string.check_connection_status)
+                                enterOTPDescriptionScreenTextView?.text = resources.getString(R.string.check_connection_status)
                             }
                         }
                     }

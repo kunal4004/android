@@ -101,11 +101,11 @@ open class EnterOTPFragmentExtension : Fragment() {
 
 
     private fun validateVerificationCode() {
-        when ((edtVerificationCode1.length() == 1)
-                && (edtVerificationCode2.length() == 1)
-                && (edtVerificationCode3.length() == 1)
-                && (edtVerificationCode4.length() == 1)
-                && (edtVerificationCode5.length() == 1)) {
+        when ((edtVerificationCode1?.length() == 1)
+                && (edtVerificationCode2?.length() == 1)
+                && (edtVerificationCode3?.length() == 1)
+                && (edtVerificationCode4?.length() == 1)
+                && (edtVerificationCode5?.length() == 1)) {
             true -> {
                 buttonNext?.isEnabled = true
                 buttonNext?.alpha = 1.0f
@@ -117,7 +117,7 @@ open class EnterOTPFragmentExtension : Fragment() {
                 buttonNext?.isFocusable = true
             }
         }
-        if (otpErrorTextView.visibility == View.VISIBLE) {
+        if (otpErrorTextView?.visibility == View.VISIBLE) {
             clearOTP()
             setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
         }
