@@ -41,6 +41,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
         const val ACCOUNTSEVENTSAPPEARED: String = "accounts_event_appeared"
+        const val MYACCOUNTS_PRODUCT_OFFERING: String = "accounts_event_product_offering"
         const val LOGIN: String = "login"
         const val SORTBY_EVENT_APPEARED: String = "GA_Event_ONE_SORTSFILTERS_BUT"
         const val SORTBY_EVENT_APPLIED: String = "GA_Event_ONE_SORTSFILTERS_OPTION"
@@ -108,6 +109,13 @@ class FirebaseManagerAnalyticsProperties {
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
             const val DEEP_LINK_URL = "deepLinkUrl"
+            const val PERSONAL_LOAN_PRODUCT_OFFERING = "Personal_Loan"
+            const val STORE_CARD_PRODUCT_OFFERING = "Store_Card"
+            const val CREDIT_CARD_PRODUCT_OFFERING = "Credit_Card"
+            const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "Gold_Credit_Card"
+            const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "Silver_Credit_Card"
+            const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "Black_Credit_Card"
+
         }
     }
 

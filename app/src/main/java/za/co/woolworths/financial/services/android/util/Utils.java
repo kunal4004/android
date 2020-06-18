@@ -528,6 +528,17 @@ public class Utils {
 		mFirebaseAnalytics.logEvent(eventName, params);
 	}
 
+	public static void triggerFireBaseEvent(String eventName, Map<String, Boolean> argument) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+
+		Bundle params = new Bundle();
+		for (Map.Entry<String, Boolean> entry : argument.entrySet()) {
+			params.putBoolean(entry.getKey(), entry.getValue());
+		}
+
+		mFirebaseAnalytics.logEvent(eventName, params);
+	}
+
 	public static void triggerFireBaseEvents(String eventName) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 		mFirebaseAnalytics.logEvent(eventName, null);
