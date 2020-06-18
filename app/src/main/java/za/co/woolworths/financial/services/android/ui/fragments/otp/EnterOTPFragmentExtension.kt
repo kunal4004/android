@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.otp
 
 import android.app.Activity
 import android.content.Context
+import android.text.InputType
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.FOCUS_DOWN
@@ -38,7 +39,7 @@ open class EnterOTPFragmentExtension : Fragment() {
         })
 
         edtVerificationCode2?.setOnKeyListener(View.OnKeyListener
-        { v, keyCode, event ->
+        { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
 
                 if (edtVerificationCode2?.text?.isEmpty() == true) {
