@@ -760,7 +760,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 								}
 							}
 
-							setUserPropertiesForCardProducts(accounts);
+							setUserPropertiesForCardProductOfferings(accounts);
 
 							isAccountsCallMade = true;
 							configureView();
@@ -816,7 +816,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		});
 	}
 
-	private void setUserPropertiesForCardProducts(Map<String, Account> accountsMap) {
+	private void setUserPropertiesForCardProductOfferings(Map<String, Account> accountsMap) {
 
 		Map<String, Boolean> arguments = new HashMap<>();
 
