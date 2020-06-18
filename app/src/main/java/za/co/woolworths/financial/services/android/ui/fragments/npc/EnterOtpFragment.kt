@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableString
@@ -122,10 +121,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
             }
 
             val otpDescription = activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel as CharSequence?), type, false) } }
+
             enterOTPDescriptionScreen?.apply {
                 text = otpDescription
                 movementMethod = LinkMovementMethod.getInstance()
-                highlightColor = Color.TRANSPARENT
                 visibility = VISIBLE
             }
         }
@@ -176,8 +175,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun sendOTBack() {
-        val otpNumber =
-                getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
+        val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
         activity?.apply {
             setResult(Activity.RESULT_OK, Intent().putExtra(RequestOTPActivity.OTP_VALUE, otpNumber))
             (this as RequestOTPActivity).finishActivity()
@@ -260,8 +258,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                         setIsOtpApiInProgress(false)
                         if (error is ConnectException || error is UnknownHostException) {
                             activity.resources?.let { resources ->
-                                enterOTPDescriptionScreen?.text =
-                                        resources.getString(R.string.check_connection_status)
+                                enterOTPDescriptionScreen?.text = resources.getString(R.string.check_connection_status)
                             }
                         }
                     }
