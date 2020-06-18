@@ -1747,13 +1747,13 @@
 
     <style name="enter_otp_edit_text_style">
         <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
-        <item name="android:inputType">textFilter|textNoSuggestions|textMultiLine</item>
         <item name="android:textColor">#222222</item>
         <item name="android:layout_width">@dimen/store_card_text_field_width_47_dp</item>
         <item name="android:layout_height">@dimen/store_card_text_field_height_50_dp</item>
         <item name="android:textSize">@dimen/store_card_text_field_text_size_14_dp</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLength">2</item>
+        <item name="android:inputType">textFilter|textNoSuggestions|textVisiblePassword</item>
     </style>
 
 
