@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.os.Handler
 import android.text.SpannableString
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
@@ -121,12 +122,13 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
             }
 
             val otpDescription = activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(otpDescriptionLabel as CharSequence?), type, false) } }
-
-            enterOTPDescriptionScreenTextView?.apply {
-                text = otpDescription
-                movementMethod = LinkMovementMethod.getInstance()
-                visibility = VISIBLE
-            }
+            Handler().postDelayed({
+                enterOTPDescriptionScreenTextView?.apply {
+                    text = otpDescription
+                    movementMethod = LinkMovementMethod.getInstance()
+                    visibility = VISIBLE
+                }
+            }, 300)
         }
     }
 
