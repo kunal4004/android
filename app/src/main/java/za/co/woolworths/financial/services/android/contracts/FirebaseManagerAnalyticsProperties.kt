@@ -86,6 +86,10 @@ class FirebaseManagerAnalyticsProperties {
         const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
 
         const val SHOP_SEARCH = "SHOP_Search"
+
+        const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
+        const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
+        const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
     }
 
     class PropertyNames {
