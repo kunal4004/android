@@ -768,7 +768,7 @@
     <string name="invalid_card_number">Invalid card number</string>
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
-    <string name="enter_otp_title">Enter OTP Number</string>
+    <string name="enter_otp_title">Enter OTP</string>
     <string name="did_not_receive_title">Did Not Receive OTP?</string>
     <string name="resend_otp_title">Resend OTP</string>
     <string name="resend_sms_to">SMS to </string>

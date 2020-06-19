@@ -25,7 +25,7 @@
         tools:text="@string/enter_otp_title" />
 
     <TextView
-        android:id="@+id/enterOTPDescriptionScreen"
+        android:id="@+id/enterOTPDescriptionScreenTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -53,7 +53,7 @@
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterOTPDescriptionScreen" />
+        app:layout_constraintTop_toBottomOf="@+id/enterOTPDescriptionScreenTextView" />
 
 
     <TextView
@@ -88,7 +88,7 @@
         app:layout_constraintStart_toEndOf="@+id/loadingDotsText"
         app:layout_constraintTop_toTopOf="@+id/loadingDotsText" />
 
-    <androidx.appcompat.widget.AppCompatEditText
+    <EditText
         android:id="@+id/edtVerificationCode1"
         style="@style/enter_otp_edit_text_style"
         android:background="@drawable/otp_box_background_focus_selector"
@@ -101,7 +101,7 @@
         app:layout_constraintStart_toStartOf="@+id/viewOTPBackground"
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
 
-    <androidx.appcompat.widget.AppCompatEditText
+    <EditText
         android:id="@+id/edtVerificationCode2"
         style="@style/enter_otp_edit_text_style"
         android:background="@drawable/otp_box_background_focus_selector"
@@ -115,7 +115,7 @@
         app:layout_constraintStart_toEndOf="@+id/edtVerificationCode1"
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
 
-    <androidx.appcompat.widget.AppCompatEditText
+    <EditText
         android:id="@+id/edtVerificationCode3"
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="2dp"
@@ -130,7 +130,7 @@
         app:layout_constraintStart_toEndOf="@+id/edtVerificationCode2"
         app:layout_constraintTop_toTopOf="@+id/edtVerificationCode2" />
 
-    <androidx.appcompat.widget.AppCompatEditText
+    <EditText
         android:id="@+id/edtVerificationCode4"
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="1dp"
@@ -145,7 +145,7 @@
         app:layout_constraintStart_toEndOf="@+id/edtVerificationCode3"
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
 
-    <androidx.appcompat.widget.AppCompatEditText
+    <EditText
         android:id="@+id/edtVerificationCode5"
         style="@style/enter_otp_edit_text_style"
         android:layout_marginStart="2dp"
