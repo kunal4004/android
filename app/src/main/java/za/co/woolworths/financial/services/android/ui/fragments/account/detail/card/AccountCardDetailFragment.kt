@@ -383,6 +383,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     private fun navigateToCreditCardActivation(){
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD)
         activity?.apply {
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()
