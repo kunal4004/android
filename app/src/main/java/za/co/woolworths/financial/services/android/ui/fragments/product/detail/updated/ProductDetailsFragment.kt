@@ -1103,7 +1103,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showProductUnavailable() {
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         hideProductDetailsLoading()
-        toCartAndFindInStoreLayout.visibility = View.GONE
+        toCartAndFindInStoreLayout?.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
         //hideProgressBar()
     }

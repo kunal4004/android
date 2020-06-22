@@ -8,12 +8,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import kotlinx.android.synthetic.main.my_orders_upcoming_order_item.view.*
+import kotlinx.android.synthetic.main.view_floating_action_button.view.*
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
@@ -51,6 +56,39 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
                 presentOrderDetailsPage(item)
             }
             itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
+            if (!item.deliveryDates.isJsonNull) {
+                val deliveryDates: HashMap<String, String> = hashMapOf()
+                deliveryDates.clear()
+                itemView.deliveryDateContainer.removeAllViews()
+                for (i in 0 until item.deliveryDates.asJsonArray.size()) {
+                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.deliveryDates.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
+                }
+                when (deliveryDates.keys.size) {
+                    0 -> {
+                        itemView.deliveryDateLayout.visibility = View.GONE
+                    }
+                    1 -> {
+                        itemView.deliveryDate.text = deliveryDates.getValue(deliveryDates.keys.toList()[0])
+                        itemView.deliveryDate.visibility = View.VISIBLE
+                        itemView.deliveryDateLayout.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        itemView.deliveryDate.visibility = View.GONE
+                        deliveryDates.entries.forEach { entry ->
+                            val view = (context as Activity).layoutInflater.inflate(R.layout.orders_list_delivery_date_item, null)
+                            val deliveryItemsType = view.findViewById<WTextView>(R.id.deliveryItemsType)
+                            val dateOfDelivery = view.findViewById<WTextView>(R.id.dateOfDelivery)
+                            deliveryItemsType.text = entry.key
+                            dateOfDelivery.text = entry.value
+                            itemView.deliveryDateContainer.addView(view)
+                        }
+                        itemView.deliveryDateLayout.visibility = View.VISIBLE
+                    }
+                }
+            } else {
+                itemView.deliveryDateLayout.visibility = View.GONE
+            }
+
         }
 
     }
@@ -80,7 +118,7 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
 
     private fun presentOrderDetailsPage(item: Order) {
         val intent = Intent(context, OrderDetailsActivity::class.java)
-        intent.putExtra("order", item)
+        intent.putExtra("order", Utils.toJson(item))
         (context as? Activity)?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
         (context as? Activity)?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }

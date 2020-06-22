@@ -2,10 +2,9 @@
 
 package za.co.woolworths.financial.services.android.ui.extension
 
-import android.content.Context
+
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
-import android.os.Bundle
+
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,16 +14,12 @@ import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
-import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 
 
 /**
@@ -220,22 +215,4 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
             cancel()
         }
     }
-}
-
-// Find current fragments in navigation graph
-fun Fragment.getFragmentNavController(@IdRes id: Int) = activity?.let {
-    return@let Navigation.findNavController(it, id)
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
-    val navHostFragment = this.supportFragmentManager.fragments.first() as NavHostFragment
-
-    navHostFragment.childFragmentManager.fragments.forEach {
-        if (fragmentClass.isAssignableFrom(it.javaClass)) {
-            return it as F
-        }
-    }
-
-    return null
 }
