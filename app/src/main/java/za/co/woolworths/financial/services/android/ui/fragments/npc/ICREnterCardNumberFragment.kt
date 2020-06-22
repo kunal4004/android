@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.*
 
@@ -53,12 +54,11 @@ class ICREnterCardNumberFragment : MyCardExtension() {
 
     private fun uniqueIdsForEnterCartNumberScreen() {
         activity?.resources?.apply {
-            tvLinkNewCardTitle?.contentDescription = getString(R.string.label_linkICR)
-            tvLinkNewCardDesc?.contentDescription = getString(R.string.label_linkICRCardDescription)
-            cardNumberEditText?.contentDescription = getString(R.string.text_carddetails)
-            navigateToEnterOTPFragmentImageView?.contentDescription =
-                    getString(R.string.button_next)
-            invalidCardNumberLabel?.contentDescription = getString(R.string.invalid_card_number)
+            tvLinkNewCardTitle?.contentDescription = bindString(R.string.label_linkICR)
+            tvLinkNewCardDesc?.contentDescription = bindString(R.string.label_linkICRCardDescription)
+            cardNumberEditText?.contentDescription = bindString(R.string.text_carddetails)
+            navigateToEnterOTPFragmentImageView?.contentDescription = bindString(R.string.button_next)
+            invalidCardNumberLabel?.contentDescription = bindString(R.string.invalid_card_number)
         }
     }
 

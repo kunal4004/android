@@ -41,8 +41,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override val randomVideoPath: String
         get() {
             val listOfVideo = ArrayList<String>()
-           // val rawFolderPath = "android.resource://" + mContext.packageName + "/"
-           // listOfVideo.add(rawFolderPath + R.raw.food_broccoli)
+            // val rawFolderPath = "android.resource://" + mContext.packageName + "/"
+            // listOfVideo.add(rawFolderPath + R.raw.food_broccoli)
             listOfVideo.shuffle()
             return listOfVideo[0]
         }
@@ -86,7 +86,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     }
 
     private fun handleAppLink(appLinkData: Uri) {
-       // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
+        // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
@@ -94,24 +94,27 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     }
 
     private fun persistGlobalConfig(response: ConfigResponse) {
-        response.configs?.enviroment?.apply {
-            this@StartupViewModelImpl.splashScreenText = splashScreenText
-            this@StartupViewModelImpl.isSplashScreenDisplay = splashScreenDisplay
-            this@StartupViewModelImpl.isSplashScreenPersist = splashScreenPersist
-
-            WoolworthsApplication.setStoreCardBlockReasons(storeCardBlockReasons)
-            WoolworthsApplication.setSsoRedirectURI(getSsoRedirectURI())
-            WoolworthsApplication.setStsURI(getStsURI())
-            WoolworthsApplication.setSsoRedirectURILogout(getSsoRedirectURILogout())
-            WoolworthsApplication.setSsoUpdateDetailsRedirectUri(getSsoUpdateDetailsRedirectUri())
-            WoolworthsApplication.setWwTodayURI(getWwTodayURI())
-            WoolworthsApplication.setAuthenticVersionReleaseNote(getAuthenticVersionReleaseNote())
-            WoolworthsApplication.setAuthenticVersionStamp(getAuthenticVersionStamp())
-            WoolworthsApplication.getInstance().wGlobalState.startRadius = getStoreStockLocatorConfigStartRadius()
-            WoolworthsApplication.getInstance().wGlobalState.endRadius = getStoreStockLocatorConfigEndRadius()
-        }
-
         response.configs?.apply {
+
+            enviroment?.apply {
+                this@StartupViewModelImpl.splashScreenText = splashScreenText
+                this@StartupViewModelImpl.isSplashScreenDisplay = splashScreenDisplay
+                this@StartupViewModelImpl.isSplashScreenPersist = splashScreenPersist
+
+                WoolworthsApplication.setStoreCardBlockReasons(storeCardBlockReasons)
+                WoolworthsApplication.setSsoRedirectURI(getSsoRedirectURI())
+                WoolworthsApplication.setStsURI(getStsURI())
+                WoolworthsApplication.setSsoRedirectURILogout(getSsoRedirectURILogout())
+                WoolworthsApplication.setSsoUpdateDetailsRedirectUri(getSsoUpdateDetailsRedirectUri())
+                WoolworthsApplication.setWwTodayURI(getWwTodayURI())
+                WoolworthsApplication.setAuthenticVersionReleaseNote(getAuthenticVersionReleaseNote())
+                WoolworthsApplication.setAuthenticVersionStamp(getAuthenticVersionStamp())
+                WoolworthsApplication.getInstance().wGlobalState.startRadius =
+                        getStoreStockLocatorConfigStartRadius()
+                WoolworthsApplication.getInstance().wGlobalState.endRadius =
+                        getStoreStockLocatorConfigEndRadius()
+            }
+
 
             defaults?.apply {
                 WoolworthsApplication.setRegistrationTCLink(registerTCLink)
@@ -124,7 +127,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             }
 
             whatsApp?.apply {
-                showWhatsAppButton  =  Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                showWhatsAppButton = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setWhatsAppConfig(this)
             }
 
@@ -137,7 +140,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             if (absaBankingOpenApiServices == null) {
                 absaBankingOpenApiServices = AbsaBankingOpenApiServices(false, "", "", "", "")
             } else {
-                absaBankingOpenApiServices.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
+                absaBankingOpenApiServices.isEnabled =
+                        Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
             }
 
 
@@ -145,17 +149,22 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             if (presenceInAppChat == null) {
                 presenceInAppChat = PresenceInAppChat(ArrayList(), "", false)
             } else {
-                presenceInAppChat.isEnabled = Utils.isFeatureEnabled(presenceInAppChat.minimumSupportedAppBuildNumber)
+                presenceInAppChat.isEnabled =
+                        Utils.isFeatureEnabled(presenceInAppChat.minimumSupportedAppBuildNumber)
             }
 
             val virtualTempCard = virtualTempCard
             if (virtualTempCard != null) {
-                virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
+                virtualTempCard.isEnabled =
+                        Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
             }
 
             WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
             WoolworthsApplication.setPresenceInAppChat(presenceInAppChat)
 
+            instantCardReplacement?.isEnabled =
+                    instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
+                            ?: false
             WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
             WoolworthsApplication.setVirtualTempCard(virtualTempCard)
 

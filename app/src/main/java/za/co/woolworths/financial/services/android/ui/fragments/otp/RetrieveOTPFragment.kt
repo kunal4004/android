@@ -82,6 +82,7 @@ class RetrieveOTPFragment : Fragment(), IProgressAnimationState,View.OnClickList
             when (httpCode) {
                 200 -> {
                     bundle?.apply {
+                        getProgressState()?.let { activity?.supportFragmentManager?.beginTransaction()?.remove(it)?.commitAllowingStateLoss() }
                         putString("otpSentTo", otpSentTo)
                         putString("otpMethodType", otpMethodType.name)
                         if (otpMethodType == OTPMethodType.SMS)

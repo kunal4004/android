@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class GetReplacementCardFragment : MyCardExtension() {
 
@@ -53,6 +54,10 @@ class GetReplacementCardFragment : MyCardExtension() {
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         requestGPSLocation()
+
+        AnimationUtilExtension.animateViewPushDown(btnParticipatingStores)
+        AnimationUtilExtension.animateViewPushDown(tvAlreadyHaveCard)
+
         val storeCardResponse = (activity as? MyCardDetailActivity)?.getStoreCardDetail()
         tvAlreadyHaveCard?.setOnClickListener {
             (activity as? MyCardDetailActivity)?.apply {
