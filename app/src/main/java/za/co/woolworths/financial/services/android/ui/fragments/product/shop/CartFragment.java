@@ -403,6 +403,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.showEditCart();
 			}
+
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
@@ -599,6 +600,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							rlCheckOut.setVisibility(View.VISIBLE);
 							rlCheckOut.setEnabled(true);
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
+							String checkoutLink = WoolworthsApplication.getCartCheckoutLink();
+							Log.e("checkOutLinkz",checkoutLink+"?JSESSIONID="+shoppingCartResponse.data[0].jSessionId);
+							WoolworthsApplication.setCartCheckoutLink(checkoutLink+"?JSESSIONID="+shoppingCartResponse.data[0].jSessionId);
 							bindCartData(cartResponse);
 							if (onItemRemove) {
 								cartProductAdapter.setEditMode(true);
