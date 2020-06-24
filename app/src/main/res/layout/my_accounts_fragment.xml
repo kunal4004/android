@@ -157,6 +157,7 @@
                                 android:contentDescription="@string/shop_department_title_order">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                    android:id="@+id/myOrdersTextView"
                                     style="@style/accountsItem"
                                     android:drawableStart="@drawable/ic_delivery_truck"
                                     android:text="@string/my_orders_title" />
