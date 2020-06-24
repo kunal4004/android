@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
@@ -63,11 +62,11 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     fun initViews() {
         parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
         mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
-        myOrdersList.layoutManager = LinearLayoutManager(activity)
+        myOrdersList?.layoutManager = LinearLayoutManager(activity)
         btnGoToProduct.setOnClickListener { onActionClick() }
 
-        swipeToRefresh.setOnRefreshListener {
-            swipeToRefresh.isRefreshing = true
+        swipeToRefresh?.setOnRefreshListener {
+            swipeToRefresh?.isRefreshing = true
             executeOrdersRequest(true)
         }
         configureUI(false)
@@ -123,38 +122,39 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
         dataList = buildDataToDisplayOrders(ordersResponse)
             if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
-            myOrdersList.adapter = activity?.let { OrdersAdapter(it, dataList) }
-            myOrdersList.visibility = View.VISIBLE
-            swipeToRefresh.isEnabled = true
+            myOrdersList?.adapter = activity?.let { OrdersAdapter(it, dataList) }
+            myOrdersList?.visibility = View.VISIBLE
+            swipeToRefresh?.isEnabled = true
         } else
             showEmptyOrdersView()
     }
 
-
     private fun executeOrdersRequest(isPullToRefresh: Boolean) {
-        mErrorHandlerView?.hideEmpyState()
-        if (!isPullToRefresh) showLoading()
-        requestOrders = OneAppService.getOrders().apply {
-            enqueue(CompletionHandler(object: IResponseListener<OrdersResponse> {
-                override fun onSuccess(ordersResponse: OrdersResponse?) {
-                    if (isAdded) {
-                        if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
-                        parentFragment?.setOrdersResponseData(ordersResponse)
-                        updateUI()
+        activity?.runOnUiThread {
+            mErrorHandlerView?.hideEmpyState()
+            if (!isPullToRefresh) showLoading()
+            requestOrders = OneAppService.getOrders().apply {
+                enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
+                    override fun onSuccess(ordersResponse: OrdersResponse?) {
+                        if (isAdded) {
+                            if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
+                            parentFragment?.setOrdersResponseData(ordersResponse)
+                            updateUI()
+                        }
                     }
-                }
 
-                override fun onFailure(error: Throwable?) {
-                    if (isAdded) {
-                        activity?.apply {
-                            runOnUiThread {
-                                loadingBar?.visibility = View.GONE
-                                showErrorView()
+                    override fun onFailure(error: Throwable?) {
+                        if (isAdded) {
+                            activity?.apply {
+                                runOnUiThread {
+                                    loadingBar?.visibility = View.GONE
+                                    showErrorView()
+                                }
                             }
                         }
                     }
-                }
-            },OrdersResponse::class.java))
+                }, OrdersResponse::class.java))
+            }
         }
     }
 
@@ -188,8 +188,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
                 QueryBadgeCounter.instance.clearBadge()
             }
             502->{
-                showErrorDialog(ordersResponse?.response?.desc
-                        ?: getString(R.string.general_error_desc))
+                showErrorDialog(ordersResponse?.response?.desc ?: getString(R.string.general_error_desc))
             }
             else -> {
                 showErrorView()
