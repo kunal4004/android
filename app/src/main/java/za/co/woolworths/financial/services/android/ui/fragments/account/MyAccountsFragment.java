@@ -64,9 +64,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -728,10 +727,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			case R.id.myOrdersRelativeLayout:
 				if (activity instanceof BottomNavigationActivity) {
 					if (getBottomNavigationActivity() != null)
-						getBottomNavigationActivity().pushFragment(new ShopFragment());
+						getBottomNavigationActivity().pushFragment(new MyOrdersAccountFragment());
 				}else {
 					if (activity instanceof MyAccountActivity) {
-						((MyAccountActivity) activity).replaceFragment(new ShopFragment());
+						((MyAccountActivity) activity).replaceFragment(new MyOrdersAccountFragment());
 					}
 				}
 				break;
