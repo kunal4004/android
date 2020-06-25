@@ -7,6 +7,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 
 import android.os.CountDownTimer
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -20,7 +21,6 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -215,4 +215,8 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
             cancel()
         }
     }
+}
+
+fun String.isEmailValid(): Boolean {
+    return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
