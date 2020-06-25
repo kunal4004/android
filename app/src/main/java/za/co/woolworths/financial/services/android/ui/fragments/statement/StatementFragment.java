@@ -4,26 +4,24 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.crashlytics.android.Crashlytics;
 
-import java.io.File;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,16 +44,20 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
+import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
@@ -68,22 +70,22 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private ErrorHandlerView mErrorHandlerView;
     private WButton mBtnRetry;
     private GetStatement mGetStatementFile;
-    private SlidingUpPanelLayout mSlideUpPanelLayout;
     private int mViewIsLoadingPosition = -1;
     private Call<StatementResponse> cliGetStatements;
     private BroadcastReceiver mConnectionBroadcast;
     private LoadState loadState;
-    private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
     private boolean viewWasCreated = false;
-    private final String TAG = StatementFragment.this.getClass().getSimpleName();
-    View view;
+    private View view;
     private Call<ResponseBody> mGetPdfFile;
+    private UserStatement mSelectedStatement;
+    private View topMarginView;
+    private boolean arrayContainTrue = false;
 
     public StatementFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (view == null) {
             view = inflater.inflate(R.layout.statement_fragment, container, false);
@@ -93,16 +95,13 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null & !viewWasCreated) {
-            slideUpPanel(view);
             init(view);
             listener();
-            setAdapter();
             setRecyclerView(rclEStatement);
             disableButton();
-            slideUpPanelListener();
             loadState = new LoadState();
             loadSuccess();
             mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
@@ -110,15 +109,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         }
     }
 
-    private void slideUpPanel(View v) {
-        mSlideUpPanelLayout = v.findViewById(R.id.sliding_layout);
-    }
-
-    private void showSlideUpPanel() {
-        mSlideUpPanelLayout.setAnchorPoint(1.0f);
-        mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-        mSlideUpPanelLayout.setTouchEnabled(false);
-    }
 
     private void setAdapter() {
         mStatementAdapter = new StatementAdapter(this);
@@ -136,6 +126,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private void init(View view) {
         ctNoResultFound = view.findViewById(R.id.ctNoResultFound);
         ccProgressLayout = view.findViewById(R.id.ccProgressLayout);
+        topMarginView = view.findViewById(R.id.topMarginView);
         rclEStatement = view.findViewById(R.id.rclEStatement);
         relNextButton = view.findViewById(R.id.relNextButton);
         mBtnEmailStatement = view.findViewById(R.id.btnEmailStatement);
@@ -170,17 +161,18 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             statement.setSelectedByUser(true);
         }
 
-        boolean arrayContainTrue = false;
+        boolean isAtleastOneStatementSelected = false;
         for (UserStatement s : arrStatement) {
             if (s.selectedByUser()) {
-                arrayContainTrue = true;
+                isAtleastOneStatementSelected = true;
+                break;
             }
         }
 
         hideViewProgress();
-        mStatementAdapter.updateStatementViewState(arrayContainTrue);
+        mStatementAdapter.updateStatementViewState(isAtleastOneStatementSelected);
 
-        if (arrayContainTrue) {
+        if (isAtleastOneStatementSelected) {
             enableButton();
         } else {
             disableButton();
@@ -192,6 +184,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     @Override
     public void onViewClicked(View v, int position, UserStatement statement) {
         this.mViewIsLoadingPosition = position;
+        mSelectedStatement = statement;
         Activity activity = getActivity();
         mGetStatementFile = new GetStatement(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
         if (activity instanceof StatementActivity) {
@@ -202,13 +195,15 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
     @Override
     public void onClick(View v) {
+        Activity activity = getActivity();
+        if (activity==null)return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
                 break;
 
             case R.id.btnRetry:
-                if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+                if (NetworkManager.getInstance().isConnectedToNetwork(activity))
                     getStatement();
                 break;
 
@@ -229,7 +224,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mBtnEmailStatement.setEnabled(true);
     }
 
-    public void getStatement() {
+    private void getStatement() {
         onLoad();
         UserStatement userStatement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
         cliGetStatements = OneAppService.INSTANCE.getStatementResponse(userStatement);
@@ -239,6 +234,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 if (statementResponse != null && getActivity() !=null) {
                     switch (statementResponse.httpCode) {
                         case 200:
+                            setAdapter();
                             List<UserStatement> statement = statementResponse.data;
                             if (statement.size() == 0) {
                                 showView(ctNoResultFound);
@@ -251,20 +247,24 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                     index++;
                                 }
                             }
+                            onLoadComplete();
                             break;
 
                         case 440:
-
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, statementResponse.response.stsParams, getActivity());
                             break;
-
                         default:
-                            if (statementResponse.response != null) {
-                                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_ERROR, statementResponse.response.desc);
+                            if (statementResponse.response != null && statementResponse.response.desc != null) {
+                                try {
+                                    AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(statementResponse.response.desc);
+                                    accountsErrorHandlerFragment.show(getActivity().getSupportFragmentManager(), AccountsErrorHandlerFragment.class.getSimpleName());
+                                } catch (IllegalStateException ex) {
+                                    Crashlytics.logException(ex);
+                                }
                             }
                             break;
                     }
-                    onLoadComplete();
+                    hideView(ccProgressLayout);
                 }
             }
 
@@ -273,12 +273,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 if (error == null)return;
                 Activity activity = getActivity();
                 if (activity !=null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            onLoadComplete();
-                            mErrorHandlerView.networkFailureHandler(error.getMessage());
-                        }
+                    activity.runOnUiThread(() -> {
+                        onLoadComplete();
+                        mErrorHandlerView.networkFailureHandler(error.getMessage());
                     });
                 }
             }
@@ -294,45 +291,44 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         view.setVisibility(View.VISIBLE);
     }
 
-    public void onLoad() {
+    private void onLoad() {
         mErrorHandlerView.hideErrorHandler();
         showView(ccProgressLayout);
+        hideView(topMarginView);
+        hideView(relNextButton);
     }
 
 
     public void onLoadComplete() {
         hideView(ccProgressLayout);
+        showView(topMarginView);
+        showView(relNextButton);
     }
 
     public void getPDFFile() {
         showViewProgress();
         final FragmentActivity activity = getActivity();
-        if (activity == null) return;
+        if (activity == null || !isAdded()) return;
         mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
         mGetPdfFile.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     if (getActivity() != null) {
                         loadSuccess();
                         hideViewProgress();
                         if (response.code() == 200) {
                             try {
-                                StatementUtils statementUtils = new StatementUtils(activity);
                                 if (response.body() != null) {
-                                    statementUtils.savePDF(response.body().byteStream());
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        PreviewStatement previewStatement = new PreviewStatement();
-                                        FragmentUtils fragmentUtils = new FragmentUtils(activity);
-                                        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                                        fragmentUtils.openFragment(fragmentManager, previewStatement, R.id.flAccountStatement);
-                                        showSlideUpPanel();
-                                    } else {
-                                        launchOpenPDFIntent();
-                                    }
+                                    String fileName = "statement_"+mSelectedStatement.docDesc;
+                                    Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
+                                    openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
+                                    openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
+                                    openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
+                                    activity.startActivity(openPdfIntent);
                                 }
                             } catch (Exception ex) {
-                                Log.d(TAG, ex.getMessage());
+                                Crashlytics.logException(ex);
                             }
                         }
                     }
@@ -340,60 +336,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
                 Activity activity = getActivity();
                 if (activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mErrorHandlerView.showToast();
-                            loadFailure();
-                            hideViewProgress();
-                        }
+                    activity.runOnUiThread(() -> {
+                        mErrorHandlerView.showToast();
+                        loadFailure();
+                        hideViewProgress();
                     });
-                }
-            }
-        });
-    }
-
-    private void slideUpPanelListener() {
-        mSlideUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            }
-        });
-        mSlideUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                if (slideOffset == 0.0) {
-                    mSlideUpPanelLayout.setAnchorPoint(1.0f);
-                }
-            }
-
-            @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
-                                            SlidingUpPanelLayout.PanelState newState) {
-                Activity activity = getActivity();
-                if (activity != null) {
-                    StatementActivity statementActivity = (StatementActivity) activity;
-                    switch (newState) {
-                        case COLLAPSED:
-                            panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
-                            statementActivity.showHomeButton();
-                            break;
-
-                        case DRAGGING:
-                            panelIsCollapsed = SlidingUpPanelLayout.PanelState.DRAGGING;
-                            break;
-
-                        case EXPANDED:
-                            panelIsCollapsed = SlidingUpPanelLayout.PanelState.EXPANDED;
-                            statementActivity.showAccountStatementButton();
-                            break;
-                        default:
-                            break;
-                    }
                 }
             }
         });
@@ -421,13 +371,10 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private void retryConnect() {
         Activity activity = getActivity();
         if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-                        if (!loadState.onLoanCompleted()) {
-                            getPDFFile();
-                        }
+            activity.runOnUiThread(() -> {
+                if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+                    if (!loadState.onLoanCompleted()) {
+                        getPDFFile();
                     }
                 }
             });
@@ -456,23 +403,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         super.onPause();
     }
 
-    public SlidingUpPanelLayout.PanelState isSlideUpPanelEnabled() {
-        return panelIsCollapsed;
-    }
-
-    public void hideSlideUpPanel() {
-        switch (panelIsCollapsed) {
-            case EXPANDED:
-                mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                break;
-
-            case DRAGGING:
-                break;
-            default:
-                break;
-        }
-    }
-
     private void loadSuccess() {
         loadState.setLoadComplete(true);
     }
@@ -481,15 +411,15 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         loadState.setLoadComplete(false);
     }
 
-    public void showViewProgress() {
+    private void showViewProgress() {
         mStatementAdapter.onViewClicked(mViewIsLoadingPosition, true);
     }
 
-    public void hideViewProgress() {
+    private void hideViewProgress() {
         mStatementAdapter.onViewClicked(mViewIsLoadingPosition, false);
     }
 
-    public SendUserStatementRequest createUserStatementRequest() {
+    private SendUserStatementRequest createUserStatementRequest() {
         SendUserStatementRequest sendUserStatementRequest = new SendUserStatementRequest();
         List<USDocument> documents = new ArrayList<>();
         for (UserStatement us : mStatementAdapter.getStatementList()) {
@@ -502,23 +432,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         sendUserStatementRequest.documents = usDocuments;
         sendUserStatementRequest.productOfferingId = String.valueOf(WoolworthsApplication.getProductOfferingId());
         return sendUserStatementRequest;
-    }
-
-    private void launchOpenPDFIntent() {
-        File file = new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf");
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        try {
-            Utils.deleteDirectory(new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf"));
-        } catch (Exception ex) {
-        }
     }
 }
 

@@ -16,26 +16,14 @@
 
     <dimen name="default_stack_spacing">12dp</dimen>
     <dimen name="button_style_height">50dp</dimen>
-    <dimen name="page_margin">16dp</dimen>
-    <dimen name="card_margin">45dp</dimen>
     <dimen name="acc_fifteen_dp">12sp</dimen>
     <dimen name="acc_thirteen_sp">13sp</dimen>
     <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
-    <dimen name="voucher_message_layout_height">191dp</dimen>
-    <dimen name="voucher_barcode_margin">15dp</dimen>
-    <dimen name="voucher_barcode_number_margintop">16dp</dimen>
-    <dimen name="voucher_min_spend_margintop">18dp</dimen>
-    <dimen name="voucher_min_spend_padding">16dp</dimen>
-    <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
-    <dimen name="voucher_barcode_number_text_size">17.5dp</dimen>
-    <dimen name="terms_and_conditions_margin">16dp</dimen>
-    <dimen name="voucher_card_layout_padding">8dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
 
     <dimen name="LoadingDots_dots_size_default">3dp</dimen>
     <dimen name="LoadingDots_dots_space_default">6dp</dimen>
     <dimen name="LoadingDots_jump_height_default">5dp</dimen>
-    <dimen name="product_image_height">220dp</dimen>
     <dimen name="product_category_image_height">180dp</dimen>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
@@ -58,7 +46,6 @@
     <dimen name="left_right_padding">6dp</dimen>
     <dimen name="offering_radius">8dp</dimen>
     <dimen name="rag_rating_sp">10sp</dimen>
-    <dimen name="cli_left_right_padding">10dp</dimen>
 
     <dimen name="two_dp">2dp</dimen>
     <dimen name="thirty_dp">30dp</dimen>
@@ -75,13 +62,10 @@
     <dimen name="twenty_five_dp">25dp</dimen>
     <dimen name="twenty_seven_dp">27dp</dimen>
     <dimen name="thirty_one_dp">31dp</dimen>
-    <dimen name="cli_tag_corner_radius">12dp</dimen>
     <dimen name="twenty_three_dp">23dp</dimen>
     <dimen name="sixteen_dp">16dp</dimen>
     <dimen name="twenty_eight_dp">28dp</dimen>
     <dimen name="thirty_two_dp">32dp</dimen>
-    <dimen name="twenty_two_sp">22sp</dimen>
-    <dimen name="twenty_nine_dp">29dp</dimen>
     <dimen name="eight_dp">8dp</dimen>
     <dimen name="thirty_four_dp">34dp</dimen>
     <dimen name="fifteen_sp">15sp</dimen>
@@ -118,7 +102,6 @@
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
     <dimen name="hundred_and_fifty_dp">150dp</dimen>
-    <dimen name="statusbar_view_height">0dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="six_dp">6dp</dimen>
     <dimen name="fourty_five_dp">45dp</dimen>
@@ -130,20 +113,14 @@
     <dimen name="line_dp">0.5dp</dimen>
     <dimen name="seventy_five_dp">75dp</dimen>
     <dimen name="sixty_dp">60dp</dimen>
-    <dimen name="three_dp">3dp</dimen>
     <dimen name="thirteen_sp">13sp</dimen>
     <dimen name="two_hundred_and_twenty_one_dp">221dp</dimen>
     <dimen name="twenty_eight_sp">28sp</dimen>
     <dimen name="exr_margin">16dp</dimen>
     <dimen name="fourteen_sp">14sp</dimen>
     <dimen name="ten_sp">10sp</dimen>
-    <dimen name="forty_four_dp">44dp</dimen>
     <dimen name="nineteen_sp">19sp</dimen>
-    <dimen name="thirty_five_dp">35dp</dimen>
-    <dimen name="sixty_three_dp">63dp</dimen>
     <dimen name="sixty_six_dp">66dp</dimen>
-    <dimen name="thirty_seven_dp">37dp</dimen>
-    <dimen name="common_circle_width">3dp</dimen>
     <dimen name="chat_bubble_text_line_spacing">1.31dp</dimen>
     <dimen name="chat_bubble_text_size">16sp</dimen>
     <dimen name="sixty_four_dp">64dp</dimen>
@@ -167,8 +144,6 @@
     <dimen name="available_fund_16sp_amount">16sp</dimen>
     <dimen name="available_fund_16dp_margin">16dp</dimen>
     <dimen name="available_fund_46dp_margin">46dp</dimen>
-    <dimen name="account_sales_apply_now_button_height">50dp</dimen>
-    <dimen name="account_sales_apply_now_button_text_size">12sp</dimen>
     <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
     <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
     <dimen name="voucher_off_price_text_size">93sp</dimen>
@@ -176,5 +151,22 @@
     <dimen name="voucher_description_text_size">15sp</dimen>
     <dimen name="voucher_barcode_text_size">20sp</dimen>
     <dimen name="fourty_eight_dp">48dp</dimen>
+    <dimen name="voucher_date_text_size_11sp">11sp</dimen>
+    <dimen name="voucher_value_text_size_93sp">93sp</dimen>
+    <dimen name="barcode_voucher_top_margin_39dp">39dp</dimen>
+    <dimen name="barcode_voucher_height_57dp">57dp</dimen>
+    <dimen name="voucher_number_top_margin_20dp">20dp</dimen>
+    <dimen name="voucher_number_bottom_margin_19dp">19sp</dimen>
+    <dimen name="valid_date_guideline_begin_42dp">42dp</dimen>
+    <dimen name="voucher_number_top_margin_19dp">19dp</dimen>
+    <dimen name="minimum_spend_label_text_size_15sp">15sp</dimen>
+    <dimen name="minimum_spend_view_height_45dp">45dp</dimen>
+    <dimen name="minimum_spend_top_margin_16dp">16dp</dimen>
+    <dimen name="voucher_number_barcode_value_text_size_17sp">17sp</dimen>
+    <dimen name="voucher_off_value_25sp">25sp</dimen>
+    <item name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</item>
+    <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
+    <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
+    <item name="availableFundMaximumHeight" type="dimen" format="float">0.7</item>
 </resources>
 

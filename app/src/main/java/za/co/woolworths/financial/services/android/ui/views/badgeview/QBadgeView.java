@@ -32,6 +32,10 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TODO::  JetPack offers native support for badge counter, this
+ *  class should be replaced by JetPack solution
+ */
 public class QBadgeView extends View implements Badge {
 	protected int mColorBackground;
 	protected int mColorBackgroundBorder;
@@ -464,7 +468,7 @@ public class QBadgeView extends View implements Badge {
 
 	private void createClipLayer() {
 		if (mBadgeText == null) {
-			setVisibility(GONE);
+				setVisibility(GONE);
 			return;
 		}
 		setVisibility(VISIBLE);
@@ -565,6 +569,7 @@ public class QBadgeView extends View implements Badge {
 			mBadgeTextFontMetrics = mBadgeTextPaint.getFontMetrics();
 			mBadgeTextRect.bottom = mBadgeTextFontMetrics.descent - mBadgeTextFontMetrics.ascent;
 		}
+
 		createClipLayer();
 	}
 

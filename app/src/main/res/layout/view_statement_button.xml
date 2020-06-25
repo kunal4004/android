@@ -39,6 +39,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:indeterminateDrawable="@drawable/progress_circle"
         app:layout_constraintBottom_toBottomOf="@+id/statementProgressbarView"
         app:layout_constraintEnd_toEndOf="@+id/statementProgressbarView"

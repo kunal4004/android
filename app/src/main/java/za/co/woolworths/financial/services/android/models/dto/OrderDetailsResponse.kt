@@ -24,4 +24,8 @@ class OrderDetailsResponse {
     val orderSummary: OrderSummary? = null
 
     var items: JsonElement? = null
+
+    var httpCode: Int = 0
+
+    var response: Response? = null
 }

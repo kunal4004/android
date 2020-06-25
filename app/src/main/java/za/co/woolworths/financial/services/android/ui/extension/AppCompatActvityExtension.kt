@@ -3,21 +3,17 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.TextView
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -193,28 +189,13 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
             }.start()
         }
     })
-
-    fun TabLayout.applyFont(typeface: Typeface) {
-        val viewGroup = getChildAt(0) as ViewGroup
-        val tabsCount = viewGroup.childCount
-        for (j in 0 until tabsCount) {
-            val viewGroupChildAt = viewGroup.getChildAt(j) as ViewGroup
-            val tabChildCount = viewGroupChildAt.childCount
-            for (i in 0 until tabChildCount) {
-                val tabViewChild = viewGroupChildAt.getChildAt(i)
-                if (tabViewChild is TextView) {
-                    tabViewChild.typeface = typeface
-                }
-            }
-        }
-    }
 }
 
 inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: IGenericAPILoaderView<Any>? = null): Call<RESPONSE_OBJECT>? {
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
     call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
-        override fun onSuccess(response: RESPONSE_OBJECT) {
+        override fun onSuccess(response: RESPONSE_OBJECT?) {
             requestListener?.hideProgress()
             requestListener?.onSuccess(response)
         }

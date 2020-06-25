@@ -12,6 +12,7 @@
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:visibility="invisible"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -22,6 +23,7 @@
         android:text="@string/sending_otp_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/pageTitle" />
 
     <include
@@ -46,7 +48,6 @@
         app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
     <TextView
-        android:id="@+id/progressDescription"
         style="@style/body_text_style"
         android:layout_marginTop="@dimen/twelve_dp"
         android:gravity="center"

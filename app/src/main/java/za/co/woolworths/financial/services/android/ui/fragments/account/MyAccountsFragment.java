@@ -12,9 +12,10 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
@@ -53,7 +54,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -62,16 +62,17 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -79,13 +80,14 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
+public class MyAccountsFragment extends Fragment implements View.OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -105,9 +107,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private RelativeLayout signOutRelativeLayout;
 	private RelativeLayout profileRelativeLayout;
 	private RelativeLayout preferenceRelativeLayout;
-	private ViewPager viewPager;
-	private MyAccountOverViewPagerAdapter adapter;
-	private LinearLayout pager_indicator;
 
 	private WTextView sc_available_funds;
 	private WTextView cc_available_funds;
@@ -123,8 +122,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private List<String> unavailableAccounts;
 	private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
 
-	private int dotsCount;
-	private ImageView[] dots;
 	private NestedScrollView mScrollView;
 	private ErrorHandlerView mErrorHandlerView;
 	private LinearLayout allUserOptionsLayout;
@@ -137,7 +134,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private boolean isActivityInForeground;
 	private boolean isPromptsShown;
 	private boolean isAccountsCallMade;
-    private RelativeLayout updatePasswordRelativeLayout;
+	private RelativeLayout updatePasswordRelativeLayout;
 	private UpdateMyAccount mUpdateMyAccount;
 	private ImageView imRefreshAccount;
 	private RelativeLayout storeLocatorRelativeLayout;
@@ -148,6 +145,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private FrameLayout imgCreditCardLayout;
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
+	private View linkedAccountBottomDivider;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -177,6 +175,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		if (getActivity() instanceof MyAccountActivity){
+			if (getActivity() !=null) {
+				if (((MyAccountActivity) getActivity()).getSupportActionBar() != null)
+					((MyAccountActivity) getActivity()).getSupportActionBar().hide();
+			}
+		}
 		if (savedInstanceState == null) {
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
@@ -189,6 +193,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			applyPersonalCardView = view.findViewById(R.id.applyPersonalLoan);
 			linkedCreditCardView = view.findViewById(R.id.linkedCrediCard);
 			linkedStoreCardView = view.findViewById(R.id.linkedStoreCard);
+			linkedAccountBottomDivider = view.findViewById(R.id.linkedAccountBottomDivider);
 			linkedPersonalCardView = view.findViewById(R.id.linkedPersonalLoan);
 			linkedAccountsLayout = view.findViewById(R.id.linkedLayout);
 			mScrollView = view.findViewById(R.id.nest_scrollview);
@@ -198,10 +203,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
 			signOutRelativeLayout = view.findViewById(R.id.signOutBtn);
 			profileRelativeLayout = view.findViewById(R.id.rlProfile);
-            updatePasswordRelativeLayout = view.findViewById(R.id.rlUpdatePassword);
-            preferenceRelativeLayout = view.findViewById(R.id.rlMyPreferences);
-			viewPager = view.findViewById(R.id.pager);
-			pager_indicator = view.findViewById(R.id.viewPagerCountDots);
+			updatePasswordRelativeLayout = view.findViewById(R.id.rlUpdatePassword);
+			preferenceRelativeLayout = view.findViewById(R.id.rlMyPreferences);
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
 			cc_available_funds = view.findViewById(R.id.cc_available_funds);
 			pl_available_funds = view.findViewById(R.id.pl_available_funds);
@@ -239,9 +242,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			updatePasswordRelativeLayout.setOnClickListener(this);
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
-			adapter = new MyAccountOverViewPagerAdapter(getActivity());
-			viewPager.addOnPageChangeListener(this);
-			setUiPageViewController();
+
+			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
+			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
 
 			imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
 			imRefreshAccount.setOnClickListener(this);
@@ -286,7 +289,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
 		if (getActivity() instanceof MyAccountActivity){
 			//hide all views, load accounts may occur
-			MyAccountsFragment.this.initialize();
+			initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			messageCounterRequest();
@@ -338,7 +341,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
 			messageCounterRequest();
 
-		if (getBottomNavigationActivity().getCurrentFragment() !=null
+		if (getBottomNavigationActivity()!=null && getBottomNavigationActivity().getCurrentFragment() !=null
 				&& getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
 				&& NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
 			initialize();
@@ -346,7 +349,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	// add negative sign before currency value
-	public String removeNegativeSymbol(SpannableString amount) {
+	private String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
 			currentAmount = currentAmount.replace("R - ","- R ");
@@ -366,8 +369,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 					applyStoreCardView.setVisibility(View.GONE);
 					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
 					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                    sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    break;
+					sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+					break;
 				case "CC":
 					linkedCreditCardView.setVisibility(View.VISIBLE);
 					applyCreditCardView.setVisibility(View.GONE);
@@ -381,19 +384,20 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 						imgCreditCard.setBackgroundResource(R.drawable.small_3);
 					}
 					imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+					cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 				case "PL":
 					linkedPersonalCardView.setVisibility(View.VISIBLE);
 					applyPersonalCardView.setVisibility(View.GONE);
 					imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+					pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 			}
-		}
 
+		}
+		
 		//hide content for unavailable products
 		boolean sc = true, cc = true, pl = true;
 		for (String s : unavailableAccounts) {
@@ -421,6 +425,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			disableRefresh();
 		}
 
+		moveLinkedLayoutPosition();
+
 		if (unavailableAccounts.size() == 0) {
 			//all accounts are shown/linked
 			applyNowAccountsLayout.setVisibility(View.GONE);
@@ -429,8 +435,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		}
 
 		allUserOptionsLayout.setVisibility(View.VISIBLE);
-		viewPager.setAdapter(adapter);
-		viewPager.setCurrentItem(0);
 		showFeatureWalkthroughPrompts();
 	}
 
@@ -473,6 +477,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 			}
+
 		}
 
 		//hide content for unavailable products
@@ -493,6 +498,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 		}
 
+		moveLinkedLayoutPosition();
+
 		if (unavailableAccounts.size() == 0) {
 			//all accounts are shown/linked
 			hideView(applyNowAccountsLayout);
@@ -502,11 +509,38 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		}
 
 		showView(allUserOptionsLayout);
-		viewPager.setAdapter(adapter);
-		viewPager.setCurrentItem(0);
 		// prompts when user not linked
 		isAccountsCallMade = true;
-        showFeatureWalkthroughPrompts();
+		showFeatureWalkthroughPrompts();
+	}
+
+	private void moveLinkedLayoutPosition() {
+		if (mAccountResponse != null &&
+				mAccountResponse.accountList != null &&
+				mAccountResponse.accountList.size() > 0 && isAdded()) {
+			List<Account> accountsList = mAccountResponse.accountList;
+			for (Account account : accountsList) {
+				switch (account.productGroupCode.toLowerCase()) {
+					case "pl":
+						linkedAccountsLayout.removeView(linkedPersonalCardView);
+						linkedAccountsLayout.addView(linkedPersonalCardView);
+						break;
+
+					case "sc":
+						linkedAccountsLayout.removeView(linkedStoreCardView);
+						linkedAccountsLayout.addView(linkedStoreCardView);
+						break;
+					case "cc":
+						linkedAccountsLayout.removeView(linkedCreditCardView);
+						linkedAccountsLayout.addView(linkedCreditCardView);
+						break;
+					default:
+						break;
+				}
+			}
+			linkedAccountsLayout.removeView(linkedAccountBottomDivider);
+			linkedAccountsLayout.addView(linkedAccountBottomDivider);
+		}
 	}
 
 	private void showView(View view) {
@@ -524,7 +558,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			//initials of the logged in user will be displayed on the page
 			showView(signOutRelativeLayout);
 			showView(profileRelativeLayout);
-            showView(updatePasswordRelativeLayout);
+			showView(updatePasswordRelativeLayout);
 			showView(preferenceRelativeLayout);
 			showView(loginUserOptionsLayout);
 			mUpdateMyAccount.swipeToRefreshAccount(true);
@@ -535,13 +569,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				//but signed in
 				mUpdateMyAccount.swipeToRefreshAccount(true);
 				showView(unlinkedLayout);
-				setUiPageViewController();
 			}
 		} else {
 			//user is signed out
 			mUpdateMyAccount.swipeToRefreshAccount(false);
 			showView(loggedOutHeaderLayout);
-			setUiPageViewController();
 		}
 	}
 
@@ -550,42 +582,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(loggedOutHeaderLayout);
 		hideView(signOutRelativeLayout);
 		hideView(profileRelativeLayout);
-        hideView(updatePasswordRelativeLayout);
+		hideView(updatePasswordRelativeLayout);
 		hideView(linkedAccountsLayout);
 		hideView(applyNowAccountsLayout);
 		hideView(allUserOptionsLayout);
 		hideView(unlinkedLayout);
 		hideView(loginUserOptionsLayout);
 		hideView(preferenceRelativeLayout);
-	}
-
-	private void setUiPageViewController() {
-		try {
-			Activity activity = getActivity();
-			pager_indicator.removeAllViews();
-			dotsCount = adapter.getCount();
-			dots = new ImageView[dotsCount];
-
-			for (int i = 0; i < dotsCount; i++) {
-				dots[i] = new ImageView(getActivity());
-				if (activity != null)
-					dots[i].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_default));
-
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT
-				);
-
-				params.setMargins(10, 0, 10, 0);
-
-				pager_indicator.addView(dots[i], params);
-			}
-
-			if (activity != null)
-				dots[0].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_selected));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -616,8 +619,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
 	@Override
 	public void onClick(View v) {
-        Activity activity = getActivity();
-        if (activity == null ||  mUpdateMyAccount.accountUpdateActive()) return;
+		Activity activity = getActivity();
+		if (activity == null ||  mUpdateMyAccount.accountUpdateActive()) return;
 		switch (v.getId()) {
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
@@ -657,8 +660,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
 				break;
 			case R.id.contactUs:
-				if (activity instanceof BottomNavigationActivity){
-					getBottomNavigationActivity().pushFragment(new ContactUsFragment());
+				if (activity instanceof BottomNavigationActivity) {
+					if (getBottomNavigationActivity() != null)
+						getBottomNavigationActivity().pushFragment(new ContactUsFragment());
+					return;
+				}
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(new ContactUsFragment());
 				}
 				break;
 			case R.id.helpSection:
@@ -670,20 +678,36 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				}
 				if (activity instanceof BottomNavigationActivity){
 					getBottomNavigationActivity().pushFragment(helpSectionFragment);
+					return;
+				}
+
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(helpSectionFragment);
 				}
 				break;
 			case R.id.signOutBtn:
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");
+				SignOutFragment signOutFragment = new SignOutFragment();
+				try {
+				signOutFragment.show((activity instanceof BottomNavigationActivity) ? ((BottomNavigationActivity) activity).getSupportFragmentManager() : ((MyAccountActivity) activity).getSupportFragmentManager(), SignOutFragment.class.getSimpleName());
+			} catch (IllegalStateException ex){
+				Crashlytics.logException(ex);
+			}
 				break;
-            case R.id.rlProfile:
-                ScreenManager.presentSSOUpdateProfile(activity);
-                break;
-            case R.id.rlUpdatePassword:
-                ScreenManager.presentSSOUpdatePassword(activity);
-                break;
+			case R.id.rlProfile:
+				ScreenManager.presentSSOUpdateProfile(activity);
+				break;
+			case R.id.rlUpdatePassword:
+				ScreenManager.presentSSOUpdatePassword(activity);
+				break;
 			case R.id.storeLocator:
 				if (activity instanceof BottomNavigationActivity){
-					getBottomNavigationActivity().pushFragment(new StoresNearbyFragment1());
+					if (getBottomNavigationActivity()!=null)
+						getBottomNavigationActivity().pushFragment(new StoresNearbyFragment1());
+					return;
+				}
+
+				if (activity instanceof MyAccountActivity) {
+					((MyAccountActivity) activity).replaceFragment(new StoresNearbyFragment1());
 				}
 				break;
 			case R.id.rlMyPreferences:
@@ -700,28 +724,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		}
 	}
 
-	@Override
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-	}
-
-	@Override
-	public void onPageSelected(int position) {
-		Activity activity  = getActivity();
-		if (activity == null) return;
-		for (int i = 0; i < dotsCount; i++) {
-			dots[i].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_default));
-		}
-		dots[position].setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.my_account_page_indicator_selected));
-	}
-
-	@Override
-	public void onPageScrollStateChanged(int state) {
-	}
-
-    private void loadAccounts(boolean forceNetworkUpdate) {
+	private void loadAccounts(boolean forceNetworkUpdate) {
 		if (!SessionUtilities.getInstance().isC2User()) return;
-			mErrorHandlerView.hideErrorHandlerLayout();
-			Activity activity = getActivity();
+		mErrorHandlerView.hideErrorHandlerLayout();
+		Activity activity = getActivity();
 		if (activity != null)
 			mScrollView.setBackgroundColor(ContextCompat.getColor(activity, R.color.recent_search_bg));
 		if (forceNetworkUpdate)
@@ -729,65 +735,73 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		else
 			showProgressBar();
 		mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
-            @Override
-            public void onSuccess(AccountsResponse accountsResponse) {
-            	FragmentActivity activity =  getActivity();
-            	if (activity == null) return;
-                 try {
-                 	httpCode = accountsResponse.httpCode;
-                    switch (httpCode) {
+			@Override
+			public void onSuccess(AccountsResponse accountsResponse) {
+				FragmentActivity activity =  getActivity();
+				if (activity == null) return;
+				try {
+					httpCode = accountsResponse.httpCode;
+					switch (httpCode) {
 						case 502:
-                        case 200:
-                            mAccountResponse = accountsResponse;
-                            List<Account> accountList = accountsResponse.accountList;
-                            if (accountList == null) accountList = new ArrayList<>();
-                            for (Account p : accountList) {
-                                accounts.put(p.productGroupCode.toUpperCase(), p);
-                                int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
-                                if (indexOfUnavailableAccount > -1) {
-                                    try {
-                                        unavailableAccounts.remove(indexOfUnavailableAccount);
-                                    } catch (Exception e) {
-                                        Log.e("", e.getMessage());
-                                    }
-                                }
-                            }
-                            isAccountsCallMade = true;
-                            configureView();
+						case 200:
+							mAccountResponse = accountsResponse;
+							List<Account> accountList = accountsResponse.accountList;
+							if (accountList == null) accountList = new ArrayList<>();
+							for (Account p : accountList) {
 
-                            // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
-							if (httpCode == 502) {
-								if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)){
-									AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
-									accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+								accounts.put(p.productGroupCode.toUpperCase(), p);
+								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
+								if (indexOfUnavailableAccount > -1) {
+									try {
+										unavailableAccounts.remove(indexOfUnavailableAccount);
+									} catch (Exception e) {
+										Log.e("", e.getMessage());
+									}
 								}
 							}
-                            break;
-                        case 440:
+
+							setUserPropertiesForCardProductOfferings(accounts);
+
+							isAccountsCallMade = true;
+							configureView();
+
+							// # WOP-6284 - Show a retry button on accounts section when an error is returned from server
+							if (activity instanceof BottomNavigationActivity) {
+								if (httpCode == 502 && getBottomNavigationActivity()!=null&&getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+									if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)) {
+										AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
+										accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+									}
+								}
+							}
+							break;
+						case 440:
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
 							onSessionExpired(activity);
 							initialize();
-                            break;
-                        default:
-                            if (accountsResponse.response != null) {
-								mUpdateMyAccount.swipeToRefreshAccount(false);
+							break;
+						default:
+							if (accountsResponse.response != null) {
+								configureView();
+								mUpdateMyAccount.enableSwipeToRefreshAccount(true);
+								mUpdateMyAccount.swipeToRefreshAccount(true);
+								imRefreshAccount.setEnabled(true);
 								Utils.alertErrorMessage(activity, accountsResponse.response.desc);
-                            }
-
-                            break;
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                hideProgressBar();
+							}
+							break;
+					}
+				} catch (Exception ex) {
+					Crashlytics.logException(ex);
+				}
+				hideProgressBar();
 				mUpdateMyAccount.swipeToRefreshAccount(false);
-            }
+			}
 
-            @Override
-            public void onFailure(Throwable error) {
-            	Activity activity = getActivity();
-            	if (activity == null) return;
+			@Override
+			public void onFailure(Throwable error) {
+				Activity activity = getActivity();
+				if (activity == null) return;
 				activity.runOnUiThread(() -> {
 					try {
 						mUpdateMyAccount.swipeToRefreshAccount(false);
@@ -798,9 +812,58 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 						mErrorHandlerView.networkFailureHandler(error.getMessage());
 				});
 
-            }
-        });
-    }
+			}
+		});
+	}
+
+	private void setUserPropertiesForCardProductOfferings(Map<String, Account> accountsMap) {
+
+		Map<String, Boolean> arguments = new HashMap<>();
+
+		for (Map.Entry<String, Account> accounts : accountsMap.entrySet()) {
+			Account account = accounts.getValue();
+			switch (accounts.getKey().toLowerCase()) {
+				case "pl":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, true);
+					break;
+				case "sc":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, true);
+					break;
+				case "cc":
+					switch (account.accountNumberBin){
+						case Utils.SILVER_CARD:
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, true);
+							break;
+						case Utils.GOLD_CARD:
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, true);
+							break;
+						case Utils.BLACK_CARD:
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, true);
+							break;
+					}
+					break;
+			}
+		}
+
+		for (String unavailable : unavailableAccounts){
+			switch (unavailable.toLowerCase()){
+				case "pl":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, false);
+					break;
+
+				case "sc":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, false);
+					break;
+
+				case "cc":
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, false);
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, false);
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, false);
+					break;
+			}
+		}
+		Utils.triggerFireBaseEvent(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PRODUCT_OFFERING, arguments);
+	}
 
 	@Override
 	public void onDetach() {
@@ -915,13 +978,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(pbAccount);
 	}
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
 		//Check if view hierarchy was created
 		if (!hidden) {
 			//hide all views, load accounts may occur
-			MyAccountsFragment.this.initialize();
+			initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			messageCounterRequest();
@@ -953,9 +1016,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			//One time biometricsWalkthrough
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-			onSignOut();
-			clearActivityStoryStack();
-			initialize();
+			if ((getActivity() instanceof MyAccountActivity)) {
+				onSignOut();
+				initialize();
+			} else {
+				onSignOut();
+				clearActivityStoryStack();
+				initialize();
+			}
 		} else {
 			initialize();
 		}
@@ -998,12 +1066,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		anim.setDuration(500).start();
 	}
 
-    public void showFeatureWalkthroughPrompts() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-        	isPromptsShown = true;
+	public void showFeatureWalkthroughPrompts() {
+		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+			isPromptsShown = true;
 			showFeatureWalkthroughAccounts(unavailableAccounts);
 		}
-    }
+	}
 
 	@SuppressLint("StaticFieldLeak")
 	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
@@ -1139,10 +1207,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	private void redirectToAccountSignInActivity(ApplyNowState applyNowState) {
-		Intent intent = new Intent(getActivity(), AccountSignedInActivity.class);
+		Activity activity = getActivity();
+		if (activity==null) return;
+		Intent intent = new Intent(activity, AccountSignedInActivity.class);
 		intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
 		intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-		startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+		activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	private void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {

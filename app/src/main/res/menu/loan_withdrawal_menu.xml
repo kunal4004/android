@@ -4,7 +4,7 @@
     >
     <item
         android:id="@+id/itemNextArrow"
-        android:icon="@drawable/icon_next_active"
+        android:icon="@drawable/close_white"
         app:showAsAction="always"
         android:title="" />
 </menu>

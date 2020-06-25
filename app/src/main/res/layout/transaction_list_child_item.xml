@@ -58,7 +58,6 @@
         app:layout_constraintGuide_end="24dp" />
 
     <View
-        android:id="@+id/bottomSeparator"
         android:layout_width="0dp"
         android:layout_height="17dp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
@@ -67,7 +66,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.8dp"
+        android:layout_height="1dp"
         android:background="@color/recent_search_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

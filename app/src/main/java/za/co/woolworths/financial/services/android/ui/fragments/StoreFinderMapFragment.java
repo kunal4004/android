@@ -105,11 +105,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	LinearLayout timeingsLayout;
 	LinearLayout brandsLayout;
 	RelativeLayout storeTimingView;
-	WTextView storeName;
-	WTextView storeOfferings;
-	WTextView storeAddress;
+	TextView storeName;
+	TextView storeOfferings;
+	TextView storeAddress;
 	TextView storeDistance;
-	WTextView storeNumber;
+	TextView storeNumber;
 
 	RelativeLayout layoutLocationServiceOn;
 	RelativeLayout relBrandLayout;
@@ -160,11 +160,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		close = (ImageView) v.findViewById(R.id.close);
-		storeName = (WTextView) v.findViewById(R.id.storeName);
-		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
-		storeDistance = v.findViewById(R.id.distance);
-		storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
-		storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
+		storeName = (TextView) v.findViewById(R.id.storeNameTextView);
+		storeOfferings = (TextView) v.findViewById(R.id.offeringsTextView);
+		storeDistance = v.findViewById(R.id.distanceTextView);
+		storeAddress = (TextView) v.findViewById(R.id.storeAddressTextView);
+		storeNumber = (TextView) v.findViewById(R.id.storeNumberTextView);
 		timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
 		storeTimingView = (RelativeLayout) v.findViewById(R.id.storeTimingView);
 		brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
@@ -413,11 +413,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
 			if (brandslist != null) {
 				if (brandslist.size() > 0) {
-					WTextView textView;
+					TextView textView;
 					relBrandLayout.setVisibility(View.VISIBLE);
 					for (int i = 0; i < brandslist.size(); i++) {
 						View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-						textView = (WTextView) v.findViewById(R.id.openingHours);
+						textView = (TextView) v.findViewById(R.id.openingHoursTextView);
 						textView.setText(brandslist.get(i).offering);
 						brandsLayout.addView(textView);
 					}
@@ -432,10 +432,10 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		}
 		if (storeDetail.times != null && storeDetail.times.size() != 0) {
 			storeTimingView.setVisibility(View.VISIBLE);
-			WTextView textView;
+			TextView textView;
 			for (int i = 0; i < storeDetail.times.size(); i++) {
 				View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-				textView = (WTextView) v.findViewById(R.id.openingHours);
+				textView = (TextView) v.findViewById(R.id.openingHoursTextView);
 				textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
 				if (i == 0)
 					textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));

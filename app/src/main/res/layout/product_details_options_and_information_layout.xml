@@ -49,7 +49,6 @@
             app:srcCompat="@drawable/ic_store_locator" />
 
         <TextView
-            android:id="@+id/tvCheckInStore"
             style="@style/card_item_regular_text_style"
             android:layout_toEndOf="@+id/logoCheckInStore"
             android:text="@string/check_in_store_availablity"
@@ -91,7 +90,6 @@
             app:srcCompat="@drawable/ic_add_to_list_pdp" />
 
         <TextView
-            android:id="@+id/tvAddToShoppingList"
             style="@style/card_item_regular_text_style"
             android:layout_toEndOf="@+id/logoAddToShoppingList"
             android:text="@string/add_to_a_shopping_list"

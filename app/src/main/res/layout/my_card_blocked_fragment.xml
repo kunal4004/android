@@ -25,7 +25,6 @@
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
-        android:letterSpacing="0.1"
         android:text="@string/no_active_card"
         android:textColor="@color/no_active_card_title"
         android:textSize="20sp"
@@ -36,10 +35,9 @@
 
 
     <View
-        android:id="@+id/cardViewBackground"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
-        android:background="@color/grey_bg"
+        android:background="@color/grey_background_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,28 +48,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:alpha="0.3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/w_store_card" />
+        app:srcCompat="@drawable/icr_blocked_card_disabled" />
 
     <TextView
-        android:id="@+id/tvActive"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/black_tag_bg"
+        android:background="@drawable/white_tag_bg"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
-        android:letterSpacing="0.12"
+        android:letterSpacing="0.067"
         android:paddingStart="6dp"
         android:paddingTop="5dp"
         android:paddingEnd="6dp"
         android:paddingBottom="5dp"
         android:text="@string/blocked"
-        android:textColor="@color/white"
+        android:textColor="@color/block_card_color"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="@+id/imStoreCard"
         app:layout_constraintTop_toTopOf="@+id/imStoreCard"
@@ -101,10 +97,10 @@
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/black_button_drawable_state"
+        android:layout_marginBottom="24dp"
+        android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold_ttf"
-        android:letterSpacing="0.15"
+        android:letterSpacing="0.2"
         android:text="@string/get_replacement_card"
         android:textAllCaps="true"
         android:textColor="@color/white"
@@ -138,11 +134,10 @@
         app:layout_constraintTop_toBottomOf="@+id/tvNoActiveCardDesc"
         tools:ignore="UnusedAttribute" />
 
-    <Button
+    <TextView
         android:id="@+id/btnLinkACard"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
@@ -150,7 +145,6 @@
         android:background="@color/transparent"
         android:fontFamily="@font/futura_medium_ttf"
         android:letterSpacing="0.015"
-        android:lineSpacingExtra="4dp"
         android:paddingStart="31dp"
         android:paddingEnd="31dp"
         android:text="@string/npc_already_have_your_card_link"

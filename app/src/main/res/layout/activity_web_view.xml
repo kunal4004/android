@@ -4,13 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/ssoLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
-        tools:context="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity">
+        android:visibility="gone">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
@@ -46,7 +45,6 @@
             </androidx.appcompat.widget.Toolbar>
 
             <View
-                android:id="@+id/view_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:color="#D3D3D3" />
@@ -59,7 +57,7 @@
             <WebView
                 android:id="@+id/webview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></WebView>
+                android:layout_height="match_parent"/>
 
             <ProgressBar
                 android:id="@+id/loadingProgressBar"
@@ -90,7 +88,6 @@
             app:WTextView_font="myriadpro_regular" />
 
         <ProgressBar
-            android:id="@+id/kmsiProgressBar"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"

@@ -108,7 +108,6 @@
                     style="@style/reward_benefit_container_style">
 
                     <TextView
-                        android:id="@+id/tvBenefitRewardVirtualCard"
                         style="@style/reward_benefit_title"
                         android:text="@string/virtual_card_number" />
 
@@ -146,7 +145,6 @@
                     style="@style/reward_benefit_container_style">
 
                     <TextView
-                        android:id="@+id/tvBenefitReward"
                         style="@style/reward_benefit_title"
                         android:text="@string/reward_benefits_title" />
 

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Typeface
@@ -43,6 +44,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -55,7 +57,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        vpRewardBenefit.adapter = object : FragmentStateAdapter(this) {
+        vpRewardBenefit?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
                     0 -> RewardBenefitFragment.newInstance()
@@ -74,27 +76,32 @@ class WRewardBenefitActivity : AppCompatActivity() {
                 else -> getString(R.string.vip_exclusive)
             }
         }.attach()
-        vpRewardBenefit.currentItem = benefitTabPosition
-        updateTabFont(benefitTabPosition, true)
 
-        tabs?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                updateTabFont(tab?.position ?: 0, false)
-            }
+        vpRewardBenefit?.currentItem = benefitTabPosition
 
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                updateTabFont(tab?.position ?: 0, true)
-            }
+       updateTabFont (benefitTabPosition, true)
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
-        })
+        tabs?.addOnTabSelectedListener(
+                object : TabLayout.OnTabSelectedListener {
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {
+                        updateTabFont(tab?.position ?: 0, false)
+                    }
+
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        updateTabFont(tab?.position ?: 0, true)
+                    }
+
+                    override fun onTabReselected(tab: TabLayout.Tab?) {
+                    }
+                })
     }
 
     private fun updateTabFont(position: Int, tabIsSelected: Boolean) {
-        val tabLayout = (tabs.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? LinearLayout
+        val tabLayout =
+                (tabs.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? LinearLayout
         val tabTextView = tabLayout?.getChildAt(1) as? AppCompatTextView
-        val typeface = ResourcesCompat.getFont(this@WRewardBenefitActivity, if (tabIsSelected) R.font.futura_semi_bold_ttf else R.font.futura_medium_ttf)
+        val typeface =
+                ResourcesCompat.getFont(this@WRewardBenefitActivity, if (tabIsSelected) R.font.futura_semi_bold_ttf else R.font.futura_medium_ttf)
         tabTextView?.setTypeface(typeface, Typeface.NORMAL)
     }
 

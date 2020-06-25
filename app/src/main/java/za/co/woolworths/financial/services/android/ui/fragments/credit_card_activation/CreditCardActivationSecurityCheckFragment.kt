@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_security_check_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -44,6 +45,7 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.activateCardButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_MY_CARD)
                 navController?.navigate(if (WoolworthsApplication.getCreditCardActivation().otpEnabledForCreditCardActivation)
                     R.id.action_to_RetrieveOTPFragment
                 else

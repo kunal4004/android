@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:contentDescription="@string/account_in_arrears_toolbar"
     android:layout_height="match_parent">
 
     <ImageButton
         android:id="@+id/navigateBackImageButton"
         style="@style/selectableImageButtonRippleStyle"
-        android:background="@drawable/ic_filter_state"
+        android:background="@null"
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="7dp"
-        android:background="@android:color/transparent"
+        android:background="@null"
         android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

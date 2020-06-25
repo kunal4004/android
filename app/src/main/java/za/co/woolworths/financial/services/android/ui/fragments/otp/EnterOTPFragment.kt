@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.otp
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.InputType
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +14,11 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_enter_otp.*
-import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_enter_otp.enterOTPDescriptionScreen
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 
 class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IResendOTPOptionSelection {
 
-    var navController: NavController? = null
+    private var navController: NavController? = null
     private var mResendOTPDialogFragment: ResendOTPDialogFragment? = null
     var bundle: Bundle? = null
     lateinit var otpSentTo: String
@@ -51,8 +50,8 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
     }
 
     fun configureUI() {
-        enterOTPDescriptionScreen.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
-        didNotReceiveOTPTextView.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        enterOTPDescriptionScreen?.text = activity?.resources?.getString(R.string.sent_otp_desc, otpSentTo)
+        didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         if (otpValue.isNotEmpty())
             showWrongOTP()
     }
@@ -96,6 +95,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
             edtVerificationCode1?.apply {
                 requestFocus()
                 showSoftKeyboard(activity, this)
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             }
         }
     }
@@ -111,7 +111,7 @@ class EnterOTPFragment : EnterOTPFragmentExtension(), ResendOTPDialogFragment.IR
             }
             edtVerificationCode1?.setSelection(0)
         }
-        otpErrorTextView.visibility = View.VISIBLE
+        otpErrorTextView?.visibility = View.VISIBLE
         setOtpErrorBackground(R.drawable.otp_box_error_background)
     }
 

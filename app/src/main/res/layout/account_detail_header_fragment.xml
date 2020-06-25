@@ -5,7 +5,7 @@
     android:id="@+id/cardImageRootView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_gray_background">
+    android:background="@drawable/card_header_background">
 
     <TextView
         android:id="@+id/myCardTextView"

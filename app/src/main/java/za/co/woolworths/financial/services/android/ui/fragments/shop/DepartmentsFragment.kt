@@ -62,18 +62,18 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
             noConnectionLayout(false)
             rootCategoryCall = OneAppService.getRootCategory()
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
-                override fun onSuccess(rootCategories: RootCategories) {
-                    when (rootCategories.httpCode) {
+                override fun onSuccess(response: RootCategories?) {
+                    when (response?.httpCode) {
                         200 -> {
-                            version = rootCategories.response.version
-                            parentFragment?.setCategoryResponseData(rootCategories)
+                            version = response.response.version
+                            parentFragment?.setCategoryResponseData(response)
                             bindDepartment()
                         }
-                        else -> rootCategories.response?.desc?.let { showErrorDialog(it) }
+                        else -> response?.response?.desc?.let { showErrorDialog(it) }
                     }
                 }
 
-                override fun onFailure(error: Throwable) {
+                override fun onFailure(error: Throwable?) {
                     if (isAdded) {
                         activity?.runOnUiThread {
                             if (networkConnectionStatus())
@@ -89,7 +89,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
 
     private fun bindDepartment() {
-        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()!!.rootCategories)
+        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
     }
 
@@ -137,14 +137,14 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         }
     }
 
+
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         isFragmentVisible = isVisibleToUser
     }
 
     fun scrollToTop() {
-        if (rclDepartment != null)
-            rclDepartment.scrollToPosition(0)
+        rclDepartment?.scrollToPosition(0)
     }
 
 }

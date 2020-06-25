@@ -18,7 +18,6 @@
         android:orientation="horizontal">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvAmount"
             style="@style/edit_cursor_style"
             android:layout_width="wrap_content"
             android:layout_marginEnd="@dimen/two_dp"

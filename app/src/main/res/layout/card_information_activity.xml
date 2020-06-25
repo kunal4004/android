@@ -22,16 +22,10 @@
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/futura_semi_bold_ttf"
+                style="@style/appToolbarStyle"
                 android:gravity="center"
-                android:textAllCaps="true"
-                android:letterSpacing="0.02"
-                android:text="@string/information"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                tools:ignore="UnusedAttribute" />
+                android:layout_width="match_parent"
+                android:text="@string/information" />
 
             <ImageButton
                 android:id="@+id/closeIcon"
@@ -54,7 +48,6 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbarContainer" />
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/informationNestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -75,13 +68,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
-
-            <TextView
-                android:id="@+id/termsAndConditionsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/card_info_view_term_and_condition" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

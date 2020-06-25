@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsAct
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1.CAMERA_ANIMATION_SPEED
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1.Companion.CAMERA_ANIMATION_SPEED
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.ArrayList
 import java.util.HashMap
@@ -136,7 +136,7 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private fun bindDataWithUI(storeDetailsList: MutableList<StoreDetails>) {
         mGoogleMap.let {
             if (storeDetailsList.size >= 0) {
-                activity?.let { activity -> updateMyCurrentLocationOnMap(Utils.getLastSavedLocation(activity)) }
+                activity?.let { activity -> updateMyCurrentLocationOnMap(Utils.getLastSavedLocation()) }
                 for (i in storeDetailsList.indices) {
                     if (i == 0) {
                         selectedIcon?.let { selectedIcon -> drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), selectedIcon, i) }

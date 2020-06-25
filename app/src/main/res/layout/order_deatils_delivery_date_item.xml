@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/deliveryItemsType"
+            style="@style/my_orders_textview_style_2"
+            android:textSize="@dimen/thirteen_sp"
+            android:contentDescription="@string/delivery_date_for_any_type_item_title"
+            android:layout_alignParentLeft="true" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/dateOfDelivery"
+            style="@style/my_orders_textview_style_2"
+            android:layout_width="match_parent"
+            android:layout_toEndOf="@+id/deliveryItemsType"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/thirteen_sp"
+            android:gravity="right"
+            android:layout_marginLeft="@dimen/sixteen_dp"
+            android:contentDescription="@string/delivery_date_for_any_type_item_value"
+            app:WTextView_font="myriadpro_semibold" />
+    </RelativeLayout>
+</LinearLayout>

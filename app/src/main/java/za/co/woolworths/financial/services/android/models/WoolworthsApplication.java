@@ -33,6 +33,8 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonElement;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -52,8 +54,9 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDelivery;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
+import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -62,6 +65,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	private static Context context;
 	private static Context mContextApplication;
+	private static WhatsApp whatsApp;
 	private UserManager mUserManager;
 	private Tracker mTracker;
 	private static ApplyNowLinks applyNowLink;
@@ -531,4 +535,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	public static void setCreditCardDelivery(CreditCardDelivery creditCardDelivery) {
 		WoolworthsApplication.creditCardDelivery = creditCardDelivery;
 	}
+    public static void setWhatsAppConfig(@Nullable WhatsApp whatsApp) {
+		WoolworthsApplication.whatsApp = whatsApp;
+    }
+
+	public static WhatsApp getWhatsAppConfig() {
+		return whatsApp;
+	}
+
 }

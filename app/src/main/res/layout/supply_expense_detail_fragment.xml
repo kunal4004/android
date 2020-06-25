@@ -7,7 +7,15 @@
     android:clickable="true"
     android:focusableInTouchMode="true">
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:text="@string/only_rands_no_cents"
+            style="@style/cli_only_cents_banner" />
+
+        <androidx.core.widget.NestedScrollView
         android:id="@+id/nsSupplyExpense"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,10 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:text="@string/only_rands_no_cents"
-                style="@style/cli_only_cents_banner" />
 
             <View
                 style="@style/top_view_style_income_expenses"/>
@@ -47,13 +51,10 @@
                 style="@style/editTextLayoutContainerStyle">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvLabelMortgagePayments"
                     style="@style/textViewLabelStyle"
                     android:text="@string/expenses_mortgage_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llCurrencyContainer"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMortgagePayments"
@@ -77,9 +78,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/expenses_rental_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llNetMonthlyIncome"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvRentalPayments"
@@ -103,9 +102,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/expenses_maintenance_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llAdditionalMonthlyIncome"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMaintainanceExpenses"
@@ -129,9 +126,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/expense_monthly_credit_payment"/>
 
-                <LinearLayout
-                    android:id="@+id/llMonthlyCreditPaymentsContainer"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMonthlyCreditPayments"
@@ -155,9 +150,7 @@
                     style="@style/textViewLabelStyle"
                     android:text="@string/cli_other_expenses"/>
 
-                <LinearLayout
-                    android:id="@+id/llOtherExpenses"
-                    style="@style/currencyStyleLayout">
+                <LinearLayout style="@style/currencyStyleLayout">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvOtherExpenses"
@@ -181,6 +174,7 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
 
     <include

@@ -59,6 +59,10 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
+    fun getVouchersCount(): Call<VoucherCount> {
+        return mApiInterface.getVouchersCount(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+    }
+
     fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String): Call<LocationResponse> {
            return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
     }
@@ -359,5 +363,9 @@ object OneAppService : RetrofitConfig() {
 
     fun postScheduleDelivery(productOfferingId: String, scheduleDeliveryRequest: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse> {
         return mApiInterface.scheduleDelivery(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, scheduleDeliveryRequest)
+    }
+
+    fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
+        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
     }
 }

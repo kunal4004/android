@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockReason
 import za.co.woolworths.financial.services.android.ui.adapters.BlockCardReasonAdapter
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class BlockMyCardReasonFragment : MyCardExtension() {
 
@@ -27,6 +28,8 @@ class BlockMyCardReasonFragment : MyCardExtension() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        AnimationUtilExtension.animateViewPushDown(btnBlockCard)
 
         btnBlockCard?.setOnClickListener {
             (activity as? AppCompatActivity)?.let {

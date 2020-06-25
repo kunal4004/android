@@ -44,7 +44,9 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
+import kotlinx.android.synthetic.main.product_details_fragment.brandName
 import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
+import kotlinx.android.synthetic.main.product_listing_page_row.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -86,6 +88,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
     private var defaultGroupKey: String? = null
+    private var mFreeGiftPromotionalImage: String? = null
 
 
     companion object {
@@ -172,18 +175,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-            it.promotionImages?.apply {
-               if (!freeGift.isNullOrEmpty()){
-                   freeGiftImage?.visibility = View.VISIBLE
-                   activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, freeGift) }
-               }
-            }
-
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
         }
+
+        mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
 
         loadPromotionalImages()
 
@@ -452,8 +450,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
-                activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, it.freeGift) }
-                freeGiftImage.visibility = View.VISIBLE
             }
         }
 
@@ -549,7 +545,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             otherSku = it
                             return@forEach
                         }
-
                     }
                     setSelectedSku(otherSku)
                     if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
@@ -575,7 +570,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             else -> {
                 getSelectedSku()?.quantity?.let {
                     when (it) {
-                        0 -> showFindInStore();
+                        0 -> showFindInStore()
                         else -> {
                             getSelectedQuantity()?.apply {
                                 if (it < this)
@@ -590,13 +585,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-
     private fun showFindInStore() {
-        if (!productDetails?.isnAvailable?.toBoolean()!!) {
-            toCartAndFindInStoreLayout?.visibility = View.GONE
-            checkInStoreAvailability?.visibility = View.GONE
-            return
+        productDetails?.isnAvailable?.toBoolean()?.apply {
+            if (!this) {
+                toCartAndFindInStoreLayout?.visibility = View.GONE
+                checkInStoreAvailability?.visibility = View.GONE
+                return
+            }
         }
+
 
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.GONE
@@ -1106,7 +1103,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showProductUnavailable() {
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         hideProductDetailsLoading()
-        toCartAndFindInStoreLayout.visibility = View.GONE
+        toCartAndFindInStoreLayout?.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
         //hideProgressBar()
     }
@@ -1119,24 +1116,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun loadPromotionalImages() {
+        val images = ArrayList<String>()
         activity?.apply {
             productDetails?.promotionImages?.let {
-                val images = ArrayList<String>()
                 if (!it.save.isNullOrEmpty()) images.add(it.save)
                 if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
                 if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
                 if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
-                promotionalImages?.removeAllViews()
-                DrawImage(this).let { dImage ->
-                    images.forEach { image ->
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            dImage.displaySmallImage(view.promotionImage, image)
-                            promotionalImages?.addView(view)
-                        }
-                    }
-                }
             }
 
+            promotionalImages?.removeAllViews()
+
+            mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
+
+                images.forEach { image ->
+                    layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                        ImageManager.loadImage(view.promotionImage, image)
+                        promotionalImages?.addView(view)
+                }
+            }
         }
 
     }

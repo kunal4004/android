@@ -41,6 +41,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
         const val ACCOUNTSEVENTSAPPEARED: String = "accounts_event_appeared"
+        const val MYACCOUNTS_PRODUCT_OFFERING: String = "accounts_event_product_offering"
         const val LOGIN: String = "login"
         const val SORTBY_EVENT_APPEARED: String = "GA_Event_ONE_SORTSFILTERS_BUT"
         const val SORTBY_EVENT_APPLIED: String = "GA_Event_ONE_SORTSFILTERS_OPTION"
@@ -84,13 +85,22 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM = "MyAcc_Blk_CC_Delivery_Confirm"
         const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY = "MyAcc_Blk_CC_Manage_Delivery"
         const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL = "MyAcc_Blk_CC_Manage_Delivery_Cancel"
+        const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
+        const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
+        const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
+
+        const val SHOP_SEARCH = "SHOP_Search"
+
+        const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
+        const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
+        const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
     }
 
     class PropertyNames {
         companion object {
             const val SUBURBNAME: String = "SUBURBNAME"
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
-            const val C2ID: String = "c2_id"
+            const val C2ID: String = "C2Id"
             const val ATGId: String = "ATGId"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
             const val DESCRIPTION : String = "DESCRIPTION"
@@ -105,6 +115,15 @@ class FirebaseManagerAnalyticsProperties {
             const val ACTION = "ACTION"
             const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "PRODUCT_ID"
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
+            const val ENTRY_POINT = "Entry_Point"
+            const val DEEP_LINK_URL = "deepLinkUrl"
+            const val PERSONAL_LOAN_PRODUCT_OFFERING = "Personal_Loan"
+            const val STORE_CARD_PRODUCT_OFFERING = "Store_Card"
+            const val CREDIT_CARD_PRODUCT_OFFERING = "Credit_Card"
+            const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "Gold_Credit_Card"
+            const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "Silver_Credit_Card"
+            const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "Black_Credit_Card"
+
         }
     }
 
@@ -192,5 +211,9 @@ class FirebaseManagerAnalyticsProperties {
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val DEVICE_ROOTED_AT_STARTUP: String = "Block Rooted Device"
         }
+    }
+
+    enum class EntryPoint(val value: String) {
+        DEEP_LINK("Deep_Link"),MANUAL_SEARCH("Manual_Search"),QR_CODE("QR_Codes")
     }
 }

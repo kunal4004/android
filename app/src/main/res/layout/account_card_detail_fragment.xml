@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
     android:background="@color/white"
     android:fillViewport="true">
 
@@ -13,21 +14,24 @@
 
         <include
             android:id="@+id/includeAccountDetailHeaderView"
-            android:visibility="visible"
-            layout="@layout/account_detail_header_fragment" />
+            layout="@layout/account_detail_header_fragment"
+            android:visibility="visible" />
+
         <include
             android:id="@+id/creditCardActivationView"
-            android:visibility="gone"
-            layout="@layout/account_activate_credit_card_layout" />
+            layout="@layout/account_activate_credit_card_layout"
+            android:visibility="gone" />
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/creditCardActivationPlaceHolder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:shimmer_duration="800"
-            android:visibility="gone">
+            android:visibility="gone"
+            app:shimmer_duration="800">
+
             <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
         </com.facebook.shimmer.ShimmerFrameLayout>
+
         <LinearLayout
             android:id="@+id/llIncreaseLimitContainer"
             android:layout_width="match_parent"
@@ -41,7 +45,6 @@
             android:paddingEnd="@dimen/ten_dp">
 
             <RelativeLayout
-                android:id="@+id/relApplyNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/twenty_dp">
@@ -52,25 +55,24 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginEnd="@dimen/sixteen_dp"
                     android:alpha="0.3"
                     android:src="@color/white"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tvIncreaseLimit"
                     style="@style/style_loan_title"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/logoIncreaseLimit"
-                    android:textColor="@color/black"
-                    android:gravity="start"
-                    android:textSize="12sp"
                     android:layout_marginStart="0dp"
-                    android:fontFamily="@font/myriad_pro_semi_bold_otf" />
+                    android:layout_toEndOf="@+id/logoIncreaseLimit"
+                    android:fontFamily="@font/futura_semi_bold_ttf"
+                    android:gravity="start"
+                    android:letterSpacing="0.1"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
 
                 <LinearLayout
-                    android:id="@+id/linContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -100,10 +102,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/thirty_one_dp"
                 android:layout_marginBottom="@dimen/twenty_four_dp"
+                android:fontFamily="@font/myriad_pro_regular_otf"
                 android:text="@string/increase_limit_desc"
                 android:textColor="@color/offer_active_desc"
-                android:visibility="gone"
-                android:fontFamily="@font/myriad_pro_regular_otf" />
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/llCommonLayer"
@@ -126,7 +128,6 @@
                         android:src="@drawable/cli" />
 
                     <TextView
-                        android:id="@+id/tvIncreaseMyLimit"
                         style="@style/style_loan_title"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="14dp"
@@ -134,7 +135,6 @@
                         android:text="@string/increase_my_limit" />
 
                     <ImageView
-                        android:id="@+id/imgFindOutMoreArrow"
                         style="@style/style_loan_img"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_caret_black" />
@@ -147,9 +147,7 @@
 
         </LinearLayout>
 
-        <include
-            android:id="@+id/incCommonAccountDetailLayout"
-            layout="@layout/common_account_detail" />
+        <include layout="@layout/common_account_detail" />
 
     </LinearLayout>
 

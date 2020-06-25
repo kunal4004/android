@@ -46,7 +46,6 @@
                 app:WTextView_font="medium" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textEmailContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_horizontal_margin"
@@ -95,7 +94,6 @@
             android:visibility="visible" />
 
         <LinearLayout
-            android:id="@+id/linYesNoContainer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/cli_button_height"
             android:layout_marginBottom="@dimen/bank_spacing_width"
@@ -112,7 +110,7 @@
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:letterSpacing="0.12"
-                android:text="@string/cli_got_it"
+                android:text="@string/got_it"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:WButton_font="medium_bold"
