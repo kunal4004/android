@@ -10,7 +10,7 @@ android {
     def major = "7"
     def minor = "1"
     def fix = "0"
-    def jobNumber = 431
+    def jobNumber = 432
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         applicationId "com.awfs.coordination"
-        manifestPlaceholders = [appLabel: "Woolworths"]
+        manifestPlaceholders = [appLabel: "Woolworths", deep_link_host:"www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 28
         compileSdkVersion 28
@@ -68,7 +68,7 @@ android {
 
         if (host.contains("-qa")){
             defaultConfig.applicationIdSuffix = ".qa"
-            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q"]
+            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", deep_link_host:"www-win-qa.woolworths.co.za"]
             env = "QA"
         }else{
             //assume prod
@@ -125,7 +125,7 @@ android {
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
-                manifestPlaceholders = [deep_link_host:"www-win-qa.woolworths.co.za"]
+                manifestPlaceholders = [deep_link_host: "www-win-qa.woolworths.co.za"]
                 signingConfig signingConfigs.woneappQa
             }
 
