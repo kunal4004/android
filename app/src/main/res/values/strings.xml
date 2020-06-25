@@ -1523,5 +1523,7 @@
     <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
     <string name="collecting_from_confirm_suburb">Collecting from</string>
     <string name="select_an_option">Please Select an Option</string>
+    <string name="collection_location">Collection Location:</string>
+    <string name="collection_date">Collection Date:</string>
 </resources>
 
