@@ -133,7 +133,7 @@ android {
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
-                manifestPlaceholders = [deep_link_host: "www.woolworths.co.za"]
+                manifestPlaceholders = [deep_link_host:"www.woolworths.co.za"]
                 signingConfig signingConfigs.woolworths
             }
         }
