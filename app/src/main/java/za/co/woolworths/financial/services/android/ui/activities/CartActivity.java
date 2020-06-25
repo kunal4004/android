@@ -147,7 +147,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
             ArrayList<CartItemGroup> cartItem = ((CartFragment) currentFragment).getCartItems();
             if (cartItem == null || cartItem.isEmpty()) {
                 // No product, hide badge counter
-                QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+                QueryBadgeCounter.getInstance().setCartCount(0);
                 this.setResult(RESULT_PREVENT_CART_SUMMARY_CALL);
             }
         }

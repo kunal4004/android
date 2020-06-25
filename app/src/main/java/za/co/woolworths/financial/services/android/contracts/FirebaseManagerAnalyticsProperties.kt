@@ -41,6 +41,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
         const val ACCOUNTSEVENTSAPPEARED: String = "accounts_event_appeared"
+        const val MYACCOUNTS_PRODUCT_OFFERING: String = "accounts_event_product_offering"
         const val LOGIN: String = "login"
         const val SORTBY_EVENT_APPEARED: String = "GA_Event_ONE_SORTSFILTERS_BUT"
         const val SORTBY_EVENT_APPLIED: String = "GA_Event_ONE_SORTSFILTERS_OPTION"
@@ -80,7 +81,15 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
         const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
+        const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
+        const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
+        const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
+
         const val SHOP_SEARCH = "SHOP_Search"
+
+        const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
+        const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
+        const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
     }
 
     class PropertyNames {
@@ -104,6 +113,13 @@ class FirebaseManagerAnalyticsProperties {
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
             const val DEEP_LINK_URL = "deepLinkUrl"
+            const val PERSONAL_LOAN_PRODUCT_OFFERING = "Personal_Loan"
+            const val STORE_CARD_PRODUCT_OFFERING = "Store_Card"
+            const val CREDIT_CARD_PRODUCT_OFFERING = "Credit_Card"
+            const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "Gold_Credit_Card"
+            const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "Silver_Credit_Card"
+            const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "Black_Credit_Card"
+
         }
     }
 

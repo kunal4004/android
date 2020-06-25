@@ -67,7 +67,7 @@
     <string name="txt_technical_problem">Technical</string>
     <string name="online_local_caller_number">0860 100 987</string>
     <string name="online_inter_national_caller_number">+27 21 407 6137</string>
-    <string name="online_call_center_opening_hours">Monday - Friday 8am - 7.30pm \n\nSaturday 8am - 5pm \n\nSunday 8am - 1pm \n\nPublic Holidays 8am - 5pm</string>
+    <string name="online_call_center_opening_hours">Monday - Saturday 9am - 5pm \n\nSunday 9am - 2pm \n\nPublic Holidays 9am - 2pm</string>
     <string name="general_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8am - 5pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
     <string name="online_shop_reg_login">Online shop registration /Login</string>
     <string name="txt_delivery_queries">Delivery queries</string>
@@ -125,7 +125,7 @@
     <string name="loading">LOADING…</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
-    <string name="cli_got_it">GOT IT</string>
+    <string name="got_it">GOT IT</string>
     <string name="income_gross_monthly_desc">Gross monthly income refers to your income before deductions.</string>
     <string name="income_net_monthly_desc">Net monthly income refers to your income after deductions.</string>
     <string name="income_additional_monthly_desc">Additional income refers to any income you receive apart from your monthly salary.</string>
@@ -884,12 +884,12 @@
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can\'t find a participating store close to you? Call 0861 50 20 20 to arrange for delivery.</string>
-    <string name="temp_card_how_to_use1">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
-    <string name="temp_card_how_to_use2">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
-    <string name="temp_card_how_to_use3">This temporary card is valid for 30 days.</string>
-    <string name="temp_card_how_to_use4">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
-    <string name="temp_card_how_to_use5">Your temp store card can only be used in store and not online.</string>
-    <string name="temp_card_how_to_use6">Your temp store card will be removed after your first purchase in-store using your plastic store card.</string>
+    <string name="temp_card_how_to_use1">This Virtual temporary In-Store Card (temp store card) is valid for 30 days.</string>
+    <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not on-line purchases.</string>
+    <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card</string>
+    <string name="temp_card_how_to_use4">Unfortunately, you will not be able to pay your account in-store using a virtual card. Online payments, like EFT, are available.</string>
+    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="temp_card_how_to_use6">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
     <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
@@ -1427,6 +1427,10 @@
     <string name="cancel_order_success_title">Your order has been \nsuccessfully cancelled.</string>
 
     <!-- Unique Ids for Transactions-->
+    <string name="delivery_date_title">labelDeliveryDate</string>
+    <string name="delivery_date_value">txtDeliveryDate</string>
+    <string name="delivery_date_for_any_type_item_title">labelAnyItemsDeliveryDate</string>
+    <string name="delivery_date_for_any_type_item_value">txtAnyItemsDeliveryDate</string>
     <string name="cancel_order_popup_layout">layoutCancelOrderPopup</string>
     <string name="cancel_order_popup_image">imgCancelOrder</string>
     <string name="cancel_order_popup_confirmation_message">tvConfirmCancelOrder</string>
@@ -1436,7 +1440,7 @@
     <string name="cancel_order_error_desc">LableProblemDesct</string>
     <string name="cancel_order_retry">btnRetry</string>
     <string name="cancel_order_need_help">linkHelp</string>
-    <string name="how_to_use0">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature.  Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="how_to_use0">Stay safe - inform the till operator that you will scan your own phone and please do not share your phone with any of our staff.</string>
     <string name="temp_store_card_engine_service_stations_desc">Your temp card cannot be used at Engen service stations.</string>
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
@@ -1474,6 +1478,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delivery_date">Delivery Date:</string>
     <string name="processing_request">Processing Request</string>
     <string name="please_select_an_option">Please select an option</string>
     <string name="just_browsing">Just Browsing</string>
@@ -1496,5 +1501,25 @@
     <string name="set_your_collection_location">Set your Collection Location</string>
     <string name="your_collection_location_is_currently_set_to">Your collection location is currently set to</string>
     <string name="edit_collection_location">EDIT Collection LOCATION</string>
+    <string name="whatsapp_chat_with_us_row">WhatsApp chat with us row</string>
+    <string name="whatsapp_chat_with_us_row_title">Chat to us on WhatsApp</string>
+    <string name="whatsapp_chat_to_us_title">Chat To Us</string>
+    <string name="chat_with_us_whatsapp_description">Get in touch with us with any queries related to your Woolies Credit Card, Store Card, Personal Loan or Balance Protection.</string>
+    <string name="whatsapp_how_to_pay_woolies_account">How to pay your Woolies account</string>
+    <string name="whatsapp_unable_to_pay_woolies_account">Unable to pay your Woolies account</string>
+    <string name="payments_not_reflecting">Payments not reflecting</string>
+    <string name="whatsapp_number_label">WhatsApp Number:</string>
+    <string name="chat_with_us_now_button">CHAT WITH US NOW</string>
+    <string name="any_question_label">Any Questions?</string>
+    <string name="chat_with_us_whatsapp">Chat With Us</string>
+    <string name="chat_title_unavailable">Chat on WhatsApp Unavailable</string>
+    <string name="store_card_payment_option_label">Store Card Payment Options</string>
+    <string name="credit_card_payment_option_label">Credit Card Payment Options</string>
+    <string name="personal_loan_payment_option_label">Personal Loan Payment Options</string>
+    <string name="chat_with_us_description">Unfortunately chat to us on WhatsApp is unavailable at the moment. Please try again later.</string>
+    <string name="temp_card_how_to_use7">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
+    <string name="temp_card_how_to_use8">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
+    <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
+    <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
 </resources>
 

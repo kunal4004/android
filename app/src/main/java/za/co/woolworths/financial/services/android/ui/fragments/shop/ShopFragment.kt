@@ -74,12 +74,12 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             permissionUtils = PermissionUtils(this, this@ShopFragment)
             permissions.add(android.Manifest.permission.CAMERA)
         }
-        tvSearchProduct.setOnClickListener { navigateToProductSearch() }
-        imBarcodeScanner.setOnClickListener { checkCameraPermission() }
+        tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
+        imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         fragmentManager?.let {  shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)}
-        viewpager_main.offscreenPageLimit = 2
-        viewpager_main.adapter = shopPagerAdapter
-        viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewpager_main?.offscreenPageLimit = 2
+        viewpager_main?.adapter = shopPagerAdapter
+        viewpager_main?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -221,6 +221,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         viewpager_main?.setCurrentItem(1, true)
     }
 
+    fun navigateToMyShoppingListFragment() {
+        viewpager_main?.setCurrentItem(1, false)
+    }
+
     fun scrollToTop() {
         when (viewpager_main.currentItem) {
             0 -> {
@@ -279,5 +283,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
      */
     fun openBarcodeScanner() {
         imBarcodeScanner?.performClick()
+    }
+
+    fun switchToDepartmentTab(){
+        viewpager_main.currentItem = 0
     }
 }

@@ -1133,7 +1133,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         getSelectedSku()?.quantity = 0
         hideProductDetailsLoading()
-        toCartAndFindInStoreLayout.visibility = View.GONE
+        toCartAndFindInStoreLayout?.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
         //hideProgressBar()
     }

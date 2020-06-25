@@ -95,7 +95,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
         bottomSheetBehaviourLinearLayout?.requestLayout()
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
-        sheetBehavior?.peekHeight = mAccountSalesModelImpl?.bottomSheetBehaviourPeekHeight(this@AccountSalesActivity) ?: 0
+        sheetBehavior?.peekHeight = mAccountSalesModelImpl?.bottomSheetPeekHeight() ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {

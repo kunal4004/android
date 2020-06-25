@@ -92,7 +92,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                                     mAddToShoppingListAdapter?.notifyDataSetChanged()
                                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                     showSignOutView()
-                                    QueryBadgeCounter.getInstance().clearBadge()
+                                    QueryBadgeCounter.instance.clearBadge()
                                     if (isFragmentVisible)
                                         activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity?) }
                                 }

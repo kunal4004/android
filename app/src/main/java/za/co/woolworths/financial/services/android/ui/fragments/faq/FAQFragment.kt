@@ -140,22 +140,21 @@ class FAQFragment : Fragment(), ISelectQuestionListener {
     private fun faqRequest(): Call<FAQ>? {
         val faqCall = getFAQ()
         faqCall.enqueue(CompletionHandler(object : IResponseListener<FAQ> {
-            override fun onSuccess(faq: FAQ) {
-                when (faq.httpCode) {
+            override fun onSuccess(faq: FAQ?) {
+                when (faq?.httpCode) {
                     200 -> {
                         val faqList = faq.faqs
                         if (faqList != null) {
                             faqSuccessResponse(faqList)
                         }
                     }
-                    else -> if (faq.response != null) {
-                        unhandledResponseCode(faq.response)
-                    }
+                    else -> faq?.response?.let { response -> unhandledResponseCode(response)}
+
                 }
             }
 
-            override fun onFailure(error: Throwable) {
-                error.message?.let { failureResponseHandler(it) }
+            override fun onFailure(error: Throwable?) {
+                error?.message?.let { failureResponseHandler(it) }
             }
         }, FAQ::class.java))
         return faqCall

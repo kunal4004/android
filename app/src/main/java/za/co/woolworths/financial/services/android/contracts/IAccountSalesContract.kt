@@ -21,7 +21,7 @@ interface IAccountSalesContract {
         fun setAccountSalesIntent(intent: Intent?)
         fun getApplyNowState(): ApplyNowState?
         fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int
-        fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?) : Int
+        fun bottomSheetPeekHeight() : Int
     }
 
     interface AccountSalesModel {
