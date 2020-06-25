@@ -266,7 +266,7 @@ class KotlinUtils {
                     }
                     false -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
-                        tvDeliveryLocation.text = suburb.name + if (province?.name.isNullOrEmpty()) "" else "," + province.name
+                        tvDeliveryLocation.text = suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }

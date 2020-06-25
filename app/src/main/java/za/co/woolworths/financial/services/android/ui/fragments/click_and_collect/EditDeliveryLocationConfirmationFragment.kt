@@ -37,9 +37,9 @@ class EditDeliveryLocationConfirmationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         deliveryOptionImage?.setBackgroundResource(if (deliveryType == DeliveryType.STORE_PICKUP) R.drawable.icon_basket else R.drawable.icon_delivery)
-        deliveryOption?.text = activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.delivering_to else R.string.collecting_from)
-        suburbName?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.name else selectedSuburb?.name + "," + selectedProvince?.name
-        address?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.storeAddress?.let { it.address1 + "," + it.address2 } else ""
+        deliveryOption?.text = activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.delivering_to else R.string.collecting_from_confirm_suburb)
+        suburbName?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.name else selectedSuburb?.name + ", " + selectedProvince?.name
+        address?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.storeAddress?.let { it.address1 + ", " + it.address2 } else ""
         dismissActivity()
     }
 
