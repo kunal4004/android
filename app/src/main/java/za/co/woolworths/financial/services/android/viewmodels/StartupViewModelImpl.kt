@@ -172,6 +172,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
             }
             WoolworthsApplication.setCreditCardActivation(creditCardActivation)
+            WoolworthsApplication.setCreditCardDelivery(creditCardDelivery)
         }
     }
 

@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -156,6 +157,18 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                     }
                 }
 
+                is CreditCardDeliveryStatusResponse->{
+                    when (httpCode) {
+                        200 -> {
+                            mainView?.onGetCreditCardDeliveryStatusSuccess(this)
+                        }
+                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> {
+                            mainView?.onGetCreditCardDeliveryStatusFailure()
+                        }
+                    }
+                }
+
                 else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
             }
         }
@@ -239,5 +252,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                 cardWithPLCState = this[0]
         }
         return cardWithPLCState
+    }
+
+    override fun getCreditCardDeliveryStatus(envelopeNumber: String?) {
+        envelopeNumber?.let { model?.queryServiceGetCreditCardDeliveryStatus(getProductOfferingId().toString(), it, this) }
     }
 }

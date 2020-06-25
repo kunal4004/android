@@ -19,4 +19,7 @@ public class Card {
     @SerializedName("absaAccountToken")
     @Expose
     public String absaAccountToken;
+    @SerializedName("envelopeNumber")
+    @Expose
+    public String envelopeNumber;
 }

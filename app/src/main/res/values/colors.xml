@@ -99,6 +99,8 @@
     <color name="onBoarding_3">#F7F8EC</color>
     <color name="onBoarding_4">#D6DADD</color>
     <color name="transaction_date_color">#66030303</color>
+    <color name="accounts_sales_page_bg">#F8F8F8</color>
+    <color name="offer_title_70">#70222222</color>
     <color name="status_dark_green">#A5B52B</color>
     <color name="lighter_gray_background">#30D8D8D8</color>
     <color name="arrears_red_color_code">#F43F37</color>

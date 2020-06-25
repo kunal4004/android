@@ -9,6 +9,10 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -343,6 +347,22 @@ object OneAppService : RetrofitConfig() {
 
     fun queryServiceCancelOrder(orderId: String): Call<CancelOrderResponse> {
         return mApiInterface.queryServiceCancelOrder(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), orderId)
+    }
+
+    fun getCreditCardDeliveryStatus(envelopeReference: String, productOfferingId: String): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.cardDeliveryStatus(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeReference, productOfferingId)
+    }
+
+    fun getPossibleAddress(searchPhrase: String, productOfferingId: String): Call<PossibleAddressResponse> {
+        return mApiInterface.possibleAddress(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), searchPhrase, productOfferingId)
+    }
+
+    fun getAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String): Call<AvailableTimeSlotsResponse> {
+        return mApiInterface.availableTimeSlots(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeReference, productOfferingId, x, y, shipByDate)
+    }
+
+    fun postScheduleDelivery(productOfferingId: String, scheduleDeliveryRequest: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.scheduleDelivery(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, scheduleDeliveryRequest)
     }
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {

@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDelivery;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
@@ -104,6 +105,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static ArrayList<String> whitelistedDomainsForQRScanner;
 	private static Sts stsValues;
 	private static CreditCardActivation creditCardActivation;
+	private static CreditCardDelivery creditCardDelivery;
 
 	private Activity mCurrentActivity = null;
 
@@ -526,6 +528,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		WoolworthsApplication.creditCardActivation = creditCardActivation;
 	}
 
+	public static CreditCardDelivery getCreditCardDelivery() {
+		return creditCardDelivery;
+	}
+
+	public static void setCreditCardDelivery(CreditCardDelivery creditCardDelivery) {
+		WoolworthsApplication.creditCardDelivery = creditCardDelivery;
+	}
     public static void setWhatsAppConfig(@Nullable WhatsApp whatsApp) {
 		WoolworthsApplication.whatsApp = whatsApp;
     }
