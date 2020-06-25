@@ -16,10 +16,13 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.util.OneAppEvents
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.HttpCookie
@@ -107,6 +110,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
     }
 
     fun onRegistrationSuccess() {
+        request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_REGISTRATION_SUCCESS))
         AbsaContentEncryptionRequest.clearContentEncryptionData()
         val name = SessionUtilities.getInstance().jwt?.name?.get(0)
         tvTitle.text = getString(R.string.absa_success_title, name)
