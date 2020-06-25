@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/cardViewBackground"
-        app:srcCompat="@drawable/w_credi_card" />
+        app:srcCompat="@drawable/w_black_credit_card" />
 
     <TextView
         android:id="@+id/title"

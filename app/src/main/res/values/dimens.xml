@@ -168,5 +168,6 @@
     <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
     <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
     <item name="availableFundMaximumHeight" type="dimen" format="float">0.7</item>
+    <dimen name="thirty_seven_dp">37sp</dimen>
 </resources>
 

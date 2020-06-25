@@ -1473,7 +1473,7 @@
     <string name="created">created</string>
     <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew Black Credit Card.</string>
     <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know \nwhen and where to send your card.</string>
-    <string name="set_up_delivery_nowt">set up delivery nowt</string>
+    <string name="set_up_delivery_nowt">set up delivery now</string>
     <string name="already_have_card_activate_it_now">Already have card? Activate it now</string>
     <string name="recipient_details">Recipient Details</string>
     <string name="recipient_details_desc">Please enter the details of the person we will be delivering to below:</string>
