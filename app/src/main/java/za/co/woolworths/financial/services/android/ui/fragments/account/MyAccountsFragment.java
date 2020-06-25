@@ -64,6 +64,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -146,6 +148,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
 	private View linkedAccountBottomDivider;
+	private RelativeLayout myOrdersRelativeLayout;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -227,6 +230,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			imgPersonalLoanCardContainer = view.findViewById(R.id.imgPersonalLoan);
 			SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
 			imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
+			myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
 
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
@@ -242,6 +246,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			updatePasswordRelativeLayout.setOnClickListener(this);
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
+			myOrdersRelativeLayout.setOnClickListener(this);
 
 			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
 			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
@@ -718,6 +723,18 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.CLICK_TO_REFRESH);
 				loadAccounts(true);
 				break;
+
+			case R.id.myOrdersRelativeLayout:
+				if (activity instanceof BottomNavigationActivity) {
+					if (getBottomNavigationActivity() != null)
+						getBottomNavigationActivity().pushFragment(new MyOrdersAccountFragment());
+				}else {
+					if (activity instanceof MyAccountActivity) {
+						((MyAccountActivity) activity).replaceFragment(new MyOrdersAccountFragment());
+					}
+				}
+				break;
+
 			default:
 				break;
 
