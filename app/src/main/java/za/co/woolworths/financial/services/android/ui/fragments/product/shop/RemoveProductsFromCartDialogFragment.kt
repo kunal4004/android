@@ -83,9 +83,6 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
             override fun onSuccess(shoppingCartResponse: ShoppingCartResponse?) {
                 onItemRemoved(commerceId)
             }
-
-            override fun onFailure(error: Throwable) {
-            }
         }, ShoppingCartResponse::class.java))
     }
 
