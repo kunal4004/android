@@ -81,6 +81,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -600,8 +601,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							rlCheckOut.setVisibility(View.VISIBLE);
 							rlCheckOut.setEnabled(true);
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
-							String checkoutLink = WoolworthsApplication.getCartCheckoutLink();
-							WoolworthsApplication.setCartCheckoutLink(checkoutLink+"?JSESSIONID="+shoppingCartResponse.data[0].jSessionId);
+							KotlinUtils.Companion.updateCheckOutLink(shoppingCartResponse.data[0].jSessionId);
 							bindCartData(cartResponse);
 							if (onItemRemove) {
 								cartProductAdapter.setEditMode(true);
