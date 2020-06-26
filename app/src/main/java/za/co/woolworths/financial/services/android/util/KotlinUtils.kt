@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
@@ -13,6 +15,7 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -231,6 +234,24 @@ class KotlinUtils {
             }
 
             return transactionList
+        }
+
+        fun updateCheckOutLink(jSessionId: String?){
+            val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
+            val context = WoolworthsApplication.getAppContext()
+            val packageManager = context.packageManager
+            val info: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+
+            val version = info.versionName
+            val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode else info.versionCode
+            val appVersion = "$version.$code"
+
+            val checkOutLink = when(checkoutLink.contains("?")){
+                true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
+                else -> "$checkoutLink?appVersion=$appVersion&JSESSIONID=$jSessionId"
+            }
+
+            WoolworthsApplication.setCartCheckoutLink(checkOutLink)
         }
     }
 }
