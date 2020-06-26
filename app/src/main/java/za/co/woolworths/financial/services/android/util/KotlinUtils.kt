@@ -15,7 +15,6 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -240,11 +239,11 @@ class KotlinUtils {
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
-            val info: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+            val packageInfo: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
 
-            val version = info.versionName
-            val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode else info.versionCode
-            val appVersion = "$version.$code"
+            val versionName = packageInfo.versionName
+            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode
+            val appVersion = "$versionName.$versionCode"
 
             val checkOutLink = when(checkoutLink.contains("?")){
                 true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
