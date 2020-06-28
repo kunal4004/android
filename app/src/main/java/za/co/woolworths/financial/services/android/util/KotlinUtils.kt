@@ -5,10 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.*
@@ -26,6 +28,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
@@ -235,22 +239,39 @@ class KotlinUtils {
             return transactionList
         }
 
-        fun updateCheckOutLink(jSessionId: String?){
+        fun updateCheckOutLink(jSessionId: String?) {
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
-            val packageInfo: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+            val packageInfo: PackageInfo =
+                    packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
 
             val versionName = packageInfo.versionName
-            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode
+            val versionCode =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            val checkOutLink = when(checkoutLink.contains("?")){
+            val checkOutLink = when (checkoutLink.contains("?")) {
                 true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
                 else -> "$checkoutLink?appVersion=$appVersion&JSESSIONID=$jSessionId"
             }
 
             WoolworthsApplication.setCartCheckoutLink(checkOutLink)
+        }
+
+        fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
+            emailIntent.data = Uri.parse("mailto:" + emailId +
+                    "?subject=" + Uri.encode(subject) +
+                    "&body=" + Uri.encode(""))
+            val listOfEmail =
+                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+            if (listOfEmail.size > 0) {
+                activity?.startActivity(emailIntent)
+            } else {
+                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.INFO, bindString(R.string.contact_us_no_email_error).replace("email_address", emailId).replace("subject_line", subject
+                        ?: ""))
+            }
         }
     }
 }

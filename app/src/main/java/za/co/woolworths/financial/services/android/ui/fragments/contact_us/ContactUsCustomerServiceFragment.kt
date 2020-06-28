@@ -5,15 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_customer_service.*
-import kotlinx.android.synthetic.main.my_account_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 
-class ContactUsCustomerServiceFragment : Fragment(), View.OnClickListener {
+class ContactUsCustomerServiceFragment : Fragment() {
+
+    private val customerServicesModel = ContactUsModel()
 
     private var mBottomNavigator: BottomNavigator? = null
 
@@ -30,18 +32,18 @@ class ContactUsCustomerServiceFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
-        generalEnq?.setOnClickListener(this)
-        woolworthsOnline?.setOnClickListener(this)
-        wRewards?.setOnClickListener(this)
-        mySchoolEnq?.setOnClickListener(this)
-    }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.generalEnq -> openFragment(ContactUsGeneralEnquiriesFragment())
-            R.id.woolworthsOnline -> openFragment(ContactUsOnlineFragment())
-            R.id.wRewards -> openFragment(ContactUsWRewardsFragment())
-            R.id.mySchoolEnq -> openFragment(ContactUsMySchoolFragment())
+        customerServicesModel.contactUsCustomerServicesOptions()?.forEachIndexed { index, contactUsOptions ->
+            val customerServiceItem = layoutInflater.inflate(R.layout.contact_us_customer_services_landing_item, customerServicesLinearLayout, false)
+            val customerServicesTextView = customerServiceItem.findViewById<TextView>(R.id.customerServicesTextView)
+            val customerServicesDescriptionTextView = customerServiceItem.findViewById<TextView>(R.id.customerServicesDescriptionTextView)
+
+            customerServicesTextView?.text = contactUsOptions.key
+            customerServicesDescriptionTextView?.text = contactUsOptions.description
+            customerServiceItem?.tag = index
+
+            customerServiceItem?.setOnClickListener { openFragment(ContactUsCallCenterDetailFragment.newInstance(contactUsOptions)) }
+            customerServicesLinearLayout?.addView(customerServiceItem)
         }
     }
 
@@ -60,13 +62,14 @@ class ContactUsCustomerServiceFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setupToolbar() {
+        val title = customerServicesModel.contactUsCustomerServices()?.title
         mBottomNavigator?.apply {
-            setTitle(activity?.resources?.getString(R.string.contact_us_customer_service))
+            setTitle(title)
             displayToolbar()
             showBackNavigationIcon(true)
         }
 
         if (activity is MyAccountActivity)
-            (activity as? MyAccountActivity)?.setToolbarTitle(activity?.resources?.getString(R.string.contact_us_customer_service))
+            (activity as? MyAccountActivity)?.setToolbarTitle(title)
     }
 }
