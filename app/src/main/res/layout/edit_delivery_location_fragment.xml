@@ -73,9 +73,11 @@
         android:background="@drawable/input_box_inactive_bg"
         android:paddingStart="@dimen/sixteen_dp"
         android:paddingEnd="@dimen/sixteen_dp"
+        android:clickable="true"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/subTitle">
+        app:layout_constraintTop_toBottomOf="@id/subTitle"
+        android:focusable="true">
 
         <AutoCompleteTextView
             android:id="@+id/tvSelectedProvince"
@@ -88,6 +90,7 @@
             android:layout_toStartOf="@+id/progressGetProvinces"
             android:background="@color/white"
             android:hint="Select a Province"
+            android:focusable="false"
             android:textColorHint="@color/black40"
             android:textColor="@color/offer_title"
             android:textSize="@dimen/sixteen_sp" />
@@ -100,6 +103,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:indeterminateTint="@color/black"
+            android:focusable="false"
             android:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -108,6 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:focusable="false"
             android:background="@drawable/icon_dropdown" />
     </RelativeLayout>
 
@@ -132,9 +137,11 @@
         android:background="@drawable/input_box_inactive_bg"
         android:paddingStart="@dimen/sixteen_dp"
         android:paddingEnd="@dimen/sixteen_dp"
+        android:clickable="true"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/noStoresForProvinceMsg">
+        app:layout_constraintTop_toBottomOf="@id/noStoresForProvinceMsg"
+        android:focusable="true">
 
         <AutoCompleteTextView
             android:id="@+id/tvSelectedSuburb"
@@ -149,6 +156,7 @@
             android:hint="@string/select_a_suburb"
             android:textColor="@color/offer_title"
             android:textColorHint="@color/black40"
+            android:focusable="false"
             android:textSize="@dimen/sixteen_sp" />
 
         <ProgressBar
@@ -159,6 +167,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:indeterminateTint="@color/black"
+            android:focusable="false"
             android:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -167,6 +176,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:focusable="false"
             android:background="@drawable/icon_dropdown" />
     </RelativeLayout>
 
