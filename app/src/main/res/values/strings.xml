@@ -1525,5 +1525,6 @@
     <string name="select_an_option">Please Select an Option</string>
     <string name="collection_location">Collection Location:</string>
     <string name="collection_date">Collection Date:</string>
+    <string name="store">Store\u0020</string>
 </resources>
 
