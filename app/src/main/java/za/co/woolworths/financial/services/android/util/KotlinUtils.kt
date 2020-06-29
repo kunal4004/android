@@ -260,7 +260,7 @@ class KotlinUtils {
                 when (suburb.storePickup) {
                     true -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text = suburb.name
+                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store)+suburb.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }

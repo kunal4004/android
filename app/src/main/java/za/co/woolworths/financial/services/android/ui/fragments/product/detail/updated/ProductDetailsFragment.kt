@@ -1079,7 +1079,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     is ShoppingDeliveryLocation -> {
                         when (it.suburb.storePickup) {
                             true -> {
-                                currentDeliveryLocation.text = it.suburb?.name
+                                currentDeliveryLocation.text = resources?.getString(R.string.store)+it.suburb?.name
                                 defaultLocationPlaceholder.text = getString(R.string.collecting_from)+ " "
                             }
                             else -> {
