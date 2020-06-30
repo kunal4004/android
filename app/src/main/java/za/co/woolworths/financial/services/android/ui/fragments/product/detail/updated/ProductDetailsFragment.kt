@@ -277,9 +277,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded) return
         this.productDetails = productDetails
+        otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
 
         Utils.getPreferredDeliveryLocation()?.let {
             if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                updateDefaultUI(false)
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
@@ -325,8 +327,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         if (isDefaultRequest) {
             clearSelectedOnLocationChange()
-            otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
-            updateDefaultUI()
+            updateDefaultUI(true)
             hideProductDetailsLoading()
         } else {
             hideProgressBar()
@@ -436,7 +437,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         return otherSKUsByGroupKey
     }
 
-    override fun updateDefaultUI() {
+    override fun updateDefaultUI(isInventoryCalled: Boolean) {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
         if ((!hasColor && !hasSize)) {
@@ -470,7 +471,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-        if (isAllProductsOutOfStock()) {
+        if (isAllProductsOutOfStock() && isInventoryCalled) {
             showProductOutOfStock()
         }
     }
@@ -832,6 +833,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         Utils.getPreferredDeliveryLocation()?.let {
                             if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
                                 storeIdForInventory = ""
+                                clearStockAvailability()
                                 showProductUnavailable()
                                 showProductNotAvailableForCollection()
                                 return
@@ -840,6 +842,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
                         if (Utils.retrieveStoreId(productDetails?.fulfillmentType).isNullOrEmpty()) {
                             storeIdForInventory = ""
+                            clearStockAvailability()
                             showProductUnavailable()
                             return
                         }
@@ -1137,8 +1140,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductUnavailable() {
-        colorSelectorLayout.visibility = View.GONE
-        sizeSelectorLayout.visibility = View.GONE
+        clearStockAvailability()
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
         getSelectedSku()?.quantity = 0
         hideProductDetailsLoading()
@@ -1285,5 +1287,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onFindInStore() {
         this.findItemInStore()
+    }
+
+    override fun clearStockAvailability(){
+        productDetails?.otherSkus?.forEach{
+            it.quantity = 0
+        }
+        loadSizeAndColor()
     }
 }
