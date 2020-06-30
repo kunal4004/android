@@ -829,6 +829,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
                         updateStockAvailabilityLocation()
 
+                        Utils.getPreferredDeliveryLocation()?.let {
+                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                                storeIdForInventory = ""
+                                showProductUnavailable()
+                                showProductNotAvailableForCollection()
+                                return
+                            }
+                        }
+
                         if (Utils.retrieveStoreId(productDetails?.fulfillmentType).isNullOrEmpty()) {
                             storeIdForInventory = ""
                             showProductUnavailable()
