@@ -11,8 +11,7 @@ import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
 import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
-import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.OneAppEvents
 import java.io.FileOutputStream
 import java.lang.Exception
@@ -70,7 +69,7 @@ class WPdfViewerActivity : AppCompatActivity() {
 
     private fun shareInvoice() {
         gtmTag?.let {
-            request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_SHARE_STATEMENT))
+            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_SHARE_STATEMENT,OneAppEvents.FeatureName.ABSA)
             Utils.triggerFireBaseEvents(it)
         }
         try {

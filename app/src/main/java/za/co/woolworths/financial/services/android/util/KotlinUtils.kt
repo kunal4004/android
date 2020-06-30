@@ -26,6 +26,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
@@ -251,6 +253,10 @@ class KotlinUtils {
             }
 
             WoolworthsApplication.setCartCheckoutLink(checkOutLink)
+        }
+
+        fun postOneAppEvent(appScreen: String, featureName: String) {
+            request(OneAppService.queryServicePostEvent(featureName, appScreen))
         }
     }
 }
