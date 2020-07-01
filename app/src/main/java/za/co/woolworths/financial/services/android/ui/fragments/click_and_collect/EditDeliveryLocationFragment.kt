@@ -12,15 +12,20 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.storeName
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceDropdownAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbDropdownAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.HashMap
 
 class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.EditDeliveryLocationView, View.OnClickListener {
 
@@ -69,6 +74,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 if (selectedSuburb != null || selectedStore != null) {
                     showSetSuburbProgressBar()
                     presenter?.initSetSuburb(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb?.id!! else selectedStore?.id!!)
+                    if (deliveryType == DeliveryType.STORE_PICKUP) {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)))
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)))
+                    }
                 }
             }
             R.id.selectProvince, R.id.tvSelectedProvince -> {
@@ -81,7 +90,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 getSuburbs()
             }
             R.id.delivery -> setDeliveryOption(DeliveryType.DELIVERY)
-            R.id.clickAndCollect -> setDeliveryOption(DeliveryType.STORE_PICKUP)
+            R.id.clickAndCollect -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect)
+                setDeliveryOption(DeliveryType.STORE_PICKUP)
+            }
         }
     }
 
@@ -154,7 +166,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun showErrorDialog() {
-        val dialog = ErrorDialogFragment.newInstance(activity?.resources?.getString(R.string.general_error_desc)
+        val dialog = ErrorDialogFragment.newInstance(bindString(R.string.general_error_desc)
                 ?: "")
         (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
     }
@@ -195,13 +207,13 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         selectedSuburb = null
         selectedStore = null
         tvSelectedSuburb.text.clear()
-        tvSelectedSuburb.hint = activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
+        tvSelectedSuburb.hint = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
         validateConfirmLocationButtonAvailability()
     }
 
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
-        subTitle?.text = activity?.resources?.getString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
+        subTitle?.text = bindString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
@@ -212,7 +224,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                     tvSelectedSuburb.setText(selectedSuburb?.name)
                 } else {
                     tvSelectedSuburb.text.clear()
-                    tvSelectedSuburb.hint = activity?.resources?.getString(R.string.select_a_suburb)
+                    tvSelectedSuburb.hint = bindString(R.string.select_a_suburb)
                 }
             }
             DeliveryType.STORE_PICKUP -> {
@@ -222,7 +234,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                     tvSelectedSuburb.setText(selectedStore?.name)
                 } else {
                     tvSelectedSuburb.text.clear()
-                    tvSelectedSuburb.hint = activity?.resources?.getString(R.string.select_a_store)
+                    tvSelectedSuburb.hint = bindString(R.string.select_a_store)
                 }
             }
         }
@@ -237,14 +249,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun hideSetSuburbProgressBar() {
-        progressSetSuburb.visibility = View.INVISIBLE
+        progressSetSuburb?.visibility = View.INVISIBLE
         activity?.apply {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
     }
 
     override fun showSetSuburbProgressBar() {
-        progressSetSuburb.visibility = View.VISIBLE
+        progressSetSuburb?.visibility = View.VISIBLE
         activity?.apply {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -266,9 +278,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun showNoStoresError() {
         noStoresForProvinceMsg?.visibility = View.VISIBLE
-        noStoresForProvinceMsg.text = activity?.resources?.getString(R.string.no_stores_for_province_message)+selectedProvince?.name+"."
+        noStoresForProvinceMsg.text =bindString(R.string.no_stores_for_province_message)+selectedProvince?.name+"."
         selectProvince?.setBackgroundResource(R.drawable.input_error_background)
-        tvSelectedSuburb.setText(activity?.resources?.getString(R.string.no_stores_available))
+        tvSelectedSuburb.setText(bindString(R.string.no_stores_available))
     }
 
     private fun clearNoStoresError() {
@@ -276,7 +288,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             noStoresForProvinceMsg?.visibility = View.GONE
             selectProvince?.setBackgroundResource(R.drawable.input_box_inactive_bg)
             tvSelectedSuburb.text.clear()
-            tvSelectedSuburb.hint = activity?.resources?.getString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
+            tvSelectedSuburb.hint = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
         }
     }
 

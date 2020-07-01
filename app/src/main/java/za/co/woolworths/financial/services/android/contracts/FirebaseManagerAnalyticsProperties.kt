@@ -90,6 +90,10 @@ class FirebaseManagerAnalyticsProperties {
         const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
         const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
         const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
+
+        const val SHOP_Click_Collect = "SHOP_Click_Collect"
+        const val SHOP_Click_Collect_Prov = "SHOP_Click_Collect_Prov"
+        const val SHOP_Click_Collect_Stor = "SHOP_Click_Collect_Stor"
     }
 
     class PropertyNames {
@@ -119,6 +123,8 @@ class FirebaseManagerAnalyticsProperties {
             const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "Gold_Credit_Card"
             const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "Silver_Credit_Card"
             const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "Black_Credit_Card"
+            const val provinceName: String = "provinceName"
+            const val storeName: String = "storeName"
 
         }
     }
