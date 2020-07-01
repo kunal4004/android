@@ -41,7 +41,6 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
         const val ACCOUNTSEVENTSAPPEARED: String = "accounts_event_appeared"
-        const val MYACCOUNTS_PRODUCT_OFFERING: String = "accounts_event_product_offering"
         const val LOGIN: String = "login"
         const val SORTBY_EVENT_APPEARED: String = "GA_Event_ONE_SORTSFILTERS_BUT"
         const val SORTBY_EVENT_APPLIED: String = "GA_Event_ONE_SORTSFILTERS_OPTION"
@@ -94,6 +93,10 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOP_Click_Collect = "SHOP_Click_Collect"
         const val SHOP_Click_Collect_Prov = "SHOP_Click_Collect_Prov"
         const val SHOP_Click_Collect_Stor = "SHOP_Click_Collect_Stor"
+        const val CART_BEGIN_CHECKOUT = "begin_checkout"
+        const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
+        const val CART_CHECKOUT_COMPLETE = "ecommerce_complete"
+        const val CART_ORDER_CONFIRMATION = "ecommerce_purchase"
     }
 
     class PropertyNames {
@@ -117,14 +120,13 @@ class FirebaseManagerAnalyticsProperties {
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
             const val DEEP_LINK_URL = "deepLinkUrl"
-            const val PERSONAL_LOAN_PRODUCT_OFFERING = "Personal_Loan"
-            const val STORE_CARD_PRODUCT_OFFERING = "Store_Card"
-            const val CREDIT_CARD_PRODUCT_OFFERING = "Credit_Card"
-            const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "Gold_Credit_Card"
-            const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "Silver_Credit_Card"
-            const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "Black_Credit_Card"
             const val provinceName: String = "provinceName"
             const val storeName: String = "storeName"
+            const val PERSONAL_LOAN_PRODUCT_OFFERING = "personal_loan"
+            const val STORE_CARD_PRODUCT_OFFERING = "store_card"
+            const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "gold_credit_card"
+            const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "silver_credit_card"
+            const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "black_credit_card"
 
         }
     }
