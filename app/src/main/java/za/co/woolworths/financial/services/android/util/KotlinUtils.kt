@@ -30,6 +30,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
@@ -292,6 +294,10 @@ class KotlinUtils {
             }
 
             WoolworthsApplication.setCartCheckoutLink(checkOutLink)
+        }
+
+        fun postOneAppEvent(appScreen: String, featureName: String) {
+            request(OneAppService.queryServicePostEvent(featureName, appScreen))
         }
     }
 }

@@ -5,6 +5,7 @@ class OneAppEvents {
     class FeatureName {
         companion object {
             const val ABSA: String = "absa"
+            const val WREWARDS_VIEW_VOUCHERS: String = "viewVouchers"
         }
     }
 
@@ -15,6 +16,8 @@ class OneAppEvents {
             const val ABSA_REGISTRATION_SUCCESS: String = "registrationSuccess"
             const val ABSA_VIEW_STATEMENT: String = "viewStatement"
             const val ABSA_SHARE_STATEMENT: String = "shareStatement"
+
+            const val WREWARDS: String = "wRewards"
         }
     }
 }
