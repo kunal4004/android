@@ -16,19 +16,9 @@ class FirebaseAnalyticsUserProperty {
             val firebaseInstance = FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, if (accountsMap.containsKey(PERSONAL_LOAN_PRODUCT_GROUP_CODE)) "true" else "false")
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, if (accountsMap.containsKey(STORE_CARD_PRODUCT_GROUP_CODE)) "true" else "false")
-            if (accountsMap.containsKey(CREDIT_CARD_PRODUCT_GROUP_CODE)) {
-                val account = accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]
-                account?.accountNumberBin?.let { accountNumberBin ->
-                    firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, if (accountNumberBin.equals(Utils.SILVER_CARD, ignoreCase = true)) "true" else "false")
-                    firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, if (accountNumberBin.equals(Utils.GOLD_CARD, ignoreCase = true)) "true" else "false")
-                    firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, if (accountNumberBin.equals(Utils.BLACK_CARD, ignoreCase = true)) "true" else "false")
-
-                }
-            } else {
-                firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, "false")
-                firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, "false")
-                firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, "false")
-            }
+            firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.SILVER_CARD, ignoreCase = true)) "true" else "false")
+            firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.GOLD_CARD, ignoreCase = true)) "true" else "false")
+            firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.BLACK_CARD, ignoreCase = true)) "true" else "false")
         }
     }
 }
