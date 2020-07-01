@@ -1526,5 +1526,6 @@
     <string name="collection_location">Collection Location:</string>
     <string name="collection_date">Collection Date:</string>
     <string name="store">Store\u0020</string>
+    <string name="my_orders_title">My Orders</string>
 </resources>
 

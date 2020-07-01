@@ -19,8 +19,11 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStateme
 import za.co.absa.openbankingapi.woolworths.integration.dto.*
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.OneAppEvents
 import za.co.woolworths.financial.services.android.util.WFormatter
 import java.net.HttpCookie
 import java.util.ArrayList
@@ -75,6 +78,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     fun executeGetArchivedStatement(header: Header, accountNumber: String) {
+        request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_GET_ALL_STATEMENTS))
         AbsaGetArchivedStatementListRequest().make(header, accountNumber, object : AbsaBankingOpenApiResponse.ResponseDelegate<StatementListResponse> {
             override fun onSuccess(response: StatementListResponse?, cookies: MutableList<HttpCookie>?) {
                 if (response?.archivedStatementList != null)
@@ -182,6 +186,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     override fun onViewStatement(item: ArchivedStatement) {
         if (pbCircular.visibility != View.VISIBLE) {
+            request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_GET_STATEMENT))
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT)
             getIndividualStatement(item)
         }
@@ -218,6 +223,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun showTAxInvoice(data: ByteArray?, fileName: String) {
+        request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_VIEW_STATEMENT))
         Intent(this, WPdfViewerActivity::class.java).apply {
             putExtra(WPdfViewerActivity.FILE_NAME, fileName)
             putExtra(WPdfViewerActivity.FILE_VALUE, data)

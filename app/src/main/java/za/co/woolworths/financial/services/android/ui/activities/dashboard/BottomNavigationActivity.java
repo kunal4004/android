@@ -704,7 +704,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case INDEX_TODAY:
                 return new WTodayFragment();
             case INDEX_PRODUCT:
-                return new ShopFragment();
             case INDEX_CART:
                 return new ShopFragment();
             case INDEX_REWARD:

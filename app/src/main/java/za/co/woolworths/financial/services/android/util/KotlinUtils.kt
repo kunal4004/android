@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
@@ -260,7 +262,7 @@ class KotlinUtils {
                 when (suburb.storePickup) {
                     true -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store)+suburb.name
+                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + suburb.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
@@ -272,6 +274,24 @@ class KotlinUtils {
                     }
                 }
             }
+        }
+
+        fun updateCheckOutLink(jSessionId: String?){
+            val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
+            val context = WoolworthsApplication.getAppContext()
+            val packageManager = context.packageManager
+            val packageInfo: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+
+            val versionName = packageInfo.versionName
+            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode
+            val appVersion = "$versionName.$versionCode"
+
+            val checkOutLink = when(checkoutLink.contains("?")){
+                true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
+                else -> "$checkoutLink?appVersion=$appVersion&JSESSIONID=$jSessionId"
+            }
+
+            WoolworthsApplication.setCartCheckoutLink(checkOutLink)
         }
     }
 }

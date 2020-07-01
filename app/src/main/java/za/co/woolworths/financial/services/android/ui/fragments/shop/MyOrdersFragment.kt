@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
@@ -19,9 +19,12 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import java.lang.IllegalStateException
 
 class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss {
 
@@ -63,11 +66,11 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     fun initViews() {
         parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
         mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
-        myOrdersList.layoutManager = LinearLayoutManager(activity)
+        myOrdersList?.layoutManager = LinearLayoutManager(activity)
         btnGoToProduct.setOnClickListener { onActionClick() }
 
-        swipeToRefresh.setOnRefreshListener {
-            swipeToRefresh.isRefreshing = true
+        swipeToRefresh?.setOnRefreshListener {
+            swipeToRefresh?.isRefreshing = true
             executeOrdersRequest(true)
         }
         configureUI(false)
@@ -123,38 +126,39 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
         dataList = buildDataToDisplayOrders(ordersResponse)
             if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
-            myOrdersList.adapter = activity?.let { OrdersAdapter(it, dataList) }
-            myOrdersList.visibility = View.VISIBLE
-            swipeToRefresh.isEnabled = true
+            myOrdersList?.adapter = activity?.let { OrdersAdapter(it, dataList) }
+            myOrdersList?.visibility = View.VISIBLE
+            swipeToRefresh?.isEnabled = true
         } else
             showEmptyOrdersView()
     }
 
-
     private fun executeOrdersRequest(isPullToRefresh: Boolean) {
-        mErrorHandlerView?.hideEmpyState()
-        if (!isPullToRefresh) showLoading()
-        requestOrders = OneAppService.getOrders().apply {
-            enqueue(CompletionHandler(object: IResponseListener<OrdersResponse> {
-                override fun onSuccess(ordersResponse: OrdersResponse?) {
-                    if (isAdded) {
-                        if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
-                        parentFragment?.setOrdersResponseData(ordersResponse)
-                        updateUI()
+        activity?.runOnUiThread {
+            mErrorHandlerView?.hideEmpyState()
+            if (!isPullToRefresh) showLoading()
+            requestOrders = OneAppService.getOrders().apply {
+                enqueue(CompletionHandler(object : IResponseListener<OrdersResponse> {
+                    override fun onSuccess(ordersResponse: OrdersResponse?) {
+                        if (isAdded) {
+                            if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
+                            parentFragment?.setOrdersResponseData(ordersResponse)
+                            updateUI()
+                        }
                     }
-                }
 
-                override fun onFailure(error: Throwable?) {
-                    if (isAdded) {
-                        activity?.apply {
-                            runOnUiThread {
-                                loadingBar?.visibility = View.GONE
-                                showErrorView()
+                    override fun onFailure(error: Throwable?) {
+                        if (isAdded) {
+                            activity?.apply {
+                                runOnUiThread {
+                                    loadingBar?.visibility = View.GONE
+                                    showErrorView()
+                                }
                             }
                         }
                     }
-                }
-            },OrdersResponse::class.java))
+                }, OrdersResponse::class.java))
+            }
         }
     }
 
@@ -188,8 +192,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
                 QueryBadgeCounter.instance.clearBadge()
             }
             502->{
-                showErrorDialog(ordersResponse?.response?.desc
-                        ?: getString(R.string.general_error_desc))
+                showErrorDialog(ordersResponse.response?.desc ?: bindString(R.string.general_error_desc))
             }
             else -> {
                 showErrorView()
@@ -222,9 +225,11 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     fun showErrorDialog(errorMessage: String) {
-        val dialog = OrderHistoryErrorDialogFragment.newInstance(errorMessage)
-        activity?.apply {
-            this@MyOrdersFragment.childFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, OrderHistoryErrorDialogFragment::class.java.simpleName) }
+        try {
+            val messageError =  ErrorMessageDialogFragment.newInstance(errorMessage, bindString(R.string.ok))
+            activity?.supportFragmentManager?.let { supportManager -> messageError.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
+        }catch (ex: IllegalStateException){
+            Crashlytics.logException(ex)
         }
     }
 

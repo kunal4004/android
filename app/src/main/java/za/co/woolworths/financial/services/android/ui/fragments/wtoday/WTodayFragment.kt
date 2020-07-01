@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -23,10 +22,10 @@ import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.wtoday_main_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
+import za.co.woolworths.financial.services.android.ui.extension.isEmailValid
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -98,11 +97,16 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         webWToday?.webChromeClient = object : WebChromeClient() {
             override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
                 val data = view?.hitTestResult?.extra
+
                 try {
-                    data?.let {
-                        val uri = Uri.parse(it)
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        activity?.packageManager?.let {  packageManager ->  if (intent.resolveActivity(packageManager) != null) startActivity(intent)}
+                    var intent: Intent?
+                    when (data?.isEmailValid()) {
+                        true -> Utils.sendEmail(data)
+                        else -> data?.let {
+                            val uri = Uri.parse(it)
+                            intent = Intent(Intent.ACTION_VIEW, uri)
+                            activity?.packageManager?.let { packageManager -> if (intent?.resolveActivity(packageManager) != null) startActivity(intent) }
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, e.message)
