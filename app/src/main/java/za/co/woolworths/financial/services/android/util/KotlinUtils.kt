@@ -30,6 +30,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
@@ -272,6 +274,10 @@ class KotlinUtils {
                 Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.INFO, bindString(R.string.contact_us_no_email_error).replace("email_address", emailId).replace("subject_line", subject
                         ?: ""))
             }
+        }
+
+        fun postOneAppEvent(appScreen: String, featureName: String) {
+            request(OneAppService.queryServicePostEvent(featureName, appScreen))
         }
     }
 }
