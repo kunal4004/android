@@ -155,16 +155,15 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             val virtualTempCard = virtualTempCard
             if (virtualTempCard != null) {
-                virtualTempCard.isEnabled =
-                        Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
+                virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
             }
+
+            WoolworthsApplication.setContactUsDetails(contactUs)
 
             WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
             WoolworthsApplication.setPresenceInAppChat(presenceInAppChat)
 
-            instantCardReplacement?.isEnabled =
-                    instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
-                            ?: false
+            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) } ?: false
             WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
             WoolworthsApplication.setVirtualTempCard(virtualTempCard)
 
