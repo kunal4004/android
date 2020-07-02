@@ -90,6 +90,9 @@ class FirebaseManagerAnalyticsProperties {
         const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
         const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
 
+        const val SHOP_Click_Collect = "SHOP_Click_Collect"
+        const val SHOP_Click_Collect_Prov = "SHOP_Click_Collect_Prov"
+        const val SHOP_Click_Collect_Stor = "SHOP_Click_Collect_Stor"
         const val CART_BEGIN_CHECKOUT = "begin_checkout"
         const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
         const val CART_CHECKOUT_COMPLETE = "ecommerce_complete"
@@ -117,6 +120,8 @@ class FirebaseManagerAnalyticsProperties {
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
             const val DEEP_LINK_URL = "deepLinkUrl"
+            const val provinceName: String = "provinceName"
+            const val storeName: String = "storeName"
             const val PERSONAL_LOAN_PRODUCT_OFFERING = "personal_loan"
             const val STORE_CARD_PRODUCT_OFFERING = "store_card"
             const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "gold_credit_card"
