@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import com.android.volley.NetworkResponse
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.absa_statements_activity.*
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
@@ -19,12 +18,8 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStateme
 import za.co.absa.openbankingapi.woolworths.integration.dto.*
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
-import za.co.woolworths.financial.services.android.ui.extension.request
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.OneAppEvents
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.*
 import java.net.HttpCookie
 import java.util.ArrayList
 
@@ -78,7 +73,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     fun executeGetArchivedStatement(header: Header, accountNumber: String) {
-        request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_GET_ALL_STATEMENTS))
+        KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_ALL_STATEMENTS,OneAppEvents.FeatureName.ABSA)
         AbsaGetArchivedStatementListRequest().make(header, accountNumber, object : AbsaBankingOpenApiResponse.ResponseDelegate<StatementListResponse> {
             override fun onSuccess(response: StatementListResponse?, cookies: MutableList<HttpCookie>?) {
                 if (response?.archivedStatementList != null)
@@ -186,7 +181,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     override fun onViewStatement(item: ArchivedStatement) {
         if (pbCircular.visibility != View.VISIBLE) {
-            request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_GET_STATEMENT))
+            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_STATEMENT,OneAppEvents.FeatureName.ABSA)
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT)
             getIndividualStatement(item)
         }
@@ -223,7 +218,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun showTAxInvoice(data: ByteArray?, fileName: String) {
-        request(OneAppService.queryServicePostEvent(OneAppEvents.FeatureName.ABSA, OneAppEvents.AppScreen.ABSA_VIEW_STATEMENT))
+        KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_VIEW_STATEMENT,OneAppEvents.FeatureName.ABSA)
         Intent(this, WPdfViewerActivity::class.java).apply {
             putExtra(WPdfViewerActivity.FILE_NAME, fileName)
             putExtra(WPdfViewerActivity.FILE_VALUE, data)

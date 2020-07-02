@@ -33,10 +33,12 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonElement;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -52,6 +54,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
@@ -65,6 +68,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Context context;
 	private static Context mContextApplication;
 	private static WhatsApp whatsApp;
+	private static List<ContactUs> mContactUs;
 	private UserManager mUserManager;
 	private Tracker mTracker;
 	private static ApplyNowLinks applyNowLink;
@@ -534,4 +538,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		return whatsApp;
 	}
 
+    public static void setContactUsDetails(@NotNull List<ContactUs> contactUs) {
+        mContactUs = contactUs;
+    }
+
+	public static List<ContactUs> getContactUs() {
+		return mContactUs;
+	}
 }

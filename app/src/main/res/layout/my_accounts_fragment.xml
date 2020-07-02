@@ -159,7 +159,7 @@
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/myOrdersTextView"
                                     style="@style/accountsItem"
-                                    android:drawableStart="@drawable/ic_delivery_truck"
+                                    android:drawableStart="@drawable/delivery_grey"
                                     android:text="@string/my_orders_title" />
 
                                 <ImageView
