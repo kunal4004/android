@@ -22,6 +22,8 @@ class MyAccountActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CODE_OPEN_STATEMENT = 3334
+        const val REQUEST_CODE_MY_ACCOUNT_FRAGMENT = 4444
+        const val RESULT_CODE_MY_ACCOUNT_FRAGMENT = 4444
     }
 
     @SuppressLint("DefaultLocale")
