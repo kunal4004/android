@@ -86,9 +86,9 @@ class FirebaseManagerAnalyticsProperties {
 
         const val SHOP_SEARCH = "SHOP_Search"
 
-        const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
-        const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
-        const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
+        const val CC_ACTIVATE_NEW_CARD = "cc_activate_new_card"
+        const val CC_ACTIVATE_MY_CARD = "cc_activate_my_card"
+        const val CC_ACTIVATION_COMPLETE = "cc_activation_complete"
 
         const val CART_BEGIN_CHECKOUT = "begin_checkout"
         const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
