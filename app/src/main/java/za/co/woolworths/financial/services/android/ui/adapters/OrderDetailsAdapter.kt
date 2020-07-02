@@ -66,9 +66,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
             itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
-            itemView.deliverySuburbLbl.text = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_location else R.string.delivery_suburb)
             if (!item.orderSummary?.deliveryDates.isJsonNull) {
-                itemView.deliveryItemsType.text = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_date else R.string.delivery_date)
                 itemView.deliveryDateContainer.removeAllViews()
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.confirm_deliverylocation_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
@@ -36,6 +36,10 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        imCloseIcon.setOnClickListener {
+            listener?.onConfirmLocationDialogDismiss()
+            dismissAllowingStateLoss()
+        }
         btnDefaultLocation.setOnClickListener {
             listener?.onConfirmLocation()
             dismissAllowingStateLoss()
@@ -50,11 +54,7 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
     private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
             suburb?.let {
-                btnSetNewLocation?.text = activity?.resources?.getString(if (it.storePickup) R.string.edit_collection_location else R.string.edit_delivery_location)
-                title?.text = activity?.resources?.getString(if (it.storePickup) R.string.set_your_collection_location else R.string.set_your_delivery_location)
-                description?.text = activity?.resources?.getString(if (it.storePickup) R.string.your_collection_location_is_currently_set_to else R.string.your_delivery_location_is_set_to)
-                deliverLocationIcon?.setBackgroundResource(if (it.storePickup) R.drawable.icon_basket else R.drawable.icon_truck)
-                tvLocation.text = if (it.storePickup) it.name else it.name + ", " + this.province.name
+                tvLocation.setText(it.name + ", " + this.province.name)
             }
         }
     }

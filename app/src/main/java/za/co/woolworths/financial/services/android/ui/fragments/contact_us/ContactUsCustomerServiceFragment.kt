@@ -68,6 +68,7 @@ class ContactUsCustomerServiceFragment : Fragment() {
             displayToolbar()
             showBackNavigationIcon(true)
         }
+
         if (activity is MyAccountActivity)
             (activity as? MyAccountActivity)?.setToolbarTitle(title)
     }

@@ -76,7 +76,6 @@ public class AppInstanceObject {
 		public String absaLoginAliasID;
 		public String absaDeviceID;
 		public boolean isVirtualTemporaryStoreCardPopupShown;
-		public boolean didShowDeliverySelectionModal;
 
 		public User() {
 			id = AppInstanceObject.getCurrentUsersID();
