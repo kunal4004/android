@@ -21,5 +21,5 @@ public class CartSummary {
 	public String provinceName;
 	@SerializedName("suburb")
 	@Expose
-	public Suburb suburb;
+	public SuburbFulfillment suburb;
 }

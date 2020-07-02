@@ -4,8 +4,6 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType;
-
 public class RootCategory {
 
     @SerializedName("imgUrl")
@@ -27,7 +25,5 @@ public class RootCategory {
     @SerializedName("dimValId")
     @Expose
     public String dimValId;
-
-    public RootCategoryViewType viewType = RootCategoryViewType.DEPARTMENT;
 
 }

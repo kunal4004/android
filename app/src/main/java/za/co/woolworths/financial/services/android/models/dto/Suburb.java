@@ -28,8 +28,4 @@ public class Suburb {
 	@SerializedName("fulfillmentStores")
 	@Expose
 	public JsonElement fulfillmentStores;
-
-	public boolean storePickup;
-
-	public StoreAddress storeAddress;
 }

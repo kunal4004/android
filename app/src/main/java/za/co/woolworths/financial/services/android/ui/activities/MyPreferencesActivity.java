@@ -3,6 +3,10 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -12,10 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -23,7 +23,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MyPreferencesActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
@@ -94,7 +93,9 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (lastDeliveryLocation != null) {
-			setDeliveryLocation(lastDeliveryLocation);
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			setDeliveryLocation(mSuburbName, mProvinceName);
 		}
 
 	}
@@ -143,7 +144,9 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 			case REQUEST_SUBURB_CHANGE:
 				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 				if (lastDeliveryLocation != null) {
-					setDeliveryLocation(lastDeliveryLocation);
+					mSuburbName = lastDeliveryLocation.suburb.name;
+					mProvinceName = lastDeliveryLocation.province.name;
+					setDeliveryLocation(mSuburbName, mProvinceName);
 				}
 				break;
 			case SECURITY_SETTING_REQUEST_DIALOG:
@@ -211,7 +214,11 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	}
 
 	private void locationSelectionClicked() {
-		KotlinUtils.Companion.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE, null);
+		Intent openDeliveryLocationSelectionActivity = new Intent(MyPreferencesActivity.this, DeliveryLocationSelectionActivity.class);
+		openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
+		openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
+		startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	@Override
@@ -225,10 +232,14 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		return false;
 	}
 
-	public void setDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
+	public void setDeliveryLocation(String suburb, String provinceName) {
+		if (TextUtils.isEmpty(suburb) || suburb.equalsIgnoreCase("null")) return;
 		imRightArrow.setVisibility(View.GONE);
+		tvDeliveringToText.setVisibility(View.VISIBLE);
 		tvEditDeliveryLocation.setVisibility(View.VISIBLE);
 		imDeliveryLocationIcon.setBackgroundResource(R.drawable.tick_cli_active);
-		KotlinUtils.Companion.setDeliveryAddressView(this, shoppingDeliveryLocation, tvDeliveringToText, tvDeliveryLocation, null);
+		tvDeliveringToText.setText(provinceName);
+		tvDeliveryLocation.setVisibility(View.VISIBLE);
+		tvDeliveryLocation.setText(suburb);
 	}
 }
