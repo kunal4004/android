@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -14,16 +15,19 @@ import com.awfs.coordination.R
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListener {
+class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     var navController: NavController? = null
     var bundle: Bundle? = null
     private var bookingAddress: BookingAddress = BookingAddress()
     private lateinit var listOfInputFields: List<EditText>
+    var statusResponse: StatusResponse? = null
+    var isRecipientIsThirdPerson: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
@@ -31,12 +35,10 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.apply {
-            Utils.updateStatusBarBackground(this, R.color.white)
-            findViewById<AppBarLayout>(R.id.appbar)?.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        }
-
         bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            statusResponse = Utils.jsonStringToObject(getString("delivery_status_response"), StatusResponse::class.java) as StatusResponse?
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,6 +51,16 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
         cellphoneNumber?.apply {
             afterTextChanged { clearErrorInputField(this) }
         }
+
+        idNumber?.apply {
+            afterTextChanged { clearErrorInputField(this) }
+        }
+
+        recipientOption?.setOnCheckedChangeListener(this)
+
+        if (isThirdPartyRecipient())
+            recipientOption?.visibility = View.VISIBLE
+
         confirm?.setOnClickListener(this)
         configureUI()
     }
@@ -60,7 +72,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirm -> {
-                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty()) {
+                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
                     bookingAddress.let {
                         it.nameSurname = recipientName.text.toString().trim()
                         it.telCell = cellphoneNumber.text.toString().trim()
@@ -100,5 +112,18 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
                 cellphoneNumberErrorMsg.visibility = View.GONE
             }
         }
+    }
+
+    private fun showIDNumberLayout() {
+        idNumberLayout.visibility = View.VISIBLE
+    }
+
+    private fun isThirdPartyRecipient(): Boolean {
+        return true
+    }
+
+    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+        isRecipientIsThirdPerson = checkedId == R.id.anotherPerson
+        idNumberLayout.visibility = if (isRecipientIsThirdPerson) View.VISIBLE else View.GONE
     }
 }

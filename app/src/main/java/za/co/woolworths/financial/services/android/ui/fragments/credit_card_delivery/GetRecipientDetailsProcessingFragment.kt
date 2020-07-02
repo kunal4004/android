@@ -2,9 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.credit_card_del
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.google.android.material.appbar.AppBarLayout
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -17,6 +19,10 @@ class GetRecipientDetailsProcessingFragment : BaseProcessingFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.apply {
+            Utils.updateStatusBarBackground(this, R.color.white)
+            findViewById<AppBarLayout>(R.id.appbar)?.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        }
         bundle = arguments?.getBundle("bundle")
         envelopeNumber = bundle?.getString("envelopeNumber", "")
     }
