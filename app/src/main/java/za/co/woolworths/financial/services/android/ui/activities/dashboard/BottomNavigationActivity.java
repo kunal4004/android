@@ -1348,4 +1348,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         clearBadgeCount();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
     }
+
+    public void navigateToProduct(){
+        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+        clearStack();
+        Fragment fragment = mNavController.getCurrentFrag();
+        if (fragment instanceof ShopFragment) {
+            ShopFragment shopFragment = (ShopFragment) fragment;
+            shopFragment.onStartShopping();
+            shopFragment.refreshViewPagerFragment(true);
+        }
+    }
 }

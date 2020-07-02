@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
@@ -27,7 +28,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import java.lang.IllegalStateException
 
 class MyOrdersAccountFragment : Fragment() {
 
@@ -78,6 +78,13 @@ class MyOrdersAccountFragment : Fragment() {
                 executeOrdersRequest(false)
             }
             else -> {
+                if (activity is BottomNavigationActivity) {
+                    (activity as? BottomNavigationActivity)?.navigateToProduct()
+                }
+
+                if (activity is MyAccountActivity){
+
+                }
             }
         }
     }
