@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.empty_state_template.*
+import kotlinx.android.synthetic.main.my_account_activity.*
 import kotlinx.android.synthetic.main.shop_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -19,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.Companion.RESULT_CODE_MY_ACCOUNT_FRAGMENT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
@@ -36,6 +38,7 @@ class MyOrdersAccountFragment : Fragment() {
     private var dataList = arrayListOf<OrderItem>()
     private var mBottomNavigator: BottomNavigator? = null
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BottomNavigationActivity)
@@ -44,6 +47,9 @@ class MyOrdersAccountFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (activity is MyAccountActivity){
+            setHasOptionsMenu(true)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -58,6 +64,11 @@ class MyOrdersAccountFragment : Fragment() {
     }
 
     private fun initView() {
+
+        if (activity is MyAccountActivity) {
+            activity?.accountToolbarTitle?.text = bindString(R.string.order_history)
+            (activity as? MyAccountActivity)?.supportActionBar?.show()
+        }
         mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         myOrdersList?.layoutManager = LinearLayoutManager(activity)
         btnGoToProduct?.setOnClickListener { onActionClick() }
@@ -79,11 +90,14 @@ class MyOrdersAccountFragment : Fragment() {
             }
             else -> {
                 if (activity is BottomNavigationActivity) {
-                    (activity as? BottomNavigationActivity)?.navigateToProduct()
+                    (activity as? BottomNavigationActivity)?.navigateToDepartmentFragment()
                 }
 
-                if (activity is MyAccountActivity){
-
+                if (activity is MyAccountActivity) {
+                    activity?.apply {
+                        setResult(RESULT_CODE_MY_ACCOUNT_FRAGMENT)
+                        finish()
+                    }
                 }
             }
         }

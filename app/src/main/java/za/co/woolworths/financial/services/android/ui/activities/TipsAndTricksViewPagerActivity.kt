@@ -213,10 +213,17 @@ import kotlin.properties.Delegates
                 REQUEST_CODE_SHOPPING_LIST -> {
                     presentShoppingList()
                 }
+
             }
         } else if (requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             setResult(Activity.RESULT_OK, data)
             onBackPressed()
+        } else if (requestCode == MyAccountActivity.REQUEST_CODE_MY_ACCOUNT_FRAGMENT) {
+            if (resultCode == MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT) {
+                setResult(MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT)
+                finish()
+                overridePendingTransition(0, 0)
+            }
         }
     }
 
@@ -267,7 +274,7 @@ import kotlin.properties.Delegates
         if (accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse))
         }
-        startActivity(intent)
+        startActivityForResult(intent,MyAccountActivity.REQUEST_CODE_MY_ACCOUNT_FRAGMENT)
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 
