@@ -54,6 +54,7 @@
         app:layout_constraintTop_toTopOf="@id/delivery">
 
         <LinearLayout
+            android:id="@+id/clickAndCollectView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -76,6 +77,19 @@
                 android:textSize="@dimen/fifteen_sp" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/itemsLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/twelve_sp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:layout_below="@+id/clickAndCollectView"
+            android:layout_centerHorizontal="true"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            android:layout_marginTop="@dimen/ten_dp"
+            />
 
     </RelativeLayout>
 

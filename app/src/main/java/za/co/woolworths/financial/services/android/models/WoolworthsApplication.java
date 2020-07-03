@@ -46,6 +46,7 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
@@ -108,6 +109,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static ArrayList<String> whitelistedDomainsForQRScanner;
 	private static Sts stsValues;
 	private static CreditCardActivation creditCardActivation;
+	private static ClickAndCollect clickAndCollect;
 
 	private Activity mCurrentActivity = null;
 
@@ -544,5 +546,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static List<ContactUs> getContactUs() {
 		return mContactUs;
+	}
+
+	public static ClickAndCollect getClickAndCollect() {
+		return clickAndCollect;
+	}
+
+	public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
+		WoolworthsApplication.clickAndCollect = clickAndCollect;
 	}
 }

@@ -24,4 +24,5 @@ public class Configs {
     public CreditCardActivation creditCardActivation;
     public WhatsApp whatsApp;
     public ArrayList<ContactUs> contactUs;
+    public ClickAndCollect clickAndCollect;
 }
