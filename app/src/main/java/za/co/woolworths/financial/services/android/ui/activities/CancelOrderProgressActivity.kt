@@ -12,15 +12,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CancelOrderProgressActivity : AppCompatActivity() {
 
     var orderId: String = ""
-
-    companion object {
-        var isNavigatedFromMyAccounts: Boolean  = false
-        fun triggerFirebaseEvent(properties: String){
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = properties
-            Utils.triggerFireBaseEvents( if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments)
-        }
-    }
+    var isNavigatedFromMyAccounts: Boolean  = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,5 +42,9 @@ class CancelOrderProgressActivity : AppCompatActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
-
+     fun triggerFirebaseEvent(properties: String) {
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = properties
+            Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments)
+        }
 }
