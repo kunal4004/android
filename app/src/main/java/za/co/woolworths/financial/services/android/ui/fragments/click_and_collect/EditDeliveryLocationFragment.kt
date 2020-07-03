@@ -78,6 +78,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                     showSetSuburbProgressBar()
                     presenter?.initSetSuburb(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb?.id!! else selectedStore?.id!!)
                     if (deliveryType == DeliveryType.STORE_PICKUP) {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm)
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)))
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)))
                     }

@@ -93,6 +93,7 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOP_Click_Collect = "shop_click_collect"
         const val SHOP_Click_Collect_Prov = "shop_click_collect_prov"
         const val SHOP_Click_Collect_Stor = "shop_click_collect_stor"
+        const val SHOP_Click_Collect_CConfirm = "shop_click_collect_confirm"
         const val CART_BEGIN_CHECKOUT = "begin_checkout"
         const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
         const val CART_CHECKOUT_COMPLETE = "ecommerce_complete"
