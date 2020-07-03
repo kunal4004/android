@@ -19,13 +19,12 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
-import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
-import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionPresenterImpl;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
@@ -244,12 +243,6 @@ public class ScreenManager {
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
 		presentProductDetails(activity, bundle);
-	}
-
-	public static void presentDeliveryLocationActivity(Activity activity, int requestCode) {
-		Intent openDeliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
-		activity.startActivityForResult(openDeliveryLocationSelectionActivity, requestCode);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	public static void presentWhatsAppChatToUsActivity(Activity activity, String featureName, String appScreen) {
