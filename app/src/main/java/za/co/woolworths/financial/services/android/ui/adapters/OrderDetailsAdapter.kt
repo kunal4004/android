@@ -142,7 +142,6 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class CancelOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             itemView.setOnClickListener {
-                CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_ORDER_TAP)
                 listner.onCancelOrder()
             }
         }

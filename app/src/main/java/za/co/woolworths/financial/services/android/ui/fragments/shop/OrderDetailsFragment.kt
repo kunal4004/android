@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -21,10 +20,12 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
+import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -189,6 +190,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     }
 
     override fun onCancelOrder() {
+        (activity as? OrderDetailsActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_ORDER_TAP)
         activity?.apply {
             this@OrderDetailsFragment.childFragmentManager.apply {
                 CancelOrderConfirmationDialogFragment.newInstance().show(this, CancelOrderConfirmationDialogFragment::class.java.simpleName)
@@ -199,8 +201,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
 
     override fun onCancelOrderConfirmation() {
         activity?.apply {
-            val intent = Intent(activity, CancelOrderProgressActivity::class.java)
+            val isNavigatedFromMyAccounts  = (this as? OrderDetailsActivity)?.isNavigatedFromMyAccounts
+            val intent = Intent(this, CancelOrderProgressActivity::class.java)
             intent.putExtra(CancelOrderProgressFragment.ORDER_ID, order?.orderId)
+            intent.putExtra(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS,isNavigatedFromMyAccounts)
             startActivityForResult(intent, CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
@@ -216,5 +220,4 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     override fun onErrorDialogDismiss() {
         activity?.onBackPressed()
     }
-
 }

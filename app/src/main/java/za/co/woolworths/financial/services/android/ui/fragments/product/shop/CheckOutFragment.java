@@ -168,7 +168,7 @@ public class CheckOutFragment extends Fragment {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON);
 					closeOnNextPage = QueryString.ABANDON;
 				} else if (url.contains(ORDER_CONFIRMATION)) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_ORDER_CONFIRMATION);
 					initPostCheckout();
 				}
 				// close cart activity if current url equals next url
