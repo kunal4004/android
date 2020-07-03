@@ -11,10 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.storeName
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
@@ -64,6 +66,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
         confirmLocation?.setOnClickListener(this)
+        WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxItemsInfoMessage.text = getString(R.string.click_and_collect_max_items, it.toString()) }
         setDeliveryOption(deliveryType)
         setUsersCurrentDeliveryDetails()
     }
@@ -214,6 +217,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
         subTitle?.text = bindString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
+        maxItemsInfoMessageLayout.visibility = if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)

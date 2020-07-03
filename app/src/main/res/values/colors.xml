@@ -104,4 +104,5 @@
     <color name="arrears_red_color_code">#F43F37</color>
     <color name="sign_in_register_button_border">#E5E5E5</color>
     <color name="block_card_color" >#424244</color>
+    <color name="gray_35">#35D8D8D8</color>
 </resources>

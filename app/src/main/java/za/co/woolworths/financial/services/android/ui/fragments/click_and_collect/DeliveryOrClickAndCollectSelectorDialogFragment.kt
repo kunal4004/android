@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delivery_or_click_and_collect_selector_dialog.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
@@ -33,7 +34,7 @@ class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOpt
         justBrowsing?.setOnClickListener(this)
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
-
+        WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { itemsLimit?.text = getString(R.string.click_and_collect_dialog_items_limit, it.toString()) }
     }
 
     override fun onClick(v: View?) {

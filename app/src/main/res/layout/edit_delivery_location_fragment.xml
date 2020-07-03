@@ -228,6 +228,17 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/left_guideline" />
 
+    <include
+        android:id="@+id/maxItemsInfoMessageLayout"
+        android:visibility="gone"
+        layout="@layout/click_collect_items_limited_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toTopOf="@id/confirmLocation"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
         android:layout_width="wrap_content"
