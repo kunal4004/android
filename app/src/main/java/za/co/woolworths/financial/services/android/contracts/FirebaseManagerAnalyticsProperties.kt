@@ -86,9 +86,9 @@ class FirebaseManagerAnalyticsProperties {
 
         const val SHOP_SEARCH = "SHOP_Search"
 
-        const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
-        const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
-        const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
+        const val CC_ACTIVATE_NEW_CARD = "cc_activate_new_card"
+        const val CC_ACTIVATE_MY_CARD = "cc_activate_my_card"
+        const val CC_ACTIVATION_COMPLETE = "cc_activation_complete"
 
         const val CART_BEGIN_CHECKOUT = "begin_checkout"
         const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
@@ -113,6 +113,7 @@ class FirebaseManagerAnalyticsProperties {
             const val CANCEL_FAILURE_CALL_CENTRE = "Cancel Failure Call Centre"
             const val CANCEL_FAILURE_RETRY = "Cancel Failure Retry"
             const val ACTION = "ACTION"
+            const val ACTION_LOWER_CASE = "action"
             const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "PRODUCT_ID"
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
@@ -122,6 +123,9 @@ class FirebaseManagerAnalyticsProperties {
             const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "gold_credit_card"
             const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "silver_credit_card"
             const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "black_credit_card"
+            const val activationInitiated = "Initiate Credit Card Activation"
+            const val activationRequested = "Request Credit Card Activation"
+            const val activationConfirmed = "Confirm Credit Card Activation"
 
         }
     }
