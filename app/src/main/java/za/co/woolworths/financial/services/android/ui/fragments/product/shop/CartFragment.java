@@ -308,6 +308,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
+					if (KotlinUtils.Companion.isItemsQuantityForClickAndCollectExceed(orderSummary.totalItemsCount)) {
+						showMaxItemView();
+						return;
+					}
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT);
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
 					getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
@@ -1282,6 +1286,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onOutOfStockProductsRemoved() {
 		loadShoppingCart(false);
+	}
+
+	private void showMaxItemView() {
+		Utils.showGeneralErrorDialog(requireActivity().getSupportFragmentManager(), getString(R.string.click_and_collect_max_quantity_info, String.valueOf(WoolworthsApplication.getClickAndCollect().getMaxNumberOfItemsAllowed())));
 	}
 
 }

@@ -26,6 +26,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
@@ -318,6 +319,15 @@ class KotlinUtils {
 
         fun postOneAppEvent(appScreen: String, featureName: String) {
             request(OneAppService.queryServicePostEvent(featureName, appScreen))
+        }
+
+        fun isItemsQuantityForClickAndCollectExceed(totalItemsCount: Int): Boolean {
+            WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxAllowedQuantity ->
+                Utils.getPreferredDeliveryLocation()?.suburb?.let { suburb ->
+                    return (totalItemsCount > maxAllowedQuantity && suburb.storePickup)
+                }
+            }
+            return false
         }
     }
 }
