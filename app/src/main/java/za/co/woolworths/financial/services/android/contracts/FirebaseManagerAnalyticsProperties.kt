@@ -86,14 +86,23 @@ class FirebaseManagerAnalyticsProperties {
 
         const val SHOP_SEARCH = "SHOP_Search"
 
-        const val CC_ACTIVATE_NEW_CARD = "CC_ACTIVATE_NEW_CARD"
-        const val CC_ACTIVATE_MY_CARD = "CC_ACTIVATE_MY_CARD"
-        const val CC_ACTIVATION_COMPLETE = "CC_ACTIVATION_COMPLETE"
+        const val CC_ACTIVATE_NEW_CARD = "cc_activate_new_card"
+        const val CC_ACTIVATE_MY_CARD = "cc_activate_my_card"
+        const val CC_ACTIVATION_COMPLETE = "cc_activation_complete"
 
+        const val SHOP_Click_Collect = "shop_click_collect"
+        const val SHOP_Click_Collect_Prov = "shop_click_collect_prov"
+        const val SHOP_Click_Collect_Stor = "shop_click_collect_stor"
+        const val SHOP_Click_Collect_CConfirm = "shop_click_collect_confirm"
         const val CART_BEGIN_CHECKOUT = "begin_checkout"
         const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
         const val CART_CHECKOUT_COMPLETE = "ecommerce_complete"
         const val CART_ORDER_CONFIRMATION = "ecommerce_purchase"
+
+        const val Acc_My_Orders = "acc_my_orders"
+        const val Acc_My_Orders_Cancel_Order = "acc_my_orders_cancel_order"
+        const val Acc_My_Orders_DT = "acc_my_orders_ddp"
+        const val Shop_My_Orders_DT = "shop_my_orders_ddp"
     }
 
     class PropertyNames {
@@ -113,15 +122,21 @@ class FirebaseManagerAnalyticsProperties {
             const val CANCEL_FAILURE_CALL_CENTRE = "Cancel Failure Call Centre"
             const val CANCEL_FAILURE_RETRY = "Cancel Failure Retry"
             const val ACTION = "ACTION"
+            const val ACTION_LOWER_CASE = "action"
             const val NUTRITIONAL_INFORMATION_PRODUCT_ID = "PRODUCT_ID"
             const val NUTRITIONAL_INFORMATION_FILTER_OPTION = "Filter_Option"
             const val ENTRY_POINT = "Entry_Point"
             const val DEEP_LINK_URL = "deepLinkUrl"
+            const val provinceName: String = "province_name"
+            const val storeName: String = "store_name"
             const val PERSONAL_LOAN_PRODUCT_OFFERING = "personal_loan"
             const val STORE_CARD_PRODUCT_OFFERING = "store_card"
             const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "gold_credit_card"
             const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "silver_credit_card"
             const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "black_credit_card"
+            const val activationInitiated = "Initiate Credit Card Activation"
+            const val activationRequested = "Request Credit Card Activation"
+            const val activationConfirmed = "Confirm Credit Card Activation"
 
         }
     }

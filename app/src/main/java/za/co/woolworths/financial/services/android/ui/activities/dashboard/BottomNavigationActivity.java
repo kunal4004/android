@@ -1194,19 +1194,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
             case R.id.navigation_today:
-                mQueryBadgeCounter.queryCartSummaryCount();
-                mQueryBadgeCounter.queryVoucherCount();
-                break;
-
             case R.id.navigate_to_shop:
-                /**
-                 * Trigger cart count when delivery location address was set
-                 * if delivery location is empty or null, cart summary call will occur
-                 * in ProductDetailActivity.
-                 * It ensure only one cart count call is made on sign in
-                 */
-                if (Utils.getPreferredDeliveryLocation() != null)
-                    mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryCartSummaryCount();
                 mQueryBadgeCounter.queryVoucherCount();
                 break;
             case R.id.navigate_to_wreward:

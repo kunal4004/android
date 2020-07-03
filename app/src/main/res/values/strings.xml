@@ -498,7 +498,7 @@
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
     <string name="delivery_location_title">delivery location</string>
-    <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
+    <string name="your_delivery_location_is_set_to">Your delivery location is currently set to</string>
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
     <string name="added_to">added to </string>
@@ -1480,6 +1480,27 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delivery_date">Delivery Date:</string>
     <string name="processing_request">Processing Request</string>
+    <string name="please_select_an_option">Please select an option</string>
+    <string name="just_browsing">Just Browsing</string>
+    <string name="click_collect">Click &amp; Collect</string>
+    <string name="delivery">Delivery</string>
+    <string name="select_a_suburb">Select a Suburb</string>
+    <string name="select_a_store">Select a Store</string>
+    <string name="delivery_or_collection">Delivery or Collection?</string>
+    <string name="collecting_from">Collecting From</string>
+    <string name="select_your_collection_store">Select your collection store:</string>
+    <string name="select_your_delivery_location">Select your delivery location:</string>
+    <string name="remove_these_items_continue">remove these items &amp; continue</string>
+    <string name="item_not_available_for_collection_title">Item not available for collection</string>
+    <string name="item_not_available_for_collection_desc">To purchase, please try find in-store or change location for delivery.</string>
+    <string name="change_delivery_option">CHANGE DELIVERY OPTION</string>
+    <string name="remove_items_dialog_title">These items will be removed</string>
+    <string name="remove_items_dialog_desc">We always show you items available at the store closest to your location. When you change this location, the items you see may change too.</string>
+    <string name="no_stores_for_province_message">Sorry, we currently do not have stores that support this feature in\u0020</string>
+    <string name="no_stores_available">No Stores Available</string>
+    <string name="set_your_collection_location">Set your Collection Location</string>
+    <string name="your_collection_location_is_currently_set_to">Your collection location is currently set to</string>
+    <string name="edit_collection_location">EDIT Collection LOCATION</string>
     <string name="whatsapp_chat_with_us_row">WhatsApp chat with us row</string>
     <string name="whatsapp_chat_with_us_row_title">Chat to us on WhatsApp</string>
     <string name="whatsapp_chat_to_us_title">Chat To Us</string>
@@ -1500,6 +1521,14 @@
     <string name="temp_card_how_to_use8">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
     <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
     <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
+    <string name="collecting_from_confirm_suburb">Collecting from</string>
+    <string name="select_an_option">Please Select an Option</string>
+    <string name="collection_location">Collection Location:</string>
+    <string name="collection_date">Collection Date:</string>
+    <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
+    <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
+    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
+    <string name="click_and_collect_dialog_items_limit">%1$s items Limit</string>
 </resources>
 
