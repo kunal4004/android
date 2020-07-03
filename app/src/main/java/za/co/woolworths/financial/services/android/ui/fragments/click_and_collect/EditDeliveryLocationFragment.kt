@@ -66,7 +66,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
         confirmLocation?.setOnClickListener(this)
-        WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxItemsInfoMessage.text = getString(R.string.click_and_collect_max_items, it.toString()) }
+        WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxItemsInfoMessage?.text = getString(R.string.click_and_collect_max_items, it.toString()) }
         setDeliveryOption(deliveryType)
         setUsersCurrentDeliveryDetails()
     }
@@ -217,7 +217,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
         subTitle?.text = bindString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
-        maxItemsInfoMessageLayout.visibility = if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
+        maxItemsInfoMessageLayout?.visibility = if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
