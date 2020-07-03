@@ -94,6 +94,11 @@ class FirebaseManagerAnalyticsProperties {
         const val CART_CHECKOUT_ABANDON = "ecommerce_abandon"
         const val CART_CHECKOUT_COMPLETE = "ecommerce_complete"
         const val CART_ORDER_CONFIRMATION = "ecommerce_purchase"
+
+        const val Acc_My_Orders = "acc_my_orders"
+        const val Acc_My_Orders_Cancel_Order = "acc_my_orders_cancel_order"
+        const val Acc_My_Orders_DT = "acc_my_orders_ddp"
+        const val Shop_My_Orders_DT = "shop_my_orders_ddp"
     }
 
     class PropertyNames {

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import kotlinx.android.synthetic.main.order_details_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToastInterface {
 
+    var isNavigatedFromMyAccounts: Boolean = false
     private var order: Order? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +47,16 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
         const val ORDER_ID: String = "ORDER_ID"
         const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+        const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
     }
 
     private fun configureUI() {
+        isNavigatedFromMyAccounts = intent.getBooleanExtra(NAVIGATED_FROM_MY_ACCOUNTS, false)
+
+        when (isNavigatedFromMyAccounts){
+            true -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders_DT)
+            false -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Shop_My_Orders_DT)
+        }
         intent.getStringExtra("order")?.apply {
             order = Utils.jsonStringToObject(this, Order::class.java) as? Order
               val orderText = getString(R.string.order_page_title_prefix) + order?.orderId
