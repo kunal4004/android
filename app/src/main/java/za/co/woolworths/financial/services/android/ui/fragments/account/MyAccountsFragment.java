@@ -733,6 +733,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 						((MyAccountActivity) activity).replaceFragment(new MyOrdersAccountFragment());
 					}
 				}
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders);
 				break;
 
 			default:

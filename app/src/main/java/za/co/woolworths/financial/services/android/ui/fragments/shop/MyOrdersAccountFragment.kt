@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +14,15 @@ import kotlinx.android.synthetic.main.empty_state_template.*
 import kotlinx.android.synthetic.main.my_account_activity.*
 import kotlinx.android.synthetic.main.shop_fragment.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.IPresentOrderDetailInterface
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.Companion.RESULT_CODE_MY_ACCOUNT_FRAGMENT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -26,12 +30,9 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.*
 
-class MyOrdersAccountFragment : Fragment() {
+class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
 
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var requestOrders: Call<OrdersResponse>? = null
@@ -170,7 +171,7 @@ class MyOrdersAccountFragment : Fragment() {
         dataList = buildDataToDisplayOrders(ordersResponse)
         if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
-            myOrdersList.adapter = activity?.let { OrdersAdapter(it, dataList) }
+            myOrdersList.adapter = activity?.let { OrdersAdapter(it, this, dataList) }
             myOrdersList.visibility = View.VISIBLE
             swipeToRefresh.isEnabled = true
         } else
@@ -231,5 +232,15 @@ class MyOrdersAccountFragment : Fragment() {
         super.onHiddenChanged(hidden)
         if (!hidden)
             setupToolbar()
+    }
+
+    override fun presentOrderDetailsPage(item: Order) {
+        activity?.apply {
+            val intent = Intent(this, OrderDetailsActivity::class.java)
+            intent.putExtra("order", Utils.toJson(item))
+            intent.putExtra(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS, true)
+            activity?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
+            activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
     }
 }
