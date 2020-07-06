@@ -370,6 +370,10 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.retrieveRecipientDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
     }
 
+    fun updateRecipientDetails(envelopeNumber: String, requestBody: UpdateRecipientDetailsRequestBody): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.updateRecipientDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber, requestBody)
+    }
+
     fun getAddressDetails(envelopeNumber: String): Call<AddressDetailsResponse> {
         return mApiInterface.retrieveAddressDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
     }

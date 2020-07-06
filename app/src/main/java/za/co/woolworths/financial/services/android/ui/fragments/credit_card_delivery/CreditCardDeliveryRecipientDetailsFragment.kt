@@ -44,7 +44,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        listOfInputFields = listOf(recipientName, cellphoneNumber)
+        listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber)
         recipientName?.apply {
             afterTextChanged { clearErrorInputField(this) }
         }
@@ -58,7 +58,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
 
         recipientOption?.setOnCheckedChangeListener(this)
 
-        if (isThirdPartyRecipient())
+        if (isThirdPartyRecipientEligible())
             recipientOption?.visibility = View.VISIBLE
 
         confirm?.setOnClickListener(this)
@@ -74,12 +74,15 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
             R.id.confirm -> {
                 if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
                     bookingAddress.let {
-                        it.nameSurname = recipientName.text.toString().trim()
-                        it.telCell = cellphoneNumber.text.toString().trim()
-                        it.telWork = alternativeNumber.text.toString().trim()
+                        it.deliverTo = recipientName?.text.toString().trim()
+                        it.telCell = cellphoneNumber?.text.toString().trim()
+                        it.telWork = alternativeNumber?.text.toString().trim()
+                        it.isThirdPartyRecipient = isRecipientIsThirdPerson
+                        if (isRecipientIsThirdPerson)
+                            it.idNumber = idNumber?.text.toString().trim()
                     }
                     bundle?.putString("BookingAddress", Utils.toJson(bookingAddress))
-                    navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
+                    navController?.navigate(R.id.action_to_updateRecipientDetailsProcessingFragment, bundleOf("bundle" to bundle))
                 } else {
                     listOfInputFields.forEach {
                         if (it.text.toString().trim().isEmpty())
@@ -91,6 +94,9 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     }
 
     private fun showErrorInputField(editText: EditText) {
+        if (editText.id == R.id.idNumber && !isRecipientIsThirdPerson)
+            return
+
         editText.setBackgroundResource(R.drawable.otp_box_error_background)
         when (editText.id) {
             R.id.recipientName -> {
@@ -99,6 +105,9 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
             R.id.cellphoneNumber -> {
                 cellphoneNumberErrorMsg.visibility = View.VISIBLE
             }
+            R.id.idNumber -> {
+                idNumberErrorMsg.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -106,24 +115,26 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
         editText.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.recipientName -> {
-                recipientNameErrorMsg.visibility = View.GONE
+                recipientNameErrorMsg?.visibility = View.GONE
             }
             R.id.cellphoneNumber -> {
-                cellphoneNumberErrorMsg.visibility = View.GONE
+                cellphoneNumberErrorMsg?.visibility = View.GONE
+            }
+            R.id.idNumber -> {
+                idNumberErrorMsg?.visibility = View.GONE
             }
         }
     }
 
-    private fun showIDNumberLayout() {
-        idNumberLayout.visibility = View.VISIBLE
-    }
-
-    private fun isThirdPartyRecipient(): Boolean {
-        return true
+    private fun isThirdPartyRecipientEligible(): Boolean {
+        return !(statusResponse?.isThirdPartyRecipient == true)
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         isRecipientIsThirdPerson = checkedId == R.id.anotherPerson
         idNumberLayout.visibility = if (isRecipientIsThirdPerson) View.VISIBLE else View.GONE
+        if (checkedId == R.id.mySelf && idNumberErrorMsg.visibility == View.VISIBLE) {
+            clearErrorInputField(idNumber)
+        }
     }
 }

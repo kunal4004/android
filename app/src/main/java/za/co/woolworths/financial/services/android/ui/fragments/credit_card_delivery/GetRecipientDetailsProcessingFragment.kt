@@ -53,5 +53,6 @@ class GetRecipientDetailsProcessingFragment : BaseProcessingFragment() {
     fun navigateToRecipientDetailsFragment(response: RecipientDetailsResponse? = null) {
         response?.let { bundle?.putString("RecipientDetailsResponse", Utils.toJson(it)) }
         navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
+        getProgressState()?.let { activity?.supportFragmentManager?.beginTransaction()?.remove(it)?.commitAllowingStateLoss() }
     }
 }
