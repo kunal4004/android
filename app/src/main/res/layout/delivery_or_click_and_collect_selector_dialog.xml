@@ -82,7 +82,7 @@
             android:id="@+id/itemsLimit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/twelve_sp"
+            android:textSize="@dimen/eleven_sp"
             android:fontFamily="@font/myriad_pro_regular"
             android:layout_below="@+id/clickAndCollectView"
             android:layout_centerHorizontal="true"
