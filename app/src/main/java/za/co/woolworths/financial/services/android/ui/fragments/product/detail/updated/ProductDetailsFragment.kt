@@ -318,6 +318,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean) {
 
         productDetails?.otherSkus?.forEach { otherSku ->
+            otherSku?.quantity = 0
             skusInventoryForStoreResponse.skuInventory.forEach { skuInventory ->
                 if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
                     otherSku.quantity = skuInventory.quantity
@@ -588,7 +589,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             else -> {
                 getSelectedSku()?.quantity?.let {
                     when (it) {
-                        0 -> showFindInStore()
+                        0, -1 -> showFindInStore()
                         else -> {
                             getSelectedQuantity()?.apply {
                                 if (it < this)
@@ -1142,7 +1143,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showProductUnavailable() {
         clearStockAvailability()
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
-        getSelectedSku()?.quantity = 0
+        getSelectedSku()?.quantity = -1
         hideProductDetailsLoading()
         toCartAndFindInStoreLayout?.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
@@ -1291,7 +1292,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun clearStockAvailability(){
         productDetails?.otherSkus?.forEach{
-            it.quantity = 0
+            it.quantity = -1
         }
         loadSizeAndColor()
     }
