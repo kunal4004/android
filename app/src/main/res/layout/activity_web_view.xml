@@ -25,8 +25,6 @@
                 android:layout_marginTop="0dp"
                 android:background="@color/white"
                 android:minHeight="?attr/actionBarSize"
-                app:popupTheme="@style/SSOActivity"
-                app:theme="@style/SSOActivity"
                 app:title=" "
                 app:titleTextColor="@color/black">
 
