@@ -276,8 +276,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded) return
+
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
+        this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
+
+
+        if ((!hasColor && !hasSize)) {
+            setSelectedSku(this.defaultSku)
+            updateAddToCartButtonForSelectedSKU()
+        }
+
+        if (hasSize)
+            setSelectedGroupKey(defaultGroupKey)
 
         Utils.getPreferredDeliveryLocation()?.let {
             if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
@@ -439,16 +450,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
-
-        if ((!hasColor && !hasSize)) {
-            setSelectedSku(this.defaultSku)
-            updateAddToCartButtonForSelectedSKU()
-        }
-
-        if (hasSize)
-            setSelectedGroupKey(defaultGroupKey)
-
         loadSizeAndColor()
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
@@ -1270,10 +1271,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun clearSelectedOnLocationChange(){
-        setSelectedSku(null)
-        selectedSize?.text = ""
-        selectedColor?.text = ""
+    override fun clearSelectedOnLocationChange() {
+        if (!(!hasColor && !hasSize)) {
+            setSelectedSku(null)
+            selectedSize?.text = ""
+            selectedColor?.text = ""
+        }
     }
 
     override fun showProductNotAvailableForCollection() {
