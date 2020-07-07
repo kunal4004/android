@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/provinceItemLayout"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/white">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvProvinceName"
+        style="@style/style_province_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/iconCaretRight"
+        android:text="Western Cape" />
+
+    <ImageView
+        android:id="@+id/iconCaretRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/ic_caret_black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/outside_border" />
+
+</RelativeLayout>

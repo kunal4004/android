@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +17,6 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -46,8 +44,6 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 
 public class CheckOutFragment extends Fragment {
 
@@ -118,22 +114,14 @@ public class CheckOutFragment extends Fragment {
 		ws.setDomStorageEnabled(true);
 		clearWebViewCachesCustom(getActivity());
 		clearCookie();
-		if (Build.VERSION.SDK_INT >= 21) {
-			ws.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-		}
+		ws.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 	}
 
 	private void clearCookie() {
 		CookieManager cookieManager = CookieManager.getInstance();
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			cookieManager.removeAllCookies(new ValueCallback<Boolean>() {
-				// a callback which is executed when the cookies have been removed
-				@Override
-				public void onReceiveValue(Boolean aBoolean) {
-				}
-			});
-		} else cookieManager.removeAllCookie();
+		// a callback which is executed when the cookies have been removed
+		cookieManager.removeAllCookies(aBoolean -> { });
 	}
 
 	private void setWebViewClient() {
@@ -160,8 +148,10 @@ public class CheckOutFragment extends Fragment {
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				if (url.contains(QueryString.COMPLETE.getValue())) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE);
 					closeOnNextPage = QueryString.COMPLETE;
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON);
 					closeOnNextPage = QueryString.ABANDON;
 				}
 				view.loadUrl(url);
@@ -169,14 +159,16 @@ public class CheckOutFragment extends Fragment {
 			}
 
 			@Override
-			public void onPageStarted(WebView view, String url,
-									  Bitmap favicon) {
+			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 
 				if (url.contains(QueryString.COMPLETE.getValue())) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE);
 					closeOnNextPage = QueryString.COMPLETE;
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON);
 					closeOnNextPage = QueryString.ABANDON;
 				} else if (url.contains(ORDER_CONFIRMATION)) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_ORDER_CONFIRMATION);
 					initPostCheckout();
 				}
 				// close cart activity if current url equals next url
@@ -262,14 +254,11 @@ public class CheckOutFragment extends Fragment {
 	}
 
 	private void retryConnect(View view) {
-		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-					mErrorHandlerView.hideErrorHandler();
-					mProgressLayout.setVisibility(View.VISIBLE);
-					mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
-				}
+		view.findViewById(R.id.btnRetry).setOnClickListener(v -> {
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+				mErrorHandlerView.hideErrorHandler();
+				mProgressLayout.setVisibility(View.VISIBLE);
+				mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
 			}
 		});
 	}
@@ -285,7 +274,7 @@ public class CheckOutFragment extends Fragment {
 
 	public void initPostCheckout()
 	{
-		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+		QueryBadgeCounter.getInstance().setCartCount(0);
 		Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(Utils.getPreferredDeliveryLocation().suburb.id));
 		checkoutSuccess.enqueue(new CompletionHandler<>(new IResponseListener<Void>() {
 			@Override

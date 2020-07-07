@@ -7,11 +7,6 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.loan_confirmation_layout.*
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.btnConfirm
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.mConfirmProgressBar
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvAdditionalMonthlyRepayment
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvDrawnDownSelectedAmount
-import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.tvRepaymentPeriod
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan
@@ -54,7 +49,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.loan_confirmation_layout, container, false)
+        return inflater.inflate(R.layout.loan_confirmation_layout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

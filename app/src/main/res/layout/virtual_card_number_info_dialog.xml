@@ -61,7 +61,7 @@
         style="@style/call_to_action_text_style"
         android:layout_width="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:text="@string/cli_got_it"
+        android:text="@string/got_it"
         android:padding="@dimen/five_dp"
         android:textAllCaps="true"
         android:textColor="@color/black"

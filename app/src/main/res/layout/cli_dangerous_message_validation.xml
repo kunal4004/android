@@ -66,7 +66,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
                 android:layout_marginBottom="@dimen/bank_spacing_width"

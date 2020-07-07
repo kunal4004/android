@@ -36,9 +36,9 @@ abstract class BarcodeScanExtension : Fragment() {
         asyncTaskIsRunning(true)
         mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService.getProducts(it) }
         mRetrieveProductDetail?.enqueue(CompletionHandler(object : IResponseListener<ProductView> {
-            override fun onSuccess(response: ProductView) {
+            override fun onSuccess(response: ProductView?) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
-                    when (response.httpCode) {
+                    when (response?.httpCode) {
                         200 -> {
                             response.products?.apply {
                                 when (size) {
@@ -58,7 +58,7 @@ abstract class BarcodeScanExtension : Fragment() {
                         else -> {
                             asyncTaskIsRunning(false)
                             progressBarVisibility(false)
-                            response.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
+                            response?.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
                         }
                     }
                 }
@@ -157,43 +157,6 @@ abstract class BarcodeScanExtension : Fragment() {
                 }
             })
         }
-    }
-
-    fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
-        val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
-        val uri = Uri.parse(urlString)
-        uri?.host?.replace("www.", "")?.let { domain ->
-            WoolworthsApplication.getWhitelistedDomainsForQRScanner()?.apply {
-                if (domain in this) {
-                    when {
-                        domain.contains(BarcodeScanFragment.DOMAIN_WOOLWORTHS, true) -> {
-                            var searchTerm = uri.getQueryParameter("Ntt")
-                            if (searchTerm.isNullOrEmpty())
-                                searchTerm = uri.getQueryParameter("searchTerm")
-
-                            if (!searchTerm.isNullOrEmpty()) {
-                                productSearchTypeAndTerm.searchTerm = searchTerm
-                                productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
-                            } else {
-                                searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
-                                if (!searchTerm.isNullOrEmpty()) {
-                                    productSearchTypeAndTerm.searchTerm = searchTerm
-                                    productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
-                                }else{
-                                    productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.WHITE_LISTED_DOMAIN
-                                }
-                            }
-                        }
-                        else -> {
-                            productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.WHITE_LISTED_DOMAIN
-                        }
-                    }
-
-                }
-            }
-        }
-
-        return productSearchTypeAndTerm
     }
 
     fun sendResultBack(searchType: String, searchTerm: String) {

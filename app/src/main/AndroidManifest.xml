@@ -143,21 +143,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="https"
-                    android:host="www-win-qa.woolworths.co.za"
-                    android:path="/cat" />
-            </intent-filter>
-            <intent-filter android:order="2">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:scheme="https"
-                    android:host="www-win-qa.woolworths.co.za"
-                    android:path="/fragments/common/dimension-search-results.jsp" />
+                <data android:scheme="https" />
+                <data android:host="${deep_link_host}" />
+                <data android:pathPattern="/cat.*" />
             </intent-filter>
         </activity>
         <activity
@@ -258,10 +246,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity"
             android:screenOrientation="portrait"
@@ -324,11 +309,6 @@
             android:theme="@style/Cart" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Cart" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Cart" />
 
@@ -403,7 +383,6 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
-
             />
 
         <activity
@@ -497,6 +476,12 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension" android:screenOrientation="portrait"/>
 
         <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity"
             android:theme="@style/salesPageMainStyle" />
 
@@ -523,6 +508,21 @@
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize"
             />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/salesPageMainStyle" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle" />
 
     </application>
 

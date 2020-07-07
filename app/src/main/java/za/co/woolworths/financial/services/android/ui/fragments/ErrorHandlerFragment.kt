@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments
 import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -102,7 +101,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     ErrorHandlerActivity.ATM_PIN_LOCKED -> {
                         val openDialogFragment =
                                 GotITDialogFragment.newInstance(getString(R.string.absa_forgot_atm_pin_code_title),
-                                        getString(R.string.absa_forgot_atm_pin_code_desc), getString(R.string.cli_got_it),
+                                        getString(R.string.absa_forgot_atm_pin_code_desc), getString(R.string.got_it),
                                         this)
                         activity?.let {
                             openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)

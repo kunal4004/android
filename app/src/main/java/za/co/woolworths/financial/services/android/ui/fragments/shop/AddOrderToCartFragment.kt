@@ -5,14 +5,14 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
@@ -24,10 +24,10 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
-import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.MultiMap
 import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.Utils
@@ -431,9 +431,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     override fun openSetSuburbProcess() {
         activity?.apply {
-            val openDeliveryLocationSelectionActivity = Intent(this, DeliveryLocationSelectionActivity::class.java)
-            startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE)
-            overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+            KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE)
         }
     }
 

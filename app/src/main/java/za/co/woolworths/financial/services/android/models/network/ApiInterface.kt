@@ -9,7 +9,12 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
+import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
+import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
+import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
@@ -63,6 +68,21 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String): Call<VoucherResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("user/vouchers/count")
+    fun getVouchersCount(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<VoucherCount>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/session")
@@ -908,7 +928,7 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String): Call<OrdersResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order/{id}")
     fun getOrderDetails(
             @Header("apiId") apiId: String,
@@ -1147,7 +1167,6 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/locations")
     fun getStoresForNPC(
             @Header("apiId") apiId: String,
@@ -1181,4 +1200,67 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Query("orderId") orderId: String): Call<CancelOrderResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("absa/activateCardAccount")
+    fun activateCreditCard(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("accounts/otp/retrieve")
+    fun retrieveOTP(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("otpMethod") otpMethod: String,
+            @Query("productOfferingId") productOfferingId: String): Call<RetrieveOTPResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/otp/validate/{productOfferingId}")
+    fun validateOTP(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body requestBody: ValidateOTPRequest,
+            @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("event/{featureName}/{appScreen}")
+    fun postEvent(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("featureName") featureName: String,
+            @Path("appScreen") appScreen: String): Call<Response>
 }

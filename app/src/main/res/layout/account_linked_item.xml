@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linkAccountCardRelativeLayout"
+    android:visibility="visible"
+    style="@style/accountsCardStyle">
+
+    <FrameLayout
+        android:id="@+id/imgPersonalLoan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/accountProductImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/small" />
+
+        <ImageView
+            android:id="@+id/accountLoanStatusIndicatorImageView"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_gravity="end"
+            android:background="@drawable/account_status_indicator" />
+    </FrameLayout>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/accountProductTitleTextView"
+        style="@style/sectionCardLight"
+        android:layout_marginStart="7dp"
+        android:layout_toRightOf="@+id/imgPersonalLoan"
+        android:text="@string/personal_loan"
+        android:textSize="@dimen/acc_thirteen_sp"
+        app:WTextView_font="medium" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/accountProductAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/black_off"
+        android:textSize="@dimen/acc_thirteen_sp"
+        app:WTextView_font="medium_bold" />
+</RelativeLayout>

@@ -18,7 +18,6 @@
 
 
         <RelativeLayout
-            android:id="@+id/view_background"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@color/delete_red_bg"
@@ -42,7 +41,6 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/view_foreground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white">
@@ -53,7 +51,6 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/llProductView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
@@ -99,7 +96,7 @@
                             android:gravity="center"
                             android:minHeight="@dimen/eighty_dp">
 
-                            <ImageView
+                            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                                 android:id="@+id/cartProductImage"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,15 +16,17 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -52,16 +53,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.resources?.apply {
-            mTabTitle = mutableListOf(
-                    getString(R.string.shop_department_title_category),
-                    getString(R.string.shop_department_title_list),
-                    getString(R.string.shop_department_title_order))
-        }
+        mTabTitle = mutableListOf(
+                bindString(R.string.shop_department_title_category),
+                bindString(R.string.shop_department_title_list),
+                bindString(R.string.shop_department_title_order))
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_shop, container, false)
     }
@@ -72,12 +70,12 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             permissionUtils = PermissionUtils(this, this@ShopFragment)
             permissions.add(android.Manifest.permission.CAMERA)
         }
-        tvSearchProduct.setOnClickListener { navigateToProductSearch() }
-        imBarcodeScanner.setOnClickListener { checkCameraPermission() }
+        tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
+        imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
         fragmentManager?.let {  shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)}
-        viewpager_main.offscreenPageLimit = 2
-        viewpager_main.adapter = shopPagerAdapter
-        viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewpager_main?.offscreenPageLimit = 2
+        viewpager_main?.adapter = shopPagerAdapter
+        viewpager_main?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -113,9 +111,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View {
-        val view = activity?.layoutInflater!!.inflate(R.layout.shop_custom_tab, null)
-        view.tvTitle.text = tabTitle!![pos]
+    private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View? {
+        val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
+        view?.tvTitle?.text = tabTitle?.get(pos)
         return view
     }
 
@@ -190,6 +188,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         if (requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
             refreshViewPagerFragment(true)
         }
+
+        if (requestCode == EditDeliveryLocationActivity.REQUEST_CODE || requestCode == DEPARTMENT_LOGIN_REQUEST && viewpager_main.currentItem == 0) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+            fragment?.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     fun refreshViewPagerFragment(isNewSession: Boolean) {
@@ -214,8 +217,12 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         viewpager_main?.setCurrentItem(1, true)
     }
 
+    fun navigateToMyShoppingListFragment() {
+        viewpager_main?.setCurrentItem(1, false)
+    }
+
     fun scrollToTop() {
-        when (viewpager_main.currentItem) {
+        when (viewpager_main?.currentItem) {
             0 -> {
                 val detailsFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
                 detailsFragment?.scrollToTop()
@@ -272,5 +279,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
      */
     fun openBarcodeScanner() {
         imBarcodeScanner?.performClick()
+    }
+
+    fun switchToDepartmentTab(){
+        viewpager_main.currentItem = 0
     }
 }

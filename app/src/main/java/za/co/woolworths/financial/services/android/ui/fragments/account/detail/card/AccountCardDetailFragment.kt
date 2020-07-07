@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -17,18 +18,26 @@ import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.account_activate_credit_card_layout.*
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
+import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.android.synthetic.main.common_account_detail.*
-import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationInitiated
+import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
+import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
@@ -37,14 +46,21 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+
+    companion object {
+        private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+    }
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
+    private var cardWithPLCState: Card? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +83,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         relIncreaseMyLimit?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
-
+        viewPaymentOptions?.setOnClickListener(this)
+        activateCreditCard?.setOnClickListener(this)
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
@@ -96,6 +113,8 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 })
 
         autoConnectToNetwork()
+
+        initCreditCardActivation()
     }
 
     private fun autoConnectToNetwork() {
@@ -158,6 +177,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
+                }
+                R.id.viewPaymentOptions -> { mCardPresenterImpl?.navigateToPaymentOptionActivity()}
+                R.id.activateCreditCard -> {
+                    if (Utils.isCreditCardActivationEndpointAvailable())
+                        navigateToCreditCardActivation()
+                    else
+                        showCreditCardActivationUnavailableDialog()
                 }
             }
         }
@@ -228,14 +254,14 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
         when (coveredText) {
             true -> {
-                balanceProtectInsuranceTextView?.text =
-                        activity?.resources?.getString(R.string.bpi_covered)
-                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView, "#bad110")
+                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, "#bad110")
+                bpiCoveredTextView?.visibility = VISIBLE
+                bpiNotCoveredGroup?.visibility = GONE
+
             }
             false -> {
-                balanceProtectInsuranceTextView?.text =
-                        activity?.resources?.getString(R.string.bpi_not_covered)
-                KotlinUtils.roundCornerDrawable(balanceProtectInsuranceTextView, "#4c000000")
+                bpiCoveredTextView?.visibility = GONE
+                bpiNotCoveredGroup?.visibility = VISIBLE
             }
         }
     }
@@ -295,8 +321,103 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         }
     }
 
+    override fun navigateToPaymentOptionActivity() {
+        activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
+    }
+
     private fun hideCLIView() {
         mCardPresenterImpl?.creditLimitIncrease()?.showCLIProgress(llCommonLayer, tvIncreaseLimitDescription)
+    }
+
+    override fun executeCreditCardTokenService() {
+        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true) return
+        activity?.apply {
+            includeAccountDetailHeaderView.visibility = GONE
+            creditCardActivationView.visibility = GONE
+            creditCardActivationPlaceHolder.visibility = VISIBLE
+            creditCardActivationPlaceHolder?.startShimmer()
+            mCardPresenterImpl?.getCreditCardToken()
+        }
+    }
+
+    override fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse) {
+        creditCardTokenResponse.apply {
+            if (cards.isNullOrEmpty()) {
+                showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
+            } else {
+                cardWithPLCState = mCardPresenterImpl?.getCardWithPLCState(cards)
+                if (cardWithPLCState == null) {
+                    showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
+                } else {
+                    showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
+                }
+            }
+        }
+    }
+
+    override fun onGetCreditCardTokenFailure() {
+        showGetCreditCardActivationStatus(CreditCardActivationState.FAILED)
+    }
+
+    override fun showGetCreditCardActivationStatus(status: CreditCardActivationState) {
+        when (status) {
+            CreditCardActivationState.FAILED,
+            CreditCardActivationState.ACTIVATED -> {
+                stopCardActivationShimmer()
+                includeAccountDetailHeaderView.visibility = VISIBLE
+            }
+            CreditCardActivationState.UNAVAILABLE,
+            CreditCardActivationState.AVAILABLE -> {
+                stopCardActivationShimmer()
+                creditCardActivationView.visibility = VISIBLE
+                KotlinUtils.roundCornerDrawable(creditCardActivationState, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
+                creditCardActivationState.text = status.value
+            }
+        }
+    }
+
+
+    override fun stopCardActivationShimmer(){
+        creditCardActivationPlaceHolder.apply {
+            stopShimmer()
+            visibility = GONE
+        }
+    }
+
+    private fun navigateToCreditCardActivation(){
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)))
+        activity?.apply {
+            val mIntent = Intent(this, CreditCardActivationActivity::class.java)
+            val mBundle = Bundle()
+            mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)
+            mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+            mIntent.putExtra("bundle", mBundle)
+            startActivityForResult(mIntent, REQUEST_CREDIT_CARD_ACTIVATION)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
+    }
+
+    private fun showCreditCardActivationUnavailableDialog(){
+        activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(mCardPresenterImpl?.getAccount()?.accountNumberBin).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CREDIT_CARD_ACTIVATION -> {
+                    executeCreditCardTokenService()
+                }
+            }
+        }
+    }
+
+    private fun initCreditCardActivation() {
+        WoolworthsApplication.getCreditCardActivation()?.apply {
+            if (isEnabled) {
+                executeCreditCardTokenService()
+            }
+        }
     }
 }
 

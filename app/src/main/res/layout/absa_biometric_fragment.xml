@@ -54,7 +54,6 @@
         android:visibility="visible">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvEnableBiometric"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

@@ -68,7 +68,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
 
     <Button
-        android:id="@+id/gotITButton"
+        android:id="@+id/okButtonTapped"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -7,7 +7,12 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
+import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
+import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
+import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
+import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -48,6 +53,10 @@ object OneAppService : RetrofitConfig() {
 
     fun getVouchers(): Call<VoucherResponse> {
         return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+    }
+
+    fun getVouchersCount(): Call<VoucherCount> {
+        return mApiInterface.getVouchersCount(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
     fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String): Call<LocationResponse> {
@@ -320,8 +329,23 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, requestBody)
     }
 
+    fun activateCreditCardRequest(requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse> {
+        return mApiInterface.activateCreditCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), requestBody)
+    }
+
+    fun retrieveOTP(otpMethodType: OTPMethodType, productOfferingId: String): Call<RetrieveOTPResponse> {
+        return mApiInterface.retrieveOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethodType.name, productOfferingId)
+    }
+
+    fun validateOTP(validateOTPRequest: ValidateOTPRequest, productOfferingId: String): Call<ValidateOTPResponse> {
+        return mApiInterface.validateOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), validateOTPRequest, productOfferingId)
+    }
+
     fun queryServiceCancelOrder(orderId: String): Call<CancelOrderResponse> {
         return mApiInterface.queryServiceCancelOrder(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), orderId)
     }
 
+    fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
+        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
+    }
 }

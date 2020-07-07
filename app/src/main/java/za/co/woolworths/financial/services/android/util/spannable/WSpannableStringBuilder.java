@@ -13,9 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import za.co.woolworths.financial.services.android.util.LinkType;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.LinkType;
 
 public class WSpannableStringBuilder extends SpannableStringBuilder {
 

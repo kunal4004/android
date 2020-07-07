@@ -68,13 +68,6 @@
         <item name="actionBarItemBackground">@null</item>
     </style>
 
-    <style name="LoanWithdrawal" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
-        <item name="android:actionBarStyle">@style/LoanWithdrawalStyle</item>
-    </style>
-
     <style name="FaqStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -108,29 +101,12 @@
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
     </style>
 
-    <style name="MyAccountCards" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowDisablePreview">true</item>
-        <item name="android:homeAsUpIndicator">@drawable/back_white</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowActionBarOverlay">false</item>
-
-    </style>
-
 
     <style name="Cart" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:background">@android:color/transparent</item>
 
-    </style>
-
-    <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="WTransaction" parent="Theme.AppCompat.Light.NoActionBar">
@@ -181,9 +157,6 @@
     <!-- the theme applied to the application or activity -->
 
     <!-- ActionBar styles -->
-    <style name="LoanWithdrawalStyle" parent="@style/Theme.AppCompat.Light.NoActionBar">
-        <item name="android:background">@color/purple</item>
-    </style>
 
     <style name="SSOActivity" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
@@ -275,130 +248,6 @@
 
     <!-- Account logged out state view -->
 
-    <style name="account_logged_out_benefit" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:paddingBottom">30dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">22sp</item>
-        <item name="WTextView_font">medium_bold</item>
-        <item name="android:text">@string/the_benefits</item>
-        <item name="android:letterSpacing">-0.02</item>
-    </style>
-
-    <style name="account_logged_out_container" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:paddingStart">@dimen/bank_spacing_width</item>
-        <item name="android:paddingEnd">@dimen/bank_spacing_width</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
-    <style name="account_logged_out_icon" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_marginTop">30dp</item>
-        <item name="android:layout_marginBottom">25dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:contentDescription">@string/placeholder</item>
-    </style>
-
-    <style name="account_logged_out_reward_title" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:paddingBottom">@dimen/default_margin</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">17.5sp</item>
-        <item name="WTextView_font">medium</item>
-        <item name="android:letterSpacing">0.02</item>
-    </style>
-
-    <style name="account_logged_out_reward_detail" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:paddingBottom">@dimen/bank_spacing_width</item>
-        <item name="android:gravity">center|top</item>
-        <item name="android:textColor">#80000000</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:lineSpacingExtra">4dp</item>
-    </style>
-
-    <style name="account_logged_out_card_title_3" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:paddingBottom">30dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:layout_marginTop">30dp</item>
-        <item name="android:textSize">20sp</item>
-        <item name="WTextView_font">medium_bold</item>
-        <item name="android:letterSpacing">-0.02</item>
-    </style>
-
-    <style name="account_logged_out_bullet" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:gravity">start|center</item>
-        <item name="android:textColor">#80000000</item>
-        <item name="android:text">@string/bullet</item>
-        <item name="android:layout_marginRight">@dimen/default_margin</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">medium_bold</item>
-    </style>
-
-    <style name="account_logged_out_trans_container" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:paddingStart">@dimen/bank_spacing_width</item>
-        <item name="android:paddingEnd">@dimen/bank_spacing_width</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-
-    <style name="account_logged_out_reward_bold" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginTop">32dp</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:paddingBottom">20dp</item>
-        <item name="android:gravity">start|top</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">14sp</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
-    </style>
-
-    <style name="account_logged_out_list_bullet" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:gravity">start|top</item>
-        <item name="android:textColor">#80000000</item>
-        <item name="android:textSize">15sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:lineSpacingExtra">4dp</item>
-    </style>
-
-    <style name="colorSizeStyle" parent="android:Theme">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:gravity">center|start</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.08</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="WTextView_font">medium_bold</item>
-    </style>
-
     x
     <!-- Customize theme for transparent activity -->
     <style name="Theme.AppCompat.Transparent.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
@@ -415,9 +264,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
-        <item name="WTextView_font">myriadpro_regular</item>
         <item name="android:textSize">15sp</item>
-
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <style name="contact_us_item_desc_textview" parent="android:Theme">
@@ -425,9 +275,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">#4d000000</item>
         <item name="android:singleLine">true</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:textSize">13sp</item>
-
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <!-- Barcode Style-->
@@ -452,6 +303,7 @@
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:lineSpacingExtra">-2dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <!--Alerter-->
@@ -488,40 +340,12 @@
         <item name="android:background">@drawable/bottom_light_divider_list</item>
     </style>
 
-    <style name="card_item_click_style">
-        <item name="android:paddingTop">28.2dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">@dimen/default_margin</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingBottom">26.8dp</item>
-        <item name="android:background">@drawable/bottom_light_divider_list</item>
-    </style>
-
     <style name="card_item_click_no_pad_style">
         <item name="android:paddingTop">9dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">60dp</item>
         <item name="android:paddingBottom">20dp</item>
         <item name="android:background">@drawable/bottom_light_divider_list</item>
-    </style>
-
-    <style name="last_card_style">
-        <item name="android:paddingTop">9dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">60dp</item>
-        <item name="android:paddingBottom">20dp</item>
-    </style>
-
-    <style name="style_account_status_label">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">medium_bold</item>
-        <item name="android:letterSpacing">0.15</item>
     </style>
 
     <style name="style_debit_order_title">
@@ -546,28 +370,6 @@
     </style>
 
     <style name="style_debit_order_labels">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/account_label_color</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-    </style>
-
-    <style name="style_how_to_pay_label">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">#222222</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">medium</item>
-        <item name="android:letterSpacing">0.1</item>
-    </style>
-
-    <style name="style_loan_label">
-        <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">15sp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -625,17 +427,6 @@
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
-    </style>
-
-    <style name="style_loan_amount">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/account_amount_color</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">center|end</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:layout_marginRight">@dimen/sixteen_dp</item>
     </style>
 
     <style name="style_loan_desc">
@@ -782,7 +573,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:visibility">invisible</item>
-        <item name="WTextView_font">medium_bold</item>
+        <item name="fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
     <style name="cli_step_indicator_line">
@@ -818,7 +609,6 @@
         <item name="android:contentDescription">@string/placeholder</item>
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:src">@drawable/icon_info</item>
-        <item name="android:alpha">0.2</item>
     </style>
 
     <style name="increase_limit_relative_style" parent="android:Theme">
@@ -942,27 +732,6 @@
         <item name="android:layout_height">@dimen/ten_dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/default_background</item>
-    </style>
-
-    <style name="account_card_style">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black_50</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_marginBottom">5dp</item>
-    </style>
-
-    <style name="account_card_amount_style">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginRight">@dimen/ten_dp</item>
-        <item name="android:textSize">@dimen/twenty_two_sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="WTextView_font">medium_bold</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_alignParentLeft">true</item>
     </style>
 
     <!-- upload document modal -->
@@ -1152,17 +921,6 @@
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
-    <style name="style_cart_delivery_info">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">center</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:background">#4A4A4A</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:paddingTop">15dp</item>
-    </style>
-
     <style name="style_delivery_location_item_title">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/black</item>
@@ -1213,13 +971,6 @@
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
-    <style name="full_screen_dialog" parent="Theme.AppCompat.Light">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-    </style>
-
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
         <item name="android:colorControlActivated">#000000</item>
     </style>
@@ -1232,6 +983,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/email_text_size_15sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <style name="top_view_style_income_expenses" parent="android:Theme">
@@ -1429,14 +1181,6 @@
         <item name="android:background">@color/recent_search_bg</item>
     </style>
 
-    <style name="style_info_cards">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_alignParentRight">true</item>
-        <item name="android:alpha">0.3</item>
-    </style>
-
     <style name="my_orders_textview_style_1">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1496,17 +1240,6 @@
         <item name="android:selectableItemBackground">@android:color/transparent</item>
         <item name="android:actionBarItemBackground">@null</item>
         <item name="actionBarItemBackground">@null</item>
-    </style>
-
-    <style name="PermanentCardBlockBottomSheetStyle" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowCloseOnTouchOutside">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorBackground">     @android:color/transparent</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.3</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
     </style>
 
 
@@ -1946,10 +1679,6 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="futura_medium_black_22_text_style" parent="futura_medium_black">
-        <item name="android:textSize">@dimen/twenty_two_sp</item>
-    </style>
-
 
     <style name="myriad_pro_regular">
         <item name="android:layout_width">0dp</item>
@@ -2021,13 +1750,13 @@
 
     <style name="enter_otp_edit_text_style">
         <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
-        <item name="android:inputType">textFilter|textNoSuggestions|textMultiLine</item>
         <item name="android:textColor">#222222</item>
         <item name="android:layout_width">@dimen/store_card_text_field_width_47_dp</item>
         <item name="android:layout_height">@dimen/store_card_text_field_height_50_dp</item>
         <item name="android:textSize">@dimen/store_card_text_field_text_size_14_dp</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLength">2</item>
+        <item name="android:inputType">textFilter|textNoSuggestions|textVisiblePassword</item>
     </style>
 
 
@@ -2118,17 +1847,6 @@
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
-    <style name="account_sales_apply_now_button" parent="android:Theme">
-        <item name="android:layout_height">@dimen/account_sales_apply_now_button_height</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/account_sales_apply_now_button_text_size</item>
-        <item name="WButton_font">medium_bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
-    </style>
-
     <style name="accountPaymentOptionsRootStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">100dp</item>
@@ -2186,7 +1904,6 @@
     <style name="accountAvailableFundAmountStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/available_fund_46dp_margin</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">40sp</item>
@@ -2227,19 +1944,6 @@
         <item name="android:layout_height">70dp</item>
     </style>
 
-    <style name="textViewRoundedTagStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
-        <item name="android:gravity">center|start</item>
-        <item name="android:letterSpacing" tools:targetApi="lollipop">0.12</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
     <style name="tag_badge_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -2255,19 +1959,150 @@
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
-    <style name="gift_item_textView_style">
+    <style name="onBoardingButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/account_button_bg</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="onBoardingButtonBlackStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="wRewardValidDateLabelStyle">
+        <item name="android:textSize">@dimen/voucher_date_text_size_11sp</item>
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="wRewardValidDateTextStyle">
+        <item name="android:textSize">@dimen/voucher_date_text_size_11sp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="appToolbarStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginEnd">3dp</item>
-        <item name="android:paddingStart">4dp</item>
-        <item name="android:paddingEnd">4dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
-        <item name="android:background">@color/black</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">8sp</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
-        <item name="android:layout_marginBottom">32dp</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="promotionLayoutStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:contentDescription">@string/plp_newPromotionalImage</item>
+    </style>
+
+    <style name="cli_steps_title_style" parent="cli_step_indicator_text">
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+    </style>
+
+    <style name="chatToUsOnWhatsAppStyle">
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_marginStart">17dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:lineSpacingExtra">1.20sp</item>
+    </style>
+
+    <style name="whatsapp_how_to_pay_info_icon_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="whatsapp_how_to_pay_info_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">25dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="autoSizeMaxTextSize">15sp</item>
+    </style>
+
+    <style name="chat_with_us_title_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">26dp</item>
+        <item name="android:gravity">start</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingMultiplier">1.40</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0.07</item>
+    </style>
+
+    <style name="chat_with_us_desc_whatsapp_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">11dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#7F7F7F</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">14sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="autoSizeMaxTextSize">16sp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:lineSpacingMultiplier">1.28</item>
+    </style>
+
+    <style name="anyQuestionLabelStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textColor">@color/offer_title</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+    </style>
+
+    <style name="gift_item_textView_style">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginEnd">3dp</item>
+    <item name="android:paddingStart">4dp</item>
+    <item name="android:paddingEnd">4dp</item>
+    <item name="android:paddingTop">2dp</item>
+    <item name="android:paddingBottom">2dp</item>
+    <item name="android:background">@color/black</item>
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:textSize">8sp</item>
+    <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+    <item name="android:layout_marginBottom">32dp</item>
     </style>
 </resources>

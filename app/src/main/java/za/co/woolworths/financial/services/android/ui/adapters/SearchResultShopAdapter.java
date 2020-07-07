@@ -16,15 +16,12 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
-
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.ui.adapters.holder.PriceItem;
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.SearchResultPriceItem;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
@@ -232,7 +229,9 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 
 		private void setCartImage(ProductList productItem) {
-			cartProductImage.setImageURI(productItem.externalImageRef + ((productItem.externalImageRef.indexOf("?") > 0) ? "w=" + 85 + "&q=" + 85 : "?w=" + 85 + "&q=" + 85));
+			String externalImageRef = productItem.externalImageRef;
+			if (cartProductImage!=null && !TextUtils.isEmpty(externalImageRef))
+				cartProductImage.setImageURI(externalImageRef + ((externalImageRef.indexOf("?") > 0) ? "w=" + 85 + "&q=" + 85 : "?w=" + 85 + "&q=" + 85));
 		}
 
 		public void setProductName(ProductList productItem) {
@@ -240,7 +239,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 
 		private void setPrice(ProductList productItem) {
-			PriceItem priceItem =new  PriceItem();
+			SearchResultPriceItem priceItem =new  SearchResultPriceItem();
 			priceItem.setPrice(productItem, itemView, true);
 		}
 

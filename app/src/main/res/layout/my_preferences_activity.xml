@@ -49,7 +49,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <LinearLayout
-            android:id="@+id/locationLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -99,8 +98,8 @@
 
                 <ImageView
                     android:id="@+id/deliverLocationIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/twenty_four_dp"
+                    android:layout_height="@dimen/twenty_four_dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/ic_delivery_truck" />
@@ -109,32 +108,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="16dp"
-                    android:layout_toLeftOf="@+id/iconCaretRight"
+                    android:layout_toLeftOf="@+id/editLocation"
                     android:layout_toRightOf="@+id/deliverLocationIcon"
                     android:gravity="center_vertical"
-                    android:orientation="vertical">
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvDeliveryLocation"
-                        style="@style/style_cart_delivery_selected"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:drawablePadding="16dp"
-                        android:gravity="center_vertical"
-                        android:singleLine="true"
-                        android:ellipsize="end"
-                        app:WTextView_font="myriadpro_regular"
-                        android:text="@string/set_your_delivery_location"
-                        />
+                    android:orientation="horizontal">
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvDeliveringTo"
                         style="@style/style_cart_delivery_to_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
                         android:gravity="center_vertical"
-                        android:textColor="@color/semi_transparent_black"
-                        android:visibility="gone"
-                        />
+                        android:text="@string/delivery_or_collection" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvDeliveryLocation"
+                        style="@style/style_cart_delivery_selected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="16dp"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:visibility="gone" />
                 </LinearLayout>
                 <ImageView
                     android:id="@+id/iconCaretRight"
@@ -156,7 +152,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:letterSpacing="0.1"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     />
             </RelativeLayout>
         </LinearLayout>
@@ -212,7 +208,6 @@
                 android:visibility="visible">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvMyDetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

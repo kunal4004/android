@@ -20,21 +20,23 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
+import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import java.lang.IllegalStateException
 
-class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation {
+class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation, OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss {
 
     companion object {
         private val ARG_PARAM = "order"
         fun getInstance(order: Order) = OrderDetailsFragment().withArgs {
-            putSerializable(ARG_PARAM, order)
+            putString(ARG_PARAM, Utils.toJson(order))
         }
     }
 
@@ -52,7 +54,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            order = it.getSerializable(ARG_PARAM) as Order
+            order = Utils.jsonStringToObject(it.getString("order"),Order::class.java) as Order?
         }
     }
 
@@ -80,10 +82,20 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
         orderDetailRequest.enqueue(CompletionHandler(object : IResponseListener<OrderDetailsResponse> {
             override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
                 if (!isAdded) return
-                mainLayout.visibility = View.VISIBLE
-                loadingBar.visibility = View.GONE
-                orderDetailsResponse = ordersResponse
-                bindData(orderDetailsResponse!!)
+                when (ordersResponse?.httpCode) {
+                    0 -> {
+                        mainLayout?.visibility = View.VISIBLE
+                        loadingBar?.visibility = View.GONE
+                        orderDetailsResponse = ordersResponse
+                        bindData(orderDetailsResponse!!)
+                    }
+                    502 -> {
+                        loadingBar.visibility = View.GONE
+                        showErrorDialog(ordersResponse?.response?.desc
+                                ?: getString(R.string.general_error_desc))
+                    }
+                }
+
             }
 
             override fun onFailure(error: Throwable?) {
@@ -184,6 +196,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     }
 
     override fun onCancelOrder() {
+        (activity as? OrderDetailsActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_ORDER_TAP)
         activity?.apply {
             this@OrderDetailsFragment.childFragmentManager.apply {
                 CancelOrderConfirmationDialogFragment.newInstance().show(this, CancelOrderConfirmationDialogFragment::class.java.simpleName)
@@ -194,12 +207,23 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
 
     override fun onCancelOrderConfirmation() {
         activity?.apply {
-            val intent = Intent(activity, CancelOrderProgressActivity::class.java)
+            val isNavigatedFromMyAccounts  = (this as? OrderDetailsActivity)?.isNavigatedFromMyAccounts
+            val intent = Intent(this, CancelOrderProgressActivity::class.java)
             intent.putExtra(CancelOrderProgressFragment.ORDER_ID, order?.orderId)
+            intent.putExtra(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS,isNavigatedFromMyAccounts)
             startActivityForResult(intent, CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
 
+    fun showErrorDialog(errorMessage: String) {
+        val dialog = OrderHistoryErrorDialogFragment.newInstance(errorMessage)
+        activity?.apply {
+            this@OrderDetailsFragment.childFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, OrderHistoryErrorDialogFragment::class.java.simpleName) }
+        }
+    }
 
+    override fun onErrorDialogDismiss() {
+        activity?.onBackPressed()
+    }
 }

@@ -1,17 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import cards.pay.paycardsrecognizer.sdk.Card
-import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -19,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.*
 
@@ -29,7 +25,6 @@ class ICREnterCardNumberFragment : MyCardExtension() {
     private val mMCSInstantStoreCard = WoolworthsApplication.getInstantCardReplacement()
 
     companion object {
-        const val REQUEST_CODE_SCAN_CARD = 1
         fun newInstance() = ICREnterCardNumberFragment()
     }
 
@@ -59,12 +54,11 @@ class ICREnterCardNumberFragment : MyCardExtension() {
 
     private fun uniqueIdsForEnterCartNumberScreen() {
         activity?.resources?.apply {
-            tvLinkNewCardTitle?.contentDescription = getString(R.string.label_linkICR)
-            tvLinkNewCardDesc?.contentDescription = getString(R.string.label_linkICRCardDescription)
-            cardNumberEditText?.contentDescription = getString(R.string.text_carddetails)
-            navigateToEnterOTPFragmentImageView?.contentDescription =
-                    getString(R.string.button_next)
-            invalidCardNumberLabel?.contentDescription = getString(R.string.invalid_card_number)
+            tvLinkNewCardTitle?.contentDescription = bindString(R.string.label_linkICR)
+            tvLinkNewCardDesc?.contentDescription = bindString(R.string.label_linkICRCardDescription)
+            cardNumberEditText?.contentDescription = bindString(R.string.text_carddetails)
+            navigateToEnterOTPFragmentImageView?.contentDescription = bindString(R.string.button_next)
+            invalidCardNumberLabel?.contentDescription = bindString(R.string.invalid_card_number)
         }
     }
 
@@ -133,16 +127,6 @@ class ICREnterCardNumberFragment : MyCardExtension() {
                 isFocusable = true
                 requestFocus()
                 showSoftKeyboard(it, this)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_SCAN_CARD) {
-            when (resultCode) {
-                RESULT_OK -> (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber?.let { cardNumber -> cardNumberEditText?.setText(cardNumber) }
-                else -> return
             }
         }
     }

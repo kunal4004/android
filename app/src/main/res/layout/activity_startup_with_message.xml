@@ -15,7 +15,6 @@
         android:background="@drawable/splash_w_logo"
         />
     <LinearLayout
-        android:id="@+id/messageLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/splashLogo"

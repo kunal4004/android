@@ -5,7 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.loan_withdrawal_layout.*
+import kotlinx.android.synthetic.main.loan_withdrawal_container.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
@@ -67,7 +67,7 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
     }
 
     fun finishActivity() {
-        supportFragmentManager?.let {
+        supportFragmentManager.let {
             it.backStackEntryCount.let { count ->
                 when (count) {
                     1 -> it.popBackStack()
@@ -101,7 +101,7 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
 
     override fun onConnectionChanged() {
         val isConnected = NetworkManager.getInstance().isConnectedToNetwork(this@LoanWithdrawalActivity)
-       supportFragmentManager?.findFragmentById(R.id.flLoanContent)?.apply {
+       supportFragmentManager.findFragmentById(R.id.flLoanContent)?.apply {
            when (this) {
                is LoanWithdrawalFragment -> onConnectionChanged(isConnected)
                is LoanWithdrawalDetailFragment -> onConnectionChanged(isConnected)

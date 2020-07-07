@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wtoday
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Intent
 import android.net.Uri
@@ -24,7 +25,7 @@ import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.extension.isEmailValid
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -36,13 +37,13 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         super.onCreate(savedInstanceState)
         activity?.let {
             Utils.updateStatusBarBackground(it)
-            QueryBadgeCounter.getInstance().queryMessageCount()
+            QueryBadgeCounter.instance.queryMessageCount()
         }
 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.wtoday_main_fragment, container, false)
+        return inflater.inflate(R.layout.wtoday_main_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,6 +52,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         setClient()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun configureUI() {
         webWToday?.apply {
             settings?.apply {
@@ -61,8 +63,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 addJavascriptInterface(WebViewJavascriptInterface(this@WTodayFragment), "Android")
                 setSupportMultipleWindows(true)
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             }
 
             loadUrl(wTodayUrl)
@@ -96,11 +97,16 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         webWToday?.webChromeClient = object : WebChromeClient() {
             override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
                 val data = view?.hitTestResult?.extra
+
                 try {
-                    data?.let {
-                        val uri = Uri.parse(it)
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        if (intent.resolveActivity(activity?.packageManager) != null) startActivity(intent)
+                    var intent: Intent?
+                    when (data?.isEmailValid()) {
+                        true -> Utils.sendEmail(data)
+                        else -> data?.let {
+                            val uri = Uri.parse(it)
+                            intent = Intent(Intent.ACTION_VIEW, uri)
+                            activity?.packageManager?.let { packageManager -> if (intent?.resolveActivity(packageManager) != null) startActivity(intent) }
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, e.message)
@@ -166,5 +172,4 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     override fun progressBarVisibility(isDisplayed: Boolean) {
         flProgressContainer?.visibility = if (isDisplayed) VISIBLE else GONE
     }
-
 }

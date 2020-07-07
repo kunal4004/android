@@ -8,13 +8,13 @@
     android:background="@color/white">
 
     <View
-        android:id="@+id/vSpaceView"
+        android:id="@+id/topMarginView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sixteen_dp"
         android:background="@color/default_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/pbCircular"

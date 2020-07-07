@@ -66,7 +66,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
                 android:layout_marginBottom="@dimen/bank_spacing_width"
@@ -77,7 +76,7 @@
                 android:weightSum="1">
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
-                    android:id="@+id/btnSignOutCancel"
+                    android:id="@+id/cancelSignOutButton"
                     style="@style/whiteButtonStyle"
                     android:layout_marginRight="4dp"
                     android:layout_weight="0.5"

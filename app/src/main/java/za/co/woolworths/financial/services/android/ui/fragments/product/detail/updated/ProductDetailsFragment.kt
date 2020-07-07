@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
@@ -13,52 +16,52 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
+import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
+import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import kotlinx.android.synthetic.main.promotional_image.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
-import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-import android.graphics.Color
-import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
-import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
-import kotlinx.android.synthetic.main.promotional_image.view.*
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
-import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
-import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
-import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.*
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -86,6 +89,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
     private var isApiCallInProgress: Boolean = false
     private var defaultGroupKey: String? = null
+    private var mFreeGiftPromotionalImage: String? = null
+    private var EDIT_LOCATION_LOGIN_REQUEST = 2020
 
 
     companion object {
@@ -171,11 +176,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     visibility = View.VISIBLE
                 }
             }
+
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
             it.saveText?.apply { setPromotionalText(this) }
         }
+
+        mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
 
         loadPromotionalImages()
 
@@ -197,6 +205,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 requestSelectColor()
             else
                 requestSelectSize()
+            return
+        }
+
+        if (!Utils.isDeliverySelectionModalShown()) {
+            showDeliveryOptionDialog()
             return
         }
 
@@ -264,9 +277,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
         if (!isAdded) return
         this.productDetails = productDetails
-        if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
+        otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
 
+        Utils.getPreferredDeliveryLocation()?.let {
+            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                updateDefaultUI(false)
+                showProductUnavailable()
+                showProductNotAvailableForCollection()
+                return
+            }
+        }
+
+        if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
             storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
                 false -> {
@@ -294,6 +318,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean) {
 
         productDetails?.otherSkus?.forEach { otherSku ->
+            otherSku?.quantity = 0
             skusInventoryForStoreResponse.skuInventory.forEach { skuInventory ->
                 if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
                     otherSku.quantity = skuInventory.quantity
@@ -302,8 +327,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
         if (isDefaultRequest) {
-            otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
-            updateDefaultUI()
+            clearSelectedOnLocationChange()
+            updateDefaultUI(true)
             hideProductDetailsLoading()
         } else {
             hideProgressBar()
@@ -408,12 +433,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
                 this.otherSKUsByGroupKey[groupKey] = ArrayList<OtherSkus>()
             }
-            this.otherSKUsByGroupKey.get(groupKey)!!.add(otherSkuObj)
+            if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(otherSkuObj)
         }
         return otherSKUsByGroupKey
     }
 
-    override fun updateDefaultUI() {
+    override fun updateDefaultUI(isInventoryCalled: Boolean) {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
         if ((!hasColor && !hasSize)) {
@@ -444,12 +469,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
-                activity?.apply { DrawImage(this).displaySmallImage(freeGiftImage, it.freeGift) }
-                freeGiftImage.visibility = View.VISIBLE
             }
         }
 
-        if (isAllProductsOutOfStock()) {
+        if (isAllProductsOutOfStock() && isInventoryCalled) {
             showProductOutOfStock()
         }
     }
@@ -541,7 +564,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             otherSku = it
                             return@forEach
                         }
-
                     }
                     setSelectedSku(otherSku)
                     if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
@@ -567,7 +589,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             else -> {
                 getSelectedSku()?.quantity?.let {
                     when (it) {
-                        0 -> showFindInStore();
+                        0, -1 -> showFindInStore()
                         else -> {
                             getSelectedQuantity()?.apply {
                                 if (it < this)
@@ -582,13 +604,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
-
     private fun showFindInStore() {
-        if (!productDetails?.isnAvailable?.toBoolean()!!) {
-            toCartAndFindInStoreLayout?.visibility = View.GONE
-            checkInStoreAvailability?.visibility = View.GONE
-            return
+        productDetails?.isnAvailable?.toBoolean()?.apply {
+            if (!this) {
+                toCartAndFindInStoreLayout?.visibility = View.GONE
+                checkInStoreAvailability?.visibility = View.GONE
+                return
+            }
         }
+
 
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.GONE
@@ -687,7 +711,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (Utils.isCartSummarySuburbIDEmpty(cartSummaryResponse)) {
             activity?.apply {
-                ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+                KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE)
             }
         } else confirmDeliveryLocation()
     }
@@ -712,12 +736,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         addItemToCart()
     }
 
-    override fun onConfirmLocationDialogDismiss() {
-        //cancel add to cart request
-    }
-
     override fun onSetNewLocation() {
-        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
@@ -802,7 +822,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         showToastMessage(getActivity(), listSize);*/
                     }
                     SET_DELIVERY_LOCATION_REQUEST_CODE -> {
-                        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE)
+                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
                     }
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
@@ -810,6 +830,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     REQUEST_SUBURB_CHANGE_FOR_STOCK -> {
 
                         updateStockAvailabilityLocation()
+
+                        Utils.getPreferredDeliveryLocation()?.let {
+                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                                storeIdForInventory = ""
+                                clearStockAvailability()
+                                showProductUnavailable()
+                                showProductNotAvailableForCollection()
+                                return
+                            }
+                        }
+
+                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType).isNullOrEmpty()) {
+                            storeIdForInventory = ""
+                            clearStockAvailability()
+                            showProductUnavailable()
+                            return
+                        }
 
                         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
                             updateStockAvailability(true)
@@ -820,7 +857,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
                 updateStockAvailabilityLocation()
                 when (requestCode) {
-                    SSO_REQUEST_ADD_TO_CART -> {
+                    SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
                         addItemToCart()
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
@@ -829,7 +866,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
                     }
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
-                        ScreenManager.presentDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE_FOR_STOCK)
+                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK) }
                     }
                 }
             }
@@ -1041,7 +1078,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun updateDeliveryLocation() {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> ScreenManager.presentDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK)
+                true -> KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK)
                 false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
             }
 
@@ -1053,8 +1090,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             getDeliveryLocation()?.let {
                 when (it) {
                     is ShoppingDeliveryLocation -> {
-                        currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
-                        defaultLocationPlaceholder.text = getString(R.string.delivering_to_pdp)
+                        when (it.suburb.storePickup) {
+                            true -> {
+                                currentDeliveryLocation.text = resources?.getString(R.string.store)+it.suburb?.name
+                                defaultLocationPlaceholder.text = getString(R.string.collecting_from)+ " "
+                            }
+                            else -> {
+                                currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
+                                defaultLocationPlaceholder.text = getString(R.string.delivering_to_pdp)
+                            }
+                        }
                     }
                     is QuickShopDefaultValues -> {
                         currentDeliveryLocation.text = it.suburb.name
@@ -1096,9 +1141,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductUnavailable() {
+        clearStockAvailability()
         productDetails?.otherSkus?.get(0)?.let { otherSku -> setSelectedSku(otherSku) }
+        getSelectedSku()?.quantity = -1
         hideProductDetailsLoading()
-        toCartAndFindInStoreLayout.visibility = View.GONE
+        toCartAndFindInStoreLayout?.visibility = View.GONE
         updateAddToCartButtonForSelectedSKU()
         //hideProgressBar()
     }
@@ -1111,24 +1158,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun loadPromotionalImages() {
+        val images = ArrayList<String>()
         activity?.apply {
             productDetails?.promotionImages?.let {
-                val images = ArrayList<String>()
                 if (!it.save.isNullOrEmpty()) images.add(it.save)
                 if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
                 if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
                 if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
-                promotionalImages?.removeAllViews()
-                DrawImage(this).let { dImage ->
-                    images.forEach { image ->
-                        layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            dImage.displaySmallImage(view.promotionImage, image)
-                            promotionalImages?.addView(view)
-                        }
-                    }
-                }
             }
 
+            promotionalImages?.removeAllViews()
+
+            mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
+
+                images.forEach { image ->
+                    layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                        ImageManager.loadImage(view.promotionImage, image)
+                        promotionalImages?.addView(view)
+                }
+            }
         }
 
     }
@@ -1210,4 +1258,42 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
     }
 
+    private fun showDeliveryOptionDialog() {
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+    }
+
+    override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE, deliveryType) }
+        } else {
+            ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
+        }
+    }
+
+    override fun clearSelectedOnLocationChange(){
+        setSelectedSku(null)
+        selectedSize?.text = ""
+        selectedColor?.text = ""
+    }
+
+    override fun showProductNotAvailableForCollection() {
+        activity?.apply {
+            ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
+        }
+    }
+
+    override fun onChangeDeliveryOption() {
+        this.updateDeliveryLocation()
+    }
+
+    override fun onFindInStore() {
+        this.findItemInStore()
+    }
+
+    override fun clearStockAvailability(){
+        productDetails?.otherSkus?.forEach{
+            it.quantity = -1
+        }
+        loadSizeAndColor()
+    }
 }

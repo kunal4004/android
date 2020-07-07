@@ -154,7 +154,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                     hideKeyboard()
                     val openDialogFragment =
                             GotITDialogFragment.newInstance(getString(R.string.absa_forgot_atm_pin_code_title),
-                                    getString(R.string.absa_forgot_atm_pin_code_desc), getString(R.string.cli_got_it),
+                                    getString(R.string.absa_forgot_atm_pin_code_desc), getString(R.string.got_it),
                                     this)
                     openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
                 }

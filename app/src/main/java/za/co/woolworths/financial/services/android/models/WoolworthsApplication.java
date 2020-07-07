@@ -33,9 +33,12 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonElement;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -43,6 +46,8 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
+import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
@@ -50,9 +55,11 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
+import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -61,6 +68,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	private static Context context;
 	private static Context mContextApplication;
+	private static WhatsApp whatsApp;
+	private static List<ContactUs> mContactUs;
 	private UserManager mUserManager;
 	private Tracker mTracker;
 	private static ApplyNowLinks applyNowLink;
@@ -99,6 +108,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static VirtualTempCard virtualTempCard;
 	private static ArrayList<String> whitelistedDomainsForQRScanner;
 	private static Sts stsValues;
+	private static CreditCardActivation creditCardActivation;
+	private static ClickAndCollect clickAndCollect;
 
 	private Activity mCurrentActivity = null;
 
@@ -511,5 +522,37 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setStsValues(Sts stsValues) {
 		WoolworthsApplication.stsValues = stsValues;
+	}
+
+	public static CreditCardActivation getCreditCardActivation() {
+		return creditCardActivation;
+	}
+
+	public static void setCreditCardActivation(CreditCardActivation creditCardActivation) {
+		WoolworthsApplication.creditCardActivation = creditCardActivation;
+	}
+
+    public static void setWhatsAppConfig(@Nullable WhatsApp whatsApp) {
+		WoolworthsApplication.whatsApp = whatsApp;
+    }
+
+	public static WhatsApp getWhatsAppConfig() {
+		return whatsApp;
+	}
+
+    public static void setContactUsDetails(@NotNull List<ContactUs> contactUs) {
+        mContactUs = contactUs;
+    }
+
+	public static List<ContactUs> getContactUs() {
+		return mContactUs;
+	}
+
+	public static ClickAndCollect getClickAndCollect() {
+		return clickAndCollect;
+	}
+
+	public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
+		WoolworthsApplication.clickAndCollect = clickAndCollect;
 	}
 }

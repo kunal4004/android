@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/cardImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myCardTitle" />
+
+    <RelativeLayout
+        android:id="@+id/activateCreditCard"
+        style="@style/card_item_click_no_pad_style"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingStart="@dimen/sixteen_dp"
+        android:paddingEnd="@dimen/sixteen_dp"
+        app:layout_constraintTop_toBottomOf="@+id/divider">
+
+        <ImageView
+            android:id="@+id/imLogoIncreaseLimit"
+            style="@style/style_loan_logo_img"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_card" />
+
+        <ImageView
+            style="@style/style_loan_img"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_caret_black" />
+
+        <TextView
+            style="@style/style_loan_title"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"
+            android:layout_toEndOf="@+id/imLogoIncreaseLimit"
+            android:text="@string/activate_new_credit_card" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/myCardTitle"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/my_card_title"
+        android:textAllCaps="true"
+        app:layout_constraintStart_toStartOf="@id/startGuide"
+        app:layout_constraintTop_toBottomOf="@+id/creditCardActivationState"
+        app:layout_constraintBottom_toTopOf="@+id/creditCardActivationState"
+        />
+
+    <TextView
+        android:id="@+id/creditCardActivationState"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:textColor="@color/white"
+        android:letterSpacing="0.12"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="@id/endGuide"
+        app:layout_constraintTop_toTopOf="@id/topGuide"
+        />
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/thirty_dp"
+        android:alpha="0.1"
+        android:background="@color/black"
+        app:layout_constraintEnd_toEndOf="@id/endGuide"
+        app:layout_constraintStart_toStartOf="@id/startGuide"
+        app:layout_constraintTop_toBottomOf="@+id/cardImage" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sixteen_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activateCreditCard"
+        android:background="@color/light_gray_background"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

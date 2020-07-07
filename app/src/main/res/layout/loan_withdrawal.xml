@@ -1,107 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relLoanWithdrawal"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:background="@color/purple"
-    android:orientation="vertical">
+    android:contentDescription="@string/loan_withdrawal_drawn_down_amount_layout"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?android:attr/actionBarSize"
+    android:background="@color/purple">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/txtWithdrawAmount"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loanWithdrawalLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginRight="32dp"
-        android:gravity="center_horizontal"
-        android:lineSpacingExtra="1.2dp"
-        android:text="@string/please_enter_the_amount"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:WTextView_font="medium_bold" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#10FFFFFF"
-        android:minHeight="80dp">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/topLabelGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
 
-        <LinearLayout
-            android:id="@+id/availableFundsLinearLayout"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="32dp" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottomGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="80dp" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/fundGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="40dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="32dp" />
+
+
+        <TextView
+            android:id="@+id/txtWithdrawAmount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="80dp"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="1.3dp"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/please_enter_the_amount"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+            app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+            app:layout_constraintTop_toTopOf="@+id/topLabelGuideLine" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Available funds"
-                android:textColor="#99ffffff"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvAvailableFunds"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="R20 000.00"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                app:WTextView_font="medium_bold" />
-        </LinearLayout>
 
         <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="#7a4183" />
+            android:id="@+id/availableFundView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="2dp"
+            android:background="#10FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/creditLimitView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bottomGuideLine"
+            app:layout_constraintVertical_bias="0.0" />
 
-        <LinearLayout
-            android:id="@+id/credit_limit_layout"
+        <View
+            android:id="@+id/creditLimitView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="2dp"
+            android:background="#10FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/availableFundView"
+            app:layout_constraintTop_toTopOf="@+id/bottomGuideLine" />
+
+        <TextView
+            android:id="@+id/availableFundLabelTextView"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:gravity="start"
+            android:text="@string/available_funds_label"
+            android:textColor="#99ffffff"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/fundGuideLine"
+            app:layout_constraintEnd_toEndOf="@+id/availableFundView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvAvailableFunds"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="80dp"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:gravity="start"
+            android:text="R20 000.00"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/availableFundView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/availableFundView"
+            app:layout_constraintTop_toTopOf="@+id/fundGuideLine" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Credit Limit"
-                android:textColor="#99ffffff"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvCreditLimit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:letterSpacing="0.05"
-                android:text="R30 000.00"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                app:WTextView_font="medium" />
-        </LinearLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/creditLimitLabelTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:gravity="start"
+            android:text="@string/credit_limit_label"
+            android:textColor="#99ffffff"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/fundGuideLine"
+            app:layout_constraintEnd_toEndOf="@+id/creditLimitView"
+            app:layout_constraintStart_toStartOf="@+id/tvCreditLimit" />
 
-    <RelativeLayout
-        android:id="@+id/relWithdrawalAmount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtWithdrawAmount"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="21dp"
-        android:gravity="center"
-        android:minHeight="92dp">
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+            android:id="@+id/edtWithdrawAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:digits="0123456789., "
+            android:gravity="start"
+            android:hint=" "
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:maxLength="13"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
+            android:layout_marginEnd="?attr/actionBarSize"
+            android:textColor="@color/white"
+            android:textColorHint="@color/recent_search_bg"
+            android:textCursorDrawable="@drawable/colorcursor"
+            android:textSize="45sp"
+            android:visibility="visible"
+            app:WEditTextView_font="light"
+            app:layout_constraintBottom_toTopOf="@+id/creditLimitView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/startGuideLine"
+            app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount">
+
+            <requestFocus />
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+
+
+        <TextView
+            android:id="@+id/tvCreditLimit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/futura_medium_ttf"
+            android:gravity="start"
+            android:letterSpacing="0.05"
+            android:text="R30 000.00"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/creditLimitView"
+            app:layout_constraintStart_toStartOf="@+id/creditLimitView"
+            app:layout_constraintTop_toTopOf="@+id/fundGuideLine" />
+
+        <TextView
+            android:id="@+id/currencyType"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:fontFamily="@font/futura_light"
+            android:gravity="bottom"
+            android:text="R"
+            android:textColor="@color/white"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edtWithdrawAmount"
+            app:layout_constraintEnd_toStartOf="@+id/edtWithdrawAmount"
+            app:layout_constraintTop_toTopOf="@+id/edtWithdrawAmount" />
 
         <ProgressBar
             android:id="@+id/mLoanWithdrawalProgress"
@@ -109,53 +207,21 @@
             android:layout_height="30dp"
             android:gravity="center"
             android:indeterminateTint="@color/white"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/llDrawndownAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/bank_spacing_width"
-            android:layout_marginRight="@dimen/bank_spacing_width"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/nexImageView"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/currencyType"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/currencyType"
+            app:srcCompat="@drawable/icon_next_active" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/currencyType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:text="R"
-                android:textColor="@color/white"
-                android:textSize="45sp"
-                app:WTextView_font="light" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
-                android:id="@+id/edtWithdrawAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/currencyType"
-                android:background="@android:color/transparent"
-                android:digits="0123456789., "
-                android:gravity="left"
-                android:hint=" "
-                android:imeOptions="actionDone"
-                android:inputType="numberDecimal|numberSigned"
-                android:maxLength="13"
-                android:maxLines="1"
-                android:paddingLeft="8dp"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textColorHint="@color/recent_search_bg"
-                android:textCursorDrawable="@drawable/colorcursor"
-                android:textSize="45sp"
-                android:visibility="visible"
-                app:WEditTextView_font="light">
-
-                <requestFocus />
-            </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
-
-        </LinearLayout>
-    </RelativeLayout>
-
-</RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

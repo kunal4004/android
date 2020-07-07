@@ -1,47 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nestedScrollViewLayout"
     android:layout_width="match_parent"
-    android:tag="nested"
-    android:layout_height="match_parent"
-    android:background="@color/light_gray_background"
-    android:fillViewport="true"
-    android:scrollbars="none"
-    >
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/accountSalesContainerLinearLayout"
+    <include layout="@layout/account_sales_card_benefit_layout" />
+
+    <include layout="@layout/account_sales_more_benefit_layout" />
+
+    <include layout="@layout/account_sales_qualify_criteria_layout" />
+
+    <include
+        android:id="@+id/cardCollectionConstraintLayout"
+        layout="@layout/account_sales_card_collection_layout" />
+
+    <View
+        style="@style/account_sales_card_benefits_bottom_margin_style"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/light_gray_background"
-        android:orientation="vertical">
+        android:layout_height="65dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view3" />
 
-        <include
-            android:id="@+id/cardBenefitConstraintLayout"
-            layout="@layout/account_sales_card_benefit_layout" />
-
-        <include
-            android:id="@+id/moreBenefitConstraintLayout"
-            layout="@layout/account_sales_more_benefit_layout" />
-
-        <include
-            android:id="@+id/qualifyingCriteriaConstraintLayout"
-            layout="@layout/account_sales_qualify_criteria_layout" />
-
-        <include
-            android:id="@+id/cardCollectionConstraintLayout"
-            layout="@layout/account_sales_card_collection_layout" />
-
-        <View
-            style="@style/account_sales_card_benefits_bottom_margin_style"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/light_gray_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view3" />
-
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
+</LinearLayout>

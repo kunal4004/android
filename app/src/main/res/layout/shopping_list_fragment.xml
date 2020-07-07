@@ -38,19 +38,19 @@
                     android:paddingBottom="@dimen/twenty_six_dp">
 
                     <ImageView
-                        android:id="@+id/truckIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/deliverLocationIcon"
+                        android:layout_width="@dimen/twenty_four_dp"
+                        android:layout_height="@dimen/twenty_four_dp"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_delivery_truck" />
+                        android:background="@drawable/ic_delivery_truck" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:layout_toLeftOf="@+id/iconCaretRight"
-                        android:layout_toRightOf="@+id/truckIcon"
+                        android:layout_toLeftOf="@+id/editLocation"
+                        android:layout_toRightOf="@+id/deliverLocationIcon"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -61,7 +61,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="4dp"
                             android:gravity="center_vertical"
-                            android:text="@string/set_your_delivery_location" />
+                            android:text="@string/delivery_or_collection" />
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvDeliveryLocation"
@@ -77,13 +77,28 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/iconCaretRight"
+                        android:id="@+id/rightArrowDelivery"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
                         android:src="@drawable/ic_caret_black" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/editLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/edit"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:WTextView_font="medium"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:letterSpacing="0.1"
+                        android:visibility="invisible"
+                        />
 
                 </RelativeLayout>
 
@@ -99,7 +114,6 @@
                     android:paddingBottom="@dimen/twenty_six_dp">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvCreateList"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
@@ -124,7 +138,6 @@
                     android:layout_marginEnd="@dimen/sixteen_dp" />
 
                 <RelativeLayout
-                    android:id="@+id/rlShoppingListContainer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/default_background">

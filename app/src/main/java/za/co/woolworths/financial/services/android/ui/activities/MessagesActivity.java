@@ -312,7 +312,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 						messageList = messageResponse.messagesList;
 						unreadMessageCount = messageResponse.unreadCount;
 						bindDataWithUI(messageList);
-						String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+						String unreadCountValue = Utils.getSessionDaoValue(
 								SessionDao.KEY.UNREAD_MESSAGE_COUNT);
 						if (!TextUtils.isEmpty(unreadCountValue) && TextUtils.isDigitsOnly(unreadCountValue)) {
 							int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();

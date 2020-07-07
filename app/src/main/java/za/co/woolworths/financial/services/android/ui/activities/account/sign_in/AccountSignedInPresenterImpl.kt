@@ -2,8 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -124,17 +124,21 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
+   override fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?): Int {
+        appCompatActivity?.apply {
+            val height = resources?.displayMetrics?.heightPixels ?: 0
+            return (height.div(100)).times(23)
+        }
+        return 0
+    }
+
     private fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
 
-    override fun getStatusBarHeight(actionBarHeight: Int): Int = KotlinUtils.getStatusBarHeight(actionBarHeight)
-
     override fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
-
-    override fun getOverlayAnchoredHeight(): Int? = KotlinUtils.getBottomSheetBehaviorDefaultAnchoredHeight()?.minus(KotlinUtils.dpToPxConverter(60))
 
     override fun onDestroy() {
         mainView = null
@@ -143,12 +147,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     private fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {
         return model.getCardProductInformation(accountIsInArrearsState)
     }
-
-    override fun getStatusBarHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
-        return toolbar?.layoutParams?.height?.let { toolBarHeight -> getStatusBarHeight(toolBarHeight) }
-    }
-
-    override fun getStatusBarHeight(): Int? = KotlinUtils.getStatusBarHeight(getAppCompatActivity())
 
     override fun setAccountCardDetailInfo(navDetailController: NavController?) {
         val bundle = Bundle()
@@ -183,5 +181,15 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_personal_loan_card, R.string.personalLoanCard_title)
             else -> throw RuntimeException("SixMonthOutstanding Invalid  ApplyNowState ${accountInfo?.first}")
         }
+    }
+
+    override fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int {
+        appCompatActivity?.apply {
+            val displayMetrics: DisplayMetrics = resources.displayMetrics
+            val height = displayMetrics.heightPixels
+            val toolbarHeight = KotlinUtils.getToolbarHeight(this)
+            return height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight(this).div(2))
+        }
+        return 0
     }
 }

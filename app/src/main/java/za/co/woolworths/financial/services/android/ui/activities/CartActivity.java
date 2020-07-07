@@ -38,7 +38,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
@@ -147,7 +146,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
             ArrayList<CartItemGroup> cartItem = ((CartFragment) currentFragment).getCartItems();
             if (cartItem == null || cartItem.isEmpty()) {
                 // No product, hide badge counter
-                QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+                QueryBadgeCounter.getInstance().setCartCount(0);
                 this.setResult(RESULT_PREVENT_CART_SUMMARY_CALL);
             }
         }
