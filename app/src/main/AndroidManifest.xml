@@ -150,6 +150,7 @@
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity"
+            android:theme="@style/SSOActivity"
             android:icon="@drawable/ic_action_bar_logo" />
         <!-- Goolge Maps API Key -->
         <meta-data
@@ -221,7 +222,7 @@
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
-            android:theme="@style/SSOActivityKMSIStyle"
+            android:theme="@style/SSOActivity"
             />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
