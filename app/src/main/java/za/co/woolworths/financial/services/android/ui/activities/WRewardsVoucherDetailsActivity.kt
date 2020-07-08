@@ -71,7 +71,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
     }
 
     private fun moveVoucherItemToLastPosition() {
-        tagVoucherDescription(cardSwipeStackView?.topIndex?.plus(1) ?: 0)
+        tagVoucherDescription(cardSwipeStackView?.topIndex ?: 0)
         val voucher = vouchers?.get(0)
         vouchers?.removeAt(0)
         vouchers?.add(voucher)
@@ -91,11 +91,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
 
     private fun tagVoucherDescription(position: Int) {
         val arguments: MutableMap<String, String> = HashMap()
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.VOUCHERDESCRIPTION] =
-                vouchers?.get(position)?.description?.let { description -> Utils.ellipsizeVoucherDescription(description) }
-                        ?: ""
-        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.VOUCHERDESCRIPTION] =
-                Utils.ellipsizeVoucherDescription(vouchers?.get(position)?.description)
+        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.VOUCHERDESCRIPTION] = Utils.ellipsizeVoucherDescription(vouchers?.get(position)?.description)
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSDESCRIPTION_VOUCHERDESCRIPTION, arguments)
     }
 

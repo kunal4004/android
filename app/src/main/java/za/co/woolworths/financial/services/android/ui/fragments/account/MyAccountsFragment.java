@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -71,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.Accounts
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -146,6 +148,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private Call<MessageResponse> messageRequestCall;
 	private Account mCreditCardAccount;
 	private View linkedAccountBottomDivider;
+	private RelativeLayout myOrdersRelativeLayout;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -227,6 +230,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			imgPersonalLoanCardContainer = view.findViewById(R.id.imgPersonalLoan);
 			SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
 			imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
+			myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
 
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
@@ -242,6 +246,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			updatePasswordRelativeLayout.setOnClickListener(this);
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
+			myOrdersRelativeLayout.setOnClickListener(this);
 
 			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
 			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
@@ -718,6 +723,19 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.CLICK_TO_REFRESH);
 				loadAccounts(true);
 				break;
+
+			case R.id.myOrdersRelativeLayout:
+				if (activity instanceof BottomNavigationActivity) {
+					if (getBottomNavigationActivity() != null)
+						getBottomNavigationActivity().pushFragment(new MyOrdersAccountFragment());
+				}else {
+					if (activity instanceof MyAccountActivity) {
+						((MyAccountActivity) activity).replaceFragment(new MyOrdersAccountFragment());
+					}
+				}
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders);
+				break;
+
 			default:
 				break;
 
@@ -760,7 +778,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 								}
 							}
 
-							setUserPropertiesForCardProductOfferings(accounts);
+							FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
 
 							isAccountsCallMade = true;
 							configureView();
@@ -814,55 +832,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
 			}
 		});
-	}
-
-	private void setUserPropertiesForCardProductOfferings(Map<String, Account> accountsMap) {
-
-		Map<String, Boolean> arguments = new HashMap<>();
-
-		for (Map.Entry<String, Account> accounts : accountsMap.entrySet()) {
-			Account account = accounts.getValue();
-			switch (accounts.getKey().toLowerCase()) {
-				case "pl":
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, true);
-					break;
-				case "sc":
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, true);
-					break;
-				case "cc":
-					switch (account.accountNumberBin){
-						case Utils.SILVER_CARD:
-							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, true);
-							break;
-						case Utils.GOLD_CARD:
-							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, true);
-							break;
-						case Utils.BLACK_CARD:
-							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, true);
-							break;
-					}
-					break;
-			}
-		}
-
-		for (String unavailable : unavailableAccounts){
-			switch (unavailable.toLowerCase()){
-				case "pl":
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, false);
-					break;
-
-				case "sc":
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, false);
-					break;
-
-				case "cc":
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, false);
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, false);
-					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, false);
-					break;
-			}
-		}
-		Utils.triggerFireBaseEvent(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PRODUCT_OFFERING, arguments);
 	}
 
 	@Override

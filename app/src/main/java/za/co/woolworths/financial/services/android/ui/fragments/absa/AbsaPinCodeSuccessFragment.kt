@@ -20,6 +20,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBanki
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.OneAppEvents
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.HttpCookie
@@ -107,6 +109,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
     }
 
     fun onRegistrationSuccess() {
+        KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_REGISTRATION_SUCCESS, OneAppEvents.FeatureName.ABSA)
         AbsaContentEncryptionRequest.clearContentEncryptionData()
         val name = SessionUtilities.getInstance().jwt?.name?.get(0)
         tvTitle.text = getString(R.string.absa_success_title, name)

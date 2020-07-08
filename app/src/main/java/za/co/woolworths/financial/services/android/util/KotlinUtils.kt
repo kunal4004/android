@@ -3,10 +3,14 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.*
@@ -16,15 +20,24 @@ import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
 
@@ -231,6 +244,90 @@ class KotlinUtils {
             }
 
             return transactionList
+        }
+
+        fun presentEditDeliveryLocationActivity(activity: Activity?, requestCode: Int, deliveryType: DeliveryType? = null) {
+            var type = deliveryType
+            if (type == null) {
+                if (Utils.getPreferredDeliveryLocation() != null) {
+                    type = if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                }
+            }
+            activity?.apply {
+                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
+                val mBundle = Bundle()
+                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
+                mIntent.putExtra("bundle", mBundle)
+                startActivityForResult(mIntent, requestCode)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
+
+        fun setDeliveryAddressView(context: Activity?, shoppingDeliveryLocation: ShoppingDeliveryLocation, tvDeliveringTo: WTextView, tvDeliveryLocation: WTextView, deliverLocationIcon: ImageView?) {
+            with(shoppingDeliveryLocation) {
+                when (suburb.storePickup) {
+                    true -> {
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
+                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + suburb.name
+                        tvDeliveryLocation.visibility = View.VISIBLE
+                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
+                    }
+                    false -> {
+                        tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
+                        tvDeliveryLocation.text = suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
+                        tvDeliveryLocation.visibility = View.VISIBLE
+                        deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
+                    }
+                }
+            }
+        }
+
+        fun updateCheckOutLink(jSessionId: String?) {
+            val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
+            val context = WoolworthsApplication.getAppContext()
+            val packageManager = context.packageManager
+            val packageInfo: PackageInfo =
+                    packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+
+            val versionName = packageInfo.versionName
+            val versionCode =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
+            val appVersion = "$versionName.$versionCode"
+
+            val checkOutLink = when (checkoutLink.contains("?")) {
+                true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
+                else -> "$checkoutLink?appVersion=$appVersion&JSESSIONID=$jSessionId"
+            }
+
+            WoolworthsApplication.setCartCheckoutLink(checkOutLink)
+        }
+
+        fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
+            emailIntent.data = Uri.parse("mailto:" + emailId +
+                    "?subject=" + Uri.encode(subject) +
+                    "&body=" + Uri.encode(""))
+            val listOfEmail =
+                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+            if (listOfEmail.size > 0) {
+                activity?.startActivity(emailIntent)
+            } else {
+                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.INFO, bindString(R.string.contact_us_no_email_error).replace("email_address", emailId).replace("subject_line", subject
+                        ?: ""))
+            }
+        }
+
+        fun postOneAppEvent(appScreen: String, featureName: String) {
+            request(OneAppService.queryServicePostEvent(featureName, appScreen))
+        }
+
+        fun isItemsQuantityForClickAndCollectExceed(totalItemsCount: Int): Boolean {
+            WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxAllowedQuantity ->
+                Utils.getPreferredDeliveryLocation()?.suburb?.let { suburb ->
+                    return (totalItemsCount > maxAllowedQuantity && suburb.storePickup)
+                }
+            }
+            return false
         }
     }
 }

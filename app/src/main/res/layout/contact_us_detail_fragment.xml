@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#efefef"
+    android:paddingTop="?attr/actionBarSize"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.2"
+            android:minHeight="68dp"
+            android:paddingStart="16dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="0dp"
+            android:text="@string/call_us"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#0a000000" />
+
+
+        <LinearLayout
+            android:id="@+id/callUsLinearLayoutContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+
+        <View
+            android:id="@+id/contactUsFaxNumberHorizontalView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#0a000000"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/contactUsFaxNumberRelativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:minHeight="50dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/faxImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_fax" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@+id/faxImg"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:text="@string/fax"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/faxNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:gravity="center_vertical"
+                android:text="@string/customer_service_inter_national_caller_number"
+                android:textColor="#4d000000"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_top_and_bottom"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.2"
+            android:minHeight="68dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="20dp"
+            android:text="@string/txt_call_center_opening_hours"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <LinearLayout style="@style/contact_us_operating_hours_layout">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_time24" />
+
+            <TextView
+                android:id="@+id/callCenterOperationHoursTextView"
+                style="@style/contact_us_operating_hours_textview"
+                android:lineSpacingExtra="1.1sp"
+                android:lineSpacingMultiplier="1.2" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_top_and_bottom"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.2"
+            android:minHeight="68dp"
+            android:paddingStart="16dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="0dp"
+            android:text="@string/email_us"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/contactFinancialServicesEmailLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</ScrollView>
