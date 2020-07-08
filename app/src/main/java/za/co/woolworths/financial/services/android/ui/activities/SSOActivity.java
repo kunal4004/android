@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -751,5 +752,12 @@ public class SSOActivity extends WebViewActivity {
 	public void handleUIForKMSIEntry(boolean showKMSIView) {
 		ssoLayout.setVisibility(showKMSIView ? View.GONE : View.VISIBLE);
 		loadingProgressBarKMSI.setVisibility(showKMSIView ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public Resources.Theme getTheme() {
+		Resources.Theme theme = super.getTheme();
+		theme.applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
+		return theme;
 	}
 }
