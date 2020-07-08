@@ -1,147 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/grey_bg"
     android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment">
+    android:paddingTop="16dp">
 
-    <RelativeLayout
-        android:id="@+id/generalEnq"
+    <LinearLayout
+        android:id="@+id/customerServicesLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/contact_us_item_bg"
-        android:minHeight="60dp"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/img1"
-            android:orientation="vertical">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/contact_us_item_header_textview"
-                android:text="@string/txt_general_enquiry" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/contact_us_item_desc_textview"
-                android:layout_marginTop="5dp"
-                android:text="@string/general_enquiry_desc" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/img1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_caret_black" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/woolworthsOnline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/contact_us_item_bg"
-        android:minHeight="60dp"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/img2"
-            android:orientation="vertical">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/contact_us_item_header_textview"
-                android:text="@string/woolworths_online" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/contact_us_item_desc_textview"
-                android:layout_marginTop="5dp"
-                android:text="@string/website_and_online_shoppping" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/img2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_caret_black" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/wRewards"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/contact_us_item_bg"
-        android:minHeight="70dp"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/img3"
-            android:orientation="vertical">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/contact_us_item_header_textview"
-                android:text="@string/contact_us_wrewards" />
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/img3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_caret_black" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/mySchoolEnq"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/contact_us_item_bg"
-        android:minHeight="70dp"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/img4"
-            android:orientation="vertical">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/contact_us_item_header_textview"
-                android:text="@string/contact_us_myschool" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/img4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_caret_black" />
-
-    </RelativeLayout>
+        android:orientation="vertical" />
 
     <View
         android:layout_width="match_parent"

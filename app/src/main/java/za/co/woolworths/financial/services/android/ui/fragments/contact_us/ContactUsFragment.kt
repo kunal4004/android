@@ -5,16 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_contact_us.*
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+
 
 class ContactUsFragment : Fragment(), View.OnClickListener {
 
     private var mBottomNavigator: BottomNavigator? = null
+    private val contactUsModel = ContactUsModel()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -31,19 +35,33 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MyAccountActivity?)?.supportActionBar?.show()
         setupToolbar()
-        financialService?.setOnClickListener(this)
-        customerService?.setOnClickListener(this)
+
+        with(contactUsModel) {
+            contactUsLanding()?.forEachIndexed { index, item ->
+
+                val contactUsRow = layoutInflater.inflate(R.layout.contact_us_landing_item, contactUsContainerLinearLayout, false)
+                val contactUsLandingTextView = contactUsRow.findViewById<TextView>(R.id.contactUsLandingTextView)
+                val contactUsLandingDescriptionTextView = contactUsRow.findViewById<TextView>(R.id.contactUsLandingDescriptionTextView)
+
+                contactUsLandingTextView?.text = item.title
+                contactUsLandingDescriptionTextView?.text = item.description
+                contactUsRow?.tag = index
+                contactUsRow?.setOnClickListener (this@ContactUsFragment)
+
+                contactUsContainerLinearLayout?.addView(contactUsRow)
+            }
+        }
     }
 
     override fun onClick(v: View) {
-        when (v.id) {
-            R.id.financialService -> {
+        when (v.tag as? Int) {
+            0 -> {
                 if (activity is BottomNavigationActivity)
                     mBottomNavigator?.pushFragment(ContactUsFinancialServiceFragment())
                 else
                     (activity as? MyAccountActivity)?.replaceFragment(ContactUsFinancialServiceFragment())
             }
-            R.id.customerService -> {
+            1 -> {
                 if (activity is BottomNavigationActivity)
                     mBottomNavigator?.pushFragment(ContactUsCustomerServiceFragment())
                 else
@@ -54,7 +72,7 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
 
     private fun setupToolbar() {
         mBottomNavigator?.apply {
-            setTitle(getString(R.string.contact_us))
+            setTitle(bindString(R.string.contact_us))
             showBackNavigationIcon(true)
             (activity as? BottomNavigationActivity)?.apply {
                 setToolbarBackgroundDrawable(R.drawable.appbar_background)
@@ -62,7 +80,7 @@ class ContactUsFragment : Fragment(), View.OnClickListener {
             }
         }
         if (activity is MyAccountActivity)
-            (activity as? MyAccountActivity)?.setToolbarTitle(activity?.resources?.getString(R.string.contact_us))
+            (activity as? MyAccountActivity)?.setToolbarTitle(bindString(R.string.contact_us))
 
     }
 
