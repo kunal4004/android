@@ -18,6 +18,5 @@ class GiftWithPurchaseDialogDetailFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         gotITButton?.setOnClickListener { dismiss() }
-
     }
 }
