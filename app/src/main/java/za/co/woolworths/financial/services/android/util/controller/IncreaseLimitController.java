@@ -46,7 +46,7 @@ public class IncreaseLimitController {
 		imm.showSoftInput(wEditTextView, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
-	public static String removeNonDigit(WEditTextView view) {
+	private static String removeNonDigit(WEditTextView view) {
 		return view.getText().toString().replaceAll("\\D+", "");
 	}
 

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
@@ -22,7 +23,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.util.*
 
-class MyOrdersFragment : Fragment() {
+class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss {
 
     private var dataList = arrayListOf<OrderItem>()
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -186,6 +187,10 @@ class MyOrdersFragment : Fragment() {
                 showSignOutView()
                 QueryBadgeCounter.instance.clearBadge()
             }
+            502->{
+                showErrorDialog(ordersResponse?.response?.desc
+                        ?: getString(R.string.general_error_desc))
+            }
             else -> {
                 showErrorView()
             }
@@ -214,5 +219,16 @@ class MyOrdersFragment : Fragment() {
             if (!isCanceled)
                 cancel()
         }
+    }
+
+    fun showErrorDialog(errorMessage: String) {
+        val dialog = OrderHistoryErrorDialogFragment.newInstance(errorMessage)
+        activity?.apply {
+            this@MyOrdersFragment.childFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, OrderHistoryErrorDialogFragment::class.java.simpleName) }
+        }
+    }
+
+    override fun onErrorDialogDismiss() {
+        parentFragment?.switchToDepartmentTab()
     }
 }

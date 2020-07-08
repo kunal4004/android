@@ -68,7 +68,7 @@ class RequestOTPActivity : MyCardActivityExtension() {
 
 
     private fun navigateBack() {
-        supportFragmentManager?.apply {
+        supportFragmentManager.apply {
             if (backStackEntryCount > 0) {
                 popBackStack()
             } else

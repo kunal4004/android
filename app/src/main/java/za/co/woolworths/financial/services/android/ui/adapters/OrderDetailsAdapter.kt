@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.app.Activity
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
@@ -7,7 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.add_item_to_shoppinglist_layout.view.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
@@ -15,6 +17,7 @@ import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
+import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -63,6 +66,33 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
             itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
+            if (!item.orderSummary?.deliveryDates.isJsonNull) {
+                itemView.deliveryDateContainer.removeAllViews()
+                val deliveryDates: HashMap<String, String> = hashMapOf()
+                for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
+                    deliveryDates.putAll(Gson().fromJson<Map<String, String>>(item.orderSummary?.deliveryDates.asJsonArray.get(i).toString(), object : TypeToken<Map<String, String>>() {}.type))
+                }
+                when (deliveryDates.keys.size) {
+                    0 -> {
+                        itemView.deliveryDateLayout.visibility = View.GONE
+                    }
+                    1 -> {
+                        itemView.deliveryDate.text = deliveryDates.getValue(deliveryDates.keys.toList()[0])
+                    }
+                    else -> {
+                        deliveryDates.entries.forEach { entry ->
+                            val view = (context as Activity).layoutInflater.inflate(R.layout.order_deatils_delivery_date_item, null)
+                            val deliveryItemsType = view.findViewById<WTextView>(R.id.deliveryItemsType)
+                            val dateOfDelivery = view.findViewById<WTextView>(R.id.dateOfDelivery)
+                            deliveryItemsType.text = entry.key
+                            dateOfDelivery.text = entry.value
+                            itemView.deliveryDateContainer.addView(view)
+                        }
+                    }
+                }
+            } else {
+                itemView.deliveryDateLayout.visibility = View.GONE
+            }
         }
 
     }
