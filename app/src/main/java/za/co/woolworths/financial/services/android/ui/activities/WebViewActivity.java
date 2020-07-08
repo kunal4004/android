@@ -1,17 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.http.SslError;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
@@ -46,13 +43,11 @@ public class WebViewActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_web_view);
 		webView = (WebView) findViewById(R.id.webview);
-		Bundle b = new Bundle();
-		b = getIntent().getBundleExtra("Bundle");
+		Bundle b = getIntent().getBundleExtra("Bundle");
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbarTextView = (WTextView) findViewById(R.id.toolbar_title);
 		loadingProgressBar = findViewById(R.id.loadingProgressBar);
-		mErrorView = new ErrorHandlerView(WebViewActivity.this, (RelativeLayout) findViewById
-				(R.id.no_connection_layout));
+		mErrorView = new ErrorHandlerView(WebViewActivity.this, (RelativeLayout) findViewById(R.id.no_connection_layout));
 		loadingProgressBarKMSI = findViewById(R.id.kmsiProgressLayout);
 		ssoLayout = findViewById(R.id.ssoLayout);
 		setSupportActionBar(toolbar);
@@ -63,22 +58,16 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setDomStorageEnabled(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		webView.setWebViewClient(new WebViewController());
 		try {
 			Method m = WebSettings.class.getMethod("setMixedContentMode", int.class);
-			if (m == null) {
-			} else {
-				m.invoke(webView.getSettings(), 2); // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
-			}
+			m.invoke(webView.getSettings(), 2); // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
 		} catch (Exception ex) {
 		}
 		//webView.clearCache(true);
 		//webView.clearHistory();
-		if (Build.VERSION.SDK_INT >= 21) {
-			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-		}
+		webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		//clearCookies(this);
 		if (TextUtils.isEmpty(url)) mErrorView.networkFailureHandler("");
 		webView.loadUrl(url, getExtraHeader());
@@ -110,18 +99,8 @@ public class WebViewActivity extends AppCompatActivity {
 			//super.onReceivedSslError(view, handler, error);
 			final AlertDialog.Builder builder = new AlertDialog.Builder(WebViewActivity.this);
 			builder.setMessage(R.string.ssl_error);
-			builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					handler.proceed();
-				}
-			});
-			builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					handler.cancel();
-				}
-			});
+			builder.setPositiveButton("continue", (dialog, which) -> handler.proceed());
+			builder.setNegativeButton("cancel", (dialog, which) -> handler.cancel());
 			final AlertDialog dialog = builder.create();
 			dialog.show();
 		}
