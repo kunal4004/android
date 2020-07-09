@@ -126,9 +126,7 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.getSettings().setDomStorageEnabled(true);
 		this.webView.addJavascriptInterface(new KMSIState(),"injection");
 		webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-		if (Build.VERSION.SDK_INT >= 21) {
-			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-		}
+		this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		this.webView.setWebChromeClient(new WebChromeClient() {
 
 			@Override
