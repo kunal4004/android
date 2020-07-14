@@ -89,7 +89,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/deliveryDetailsDesc">
 
                 <RadioButton
-                    android:id="@+id/radioButton1"
+                    android:id="@+id/residential"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:button="@drawable/shopping_list_item_selector"
@@ -100,7 +100,7 @@
                     android:textSize="@dimen/sixteen_sp" />
 
                 <RadioButton
-                    android:id="@+id/radioButton2"
+                    android:id="@+id/business"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/fifty_dp"
@@ -238,7 +238,7 @@
                 android:id="@+id/businessNamePlaceHolder"
                 style="@style/myriad_pro_regular_black"
                 android:layout_marginTop="@dimen/twenty_four_dp"
-                android:text="@string/business_name"
+                android:text="@string/business_name_optional"
                 android:textSize="@dimen/fourteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"

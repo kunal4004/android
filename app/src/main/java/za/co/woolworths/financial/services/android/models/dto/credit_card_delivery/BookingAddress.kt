@@ -13,4 +13,6 @@ class BookingAddress {
     var street: String? = null
     var complexName: String? = null
     var postalCode: String? = null
+    var idNumber: String? = null
+    var isThirdPartyRecipient: Boolean? = false
 }

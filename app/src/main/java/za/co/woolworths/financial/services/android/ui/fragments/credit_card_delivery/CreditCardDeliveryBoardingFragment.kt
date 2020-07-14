@@ -29,7 +29,7 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         setUpDeliveryNow?.setOnClickListener {
-            navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
+            navController?.navigate(R.id.action_to_getRecipientDetailsProcessingFragment, bundleOf("bundle" to bundle))
         }
     }
 }

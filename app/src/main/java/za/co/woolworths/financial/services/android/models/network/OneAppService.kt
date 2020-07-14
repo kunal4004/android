@@ -9,10 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -367,5 +364,17 @@ object OneAppService : RetrofitConfig() {
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
         return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
+    }
+
+    fun getRecipientDetails(envelopeNumber: String): Call<RecipientDetailsResponse> {
+        return mApiInterface.retrieveRecipientDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
+    }
+
+    fun updateRecipientDetails(envelopeNumber: String, requestBody: UpdateRecipientDetailsRequestBody): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.updateRecipientDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber, requestBody)
+    }
+
+    fun getAddressDetails(envelopeNumber: String): Call<AddressDetailsResponse> {
+        return mApiInterface.retrieveAddressDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
     }
 }
