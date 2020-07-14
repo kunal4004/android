@@ -1562,4 +1562,5 @@
     <string name="id_number_error_msg">Please enter a ID Number</string>
     <string name="myself">Myself</string>
     <string name="another_person">Another Person</string>
+    <string name="business_name_optional">Business Name (Optional)</string>
 </resources>

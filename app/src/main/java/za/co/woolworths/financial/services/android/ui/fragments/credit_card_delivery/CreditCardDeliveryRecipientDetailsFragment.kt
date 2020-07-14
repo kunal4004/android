@@ -66,7 +66,10 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     }
 
     fun configureUI() {
-        recipientName.setText(SessionUtilities.getInstance().jwt?.name?.get(0))
+        recipientName?.apply {
+            isEnabled = statusResponse?.isCardNew == true
+            setText(SessionUtilities.getInstance().jwt?.name?.get(0))
+        }
     }
 
     override fun onClick(v: View?) {

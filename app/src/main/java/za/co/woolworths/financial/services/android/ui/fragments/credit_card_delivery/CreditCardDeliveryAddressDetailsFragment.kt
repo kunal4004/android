@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.RadioGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -13,9 +14,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListener {
+class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     var navController: NavController? = null
     var bundle: Bundle? = null
@@ -48,6 +50,7 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
         cityOrTown?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         province?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        addressOption?.setOnCheckedChangeListener(this)
     }
 
 
@@ -106,6 +109,10 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
                 cityOrTownErrorMsg.visibility = visible
             }
         }
+    }
+
+    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+        businessNamePlaceHolder?.text = bindString(if(checkedId == R.id.business) R.string.business_name else R.string.business_name_optional)
     }
 
 }
