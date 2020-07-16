@@ -377,4 +377,8 @@ object OneAppService : RetrofitConfig() {
     fun getAddressDetails(envelopeNumber: String): Call<AddressDetailsResponse> {
         return mApiInterface.retrieveAddressDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
     }
+
+    fun updateRecipientAddressDetails(envelopeNumber: String, requestBody: UpdateAddressDetailsRequestBody): Call<UpdateAddressDetailsResponse> {
+        return mApiInterface.updateRecipientAddressDetail(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber, requestBody)
+    }
 }

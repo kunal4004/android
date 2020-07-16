@@ -1265,7 +1265,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<CreditCardDeliveryStatusResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/cardDelivery/address")
+    @GET("accounts/cardDelivery/possibleAddress")
     fun possibleAddress(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1379,7 +1379,7 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @PUT("accounts/cardDelivery/address")
-    fun updateAddressDetail(
+    fun updateRecipientAddressDetail(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
             @Header("deviceVersion") deviceVersion: String,

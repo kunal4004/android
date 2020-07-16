@@ -15,6 +15,7 @@ import com.awfs.coordination.R
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -28,6 +29,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     private lateinit var listOfInputFields: List<EditText>
     var statusResponse: StatusResponse? = null
     var isRecipientIsThirdPerson: Boolean = false
+    var recipientDetailsResponse: RecipientDetailsResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
@@ -38,13 +40,14 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             statusResponse = Utils.jsonStringToObject(getString("delivery_status_response"), StatusResponse::class.java) as StatusResponse?
+            recipientDetailsResponse = Utils.jsonStringToObject(getString("RecipientDetailsResponse"), RecipientDetailsResponse::class.java) as RecipientDetailsResponse?
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber)
+        listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber, alternativeNumber)
         recipientName?.apply {
             afterTextChanged { clearErrorInputField(this) }
         }
@@ -53,6 +56,10 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
         }
 
         idNumber?.apply {
+            afterTextChanged { clearErrorInputField(this) }
+        }
+
+        alternativeNumber?.apply {
             afterTextChanged { clearErrorInputField(this) }
         }
 
@@ -66,16 +73,22 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     }
 
     fun configureUI() {
-        recipientName?.apply {
-            isEnabled = statusResponse?.isCardNew == true
-            setText(SessionUtilities.getInstance().jwt?.name?.get(0))
+        recipientDetailsResponse?.recipientDetails?.let {
+            recipientName?.apply {
+                isEnabled = statusResponse?.isCardNew == true
+                setText(it.deliverTo ?: SessionUtilities.getInstance().jwt?.name?.get(0))
+            }
+            idNumber?.setText(it.idNumber ?: "")
+            cellphoneNumber?.setText(it.telCell ?: "")
+            alternativeNumber?.setText(it.telWork ?: "")
         }
+
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirm -> {
-                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
+                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
                     bookingAddress.let {
                         it.deliverTo = recipientName?.text.toString().trim()
                         it.telCell = cellphoneNumber?.text.toString().trim()
@@ -111,6 +124,9 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
             R.id.idNumber -> {
                 idNumberErrorMsg.visibility = View.VISIBLE
             }
+            R.id.alternativeNumber -> {
+                alternativeNumberErrorMsg.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -125,6 +141,9 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
             }
             R.id.idNumber -> {
                 idNumberErrorMsg?.visibility = View.GONE
+            }
+            R.id.alternativeNumber -> {
+                alternativeNumberErrorMsg.visibility = View.GONE
             }
         }
     }
