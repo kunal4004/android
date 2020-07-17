@@ -12,11 +12,8 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.UpdateAddressDetailsRequestBody
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
@@ -29,8 +26,6 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
     private lateinit var listOfInputFields: List<EditText>
     var recipientDetailsResponse: RecipientDetailsResponse? = null
     var isBusinessAddress: Boolean = false
-    var envelopeNumber: String? = null
-    var productOfferingId: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_address_layout, container, false)
@@ -44,8 +39,6 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
                 bookingAddress = Utils.jsonStringToObject(getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
             if (containsKey("RecipientDetailsResponse"))
                 recipientDetailsResponse = Utils.jsonStringToObject(getString("RecipientDetailsResponse"), RecipientDetailsResponse::class.java) as RecipientDetailsResponse?
-            envelopeNumber = getString("envelopeNumber", "")
-            productOfferingId = getString("productOfferingId", "")
         }
     }
 
@@ -90,6 +83,7 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
             bookingAddress?.let {
                 it.businessName = businessName?.text.toString().trim()
+                it.complexName = complexOrBuildingName?.text.toString().trim()
                 it.buildingName = complexOrBuildingName?.text.toString().trim()
                 it.street = streetAddress?.text.toString().trim()
                 it.suburb = suburb?.text.toString().trim()
@@ -98,8 +92,6 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
                 it.postalCode = postalCode?.text.toString().trim()
             }
             bundle?.putString("BookingAddress", Utils.toJson(bookingAddress))
-            val addressDetails: AddressDetails? = bookingAddress?.let { AddressDetails(it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode) }
-            envelopeNumber?.let { OneAppService.updateRecipientAddressDetails(it, UpdateAddressDetailsRequestBody(addressDetails,productOfferingId)) }
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 
         } else {

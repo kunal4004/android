@@ -63,11 +63,13 @@
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
+                android:imeOptions="actionDone"
                 app:layout_constraintTop_toBottomOf="@id/alternativeNumberPlaceHolder" />
 
             <EditText
                 android:id="@+id/idNumber"
                 style="@style/credi_card_delivery_edittext_style"
+                android:maxLength="13"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/idNumberPlaceHolder" />
