@@ -74,13 +74,15 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
 
     fun configureUI() {
         recipientDetailsResponse?.recipientDetails?.let {
-            recipientName?.apply {
-                isEnabled = statusResponse?.isCardNew == true
-                setText(it.deliverTo ?: SessionUtilities.getInstance().jwt?.name?.get(0))
-            }
             idNumber?.setText(it.idNumber ?: "")
             cellphoneNumber?.setText(it.telCell ?: "")
             alternativeNumber?.setText(it.telWork ?: "")
+        }
+
+        recipientName?.apply {
+            isEnabled = statusResponse?.isCardNew != true
+            setText(recipientDetailsResponse?.recipientDetails?.deliverTo
+                    ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }
 
     }
@@ -149,7 +151,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     }
 
     private fun isThirdPartyRecipientEligible(): Boolean {
-        return !(statusResponse?.isThirdPartyRecipient == true)
+        return statusResponse?.isThirdPartyRecipient == true
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
