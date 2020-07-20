@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
 import kotlinx.android.synthetic.main.common_account_detail.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationInitiated
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -383,6 +385,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     private fun navigateToCreditCardActivation(){
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)))
         activity?.apply {
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()

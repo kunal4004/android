@@ -123,6 +123,7 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 
 public class Utils {
@@ -523,6 +524,17 @@ public class Utils {
 		Bundle params = new Bundle();
 		for (Map.Entry<String, String> entry : arguments.entrySet()) {
 			params.putString(entry.getKey(), entry.getValue());
+		}
+
+		mFirebaseAnalytics.logEvent(eventName, params);
+	}
+
+	public static void triggerFireBaseEvent(String eventName, Map<String, Boolean> argument) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+
+		Bundle params = new Bundle();
+		for (Map.Entry<String, Boolean> entry : argument.entrySet()) {
+			params.putBoolean(entry.getKey(), entry.getValue());
 		}
 
 		mFirebaseAnalytics.logEvent(eventName, params);
@@ -1537,5 +1549,20 @@ public class Utils {
 		Date closingTime = WFormatter.parseDate(endTime);
 
 		return (currentTime.after(openingTime) && currentTime.before(closingTime));
+	}
+
+	public static void deliverySelectionModalShown() {
+		try {
+			String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
+			if (firstTime == null) {
+				Utils.sessionDaoSave(DELIVERY_OPTION, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
+	public static Boolean isDeliverySelectionModalShown() {
+		String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
+		return (firstTime != null);
 	}
 }

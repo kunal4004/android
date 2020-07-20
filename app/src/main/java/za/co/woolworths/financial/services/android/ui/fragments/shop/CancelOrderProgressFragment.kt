@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
@@ -67,7 +68,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
                 containerViewId = R.id.flProgressIndicator
         )
         closeButton?.setOnClickListener {
-            CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CLOSE_FAILURE_CANCEL)
+            (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CLOSE_FAILURE_CANCEL)
             activity?.onBackPressed()
         }
     }
@@ -76,7 +77,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         when (v?.id) {
             R.id.retry -> orderId?.let { retryCancelOrder() }
             R.id.callTheCallCenter -> activity?.apply {
-                CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_FAILURE_CALL_CENTRE)
+                (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_FAILURE_CALL_CENTRE)
                 Utils.makeCall("0861 50 20 20") }
         }
     }
@@ -85,7 +86,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
 
     private fun retryCancelOrder() {
         closeButton?.visibility = View.GONE
-        CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_FAILURE_RETRY)
+        (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_FAILURE_RETRY)
         getProgressState()?.restartSpinning()
         orderId?.let { requestCancelOrder(it) }
     }
@@ -116,8 +117,8 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
     fun onCancelOrderSuccess() {
         getProgressState()?.animateSuccessEnd(true)
         tvProcessingYourRequestDuration.visibility = View.GONE
-        processingLayoutTitle.text = resources.getString(R.string.cancel_order_success_title)
-        CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
+        processingLayoutTitle?.text = bindString(R.string.cancel_order_success_title)
+        (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_SUCCESS)
     }
 
     fun onCancelOrderFailure() {
@@ -125,7 +126,7 @@ class CancelOrderProgressFragment : Fragment(), IProgressAnimationState, View.On
         getProgressState()?.animateSuccessEnd(false)
         cancelOrderProcessingLayout?.visibility = View.GONE
         cancelOrderFailureView?.visibility = View.VISIBLE
-        CancelOrderProgressActivity.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_FAILURE)
+        (activity as? CancelOrderProgressActivity)?.triggerFirebaseEvent(FirebaseManagerAnalyticsProperties.PropertyNames.CANCEL_API_FAILURE)
     }
 
     override fun onAnimationEnd(cardIsBlocked: Boolean) {

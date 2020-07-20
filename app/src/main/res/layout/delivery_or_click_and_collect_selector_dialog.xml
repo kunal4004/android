@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/thirty_two_dp">
+
+
+    <RelativeLayout
+        android:id="@+id/delivery"
+        android:layout_width="0dp"
+        android:layout_height="158dp"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:background="@drawable/delivery_option_bg"
+        app:layout_constraintEnd_toStartOf="@id/clickAndCollect"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/fourty_dp"
+                android:layout_height="@dimen/fourty_dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/icon_delivery" />
+
+            <TextView
+                style="@style/myriad_pro_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:gravity="center_horizontal"
+                android:text="@string/delivery"
+                android:textColor="@color/offer_title"
+                android:textSize="@dimen/fifteen_sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/clickAndCollect"
+        android:layout_width="0dp"
+        android:layout_height="158dp"
+        android:background="@drawable/click_and_collect_option_bg"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toEndOf="@+id/delivery"
+        app:layout_constraintTop_toTopOf="@id/delivery">
+
+        <LinearLayout
+            android:id="@+id/clickAndCollectView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/fourty_dp"
+                android:layout_height="@dimen/fourty_dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/icon_basket" />
+
+            <TextView
+                style="@style/myriad_pro_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:gravity="center_horizontal"
+                android:text="@string/click_collect"
+                android:textColor="@color/offer_title"
+                android:textSize="@dimen/fifteen_sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/itemsLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/eleven_sp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:layout_below="@+id/clickAndCollectView"
+            android:layout_centerHorizontal="true"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            android:layout_marginTop="@dimen/ten_dp"
+            />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/newFeature"
+        style="@style/futura_semi_bold"
+        android:layout_width="@dimen/thirty_two_dp"
+        android:layout_height="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:background="#4A9521"
+        android:gravity="center"
+        android:text="@string/text_new"
+        android:textColor="@color/white"
+        android:textSize="8sp"
+        app:layout_constraintLeft_toLeftOf="@+id/clickAndCollect"
+        app:layout_constraintRight_toRightOf="@+id/clickAndCollect"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/dialog_title_text_style"
+        android:layout_marginTop="@dimen/fifty_dp"
+        android:text="@string/please_select_an_option"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
+
+    <TextView
+        android:id="@+id/justBrowsing"
+        style="@style/link_text_style"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:text="@string/just_browsing"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/delivery" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

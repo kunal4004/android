@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -213,17 +214,23 @@ import kotlin.properties.Delegates
                 REQUEST_CODE_SHOPPING_LIST -> {
                     presentShoppingList()
                 }
+
             }
         } else if (requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             setResult(Activity.RESULT_OK, data)
             onBackPressed()
+        } else if (requestCode == MyAccountActivity.REQUEST_CODE_MY_ACCOUNT_FRAGMENT) {
+            if (resultCode == MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT) {
+                setResult(MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT)
+                finish()
+                overridePendingTransition(0, 0)
+            }
         }
     }
 
     private fun presentEditDeliveryLocation() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            startActivity(Intent(this, DeliveryLocationSelectionActivity::class.java))
-            overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+            presentEditDeliveryLocationActivity(this, 0)
         } else {
             ScreenManager.presentSSOSignin(this, REQUEST_CODE_DELIVERY_LOCATION)
         }
@@ -267,7 +274,7 @@ import kotlin.properties.Delegates
         if (accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse))
         }
-        startActivity(intent)
+        startActivityForResult(intent,MyAccountActivity.REQUEST_CODE_MY_ACCOUNT_FRAGMENT)
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 

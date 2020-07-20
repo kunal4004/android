@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 interface IProductListing {
     fun openProductDetailView(productList: ProductList)
-    fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
+    fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
     fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?)
     fun queryStoreFinderProductByFusedLocation(location: Location?)
 }

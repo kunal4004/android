@@ -42,9 +42,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.OneAppEvents;
 import za.co.woolworths.financial.services.android.util.Utils;
-
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -144,6 +145,18 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			viewPager.setContentDescription(getString(R.string.reward_items_layout));
 			mRlConnect.setContentDescription(getString(R.string.no_connection));
 		}
+
+		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			public void onPageScrollStateChanged(int state) { }
+
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+			public void onPageSelected(int position) {
+				if (position == 1) {
+					KotlinUtils.Companion.postOneAppEvent(OneAppEvents.AppScreen.WREWARDS, OneAppEvents.FeatureName.WREWARDS_VIEW_VOUCHERS);
+				}
+			}
+		});
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse, CardDetailsResponse cardResponse) {
@@ -156,6 +169,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		adapter.addFrag(new WRewardsOverviewFragment(), getString(R.string.overview));
 		adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
 		adapter.addFrag(new WRewardsSavingsFragment(), getString(R.string.savings));
+
 		viewPager.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
 		tabLayout.setupWithViewPager(viewPager);
@@ -262,7 +276,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.savings));
 		viewPager.setAdapter(adapter);
 		tabLayout.setupWithViewPager(viewPager);
-
 		try {
 			setupTabIcons(0);
 		} catch (Exception e) {

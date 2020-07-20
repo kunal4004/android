@@ -76,7 +76,7 @@
     <color name="active_card_color">#424244</color>
     <color name="npc_description">#909090</color>
     <color name="permanent_card_block_desc_color">#7F7F7F</color>
-    <color name="no_active_card_title">#FF222222</color>
+    <color name="no_active_card_title">#222222</color>
     <color name="success_stroke_color"> #CC196A</color>
     <color name="gray">#FF7F7F7F</color>
     <color name="chat_hint">#FFBCBCBC</color>
@@ -103,4 +103,6 @@
     <color name="lighter_gray_background">#30D8D8D8</color>
     <color name="arrears_red_color_code">#F43F37</color>
     <color name="sign_in_register_button_border">#E5E5E5</color>
+    <color name="block_card_color" >#424244</color>
+    <color name="gray_35">#35D8D8D8</color>
 </resources>
