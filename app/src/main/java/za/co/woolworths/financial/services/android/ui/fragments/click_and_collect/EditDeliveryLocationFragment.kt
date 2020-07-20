@@ -104,9 +104,16 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun onGetProvincesSuccess(regions: List<Province>) {
         this.regions = regions
         hideGetProvincesProgress()
-        val adapter = activity?.let { ProvinceDropdownAdapter(it, 0, regions, ::onProvinceSelected) }
-        tvSelectedProvince.setAdapter(adapter)
-        tvSelectedProvince.showDropDown()
+        activity?.let { activity ->
+            this.regions?.let {
+                ProvinceDropdownAdapter(activity, 0, it, ::onProvinceSelected).let {
+                    tvSelectedProvince?.apply {
+                        setAdapter(it)
+                        showDropDown()
+                    }
+                }
+            }
+        }
     }
 
     override fun onGetProvincesFailure() {
@@ -119,9 +126,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         if (suburbs.isNullOrEmpty()) {
             showNoStoresError()
         } else {
-            val adapter = activity?.let { SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected) }
-            tvSelectedSuburb.setAdapter(adapter)
-            tvSelectedSuburb.showDropDown()
+            activity?.let { it ->
+                SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected).let {
+                    tvSelectedSuburb?.apply {
+                        setAdapter(it)
+                        showDropDown()
+                    }
+                }
+            }
         }
     }
 
