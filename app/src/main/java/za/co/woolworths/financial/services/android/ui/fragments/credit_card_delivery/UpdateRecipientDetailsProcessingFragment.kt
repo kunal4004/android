@@ -57,5 +57,6 @@ class UpdateRecipientDetailsProcessingFragment : BaseProcessingFragment() {
     fun navigateToAddressDetailsFragment(response: CreditCardDeliveryStatusResponse? = null) {
         response?.let { bundle?.putString("CreditCardDeliveryStatusResponse", Utils.toJson(it)) }
         navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
+        getProgressState()?.let { activity?.supportFragmentManager?.beginTransaction()?.remove(it)?.commitAllowingStateLoss() }
     }
 }

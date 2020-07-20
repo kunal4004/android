@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.text.SimpleDateFormat
+import java.util.*
 
 class KotlinUtils {
     companion object {
@@ -231,6 +232,16 @@ class KotlinUtils {
             }
 
             return transactionList
+        }
+
+        fun getDateDaysAfter(daysAfter: Int): Date {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, daysAfter)
+            return calendar.time
+        }
+
+        fun toShipByDateFormat(date: Date?) :String {
+            return SimpleDateFormat("dd-MM-yyy").format(date)
         }
     }
 }

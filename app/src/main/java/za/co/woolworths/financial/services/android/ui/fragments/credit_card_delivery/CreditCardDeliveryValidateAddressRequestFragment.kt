@@ -19,11 +19,13 @@ import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_requ
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView, IProgressAnimationState, View.OnClickListener {
@@ -32,6 +34,9 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
     var bundle: Bundle? = null
     var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
     var possibleAddressResponse: PossibleAddressResponse? = null
+    var envelopeNumber: String? = null
+    var productOfferingId: String? = null
+    private var bookingAddress: BookingAddress? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_validate_address_request_layout, container, false)
@@ -41,6 +46,12 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
         super.onCreate(savedInstanceState)
         presenter = ValidateAddressAndTimeSlotPresenterImpl(this, ValidateAddressAndTimeSlotInteractorImpl())
         bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            if (containsKey("BookingAddress"))
+                bookingAddress = Utils.jsonStringToObject(getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
+            envelopeNumber = getString("envelopeNumber", "")
+            productOfferingId = getString("productOfferingId", "")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,6 +73,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
         when (v?.id) {
             R.id.confirmAddress -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM)
+                updateAddressDetails()
                 getAvailableTimeSlots()
             }
             R.id.editAddress -> {
@@ -73,7 +85,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
                     restartProgress()
-                    presenter?.initValidateAddress("woodstock", "20")
+                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(bookingAddress), it) }
                 }
             }
             R.id.retryGetTimeSlots -> {
@@ -87,14 +99,14 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
 
     override fun getValidateAddress() {
         startProgress()
-        presenter?.initValidateAddress("woodstock", "20")
+        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(bookingAddress), it) }
     }
 
     override fun getAvailableTimeSlots() {
         activity?.apply {
             possibleAddressResponse?.address?.let {
                 restartProgress()
-                presenter?.initAvailableTimeSlots("24/03 WOOP 100001", "20", it.x, it.y, "2020-04-08")
+                envelopeNumber?.let { it1 -> productOfferingId?.let { it2 -> presenter?.initAvailableTimeSlots(it1, it2, it.x, it.y, KotlinUtils.toShipByDateFormat(KotlinUtils.getDateDaysAfter(2))) } }
             }
         }
     }
@@ -222,5 +234,19 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
     override fun onDestroyView() {
         super.onDestroyView()
         getProgressState()?.let { activity?.supportFragmentManager?.beginTransaction()?.remove(it)?.commitAllowingStateLoss() }
+    }
+
+    //This API should be Fire and forget
+    private fun updateAddressDetails() {
+        val addressDetails: AddressDetails? = bookingAddress?.let { AddressDetails(it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode) }
+        envelopeNumber?.let { request(OneAppService.updateRecipientAddressDetails(it, UpdateAddressDetailsRequestBody(addressDetails, productOfferingId))) }
+    }
+
+    private fun getSearchPhase(bookingAddress: BookingAddress?): String {
+        var searchPhase: String = ""
+        bookingAddress?.let {
+            searchPhase = "${it.street} ${it.suburb} ${it.city} ${it.postalCode}"
+        }
+        return searchPhase
     }
 }

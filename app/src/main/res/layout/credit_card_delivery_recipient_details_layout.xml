@@ -63,11 +63,13 @@
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
+                android:imeOptions="actionDone"
                 app:layout_constraintTop_toBottomOf="@id/alternativeNumberPlaceHolder" />
 
             <EditText
                 android:id="@+id/idNumber"
                 style="@style/credi_card_delivery_edittext_style"
+                android:maxLength="13"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/idNumberPlaceHolder" />
@@ -144,6 +146,19 @@
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/idNumber" />
+
+            <TextView
+                android:id="@+id/alternativeNumberErrorMsg"
+                style="@style/myriad_pro_regular"
+                android:layout_marginTop="@dimen/eight_dp"
+                android:lineSpacingMultiplier="1.40"
+                android:text="@string/cellphone_number_error_msg"
+                android:textColor="@color/input_error_color_code"
+                android:textSize="@dimen/fourteen_sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/alternativeNumber" />
 
             <TextView
                 android:id="@+id/recipientDetailsDesc"
