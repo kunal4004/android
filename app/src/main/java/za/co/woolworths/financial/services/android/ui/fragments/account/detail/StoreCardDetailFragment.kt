@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -19,8 +18,6 @@ class StoreCardDetailFragment : AccountCardDetailFragment() {
         cardDetailImageView?.setImageResource(R.drawable.w_store_card)
 
         includeManageMyCard?.visibility = VISIBLE
-
-        navigateToGetStoreCards()
 
         if (mCardPresenterImpl?.isDebitOrderActive() == VISIBLE) {
             debitOrderViewGroup?.visibility = VISIBLE

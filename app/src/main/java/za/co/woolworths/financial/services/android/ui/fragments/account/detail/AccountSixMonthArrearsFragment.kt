@@ -35,6 +35,7 @@ class AccountSixMonthArrearsFragment : Fragment() {
         setTitleAndCardType()
         callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
         navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
+        bottomView?.visibility = GONE
     }
 
     private fun hideCardTextViews() {
