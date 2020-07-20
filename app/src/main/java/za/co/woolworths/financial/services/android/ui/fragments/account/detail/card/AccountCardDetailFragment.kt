@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -81,6 +80,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         cardDetailImageView?.setOnClickListener(this)
         tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
+        includeManageMyCard?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
         viewPaymentOptions?.setOnClickListener(this)
@@ -115,6 +115,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         autoConnectToNetwork()
 
         initCreditCardActivation()
+
     }
 
     private fun autoConnectToNetwork() {
@@ -132,7 +133,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     private fun retryConnect() {
         activity?.apply {
             if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-                Log.e("ConnectionIssue", "NetworkManagerIssue")
                 mCardPresenterImpl?.getUserCLIOfferActive()
             } else {
                 ErrorHandlerView(this).showToast()
@@ -143,16 +143,17 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun showStoreCardProgress() {
         loadStoreCardProgressBar?.visibility = VISIBLE
         storeCardLoaderView?.visibility = VISIBLE
+        includeManageMyCard?.isEnabled  = false
         cardImageRootView?.isEnabled = false
     }
 
     @SuppressLint("DefaultLocale")
-    override fun hideAccountStoreCardProgress() {
+    override fun hideStoreCardProgress() {
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         // Boolean check will enable clickable event only when text is "view card"
-        cardImageRootView?.isEnabled =
-                myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
+        includeManageMyCard?.isEnabled  = true
+        cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 
     override fun handleUnknownHttpCode(description: String?) {
@@ -168,23 +169,18 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
             when (v?.id) {
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
-                R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
-                R.id.cardDetailImageView -> {
+                R.id.cardImageRootView -> navigateToTemporaryStoreCard()
+                R.id.includeManageMyCard, R.id.cardDetailImageView -> {
                     cancelRetrofitRequest(mOfferActiveCall)
-                    navigateToGetStoreCards()
+                    navigateToTemporaryStoreCard()
                 }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
                 }
-                R.id.viewPaymentOptions -> { mCardPresenterImpl?.navigateToPaymentOptionActivity()}
-                R.id.activateCreditCard -> {
-                    if (Utils.isCreditCardActivationEndpointAvailable())
-                        navigateToCreditCardActivation()
-                    else
-                        showCreditCardActivationUnavailableDialog()
-                }
+                R.id.viewPaymentOptions -> mCardPresenterImpl?.navigateToPaymentOptionActivity()
+                R.id.activateCreditCard -> if (Utils.isCreditCardActivationEndpointAvailable()) navigateToCreditCardActivation() else showCreditCardActivationUnavailableDialog()
             }
         }
     }
@@ -194,7 +190,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         cancelRetrofitRequest(mStoreCardCall)
     }
 
-    private fun navigateToGetStoreCards() {
+    fun navigateToGetStoreCards() {
         activity?.apply {
             if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
                 mCardPresenterImpl?.getAccountStoreCardCards()
@@ -377,14 +373,14 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
 
-    override fun stopCardActivationShimmer(){
+    override fun stopCardActivationShimmer() {
         creditCardActivationPlaceHolder.apply {
             stopShimmer()
             visibility = GONE
         }
     }
 
-    private fun navigateToCreditCardActivation(){
+    private fun navigateToCreditCardActivation() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)))
         activity?.apply {
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
@@ -397,7 +393,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         }
     }
 
-    private fun showCreditCardActivationUnavailableDialog(){
+    private fun showCreditCardActivationUnavailableDialog() {
         activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(mCardPresenterImpl?.getAccount()?.accountNumberBin).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
     }
 

@@ -96,7 +96,7 @@ class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
         }
     }
 
-    fun getCardDetail(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(0)
+    fun getAccountStoreCards(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(0)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state

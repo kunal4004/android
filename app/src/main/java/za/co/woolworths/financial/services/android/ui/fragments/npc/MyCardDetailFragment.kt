@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -25,7 +27,9 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_SENT_TO
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_VALUE
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
@@ -37,6 +41,7 @@ import java.net.SocketTimeoutException
 
 class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
 
+    private var temporaryFreezeCard: TemporaryFreezeStoreCard? = null
     private var mStoreCard: StoreCard? = null
     private var mStoreCardDetail: String? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
@@ -80,6 +85,70 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         initListener()
         populateView()
         uniqueIdsForCardDetails()
+
+        initTemporaryFreezeCard()
+
+        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { _, isChecked ->
+            when (isChecked) {
+                true -> temporaryFreezeCard?.freezeStoreCardDialog(childFragmentManager)
+                false -> temporaryFreezeCard?.unFreezeStoreCardDialog(childFragmentManager)
+            }
+        }
+    }
+
+    private fun initTemporaryFreezeCard() {
+        temporaryFreezeCard = TemporaryFreezeStoreCard(mStoreCardsResponse, object : ITemporaryCardFreeze {
+
+                    override fun showProgress() {
+                        super.showProgress()
+                        temporaryFreezeCardProgressBar?.visibility = VISIBLE
+                        temporaryCardFreezeSwitch?.visibility = GONE
+                    }
+
+                    override fun onFreezeCardSuccess(response: BlockMyCardResponse?) {
+                        super.onFreezeCardSuccess(response)
+                        if (!isAdded) return
+                        when (response?.httpCode) {
+                            200 -> {
+                                Snackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label), Snackbar.LENGTH_SHORT).show();
+                                temporaryCardFreezeSwitch?.isChecked = true
+                                temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+                            }
+
+                            440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams ?: "", activity)
+
+                            else -> {
+                                temporaryCardFreezeSwitch?.isChecked = false
+                                activity?.supportFragmentManager?.let { fragmentManager ->
+                                    Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc
+                                            ?: "")
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onUnFreezeSuccess(response: UnblockStoreCardResponse?) {
+
+                    }
+
+                    override fun onTemporaryCardFreezeCanceled() {
+                        super.onTemporaryCardFreezeCanceled()
+                        temporaryCardFreezeSwitch?.isChecked = false
+                    }
+
+                    override fun onTemporaryCardFreezeConfirmed() {
+                        super.onTemporaryCardFreezeConfirmed()
+                        temporaryFreezeCard?.blockStoreCardRequest()
+                    }
+
+                    override fun onTemporaryCardUnFreezeConfirmed() {
+                        super.onTemporaryCardUnFreezeConfirmed()
+                        temporaryFreezeCard?.unblockStoreCardRequest()
+                    }
+                })
+
+        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+
     }
 
     private fun uniqueIdsForCardDetails() {
@@ -165,12 +234,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun initPayWithCard() {
         when (mStoreCardsResponse?.oneTimePinRequired?.unblockStoreCard) {
-            true -> {
-                navigateToOTPActivity(OTPMethodType.SMS.name)
-            }
-            else -> {
-                requestUnblockCard()
-            }
+            true -> navigateToOTPActivity(OTPMethodType.SMS.name)
+            else -> requestUnblockCard()
+
         }
     }
 
@@ -190,8 +256,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                     showPayWithCardProgressBar(GONE)
                     when (response?.httpCode) {
                         200 -> displayTemporaryCardToPayDialog()
-                        440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
-                        else ->showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
+                        440 -> activity?.let { activity ->
+                            response.let {
+                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams
+                                        ?: "", activity)
+                            }
+                        }
+                        else -> showErrorDialog(response?.response?.desc
+                                ?: getString(R.string.general_error_desc))
                     }
                 }
 
@@ -216,7 +288,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             }
         }
     }
-
 
     fun displayTemporaryCardToPayDialog() {
         activity?.apply {
@@ -268,8 +339,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     fun showErrorDialog(errorMessage: String) {
-            val dialog = ErrorDialogFragment.newInstance(errorMessage)
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
+        val dialog = ErrorDialogFragment.newInstance(errorMessage)
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
     }
 
     private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean {

@@ -15,7 +15,7 @@ interface IAccountCardDetailsContract {
         fun handleUnknownHttpCode(description: String?)
         fun handleSessionTimeOut(stsParams: String?)
         fun showStoreCardProgress()
-        fun hideAccountStoreCardProgress()
+        fun hideStoreCardProgress()
         fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse)
         fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse)
         fun navigateToDebitOrderActivity(debitOrder: DebitOrder)
@@ -59,7 +59,7 @@ interface IAccountCardDetailsContract {
         fun getOfferActive(): OfferActive?
         fun getProductOfferingId(): Int?
         fun onDestroy()
-        fun navigateToTemporaryStoreCardOnButtonTapped()
+        fun navigateToTemporaryStoreCard()
         fun navigateToDebitOrderActivityOnButtonTapped()
         fun navigateToBalanceProtectionInsuranceOnButtonTapped()
         fun cliProductOfferingGoodStanding(): Boolean

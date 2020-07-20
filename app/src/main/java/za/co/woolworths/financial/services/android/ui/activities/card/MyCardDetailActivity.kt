@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
@@ -54,10 +55,15 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     }
 
     private fun addCardDetailFragment() {
-        val blockCode = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode
+        val primaryCard =  Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)
+        val blockCode =primaryCard?.blockCode
+        val blockType = primaryCard?.blockType
+        val isStoreCardBlocked = TextUtils.isEmpty(blockCode) || blockType == TemporaryFreezeStoreCard.TEMPORARY
         val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
         // Determine if card is blocked: if blockCode is not null, card is blocked.
-        when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true) || TextUtils.isEmpty(blockCode)) {
+        when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+                || isStoreCardBlocked
+                && blockType != TemporaryFreezeStoreCard.PERMANENT) {
             true -> {
                 addFragment(
                         fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),

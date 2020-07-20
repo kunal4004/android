@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="30dp" />
+        app:layout_constraintGuide_begin="0dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuide"
@@ -62,9 +62,14 @@
         android:id="@+id/bottomGuide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/light_gray_background"
         android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintGuide_percent="0.85"
-        app:layout_constraintHeight_percent="0.85" />
+        app:layout_constraintHeight_percent="0.85"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startUsernameVerticalGuide"
@@ -84,6 +89,7 @@
         android:textAllCaps="true"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/topGuide"
         tools:ignore="UnusedAttribute" />
@@ -100,19 +106,12 @@
         app:srcCompat="@drawable/w_black_credit_card"
         tools:ignore="ContentDescription" />
 
-    <View
-        android:id="@+id/bottomView"
-        android:layout_width="wrap_content"
-        android:layout_height="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardDetailImageView" />
-
     <TextView
         android:id="@+id/userNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:shadowColor="@color/black"
         android:shadowRadius="1"
@@ -120,9 +119,8 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
-        app:layout_constraintStart_toStartOf="@+id/startUsernameVerticalGuide" />
-
+        app:layout_constraintBottom_toBottomOf="@+id/cardDetailImageView"
+        app:layout_constraintStart_toStartOf="@+id/imageGuideLine" />
 
     <View
         android:id="@+id/storeCardLoaderView"
@@ -130,10 +128,9 @@
         android:layout_height="0dp"
         android:background="@color/grey_90_bg"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/bottomView"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
-        app:layout_constraintTop_toTopOf="@+id/cardDetailImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/cardDetailImageView" />
 
 
     <ProgressBar
@@ -143,10 +140,44 @@
         android:layout_height="wrap_content"
         android:indeterminateDrawable="@drawable/progress_circle"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        app:layout_constraintBottom_toTopOf="@+id/storeCardLoaderView"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/cardDetailImageView"
         app:layout_constraintTop_toTopOf="@+id/cardDetailImageView" />
 
+    <View
+        android:id="@+id/manageCardDivider"
+        style="@style/horizontal_divider_how_to_pay"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardDetailImageView" />
+
+    <include
+        android:id="@+id/includeManageMyCard"
+        layout="@layout/account_cart_item"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="24dp"
+        android:visibility="gone"
+        android:layout_marginEnd="16dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manageCardDivider" />
+
+    <View
+        android:id="@+id/bottomView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:background="@color/light_gray_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/includeManageMyCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

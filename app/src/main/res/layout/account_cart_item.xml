@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/manageMyCardConstraintLayout"
+    android:layout_width="0dp"
+    android:layout_height="70dp"
+    android:background="@drawable/card_header_background">
+
+    <ImageView
+        android:id="@+id/imLogoIncreaseLimit"
+        style="@style/style_loan_logo_img"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/icon_card"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/imLogoIncreaseLimit"
+        android:fontFamily="@font/myriad_pro_semi_bold"
+        android:text="@string/manage_my_card_title"
+        app:layout_constraintBottom_toBottomOf="@+id/imLogoIncreaseLimit"
+        app:layout_constraintEnd_toStartOf="@+id/manageMyCardImageView"
+        app:layout_constraintStart_toEndOf="@+id/imLogoIncreaseLimit"
+        app:layout_constraintTop_toTopOf="@+id/imLogoIncreaseLimit" />
+
+    <ImageView
+        android:id="@+id/manageMyCardImageView"
+        style="@style/style_loan_img"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

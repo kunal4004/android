@@ -87,9 +87,9 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     }
 
     private fun executeBlockCard() {
-        val storeCard = (activity as? BlockMyCardActivity)?.getCardDetail()
+        val storeCard = (activity as? BlockMyCardActivity)?.getAccountStoreCards()
         val storeCardDetail = (activity as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
-        (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
+        (activity as? BlockMyCardActivity)?.getAccountStoreCards()?.apply {
             storeCardDetail?.productOfferingId?.let {
                 blockMyCardRequest(BlockCardRequestBody(storeCardDetail.visionAccountNumber, storeCard?.number
                         ?: "", storeCard?.sequence?.toInt() ?: 0, mBlockCardReason), it)

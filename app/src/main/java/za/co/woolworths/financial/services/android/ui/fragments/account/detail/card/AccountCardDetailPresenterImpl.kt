@@ -117,7 +117,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         with(apiResponse) {
             when (this) {
                 is StoreCardsResponse -> {
-                    mainView?.hideAccountStoreCardProgress()
+                    mainView?.hideStoreCardProgress()
                     if (WoolworthsApplication.getInstance()?.currentActivity !is AccountSignedInActivity) return
                     when (httpCode) {
                         200 -> handleStoreCardSuccessResponse(this)
@@ -185,10 +185,23 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
-        navigateToTemporaryStoreCardOnButtonTapped()
+
+        when (storeCardResponse.httpCode) {
+            200 -> {
+                val primaryCard = storeCardResponse.storeCardsData?.primaryCards?.get(0)
+                val blockType = primaryCard?.blockType
+
+            }
+            440 -> {
+
+            }
+            else -> {
+
+            }
+        }
     }
 
-    override fun navigateToTemporaryStoreCardOnButtonTapped() {
+    override fun navigateToTemporaryStoreCard() {
         when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
             true -> navigateToGetTemporaryStoreCardPopupActivity()
             false -> navigateToMyCardDetailActivity()
@@ -225,7 +238,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun onFailure(error: Throwable?) {
-        mainView?.hideAccountStoreCardProgress()
+        mainView?.hideStoreCardProgress()
     }
 
     override fun navigateToPaymentOptionActivity() {
