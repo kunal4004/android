@@ -54,8 +54,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             this.intent = getIntent()
             val bundle = getIntent()?.extras
 
-            pushNotificationUpdate = bundle?.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT)
-
             try {
                 appVersion = packageManager.getPackageInfo(packageName, 0).versionName
                 environment = BuildConfig.FLAVOR
@@ -240,7 +238,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     initialize()
                 } else {
                     startActivity(Intent(this@StartupActivity, StartupActivity::class.java))
-                    finish()
+                    //finish()
                 }
             } else {
                 initialize()

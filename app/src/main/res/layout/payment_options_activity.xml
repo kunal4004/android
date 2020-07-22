@@ -36,7 +36,6 @@
                 android:background="@color/default_background" />
 
             <TextView
-                android:id="@+id/tvPaymentABSATitle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/fifty_dp"
                 android:background="@color/white"
@@ -54,7 +53,6 @@
             <View style="@style/horizontal_divider_how_to_pay" />
 
             <TextView
-                android:id="@+id/tvPaymentABSADesc"
                 style="@style/contact_us_item_header_textview"
                 android:layout_width="match_parent"
                 android:layout_marginStart="@dimen/twenty_four_dp"
@@ -75,7 +73,6 @@
             android:orientation="vertical">
 
             <View
-                android:id="@+id/absaBottomView"
                 android:layout_width="match_parent"
                 android:layout_height="16dp"
                 android:background="@color/default_background" />
@@ -128,7 +125,6 @@
             android:paddingBottom="@dimen/six_dp" />
 
         <View
-            android:id="@+id/bottomSpaceView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/twenty_four_dp"
             android:background="@color/default_background" />
@@ -140,7 +136,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/chatWithUsTextView"
                 style="@style/anyQuestionLabelStyle"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"

@@ -44,19 +44,17 @@ public class ScreenManager {
 	public static final int BIOMETRICS_LAUNCH_VALUE = 1983;
 	public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
 
-	public static void presentMain(Activity activity, String notificationUtils) {
+	public static void presentMain(Activity activity) {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 		activity.finish();
 	}
 
-	public static void presentMain(Activity activity, String notificationUtils, Uri data) {
+	public static void presentMain(Activity activity, Uri data) {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		intent.setData(data);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

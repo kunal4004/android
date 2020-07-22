@@ -92,7 +92,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/chatWithUsTextView"
                 style="@style/anyQuestionLabelStyle"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="33dp"

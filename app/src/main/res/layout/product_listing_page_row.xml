@@ -121,7 +121,6 @@
         app:layout_constraintGuide_begin="16dp" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/promotionalImageGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -160,7 +159,6 @@
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
 
     <include
-        android:id="@+id/productListingPromotionalImage"
         layout="@layout/product_listing_promotional_images"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toTopOf="@+id/promotionalImageTopGuideline" />

@@ -33,7 +33,6 @@
         app:layout_constraintTop_toTopOf="@+id/logoProtectionInsurance" />
 
     <TextView
-        android:id="@+id/balanceLabelTextView"
         style="@style/style_loan_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -82,7 +81,6 @@
         tools:ignore="UnusedAttribute" />
 
     <TextView
-        android:id="@+id/debitOrderTextView"
         style="@style/style_loan_title"
         android:layout_width="0dp"
         android:text="@string/debit_orders"
@@ -164,7 +162,6 @@
 
 
     <View
-        android:id="@+id/creditLimitDividerStyle"
         style="@style/creditLimitDividerStyle"
         android:layout_height="1dp"
         app:layout_constraintEnd_toEndOf="parent"

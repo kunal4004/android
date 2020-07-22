@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override var intent: Intent? = null
-    override var pushNotificationUpdate: String? = null
+//    override var pushNotificationUpdate: String? = null
 
     override var firebaseAnalytics: FirebaseAnalytics? = null
 
@@ -80,7 +80,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             if (isFirstTime == null || Utils.isAppUpdated(mContext))
                 ScreenManager.presentOnboarding(activity)
             else {
-                ScreenManager.presentMain(activity, pushNotificationUpdate)
+                ScreenManager.presentMain(activity)
             }
         }
     }
@@ -90,7 +90,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
-        ScreenManager.presentMain(mContext as Activity, pushNotificationUpdate, appLinkData)
+        ScreenManager.presentMain(mContext as Activity, appLinkData)
     }
 
     private fun persistGlobalConfig(response: ConfigResponse) {

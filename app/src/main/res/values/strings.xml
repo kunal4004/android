@@ -31,11 +31,7 @@
     <string name="km">km</string>
     <string name="contact_us">Contact Us</string>
     <string name="cart">Cart</string>
-    <string name="delivery_location">Delivery Location</string>
     <string name="set_delivery_location_button">SET DELIVERY LOCATION</string>
-    <string name="previously_selected_locations">Previously Selected Locations</string>
-    <string name="select_your_province">Select your Province</string>
-    <string name="select_your_suburb">Select your Suburb</string>
     <string name="set_your_delivery_location">Set your Delivery Location</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
@@ -52,55 +48,15 @@
     <string name="call_us">CALL US</string>
     <string name="txt_local_caller">Local caller</string>
     <string name="fs_local_caller_number">0861 502 020</string>
-    <string name="fs_inter_national_caller_number">+27 21 411 5000</string>
-    <string name="txt_international_caller">International caller</string>
     <string name="txt_call_center_opening_hours">Call Centre Operating Hours</string>
     <string name="fs_call_center_opening_hours">Daily 7.30am - 9pm</string>
     <string name="email_us">email us</string>
     <string name="txt_black_credit_card_query">Black Credit Card query</string>
-    <string name="txt_complaint">Complaint</string>
-    <string name="txt_cc_query">Credit Card query</string>
-    <string name="txt_wrewards_query">WRewards query</string>
-    <string name="txt_insurance_claim">Insurance claim</string>
-    <string name="txt_payment_query">Payment query</string>
-    <string name="txt_sc_and_pl_query">Store Card &amp; Personal Loan query</string>
-    <string name="txt_technical_problem">Technical</string>
-    <string name="online_local_caller_number">0860 100 987</string>
-    <string name="online_inter_national_caller_number">+27 21 407 6137</string>
-    <string name="online_call_center_opening_hours">Monday - Saturday 9am - 5pm \n\nSunday 9am - 2pm \n\nPublic Holidays 9am - 2pm</string>
-    <string name="general_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8am - 5pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
-    <string name="online_shop_reg_login">Online shop registration /Login</string>
-    <string name="txt_delivery_queries">Delivery queries</string>
-    <string name="txt_order_queries">Order queries</string>
-    <string name="customer_service_local_caller_number">0860 022 002</string>
     <string name="customer_service_inter_national_caller_number">(021) 407 3995</string>
-    <string name="customer_service_international_call">+27 21 407 7002</string>
-    <string name="txt_product_query">Product query</string>
-    <string name="txt_store_query">Store query</string>
-    <string name="wrewards_local_caller_number">0861 502 050</string>
-    <string name="wrewards_inter_national_caller_number">+27 21 407 7003</string>
-    <string name="wrewards_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8:30am - 2pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
-    <string name="txt_wrewards_card">WRewards card</string>
-    <string name="txt_wrewards_loyalty_vouchers">WRewards loyalty vouchers</string>
-    <string name="txt_littleworld">Littleworld</string>
-    <string name="txt_general">General</string>
-    <string name="myschool_call_center_opening_hours">Monday - Friday 8am - 5pm \n\nNo Weekends \n\nNo Public Holidays</string>
-    <string name="txt_myschool_card">MySchool card</string>
     <string name="txt_general_enquiry">General enquiries</string>
 
     <string name="contact_us_financial_services">Financial Services</string>
-    <string name="contact_us_customer_service">Customer Services</string>
-    <string name="contact_us_wrewards">WRewards</string>
-    <string name="contact_us_myschool">MySchool enquiries</string>
 
-    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
-    <string name="accounts_walkthrough_desc_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
-    <string name="accounts_walkthrough_desc_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
-    <string name="accounts_walkthrough_desc_4">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
-    <string name="accounts_walkthrough_title_1">welcome</string>
-    <string name="accounts_walkthrough_title_2">WRewards at a glance</string>
-    <string name="accounts_walkthrough_title_3">Financial services</string>
-    <string name="accounts_walkthrough_title_4">GET STARTED</string>
     <string name="distance_in_km">km</string>
     <string name="search_by_store_loc">Search by Store or Location</string>
     <string name="skip">SKIP</string>
@@ -143,10 +99,6 @@
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
 
-    <string name="onboarding_desc_screen_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
-    <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
-    <string name="onboarding_desc_screen_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
-    <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in details to get started. Your sign in details will be the same on the app, mobi site and website.</string>
     <string name="welcome_back">Welcome back</string>
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
     <string name="loan_withdrawal_title">loan withdrawal</string>
@@ -212,26 +164,10 @@
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
     <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
-    <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
     <string name="general_enquiry_desc">Products and instore</string>
     <string name="woolworths_online">Woolworths online</string>
-    <string name="website_and_online_shoppping">Website and App shopping</string>
     <string name="email_black_credit_card_query">woolworthsblack@wfs.co.za</string>
-    <string name="email_complaints">complaints@wfs.co.za</string>
-    <string name="email_credicard_query">creditcard@wfs.co.za</string>
-    <string name="email_wrewards_query">creditcard@wfs.co.za</string>
-    <string name="email_insurance_claim">insuranceclaims@wfs.co.za</string>
-    <string name="email_payment_query">payments@wfs.co.za</string>
-    <string name="email_sc_and_pl_query">queries@wfs.co.za</string>
-    <string name="email_proof_of_income">income@wfs.co.za</string>
-    <string name="email_technical">queries@wfs.co.za</string>
     <string name="fax">Fax</string>
-    <string name="email_custserv">custserv@woolworths.co.za</string>
-    <string name="txt_general_technical_problem">Technical problem</string>
-    <string name="email_online_shop">shop@woolworths.co.za</string>
-    <string name="email_rewards">rewards@woolworths.co.za</string>
-    <string name="email_myschool">cs@myschool.co.za</string>
-    <string name="my_school_local_caller_number">0860 100 445</string>
     <string name="ingredients">Ingredients</string>
     <string name="savings_since">Savings Since</string>
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
@@ -272,11 +208,6 @@
         <item>@string/absa_no_statement_desc</item>
     </string-array>
 
-    <string name="on_boarding_title_1">WELCOME</string>
-    <string name="on_boarding_title_2">WREWARDS AT A GLANCE</string>
-    <string name="on_boarding_title_3">FINANCIAL SERVICES</string>
-    <string name="on_boarding_title_4">CREATE A DIGITAL PROFILE</string>
-    <string name="get_started">get started</string>
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
@@ -477,7 +408,6 @@
     <string name="alternative_email_adress">alternative email address:</string>
     <string name="no_statements">No Statements</string>
     <string name="no_statements_desc">We have no data for the current period.</string>
-    <string name="account_statement">account statement</string>
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
@@ -534,7 +464,6 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
-    <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
     <string name="set_up_device_biometrics_desc">You need to set up Biometrics on your device in order to activate this feature.</string>
@@ -1003,9 +932,6 @@
     <!-- Unique Ids for PLDD Enter Drawn Down Amount Layout-->
     <string name="PLDD_toolbar_layout">Toolbar</string>
     <string name="loan_withdrawal_drawn_down_amount_layout">Loan Withdrawal Drawn Down Amount</string>
-    <string name="enter_drawn_down_amount_layout">Enter Drawn Down Amount layout</string>
-    <string name="available_funds_layout">Available Funds Layout</string>
-    <string name="pldd_credit_limit_layout">Credit Limit Layout</string>
 
     <!-- Unique Ids for Loan Confirmation Layout -->
     <string name="pldd_drawn_down_amount_description_layout">Drawn Down Amount Description</string>
@@ -1413,11 +1339,7 @@
     <string name="plp_productListLayout">productListLayout</string>
     <string name="plp_textViewProductName">textViewProductName</string>
     <string name="plp_textViewPromotion">textViewPromotion</string>
-    <string name="plp_textViewPrice">textViewPrice</string>
     <string name="plp_newPromotionalImage">newPromotionalImage</string>
-    <string name="plp_savePromotionalImage">savePromotionalImage</string>
-    <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
-    <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
     <string name="cancel_order">Cancel Order</string>
     <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
     <string name="confirm_cancel_order_dialog_title">Are you sure you wish to \ncancel this order?</string>
@@ -1441,7 +1363,6 @@
     <string name="cancel_order_retry">btnRetry</string>
     <string name="cancel_order_need_help">linkHelp</string>
     <string name="how_to_use0">Stay safe - inform the till operator that you will scan your own phone and please do not share your phone with any of our staff.</string>
-    <string name="temp_store_card_engine_service_stations_desc">Your temp card cannot be used at Engen service stations.</string>
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
@@ -1477,9 +1398,7 @@
     <string name="onboarding_image_view_layout">on-boarding layout</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delivery_date">Delivery Date:</string>
-    <string name="processing_request">Processing Request</string>
     <string name="please_select_an_option">Please select an option</string>
     <string name="just_browsing">Just Browsing</string>
     <string name="click_collect">Click &amp; Collect</string>
@@ -1530,5 +1449,6 @@
     <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
+    <string name="default_notification_channel_id">oneapp_notification_channel</string>
 </resources>
 
