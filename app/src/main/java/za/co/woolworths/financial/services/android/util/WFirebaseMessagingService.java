@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -23,7 +24,9 @@ import com.awfs.coordination.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -54,41 +57,49 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
 
         Log.i(TAG, remoteMessage.getData().toString());
-        sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            buildNotificationChannel();
+        }
+        if (!WoolworthsApplication.isApplicationInForeground()){
+            sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void buildNotificationChannel(){
+        Log.i(TAG, "-----------buildNotificationChannel");
         final String DEFAULT_NOTIFICATION_CHANNEL = getResources().getString(R.string.default_notification_channel_id);
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager.getNotificationChannel(DEFAULT_NOTIFICATION_CHANNEL) != null)
+            return;
 
-        notificationManager.deleteNotificationChannel("wfs_channel_id");
-        notificationManager.deleteNotificationChannel(DEFAULT_NOTIFICATION_CHANNEL);
+        List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
 
-        AudioAttributes soundAttributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                .build();
+        Log.i(TAG, String.format("channel count: %d", notificationChannels.size()));
+        notificationChannels.forEach(new Consumer<NotificationChannel>() {
+            @Override
+            public void accept(NotificationChannel notificationChannel) {
+                Log.i(TAG, String.format("Channel ID: %s", notificationChannel.getId()));
 
-        NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, DEFAULT_NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationManager.deleteNotificationChannel(notificationChannel.getId());
+            }
+        });
+
+        NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, DEFAULT_NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
         channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL_NAME.concat(" default notification channel"));
         channel.enableVibration(true);
-        channel.setVibrationPattern(new long[] { 0, 1000, 500, 1000 });
-//        channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), soundAttributes);
+//        channel.setVibrationPattern(new long[] { 0, 1000, 500, 1000 });
+//        channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), soundAttributes);
         notificationManager.createNotificationChannel(channel);
+        Log.i(TAG, "buildNotificationChannel-----------");
     }
 
     private void sendNotification(RemoteMessage.Notification notification, @NonNull Map<String, String> payload){
+        Log.i(TAG, "-----------sendNotification");
 
-        NotificationCompat.Builder notificationBuilder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            buildNotificationChannel();
-            final String DEFAULT_NOTIFICATION_CHANNEL = getResources().getString(R.string.default_notification_channel_id);
-            notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), DEFAULT_NOTIFICATION_CHANNEL);
-        } else {
-            notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext());
-        }
+        final String DEFAULT_NOTIFICATION_CHANNEL = getResources().getString(R.string.default_notification_channel_id);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), DEFAULT_NOTIFICATION_CHANNEL);
 
         Intent intent = null;
         if (payload.get("feature").equals("Product Listing")){
@@ -101,57 +112,33 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        String contentTitle = null;
+        String contentText = null;
+
+        if (notification == null){
+            contentTitle = payload.get("title");
+            contentText = payload.get("body");
+        } else{
+            contentTitle = notification.getTitle();
+            contentText = notification.getBody();
+        }
+
         notificationBuilder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.appicon)
-                .setContentText(notification.getBody())
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(Color.BLACK)
+                .setContentTitle(contentTitle)
+                .setContentText(contentText)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        Log.i(TAG, "sendNotification-----------");
     }
-
-//    private void sendNotification(RemoteMessage.Notification notification){
-//
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        NotificationCompat.Builder notificationBuilder;
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            notificationBuilder = new NotificationCompat.Builder(this, DEFAULT_NOTIFICATION_CHANNEL);
-//
-//            NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, DEFAULT_NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-//            channel.setDescription(notification.getBody());
-//            notificationManager.createNotificationChannel(channel);
-//        } else {
-//            Context appContext = WoolworthsApplication.getAppContext();
-//            Context safeContext = ContextCompat.createDeviceProtectedStorageContext(appContext);
-//
-//            if (safeContext == null)
-//                safeContext = appContext;
-//
-//            Intent intent = new Intent(safeContext, StartupActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-//            notificationBuilder = new NotificationCompat.Builder(this, null);
-//            notificationBuilder.setContentIntent(contentIntent);
-//        }
-//
-//        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//
-//        notificationBuilder.setAutoCancel(true)
-//                .setDefaults(Notification.DEFAULT_ALL)
-//                .setWhen(System.currentTimeMillis())
-//                .setSmallIcon(R.drawable.appicon)
-//                .setContentText(notification.getBody())
-//                .setSound(soundUri)
-//                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
-//
-//        notificationManager.notify((int)System.currentTimeMillis(), notificationBuilder.build());
-//    }
 
     //    @Override
 //    public void onMessageReceived(RemoteMessage remoteMessage) {
