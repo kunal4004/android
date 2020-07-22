@@ -1249,7 +1249,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("event/{featureName}/{appScreen}")
+    @POST("event/{appScreen}/{featureName}")
     fun postEvent(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
