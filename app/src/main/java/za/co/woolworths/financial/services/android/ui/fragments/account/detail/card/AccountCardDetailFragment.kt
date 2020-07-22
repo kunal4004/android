@@ -13,6 +13,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -45,10 +46,10 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-
 
 open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
@@ -142,6 +143,16 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
 
     override fun showStoreCardProgress() {
         loadStoreCardProgressBar?.visibility = VISIBLE
+
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
+        myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
+        tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
+        manageCardGroup?.visibility  = GONE
+        bottomView?.visibility = VISIBLE
+        cardDetailImageShimmerFrameLayout?.startShimmer()
+        myCardTextViewShimmerFrameLayout?.startShimmer()
+        tempFreezeTextViewShimmerFrameLayout?.startShimmer()
         storeCardLoaderView?.visibility = VISIBLE
         includeManageMyCard?.isEnabled  = false
         cardImageRootView?.isEnabled = false
@@ -151,6 +162,18 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun hideStoreCardProgress() {
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
+        manageCardGroup?.visibility  = VISIBLE
+        cardDetailImageShimmerFrameLayout?.stopShimmer()
+        cardDetailImageShimmerFrameLayout?.setShimmer(null)
+        myCardTextViewShimmerFrameLayout?.stopShimmer()
+        myCardTextViewShimmerFrameLayout?.setShimmer(null)
+        tempFreezeTextViewShimmerFrameLayout?.stopShimmer()
+        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+
+        cardDetailImageShimmerFrameLayout?.invalidate()
+        myCardTextViewShimmerFrameLayout?.invalidate()
+        tempFreezeTextViewShimmerFrameLayout?.invalidate()
+
         // Boolean check will enable clickable event only when text is "view card"
         includeManageMyCard?.isEnabled  = true
         cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
@@ -171,6 +194,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
+                    if (loadStoreCardProgressBar?.visibility == VISIBLE) return
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
@@ -218,10 +242,11 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         }
     }
 
-    override fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse) {
+    override fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean) {
         activity?.apply {
             val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
             displayStoreCardDetail.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
+            displayStoreCardDetail.putExtra(ACTIVATE_UNBLOCK_CARD_ON_LANDING, requestUnblockStoreCardCall)
             startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
@@ -253,7 +278,6 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 KotlinUtils.roundCornerDrawable(bpiCoveredTextView, "#bad110")
                 bpiCoveredTextView?.visibility = VISIBLE
                 bpiNotCoveredGroup?.visibility = GONE
-
             }
             false -> {
                 bpiCoveredTextView?.visibility = GONE

@@ -2098,4 +2098,5 @@
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
+
 </resources>

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -10,7 +11,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -19,8 +19,12 @@ import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreez
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.npc.*
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.*
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_REQUEST_CODE
@@ -30,14 +34,17 @@ import za.co.woolworths.financial.services.android.ui.activities.temporary_store
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.NOW
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.TEMPORARY
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.ui.views.snackbar.OneAppSnackbar
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.net.SocketTimeoutException
+import java.util.*
 
 class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
 
@@ -45,10 +52,18 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private var mStoreCard: StoreCard? = null
     private var mStoreCardDetail: String? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
+    private var mShouldActivateBlockCardOnLanding : Boolean = false
+    private var isFreezeCardCallCompleted : Boolean = true
+    private var isUnFreezeCardCallCompleted : Boolean = true
+
+    private enum class AutoConnectStoreCardType{FREEZE, UNFREEZE}
+
+    private var autoConnectStoreCardType : AutoConnectStoreCardType = AutoConnectStoreCardType.FREEZE
 
     companion object {
-        fun newInstance(storeCardDetail: String?) = MyCardDetailFragment().withArgs {
+        fun newInstance(storeCardDetail: String?, shouldActivateUnblockCardOnLanding: Boolean) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
+            putBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, shouldActivateUnblockCardOnLanding)
         }
 
         fun cardName(): String {
@@ -63,16 +78,40 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         super.onCreate(savedInstanceState)
         arguments?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
+            mShouldActivateBlockCardOnLanding = getBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, false)
 
             activity?.let {
                 Utils.updateStatusBarBackground(it, R.color.grey_bg)
                 mStoreCardDetail?.let { cardValue ->
                     mStoreCardsResponse = Gson().fromJson(cardValue, StoreCardsResponse::class.java)
                     mStoreCard = mStoreCardsResponse?.storeCardsData?.let { it ->
-                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(0)
+                        if (isUserGotVirtualCard(it)) it.virtualCard else it.primaryCards?.get(PRIMARY_CARD_POSITION)
                     }
                 }
             }
+        }
+
+        autoConnectDetector()
+    }
+
+    private fun autoConnectDetector() {
+        activity?.let {
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(it, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    when (autoConnectStoreCardType) {
+                        AutoConnectStoreCardType.FREEZE -> {
+                            if (hasConnection && !isFreezeCardCallCompleted) {
+                                temporaryCardFreezeConfirmed()
+                            }
+                        }
+                        AutoConnectStoreCardType.UNFREEZE -> {
+                            if (hasConnection && !isUnFreezeCardCallCompleted) {
+                                temporaryCardUnFreezeConfirmed()
+                            }
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -89,10 +128,20 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         initTemporaryFreezeCard()
 
         temporaryCardFreezeSwitch?.setOnCheckedChangeListener { _, isChecked ->
-            when (isChecked) {
-                true -> temporaryFreezeCard?.freezeStoreCardDialog(childFragmentManager)
-                false -> temporaryFreezeCard?.unFreezeStoreCardDialog(childFragmentManager)
+            if (mShouldActivateBlockCardOnLanding){
+                Handler().postDelayed({ mShouldActivateBlockCardOnLanding = false},200)
+                return@setOnCheckedChangeListener
             }
+
+            when (isChecked) {
+                true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+                false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+            }
+        }
+
+        // call to unblock/unfreeze store Card
+        if (mShouldActivateBlockCardOnLanding) {
+            temporaryFreezeCard?.unblockStoreCardRequest()
         }
     }
 
@@ -105,13 +154,49 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                         temporaryCardFreezeSwitch?.visibility = GONE
                     }
 
+                    override fun hideProgress() {
+                        super.hideProgress()
+                        temporaryFreezeCardProgressBar?.visibility = GONE
+                        temporaryCardFreezeSwitch?.visibility = VISIBLE
+                    }
+
                     override fun onFreezeCardSuccess(response: BlockMyCardResponse?) {
                         super.onFreezeCardSuccess(response)
+                        (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
                         if (!isAdded) return
+                        isFreezeCardCallCompleted = true
+                        hideProgress()
                         when (response?.httpCode) {
                             200 -> {
-                                Snackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label), Snackbar.LENGTH_SHORT).show();
-                                temporaryCardFreezeSwitch?.isChecked = true
+                                OneAppSnackbar.make(cardNestedScrollView,bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
+                                temporaryFreezeCard?.setBlockType(TEMPORARY)
+                                temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+                            }
+
+                            440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams
+                                    ?: "", activity)
+
+                            else -> {
+                                temporaryCardFreezeSwitch?.isChecked = false
+                                activity?.supportFragmentManager?.let { fragmentManager ->
+                                    Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc ?: "")
+                                }
+                            }
+                        }
+                        mShouldActivateBlockCardOnLanding = true
+                    }
+
+                    override fun onUnFreezeSuccess(response: UnblockStoreCardResponse?) {
+                        super.onUnFreezeSuccess(response)
+                        if (!isAdded) return
+                        (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
+                        isFreezeCardCallCompleted = true
+                        hideProgress()
+                        when (response?.httpCode) {
+                            200 -> {
+                                temporaryFreezeCard?.setBlockType(NOW)
+                                OneAppSnackbar.make(cardNestedScrollView,bindString(R.string.card_temporarily_unfrozen_label).toUpperCase(Locale.getDefault())).show()
+                                temporaryCardFreezeSwitch?.isChecked = false
                                 temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
                             }
 
@@ -119,31 +204,54 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
                             else -> {
                                 temporaryCardFreezeSwitch?.isChecked = false
-                                activity?.supportFragmentManager?.let { fragmentManager ->
-                                    Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc
-                                            ?: "")
+                                activity?.supportFragmentManager?.let { fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc ?: "")
                                 }
                             }
                         }
-                    }
-
-                    override fun onUnFreezeSuccess(response: UnblockStoreCardResponse?) {
-
+                        mShouldActivateBlockCardOnLanding = true
                     }
 
                     override fun onTemporaryCardFreezeCanceled() {
                         super.onTemporaryCardFreezeCanceled()
+                        mShouldActivateBlockCardOnLanding = true
                         temporaryCardFreezeSwitch?.isChecked = false
+                    }
+
+                    override fun onStoreCardFailure(error: Throwable?) {
+                        super.onStoreCardFailure(error)
+                        activity?.runOnUiThread {
+                            if (error is SocketTimeoutException) {
+                                mShouldActivateBlockCardOnLanding = true
+                                temporaryCardFreezeSwitch?.isChecked = false
+                                (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
+                                isFreezeCardCallCompleted = false
+                                activity?.let { ErrorHandlerView(it).showToast() }
+                            } else {
+                                hideProgress()
+                            }
+                        }
+                    }
+
+                    override fun onUnFreezeStoreCardFailure(error: Throwable?) {
+                        super.onUnFreezeStoreCardFailure(error)
+                        activity?.runOnUiThread {
+                            if (error is SocketTimeoutException) {
+                                (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
+                                isUnFreezeCardCallCompleted = false
+                                mShouldActivateBlockCardOnLanding = true
+                                activity?.let { ErrorHandlerView(it).showToast() }
+                            }
+                        }
                     }
 
                     override fun onTemporaryCardFreezeConfirmed() {
                         super.onTemporaryCardFreezeConfirmed()
-                        temporaryFreezeCard?.blockStoreCardRequest()
+                        temporaryCardFreezeConfirmed()
                     }
 
                     override fun onTemporaryCardUnFreezeConfirmed() {
                         super.onTemporaryCardUnFreezeConfirmed()
-                        temporaryFreezeCard?.unblockStoreCardRequest()
+                        temporaryCardUnFreezeConfirmed()
                     }
                 })
 
@@ -151,22 +259,30 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     }
 
+    private fun temporaryCardUnFreezeConfirmed() {
+        autoConnectStoreCardType = AutoConnectStoreCardType.UNFREEZE
+        temporaryFreezeCard?.unblockStoreCardRequest()
+    }
+
+    private fun temporaryCardFreezeConfirmed() {
+        autoConnectStoreCardType = AutoConnectStoreCardType.FREEZE
+        temporaryFreezeCard?.blockStoreCardRequest()
+    }
+
     private fun uniqueIdsForCardDetails() {
-        activity?.resources?.apply {
-            cardDetailsView?.contentDescription = getString(R.string.label_card_details)
-            cardNumberLayout?.contentDescription = getString(R.string.label_cardHolder)
-            cardHolderLayout?.contentDescription = getString(R.string.text_cardHolderName)
-            manageView?.contentDescription = getString(R.string.label_manage_layout)
-            blockCard?.contentDescription = getString(R.string.rlt_BlockCard)
-            imStoreCard?.contentDescription = getString(R.string.store_card_image)
-            tvCardHolder?.contentDescription = getString(R.string.label_cardHolder)
-            textViewCardHolderName?.contentDescription = getString(R.string.text_cardHolderName)
-            tvExpires?.contentDescription = getString(R.string.label_card_expire_date)
-            cardExpireDate?.contentDescription = getString(R.string.text_card_expire_date)
-            expireInfo?.contentDescription = getString(R.string.info_card_expire_date)
-            payWithCard?.contentDescription = getString(R.string.layout_pay_with_card)
-            howItWorks?.contentDescription = getString(R.string.layout_how_it_works)
-        }
+        cardDetailsView?.contentDescription = bindString(R.string.label_card_details)
+        cardNumberLayout?.contentDescription = bindString(R.string.label_cardHolder)
+        cardHolderLayout?.contentDescription = bindString(R.string.text_cardHolderName)
+        manageView?.contentDescription = bindString(R.string.label_manage_layout)
+        blockCard?.contentDescription = bindString(R.string.rlt_BlockCard)
+        imStoreCard?.contentDescription = bindString(R.string.store_card_image)
+        tvCardHolder?.contentDescription = bindString(R.string.label_cardHolder)
+        textViewCardHolderName?.contentDescription = bindString(R.string.text_cardHolderName)
+        tvExpires?.contentDescription = bindString(R.string.label_card_expire_date)
+        cardExpireDate?.contentDescription = bindString(R.string.text_card_expire_date)
+        expireInfo?.contentDescription = bindString(R.string.info_card_expire_date)
+        payWithCard?.contentDescription = bindString(R.string.layout_pay_with_card)
+        howItWorks?.contentDescription = bindString(R.string.layout_how_it_works)
     }
 
     private fun initListener() {
@@ -231,15 +347,12 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-
     private fun initPayWithCard() {
         when (mStoreCardsResponse?.oneTimePinRequired?.unblockStoreCard) {
             true -> navigateToOTPActivity(OTPMethodType.SMS.name)
             else -> requestUnblockCard()
-
         }
     }
-
 
     private fun requestUnblockCard(otp: String = "") {
         if (isApiCallInProgress())

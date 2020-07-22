@@ -1541,6 +1541,6 @@
     <string name="unfreeze_my_card_label">UnFreeze My Card</string>
     <string name="card_temporarily_frozen_label">your card has been temporarily frozen</string>
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
-
+    <string name="freeze_temp_label">Temp Freeze</string>
 </resources>
 

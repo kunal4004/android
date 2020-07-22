@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -35,5 +36,10 @@ class TemporaryFreezeCardFragment(private val iTemporaryCardFreeze: ITemporaryCa
             }
             AnimationUtilExtension.animateViewPushDown(this)
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        iTemporaryCardFreeze?.onTemporaryCardFreezeCanceled()
     }
 }

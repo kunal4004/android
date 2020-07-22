@@ -5,11 +5,13 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 
 interface ITemporaryCardFreeze {
     fun showProgress() {}
+    fun hideProgress() {}
     fun onTemporaryCardFreezeConfirmed() {}
     fun onTemporaryCardFreezeCanceled() {}
     fun onTemporaryCardUnFreezeConfirmed() {}
     fun onTemporaryCardUnFreezeCanceled() {}
     fun onFreezeCardSuccess(response: BlockMyCardResponse?) {}
     fun onStoreCardFailure(error: Throwable?) {}
-    fun onUnFreezeSuccess(response: UnblockStoreCardResponse?)
+    fun onUnFreezeSuccess(response: UnblockStoreCardResponse?){}
+    fun onUnFreezeStoreCardFailure(error: Throwable?){}
 }

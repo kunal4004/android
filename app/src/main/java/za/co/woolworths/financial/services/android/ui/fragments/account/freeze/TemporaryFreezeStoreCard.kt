@@ -17,30 +17,36 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryFreezeCardFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.TemporaryUnFreezeCardFragment
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
+import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
+import java.util.*
 
-open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsResponse?, private val temporaryCardFreezeInterface: ITemporaryCardFreeze?) {
+open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsResponse? = null, private val temporaryCardFreezeInterface: ITemporaryCardFreeze?) {
 
     companion object {
         const val TEMPORARY = "temporary"
         const val PERMANENT = "permanent"
         const val NOW = ""
         const val BLOCK_REASON = 6
+        const val ACTIVATE_UNBLOCK_CARD_ON_LANDING = "ACTIVATE_UNBLOCK_CARD_CALL_ON_LANDING"
     }
 
-    private fun primaryCard() = this.storeCardResponse?.storeCardsData?.primaryCards?.get(0)
+    private fun primaryCard() = this.storeCardResponse?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
 
     private fun storeCardsData() = this.storeCardResponse?.storeCardsData
 
-    private fun blockType() = primaryCard()?.blockType
+    private fun blockType() = primaryCard()?.blockType?.toLowerCase(Locale.getDefault())
 
-    fun freezeStoreCardDialog(childFragmentManager: FragmentManager?) {
+    fun setBlockType(blockType : String) {
+        primaryCard()?.blockType = blockType
+    }
+
+    fun showFreezeStoreCardDialog(childFragmentManager: FragmentManager?) {
         val temporaryFreezeCardFragment = TemporaryFreezeCardFragment(temporaryCardFreezeInterface)
         childFragmentManager?.let { cfm -> temporaryFreezeCardFragment.show(cfm, TemporaryFreezeCardFragment::class.java.simpleName) }
     }
 
-    fun unFreezeStoreCardDialog(childFragmentManager: FragmentManager?) {
-        val temporaryUnFreezeCardFragment =
-                TemporaryUnFreezeCardFragment(temporaryCardFreezeInterface)
+    fun showUnFreezeStoreCardDialog(childFragmentManager: FragmentManager?) {
+        val temporaryUnFreezeCardFragment = TemporaryUnFreezeCardFragment(temporaryCardFreezeInterface)
         childFragmentManager?.let { cfm -> temporaryUnFreezeCardFragment.show(cfm, TemporaryUnFreezeCardFragment::class.java.simpleName) }
     }
 
@@ -89,7 +95,6 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
         })
     }
 
-
     fun unblockStoreCardRequest() {
 
         val storeCardData = storeCardsData()
@@ -111,9 +116,8 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
             }
 
             override fun onFailure(error: Throwable?) {
-                temporaryCardFreezeInterface?.onStoreCardFailure(error)
+                temporaryCardFreezeInterface?.onUnFreezeStoreCardFailure(error)
             }
         })
     }
-
 }

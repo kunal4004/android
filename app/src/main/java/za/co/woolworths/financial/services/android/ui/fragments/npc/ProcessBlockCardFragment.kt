@@ -26,10 +26,12 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.PERMANENT
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 
 class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimationState {
 
@@ -141,7 +143,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 override fun onFinish() {
                     activity?.apply {
                         val storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()
-                        storeCard?.storeCardsData?.primaryCards?.get(0)?.blockCode = "L"
+                        storeCard?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)?.blockType = PERMANENT
                         PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
                         val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
                         displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCard))
