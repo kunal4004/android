@@ -307,7 +307,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				break;
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
-				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
+				if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
 					if (KotlinUtils.Companion.isItemsQuantityForClickAndCollectExceed(orderSummary.totalItemsCount)) {
 						showMaxItemView();
 						return;
@@ -1171,8 +1171,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			fadeCheckoutButton(false);
 
 		if (itemsTobeRemovedFromCart.size() > 0) {
-			RemoveProductsFromCartDialogFragment fromCartDialogFragment = RemoveProductsFromCartDialogFragment.Companion.newInstance(itemsTobeRemovedFromCart);
-			fromCartDialogFragment.show(this.getChildFragmentManager(), this.getClass().getSimpleName());
+			if (getActivity() != null && isAdded()) {
+				RemoveProductsFromCartDialogFragment fromCartDialogFragment = RemoveProductsFromCartDialogFragment.Companion.newInstance(itemsTobeRemovedFromCart);
+				fromCartDialogFragment.show(this.getChildFragmentManager(), this.getClass().getSimpleName());
+			}
 		}
 	}
 
