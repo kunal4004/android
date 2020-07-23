@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.ui.activities.StartupActivity
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = WFirebaseMessagingService.class.getSimpleName();
-    private static final String DEFAULT_NOTIFICATION_CHANNEL_NAME = "Woolworths";
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of
@@ -57,42 +56,23 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
 
         Log.i(TAG, remoteMessage.getData().toString());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            buildNotificationChannel();
+        if (WoolworthsApplication.isApplicationInForeground()){
+            //sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
+            //TODO: build notification to show in App
+            //use LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent); possibly
         }
-        if (!WoolworthsApplication.isApplicationInForeground()){
-            sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
-        }
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void buildNotificationChannel(){
-        Log.i(TAG, "-----------buildNotificationChannel");
-        final String DEFAULT_NOTIFICATION_CHANNEL = getResources().getString(R.string.default_notification_channel_id);
-        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager.getNotificationChannel(DEFAULT_NOTIFICATION_CHANNEL) != null)
-            return;
-
-        List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
-
-        Log.i(TAG, String.format("channel count: %d", notificationChannels.size()));
-        notificationChannels.forEach(new Consumer<NotificationChannel>() {
-            @Override
-            public void accept(NotificationChannel notificationChannel) {
-                Log.i(TAG, String.format("Channel ID: %s", notificationChannel.getId()));
-
-                notificationManager.deleteNotificationChannel(notificationChannel.getId());
+        Map<String,String> data = remoteMessage.getData();
+        if(data != null && data.containsKey("type")){
+            String type = data.get("type");
+            switch (type){
+                case FCMMessageType
+                        .mcConfigClear:{
+                    mcConfigClear();
+                }
             }
-        });
-
-        NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, DEFAULT_NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
-        channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL_NAME.concat(" default notification channel"));
-        channel.enableVibration(true);
-//        channel.setVibrationPattern(new long[] { 0, 1000, 500, 1000 });
-//        channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), soundAttributes);
-        notificationManager.createNotificationChannel(channel);
-        Log.i(TAG, "buildNotificationChannel-----------");
+            return;
+        }
     }
 
     private void sendNotification(RemoteMessage.Notification notification, @NonNull Map<String, String> payload){
@@ -140,54 +120,17 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         Log.i(TAG, "sendNotification-----------");
     }
 
-    //    @Override
-//    public void onMessageReceived(RemoteMessage remoteMessage) {
-//
-//        if (remoteMessage == null)
-//            return;
-//
-//        Map<String,String> data = remoteMessage.getData();
-//        if(data.containsKey("type")){
-//            String type = data.get("type");
-//            switch (type){
-//                case FCMMessageType
-//                        .mcConfigClear:{
-//                    mcConfigClear();
-//                }
-//            }
-//            return;
-//        }
-//
-//        //Push Notification Message Handler down onward i.e no data message
-//        String unreadCountString = Utils.getSessionDaoValue(SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-//        int unreadCountValue;
-//        try{
-//            unreadCountValue = Integer.parseInt(unreadCountString);
-//        }catch (Exception e){
-//            unreadCountValue = 0;
-//        }
-//
-//        if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
-//            //notificationUtils = NotificationUtils.newInstance(this);
-//            NotificationUtils.getInstance().sendBundledNotification(data.get("title"),data.get("body"), unreadCountValue);
-//        } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
-//            Intent intent = new Intent("UpdateCounter");
-//            LocalBroadcastManager.
-//                    getInstance(getApplicationContext()).sendBroadcast(intent);
-//        }
-//    }
-
-    //#region FCM Methods
-//    private void mcConfigClear(){
-//        try {
-//            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiResponse WHERE ApiRequestId IN (SELECT id FROM ApiRequest WHERE endpoint = '/mobileconfigs');");
-//            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint = '/mobileconfigs';");
-//        }catch (Exception e)
-//        {
-//            Log.e(TAG,e.getMessage());
-//        }
-//    }
-    //#endregion
+//    #region FCM Methods
+    private void mcConfigClear(){
+        try {
+            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiResponse WHERE ApiRequestId IN (SELECT id FROM ApiRequest WHERE endpoint = '/mobileconfigs');");
+            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint = '/mobileconfigs';");
+        }catch (Exception e)
+        {
+            Log.e(TAG,e.getMessage());
+        }
+    }
+//    #endregion
 
 
 }
