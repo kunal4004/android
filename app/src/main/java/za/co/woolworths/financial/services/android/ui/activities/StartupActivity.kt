@@ -46,7 +46,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         supportActionBar?.hide()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.getInstance().buildNotificationChannel()
+            NotificationUtils.createNotificationChannelIfNeeded(this);
         };
 
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
@@ -243,7 +243,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     initialize()
                 } else {
                     startActivity(Intent(this@StartupActivity, StartupActivity::class.java))
-                    //finish()
+                    finish()
                 }
             } else {
                 initialize()

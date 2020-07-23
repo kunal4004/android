@@ -1450,7 +1450,7 @@
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
     <string name="default_notification_channel_id">woolworths_notification_channel_01</string>
-    <string name="default_notification_channel_name">All Woolworths Notifications</string>
+    <string name="default_notification_channel_name">All Notifications</string>
     <string name="default_notification_channel_description">Woolworths Notification Channel</string>
 
 </resources>

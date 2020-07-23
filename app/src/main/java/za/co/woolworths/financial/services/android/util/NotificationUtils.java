@@ -31,7 +31,7 @@ public class NotificationUtils {
     private static NotificationUtils instance;
 
     private final Context appContext;
-    private final NotificationManager notificationManager;
+
 
     public static NotificationUtils getInstance() {
         if (instance == null)
@@ -42,44 +42,41 @@ public class NotificationUtils {
 
     public NotificationUtils() {
         this.appContext = WoolworthsApplication.getInstance().getApplicationContext();
-        this.notificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void buildNotificationChannel(){
-        Log.i(TAG, "-----------buildNotificationChannel");
-        final String channelId = appContext.getResources().getString(R.string.default_notification_channel_id);
-        final CharSequence channelName = appContext.getResources().getString(R.string.default_notification_channel_name);
-        final String channelDescription = appContext.getResources().getString(R.string.default_notification_channel_description);
+    public static void createNotificationChannelIfNeeded(Context context){
+        final String channelId = context.getResources().getString(R.string.default_notification_channel_id);
+        final CharSequence channelName = context.getResources().getString(R.string.default_notification_channel_name);
+        final String channelDescription = context.getResources().getString(R.string.default_notification_channel_description);
 
-        NotificationChannel notificationChannel = notificationManager.getNotificationChannel(channelId);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (notificationChannel == null){
+        if (notificationManager.getNotificationChannel(channelId) == null){
             //this notification channel was not found, remove any other channels that exists
             List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
 
             notificationChannels.forEach(new Consumer<NotificationChannel>() {
                 @Override
-                public void accept(NotificationChannel channel) {
-                    notificationManager.deleteNotificationChannel(channel.getId());
+                public void accept(NotificationChannel notificationChannel) {
+                    notificationManager.deleteNotificationChannel(notificationChannel.getId());
                 }
             });
-
-            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
-
-            //create notification channel
-            notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setDescription(channelDescription);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setSound(soundUri, audioAttributes);
-            notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        Log.i(TAG, "buildNotificationChannel-----------");
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+
+        //create notification channel
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setDescription(channelDescription);
+        notificationChannel.enableVibration(true);
+        notificationChannel.setVibrationPattern(new long[]{0, 500, 500});
+        notificationChannel.setSound(soundUri, audioAttributes);
+        notificationManager.createNotificationChannel(notificationChannel);
     }
 
     // Clears notification tray messages

@@ -142,7 +142,6 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PROFILE.rawValue());
-		Log.e("updateDetail_PROFILE", SSOActivity.Path.UPDATE_PROFILE.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}

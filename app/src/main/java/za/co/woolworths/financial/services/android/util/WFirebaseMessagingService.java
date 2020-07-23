@@ -55,13 +55,18 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
 
-        Log.i(TAG, remoteMessage.getData().toString());
-        if (WoolworthsApplication.isApplicationInForeground()){
-            //sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
-            //TODO: build notification to show in App
-            //use LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent); possibly
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationUtils.createNotificationChannelIfNeeded(this);
         }
 
+        Log.i(TAG, "--------------onMessageReceived");
+//        Log.i(TAG, remoteMessage.getData().toString());
+//        if (!WoolworthsApplication.isApplicationInForeground()){
+//            sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
+//            //TODO: build notification to show in App
+//            //use LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent); possibly
+//        }
+//
         Map<String,String> data = remoteMessage.getData();
         if(data != null && data.containsKey("type")){
             String type = data.get("type");
@@ -73,13 +78,14 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             }
             return;
         }
+        Log.i(TAG, "onMessageReceived--------------");
     }
 
     private void sendNotification(RemoteMessage.Notification notification, @NonNull Map<String, String> payload){
         Log.i(TAG, "-----------sendNotification");
 
-        final String DEFAULT_NOTIFICATION_CHANNEL = getResources().getString(R.string.default_notification_channel_id);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), DEFAULT_NOTIFICATION_CHANNEL);
+        final String channelId = getResources().getString(R.string.default_notification_channel_id);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), channelId);
 
         Intent intent = null;
         if (payload.get("feature").equals("Product Listing")){
@@ -90,7 +96,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_ONE_SHOT);
 
         String contentTitle = null;
         String contentText = null;
