@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -127,15 +126,12 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
         initTemporaryFreezeCard()
 
-        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { _, isChecked ->
-            if (mShouldActivateBlockCardOnLanding){
-                Handler().postDelayed({ mShouldActivateBlockCardOnLanding = false},200)
-                return@setOnCheckedChangeListener
-            }
-
-            when (isChecked) {
-                true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-                false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (compoundButton.isPressed){
+                when (isChecked) {
+                    true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+                    false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+                }
             }
         }
 
@@ -148,112 +144,114 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun initTemporaryFreezeCard() {
         temporaryFreezeCard = TemporaryFreezeStoreCard(mStoreCardsResponse, object : ITemporaryCardFreeze {
 
-                    override fun showProgress() {
-                        super.showProgress()
-                        temporaryFreezeCardProgressBar?.visibility = VISIBLE
-                        temporaryCardFreezeSwitch?.visibility = GONE
+            override fun showProgress() {
+                super.showProgress()
+                temporaryFreezeCardProgressBar?.visibility = VISIBLE
+                temporaryCardFreezeSwitch?.visibility = GONE
+            }
+
+            override fun hideProgress() {
+                super.hideProgress()
+                temporaryFreezeCardProgressBar?.visibility = GONE
+                temporaryCardFreezeSwitch?.visibility = VISIBLE
+            }
+
+            override fun onFreezeCardSuccess(response: BlockMyCardResponse?) {
+                super.onFreezeCardSuccess(response)
+                (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged = true
+                if (!isAdded) return
+                isFreezeCardCallCompleted = true
+                hideProgress()
+                when (response?.httpCode) {
+                    200 -> {
+                        OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
+                        temporaryFreezeCard?.setBlockType(TEMPORARY)
+                        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
                     }
 
-                    override fun hideProgress() {
-                        super.hideProgress()
-                        temporaryFreezeCardProgressBar?.visibility = GONE
-                        temporaryCardFreezeSwitch?.visibility = VISIBLE
-                    }
+                    440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams
+                            ?: "", activity)
 
-                    override fun onFreezeCardSuccess(response: BlockMyCardResponse?) {
-                        super.onFreezeCardSuccess(response)
-                        (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
-                        if (!isAdded) return
-                        isFreezeCardCallCompleted = true
-                        hideProgress()
-                        when (response?.httpCode) {
-                            200 -> {
-                                OneAppSnackbar.make(cardNestedScrollView,bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
-                                temporaryFreezeCard?.setBlockType(TEMPORARY)
-                                temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
-                            }
-
-                            440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams
-                                    ?: "", activity)
-
-                            else -> {
-                                temporaryCardFreezeSwitch?.isChecked = false
-                                activity?.supportFragmentManager?.let { fragmentManager ->
-                                    Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc ?: "")
-                                }
-                            }
-                        }
-                        mShouldActivateBlockCardOnLanding = true
-                    }
-
-                    override fun onUnFreezeSuccess(response: UnblockStoreCardResponse?) {
-                        super.onUnFreezeSuccess(response)
-                        if (!isAdded) return
-                        (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
-                        isFreezeCardCallCompleted = true
-                        hideProgress()
-                        when (response?.httpCode) {
-                            200 -> {
-                                temporaryFreezeCard?.setBlockType(NOW)
-                                OneAppSnackbar.make(cardNestedScrollView,bindString(R.string.card_temporarily_unfrozen_label).toUpperCase(Locale.getDefault())).show()
-                                temporaryCardFreezeSwitch?.isChecked = false
-                                temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
-                            }
-
-                            440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams ?: "", activity)
-
-                            else -> {
-                                temporaryCardFreezeSwitch?.isChecked = false
-                                activity?.supportFragmentManager?.let { fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc ?: "")
-                                }
-                            }
-                        }
-                        mShouldActivateBlockCardOnLanding = true
-                    }
-
-                    override fun onTemporaryCardFreezeCanceled() {
-                        super.onTemporaryCardFreezeCanceled()
-                        mShouldActivateBlockCardOnLanding = true
+                    else -> {
                         temporaryCardFreezeSwitch?.isChecked = false
-                    }
-
-                    override fun onStoreCardFailure(error: Throwable?) {
-                        super.onStoreCardFailure(error)
-                        activity?.runOnUiThread {
-                            if (error is SocketTimeoutException) {
-                                mShouldActivateBlockCardOnLanding = true
-                                temporaryCardFreezeSwitch?.isChecked = false
-                                (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
-                                isFreezeCardCallCompleted = false
-                                activity?.let { ErrorHandlerView(it).showToast() }
-                            } else {
-                                hideProgress()
-                            }
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc
+                                    ?: "")
                         }
                     }
+                }
+            }
 
-                    override fun onUnFreezeStoreCardFailure(error: Throwable?) {
-                        super.onUnFreezeStoreCardFailure(error)
-                        activity?.runOnUiThread {
-                            if (error is SocketTimeoutException) {
-                                (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged  = true
-                                isUnFreezeCardCallCompleted = false
-                                mShouldActivateBlockCardOnLanding = true
-                                activity?.let { ErrorHandlerView(it).showToast() }
-                            }
+            override fun onUnFreezeSuccess(response: UnblockStoreCardResponse?) {
+                super.onUnFreezeSuccess(response)
+                if (!isAdded) return
+                (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged = true
+                isFreezeCardCallCompleted = true
+                hideProgress()
+                when (response?.httpCode) {
+                    200 -> {
+                        temporaryFreezeCard?.setBlockType(NOW)
+                        OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_unfrozen_label).toUpperCase(Locale.getDefault())).show()
+                        temporaryCardFreezeSwitch?.isChecked = false
+                        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+                    }
+
+                    440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams ?: "", activity)
+
+                    else -> {
+                        temporaryCardFreezeSwitch?.isChecked = false
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            Utils.showGeneralErrorDialog(fragmentManager, response?.response?.desc ?: "")
                         }
                     }
+                }
+            }
 
-                    override fun onTemporaryCardFreezeConfirmed() {
-                        super.onTemporaryCardFreezeConfirmed()
-                        temporaryCardFreezeConfirmed()
-                    }
+            override fun onTemporaryCardFreezeCanceled() {
+                super.onTemporaryCardFreezeCanceled()
+                temporaryCardFreezeSwitch?.isChecked = false
+            }
 
-                    override fun onTemporaryCardUnFreezeConfirmed() {
-                        super.onTemporaryCardUnFreezeConfirmed()
-                        temporaryCardUnFreezeConfirmed()
+            override fun onStoreCardFailure(error: Throwable?) {
+                super.onStoreCardFailure(error)
+                activity?.runOnUiThread {
+                    if (error is SocketTimeoutException) {
+                        temporaryCardFreezeSwitch?.isChecked = false
+                        (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged = true
+                        isFreezeCardCallCompleted = false
+                        activity?.let { ErrorHandlerView(it).showToast() }
+                    } else {
+                        hideProgress()
                     }
-                })
+                }
+            }
+
+            override fun onUnFreezeStoreCardFailure(error: Throwable?) {
+                super.onUnFreezeStoreCardFailure(error)
+                activity?.runOnUiThread {
+                    if (error is SocketTimeoutException) {
+                        (activity as? MyCardDetailActivity)?.shouldNotifyStateChanged = true
+                        isUnFreezeCardCallCompleted = false
+                        activity?.let { ErrorHandlerView(it).showToast() }
+                    }
+                }
+            }
+
+            override fun onTemporaryCardFreezeConfirmed() {
+                super.onTemporaryCardFreezeConfirmed()
+                temporaryCardFreezeConfirmed()
+            }
+
+            override fun onTemporaryCardUnFreezeCanceled() {
+                super.onTemporaryCardUnFreezeCanceled()
+                temporaryCardFreezeSwitch?.isChecked = true
+            }
+
+            override fun onTemporaryCardUnFreezeConfirmed() {
+                super.onTemporaryCardUnFreezeConfirmed()
+                temporaryCardUnFreezeConfirmed()
+            }
+        })
 
         temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
 
@@ -376,14 +374,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                             }
                         }
                         else -> showErrorDialog(response?.response?.desc
-                                ?: getString(R.string.general_error_desc))
+                                ?: bindString(R.string.general_error_desc))
                     }
                 }
 
                 override fun onFailure(error: Throwable?) {
                     showPayWithCardProgressBar(GONE)
                     if (error !is SocketTimeoutException)
-                        showErrorDialog(getString(R.string.general_error_desc))
+                        showErrorDialog(bindString(R.string.general_error_desc))
                 }
             })
         }
@@ -463,4 +461,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun isApiCallInProgress(): Boolean {
         return payWithCardTokenProgressBar?.visibility == VISIBLE
     }
+
+
+
 }

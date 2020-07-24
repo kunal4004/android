@@ -83,6 +83,7 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
         val blockStoreCardRequestBody = BlockCardRequestBody(visionAccountNumber, storeCardNumber, sequenceNumber, BLOCK_REASON)
 
         temporaryCardFreezeInterface?.showProgress()
+
         StoreCardAPIRequest().blockCard(productOfferingId
                 ?: "", blockStoreCardRequestBody, object : IResponseListener<BlockMyCardResponse> {
             override fun onSuccess(response: BlockMyCardResponse?) {

@@ -222,8 +222,9 @@
             <ImageView
                 android:id="@+id/temporaryCardFreezeImageView"
                 style="@style/card_item_start_icon_style"
-                android:layout_width="@dimen/twenty_four_dp"
-                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_width="wrap_content"
+                android:alpha="0.8"
+                android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_freeze_grey" />
 
             <TextView
@@ -248,8 +249,8 @@
 
                 <Switch
                     android:id="@+id/temporaryCardFreezeSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:theme="@style/SwitchTheme"
                     android:thumb="@drawable/customswitchselector"
                     android:track="@drawable/custom_track" />
