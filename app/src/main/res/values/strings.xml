@@ -1530,5 +1530,44 @@
     <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
+
+    <!-- Pay My Account -->
+    <string name="store_card_payment_option_desc">You can pay your Woolies Store Card using any of the following payment options:</string>
+    <string name="debit_or_credit_card_title">Debit or Credit Card</string>
+    <string name="debit_or_credit_card_desc">Pay your account now using a different debit card or credit card.</string>
+    <string name="pay_by_card_button_label">Pay By Card Now</string>
+    <string name="by_electronic_fund_transfer_title">By Electronic Fund Transfer (EFT)</string>
+    <string name="by_electronic_fund_transfer_desc">Pay your account by EFT or a direct payment into your Store Card account.</string>
+    <string name="view_banking_details_button_label">View Banking Details</string>
+    <string name="at_any_absa_branch_title">At any Absa Branch</string>
+    <string name="at_any_absa_branch_desc">Pay your account at any branch of Absa Bank. Use your 16-digit Woolworths Card number as the bill account number.</string>
+    <string name="at_your_nearest_woolworths_store_title">At your Nearest  Woolworths Store</string>
+    <string name="at_your_nearest_woolworths_store_desc">Pay your account at any Woolworths store.</string>
+    <string name="find_a_woolies_store_label">Find a Woolies Store</string>
+    <string name="pay_at_any_atm_title">Pay at any ATM</string>
+    <string name="pay_at_any_atm_desc">Pay your account at any South African bank\'s ATM.</string>
+    <string name="pay_at_any_atm_button_label">Learn More</string>
+    <string name="whatsapp_any_questions_title">Any Questions?</string>
+    <string name="whatsapp_any_questions_desc">Chat to us on WhatsApp</string>
+    <string name="pay_my_account_button_label">Pay My Account</string>
+    <string name="enter_payment_amount_label">Enter Payment Amount</string>
+    <string name="amount_outstanding">Amount Outstanding</string>
+    <string name="continue_to_payment">Continue To Payment</string>
+    <string name="would_you_like_to_save_this_card_for_future_payments_title">Would you like to save this card for future payments?</string>
+    <string name="would_you_like_to_save_this_card_for_future_payments_desc">Would you like to save this card for future payments?</string>
+    <string name="save_this_card_for_future_payments">Save this card for future payments</string>
+    <string name="save_card_and_pay_now_button_label">Save Card &amp; Pay Now</string>
+    <string name="name_on_card_label">Name on Card:</string>
+    <string name="expiration_date_label">Expiration Date:</string>
+    <string name="card_number_label">Card Number:</string>
+    <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 48 hours to reflect on your account.</string>
+    <string name="payment_successful_title">Payment Successful</string>
+    <string name="ccv_number_label">Enter your CVV Number:</string>
+    <string name="confirm_payment">CONFIRM PAYMENT</string>
+    <string name="change_label">Change</string>
+    <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
+    <string name="atm_payment_steps_title">ATM PAYMENT</string>
+
+    <!-- End Pay My Account -->
 </resources>
 
