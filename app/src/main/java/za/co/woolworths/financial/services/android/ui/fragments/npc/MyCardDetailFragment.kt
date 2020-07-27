@@ -317,6 +317,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     override fun onClick(v: View?) {
+        if (isTemporaryCardFreezeInProgress()) return
         when (v?.id) {
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
@@ -462,6 +463,5 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         return payWithCardTokenProgressBar?.visibility == VISIBLE
     }
 
-
-
+    fun isTemporaryCardFreezeInProgress() = temporaryFreezeCardProgressBar?.visibility == VISIBLE
 }

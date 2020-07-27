@@ -109,6 +109,10 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     private fun navigateBack() {
         supportFragmentManager?.apply {
+            // Disable onBackPressed when temporary freeze card api is executing
+            if (getCurrentFragment() is MyCardDetailFragment) {
+                if ((getCurrentFragment() as? MyCardDetailFragment)?.isTemporaryCardFreezeInProgress() == true) return@apply
+            }
             if (backStackEntryCount > 0) {
                 popBackStack()
                 when (getCurrentFragment()) {
