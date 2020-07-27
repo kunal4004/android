@@ -2,4 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 class CreditAndDebitCardPaymentModelImpl {
 
+    
+
 }
