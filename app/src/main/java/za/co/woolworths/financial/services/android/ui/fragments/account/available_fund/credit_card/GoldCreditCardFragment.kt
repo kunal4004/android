@@ -16,14 +16,14 @@ class GoldCreditCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
         incViewStatementButton?.visibility = if (WoolworthsApplication.getAbsaBankingOpenApiServices()?.isEnabled == true) View.VISIBLE else View.GONE
         incRecentTransactionButton?.setOnClickListener(this)
-        incViewPayMyAccountButton?.setOnClickListener(this)
+        incPayMyAccountButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
-            R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
+            R.id.incPayMyAccountButton -> navigateToPaymentOptionActivity()
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }

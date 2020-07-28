@@ -17,23 +17,23 @@ class PersonalLoanFragment : AvailableFundsFragment(), View.OnClickListener {
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
-        incViewPayMyAccountButton?.setOnClickListener(this)
+        incPayMyAccountButton?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.incRecentTransactionButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
-                navigateToRecentTransactionActivity("PL")
-            }
-            R.id.incViewStatementButton -> navigateToStatementActivity()
-            R.id.incViewPaymentOptionButton -> {
+            R.id.incPayMyAccountButton -> {
                 val personalLoanAccount = mAvailableFundPresenter?.getAccount()
                 if (personalLoanAccount?.productOfferingGoodStanding != true){
                     personalLoanAccount?.let { account ->  (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
                 }else {
                     navigateToLoanWithdrawalActivity()}
             }
+            R.id.incRecentTransactionButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
+                navigateToRecentTransactionActivity("PL")
+            }
+            R.id.incViewStatementButton -> navigateToStatementActivity()
         }
     }
 }

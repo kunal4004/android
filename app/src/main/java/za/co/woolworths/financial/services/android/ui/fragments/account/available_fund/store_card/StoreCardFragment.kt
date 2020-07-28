@@ -17,7 +17,7 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
-        incViewPayMyAccountButton?.setOnClickListener(this)
+        incPayMyAccountButton?.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -27,7 +27,7 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
                 navigateToRecentTransactionActivity("SC")
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
-            R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()
+            R.id.incPayMyAccountButton -> navigateToPaymentOptionActivity()
         }
     }
 }
