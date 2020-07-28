@@ -164,6 +164,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 hideProgress()
                 when (response?.httpCode) {
                     200 -> {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_FREEZE_CARD)
                         OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
                         temporaryFreezeCard?.setBlockType(TEMPORARY)
                         temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
@@ -190,6 +191,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 hideProgress()
                 when (response?.httpCode) {
                     200 -> {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_UNFREEZE_CARD)
                         temporaryFreezeCard?.setBlockType(NOW)
                         OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_unfrozen_label).toUpperCase(Locale.getDefault())).show()
                         temporaryCardFreezeSwitch?.isChecked = false

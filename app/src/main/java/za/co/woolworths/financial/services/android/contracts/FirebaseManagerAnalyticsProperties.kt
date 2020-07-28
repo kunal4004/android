@@ -103,6 +103,9 @@ class FirebaseManagerAnalyticsProperties {
         const val Acc_My_Orders_Cancel_Order = "acc_my_orders_cancel_order"
         const val Acc_My_Orders_DT = "acc_my_orders_ddp"
         const val Shop_My_Orders_DT = "shop_my_orders_ddp"
+
+        const val SC_UNFREEZE_CARD = "sc_unfreeze_card"
+        const val SC_FREEZE_CARD = "sc_freeze_card"
     }
 
     class PropertyNames {
