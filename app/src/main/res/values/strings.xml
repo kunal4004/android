@@ -1536,9 +1536,8 @@
     <string name="freeze_store_card_description">Your card will be temporarily frozen and cannot be used to shop online or in-store.</string>
     <string name="temporary_card_unfreeze_title">Would you like to remove your Temporary Freeze?</string>
     <string name="unfreeze_store_card_description">Once you have unblocked your card it will then be available for shopping online or in-store. Happy shopping!</string>
-    <string name="unfreeze_temporary_card_button_label">Unfreeze My Card</string>
     <string name="temp_freeze_label">temp freeze</string>
-    <string name="unfreeze_my_card_label">UnFreeze My Card</string>
+    <string name="unfreeze_my_card_label">Unfreeze My Card</string>
     <string name="card_temporarily_frozen_label">your card has been temporarily frozen</string>
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
     <string name="freeze_temp_label">Temp Freeze</string>
