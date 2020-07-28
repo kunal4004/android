@@ -16,7 +16,7 @@ class GoldCreditCardFragment : AvailableFundsFragment(), View.OnClickListener {
 
         incViewStatementButton?.visibility = if (WoolworthsApplication.getAbsaBankingOpenApiServices()?.isEnabled == true) View.VISIBLE else View.GONE
         incRecentTransactionButton?.setOnClickListener(this)
-        incViewPaymentOptionButton?.setOnClickListener(this)
+        incViewPayMyAccountButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
     }
 

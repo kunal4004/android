@@ -1301,7 +1301,7 @@
 
     <string name="label_recent_transactions">Recent\nTransactions</string>
     <string name="label_view_statements">View\nStatements</string>
-    <string name="label_payment_options">Payment\nOptions</string>
+    <string name="label_payment_options">Pay My\nAccount</string>
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
@@ -1448,6 +1448,7 @@
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="recent_transactions_title">Recent Transactions</string>
 
+    <string name="payment_option_title">Payment Options</string>
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
     <string name="store_card_payment_options_desc">You can pay your woolworths store card account in any of the following ways</string>
 

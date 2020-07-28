@@ -70,7 +70,7 @@
 
     <include
         android:id="@+id/incViewPaymentOptionButton"
-        layout="@layout/view_payment_option_button"
+        layout="@layout/view_pay_my_account_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/available_fund_transaction_button_height"
         android:visibility="visible"

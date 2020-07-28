@@ -6,13 +6,13 @@
     <ImageView
         android:id="@+id/viewPaymentOptionImageView"
         style="@style/accountPaymentOptionIconImageViewStyle"
-        android:contentDescription="@string/view_statements"
+        android:contentDescription="@string/label_payment_options"
         app:layout_constraintBottom_toTopOf="@+id/viewPaymentOptionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/money_white" />
+        app:srcCompat="@drawable/card_white" />
 
     <TextView
         android:id="@+id/viewPaymentOptionTextView"

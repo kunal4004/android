@@ -79,13 +79,13 @@
         android:layout_marginEnd="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
-        app:layout_constraintEnd_toStartOf="@+id/incViewPaymentOptionButton"
+        app:layout_constraintEnd_toStartOf="@+id/incViewPayMyAccountButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
 
     <include
-        android:id="@+id/incViewPaymentOptionButton"
-        layout="@layout/view_payment_option_button"
+        android:id="@+id/incViewPayMyAccountButton"
+        layout="@layout/view_pay_my_account_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/available_fund_transaction_button_height"
         android:visibility="visible"
@@ -123,7 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="@string/credit_card_gold_title"
-        app:layout_constraintBottom_toTopOf="@+id/incViewPaymentOptionButton"
+        app:layout_constraintBottom_toTopOf="@+id/incViewPayMyAccountButton"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/paymentDueDateTextView" />
 

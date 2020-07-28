@@ -61,7 +61,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
 
         setPushViewDownAnimation(incRecentTransactionButton)
         setPushViewDownAnimation(incViewStatementButton)
-        setPushViewDownAnimation(incViewPaymentOptionButton)
+        setPushViewDownAnimation(incViewPayMyAccountButton)
 
         availableFundBackground?.post {
             val dm = DisplayMetrics()
