@@ -27,7 +27,7 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
                 navigateToRecentTransactionActivity("SC")
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
-            R.id.incPayMyAccountButton -> navigateToPaymentOptionActivity()
+            R.id.incPayMyAccountButton -> navigateToPayMyAccountActivity()
         }
     }
 }

@@ -24,7 +24,7 @@ class BlackCreditCardFragment : AvailableFundsFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
-            R.id.incPayMyAccountButton -> navigateToPaymentOptionActivity()
+            R.id.incPayMyAccountButton -> navigateToPayMyAccountActivity()
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }

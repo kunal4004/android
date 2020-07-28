@@ -24,10 +24,11 @@ class PersonalLoanFragment : AvailableFundsFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incPayMyAccountButton -> {
                 val personalLoanAccount = mAvailableFundPresenter?.getAccount()
-                if (personalLoanAccount?.productOfferingGoodStanding != true){
-                    personalLoanAccount?.let { account ->  (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
-                }else {
-                    navigateToLoanWithdrawalActivity()}
+                if (personalLoanAccount?.productOfferingGoodStanding != true) {
+                    personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
+                } else {
+                    navigateToPayMyAccountActivity()
+                }
             }
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)

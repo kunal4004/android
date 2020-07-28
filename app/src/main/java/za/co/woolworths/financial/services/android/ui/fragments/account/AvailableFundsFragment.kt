@@ -88,6 +88,6 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     }
 
     fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mAccountPair) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAccountPair) }
     }
 }

@@ -322,7 +322,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     override fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
     }
 
     private fun hideCLIView() {

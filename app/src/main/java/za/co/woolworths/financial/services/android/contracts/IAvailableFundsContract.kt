@@ -20,7 +20,7 @@ interface IAvailableFundsContract {
         fun hideABSAServiceGetUserCreditCardTokenProgressBar()
         fun navigateToRecentTransactionActivity(cardType: String)
         fun navigateToLoanWithdrawalActivity()
-        fun navigateToPaymentOptionActivity()
+        fun navigateToPayMyAccountActivity()
         fun navigateToStatementActivity()
         fun setPushViewDownAnimation(view: View)
         fun onABSACreditCardFailureHandler(error: Throwable?)

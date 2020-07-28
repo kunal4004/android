@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
@@ -195,11 +196,10 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public static void presentHowToPayActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
-		Intent howToPayIntent = new Intent(activity, PaymentOptionActivity.class);
-		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO,Utils.objectToJson(mAccountPair));
+	public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
+		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
+		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
 		activity.startActivity(howToPayIntent);
-		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
 	public static void presentShoppingCart(Activity activity){
