@@ -31,6 +31,7 @@ import kotlin.collections.ArrayList
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
 
     companion object {
+        private const val STORE_CARD_PRODUCT_GROUP_CODE = "sc"
         private const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
         private const val PERSONAL_LOAN_PRODUCT_GROUP_CORE = "pl"
     }
@@ -262,5 +263,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         val storeCardsData = getStoreCardResponse()?.storeCardsData
         val primaryCard = storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
         return primaryCard?.blockType?.toLowerCase(Locale.getDefault()) == TemporaryFreezeStoreCard.TEMPORARY
+    }
+
+    override fun isProductCodeStoreCard(): Boolean {
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == STORE_CARD_PRODUCT_GROUP_CODE
     }
 }

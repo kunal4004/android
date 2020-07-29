@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
@@ -35,6 +37,11 @@ class AccountSixMonthArrearsFragment : Fragment() {
         setTitleAndCardType()
         callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
         navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
+
+        cardDetailImageShimmerFrameLayout?.setShimmer(null)
+        myCardTextViewShimmerFrameLayout?.setShimmer(null)
+        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+        bottomView?.visibility = INVISIBLE
     }
 
     private fun hideCardTextViews() {

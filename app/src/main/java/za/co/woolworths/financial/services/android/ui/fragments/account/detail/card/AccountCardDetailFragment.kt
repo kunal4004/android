@@ -117,6 +117,12 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
 
         initCreditCardActivation()
 
+        //Disable shimmer for non store card
+        if (mCardPresenterImpl?.isProductCodeStoreCard() != true) {
+            cardDetailImageShimmerFrameLayout?.setShimmer(null)
+            myCardTextViewShimmerFrameLayout?.setShimmer(null)
+            tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+        }
     }
 
     private fun autoConnectToNetwork() {

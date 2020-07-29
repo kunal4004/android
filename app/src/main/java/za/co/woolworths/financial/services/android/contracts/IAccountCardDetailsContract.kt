@@ -71,6 +71,7 @@ interface IAccountCardDetailsContract {
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
         fun getStoreCardBlockType(): Boolean
+        fun isProductCodeStoreCard():Boolean
     }
 
     interface AccountCardDetailModel {

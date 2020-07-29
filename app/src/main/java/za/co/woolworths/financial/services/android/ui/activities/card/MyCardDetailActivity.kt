@@ -174,6 +174,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         } else if ((requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_OK) ||
                 (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_CODE_BLOCK_CODE_SUCCESS) ||
                 (requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_CODE_BLOCK_CODE_SUCCESS)) { // close previous cart detail
+            setResult(TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
             finish() // will close previous activity in stack
         } else {
             supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
