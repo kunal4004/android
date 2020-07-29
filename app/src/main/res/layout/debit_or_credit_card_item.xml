@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/method_card_background"
+    android:paddingBottom="32dp">
+
+    <ImageView
+        android:id="@+id/methodCardWhiteImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/method_card_white" />
+
+    <TextView
+        android:id="@+id/debitOrCreditCardTextView"
+        style="@style/payMyAccountCardTitleStyle"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/debit_or_credit_card_title"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/methodCardWhiteImageView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="33dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="32dp" />
+
+    <TextView
+        android:id="@+id/debitOrCreditCardDescTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/pay_your_account_desc_label"
+        android:textColor="@color/semi_transparent_white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardTextView" />
+
+    <ImageView
+        android:id="@+id/visaIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardDescTextView"
+        app:srcCompat="@drawable/card_visa_grey" />
+
+    <ImageView
+        android:id="@+id/mastercardIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/visaIconImageView"
+        app:layout_constraintTop_toTopOf="@+id/visaIconImageView"
+        app:srcCompat="@drawable/card_mastercard_grey" />
+
+    <Button
+        android:id="@+id/payByCardNowButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/white"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.15"
+        android:text="@string/pay_by_card_button_label"
+        android:textAllCaps="true"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/visaIconImageView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

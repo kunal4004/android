@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -200,6 +204,14 @@ public class ScreenManager {
 		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
 		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
 		activity.startActivity(howToPayIntent);
+	}
+
+	public static void presentPayMyAccountSceneActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, ImageView imageView) {
+		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
+		ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+				activity, imageView, ViewCompat.getTransitionName(imageView));
+		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
+		activity.startActivity(howToPayIntent,options.toBundle());
 	}
 
 	public static void presentShoppingCart(Activity activity){

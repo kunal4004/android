@@ -1536,7 +1536,7 @@
     <string name="debit_or_credit_card_title">Debit or Credit Card</string>
     <string name="debit_or_credit_card_desc">Pay your account now using a different debit card or credit card.</string>
     <string name="pay_by_card_button_label">Pay By Card Now</string>
-    <string name="by_electronic_fund_transfer_title">By Electronic Fund Transfer (EFT)</string>
+    <string name="by_electronic_fund_transfer_title">By Electronic Fund\nTransfer (EFT)</string>
     <string name="by_electronic_fund_transfer_desc">Pay your account by EFT or a direct payment into your Store Card account.</string>
     <string name="view_banking_details_button_label">View Banking Details</string>
     <string name="at_any_absa_branch_title">At any Absa Branch</string>
@@ -1567,6 +1567,7 @@
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
     <string name="atm_payment_steps_title">ATM PAYMENT</string>
+    <string name="pay_your_account_desc_label">Pay your account now using a different debit card or credit card.</string>
 
     <!-- End Pay My Account -->
 </resources>

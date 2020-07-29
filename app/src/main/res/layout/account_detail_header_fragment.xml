@@ -94,6 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:adjustViewBounds="true"
+        android:transitionName="example_transition"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
         app:layout_constraintTop_toBottomOf="@+id/myCardTextView"
