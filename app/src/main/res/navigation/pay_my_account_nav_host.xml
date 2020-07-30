@@ -9,6 +9,19 @@
         android:id="@+id/creditAndDebitCardPaymentsFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment"
         android:label="CreditAndDebitCardPaymentsFragment"
-        tools:layout="@layout/credit_and_debit_card_payments_fragment" />
+        tools:layout="@layout/credit_and_debit_card_payments_fragment">
+        <action
+            android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment"
+            app:destination="@id/payMyAccountLearnMoreFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/payMyAccountLearnMoreFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountLearnMoreFragment"
+        android:label="PayMyAccountLearnMoreFragment"
+        tools:layout="@layout/pay_my_account_learn_more_fragment" />
 
 </navigation>

@@ -44,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
         android:fontFamily="@font/myriad_pro_regular"
+        android:lineSpacingExtra="8sp"
         android:text="@string/pay_your_account_desc_label"
         android:textColor="@color/semi_transparent_white"
         android:textSize="16sp"

@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymentOptionContract.PaymentOptionView {
 
-    private var mPaymentOptionPresenterImpl: PaymentOptionPresenterImpl? = null
+    private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +42,8 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     }
 
     private fun initViews() {
-        mPaymentOptionPresenterImpl = PaymentOptionPresenterImpl(this, PaymentOptionModelImpl())
-        mPaymentOptionPresenterImpl?.apply {
+        mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PaymentOptionModelImpl())
+        mPayMyAccountPresenterImpl?.apply {
             retrieveAccountBundle(intent)
             initView()
         }
@@ -62,7 +62,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
                 }
 
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
-                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, mPaymentOptionPresenterImpl?.getAppScreenName())
+                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, mPayMyAccountPresenterImpl?.getAppScreenName())
             }
         }
     }
@@ -103,8 +103,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             val view = View.inflate(this, R.layout.how_to_pay_account_details_list_item, null)
             val paymentName: WTextView? = view?.findViewById(R.id.paymentName)
             val paymentValue: WTextView? = view?.findViewById(R.id.paymentvalue)
-            val accountLabel =
-                    KotlinUtils.capitaliseFirstLetter(KotlinUtils.addSpaceBeforeUppercase(paymentItem.key) + ":")
+            val accountLabel = KotlinUtils.capitaliseFirstLetter(KotlinUtils.addSpaceBeforeUppercase(paymentItem.key) + ":")
             paymentName?.text = accountLabel
             paymentValue?.text = paymentItem.value
             howToPayAccountDetails?.addView(view)

@@ -3,12 +3,17 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.os.Bundle
 import android.transition.Fade
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
+import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
+class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PaymentOptionView {
 
-class PayMyAccountActivity : AppCompatActivity() {
+    private var accountInfo: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +34,14 @@ class PayMyAccountActivity : AppCompatActivity() {
         fade.excludeTarget(android.R.id.statusBarBackground, true)
         fade.excludeTarget(android.R.id.navigationBarBackground, true)
 
-        window.enterTransition = fade
-        window.exitTransition = fade
+        window?.enterTransition = fade
+        window?.exitTransition = fade
+
+        accountInfo = intent?.getStringExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO)
+
+        val navigationController = findNavController(R.id.payMyAccountNavHostFragmentContainerView)
+        val bundle = bundleOf("bundle" to accountInfo)
+        navigationController.setGraph(navigationController.graph, bundle)
     }
 
 }

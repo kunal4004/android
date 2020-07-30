@@ -10,26 +10,26 @@ import java.util.HashMap
 interface IPaymentOptionContract {
 
     interface PaymentOptionView {
-        fun showPaymentDetail(paymentDetail: Map<String, String>?)
-        fun setHowToPayLogo(paymentOptionHeaderItem: PaymentOptionHeaderItem?)
-        fun showABSAInfo()
-        fun hideABSAInfo()
-        fun setPaymentOption(paymentMethods: MutableList<PaymentMethod>?)
-        fun setWhatsAppChatWithUsVisibility(isVisible: Boolean)
+        fun showPaymentDetail(paymentDetail: Map<String, String>?){}
+        fun setHowToPayLogo(paymentOptionHeaderItem: PaymentOptionHeaderItem?){}
+        fun showABSAInfo(){}
+        fun hideABSAInfo(){}
+        fun setPaymentOption(paymentMethods: MutableList<PaymentMethod>?){}
+        fun setWhatsAppChatWithUsVisibility(isVisible: Boolean){}
     }
 
     interface PaymentOptionPresenter {
-        fun retrieveAccountBundle(intent: Intent?)
+        fun retrieveAccountBundle(intent: Intent?){}
         fun getAccount(): Account?
         fun getPaymentDetail(): Map<String, String>
         fun displayPaymentDetail()
-        fun setHowToPayLogo()
-        fun loadABSACreditCardInfoIfNeeded()
+        fun setHowToPayLogo() {}
+        fun loadABSACreditCardInfoIfNeeded(){}
         fun getPaymentMethod(): MutableList<PaymentMethod>?
-        fun displayPaymentMethod()
+        fun displayPaymentMethod(){}
         fun setWhatsAppChatWithUsVisibility(applyNowState: ApplyNowState)
         fun getAppScreenName():String
-        fun initView()
+        fun initView(){}
     }
 
     interface PaymentOptionModel {

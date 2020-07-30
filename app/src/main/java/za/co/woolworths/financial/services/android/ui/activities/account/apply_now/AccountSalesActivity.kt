@@ -115,7 +115,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 AnimationUtilExtension.transitionBottomSheetBackgroundColor(dimView, slideOffset)
                 navigateBackImageButton?.rotation = slideOffset * -90
-                if (slideOffset > 0.2) AnimationUtilExtension.animateButtonIn(bottomApplyNowButtonRelativeLayout) else AnimationUtilExtension.animateButtonOut(bottomApplyNowButtonRelativeLayout)
+                if (slideOffset > 0.2) AnimationUtilExtension.animateViewPushDown(bottomApplyNowButtonRelativeLayout) else AnimationUtilExtension.animateButtonOut(bottomApplyNowButtonRelativeLayout)
             }
         })
     }

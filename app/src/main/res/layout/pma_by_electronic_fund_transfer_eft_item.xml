@@ -33,6 +33,7 @@
         android:id="@+id/byElectronicFundTransferTextView"
         style="@style/payMyAccountCardTitleStyle"
         android:fontFamily="@font/futura_semi_bold"
+        android:lineSpacingExtra="4sp"
         android:text="@string/by_electronic_fund_transfer_title"
         android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
@@ -42,6 +43,7 @@
     <TextView
         android:id="@+id/byElectronicFundTransferDescTextView"
         style="@style/pmaWhiteCardDescriptionStyle"
+        android:lineSpacingExtra="8sp"
         android:text="@string/pay_your_account_desc_label"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"

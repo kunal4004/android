@@ -30,8 +30,8 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/payMyAccountNavHostFragment"
+    <fragment
+        android:id="@+id/payMyAccountNavHostFragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"

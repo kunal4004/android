@@ -7,13 +7,13 @@
     android:paddingBottom="32dp">
 
     <ImageView
-        android:id="@+id/atAnyAbsaBranchImageView"
+        android:id="@+id/electronicFundTransferIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/method_absa" />
+        app:srcCompat="@drawable/method_woolworths" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startMargin"
@@ -30,22 +30,31 @@
         app:layout_constraintGuide_end="32dp" />
 
     <TextView
-        android:id="@+id/atAnyAbsaBranchTitleTextView"
+        android:id="@+id/atYourWooliesStoreTitleTextView"
         style="@style/payMyAccountCardTitleStyle"
         android:fontFamily="@font/futura_semi_bold"
-        android:text="@string/at_any_absa_branch_title"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/at_your_nearest_woolworths_store_title"
         android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/atAnyAbsaBranchImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/electronicFundTransferIconImageView" />
 
     <TextView
-        android:id="@+id/atAnyAbsaBranchDescTextView"
+        android:id="@+id/atYourWooliesStoreDescTextView"
         style="@style/pmaWhiteCardDescriptionStyle"
         android:lineSpacingExtra="8sp"
-        android:text="@string/at_any_absa_branch_desc"
+        android:text="@string/pay_your_account_desc_label"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/atAnyAbsaBranchTitleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/atYourWooliesStoreTitleTextView" />
+
+    <Button
+        android:id="@+id/findAWooliesStoreButton"
+        android:text="@string/find_a_woolies_store_label"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/atYourWooliesStoreDescTextView"
+        style="@style/pmaViewBankingButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
