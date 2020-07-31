@@ -17,11 +17,27 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment"
+            app:destination="@id/byElectronicFundTransferFragment" />
+        <action
+            android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1"
+            app:destination="@id/storesNearbyFragment1" />
     </fragment>
     <fragment
         android:id="@+id/payMyAccountLearnMoreFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountLearnMoreFragment"
         android:label="PayMyAccountLearnMoreFragment"
         tools:layout="@layout/pay_my_account_learn_more_fragment" />
+    <fragment
+        android:id="@+id/byElectronicFundTransferFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ByElectronicFundTransferFragment"
+        android:label="ByElectronicFundTransferFragment"
+        tools:layout="@layout/pma_by_electronic_fund_transfer_eft_fragment" />
+    <fragment
+        android:id="@+id/storesNearbyFragment1"
+        tools:layout="@layout/fragment_stores_nearby1"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1"
+        android:label="StoresNearbyFragment1" />
 
 </navigation>

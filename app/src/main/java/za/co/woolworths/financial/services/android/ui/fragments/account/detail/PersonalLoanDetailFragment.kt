@@ -26,8 +26,6 @@ class PersonalLoanDetailFragment : AccountCardDetailFragment() {
         }
         myCardDetailTextView?.visibility = GONE
 
-        paymentOptionGroup?.visibility  = VISIBLE
-
         // Hide withdraw cash row for accounts not in productOfferingGoodStanding
         withdrawCashViewGroup?.visibility = if (mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding == true) VISIBLE else GONE
         activity?.findViewById<TextView>(R.id.topRoundedView)?.setBackgroundResource(R.drawable.rounded_white_bg)

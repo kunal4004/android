@@ -42,7 +42,7 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
         when (view?.id) {
             R.id.gotITButton -> dismiss()
             R.id.paymentOptionButton -> {
-                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards)
+                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards,null)
                 dismiss()
             }
         }

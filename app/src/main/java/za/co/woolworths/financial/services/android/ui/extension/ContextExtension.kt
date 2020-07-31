@@ -6,6 +6,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 
@@ -20,3 +22,5 @@ fun Any.bindStringArray(@ArrayRes id: Int): Array<String>? = WoolworthsApplicati
 fun Any.getFuturaMediumFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/WFutura-Medium.ttf")
 
 fun Any.getFuturaSemiBoldFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/WFutura-SemiBold.ttf")
+
+fun Any.getMyriadProSemiBoldFont(): Typeface? = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/MyriadPro-Semibold.otf")

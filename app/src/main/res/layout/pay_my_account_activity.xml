@@ -9,6 +9,7 @@
         android:id="@+id/payMyAccountToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,15 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <View
+        android:id="@+id/payMyAccountDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payMyAccountToolbar" />
+
     <fragment
         android:id="@+id/payMyAccountNavHostFragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -39,7 +49,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/payMyAccountToolbar"
+        app:layout_constraintTop_toBottomOf="@+id/payMyAccountDivider"
         app:navGraph="@navigation/pay_my_account_nav_host" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,22 +2,23 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import android.os.Bundle
 import android.transition.Fade
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PayMyAccountPresenterImpl
-import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.ACCOUNT_INFO
+import za.co.woolworths.financial.services.android.util.Utils
 
-class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PaymentOptionView {
+class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAccountView {
 
-    private var accountInfo: String? = null
+    private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KotlinUtils.setTransparentStatusBar(this)
+        Utils.updateStatusBarBackground(this)
         setContentView(R.layout.pay_my_account_activity)
 
         setSupportActionBar(payMyAccountToolbar)
@@ -37,11 +38,24 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.Payment
         window?.enterTransition = fade
         window?.exitTransition = fade
 
-        accountInfo = intent?.getStringExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO)
+        mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PayMyAccountModelImpl())
+        mPayMyAccountPresenterImpl?.retrieveAccountBundle(intent)
 
-        val navigationController = findNavController(R.id.payMyAccountNavHostFragmentContainerView)
-        val bundle = bundleOf("bundle" to accountInfo)
-        navigationController.setGraph(navigationController.graph, bundle)
+        with(findNavController(R.id.payMyAccountNavHostFragmentContainerView)) {
+            val bundle = Bundle()
+            bundle.putString(ACCOUNT_INFO, intent?.getStringExtra(ACCOUNT_INFO))
+            setGraph(graph, bundle)
+        }
+    }
+
+    override fun getPayMyAccountPresenter(): PayMyAccountPresenterImpl? {
+        return mPayMyAccountPresenterImpl
+    }
+
+    override fun configureToolbar(title: String?) {
+        super.configureToolbar(title)
+        payMyAccountDivider?.visibility = if (title?.isEmpty() == true) GONE else VISIBLE
+        payMyAccountTitleBar?.text = title
     }
 
 }

@@ -61,7 +61,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         var paymentDetails: Map<String, String> = Gson().fromJson(accountDetails.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
 
         for (i in paymentDetails) {
-            val v: View = inflater.inflate(R.layout.how_to_pay_account_details_list_item, howToPayAccountDetails, false)
+            val v: View = inflater.inflate(R.layout.atm_banking_detail_item, howToPayAccountDetails, false)
             var paymentName: WTextView = v.findViewById(R.id.paymentName)
             var paymentValue: WTextView = v.findViewById(R.id.paymentvalue)
             paymentName.text = accountDetailValues[i.key]

@@ -1453,10 +1453,10 @@
     <string name="store_card_payment_options_desc">You can pay your Woolies Store Card using any of the following payment options:</string>
 
     <string name="personal_loan_payment_options_title">Personal Loan Payment Options</string>
-    <string name="personal_loan_payment_options_desc">You can pay your woolworths personal loan account in any of the following ways</string>
+    <string name="personal_loan_payment_options_desc">You can pay your Woolies Personal Loan using any of the following payment options:</string>
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
-    <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="credit_card_payment_options_desc">You can pay your Woolies Credit Card using any of the following payment options:</string>
     <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
     <string name="account_in_arrears_layout">Account In Arrears Layout</string>
     <string name="account_six_month_arrear_toolbar">Account Six Month In Arrear Toolbar</string>
@@ -1568,8 +1568,16 @@
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
     <string name="atm_payment_steps_title">ATM PAYMENT</string>
     <string name="pay_your_account_desc_label">Pay your account now using a different debit card or credit card.</string>
-    <string name="goto_your_atm_number1">Go to your bank’s ATM</string>
-
+    <string name="atmPaymentInfo1">Go to your bank’s ATM</string>
+    <string name="atmPaymentInfo2" >After inserting your card and PIN</string>
+    <string name="atmPaymentInfo3" >Select make a payment</string>
+    <string name="atmPaymentInfo4" >Select 3rd party beneficiery or public recipient</string>
+    <string name="atmPaymentInfo5">Search for Woolworths</string>
+    <string name="atmPaymentInfo6" >Select Credit Card, Store Card or Personal Loan account</string>
+    <string name="atmPaymentInfo7">Complete details with your reference: Your 16 digit Woolworths account number (no spaces)</string>
+    <string name="atmPaymentInfo8">Complete the transaction</string>
+    <string name="atm_payment_note">Note: Steps in this process might vary from bank to bank.</string>
+   <string name="atm_banking_details">Banking Details</string>
     <!-- End Pay My Account -->
 </resources>
 

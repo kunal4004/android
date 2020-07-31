@@ -205,11 +205,10 @@
         android:id="@+id/paymentOptionGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:constraint_referenced_ids="creditLimitDividerStyle,paymentOptionLogoImageView,viewPaymentOptions,viewPaymentOptionTextView,viewPaymentOptionNext,viewPaymentOptions"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

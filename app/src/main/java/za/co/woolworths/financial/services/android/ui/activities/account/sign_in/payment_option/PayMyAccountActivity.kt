@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.payment_options_activity.*
@@ -16,7 +17,9 @@ import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
-import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
+import za.co.woolworths.financial.services.android.models.dto.account.PayMyCardHeaderItem
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountModelImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.util.Utils
@@ -25,7 +28,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsApp
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
-class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymentOptionContract.PaymentOptionView {
+class PayMyAccountActivity : AppCompatActivity(), View.OnClickListener, IPaymentOptionContract.PayMyAccountView {
 
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
 
@@ -42,7 +45,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     }
 
     private fun initViews() {
-        mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PaymentOptionModelImpl())
+        mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PayMyAccountModelImpl())
         mPayMyAccountPresenterImpl?.apply {
             retrieveAccountBundle(intent)
             initView()
@@ -62,7 +65,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
                 }
 
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
-                ScreenManager.presentWhatsAppChatToUsActivity(this@PaymentOptionActivity, FEATURE_WHATSAPP, mPayMyAccountPresenterImpl?.getAppScreenName())
+                ScreenManager.presentWhatsAppChatToUsActivity(this@PayMyAccountActivity, FEATURE_WHATSAPP, mPayMyAccountPresenterImpl?.getAppScreenName())
             }
         }
     }
@@ -90,19 +93,23 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
             } else {
                 whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_grey)
                 whatsAppNextIconImageView?.alpha = 0.4f
-                whatsAppTitleTextView?.setTextColor(ContextCompat.getColor(this@PaymentOptionActivity, R.color.unavailable))
+                whatsAppTitleTextView?.setTextColor(ContextCompat.getColor(this@PayMyAccountActivity, R.color.unavailable))
             }
         } else {
             chatWithUsContainerLinearLayout?.visibility = GONE
         }
     }
 
+    override fun getPayMyAccountPresenter(): PayMyAccountPresenterImpl? {
+        return mPayMyAccountPresenterImpl
+    }
+
     override fun showPaymentDetail(paymentDetail: Map<String, String>?) {
         howToPayAccountDetails?.removeAllViews()
         paymentDetail?.forEach { paymentItem ->
-            val view = View.inflate(this, R.layout.how_to_pay_account_details_list_item, null)
-            val paymentName: WTextView? = view?.findViewById(R.id.paymentName)
-            val paymentValue: WTextView? = view?.findViewById(R.id.paymentvalue)
+            val view = View.inflate(this, R.layout.atm_banking_detail_item, null)
+            val paymentName: TextView? = view?.findViewById(R.id.paymentName)
+            val paymentValue: TextView? = view?.findViewById(R.id.paymentvalue)
             val accountLabel = KotlinUtils.capitaliseFirstLetter(KotlinUtils.addSpaceBeforeUppercase(paymentItem.key) + ":")
             paymentName?.text = accountLabel
             paymentValue?.text = paymentItem.value
@@ -110,12 +117,11 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         }
     }
 
-    override fun setHowToPayLogo(paymentOptionHeaderItem: PaymentOptionHeaderItem?) {
-        paymentOptionHeaderItem?.apply {
+    override fun setHowToPayLogo(payMyCardHeaderItem: PayMyCardHeaderItem?) {
+        payMyCardHeaderItem?.apply {
             creditCardPaymentOptionTextView?.text = getString(title)
             payWooliesCardTextView?.text = getString(description)
             cardOptionImageView?.setImageResource(card)
-            viewBackground?.setBackgroundResource(background)
         }
     }
 
