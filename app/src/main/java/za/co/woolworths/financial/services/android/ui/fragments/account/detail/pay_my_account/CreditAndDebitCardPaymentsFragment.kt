@@ -134,6 +134,10 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
 
+            R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
+                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment)
+            }
+
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
                 navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1)
             }
@@ -154,6 +158,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
                 ScreenManager.presentWhatsAppChatToUsActivity(activity, WhatsAppChatToUs.FEATURE_WHATSAPP, payMyAccountPresenter?.getAppScreenName())
             }
+
         }
     }
 

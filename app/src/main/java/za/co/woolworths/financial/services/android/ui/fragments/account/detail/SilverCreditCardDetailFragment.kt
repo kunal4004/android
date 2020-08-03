@@ -18,5 +18,6 @@ class SilverCreditCardDetailFragment : AccountCardDetailFragment() {
         debitOrderViewGroup?.visibility = GONE
         myCardDetailTextView?.visibility = GONE
         cardImage.setBackgroundResource(R.drawable.silver_cc_envelope)
+        paymentOptionLogoImageView?.setImageResource(R.drawable.icon_money)
     }
 }

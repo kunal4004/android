@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewPaymentOptions"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/creditLimitDividerStyle"
+        style="@style/creditLimitDividerStyle"
+        android:layout_height="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/paymentOptionLogoImageView"
+        style="@style/style_loan_logo_img"
+        android:alpha="1"
+        android:src="@drawable/icon_money"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
+        app:layout_constraintStart_toStartOf="@+id/viewPaymentOptions"
+        app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
+
+    <TextView
+        android:id="@+id/viewPaymentOptionTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:text="@string/payment_option_title"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
+        app:layout_constraintEnd_toStartOf="@+id/viewPaymentOptionNext"
+        app:layout_constraintStart_toEndOf="@+id/paymentOptionLogoImageView"
+        app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
+
+    <ImageView
+        android:id="@+id/viewPaymentOptionNext"
+        style="@style/style_loan_logo_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        android:contentDescription="@string/bpi_covered"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

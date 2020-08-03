@@ -123,9 +123,13 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
         }
     }
 
+    override fun navigateToPaymentOptionsActivity() {
+        activity?.let { activity -> ScreenManager.presentPaymentOptionActivity(activity, mAvailableFundPresenter?.getBundle()) }
+    }
+
     override fun navigateToPayMyAccountActivity() {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(),null) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle()) }
     }
 
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {

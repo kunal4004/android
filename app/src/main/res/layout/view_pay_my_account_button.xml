@@ -7,7 +7,7 @@
         android:id="@+id/viewPaymentOptionImageView"
         style="@style/accountPaymentOptionIconImageViewStyle"
         android:contentDescription="@string/label_payment_options"
-        app:layout_constraintBottom_toTopOf="@+id/viewPaymentOptionTextView"
+        app:layout_constraintBottom_toTopOf="@+id/paymentOptionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -15,7 +15,7 @@
         app:srcCompat="@drawable/card_white" />
 
     <TextView
-        android:id="@+id/viewPaymentOptionTextView"
+        android:id="@+id/paymentOptionTextView"
         style="@style/accountPaymentOptionIconTextViewStyle"
         android:text="@string/label_payment_options"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -17,5 +17,6 @@ class GoldCreditCardDetailFragment : AccountCardDetailFragment() {
         debitOrderViewGroup?.visibility = View.GONE
         myCardDetailTextView?.visibility = View.GONE
         cardImage.setBackgroundResource(R.drawable.gold_cc_envelope)
+        paymentOptionLogoImageView?.setImageResource(R.drawable.icon_money)
     }
 }

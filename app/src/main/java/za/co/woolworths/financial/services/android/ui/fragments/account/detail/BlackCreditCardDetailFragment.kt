@@ -16,6 +16,7 @@ class BlackCreditCardDetailFragment : AccountCardDetailFragment() {
         // No Debit order for credit cards
         debitOrderViewGroup?.visibility = View.GONE
         myCardDetailTextView?.visibility = View.GONE
+        paymentOptionLogoImageView?.setImageResource(R.drawable.icon_money)
         cardImage.setBackgroundResource(R.drawable.black_cc_envelope)
     }
 }

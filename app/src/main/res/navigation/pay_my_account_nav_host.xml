@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1"
             app:destination="@id/storesNearbyFragment1" />
+        <action
+            android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment"
+            app:destination="@id/enterPaymentAmountFragment" />
     </fragment>
     <fragment
         android:id="@+id/payMyAccountLearnMoreFragment"
@@ -36,8 +39,22 @@
         tools:layout="@layout/pma_by_electronic_fund_transfer_eft_fragment" />
     <fragment
         android:id="@+id/storesNearbyFragment1"
-        tools:layout="@layout/fragment_stores_nearby1"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1"
-        android:label="StoresNearbyFragment1" />
+        android:label="StoresNearbyFragment1"
+        tools:layout="@layout/fragment_stores_nearby1" />
+    <fragment
+        android:id="@+id/enterPaymentAmountFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.EnterPaymentAmountFragment"
+        android:label="EnterPaymentAmountFragment"
+        tools:layout="@layout/enter_payment_amount_fragment" >
+        <action
+            android:id="@+id/action_enterPaymentAmountFragment_to_addNewPayUCardFragment"
+            app:destination="@id/addNewPayUCardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNewPayUCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.AddNewPayUCardFragment"
+        android:label="AddNewPayUCardFragment"
+        tools:layout="@layout/add_new_payu_card_fragment" />
 
 </navigation>

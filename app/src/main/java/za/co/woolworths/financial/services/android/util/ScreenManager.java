@@ -199,16 +199,15 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, ImageView imageView) {
+	public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
 		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
 		howToPayIntent.putExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
-		if (imageView != null) {
-			ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-					activity, imageView, ViewCompat.getTransitionName(imageView));
-			activity.startActivity(howToPayIntent, options.toBundle());
-		}else {
-			activity.startActivity(howToPayIntent);
-		}
+		activity.startActivity(howToPayIntent);
+	}
+	public static void presentPaymentOptionActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
+		Intent howToPayIntent = new Intent(activity, za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PayMyAccountActivity.class);
+		howToPayIntent.putExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
+		activity.startActivity(howToPayIntent);
 	}
 
 	public static void presentShoppingCart(Activity activity){

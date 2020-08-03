@@ -109,4 +109,5 @@
     <color name="colorPrimary">@color/white</color>
     <color name="colorPrimaryDark">@color/white</color>
     <color name="colorAccent">@color/black</color>
+    <color name="color_separator_light_grey">#1A000000</color>
 </resources>

@@ -166,9 +166,9 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun onClick(v: View?) {
         mCardPresenterImpl?.apply {
             when (v?.id) {
-                R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsuranceOnButtonTapped()
-                R.id.debitOrderView -> navigateToDebitOrderActivityOnButtonTapped()
-                R.id.cardImageRootView -> navigateToTemporaryStoreCardOnButtonTapped()
+                R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsurance()
+                R.id.debitOrderView -> navigateToDebitOrderActivity()
+                R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.cardDetailImageView -> {
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToGetStoreCards()
@@ -178,7 +178,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
                 }
-                R.id.viewPaymentOptions -> { mCardPresenterImpl?.navigateToPaymentOptionActivity()}
+                R.id.viewPaymentOptions -> { if (mCardPresenterImpl?.isCreditCardSection() == true) mCardPresenterImpl?.navigateToPaymentOptionActivity() else mCardPresenterImpl?.navigateToPayMyAccountActivity()}
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
                         navigateToCreditCardActivation()
@@ -322,7 +322,11 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     }
 
     override fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair,cardDetailImageView) }
+        activity?.let { activity -> ScreenManager.presentPaymentOptionActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
+    }
+
+    override fun navigateToPayMyAccountActivity() {
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
     }
 
     private fun hideCLIView() {
@@ -332,9 +336,9 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun executeCreditCardTokenService() {
         if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals("CC", true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true) return
         activity?.apply {
-            includeAccountDetailHeaderView.visibility = GONE
-            creditCardActivationView.visibility = GONE
-            creditCardActivationPlaceHolder.visibility = VISIBLE
+            includeAccountDetailHeaderView?.visibility = GONE
+            creditCardActivationView?.visibility = GONE
+            creditCardActivationPlaceHolder?.visibility = VISIBLE
             creditCardActivationPlaceHolder?.startShimmer()
             mCardPresenterImpl?.getCreditCardToken()
         }

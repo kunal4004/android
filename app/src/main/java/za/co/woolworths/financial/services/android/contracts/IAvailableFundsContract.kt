@@ -22,6 +22,7 @@ interface IAvailableFundsContract {
         fun navigateToLoanWithdrawalActivity()
         fun navigateToPayMyAccountActivity()
         fun navigateToStatementActivity()
+        fun navigateToPaymentOptionsActivity()
         fun setPushViewDownAnimation(view: View)
         fun onABSACreditCardFailureHandler(error: Throwable?)
         fun navigateToABSAStatementActivity()

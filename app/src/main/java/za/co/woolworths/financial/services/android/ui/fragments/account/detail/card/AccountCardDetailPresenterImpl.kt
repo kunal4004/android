@@ -185,10 +185,10 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
-        navigateToTemporaryStoreCardOnButtonTapped()
+        navigateToTemporaryStoreCard()
     }
 
-    override fun navigateToTemporaryStoreCardOnButtonTapped() {
+    override fun navigateToTemporaryStoreCard() {
         when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
             true -> navigateToGetTemporaryStoreCardPopupActivity()
             false -> navigateToMyCardDetailActivity()
@@ -207,11 +207,11 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
-    override fun navigateToDebitOrderActivityOnButtonTapped() {
+    override fun navigateToDebitOrderActivity() {
         getDebitOrder()?.let { debitOrder -> mainView?.navigateToDebitOrderActivity(debitOrder) }
     }
 
-    override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
+    override fun navigateToBalanceProtectionInsurance() {
         mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
     }
 
@@ -239,5 +239,13 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                 cardWithPLCState = this[0]
         }
         return cardWithPLCState
+    }
+
+    override fun isCreditCardSection(): Boolean {
+        return getAccount()?.productGroupCode?.toLowerCase() == CREDIT_CARD_PRODUCT_GROUP_CODE
+    }
+
+    override fun navigateToPayMyAccountActivity() {
+        mainView?.navigateToPayMyAccountActivity()
     }
 }
