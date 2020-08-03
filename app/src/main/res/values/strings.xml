@@ -1528,7 +1528,7 @@
     <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
     <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
-    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
+    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
 
     <!-- Pay My Account -->
@@ -1579,5 +1579,6 @@
     <string name="atm_payment_note">Note: Steps in this process might vary from bank to bank.</string>
    <string name="atm_banking_details">Banking Details</string>
     <!-- End Pay My Account -->
+    <string name="food_only">food only</string>
 </resources>
 
