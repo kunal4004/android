@@ -181,6 +181,47 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/storeClosedMsg"
+        style="@style/myriad_pro_regular"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/store_closed_message"
+        android:textColor="@color/input_error_color_code"
+        android:textSize="@dimen/fourteen_sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/selectSuburb" />
+
+    <TextView
+        android:id="@+id/foodDeliveryDateMessage"
+        style="@style/myriad_pro_regular"
+        android:layout_marginTop="@dimen/fourteen_dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/store_closed_message"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/storeClosedMsg" />
+
+    <TextView
+        android:id="@+id/otherDeliveryDateMessage"
+        style="@style/myriad_pro_regular"
+        android:layout_marginTop="@dimen/fourteen_dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/store_closed_message"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/foodDeliveryDateMessage" />
+
+
+
+    <TextView
         android:id="@+id/title"
         style="@style/dialog_title_text_style"
         android:text="@string/select_an_option"

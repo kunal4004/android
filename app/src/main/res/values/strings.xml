@@ -1531,5 +1531,10 @@
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
     <string name="food_only">food only</string>
+    <string name="store_closed_message">Sorry, Click &amp; Collect isn’t available at this store right now. Please try again soon.</string>
+    <string name="first_available_food_delivery_date">The earliest available delivery slot for food items to %1$s is %2$s</string>
+    <string name="first_available_other_delivery_date">The earliest available delivery for fashion, beauty &amp; home items to %1$s is %2$s</string>
+    <string name="change_store">Change Store</string>
+    <string name="these_items_will_be_removed_from_your_cart">These items will be removed from your cart</string>
 </resources>
 

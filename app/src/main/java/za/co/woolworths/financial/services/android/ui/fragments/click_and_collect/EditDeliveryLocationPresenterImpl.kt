@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.Suburb
@@ -27,6 +28,10 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
         getInteractor?.executeSetSuburb(suburbId, this)
     }
 
+    override fun validateSelectedSetSuburb(suburbId: String) {
+        getInteractor?.executeValidateSelectedSuburb(suburbId, this)
+    }
+
     override fun onSuccess(response: Any?) {
         with(response) {
             when (this) {
@@ -46,6 +51,12 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
                     when (httpCode) {
                         200 -> mainView?.onSetSuburbSuccess()
                         else -> mainView?.onSetSuburbFailure()
+                    }
+                }
+                is ValidateSelectedSuburbResponse -> {
+                    when (httpCode) {
+                        200 -> mainView?.onValidateSelectedSuburbSuccess(validatedSuburbProducts)
+                        else -> mainView?.onValidateSelectedSuburbFailure()
                     }
                 }
                 else -> throw RuntimeException("onSuccess:: unknown response $response")
