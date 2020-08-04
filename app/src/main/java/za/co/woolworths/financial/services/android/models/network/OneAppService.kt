@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
 import okhttp3.ResponseBody
@@ -347,5 +348,10 @@ object OneAppService : RetrofitConfig() {
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
         return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
+    }
+
+
+    fun queryServicePayUMethod(): Call<JsonElement> {
+        return mApiInterface.getPaymentPAYUMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 }

@@ -1263,4 +1263,21 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("featureName") featureName: String,
             @Path("appScreen") appScreen: String): Call<Response>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
+    @GET("payments/payu/methods")
+    fun getPaymentPAYUMethod(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<JsonElement>
+
+
 }

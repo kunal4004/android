@@ -13,19 +13,32 @@
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment"
             app:destination="@id/payMyAccountLearnMoreFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"></action>
+
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment"
-            app:destination="@id/byElectronicFundTransferFragment" />
+            app:destination="@id/byElectronicFundTransferFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1"
-            app:destination="@id/storesNearbyFragment1" />
+            app:destination="@id/storesNearbyFragment1"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment"
-            app:destination="@id/enterPaymentAmountFragment" />
+            app:destination="@id/enterPaymentAmountFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
     </fragment>
     <fragment
         android:id="@+id/payMyAccountLearnMoreFragment"
@@ -46,10 +59,13 @@
         android:id="@+id/enterPaymentAmountFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.EnterPaymentAmountFragment"
         android:label="EnterPaymentAmountFragment"
-        tools:layout="@layout/enter_payment_amount_fragment" >
+        tools:layout="@layout/enter_payment_amount_fragment">
         <action
             android:id="@+id/action_enterPaymentAmountFragment_to_addNewPayUCardFragment"
             app:destination="@id/addNewPayUCardFragment" />
+        <argument
+            android:name="ACCOUNT"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addNewPayUCardFragment"

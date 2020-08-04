@@ -75,12 +75,12 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     private fun configureEditText() {
-        edtWithdrawAmount.keyListener = DigitsKeyListener.getInstance("0123456789")
-        edtWithdrawAmount.addTextChangedListener(NumberTextWatcherForThousand(edtWithdrawAmount))
-        edtWithdrawAmount.setOnKeyPreImeListener { activity?.onBackPressed() }
-        edtWithdrawAmount.setRawInputType(Configuration.KEYBOARD_12KEY)
-        edtWithdrawAmount.imeOptions = EditorInfo.IME_ACTION_DONE
-        edtWithdrawAmount.setOnEditorActionListener { _, actionId, _ ->
+        edtWithdrawAmount?.keyListener = DigitsKeyListener.getInstance("0123456789")
+        edtWithdrawAmount?.addTextChangedListener(NumberTextWatcherForThousand(edtWithdrawAmount))
+        edtWithdrawAmount?.setOnKeyPreImeListener { activity?.onBackPressed() }
+        edtWithdrawAmount?.setRawInputType(Configuration.KEYBOARD_12KEY)
+        edtWithdrawAmount?.imeOptions = EditorInfo.IME_ACTION_DONE
+        edtWithdrawAmount?.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 handled = true

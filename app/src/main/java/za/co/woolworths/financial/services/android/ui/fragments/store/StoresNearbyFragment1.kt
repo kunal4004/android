@@ -47,10 +47,12 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.queryServiceGetStore
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
@@ -107,7 +109,6 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
-        val activity = activity ?: return
         mPopWindowValidationMessage = PopWindowValidationMessage(activity)
         storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         val relNoConnectionLayout =
@@ -173,8 +174,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             updateMap = true
             if (checkLocationPermission()) {
                 val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activity.startActivity(locIntent)
-                activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                activity?.startActivity(locIntent)
+                activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             } else {
                 isLocationServiceButtonClicked = true
                 checkLocationPermission()
@@ -186,7 +187,8 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 initLocationCheck()
             }
         }
-        activity.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+        activity?.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+
         if (activity is MyAccountActivity) {
             (activity as? MyAccountActivity?)?.supportActionBar?.show()
         }
@@ -678,7 +680,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     private fun setupToolbar() {
-        val toolbarTitle = activity?.resources?.getString(R.string.stores_nearby) ?: ""
+        val toolbarTitle = bindString(R.string.stores_nearby)
         mBottomNavigator?.apply {
             setTitle(toolbarTitle)
             showBackNavigationIcon(true)
@@ -686,6 +688,10 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         }
         if (activity is MyAccountActivity) {
             (activity as? MyAccountActivity?)?.setToolbarTitle(toolbarTitle)
+        }
+
+        if (activity is PayMyAccountActivity){
+            (activity as? PayMyAccountActivity)?.configureToolbar(toolbarTitle)
         }
     }
 

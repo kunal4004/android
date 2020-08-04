@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -20,11 +21,14 @@
 
     <Button
         android:id="@+id/continueToPaymentButton"
+        style="@style/blackButtonCustomStyle"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/continue_to_payment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        style="@style/blackButtonCustomStyle" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/amountOutstandingTextView"
@@ -90,29 +94,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
+        android:id="@+id/paymentAmountInputEditText"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="21dp"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/transparent"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center|top"
+        android:imeOptions="actionDone|actionGo"
+        android:inputType="number"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textSize="55sp"
         app:layout_constraintBottom_toTopOf="@+id/horizontalDividerView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterPaymentAmountTextView">
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/currencyTextView"
+        app:layout_constraintTop_toBottomOf="@+id/enterPaymentAmountTextView" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/paymentAmountInputEditText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:fontFamily="@font/futura_medium_ttf"
-            android:gravity="center|top"
-            android:hint="R 500.00"
-            android:imeOptions="actionDone"
-            android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:textSize="55sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/currencyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:text="R"
+        android:textColor="@color/black"
+        android:textSize="55sp"
+        app:layout_constraintBottom_toBottomOf="@+id/paymentAmountInputEditText"
+        app:layout_constraintEnd_toStartOf="@+id/paymentAmountInputEditText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

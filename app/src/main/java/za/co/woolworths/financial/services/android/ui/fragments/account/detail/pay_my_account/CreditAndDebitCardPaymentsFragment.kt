@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
 import kotlinx.android.synthetic.main.debit_or_credit_card_item.*
@@ -19,7 +20,6 @@ import kotlinx.android.synthetic.main.pma_at_your_nearest_woolies_store_item.*
 import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
-import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -37,9 +36,13 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
     private var payMyAccountPresenter: PayMyAccountPresenterImpl? = null
     private var navController: NavController? = null
+    private var layout: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.credit_and_debit_card_payments_fragment, container, false)
+        // Prevent layout to reload when fragment refresh
+        if (layout == null)
+            layout = inflater.inflate(R.layout.credit_and_debit_card_payments_fragment, container, false)
+        return layout
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,20 +53,19 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             configureToolbar("")
         }
 
-        GlobalScope.doAfterDelay(100) {
-            payMyAccountTitleTextView?.visibility = VISIBLE
-            payMyAccountDescTextView?.visibility = VISIBLE
-            creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
-            incDebitOrCreditCardButton?.visibility = VISIBLE
-            incByElectronicFundTransferEFTButton?.visibility = VISIBLE
-            incAtAnyAbsaBranchButton?.visibility = VISIBLE
-            incAtYourNearestWoolworthsStoreButton?.visibility = VISIBLE
-            incPayAtAnyATMButton?.visibility = VISIBLE
-            incWhatsAppAnyQuestions?.visibility = VISIBLE
-            pmaBottomView?.visibility = VISIBLE
-        }
+        payMyAccountTitleTextView?.visibility = VISIBLE
+        payMyAccountDescTextView?.visibility = VISIBLE
+        creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
+        incDebitOrCreditCardButton?.visibility = VISIBLE
+        incByElectronicFundTransferEFTButton?.visibility = VISIBLE
+        incAtAnyAbsaBranchButton?.visibility = VISIBLE
+        incAtYourNearestWoolworthsStoreButton?.visibility = VISIBLE
+        incPayAtAnyATMButton?.visibility = VISIBLE
+        incWhatsAppAnyQuestions?.visibility = VISIBLE
+        pmaBottomView?.visibility = VISIBLE
 
         navController = Navigation.findNavController(view)
+
         configureClickEvent()
 
         val payMyCardHeaderItem = payMyAccountPresenter?.getPayMyCardCardItem()
@@ -135,7 +137,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
-                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment)
+                val args = EnterPaymentAmountFragmentArgs.Builder(Gson().toJson(payMyAccountPresenter?.getAccount())).build().toBundle()
+                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment, args)
             }
 
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
