@@ -3,17 +3,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
+import android.util.JsonToken
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import java.io.IOException
 
 
 class AddNewPayUCardFragment : Fragment() {
@@ -51,6 +54,18 @@ class AddNewPayUCardFragment : Fragment() {
             webSettings.useWideViewPort = false
             webSettings.loadWithOverviewMode = false
             WebView.setWebContentsDebuggingEnabled(true)
+
+        val documentEventListener = "document.addEventListener(\"message\", function(data) {" +
+                "      console.log(data)" +
+                "      if(data.length) {" +
+                "        this.setState({" +
+                "          username: ${WoolworthsApplication.getApiId()}," +
+                "          password: ${BuildConfig.SHA1}" +
+                "        })" +
+                "      }"
+
+            evaluateJavascript(documentEventListener) { s -> Log.e("evaluateJav", s) }
+
             webViewClient = object : WebViewClient() {
                 override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest): WebResourceResponse? {
                     CookieManager.getInstance().removeAllCookies(null)
