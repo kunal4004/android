@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -39,7 +41,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
-    var validatedSuburbProducts: ValidatedSuburbProducts? = null
+    var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
+    var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
@@ -75,8 +78,19 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmLocation -> {
-                if (selectedSuburb != null || selectedStore != null || validatedSuburbProducts != null) {
-                    if (validatedSuburbProducts?.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                if (selectedSuburb != null || selectedStore != null) {
+                    when (deliveryType) {
+                        DeliveryType.STORE_PICKUP -> {
+                            validatedSuburbProductsForStore?.let {
+                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                            }
+                        }
+                        DeliveryType.DELIVERY -> {
+                            validatedSuburbProductsForDelivery?.let {
+                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                            }
+                        }
+                    }
                 }
             }
             R.id.selectProvince, R.id.tvSelectedProvince -> {
@@ -205,25 +219,30 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             this.selectedSuburb = suburb
         else
             this.selectedStore = suburb
+        hideStoreClosedMessage()
         tvSelectedSuburb?.setText(suburb?.name)
         tvSelectedSuburb?.dismissDropDown()
         suburb?.id?.let { validateSelectedSuburb(it, deliveryType == DeliveryType.STORE_PICKUP) }
-        //validateConfirmLocationButtonAvailability()
     }
 
 
     private fun resetSuburbSelection() {
         selectedSuburb = null
         selectedStore = null
+        validatedSuburbProductsForStore = null
+        validatedSuburbProductsForDelivery = null
         tvSelectedSuburb.text.clear()
         tvSelectedSuburb.hint = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
         validateConfirmLocationButtonAvailability()
+        hideAvailableDeliveryDateMessagee()
+        hideStoreClosedMessage()
     }
 
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
         subTitle?.text = bindString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
         maxItemsInfoMessageLayout?.visibility = if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
+        confirmLocation.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.confirm_suburb else R.string.confirm_store)
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
@@ -254,9 +273,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProducts != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null)
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProducts != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null)
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -283,19 +302,17 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun onValidateSelectedSuburbSuccess(validatedSuburbProducts: ValidatedSuburbProducts?) {
         hideGetSuburbProgress()
-        this.validatedSuburbProducts = validatedSuburbProducts
-        validatedSuburbProducts?.let {
-            if (it.storeClosed) {
-                storeClosedMsg?.visibility = View.VISIBLE
-            } else {
-                showAvailableDeliveryDateMessage()
-            }
-            validateConfirmLocationButtonAvailability()
-        }
+        if (deliveryType == DeliveryType.DELIVERY)
+            this.validatedSuburbProductsForDelivery = validatedSuburbProducts
+        else
+            this.validatedSuburbProductsForStore = validatedSuburbProducts
+
+        showAvailableDeliveryDateMessage()
     }
 
     override fun onValidateSelectedSuburbFailure() {
-
+        hideGetSuburbProgress()
+        showErrorDialog()
     }
 
     private fun setUsersCurrentDeliveryDetails() {
@@ -308,6 +325,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             else
                 selectedSuburb = suburb
             setDeliveryOption(deliveryType)
+
+            (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.let {
+                validateSelectedSuburb(it.id, deliveryType == DeliveryType.STORE_PICKUP)
+            }
         }
     }
 
@@ -328,18 +349,26 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun showAvailableDeliveryDateMessage() {
-        validatedSuburbProducts?.let {
-            foodDeliveryDateMessage?.apply {
-                text = getString(R.string.first_available_food_delivery_date, selectedProvince?.name + "," + selectedSuburb?.name, it.firstAvailableFoodDeliveryDate
-                        ?: "")
-                visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-            }
+        hideAvailableDeliveryDateMessagee()
+        hideStoreClosedMessage()
+        (if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.let {
+           val deliveryStatus: HashMap<String, Boolean?>? = it.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
+            if (it.storeClosed && deliveryStatus?.get("01") == false) {
+                showStoreClosedMessage()
+            } else {
+                foodDeliveryDateMessage?.apply {
+                    text = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableFoodDeliveryDate
+                            ?: "")
+                    visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
 
-            otherDeliveryDateMessage?.apply {
-                text = getString(R.string.first_available_other_delivery_date, selectedProvince?.name + "," + selectedSuburb?.name, it.firstAvailableOtherDeliveryDate
-                        ?: "")
-                visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                otherDeliveryDateMessage?.apply {
+                    text = getString(R.string.first_available_other_delivery_date, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableOtherDeliveryDate
+                            ?: "")
+                    visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
             }
+            validateConfirmLocationButtonAvailability()
         }
 
     }
@@ -351,10 +380,12 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun showStoreClosedMessage() {
         storeClosedMsg?.visibility = View.VISIBLE
+        selectSuburb?.setBackgroundResource(R.drawable.input_error_background)
     }
 
     override fun hideStoreClosedMessage() {
         storeClosedMsg?.visibility = View.GONE
+        selectSuburb?.setBackgroundResource(R.drawable.input_box_inactive_bg)
     }
 
     override fun executeSetSuburb() {
@@ -382,7 +413,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
             putString("PROVINCE", Utils.toJson(selectedProvince))
             putString("PROVINCE", Utils.toJson(selectedProvince))
-            putString("UnSellableCommerceItems", Utils.toJson(validatedSuburbProducts?.unSellableCommerceItems))
+            putString("UnSellableCommerceItems", Utils.toJson((if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.unSellableCommerceItems))
         }
         navController?.navigate(R.id.action_to_unsellableItemsFragment, bundleOf("bundle" to bundle))
     }

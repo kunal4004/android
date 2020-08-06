@@ -67,5 +67,16 @@
         android:paddingBottom="@dimen/sixteen_dp"
         android:scrollbars="vertical" />
 
+    <ProgressBar
+        android:id="@+id/progressSetSuburb"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:elevation="@dimen/two_dp"
+        android:indeterminateTint="@color/black"
+        android:visibility="invisible"
+        android:layout_centerInParent="true" />
+
 
 </RelativeLayout>

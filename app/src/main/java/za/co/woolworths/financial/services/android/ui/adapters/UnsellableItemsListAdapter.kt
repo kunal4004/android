@@ -40,9 +40,9 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
                     ?: "")
             if (commerceItem.price.getDiscountedAmount() > 0) {
                 itemView.promotionalText.text = " " + WFormatter.formatAmount(commerceItem.price.getDiscountedAmount())
-                itemView.promotionalText.visibility = View.VISIBLE
+                itemView.promotionalTextLayout.visibility = View.VISIBLE
             } else {
-                itemView.promotionalText.visibility = View.GONE
+                itemView.promotionalTextLayout.visibility = View.GONE
             }
 
             if (commerceItem.commerceItemClassType == "foodCommerceItem") {
