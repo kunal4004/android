@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -357,14 +359,16 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 showStoreClosedMessage()
             } else {
                 foodDeliveryDateMessage?.apply {
-                    text = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableFoodDeliveryDate
+                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableFoodDeliveryDate
                             ?: "")
+                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
                     visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
 
                 otherDeliveryDateMessage?.apply {
-                    text = getString(R.string.first_available_other_delivery_date, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableOtherDeliveryDate
+                    val message = getString(R.string.first_available_other_delivery_date, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableOtherDeliveryDate
                             ?: "")
+                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
                     visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
             }
