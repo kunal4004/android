@@ -1278,6 +1278,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Path("suburbId") suburbId: String): Call<ValidateSelectedSuburbResponse>
+            @Path("suburbId") suburbId: String,
+            @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
 
 }

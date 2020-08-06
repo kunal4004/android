@@ -46,12 +46,12 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_search -> onBackPressed()
+            R.id.action_search -> onFinish()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
+    private fun onFinish(){
         setResult(Activity.RESULT_CANCELED)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

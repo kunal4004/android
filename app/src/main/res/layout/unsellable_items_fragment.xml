@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/twenty_four_dp"
-    android:paddingTop="@dimen/sixteen_dp"
+    android:paddingTop="@dimen/thirty_dp"
     android:paddingRight="@dimen/twenty_four_dp"
     android:paddingBottom="@dimen/twenty_four_dp">
 
@@ -53,7 +53,6 @@
         style="@style/dialog_title_text_style"
         android:layout_width="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/thirty_two_dp"
         android:gravity="start"
         android:text="@string/these_items_will_be_removed_from_your_cart" />
 

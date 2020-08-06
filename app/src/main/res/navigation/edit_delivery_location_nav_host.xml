@@ -19,7 +19,12 @@
             app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_to_unsellableItemsFragment"
-            app:destination="@id/unsellableItemsFragment" />
+            app:destination="@id/unsellableItemsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            />
     </fragment>
     <fragment
         android:id="@+id/editDeliveryLocationConfirmationFragment"

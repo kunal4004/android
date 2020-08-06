@@ -11,13 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.storeName
-import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -30,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.HashMap
 
 class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.EditDeliveryLocationView, View.OnClickListener {
 
@@ -79,7 +76,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         when (v?.id) {
             R.id.confirmLocation -> {
                 if (selectedSuburb != null || selectedStore != null || validatedSuburbProducts != null) {
-                    if (validatedSuburbProducts?.unDeliverableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                    if (validatedSuburbProducts?.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
                 }
             }
             R.id.selectProvince, R.id.tvSelectedProvince -> {
@@ -210,7 +207,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             this.selectedStore = suburb
         tvSelectedSuburb?.setText(suburb?.name)
         tvSelectedSuburb?.dismissDropDown()
-        validateConfirmLocationButtonAvailability()
+        suburb?.id?.let { validateSelectedSuburb(it, deliveryType == DeliveryType.STORE_PICKUP) }
+        //validateConfirmLocationButtonAvailability()
     }
 
 
@@ -250,14 +248,15 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 }
             }
         }
+        showAvailableDeliveryDateMessage()
         validateConfirmLocationButtonAvailability()
     }
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProducts != null)
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProducts != null)
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -275,19 +274,23 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         }
     }
 
-    override fun validateSelectedSuburb(suburbId: String) {
+    override fun validateSelectedSuburb(suburbId: String, isStore: Boolean) {
         if (progressGetProvinces?.visibility == View.VISIBLE) return
         showGetSuburbProgress()
-        presenter?.validateSelectedSetSuburb(suburbId)
+        presenter?.validateSelectedSetSuburb(suburbId, isStore)
 
     }
 
     override fun onValidateSelectedSuburbSuccess(validatedSuburbProducts: ValidatedSuburbProducts?) {
+        hideGetSuburbProgress()
         this.validatedSuburbProducts = validatedSuburbProducts
         validatedSuburbProducts?.let {
             if (it.storeClosed) {
                 storeClosedMsg?.visibility = View.VISIBLE
+            } else {
+                showAvailableDeliveryDateMessage()
             }
+            validateConfirmLocationButtonAvailability()
         }
     }
 

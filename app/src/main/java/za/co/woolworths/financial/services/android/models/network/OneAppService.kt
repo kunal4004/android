@@ -350,7 +350,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
     }
 
-    fun validateSelectedSuburb(suburbId: String): Call<ValidateSelectedSuburbResponse> {
-        return mApiInterface.validateSelectedSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), suburbId)
+    fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {
+        return mApiInterface.validateSelectedSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), suburbId, isStore)
     }
 }

@@ -29,7 +29,7 @@ interface EditDeliveryLocationContract {
         fun showSetSuburbProgressBar()
         fun onValidateSelectedSuburbSuccess(validatedSuburbProducts: ValidatedSuburbProducts?)
         fun onValidateSelectedSuburbFailure()
-        fun validateSelectedSuburb(suburbId: String)
+        fun validateSelectedSuburb(suburbId: String, isStore: Boolean)
         fun showAvailableDeliveryDateMessage()
         fun hideAvailableDeliveryDateMessagee()
         fun showStoreClosedMessage()
@@ -45,13 +45,13 @@ interface EditDeliveryLocationContract {
         fun initGetSuburbs(locationId: String, deliveryType: DeliveryType)
         fun initSetSuburb(suburbId: String)
         fun getDeliverableSuburbs(suburbs: List<Suburb>): List<Suburb>
-        fun validateSelectedSetSuburb(suburbId: String)
+        fun validateSelectedSetSuburb(suburbId: String, isStore: Boolean)
     }
 
     interface EditDeliveryLocationInteractor {
         fun executeGetProvinces(requestListener: IGenericAPILoaderView<Any>)
         fun executeGetSuburbs(locationId: String, requestListener: IGenericAPILoaderView<Any>)
         fun executeSetSuburb(suburbId: String, requestListener: IGenericAPILoaderView<Any>)
-        fun executeValidateSelectedSuburb(suburbId: String, requestListener: IGenericAPILoaderView<Any>)
+        fun executeValidateSelectedSuburb(suburbId: String, isStore:Boolean, requestListener: IGenericAPILoaderView<Any>)
     }
 }

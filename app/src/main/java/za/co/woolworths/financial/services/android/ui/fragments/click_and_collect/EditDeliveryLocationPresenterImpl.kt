@@ -28,8 +28,8 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
         getInteractor?.executeSetSuburb(suburbId, this)
     }
 
-    override fun validateSelectedSetSuburb(suburbId: String) {
-        getInteractor?.executeValidateSelectedSuburb(suburbId, this)
+    override fun validateSelectedSetSuburb(suburbId: String, isStore: Boolean) {
+        getInteractor?.executeValidateSelectedSuburb(suburbId, isStore, this)
     }
 
     override fun onSuccess(response: Any?) {

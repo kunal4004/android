@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -14,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsListAdapter
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -51,10 +53,13 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun loadUnsellableItems() {
-        
+        rcvItemsList?.layoutManager = LinearLayoutManager(activity)
+        commerceItems?.let { rcvItemsList?.adapter = UnsellableItemsListAdapter(it) }
     }
 
     override fun onClick(v: View?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        when (v?.id) {
+            R.id.changeStore -> activity?.onBackPressed()
+        }
     }
 }

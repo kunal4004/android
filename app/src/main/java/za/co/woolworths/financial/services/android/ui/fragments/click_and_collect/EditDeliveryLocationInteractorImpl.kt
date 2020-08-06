@@ -17,8 +17,8 @@ class EditDeliveryLocationInteractorImpl : EditDeliveryLocationContract.EditDeli
         request(OneAppService.setSuburb(suburbId), requestListener)
     }
 
-    override fun executeValidateSelectedSuburb(suburbId: String, requestListener: IGenericAPILoaderView<Any>) {
-        request(OneAppService.validateSelectedSuburb(suburbId), requestListener)
+    override fun executeValidateSelectedSuburb(suburbId: String, isStore:Boolean, requestListener: IGenericAPILoaderView<Any>) {
+        request(OneAppService.validateSelectedSuburb(suburbId, isStore), requestListener)
     }
 
 }
