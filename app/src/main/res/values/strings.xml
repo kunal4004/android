@@ -1528,7 +1528,7 @@
     <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
     <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
-    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
+    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
     <string name="store_closed_message">Sorry, Click &amp; Collect isn’t available at this store right now. Please try again soon.</string>
     <string name="first_available_food_delivery_date">The earliest available delivery slot for food items to %1$s is &lt;b>%2$s&lt;/b></string>
@@ -1538,5 +1538,17 @@
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
+    <string name="manage_my_card_title">Manage My Card</string>
+    <string name="temporary_card_freeze_title">Temporary Card Freeze</string>
+    <string name="freeze_temporary_card_title">Temporary Card Freeze</string>
+    <string name="freeze_store_card_description">Your card will be temporarily frozen and cannot be used to shop online or in-store.</string>
+    <string name="temporary_card_unfreeze_title">Would you like to remove your Temporary Freeze?</string>
+    <string name="unfreeze_store_card_description">Once you have unblocked your card it will then be available for shopping online or in-store. Happy shopping!</string>
+    <string name="temp_freeze_label">temp freeze</string>
+    <string name="unfreeze_my_card_label">Unfreeze My Card</string>
+    <string name="card_temporarily_frozen_label">your card has been temporarily frozen</string>
+    <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
+    <string name="freeze_temp_label">Temp Freeze</string>
+    <string name="food_only">food only</string>
 </resources>
 

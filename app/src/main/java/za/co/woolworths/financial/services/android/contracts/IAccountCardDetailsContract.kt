@@ -15,9 +15,8 @@ interface IAccountCardDetailsContract {
         fun handleUnknownHttpCode(description: String?)
         fun handleSessionTimeOut(stsParams: String?)
         fun showStoreCardProgress()
-        fun hideAccountStoreCardProgress()
+        fun hideStoreCardProgress()
         fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse)
-        fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse)
         fun navigateToDebitOrderActivity(debitOrder: DebitOrder)
         fun navigateToBalanceProtectionInsurance(accountInfo: String?)
         fun setBalanceProtectionInsuranceState(coveredText: Boolean)
@@ -36,6 +35,10 @@ interface IAccountCardDetailsContract {
         fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
         fun executeCreditCardTokenService()
         fun stopCardActivationShimmer()
+        fun showOnStoreCardFailure(error: Throwable?) {}
+        fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {}
+        fun showUnBlockStoreCardCardDialog() {}
+        fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean = false)
     }
 
     interface AccountCardDetailPresenter {
@@ -55,11 +58,11 @@ interface IAccountCardDetailsContract {
         fun getStoreCardResponse(): StoreCardsResponse?
         fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse)
         fun navigateToGetTemporaryStoreCardPopupActivity()
-        fun navigateToMyCardDetailActivity()
+        fun navigateToMyCardDetailActivity(shouldStartWithUnblockStoreCardCall: Boolean = false)
         fun getOfferActive(): OfferActive?
         fun getProductOfferingId(): Int?
         fun onDestroy()
-        fun navigateToTemporaryStoreCardOnButtonTapped()
+        fun navigateToTemporaryStoreCard()
         fun navigateToDebitOrderActivityOnButtonTapped()
         fun navigateToBalanceProtectionInsuranceOnButtonTapped()
         fun cliProductOfferingGoodStanding(): Boolean
@@ -67,6 +70,8 @@ interface IAccountCardDetailsContract {
         fun navigateToPaymentOptionActivity()
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
+        fun getStoreCardBlockType(): Boolean
+        fun isProductCodeStoreCard():Boolean
     }
 
     interface AccountCardDetailModel {

@@ -1247,8 +1247,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
-
-
+    
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("event/{appScreen}/{featureName}")
     fun postEvent(

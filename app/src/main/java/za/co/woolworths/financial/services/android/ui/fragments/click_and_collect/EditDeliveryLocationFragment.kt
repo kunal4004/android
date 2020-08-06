@@ -78,6 +78,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun onClick(v: View?) {
+        if(progressGetProvinces.visibility == View.VISIBLE || progressGetSuburb.visibility == View.VISIBLE ) return
         when (v?.id) {
             R.id.confirmLocation -> {
                 if (selectedSuburb != null || selectedStore != null) {

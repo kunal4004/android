@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 
 class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
 
@@ -96,7 +97,7 @@ class BlockMyCardActivity : MyCardActivityExtension(), IStoreCardListener {
         }
     }
 
-    fun getCardDetail(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(0)
+    fun getAccountStoreCards(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state
