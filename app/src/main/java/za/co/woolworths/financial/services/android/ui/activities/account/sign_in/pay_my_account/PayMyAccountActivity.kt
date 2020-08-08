@@ -28,7 +28,34 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.pay_my_account_activity)
+        configureToolbar()
+        preventStatusBarToBlink()
+        setupPresenter()
+        setNavHostStartDestination()
+    }
 
+    private fun setNavHostStartDestination() {
+        navigationHost = findNavController(R.id.payMyAccountNavHostFragmentContainerView)
+        val bundle = Bundle()
+        bundle.putString(ACCOUNT_INFO, intent?.getStringExtra(ACCOUNT_INFO))
+        navigationHost?.graph?.let { graph -> navigationHost?.setGraph(graph, bundle) }
+    }
+
+    private fun setupPresenter() {
+        mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PayMyAccountModelImpl())
+        mPayMyAccountPresenterImpl?.retrieveAccountBundle(intent)
+    }
+
+    private fun preventStatusBarToBlink() {
+        val fade = Fade()
+        fade.excludeTarget(R.id.payMyAccountToolbar, true)
+        fade.excludeTarget(android.R.id.statusBarBackground, true)
+        fade.excludeTarget(android.R.id.navigationBarBackground, true)
+        window?.enterTransition = fade
+        window?.exitTransition = fade
+    }
+
+    private fun configureToolbar() {
         setSupportActionBar(payMyAccountToolbar)
 
         supportActionBar?.apply {
@@ -37,22 +64,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
         }
-
-        val fade = Fade()
-        fade.excludeTarget(R.id.payMyAccountToolbar, true)
-        fade.excludeTarget(android.R.id.statusBarBackground, true)
-        fade.excludeTarget(android.R.id.navigationBarBackground, true)
-
-        window?.enterTransition = fade
-        window?.exitTransition = fade
-
-        mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PayMyAccountModelImpl())
-        mPayMyAccountPresenterImpl?.retrieveAccountBundle(intent)
-
-        navigationHost = findNavController(R.id.payMyAccountNavHostFragmentContainerView)
-        val bundle = Bundle()
-        bundle.putString(ACCOUNT_INFO, intent?.getStringExtra(ACCOUNT_INFO))
-        navigationHost?.graph?.let { graph -> navigationHost?.setGraph(graph, bundle) }
     }
 
     override fun getPayMyAccountPresenter(): PayMyAccountPresenterImpl? {
@@ -61,7 +72,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     override fun configureToolbar(title: String?) {
         super.configureToolbar(title)
-        payMyAccountDivider?.visibility = if (title?.isEmpty() == true) GONE else VISIBLE
         payMyAccountTitleBar?.text = title
     }
 
@@ -89,7 +99,10 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     override fun onBackPressed() {
         when (currentFragment) {
-            is CreditAndDebitCardPaymentsFragment -> super.onBackPressed()
+            is CreditAndDebitCardPaymentsFragment -> {
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
             else -> navigationHost?.popBackStack()
         }
     }
@@ -102,5 +115,10 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    fun displayToolbarDivider(isDividerVisible: Boolean) {
+        payMyAccountDivider?.visibility = if (isDividerVisible) VISIBLE else GONE
     }
 }

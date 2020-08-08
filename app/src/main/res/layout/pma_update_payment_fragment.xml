@@ -12,16 +12,16 @@
         layout="@layout/popup_close_header_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="356dp" />
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="26dp"
         android:layout_marginEnd="32dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
@@ -31,7 +31,7 @@
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="388dp"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator"
         tools:text="@string/enter_payment_amount_label" />
 
 
@@ -59,6 +59,20 @@
     <TextView
         android:id="@+id/pmaTotalAmountDueTextView"
         style="@style/amountDescriptionStyle"
-        android:text="@string/amount_outstanding" />
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/amount_outstanding"
+        app:layout_constraintBottom_toBottomOf="@+id/editAmountImageView"
+        app:layout_constraintEnd_toStartOf="@+id/editAmountImageView"
+        app:layout_constraintTop_toTopOf="@+id/editAmountImageView" />
+
+    <ImageView
+        android:id="@+id/editAmountImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        app:srcCompat="@drawable/edit_amount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

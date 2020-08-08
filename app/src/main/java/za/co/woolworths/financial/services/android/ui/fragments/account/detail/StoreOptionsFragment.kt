@@ -16,11 +16,11 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.util.*
 
-class StoreCardDetailFragment : AccountCardDetailFragment() {
+class StoreOptionsFragment : AccountsOptionFragment() {
 
     private var accountStoreCardCallWasCompleted = false
 

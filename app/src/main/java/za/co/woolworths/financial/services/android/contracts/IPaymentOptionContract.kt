@@ -34,6 +34,9 @@ interface IPaymentOptionContract {
         fun getAppScreenName():String
         fun initView(){}
         fun getPayMyCardCardItem(): PayMyCardHeaderItem
+        fun getTotalAmountDue(totalAmountDue : Int): String
+        fun getAmountOutstanding(amountOutstanding: Int): String
+        fun getPayMyAccountSection(): ApplyNowState
     }
 
     interface PayMyAccountModel {

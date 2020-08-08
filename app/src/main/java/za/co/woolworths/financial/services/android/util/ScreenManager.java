@@ -203,6 +203,7 @@ public class ScreenManager {
 		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
 		howToPayIntent.putExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
 		activity.startActivity(howToPayIntent);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 	public static void presentPaymentOptionActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
 		Intent howToPayIntent = new Intent(activity, za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PayMyAccountActivity.class);

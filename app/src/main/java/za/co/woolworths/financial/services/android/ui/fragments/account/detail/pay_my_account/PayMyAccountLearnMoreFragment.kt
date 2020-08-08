@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemi
 
 class PayMyAccountLearnMoreFragment : Fragment() {
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.pay_my_account_learn_more_fragment, container, false)
     }

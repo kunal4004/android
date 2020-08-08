@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
-open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
+open class AccountsCardDetailFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
 
@@ -135,8 +135,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
-            val openABSAOnlineBanking =
-                    Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
+            val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
             openABSAOnlineBanking.putExtra(ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN, isRegistered)
             openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber)
             startActivityForResult(openABSAOnlineBanking, ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)

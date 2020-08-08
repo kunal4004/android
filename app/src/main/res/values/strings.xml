@@ -1553,14 +1553,11 @@
     <string name="enter_payment_amount_label">Enter Payment Amount</string>
     <string name="amount_outstanding">Amount Outstanding</string>
     <string name="continue_to_payment">Continue To Payment</string>
-    <string name="would_you_like_to_save_this_card_for_future_payments_title">Would you like to save this card for future payments?</string>
-    <string name="would_you_like_to_save_this_card_for_future_payments_desc">Would you like to save this card for future payments?</string>
     <string name="save_this_card_for_future_payments">Save this card for future payments</string>
     <string name="save_card_and_pay_now_button_label">Save Card &amp; Pay Now</string>
     <string name="name_on_card_label">Name on Card:</string>
     <string name="expiration_date_label">Expiration Date:</string>
     <string name="card_number_label">Card Number:</string>
-    <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 48 hours to reflect on your account.</string>
     <string name="payment_successful_title">Payment Successful</string>
     <string name="ccv_number_label">Enter your CVV Number:</string>
     <string name="confirm_payment">CONFIRM PAYMENT</string>
@@ -1592,5 +1589,11 @@
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
     <string name="freeze_temp_label">Temp Freeze</string>
     <string name="food_only">food only</string>
+    <string name="unable_to_process_your_request_title">Unable to process payment</string>
+    <string name="unable_to_process_your_request_desc" >We are unable to process your payment. For queries, call us on 0861 50 20 20.</string>
+    <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 48 hours to reflect on your account.</string>
+    <string name="back_to_my_account_button">back to my account</string>
+    <string name="pma_save_card_pay_now_title">Would you like to save this card for future payments?</string>
+    <string name="pay_now_button_label">Pay Now</string>
 </resources>
 

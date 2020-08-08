@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/pmaSaveCardPayNowTextView"
+        style="@style/pmaTitleStyle"
+        android:layout_marginTop="18dp"
+        android:text="@string/pma_save_card_pay_now_title"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/saveCardPayNowButton"
+        style="@style/blackButtonCustomStyle"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/save_card_and_pay_now_button_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/pmaCardNumberTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="45dp"
+        android:text="@string/card_number_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pmaSaveCardPayNowTextView" />
+
+    <View
+        android:id="@+id/cardNumberDivider"
+        style="@style/dividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pmaCardNumberTextView" />
+
+    <TextView
+        android:id="@+id/nameOnCardTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="21dp"
+        android:text="@string/name_on_card_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardNumberDivider" />
+
+    <View
+        android:id="@+id/nameOnCardDivider"
+        style="@style/dividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameOnCardTextView" />
+
+    <TextView
+        android:id="@+id/expiryDateTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="21dp"
+        android:text="@string/expiration_date_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameOnCardDivider" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/pmaSaveCardCheckbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="24dp"
+        android:button="@drawable/shopping_list_item_selector"
+        android:checked="false"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="24dp"
+        android:saveEnabled="false"
+        android:text="@string/save_this_card_for_future_payments"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/expiryDateTextView" />
+
+    <TextView
+        android:id="@+id/expiryDateValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:text="07 / 2021"
+        app:layout_constraintBottom_toBottomOf="@+id/expiryDateTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/expiryDateTextView" />
+
+    <TextView
+        android:id="@+id/nameOnCardValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:text="MT Thompson"
+        app:layout_constraintBottom_toBottomOf="@+id/nameOnCardTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nameOnCardTextView" />
+
+    <TextView
+        android:id="@+id/cardNumberValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:text="**** **** **** 0008"
+        app:layout_constraintBottom_toBottomOf="@+id/pmaCardNumberTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pmaCardNumberTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

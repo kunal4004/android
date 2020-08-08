@@ -198,7 +198,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
-        navigateToTemporaryStoreCard()
+        mainView?.handleStoreCardCardsSuccess(storeCardResponse)
     }
 
     override fun navigateToTemporaryStoreCard() {

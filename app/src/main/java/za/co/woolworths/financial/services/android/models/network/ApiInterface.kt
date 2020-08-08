@@ -1246,7 +1246,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
-    
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("event/{appScreen}/{featureName}")
     fun postEvent(
@@ -1276,7 +1276,39 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<JsonElement>
+            @Header("sessionToken") sessionToken: String): Call<PaymentMethodsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("payments/payu/pay")
+    fun postPayUpPay(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body payUPay: PayUPay): Call<JsonElement>
 
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
+    @GET("payments/payu/result")
+    fun getPaymentPayUResult(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("customer") customer: String,
+            @Query("payment_id") payment_id: String,
+            @Query("charge_id") charge_id: String,
+            @Query("status") status: String): Call<JsonElement>
 }

@@ -42,8 +42,8 @@ class NumberTextWatcherForThousand(private var editText: EditText) : TextWatcher
                     return
                 }
                 val cp = editText.selectionStart
-                loanAmount = getDecimalFormat(trimCommaOfString(loanAmount)) + ".00"
-                editText.setText(loanAmount)
+                loanAmount = getDecimalFormat(trimCommaOfString(loanAmount))
+                editText.setText(String.format("%.2f", loanAmount))
                 editLength = editText.text.length
                 val sel = cp + (editLength - initLength)
                 if (sel > 0) {
@@ -67,7 +67,7 @@ class NumberTextWatcherForThousand(private var editText: EditText) : TextWatcher
 
                     val str = editText.text.toString().replace(" ".toRegex(), "")
                     if (value != "")
-                        editText.setText(getDecimalFormat(str) + ".00")
+                        editText.setText(String.format("%.2f", getDecimalFormat(str)))
                     editText.setSelection(editText.text.toString().length)
                 }
                 editText.addTextChangedListener(this)
@@ -78,10 +78,8 @@ class NumberTextWatcherForThousand(private var editText: EditText) : TextWatcher
     }
 
     private fun getDecimalFormat(number: String): String {
-        var value = number
-        value = value.replace(".00", "")
-        val lst = StringTokenizer(value, ".")
-        var str1 = value
+        val lst = StringTokenizer(number, ".")
+        var str1 = number
         var str2 = ""
         if (lst.countTokens() > 1) {
             str1 = lst.nextToken()

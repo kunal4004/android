@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account
 
 import android.content.Intent
-import android.util.Log
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -12,6 +11,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.account.PayMyCardHeaderItem
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 import java.lang.RuntimeException
 
 class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.PayMyAccountView?, private var model: IPaymentOptionContract.PayMyAccountModel) : IPaymentOptionContract.PayMyAccountPresenter, IPaymentOptionContract.PayMyAccountModel {
@@ -108,7 +109,6 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
 
     override fun getPayMyCardCardItem(): PayMyCardHeaderItem {
         val drawableHeader = getDrawableHeader()
-        Log.e("firstBru",mAccountDetails?.first?.name.toString())
         return when (mAccountDetails?.first) {
             ApplyNowState.STORE_CARD -> drawableHeader[0]
             ApplyNowState.SILVER_CREDIT_CARD -> drawableHeader[3]
@@ -117,5 +117,17 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
             ApplyNowState.PERSONAL_LOAN -> drawableHeader[4]
             else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
         }
+    }
+
+    override fun getTotalAmountDue(totalAmountOverdue: Int): String {
+        return   Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountOverdue))
+    }
+
+    override fun getAmountOutstanding(amountOverdue: Int): String {
+        return   Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountOverdue))
+    }
+
+    override fun getPayMyAccountSection(): ApplyNowState {
+        return mAccountDetails?.first ?: ApplyNowState.STORE_CARD
     }
 }

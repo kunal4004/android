@@ -4,13 +4,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
 import kotlinx.android.synthetic.main.debit_or_credit_card_item.*
@@ -21,6 +21,8 @@ import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
@@ -51,17 +53,15 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         (activity as? PayMyAccountActivity)?.apply {
             payMyAccountPresenter = getPayMyAccountPresenter()
             configureToolbar("")
+            displayToolbarDivider(false)
+
+            incDebitOrCreditCardButton?.visibility = when (payMyAccountPresenter?.getPayMyAccountSection()) {
+                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> GONE
+                else -> VISIBLE
+            }
         }
 
-        payMyAccountTitleTextView?.visibility = VISIBLE
-        payMyAccountDescTextView?.visibility = VISIBLE
         creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
-        incDebitOrCreditCardButton?.visibility = VISIBLE
-        incByElectronicFundTransferEFTButton?.visibility = VISIBLE
-        incAtAnyAbsaBranchButton?.visibility = VISIBLE
-        incAtYourNearestWoolworthsStoreButton?.visibility = VISIBLE
-        incPayAtAnyATMButton?.visibility = VISIBLE
-        incWhatsAppAnyQuestions?.visibility = VISIBLE
         pmaBottomView?.visibility = VISIBLE
 
         navController = Navigation.findNavController(view)
@@ -137,8 +137,9 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
-                val args = EnterPaymentAmountFragmentArgs.Builder(Gson().toJson(payMyAccountPresenter?.getAccount())).build().toBundle()
-                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment, args)
+                val account = payMyAccountPresenter?.getAccount() ?: Account()
+                val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account)
+                navController?.navigate(toEnterPaymentAmountDirection)
             }
 
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
@@ -175,7 +176,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 chatToUsOnWhatsAppTextView?.setTextColor(Color.BLACK)
                 whatsAppNextIconImageView?.alpha = 1f
             } else {
-                whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp_grey)
+                whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp)
                 whatsAppNextIconImageView?.alpha = 0.4f
                 anyQuestionsTextView?.setTextColor(bindColor(R.color.unavailable))
                 chatToUsOnWhatsAppTextView?.setTextColor(bindColor(R.color.unavailable))

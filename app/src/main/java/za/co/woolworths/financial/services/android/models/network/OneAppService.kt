@@ -351,7 +351,7 @@ object OneAppService : RetrofitConfig() {
     }
 
 
-    fun queryServicePayUMethod(): Call<JsonElement> {
+    fun queryServicePayUMethod(): Call<PaymentMethodsResponse> {
         return mApiInterface.getPaymentPAYUMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 }

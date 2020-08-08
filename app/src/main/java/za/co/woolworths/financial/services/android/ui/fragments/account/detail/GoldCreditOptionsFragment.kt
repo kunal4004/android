@@ -6,9 +6,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_activate_credit_card_layout.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 
-class GoldCreditCardDetailFragment : AccountCardDetailFragment() {
+class GoldCreditOptionsFragment : AccountsOptionFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

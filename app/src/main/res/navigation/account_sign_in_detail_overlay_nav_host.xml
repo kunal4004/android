@@ -6,27 +6,27 @@
 
     <fragment
         android:id="@+id/accountCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment"
         android:label="AccountCardDetailFragment"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment
         android:id="@+id/silverCreditCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.SilverCreditCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.SilverCreditOptionsFragment"
         android:label="Silver Credit Card"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment
         android:id="@+id/blackCreditCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.BlackCreditCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.BlackCreditOptionsFragment"
         android:label="BlackCreditCardDetailFragment"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment
         android:id="@+id/goldCreditCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.GoldCreditCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.GoldCreditOptionsFragment"
         android:label="GoldCreditCardDetailFragment"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment
         android:id="@+id/storeCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreOptionsFragment"
         android:label="StoreCardDetailFragment"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment

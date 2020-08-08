@@ -16,7 +16,7 @@
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"></action>
+            app:popExitAnim="@anim/slide_to_right" />
 
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment"
@@ -33,12 +33,12 @@
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
         <action
-            android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_enterPaymentAmountFragment"
+            android:id="@+id/goToEnterPaymentAmountFragmentAction"
             app:destination="@id/enterPaymentAmountFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:popExitAnim="@anim/slide_to_right"></action>
     </fragment>
     <fragment
         android:id="@+id/payMyAccountLearnMoreFragment"
@@ -60,17 +60,76 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.EnterPaymentAmountFragment"
         android:label="EnterPaymentAmountFragment"
         tools:layout="@layout/enter_payment_amount_fragment">
+        <argument
+            android:name="ACCOUNT"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.Account" />
         <action
             android:id="@+id/action_enterPaymentAmountFragment_to_addNewPayUCardFragment"
             app:destination="@id/addNewPayUCardFragment" />
-        <argument
-            android:name="ACCOUNT"
-            app:argType="string" />
+        <action
+            android:id="@+id/processYourRequestFragmentAction"
+            app:destination="@id/processYourRequestFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_enterPaymentAmountFragment_to_saveCardAndPayNowFragment"
+            app:destination="@id/saveCardAndPayNowFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNewPayUCardFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.AddNewPayUCardFragment"
         android:label="AddNewPayUCardFragment"
-        tools:layout="@layout/add_new_payu_card_fragment" />
+        tools:layout="@layout/add_new_payu_card_fragment">
+        <argument
+            android:name="ACCOUNT"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.Account" />
+        <action
+            android:id="@+id/addNewPayUCardFragment_to_processYourRequestFragmentAction"
+            app:destination="@id/processYourRequestFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/processYourRequestFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessYourRequestFragment"
+        android:label="ProcessYourRequestFragment"
+        tools:layout="@layout/process_your_request_fragment">
+        <argument
+            android:name="ACCOUNT"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.Account" />
+        <action
+            android:id="@+id/processPaymentSuccessFragmentAction"
+            app:destination="@id/processPaymentSuccessFragment" />
+        <action
+            android:id="@+id/processPaymentFailureFragmentAction"
+            app:destination="@id/processPaymentFailureFragment" />
+        <action
+            android:id="@+id/action_processYourRequestFragment_to_saveCardAndPayNowFragment"
+            app:destination="@id/saveCardAndPayNowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/processPaymentSuccessFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessPaymentSuccessFragment"
+        android:label="ProcessPaymentSuccessFragment"
+        tools:layout="@layout/process_payment_success_fragment">
+        <action
+            android:id="@+id/action_processPaymentSuccessFragment_to_processYourRequestFragment"
+            app:destination="@id/processYourRequestFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/processPaymentFailureFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessPaymentFailureFragment"
+        android:label="ProcessPaymentFailureFragment"
+        tools:layout="@layout/process_payment_failure_fragment">
+        <action
+            android:id="@+id/action_processPaymentFailureFragment_to_processYourRequestFragment"
+            app:destination="@id/processYourRequestFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/saveCardAndPayNowFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.SaveCardAndPayNowFragment"
+        android:label="SaveCardAndPayNowFragment"
+        tools:layout="@layout/save_card_and_pay_now_fragment" >
+        <action
+            android:id="@+id/action_saveCardAndPayNowFragment_to_processPaymentSuccessFragment"
+            app:destination="@id/processPaymentSuccessFragment" />
+    </fragment>
 
 </navigation>

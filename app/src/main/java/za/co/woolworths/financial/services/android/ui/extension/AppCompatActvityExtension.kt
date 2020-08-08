@@ -25,6 +25,9 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+import java.lang.ref.WeakReference
+import java.text.DecimalFormat
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -231,3 +234,30 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
         launch(Dispatchers.Main) { code() }
     }
 }
+
+fun EditText.setMaskingMoney(currencyText: WLoanEditTextView) {
+    this.addTextChangedListener(object: MyTextWatcher{
+        val editTextWeakReference: WeakReference<EditText> = WeakReference(this@setMaskingMoney)
+        override fun afterTextChanged(editable: Editable?) {
+            val editText = editTextWeakReference.get() ?: return
+            val s = editable.toString()
+            editText.removeTextChangedListener(this)
+            val cleanString = s.replace("[Rp,. ]".toRegex(), "")
+            val newVal = cleanString.monetize()
+
+            editText.setText(newVal)
+            editText.setSelection(newVal.length)
+            editText.addTextChangedListener(this)
+        }
+    })
+}
+
+interface MyTextWatcher: TextWatcher {
+    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+}
+
+
+fun String.monetize(): String = if (this.isEmpty()) "0"
+else DecimalFormat("#,###").format(this.replace("[^\\d]".toRegex(),"").toLong())
+

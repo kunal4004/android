@@ -14,24 +14,24 @@
 
         <include
             android:id="@+id/incStoreCardHeaderItem"
-            layout="@layout/card_payment_option_header_item" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/card_payment_option_header_item"
+            android:layout_marginBottom="28dp" />
 
         <include
             android:id="@+id/incDebitOrCreditCardButton"
             layout="@layout/debit_or_credit_card_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="24dp"
-            android:visibility="gone" />
+            android:layout_marginBottom="24dp" />
 
         <include
             android:id="@+id/incByElectronicFundTransferEFTButton"
             layout="@layout/pma_by_electronic_fund_transfer_eft_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:visibility="gone" />
+            android:layout_marginBottom="24dp" />
 
         <include
             android:id="@+id/incAtAnyAbsaBranchButton"
@@ -46,29 +46,25 @@
             layout="@layout/pma_at_your_nearest_woolies_store_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:visibility="gone" />
+            android:layout_marginBottom="24dp" />
 
         <include
             android:id="@+id/incPayAtAnyATMButton"
             layout="@layout/pma_pay_at_any_atm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:visibility="gone" />
+            android:layout_marginBottom="24dp" />
 
         <include
             android:id="@+id/incWhatsAppAnyQuestions"
             layout="@layout/pma_whatsapp_chat_with_us"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_height="wrap_content" />
 
         <View
             android:id="@+id/pmaBottomView"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:visibility="gone" />
+            android:layout_height="32dp" />
 
     </LinearLayout>
 

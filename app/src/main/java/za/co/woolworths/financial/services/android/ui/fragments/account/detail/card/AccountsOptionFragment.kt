@@ -51,7 +51,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     companion object {
         private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
@@ -154,13 +154,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
         myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
-        manageCardGroup?.visibility  = GONE
+        manageCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.startShimmer()
         myCardTextViewShimmerFrameLayout?.startShimmer()
         tempFreezeTextViewShimmerFrameLayout?.startShimmer()
         storeCardLoaderView?.visibility = VISIBLE
-        includeManageMyCard?.isEnabled  = false
+        includeManageMyCard?.isEnabled = false
         cardImageRootView?.isEnabled = false
     }
 
@@ -168,7 +168,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun hideStoreCardProgress() {
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
-        manageCardGroup?.visibility  = VISIBLE
+        manageCardGroup?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.stopShimmer()
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
         myCardTextViewShimmerFrameLayout?.stopShimmer()
@@ -181,7 +181,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         tempFreezeTextViewShimmerFrameLayout?.invalidate()
 
         // Boolean check will enable clickable event only when text is "view card"
-        includeManageMyCard?.isEnabled  = true
+        includeManageMyCard?.isEnabled = true
         cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 
@@ -200,16 +200,16 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.debitOrderView -> navigateToDebitOrderActivity()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
-                        if (loadStoreCardProgressBar?.visibility == VISIBLE) return
-                        cancelRetrofitRequest(mOfferActiveCall)
-                        navigateToTemporaryStoreCard()
-                    }
-                    R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
-                    R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
-                        cancelRequest()
-                        navigateToLoanWithdrawalActivity()
-                    }
-                R.id.viewPaymentOptions -> { if (mCardPresenterImpl?.isCreditCardSection() == true) mCardPresenterImpl?.navigateToPaymentOptionActivity() else mCardPresenterImpl?.navigateToPayMyAccountActivity()}
+                    if (loadStoreCardProgressBar?.visibility == VISIBLE) return
+                    cancelRetrofitRequest(mOfferActiveCall)
+                    navigateToTemporaryStoreCard()
+                }
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
+                    cancelRequest()
+                    navigateToLoanWithdrawalActivity()
+                }
+                R.id.viewPaymentOptions -> mCardPresenterImpl?.navigateToPayMyAccountActivity()
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
                         navigateToCreditCardActivation()

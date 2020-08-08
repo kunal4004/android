@@ -691,7 +691,10 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         }
 
         if (activity is PayMyAccountActivity){
-            (activity as? PayMyAccountActivity)?.configureToolbar(toolbarTitle)
+            (activity as? PayMyAccountActivity)?.apply {
+                configureToolbar(toolbarTitle)
+                displayToolbarDivider(true)
+            }
         }
     }
 

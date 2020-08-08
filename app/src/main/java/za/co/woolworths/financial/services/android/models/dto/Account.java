@@ -4,12 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard;
 import za.co.woolworths.financial.services.android.models.dto.npc.SecondaryCard;
 
-public class Account {
+public class Account implements Serializable {
     public int productOfferingId;
     public int creditLimit;
     public int currentBalance;

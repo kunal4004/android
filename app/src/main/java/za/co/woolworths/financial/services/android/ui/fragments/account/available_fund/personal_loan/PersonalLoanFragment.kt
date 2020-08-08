@@ -6,10 +6,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AccountsCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class PersonalLoanFragment : AvailableFundsFragment(), View.OnClickListener {
+class PersonalLoanFragment : AccountsCardDetailFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
