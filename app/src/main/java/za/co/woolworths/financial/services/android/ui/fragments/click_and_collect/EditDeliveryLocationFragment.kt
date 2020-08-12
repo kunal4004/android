@@ -45,9 +45,12 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
     var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
+    var rootView :View ? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
+        if (rootView == null)
+            rootView = inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
+        return rootView
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -360,14 +363,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 showStoreClosedMessage()
             } else {
                 foodDeliveryDateMessage?.apply {
-                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableFoodDeliveryDate
+                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name + ", " + selectedProvince?.name, it.firstAvailableFoodDeliveryDate
                             ?: "")
                     text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
                     visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
 
                 otherDeliveryDateMessage?.apply {
-                    val message = getString(R.string.first_available_other_delivery_date, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableOtherDeliveryDate
+                    val message = getString(R.string.first_available_other_delivery_date, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name+ ", " + selectedProvince?.name, it.firstAvailableOtherDeliveryDate
                             ?: "")
                     text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
                     visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE

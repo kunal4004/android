@@ -46,16 +46,15 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_search -> onFinish()
+            R.id.action_search -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun onFinish(){
+    override fun onBackPressed() {
         setResult(Activity.RESULT_CANCELED)
         finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-    }
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)    }
 
     private fun loadNavHostFragment() {
         findNavController(R.id.nav_host_fragment)
@@ -64,4 +63,5 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                         bundleOf("bundle" to bundle)
                 )
     }
+
 }
