@@ -8,5 +8,5 @@ data class PayUPay(
         @SerializedName("productOfferingId") val productOfferingId: Int,
         @SerializedName("saveCard") val saveCard: Boolean,
         @SerializedName("paymentMethod") val paymentMethod: PayUPaymentMethod,
-        @SerializedName("accountNumber") val accountNumber: Int
+        @SerializedName("accountNumber") val accountNumber: String
 )

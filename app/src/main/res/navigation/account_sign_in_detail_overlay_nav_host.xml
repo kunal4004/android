@@ -26,7 +26,7 @@
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment
         android:id="@+id/storeCardDetail"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreOptionsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment"
         android:label="StoreCardDetailFragment"
         tools:layout="@layout/account_card_detail_fragment" />
     <fragment

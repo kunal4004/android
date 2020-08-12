@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -13,6 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -124,12 +124,9 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-   override fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?): Int {
-        appCompatActivity?.apply {
-            val height = resources?.displayMetrics?.heightPixels ?: 0
-            return (height.div(100)).times(23)
-        }
-        return 0
+    override fun bottomSheetBehaviourPeekHeight(): Int {
+        val height = deviceHeight()
+        return (height.div(100)).times(23)
     }
 
     private fun getAccount(): Account? {
@@ -183,13 +180,9 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    override fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int {
-        appCompatActivity?.apply {
-            val displayMetrics: DisplayMetrics = resources.displayMetrics
-            val height = displayMetrics.heightPixels
-            val toolbarHeight = KotlinUtils.getToolbarHeight(this)
-            return height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight(this).div(2))
-        }
-        return 0
+    override fun bottomSheetBehaviourHeight(): Int {
+        val height = deviceHeight()
+        val toolbarHeight = KotlinUtils.getToolbarHeight()
+        return height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight().div(2))
     }
 }

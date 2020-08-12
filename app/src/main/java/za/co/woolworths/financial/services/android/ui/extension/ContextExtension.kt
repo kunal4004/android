@@ -19,8 +19,12 @@ fun Any.bindString(@StringRes id: Int): String = WoolworthsApplication.getAppCon
 
 fun Any.bindStringArray(@ArrayRes id: Int): Array<String>? = WoolworthsApplication.getAppContext()?.resources?.getStringArray(id)
 
-fun Any.getFuturaMediumFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/WFutura-Medium.ttf")
+fun Any.getFuturaMediumFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/WFutura-Medium.ttf")
 
-fun Any.getFuturaSemiBoldFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/WFutura-SemiBold.ttf")
+fun Any.getFuturaSemiBoldFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/WFutura-SemiBold.ttf")
 
-fun Any.getMyriadProSemiBoldFont(): Typeface? = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/MyriadPro-Semibold.otf")
+fun Any.getMyriadProSemiBoldFont(): Typeface? = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/MyriadPro-Semibold.otf")
+
+fun Any.deviceHeight() = WoolworthsApplication.getAppContext()?.resources?.displayMetrics?.heightPixels ?: 0
+
+fun Any.deviceWidth() = WoolworthsApplication.getAppContext()?.resources?.displayMetrics?.widthPixels ?: 0

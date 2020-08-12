@@ -316,4 +316,9 @@
         <attr name="topOverlay" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="CurrencyEditText">
+        <attr name="currencySymbol" format="string"/>
+        <attr name="localeTag" format="string"/>
+        <attr name="useCurrencySymbolAsHint" format="boolean"/>
+    </declare-styleable>
 </resources>

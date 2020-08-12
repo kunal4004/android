@@ -35,7 +35,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private var blackCardScroll: Triple<Int, Int, Int>? = null
     private var goldCardScroll: Triple<Int, Int, Int>? = null
 
-    @SuppressLint("SourceLockedOrientationActivity")
+    @SuppressLint("SourceLockedOrientationActivity", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
@@ -62,7 +62,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
         scrollableView?.setOnTouchListener { _, _ -> isBlockedScrollView }
 
-        scrollableView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, scrollX, scrollY, _, oldScrollY ->
+        scrollableView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, scrollX, scrollY, _, _ ->
                 when (val currentTabPosition = tabLayout?.selectedTabPosition) {
                     0 -> goldCardScroll = saveScrollXYCoordinate(currentTabPosition, scrollX, scrollY)
                     1 -> blackCardScroll = saveScrollXYCoordinate(currentTabPosition, scrollX, scrollY)
@@ -85,14 +85,14 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     private fun setupToolbarTopMargin() {
         val bar = findViewById<Toolbar>(R.id.toolbar)
         val params = bar?.layoutParams as? ViewGroup.MarginLayoutParams
-        params?.topMargin = KotlinUtils.getStatusBarHeight(this)
+        params?.topMargin = KotlinUtils.getStatusBarHeight()
         bar?.layoutParams = params
     }
 
     private fun setupBottomSheetBehaviour() {
         val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.incBottomSheetLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
-        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight(this@AccountSalesActivity)
+        layoutParams?.height = mAccountSalesModelImpl?.bottomSheetBehaviourHeight()
         bottomSheetBehaviourLinearLayout?.requestLayout()
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
         sheetBehavior?.peekHeight = mAccountSalesModelImpl?.bottomSheetPeekHeight() ?: 0

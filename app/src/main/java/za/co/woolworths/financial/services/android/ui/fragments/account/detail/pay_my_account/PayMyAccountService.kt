@@ -11,6 +11,10 @@ class PayMyAccountService {
             override fun onSuccess(response: Any?) {
 
             }
+
+            override fun onFailure(error: Throwable?) {
+                super.onFailure(error)
+            }
         })
     }
 }

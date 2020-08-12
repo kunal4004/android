@@ -38,7 +38,10 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
+import java.text.NumberFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.*
 
 class KotlinUtils {
     companion object {
@@ -98,24 +101,22 @@ class KotlinUtils {
         }
 
         fun getStatusBarHeight(actionBarHeight: Int): Int {
-            val activity = WoolworthsApplication.getInstance()?.currentActivity
-            val resId: Int =
-                    activity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
-                            ?: -1
+            val resources = WoolworthsApplication.getAppContext().resources
+            val resId: Int = resources?.getIdentifier("status_bar_height", "dimen", "android")
+                    ?: -1
             var statusBarHeight = 0
             if (resId > 0) {
-                statusBarHeight = activity?.resources?.getDimensionPixelSize(resId) ?: 0
+                statusBarHeight = resources?.getDimensionPixelSize(resId) ?: 0
             }
             return statusBarHeight + actionBarHeight
         }
 
-        fun getStatusBarHeight(appCompatActivity: AppCompatActivity?): Int {
+        fun getStatusBarHeight(): Int {
             var result = 0
-            val resourceId =
-                    appCompatActivity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
-                            ?: 0
+            val resources = WoolworthsApplication.getAppContext().resources
+            val resourceId = resources?.getIdentifier("status_bar_height", "dimen", "android") ?: 0
             if (resourceId > 0) {
-                result = appCompatActivity?.resources?.getDimensionPixelSize(resourceId) ?: 0
+                result = resources?.getDimensionPixelSize(resourceId) ?: 0
             }
             return result
         }
@@ -172,7 +173,8 @@ class KotlinUtils {
         }
 
         fun capitaliseFirstLetter(str: String): CharSequence? {
-            val words = str.split(" ").toMutableList()
+           val value = str.toLowerCase()
+            val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
                 output += word.capitalize() + " "
@@ -188,12 +190,12 @@ class KotlinUtils {
             }
         }
 
-        fun getToolbarHeight(appCompatActivity: AppCompatActivity?): Int {
+        fun getToolbarHeight(): Int {
             val tv = TypedValue()
             var actionBarHeight = 0
-            if (appCompatActivity?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
-                actionBarHeight =
-                        TypedValue.complexToDimensionPixelSize(tv.data, appCompatActivity.resources?.displayMetrics)
+            val appCompat = WoolworthsApplication.getAppContext()
+            if (appCompat?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
+                actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, appCompat.resources?.displayMetrics)
             }
             return actionBarHeight
         }
@@ -327,6 +329,26 @@ class KotlinUtils {
                 }
             }
             return false
+        }
+
+        fun parseMoneyValue(value: String, groupingSeparator: String, currencySymbol: String): String =
+                value.replace(groupingSeparator, "").replace(currencySymbol, "")
+
+        fun parseMoneyValueWithLocale(locale: Locale, value: String, groupingSeparator: String, currencySymbol: String): Number {
+            val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
+            return try {
+                NumberFormat.getInstance(locale).parse(valueWithoutSeparator)!!
+            } catch (exception: ParseException) {
+                0
+            }
+        }
+
+        fun getLocaleFromTag(localeTag: String): Locale {
+            return try {
+                Locale.Builder().setLanguageTag(localeTag).build()
+            } catch (e: IllformedLocaleException) {
+                Locale.getDefault()
+            }
         }
     }
 }

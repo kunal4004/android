@@ -110,4 +110,6 @@
     <color name="colorPrimaryDark">@color/white</color>
     <color name="colorAccent">@color/black</color>
     <color name="color_separator_light_grey">#1A000000</color>
+    <color name="payment_method_grey_color">#333333</color>
+    <color name="add_card_color">#313131</color>
 </resources>

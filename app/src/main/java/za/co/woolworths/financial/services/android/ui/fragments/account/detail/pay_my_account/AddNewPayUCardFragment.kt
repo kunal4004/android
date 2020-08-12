@@ -5,19 +5,28 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IPayUInterface
+import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import java.net.URLEncoder
 import java.util.*
 
 class AddNewPayUCardFragment : Fragment() {
+
+    private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,22 +41,45 @@ class AddNewPayUCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController = Navigation.findNavController(view)
+
         (activity as? PayMyAccountActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             displayToolbarDivider(false)
         }
 
-
         addNewUserPayUWebView?.apply {
-            val webSettings: WebSettings = settings
-            webSettings.javaScriptEnabled = true
-            webSettings.domStorageEnabled = true
+
+            with(settings) {
+                javaScriptEnabled = true
+                domStorageEnabled = true
+            }
 
             addJavascriptInterface(PayUCardFormJavascriptBridge(object : IPayUInterface {
-                override fun onAddNewCardSuccess(token: String) {
+
+                override fun onAddNewCardSuccess(token: AddCardResponse) {
                     super.onAddNewCardSuccess(token)
-                    Log.e("onAddNewCardSuccess", token)
+                    GlobalScope.doAfterDelay(100) {
+                        processCardNavHostLinearLayout?.visibility = GONE
+                        val navigateToSaveCardAndPayNow = AddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(token)
+                        navController?.navigate(navigateToSaveCardAndPayNow)
+                    }
                 }
+
+                override fun onAddCardFailureHandler() {
+                    super.onAddCardFailureHandler()
+                    GlobalScope.doAfterDelay(100) {
+                        processCardNavHostLinearLayout?.visibility = GONE
+                    }
+                }
+
+                override fun onAddCardProgressStarted() {
+                    super.onAddCardProgressStarted()
+                    GlobalScope.doAfterDelay(100) {
+                        processCardNavHostLinearLayout?.visibility = VISIBLE
+                    }
+                }
+
             }), "JSBridge")
 
             webChromeClient = object : WebChromeClient() {
@@ -57,14 +89,7 @@ class AddNewPayUCardFragment : Fragment() {
                 }
             }
 
-            webViewClient = object : WebViewClient() {
-                override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest): WebResourceResponse? {
-                    CookieManager.getInstance().removeAllCookies(null)
-                    return super.shouldInterceptRequest(view, request)
-                }
-            }
-
-            val postData = "?api_id=" + URLEncoder.encode(WoolworthsApplication.getApiId()?.toLowerCase(Locale.ROOT), "UTF-8").toString() + "&sha1=" + URLEncoder.encode(BuildConfig.SHA1, "UTF-8")
+            val postData = "?api_id=" + URLEncoder.encode(WoolworthsApplication.getApiId()?.toLowerCase(Locale.getDefault()), "UTF-8").toString() + "&sha1=" + URLEncoder.encode(BuildConfig.SHA1, "UTF-8") + "&agent=" + URLEncoder.encode("android", "UTF-8")
             loadUrl("https://payu-qa.wfs.wigroup.io/$postData")
         }
     }

@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.util.*
 
-class StoreOptionsFragment : AccountsOptionFragment() {
+class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     private var accountStoreCardCallWasCompleted = false
 

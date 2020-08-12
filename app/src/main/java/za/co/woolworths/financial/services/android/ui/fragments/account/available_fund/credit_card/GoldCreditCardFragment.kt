@@ -6,13 +6,16 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AccountsCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 
-class GoldCreditCardFragment : AccountsCardDetailFragment(), View.OnClickListener {
+class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         availableFundBackground?.setBackgroundResource(R.drawable.gold_credit_card_background)
+
+        initShimmer()
+        stopProgress()
 
         incViewStatementButton?.visibility = if (WoolworthsApplication.getAbsaBankingOpenApiServices()?.isEnabled == true) View.VISIBLE else View.GONE
         incRecentTransactionButton?.setOnClickListener(this)

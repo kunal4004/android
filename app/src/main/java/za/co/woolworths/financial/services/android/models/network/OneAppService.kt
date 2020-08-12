@@ -1,10 +1,11 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.Query
+import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
@@ -353,5 +354,13 @@ object OneAppService : RetrofitConfig() {
 
     fun queryServicePayUMethod(): Call<PaymentMethodsResponse> {
         return mApiInterface.getPaymentPAYUMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+    }
+
+    fun queryServicePostPayU(payUPay: PayUPay): Call<PayUResponse> {
+        return mApiInterface.postPayUpPay(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), payUPay)
+    }
+
+    fun queryServicePaymentResult(request: PayUPayResultRequest): Call<PayUPayResultResponse> {
+        return mApiInterface.getPaymentPayUResult(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),request.customer,request.payment_id,request.charge_id, request.status)
     }
 }

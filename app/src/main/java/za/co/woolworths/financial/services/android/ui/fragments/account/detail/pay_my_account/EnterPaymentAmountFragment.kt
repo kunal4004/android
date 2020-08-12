@@ -2,13 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -18,11 +19,12 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.util.CurrencyInputWatcher
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import java.text.NumberFormat
 import java.util.*
 
 class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
@@ -42,6 +44,7 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         return inflater.inflate(R.layout.enter_payment_amount_fragment, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -52,10 +55,8 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue
-                ?: 0))
-        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue
-                ?: 0))
+        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
+        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
     }
 
     private fun configureToolbar() {
@@ -73,47 +74,26 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         continueToPaymentButton?.isEnabled = false
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun configureCurrencyEditText() {
-
-
         paymentAmountInputEditText?.apply {
             inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-
-            var current = ""
 
             addTextChangedListener(object : TextWatcher {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    val enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount * 100) } ?: 0
-                    amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
+//                    if (s.isEmpty()) return
+//                    val enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount * 100) } ?: 0
+//                    amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
                 }
 
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    try {
-                        val stringText = s.toString()
-
-                        if (stringText != current || stringText.isNotEmpty()) {
-                            removeTextChangedListener(this)
-
-                            val locale: Locale = Locale.US
-                            val currency = Currency.getInstance(locale)
-                            val cleanString = stringText.replace("[${currency.symbol},.R ]".toRegex(), "")
-                            val parsed = cleanString.toDouble()
-                            val formatted = NumberFormat.getCurrencyInstance(locale).format(parsed / 100)
-
-                            current = formatted.replace("[,]".toRegex(), " ").replace("[$]".toRegex(), "")
-                            setText(current)
-                            setSelection(current.length)
-                            addTextChangedListener(this)
-                        }
-                    } catch (ex: Exception) {
-                        Log.e("Exception", ex.message)
-                    }
-                }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
+
+            addTextChangedListener(CurrencyInputWatcher(this,"R ", Locale.getDefault()))
         }
     }
 
@@ -145,8 +125,8 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.continueToPaymentButton -> {
+                (activity as? PayMyAccountActivity)?.amountEntered = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()
                 navController?.navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
-                hideKeyboard()
             }
         }
     }

@@ -23,6 +23,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     private var navigationHost: NavController? = null
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
+    var amountEntered : Int? = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,4 +122,5 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     fun displayToolbarDivider(isDividerVisible: Boolean) {
         payMyAccountDivider?.visibility = if (isDividerVisible) VISIBLE else GONE
     }
+
 }

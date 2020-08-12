@@ -70,7 +70,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="19dp" />
 
-
     <include
         android:id="@+id/incViewStatementButton"
         layout="@layout/view_statement_button"

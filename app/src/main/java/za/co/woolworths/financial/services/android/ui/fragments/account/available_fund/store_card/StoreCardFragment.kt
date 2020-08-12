@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.View
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AccountsCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class StoreCardFragment : AccountsCardDetailFragment(), View.OnClickListener {
+class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -18,6 +19,7 @@ class StoreCardFragment : AccountsCardDetailFragment(), View.OnClickListener {
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)
+
     }
 
     override fun onClick(view: View?) {
@@ -27,7 +29,17 @@ class StoreCardFragment : AccountsCardDetailFragment(), View.OnClickListener {
                 navigateToRecentTransactionActivity("SC")
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
-            R.id.incPayMyAccountButton -> navigateToPayMyAccountActivity()
+            R.id.incPayMyAccountButton -> {
+                if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+                when (payUMethodType) {
+                    PAYUMethodType.CREATE_USER -> {
+                        navigateToPayMyAccountActivity()
+                    }
+                    PAYUMethodType.CARD_UPDATE -> {
+
+                    }
+                }
+            }
         }
     }
 }

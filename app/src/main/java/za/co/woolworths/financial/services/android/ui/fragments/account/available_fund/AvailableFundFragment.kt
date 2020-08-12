@@ -13,13 +13,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
+import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.bottomGuide
+import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.android.synthetic.main.view_statement_button.*
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -31,9 +35,15 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
-open class AccountsCardDetailFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
+open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
+    var mPaymentMethodsResponse: PaymentMethodsResponse? = null
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
+    private var isQueryPayUPaymentMethodComplete: Boolean = false
+
+    enum class PAYUMethodType { CREATE_USER, CARD_UPDATE }
+
+    var payUMethodType = PAYUMethodType.CREATE_USER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +73,7 @@ open class AccountsCardDetailFragment : Fragment(), IAvailableFundsContract.Avai
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incPayMyAccountButton)
 
+
         availableFundBackground?.post {
             val dm = DisplayMetrics()
             (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
@@ -72,6 +83,29 @@ open class AccountsCardDetailFragment : Fragment(), IAvailableFundsContract.Avai
             val bottomGuidelineVerticalPosition = location[1]
             val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
+        }
+
+        activity?.let { act ->
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    when (hasConnection) {
+                        true -> {
+                            when ((mAvailableFundPresenter?.isPersonalLoanAndStoreCardVisible() == true && !isQueryPayUPaymentMethodComplete)) {
+                                true -> {
+                                    initShimmer()
+                                    startProgress()
+                                    mAvailableFundPresenter?.queryPayUPaymentMethod()
+                                }
+                                false -> return
+                            }
+                        }
+                        else -> {
+                            ErrorHandlerView(act).showToast()
+                        }
+                    }
+
+                }
+            })
         }
     }
 
@@ -146,10 +180,10 @@ open class AccountsCardDetailFragment : Fragment(), IAvailableFundsContract.Avai
     override fun displayCardNumberNotFound() {
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
-        try{
-        val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
-            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager,AccountsErrorHandlerFragment::class.java.simpleName ) }
-        }catch (ex : IllegalStateException){
+        try {
+            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
+            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
+        } catch (ex: IllegalStateException) {
             Crashlytics.logException(ex)
         }
     }
@@ -221,4 +255,64 @@ open class AccountsCardDetailFragment : Fragment(), IAvailableFundsContract.Avai
             }
         }
     }
+
+    override fun onPayUMethodSuccess(paymentMethodsResponse: PaymentMethodsResponse?) {
+        stopProgress()
+        isQueryPayUPaymentMethodComplete = true
+        paymentMethodsResponse?.apply {
+            when (httpCode) {
+                200 -> {
+                    mPaymentMethodsResponse = paymentMethodsResponse
+                    payUMethodType = PAYUMethodType.CARD_UPDATE
+                }
+
+                400 -> {
+                    val code = response.code
+                    when (code.startsWith("P0453")) {
+                        true -> payUMethodType = PAYUMethodType.CREATE_USER
+                        false -> activity?.let {
+                            Utils.showGeneralErrorDialog(it, response.desc ?: "")
+                        }
+                    }
+                }
+
+                440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response?.stsParams
+                        ?: "", activity)
+
+                else -> {
+                    activity?.let { Utils.showGeneralErrorDialog(it, response.desc ?: "") }
+                }
+            }
+        }
+    }
+
+    override fun onPayUMethodFailure(error: Throwable?) {
+        isQueryPayUPaymentMethodComplete = true
+        if (error is ConnectException) {
+            isQueryPayUPaymentMethodComplete = false
+        }
+        activity?.runOnUiThread {
+            stopProgress()
+        }
+    }
+
+    fun initShimmer() {
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        viewPaymentOptionImageShimmerLayout?.setShimmer(shimmer)
+        viewPaymentOptionTextShimmerLayout?.setShimmer(shimmer)
+    }
+
+     fun startProgress() {
+        viewPaymentOptionImageShimmerLayout?.startShimmer()
+        viewPaymentOptionTextShimmerLayout?.startShimmer()
+    }
+
+    fun stopProgress() {
+        viewPaymentOptionImageShimmerLayout?.setShimmer(null)
+        viewPaymentOptionImageShimmerLayout?.stopShimmer()
+
+        viewPaymentOptionTextShimmerLayout?.setShimmer(null)
+        viewPaymentOptionTextShimmerLayout?.stopShimmer()
+    }
+
 }

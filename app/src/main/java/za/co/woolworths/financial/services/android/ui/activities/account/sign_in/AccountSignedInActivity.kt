@@ -66,7 +66,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun setToolbarTopMargin() {
         val bar = findViewById<Toolbar>(R.id.toolbarContainer)
         val params = bar?.layoutParams as? ViewGroup.MarginLayoutParams
-        params?.topMargin = KotlinUtils.getStatusBarHeight(this)
+        params?.topMargin = KotlinUtils.getStatusBarHeight()
         bar?.layoutParams = params
     }
 
@@ -75,11 +75,11 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
         layoutParams?.height =
-                mAccountSignedInPresenter?.bottomSheetBehaviourHeight(this@AccountSignedInActivity)
+                mAccountSignedInPresenter?.bottomSheetBehaviourHeight()
         bottomSheetBehaviourLinearLayout?.requestLayout()
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
         sheetBehavior?.peekHeight =
-                mAccountSignedInPresenter?.bottomSheetBehaviourPeekHeight(this@AccountSignedInActivity)
+                mAccountSignedInPresenter?.bottomSheetBehaviourPeekHeight()
                         ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}

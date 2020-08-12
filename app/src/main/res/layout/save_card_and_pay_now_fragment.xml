@@ -118,4 +118,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pmaCardNumberTextView" />
 
+    <View
+        android:id="@+id/expiryDateDivider"
+        style="@style/dividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/expiryDateTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,11 +2,8 @@ package za.co.woolworths.financial.services.android.contracts
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
-import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 
 interface IAvailableFundsContract {
@@ -26,6 +23,8 @@ interface IAvailableFundsContract {
         fun setPushViewDownAnimation(view: View)
         fun onABSACreditCardFailureHandler(error: Throwable?)
         fun navigateToABSAStatementActivity()
+        fun onPayUMethodSuccess(paymentMethodsResponse: PaymentMethodsResponse?)
+        fun onPayUMethodFailure(error: Throwable?)
     }
 
     interface AvailableFundsPresenter {
@@ -36,9 +35,13 @@ interface IAvailableFundsContract {
         fun getCreditCardNumber(cards: ArrayList<Card>?): String?
         fun getAccount(): Account?
         fun onDestroy()
+        fun queryPayUPaymentMethod()
+        fun isPersonalLoanAndStoreCardVisible(): Boolean?
+
     }
 
     interface AvailableFundsModel {
         fun queryABSAServiceGetUserCreditCardToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>?
+        fun queryPayUPaymentMethods(requestListener: IGenericAPILoaderView<Any>): Call<PaymentMethodsResponse>?
     }
 }

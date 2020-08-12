@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class PayUPaymentMethod(
         @SerializedName("token") val token: String,
-        @SerializedName("creditCardCvv") val creditCardCvv: Int,
+        @SerializedName("creditCardCvv") val creditCardCvv: String,
         @SerializedName("type") val type: String
 )

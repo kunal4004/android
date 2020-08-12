@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderVi
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 
@@ -76,12 +77,34 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     override fun getCreditCardNumber(cards: ArrayList<Card>?): String? {
         return cards?.filter { card -> card.cardStatus?.trim { it <= ' ' } == "AAA" }
                 ?.takeIf { it.isNotEmpty() }
-                ?.let {  it[0].absaCardToken}
+                ?.let { it[0].absaCardToken }
     }
 
     override fun getAccount(): Account? = mAccount
 
     override fun onDestroy() {
         mainView = null
+    }
+
+    override fun queryPayUPaymentMethod() {
+        model?.queryPayUPaymentMethods(object : IGenericAPILoaderView<Any> {
+            override fun onSuccess(response: Any?) {
+                val paymentMethodsResponse = response as? PaymentMethodsResponse
+                mainView?.onPayUMethodSuccess(paymentMethodsResponse)
+            }
+
+            override fun onFailure(error: Throwable?) {
+                super.onFailure(error)
+                mainView?.onPayUMethodFailure(error)
+            }
+
+        })
+    }
+
+    override fun isPersonalLoanAndStoreCardVisible(): Boolean? {
+        return when (mAccountPair?.first) {
+            ApplyNowState.PERSONAL_LOAN, ApplyNowState.STORE_CARD -> true
+            else -> false
+        }
     }
 }

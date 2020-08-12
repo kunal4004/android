@@ -7,6 +7,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
+import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
@@ -1291,7 +1292,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Body payUPay: PayUPay): Call<JsonElement>
+            @Body payUPay: PayUPay): Call<PayUResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
@@ -1310,5 +1311,5 @@ interface ApiInterface {
             @Query("customer") customer: String,
             @Query("payment_id") payment_id: String,
             @Query("charge_id") charge_id: String,
-            @Query("status") status: String): Call<JsonElement>
+            @Query("status") status: String): Call<PayUPayResultResponse>
 }

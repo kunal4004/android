@@ -32,8 +32,8 @@ interface IAccountSignedInContract {
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
         fun getSixMonthOutstandingTitleAndCardResource() : Pair<Int, Int>
-        fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int
-        fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?) : Int
+        fun bottomSheetBehaviourHeight(): Int
+        fun bottomSheetBehaviourPeekHeight() : Int
     }
 
     interface MyAccountModel {

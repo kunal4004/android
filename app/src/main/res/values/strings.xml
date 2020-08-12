@@ -1595,5 +1595,11 @@
     <string name="back_to_my_account_button">back to my account</string>
     <string name="pma_save_card_pay_now_title">Would you like to save this card for future payments?</string>
     <string name="pay_now_button_label">Pay Now</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="add_card_label">add card</string>
+    <string name="card_expired">Expired</string>
+    <string name="use_this_card_button_label">Use this card</string>
+    <string name="credit_debit_cards_label">Credit &amp; Debit Cards</string>
+
 </resources>
 
