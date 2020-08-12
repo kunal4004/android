@@ -45,9 +45,12 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
     var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
+    var rootView :View ? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
+        if (rootView == null)
+            rootView = inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
+        return rootView
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -276,9 +279,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null && !isStoreClosed(validatedSuburbProductsForDelivery))
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null && !isStoreClosed(validatedSuburbProductsForStore))
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -355,19 +358,18 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         hideAvailableDeliveryDateMessagee()
         hideStoreClosedMessage()
         (if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.let {
-           val deliveryStatus: HashMap<String, Boolean?>? = it.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
-            if (it.storeClosed && deliveryStatus?.get("01") == false) {
+            if (isStoreClosed(it)) {
                 showStoreClosedMessage()
             } else {
                 foodDeliveryDateMessage?.apply {
-                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableFoodDeliveryDate
+                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name + ", " + selectedProvince?.name, it.firstAvailableFoodDeliveryDate
                             ?: "")
                     text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
                     visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
 
                 otherDeliveryDateMessage?.apply {
-                    val message = getString(R.string.first_available_other_delivery_date, selectedProvince?.name + "," + (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name, it.firstAvailableOtherDeliveryDate
+                    val message = getString(R.string.first_available_other_delivery_date, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name+ ", " + selectedProvince?.name, it.firstAvailableOtherDeliveryDate
                             ?: "")
                     text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
                     visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -421,6 +423,11 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             putString("UnSellableCommerceItems", Utils.toJson((if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.unSellableCommerceItems))
         }
         navController?.navigate(R.id.action_to_unsellableItemsFragment, bundleOf("bundle" to bundle))
+    }
+
+    private fun isStoreClosed(validatedSuburbProducts: ValidatedSuburbProducts?): Boolean {
+        val deliveryStatus: HashMap<String, Boolean?>? = validatedSuburbProducts?.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
+        return (validatedSuburbProducts?.storeClosed == true && deliveryStatus?.get("01") == false)
     }
 
 }

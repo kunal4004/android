@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.UnsellableItemsLi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.Utils
 
 class UnsellableItemsFragment : Fragment(), View.OnClickListener {
@@ -68,7 +69,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.changeStore -> activity?.onBackPressed()
+            R.id.changeStore -> navController?.navigateUp()
             R.id.removeItems -> executeSetSuburb()
         }
     }
@@ -80,6 +81,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                 override fun onSuccess(response: SetDeliveryLocationSuburbResponse?) {
                     when (response?.httpCode) {
                         200 -> {
+                            QueryBadgeCounter.instance.queryCartSummaryCount()
                             Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, selectedSuburb))
                             navigateToSuburbConfirmationFragment()
                         }
