@@ -279,9 +279,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null && !isStoreClosed(validatedSuburbProductsForDelivery))
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null && !isStoreClosed(validatedSuburbProductsForStore))
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -358,8 +358,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         hideAvailableDeliveryDateMessagee()
         hideStoreClosedMessage()
         (if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.let {
-           val deliveryStatus: HashMap<String, Boolean?>? = it.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
-            if (it.storeClosed && deliveryStatus?.get("01") == false) {
+            if (isStoreClosed(it)) {
                 showStoreClosedMessage()
             } else {
                 foodDeliveryDateMessage?.apply {
@@ -424,6 +423,11 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             putString("UnSellableCommerceItems", Utils.toJson((if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.unSellableCommerceItems))
         }
         navController?.navigate(R.id.action_to_unsellableItemsFragment, bundleOf("bundle" to bundle))
+    }
+
+    private fun isStoreClosed(validatedSuburbProducts: ValidatedSuburbProducts?): Boolean {
+        val deliveryStatus: HashMap<String, Boolean?>? = validatedSuburbProducts?.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
+        return (validatedSuburbProducts?.storeClosed == true && deliveryStatus?.get("01") == false)
     }
 
 }
