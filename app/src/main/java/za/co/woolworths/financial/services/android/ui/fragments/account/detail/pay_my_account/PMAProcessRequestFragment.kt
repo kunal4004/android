@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
@@ -42,6 +44,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment() {
 
         circularProgressListener({}, {}) // onSuccess(), onFailure()
 
+        val accountNumber = accountArgs?.accountNumber ?: "0"
+        Log.e("accountNumber", "accountNumber ${Gson().toJson(accountArgs)}")
+
         activity?.let { activity ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
@@ -55,6 +60,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment() {
     }
 
     private fun postPayUMethod() {
+        return
         val payURequestBody = payURequestBody(cardDetailArgs, accountArgs)
         startSpinning()
         request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
@@ -117,6 +123,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment() {
         val currency = "ZAR"
 
         val accountNumber = accountArgs?.accountNumber ?: "0"
+        Log.e("accountNumber", "accountNumber ${Gson().toJson(accountNumber)}")
         val productOfferingId = accountArgs?.productOfferingId ?: 0
         val paymentMethod = PayUPaymentMethod(token, creditCardCVV, type)
 

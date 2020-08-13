@@ -37,6 +37,7 @@ interface IAvailableFundsContract {
         fun onDestroy()
         fun queryPayUPaymentMethod()
         fun isPersonalLoanAndStoreCardVisible(): Boolean?
+        fun getAccountDetail(): Pair<ApplyNowState, Account>?
 
     }
 

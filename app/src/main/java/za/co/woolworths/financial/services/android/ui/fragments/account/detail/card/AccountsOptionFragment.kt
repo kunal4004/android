@@ -353,7 +353,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     override fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentPaymentOptionActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair) }
     }
 
     override fun navigateToPayMyAccountActivity() {

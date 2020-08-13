@@ -26,11 +26,9 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -74,6 +72,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             payMyAccountDescTextView?.text = bindString(description)
             pmaCardImageView?.setImageResource(card)
         }
+
+        setWhatsAppChatWithUsVisibility(payMyAccountPresenter?.getWhatsAppVisibility() ?: false)
     }
 
     private fun configureClickEvent() {
@@ -166,7 +166,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun setWhatsAppChatWithUsVisibility(isVisible: Boolean) {
+    private fun setWhatsAppChatWithUsVisibility(isVisible: Boolean) {
         if (isVisible) {
             incWhatsAppAnyQuestions?.visibility = VISIBLE
             // Customer service availability
@@ -176,13 +176,13 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 chatToUsOnWhatsAppTextView?.setTextColor(Color.BLACK)
                 whatsAppNextIconImageView?.alpha = 1f
             } else {
-                whatsAppIconImageView?.setImageResource(R.drawable.icon_whatsapp)
-                whatsAppNextIconImageView?.alpha = 0.4f
-                anyQuestionsTextView?.setTextColor(bindColor(R.color.unavailable))
-                chatToUsOnWhatsAppTextView?.setTextColor(bindColor(R.color.unavailable))
+                whatsAppIconImageView?.setImageResource(R.drawable.whatsapp_offline)
+                whatsAppNextIconImageView?.alpha = 1.0f
+                anyQuestionsTextView?.setTextColor(Color.BLACK)
+                chatToUsOnWhatsAppTextView?.setTextColor(Color.BLACK)
             }
         } else {
-            incWhatsAppAnyQuestions?.visibility = View.GONE
+            incWhatsAppAnyQuestions?.visibility = GONE
         }
     }
 }

@@ -18,6 +18,7 @@ import java.lang.RuntimeException
 class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.PayMyAccountView?, private var model: IPaymentOptionContract.PayMyAccountModel) : IPaymentOptionContract.PayMyAccountPresenter, IPaymentOptionContract.PayMyAccountModel {
 
     companion object {
+        const val PAYMENT_METHOD: String = "PAYMENT_METHOD"
         const val ACCOUNT_INFO = "ACCOUNT_INFO"
     }
 
@@ -120,14 +121,25 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getTotalAmountDue(totalAmountOverdue: Int): String {
-        return   Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountOverdue))
+        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountOverdue))
     }
 
     override fun getAmountOutstanding(amountOverdue: Int): String {
-        return   Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountOverdue))
+        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountOverdue))
     }
 
     override fun getPayMyAccountSection(): ApplyNowState {
         return mAccountDetails?.first ?: ApplyNowState.STORE_CARD
+    }
+
+    fun getWhatsAppVisibility(): Boolean {
+        with(WhatsAppChatToUs()) {
+            return when (mAccountDetails?.first) {
+                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> isCCPaymentOptionsEnabled
+                ApplyNowState.STORE_CARD -> isSCPaymentOptionsEnabled
+                ApplyNowState.PERSONAL_LOAN -> isPLPaymentOptionsEnabled
+                else -> false
+            }
+        }
     }
 }

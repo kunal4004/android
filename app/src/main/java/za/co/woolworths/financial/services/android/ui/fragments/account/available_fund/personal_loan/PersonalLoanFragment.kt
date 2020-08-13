@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -15,6 +17,8 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         availableFundBackground?.setBackgroundResource(R.drawable.personal_loan_background)
+
+        navController = Navigation.findNavController(view)
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
@@ -29,13 +33,10 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {
                     personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
                 } else {
-                    when (payUMethodType) {
-                        PAYUMethodType.CREATE_USER -> {
-                            navigateToPayMyAccountActivity()
-                        }
-                        PAYUMethodType.CARD_UPDATE -> {
-
-                        }
+                    navigateToCardOptionsOrPayMyAccount(payUMethodType) {
+                        val paymentMethods = Gson().toJson(mPaymentMethodsResponse?.paymentMethods)
+                        val accountDetail: String = Gson().toJson(mAvailableFundPresenter?.getAccountDetail())
+                        navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment(paymentMethods, accountDetail))
                     }
                 }
             }
@@ -46,4 +47,5 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
             R.id.incViewStatementButton -> navigateToStatementActivity()
         }
     }
+
 }

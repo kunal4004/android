@@ -11,6 +11,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
 import com.facebook.shimmer.Shimmer
@@ -40,6 +42,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
     private var isQueryPayUPaymentMethodComplete: Boolean = false
+    var navController: NavController? = null
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE }
 
@@ -72,7 +75,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         setPushViewDownAnimation(incRecentTransactionButton)
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incPayMyAccountButton)
-
 
         availableFundBackground?.post {
             val dm = DisplayMetrics()
@@ -158,7 +160,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     override fun navigateToPaymentOptionsActivity() {
-        activity?.let { activity -> ScreenManager.presentPaymentOptionActivity(activity, mAvailableFundPresenter?.getBundle()) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle()) }
     }
 
     override fun navigateToPayMyAccountActivity() {
@@ -314,5 +316,15 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         viewPaymentOptionTextShimmerLayout?.setShimmer(null)
         viewPaymentOptionTextShimmerLayout?.stopShimmer()
     }
+
+    fun navigateToCardOptionsOrPayMyAccount(payUMethodType: PAYUMethodType, openCardOptionsDialog: () -> Unit){
+        when (payUMethodType) {
+            PAYUMethodType.CREATE_USER -> {
+                navigateToPayMyAccountActivity()
+            }
+            PAYUMethodType.CARD_UPDATE -> openCardOptionsDialog()
+        }
+    }
+
 
 }

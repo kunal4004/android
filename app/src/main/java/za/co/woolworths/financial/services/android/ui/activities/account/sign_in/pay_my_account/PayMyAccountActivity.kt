@@ -21,6 +21,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAccountView {
 
+    companion object {
+       const val PAY_MY_ACCOUNT_REQUEST_CODE = 8003
+    }
+
     private var navigationHost: NavController? = null
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
     var amountEntered : Int? = 0

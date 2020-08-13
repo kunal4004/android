@@ -10,7 +10,7 @@ data class PaymentMethodsResponse(
         val httpCode: Int,
         @SerializedName("paymentMethods")
         @Expose
-        val paymentMethods: List<GetPaymentMethod>,
+        val paymentMethods: MutableList<GetPaymentMethod>,
         @SerializedName("response")
         @Expose
         val response: Response

@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
 class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.AvailableFundsView?, private var model: IAvailableFundsContract.AvailableFundsModel?) : IAvailableFundsContract.AvailableFundsPresenter, IGenericAPILoaderView<Any> {
 
+    private var paymentMethodsResponse: PaymentMethodsResponse? = null
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
@@ -89,7 +90,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     override fun queryPayUPaymentMethod() {
         model?.queryPayUPaymentMethods(object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
-                val paymentMethodsResponse = response as? PaymentMethodsResponse
+                paymentMethodsResponse = response as? PaymentMethodsResponse
                 mainView?.onPayUMethodSuccess(paymentMethodsResponse)
             }
 
@@ -106,5 +107,9 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
             ApplyNowState.PERSONAL_LOAN, ApplyNowState.STORE_CARD -> true
             else -> false
         }
+    }
+
+    override fun getAccountDetail(): Pair<ApplyNowState, Account>? {
+        return mAccountPair
     }
 }

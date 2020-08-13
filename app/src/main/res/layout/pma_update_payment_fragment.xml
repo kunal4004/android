@@ -12,26 +12,27 @@
         layout="@layout/popup_close_header_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="37dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="356dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="26dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="26dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/enter_payment_amount_label"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
+        app:layout_constraintBottom_toTopOf="@+id/pmaTotalAmountDueTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator"
         tools:text="@string/enter_payment_amount_label" />
 
 
@@ -43,9 +44,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/black_button_drawable_state"
+        android:background="@drawable/button_selected_deselected_bg"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.18"
+        android:enabled="false"
         android:text="@string/confirm_payment"
         android:textAllCaps="true"
         android:textColor="@color/white"
@@ -59,20 +61,147 @@
     <TextView
         android:id="@+id/pmaTotalAmountDueTextView"
         style="@style/amountDescriptionStyle"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="41dp"
         android:gravity="center"
-        android:text="@string/amount_outstanding"
-        app:layout_constraintBottom_toBottomOf="@+id/editAmountImageView"
+        android:text="R 500.00"
+        android:textColor="#222222"
+        android:textSize="55sp"
+        app:layout_constraintBottom_toTopOf="@+id/changePaymentMethodView"
         app:layout_constraintEnd_toStartOf="@+id/editAmountImageView"
-        app:layout_constraintTop_toTopOf="@+id/editAmountImageView" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="R 500.00" />
 
     <ImageView
         android:id="@+id/editAmountImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
+        android:layout_marginEnd="56dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/pmaTotalAmountDueTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        app:layout_constraintTop_toTopOf="@+id/pmaTotalAmountDueTextView"
         app:srcCompat="@drawable/edit_amount" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ccvTextInput"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/rectangle_bg"
+        app:layout_constraintBottom_toTopOf="@+id/pmaConfirmPaymentButton"
+        app:layout_constraintEnd_toEndOf="@+id/pmaConfirmPaymentButton">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ccvEditTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:ems="4"
+            android:gravity="center"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/ccvIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ccvTextInput"
+        app:layout_constraintEnd_toStartOf="@+id/ccvTextInput"
+        app:layout_constraintTop_toTopOf="@+id/ccvTextInput"
+        app:srcCompat="@drawable/card_cvv" />
+
+    <TextView
+        android:id="@+id/enterCVVLabelTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="29dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:text="@string/enter_cvv_number_label"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ccvIconImageView"
+        app:layout_constraintEnd_toStartOf="@+id/ccvIconImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ccvIconImageView" />
+
+    <View
+        android:id="@+id/horizontalDividerView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/onBoarding_3"
+        app:layout_constraintBottom_toTopOf="@+id/ccvTextInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/changePaymentMethodView"
+        android:layout_width="0dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalDividerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/cardItemImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/changePaymentMethodView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/changePaymentMethodView"
+        app:srcCompat="@drawable/card_visa" />
+
+    <TextView
+        android:id="@+id/changeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:letterSpacing="0.12"
+        android:text="@string/change_label"
+        android:textAllCaps="true"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardNumberItemTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView" />
+
+    <TextView
+        android:id="@+id/cardNumberItemTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:text="**** **** **** 7239"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardItemImageView"
+        app:layout_constraintEnd_toStartOf="@+id/changeTextView"
+        app:layout_constraintStart_toEndOf="@+id/cardItemImageView"
+        app:layout_constraintTop_toTopOf="@+id/cardItemImageView" />
+
+    <View
+        android:id="@+id/changeCardHorizontalView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/onBoarding_3"
+        app:layout_constraintBottom_toTopOf="@+id/changePaymentMethodView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
