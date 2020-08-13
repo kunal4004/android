@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cart_product_item.view.*
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
-class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem>) : RecyclerView.Adapter<ItemsListToRemoveFromCartAdapter.ViewHolder>() {
+class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerceItem>) : RecyclerView.Adapter<UnsellableItemsListAdapter.ViewHolder>() {
 
 
     override fun getItemCount(): Int {
@@ -28,18 +28,18 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(commerceItem: CommerceItem) {
+        fun bind(commerceItem: UnSellableCommerceItem) {
 
             itemView.swipe.isSwipeEnabled = false
-            itemView.tvTitle.text = commerceItem.commerceItemInfo.productDisplayName ?: ""
+            itemView.tvTitle.text = commerceItem.productDisplayName ?: ""
             Utils.truncateMaxLine(itemView.tvTitle)
             itemView.llQuantity.visibility = View.INVISIBLE
-            itemView.price.text = WFormatter.formatAmount(commerceItem.priceInfo.amount)
+            itemView.price.text = commerceItem.price.amount.let { WFormatter.formatAmount(it) }
             itemView.rlDeleteButton.visibility = View.GONE
-            setProductImage(itemView.cartProductImage, commerceItem.commerceItemInfo.externalImageURL
+            setProductImage(itemView.cartProductImage, commerceItem.externalImageURL
                     ?: "")
-            if (commerceItem.priceInfo.discountedAmount > 0) {
-                itemView.promotionalText.text = " " + WFormatter.formatAmount(commerceItem.priceInfo.discountedAmount)
+            if (commerceItem.price.getDiscountedAmount() > 0) {
+                itemView.promotionalText.text = " " + WFormatter.formatAmount(commerceItem.price.getDiscountedAmount())
                 itemView.promotionalTextLayout.visibility = View.VISIBLE
             } else {
                 itemView.promotionalTextLayout.visibility = View.GONE
@@ -48,11 +48,11 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
             if (commerceItem.commerceItemClassType == "foodCommerceItem") {
                 itemView.tvSize.visibility = View.INVISIBLE
             } else {
-                var sizeAndColor = commerceItem.commerceItemInfo?.color ?: ""
-                commerceItem.commerceItemInfo?.apply {
-                    if (sizeAndColor.isEmpty() && size.isNotEmpty() && !size.equals("NO SZ", true))
+                var sizeAndColor = commerceItem.colour ?: ""
+                commerceItem.apply {
+                    if (sizeAndColor.isEmpty() && !size.isNullOrEmpty() && !size.equals("NO SZ", true))
                         sizeAndColor = size
-                    else if (sizeAndColor.isNotEmpty() && size.isNotEmpty() && !size.equals("NO SZ", true)) {
+                    else if (sizeAndColor.isNotEmpty() && !size.isNullOrEmpty() && !size.equals("NO SZ", true)) {
                         sizeAndColor = "$sizeAndColor, $size"
                     }
                     itemView.tvSize.text = sizeAndColor
