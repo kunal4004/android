@@ -17,10 +17,33 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_to_unsellableItemsFragment"
+            app:destination="@id/unsellableItemsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            />
     </fragment>
     <fragment
         android:id="@+id/editDeliveryLocationConfirmationFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationConfirmationFragment"
         android:label="EditDeliveryLocationConfirmationFragment"
         tools:layout="@layout/edit_delivery_location_confirmation_fragment" />
+    <fragment
+        android:id="@+id/unsellableItemsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment"
+        android:label="UnsellableItemsFragment"
+        tools:layout="@layout/unsellable_items_fragment" >
+        <action
+            android:id="@+id/action_unsellableItemsFragment_to_editDeliveryLocationConfirmationFragment"
+            app:destination="@id/editDeliveryLocationConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            />
+    </fragment>
+
 </navigation>
