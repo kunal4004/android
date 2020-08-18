@@ -14,7 +14,7 @@
         android:contentDescription="@string/pay_at_any_atm_title"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/method_woolworths" />
+        app:srcCompat="@drawable/method_atm" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startMargin"

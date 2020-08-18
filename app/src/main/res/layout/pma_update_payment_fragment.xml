@@ -70,7 +70,7 @@
         android:text="R 500.00"
         android:textColor="#222222"
         android:textSize="55sp"
-        app:layout_constraintBottom_toTopOf="@+id/changePaymentMethodView"
+        app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toStartOf="@+id/editAmountImageView"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="R 500.00" />
@@ -102,6 +102,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:ems="4"
+            android:maxLength="3"
             android:gravity="center"
             android:inputType="number" />
 
@@ -145,7 +146,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <View
-        android:id="@+id/changePaymentMethodView"
+        android:id="@+id/manageDebitCreditCardItem"
         android:layout_width="0dp"
         android:layout_height="85dp"
         android:layout_marginStart="24dp"
@@ -160,9 +161,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/changePaymentMethodView"
+        app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/changePaymentMethodView"
+        app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem"
         app:srcCompat="@drawable/card_visa" />
 
     <TextView
@@ -200,7 +201,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:background="@color/onBoarding_3"
-        app:layout_constraintBottom_toTopOf="@+id/changePaymentMethodView"
+        app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

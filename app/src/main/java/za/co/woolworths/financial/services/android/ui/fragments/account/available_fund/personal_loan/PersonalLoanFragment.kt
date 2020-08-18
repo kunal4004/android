@@ -8,6 +8,8 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -35,8 +37,8 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 } else {
                     navigateToCardOptionsOrPayMyAccount(payUMethodType) {
                         val paymentMethods = Gson().toJson(mPaymentMethodsResponse?.paymentMethods)
-                        val accountDetail: String = Gson().toJson(mAvailableFundPresenter?.getAccountDetail())
-                        navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment(paymentMethods, accountDetail))
+                        val accountDetail: Pair<ApplyNowState, Account>? = mAvailableFundPresenter?.getAccountDetail()
+                        navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment(Gson().toJson(accountDetail), paymentMethods))
                     }
                 }
             }

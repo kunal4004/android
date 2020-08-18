@@ -20,6 +20,8 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     companion object {
         const val PAYMENT_METHOD: String = "PAYMENT_METHOD"
         const val ACCOUNT_INFO = "ACCOUNT_INFO"
+        const val SCREEN_TYPE: String = "SCREEN_TYPE"
+
     }
 
     var mAccountDetails: Pair<ApplyNowState, Account>? = null

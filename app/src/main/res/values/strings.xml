@@ -1601,6 +1601,7 @@
     <string name="use_this_card_button_label">Use this card</string>
     <string name="credit_debit_cards_label">Credit &amp; Debit Cards</string>
     <string name="enter_cvv_number_label">Enter your CVV Number:</string>
+    <string name="undo">Undo</string>
 
 </resources>
 

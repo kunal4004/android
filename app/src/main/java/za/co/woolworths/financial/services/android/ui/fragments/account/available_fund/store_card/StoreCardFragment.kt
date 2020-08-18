@@ -18,7 +18,6 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-
         availableFundBackground?.setBackgroundResource(R.drawable.store_card_background)
 
         incRecentTransactionButton?.setOnClickListener(this)
@@ -39,7 +38,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 navigateToCardOptionsOrPayMyAccount(payUMethodType) {
                     val paymentMethod = Gson().toJson(mPaymentMethodsResponse?.paymentMethods)
                     val accountDetail = Gson().toJson(mAvailableFundPresenter?.getAccountDetail())
-                    navController?.navigate(StoreCardFragmentDirections.actionStoreCardFragmentToEnterPaymentAmountDetailFragment(paymentMethod,accountDetail))
+                    navController?.navigate(StoreCardFragmentDirections.actionStoreCardFragmentToEnterPaymentAmountDetailFragment(accountDetail,paymentMethod))
                 }
             }
         }

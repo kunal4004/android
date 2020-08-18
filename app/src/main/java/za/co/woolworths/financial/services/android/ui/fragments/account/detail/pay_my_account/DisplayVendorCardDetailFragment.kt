@@ -12,7 +12,9 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.util.*
 
 class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnClickListener {
@@ -27,8 +29,8 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val paymentMethod = args.paymentMethod
-        val paymentMethodList: MutableList<GetPaymentMethod>? = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
+        val paymentMethodArgs = args.paymentMethod
+        val paymentMethodList: MutableList<GetPaymentMethod>? = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethodArgs, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
 
         initPaymentMethod(paymentMethodList)
     }
@@ -54,7 +56,12 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             setOnClickListener(this@DisplayVendorCardDetailFragment)
         }
 
-        changePaymentMethodView?.apply {
+        with(manageDebitCreditCardItem) {
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@DisplayVendorCardDetailFragment)
+        }
+
+        with(editAmountImageView) {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@DisplayVendorCardDetailFragment)
         }
@@ -63,21 +70,14 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     override fun onClick(v: View?) {
         when (v?.id) {
 
-            R.id.changeCardHorizontalView -> {
-               // ScreenManager.presentPayMyAccountActivity(activity,)
+            R.id.editAmountImageView -> {
+                ScreenManager.presentPayMyAccountActivity(activity,args.accounts, args.paymentMethod, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
             }
 
-            R.id.pmaConfirmPaymentButton -> {
+            R.id.manageDebitCreditCardItem -> ScreenManager.presentPayMyAccountActivity(activity,args.accounts, args.paymentMethod, PayMyAccountStartDestinationType.MANAGE_CARD)
 
-            }
+            R.id.pmaConfirmPaymentButton -> { }
 
-            R.id.changePaymentMethodView -> {
-
-            }
-
-            else -> {
-
-            }
         }
     }
 }

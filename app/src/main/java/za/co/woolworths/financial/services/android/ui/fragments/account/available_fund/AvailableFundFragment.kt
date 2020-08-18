@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
 import com.facebook.shimmer.Shimmer
@@ -265,7 +264,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             when (httpCode) {
                 200 -> {
                     mPaymentMethodsResponse = paymentMethodsResponse
-                    payUMethodType = PAYUMethodType.CARD_UPDATE
+                    payUMethodType = when (paymentMethods.isNotEmpty()) {
+                        true -> PAYUMethodType.CARD_UPDATE
+                        else -> PAYUMethodType.CREATE_USER
+                    }
                 }
 
                 400 -> {
@@ -304,7 +306,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         viewPaymentOptionTextShimmerLayout?.setShimmer(shimmer)
     }
 
-     fun startProgress() {
+    fun startProgress() {
         viewPaymentOptionImageShimmerLayout?.startShimmer()
         viewPaymentOptionTextShimmerLayout?.startShimmer()
     }
@@ -317,7 +319,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         viewPaymentOptionTextShimmerLayout?.stopShimmer()
     }
 
-    fun navigateToCardOptionsOrPayMyAccount(payUMethodType: PAYUMethodType, openCardOptionsDialog: () -> Unit){
+    fun navigateToCardOptionsOrPayMyAccount(payUMethodType: PAYUMethodType, openCardOptionsDialog: () -> Unit) {
         when (payUMethodType) {
             PAYUMethodType.CREATE_USER -> {
                 navigateToPayMyAccountActivity()

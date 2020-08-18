@@ -12,7 +12,7 @@
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
             android:id="@+id/action_storeCardFragment_to_enterPaymentAmountDetailFragment"
-            app:destination="@id/enterPaymentAmountDetailFragment" />
+            app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
     <fragment
         android:id="@+id/blackCreditCardFragment"
@@ -21,7 +21,7 @@
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
             android:id="@+id/action_blackCreditCardFragment_to_enterPaymentAmountDetailFragment"
-            app:destination="@id/enterPaymentAmountDetailFragment" />
+            app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
     <fragment
         android:id="@+id/goldCreditCardFragment"
@@ -30,7 +30,7 @@
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
             android:id="@+id/action_goldCreditCardFragment_to_enterPaymentAmountDetailFragment"
-            app:destination="@id/enterPaymentAmountDetailFragment" />
+            app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
     <fragment
         android:id="@+id/personalLoanFragment"
@@ -39,7 +39,7 @@
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
             android:id="@+id/action_personalLoanFragment_to_enterPaymentAmountDetailFragment"
-            app:destination="@id/enterPaymentAmountDetailFragment" />
+            app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
     <dialog
         android:id="@+id/accountInArrearsFragmentDialog"
@@ -53,7 +53,7 @@
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
             android:id="@+id/action_availableFundFragment_to_enterPaymentAmountDetailFragment"
-            app:destination="@id/enterPaymentAmountDetailFragment" />
+            app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
     <fragment
         android:id="@+id/silverCreditCardFragment"
@@ -62,11 +62,11 @@
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
             android:id="@+id/action_silverCreditCardFragment_to_enterPaymentAmountDetailFragment"
-            app:destination="@id/enterPaymentAmountDetailFragment" />
+            app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
 
     <dialog
-        android:id="@+id/enterPaymentAmountDetailFragment"
+        android:id="@+id/toCardDetailFragmentDialog"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.DisplayVendorCardDetailFragment"
         android:label="EnterPaymentAmountDetailFragment"
         tools:layout="@layout/pma_update_payment_fragment">

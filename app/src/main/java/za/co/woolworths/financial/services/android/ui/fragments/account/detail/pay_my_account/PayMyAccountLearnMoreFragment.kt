@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.text.style.TypefaceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan
+
 
 class PayMyAccountLearnMoreFragment : Fragment() {
 
@@ -32,8 +35,9 @@ class PayMyAccountLearnMoreFragment : Fragment() {
     private fun noteStringBuilder() {
         val note = bindString(R.string.atm_payment_note)
         val noteStringBuilder = SpannableStringBuilder(note)
-        noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        noteStringBuilder.setSpan(getMyriadProSemiBoldFont(), 0, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+        noteStringBuilder.setSpan(myriadProFont, 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         atmPaymentNoteTextView?.text = noteStringBuilder
     }
 

@@ -108,10 +108,21 @@
             app:destination="@id/PMAProcessRequestFragment" />
     </fragment>
     <fragment
-        android:id="@+id/creditAndDebitCardsManageFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardsManageFragment"
+        android:id="@+id/manageCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAManageCardFragment"
         android:label="CreditAndDebitCardsManageFragment"
-        tools:layout="@layout/pma_credit_debit_cards_management_fragment" />
+        tools:layout="@layout/pma_manage_card_fragment">
+        <argument
+            android:name="paymentMethod"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_manageCardFragment_to_addNewPayUCardFragment"
+            app:destination="@id/addNewPayUCardFragment" />
+        <action
+            android:id="@+id/action_manageCardFragment_to_displayVendorCardDetailFragment"
+            app:destination="@id/displayVendorCardDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/PMAProcessRequestFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAProcessRequestFragment"
@@ -136,11 +147,24 @@
         android:id="@+id/secure3DPMAFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.Secure3DPMAFragment"
         android:label="Secure3DPMAFragment"
-        tools:layout="@layout/secure_3d_webview_fragment" >
+        tools:layout="@layout/secure_3d_webview_fragment">
         <argument
             android:name="PMARedirection"
             app:argType="za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection"
             app:nullable="true" />
     </fragment>
-
+    <dialog
+        android:id="@+id/displayVendorCardDetailFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.DisplayVendorCardDetailFragment"
+        android:label="DisplayVendorCardDetailFragment"
+        tools:layout="@layout/pma_update_payment_fragment">
+        <argument
+            android:name="paymentMethod"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="ACCOUNT"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.Account"
+            app:nullable="true" />
+    </dialog>
 </navigation>

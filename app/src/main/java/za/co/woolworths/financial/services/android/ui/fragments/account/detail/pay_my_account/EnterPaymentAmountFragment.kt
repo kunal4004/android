@@ -2,33 +2,35 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
-import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.util.CurrencyInputWatcher
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import java.util.*
+import java.lang.Exception
 
 class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
 
+    private var mPaymentMethod: MutableList<GetPaymentMethod>? = null
+    private var paymentMethod: String? = null
+    private var accountInfo: String? = null
     private var account: Account? = null
 
     private var navController: NavController? = null
@@ -38,30 +40,43 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        arguments?.apply {
+            accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
+            paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.enter_payment_amount_fragment, container, false)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-        account = args.account
+
+        // TODO:: R&D and implement, pass data from activity to fragment with safeArgs directions
+        try {
+            account = args.account
+        } catch (e: Exception) {
+            account = Gson().fromJson(accountInfo, Account::class.java)
+            mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
+        }
 
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
-        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
+        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue
+                ?: 0))
+        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue
+                ?: 0))
     }
 
     private fun configureToolbar() {
-        (activity as? AppCompatActivity)?.apply {
+        (activity as? PayMyAccountActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            displayToolbarDivider(false)
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
     }
@@ -74,7 +89,6 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         continueToPaymentButton?.isEnabled = false
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun configureCurrencyEditText() {
         paymentAmountInputEditText?.apply {
             inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -92,8 +106,6 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
-
-            addTextChangedListener(CurrencyInputWatcher(this,"R ", Locale.getDefault()))
         }
     }
 
@@ -105,9 +117,8 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                GlobalScope.doAfterDelay(100) {
-                    activity?.onBackPressed()
-                }
+                hideKeyboard()
+                activity?.onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)

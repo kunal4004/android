@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
-
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -32,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBo
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType;
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
@@ -202,9 +199,20 @@ public class ScreenManager {
 	public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
 		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
 		howToPayIntent.putExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
-		activity.startActivity(howToPayIntent);
+		activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
+
+
+	public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod,PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
+		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
+		howToPayIntent.putExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO, account);
+		howToPayIntent.putExtra(PayMyAccountPresenterImpl.PAYMENT_METHOD, paymentMethod);
+		howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
+		activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
+
 
 	public static void presentShoppingCart(Activity activity){
 		Intent openCartActivity = new Intent(activity, CartActivity.class);
