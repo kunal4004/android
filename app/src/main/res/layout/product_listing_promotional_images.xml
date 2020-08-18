@@ -18,7 +18,10 @@
 
     <ImageView
         android:id="@+id/imSave"
-        style="@style/promotionLayoutStyle" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/four_dp"
+        android:contentDescription="@string/plp_newPromotionalImage" />
 
     <ImageView
         android:id="@+id/imReward"

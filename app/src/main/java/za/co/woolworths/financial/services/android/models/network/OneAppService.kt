@@ -6,6 +6,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Query
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
@@ -351,7 +352,6 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
     }
 
-
     fun queryServicePayUMethod(): Call<PaymentMethodsResponse> {
         return mApiInterface.getPaymentPAYUMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
@@ -361,6 +361,10 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun queryServicePaymentResult(request: PayUPayResultRequest): Call<PayUPayResultResponse> {
-        return mApiInterface.getPaymentPayUResult(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),request.customer,request.payment_id,request.charge_id, request.status)
+        return mApiInterface.getPaymentPayUResult(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), request.customer, request.payment_id, request.charge_id, request.status)
+    }
+
+    fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {
+        return mApiInterface.validateSelectedSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), suburbId, isStore)
     }
 }
