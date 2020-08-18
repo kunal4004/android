@@ -65,18 +65,18 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private fun configureRecyclerview() {
 
-        val array = mutableListOf<GetPaymentMethod>()
-        val payM = mPaymentMethod?.get(0)
-        payM?.let { array.add(it) }
-        payM?.let { array.add(it) }
-        payM?.let { array.add(it) }
-        payM?.let { array.add(it) }
-        payM?.let { array.add(it) }
-        payM?.let { array.add(it) }
-
-        for (list in array) {
-            mPaymentMethod?.add(list)
-        }
+//        val array = mutableListOf<GetPaymentMethod>()
+//        val payM = mPaymentMethod?.get(0)
+//        payM?.let { array.add(it) }
+//        payM?.let { array.add(it) }
+//        payM?.let { array.add(it) }
+//        payM?.let { array.add(it) }
+//        payM?.let { array.add(it) }
+//        payM?.let { array.add(it) }
+//
+//        for (list in array) {
+//            mPaymentMethod?.add(list)
+//        }
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }

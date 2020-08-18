@@ -48,7 +48,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putString(PAYMENT_METHOD, getString(PAYMENT_METHOD, ""))
 
             val graph = navigationHost.graph
-            graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType ?: PayMyAccountStartDestinationType.CREATE_USER) {
+            graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
+                    ?: PayMyAccountStartDestinationType.CREATE_USER) {
                 PayMyAccountStartDestinationType.CREATE_USER -> R.id.creditAndDebitCardPaymentsFragment
                 PayMyAccountStartDestinationType.MANAGE_CARD -> R.id.manageCardFragment
                 PayMyAccountStartDestinationType.PAYMENT_AMOUNT -> R.id.enterPaymentAmountFragment
@@ -120,8 +121,14 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
-
-            else -> navigationHost.popBackStack()
+            else -> {
+                if (navigationHost.graph.startDestination == R.id.enterPaymentAmountFragment) {
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    return
+                }
+                navigationHost.popBackStack()
+            }
         }
     }
 

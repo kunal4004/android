@@ -46,6 +46,7 @@ class PayMyAccountLearnMoreFragment : Fragment() {
         activity?.apply {
             (this as? PayMyAccountActivity)?.apply {
                 configureToolbar(bindString(R.string.atm_payment_steps_title))
+                displayToolbarDivider(true)
                 mPayMyAccountPresenter = getPayMyAccountPresenter()
             }
             mPayMyAccountPresenter?.getATMPaymentInfo()?.forEachIndexed { index, description ->

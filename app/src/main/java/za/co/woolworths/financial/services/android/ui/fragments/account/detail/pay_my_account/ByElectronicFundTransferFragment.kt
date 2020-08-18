@@ -29,6 +29,7 @@ class ByElectronicFundTransferFragment : Fragment() {
         activity?.apply {
             (this as? PayMyAccountActivity)?.apply {
                 configureToolbar(bindString(R.string.atm_banking_details))
+                displayToolbarDivider(true)
                 mPayMyAccountPresenter = getPayMyAccountPresenter()
             }
 
