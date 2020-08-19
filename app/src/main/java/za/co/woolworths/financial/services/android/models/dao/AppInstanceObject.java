@@ -109,8 +109,10 @@ public class AppInstanceObject {
 	}
 
 	public static String getCurrentUsersID() {
+		if (!SessionUtilities.getInstance().isUserAuthenticated())
+			return "";
 		ArrayList<String> arrEmail = SessionUtilities.getInstance().getJwt().email;
-		return (arrEmail == null || !SessionUtilities.getInstance().isUserAuthenticated()) ? "" : arrEmail.get(0);
+		return arrEmail == null ? "" : arrEmail.get(0);
 	}
 
 	public boolean isBiometricWalkthroughPresented() {
