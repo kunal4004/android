@@ -1,18 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.graphics.Typeface
-
 import androidx.annotation.ArrayRes
-
 import androidx.annotation.ColorRes
-
 import androidx.annotation.DrawableRes
-
 import androidx.annotation.StringRes
-
 import androidx.core.content.ContextCompat
-
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+
 
 fun Any.bindDrawable(@DrawableRes drawableResource: Int) = ContextCompat.getDrawable(WoolworthsApplication.getAppContext(), drawableResource)
 

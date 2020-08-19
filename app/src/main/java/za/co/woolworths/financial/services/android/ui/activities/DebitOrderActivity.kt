@@ -1,3 +1,4 @@
+
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
@@ -19,10 +20,13 @@ class DebitOrderActivity : AppCompatActivity() {
         setContentView(R.layout.activity_debit_order)
         Utils.updateStatusBarBackground(this)
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setDisplayUseLogoEnabled(false)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.back24)
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
 
         var debitOrder: DebitOrder = intent.extras.getSerializable("DebitOrder") as DebitOrder
 

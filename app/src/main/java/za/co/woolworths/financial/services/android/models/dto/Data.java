@@ -18,4 +18,6 @@ public class Data {
 	public String suburbId;
 
 	public GlobalMessages globalMessages;
+
+	public String jSessionId;
 }

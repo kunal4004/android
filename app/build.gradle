@@ -8,9 +8,11 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "7"
-    def minor = "1"
+    def minor = "2"
     def fix = "0"
-    def jobNumber = 427
+
+    def jobNumber = 444
+
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -43,7 +45,7 @@ android {
 
     defaultConfig {
         applicationId "com.awfs.coordination"
-        manifestPlaceholders = [appLabel: "Woolworths"]
+        manifestPlaceholders = [appLabel: "Woolworths", app_links_host:"www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 28
         compileSdkVersion 28
@@ -68,11 +70,11 @@ android {
 
         if (host.contains("-qa")){
             defaultConfig.applicationIdSuffix = ".qa"
-            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q"]
+            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host:"www-win-qa.woolworths.co.za"]
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 129
+            jobNumber = 132
         }
 
             defaultConfig {
@@ -125,6 +127,7 @@ android {
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
+                manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
                 signingConfig signingConfigs.woneappQa
             }
 
@@ -132,6 +135,7 @@ android {
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
+                manifestPlaceholders = [app_links_host:"www.woolworths.co.za"]
                 signingConfig signingConfigs.woolworths
             }
         }
@@ -205,15 +209,15 @@ dependencies {
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
     implementation 'me.relex:circleindicator:2.1.0@aar'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
     implementation "com.github.skydoves:balloon:1.0.4"
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'

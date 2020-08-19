@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/generalEnq"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/contact_us_item_bg"
+    android:minHeight="60dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/img1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/customerServicesTextView"
+            style="@style/contact_us_item_header_textview"
+            android:text="@string/txt_general_enquiry" />
+
+        <TextView
+            android:id="@+id/customerServicesDescriptionTextView"
+            style="@style/contact_us_item_desc_textview"
+            android:layout_marginTop="5dp"
+            android:text="@string/general_enquiry_desc" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/img1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ic_caret_black" />
+
+</RelativeLayout>

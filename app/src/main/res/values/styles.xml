@@ -163,12 +163,21 @@
         <item name="windowActionBar">false</item>
         <item name="android:background">@color/semi_per_black</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
 
+    <style name="SSOActivityKMSIStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@color/semi_per_black</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
     <style name="whiteButtonStyle" parent="android:Theme">
@@ -264,9 +273,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
-        <item name="WTextView_font">myriadpro_regular</item>
         <item name="android:textSize">15sp</item>
-
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <style name="contact_us_item_desc_textview" parent="android:Theme">
@@ -274,9 +284,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">#4d000000</item>
         <item name="android:singleLine">true</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:textSize">13sp</item>
-
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <!-- Barcode Style-->
@@ -301,6 +312,7 @@
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:lineSpacingExtra">-2dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <!--Alerter-->
@@ -570,7 +582,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:visibility">invisible</item>
-        <item name="WTextView_font">medium_bold</item>
+        <item name="fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
     <style name="cli_step_indicator_line">
@@ -980,6 +992,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/email_text_size_15sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <style name="top_view_style_income_expenses" parent="android:Theme">
@@ -1746,13 +1759,13 @@
 
     <style name="enter_otp_edit_text_style">
         <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
-        <item name="android:inputType">textFilter|textNoSuggestions|textMultiLine</item>
         <item name="android:textColor">#222222</item>
         <item name="android:layout_width">@dimen/store_card_text_field_width_47_dp</item>
         <item name="android:layout_height">@dimen/store_card_text_field_height_50_dp</item>
         <item name="android:textSize">@dimen/store_card_text_field_text_size_14_dp</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLength">2</item>
+        <item name="android:inputType">textFilter|textNoSuggestions|textVisiblePassword</item>
     </style>
 
 
@@ -2006,12 +2019,14 @@
     </style>
 
     <style name="promotionLayoutStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/twenty_dp</item>
+        <item name="android:layout_height">@dimen/twenty_dp</item>
         <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:minHeight">24dp</item>
         <item name="android:contentDescription">@string/plp_newPromotionalImage</item>
-        <item name="android:minWidth">24dp</item>
+    </style>
+
+    <style name="cli_steps_title_style" parent="cli_step_indicator_text">
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
     </style>
 
     <style name="chatToUsOnWhatsAppStyle">
@@ -2083,4 +2098,5 @@
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
+
 </resources>

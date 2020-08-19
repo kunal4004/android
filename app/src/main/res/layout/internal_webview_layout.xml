@@ -20,8 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="0dp"
-            app:popupTheme="@style/SSOActivity"
-            app:theme="@style/SSOActivity"
             app:title=" "
             app:titleTextColor="@color/black">
 

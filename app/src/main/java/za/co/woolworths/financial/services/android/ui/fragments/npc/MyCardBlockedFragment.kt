@@ -15,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class MyCardBlockedFragment : MyCardExtension() {
 
@@ -31,34 +33,39 @@ class MyCardBlockedFragment : MyCardExtension() {
         super.onCreate(savedInstanceState)
         arguments?.apply {
             mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "")
-            activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
         }
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
         return inflater.inflate(R.layout.my_card_blocked_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_background_color) }
+
+        AnimationUtilExtension.animateViewPushDown(btnGetReplacementCard)
+        AnimationUtilExtension.animateViewPushDown(btnLinkACard)
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
         btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         // Hide Replacement card if MC config is true
-        if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
-            tvNoActiveCardDesc?.text = getString(R.string.card_block_desc)
-            btnGetReplacementCard?.visibility = VISIBLE
-            btnLinkACard?.visibility = VISIBLE
-            callUsNowButton?.visibility = GONE
-        } else {
-            tvNoActiveCardDesc?.text = getString(R.string.card_block_replacement_card_disabled_desc)
-            btnGetReplacementCard?.visibility = GONE
-            btnLinkACard?.visibility = GONE
-            callUsNowButton?.visibility = VISIBLE
+        when (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+            true -> {
+                tvNoActiveCardDesc?.text = bindString(R.string.card_block_desc)
+                btnGetReplacementCard?.visibility = VISIBLE
+                btnLinkACard?.visibility = VISIBLE
+                callUsNowButton?.visibility = GONE
+            }
+            else -> {
+                tvNoActiveCardDesc?.text = bindString(R.string.card_block_replacement_card_disabled_desc)
+                btnGetReplacementCard?.visibility = GONE
+                btnLinkACard?.visibility = GONE
+                callUsNowButton?.visibility = VISIBLE
+            }
         }
 
         callUsNowButton?.setOnClickListener {  Utils.makeCall( "0861502020") }

@@ -1,33 +1,31 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import kotlinx.android.synthetic.main.no_connection_handler.*
-import kotlinx.android.synthetic.main.sign_out_template.*
 import kotlinx.android.synthetic.main.shopping_list_fragment.*
+import kotlinx.android.synthetic.main.sign_out_template.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
-import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
@@ -148,19 +146,17 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun setYourDeliveryLocation() {
         Utils.getPreferredDeliveryLocation()?.apply {
-            mSuburbName = suburb?.name ?: ""
-            mProvinceName = province?.name ?: ""
-            mSuburbName?.isNotEmpty().apply { manageDeliveryLocationUI("$mSuburbName , $mProvinceName") }
+            rightArrowDelivery?.visibility = GONE
+            editLocation?.visibility = VISIBLE
+            activity?.let {
+                KotlinUtils.setDeliveryAddressView(it, this, tvDeliveringTo, tvDeliveryLocation, deliverLocationIcon)
+            }
+            iconCaretRight?.visibility = GONE
+            editDeliveryLocation?.visibility = VISIBLE
+            activity?.let {
+                KotlinUtils.setDeliveryAddressView(it, this, tvDeliveringEmptyTo, tvDeliveryEmptyLocation, truckIcon)
+            }
         }
-    }
-
-    private fun manageDeliveryLocationUI(deliveryLocation: String) {
-        tvDeliveringTo.text = getString(R.string.delivering_to)
-        tvDeliveringEmptyTo.text = getString(R.string.delivering_to)
-        tvDeliveryLocation.visibility = VISIBLE
-        tvDeliveryEmptyLocation.visibility = VISIBLE
-        tvDeliveryLocation.text = deliveryLocation
-        tvDeliveryEmptyLocation.text = deliveryLocation
     }
 
     override fun onClick(view: View?) {
@@ -194,13 +190,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun locationSelectionClicked() {
-        activity?.apply {
-            val openDeliveryLocationSelectionActivity = Intent(this, DeliveryLocationSelectionActivity::class.java)
-            openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName)
-            openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName)
-            startActivity(openDeliveryLocationSelectionActivity)
-            overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
-        }
+        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,0) }
     }
 
     private fun showEmptyShoppingListView() {

@@ -120,7 +120,7 @@
             android:id="@+id/howToUse7"
             style="@style/how_to_pay_text_style"
             android:layout_marginTop="@dimen/twenty_four_dp"
-            android:text="@string/temp_store_card_engine_service_stations_desc"
+            android:text="@string/temp_card_how_to_use7"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/howToUse6" />
@@ -129,12 +129,29 @@
             android:id="@+id/howToUse8"
             style="@style/how_to_pay_text_style"
             android:layout_marginTop="@dimen/twenty_four_dp"
-            android:text="@string/temp_store_card_contact_customer_service_desc"
-            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
+            android:text="@string/temp_card_how_to_use8"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/howToUse7" />
 
+        <CheckBox
+            android:id="@+id/howToUse9"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use9"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse8" />
+
+        <CheckBox
+            android:id="@+id/howToUse10"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use10"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse9" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"

@@ -7,6 +7,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
@@ -928,7 +929,7 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String): Call<OrdersResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order/{id}")
     fun getOrderDetails(
             @Header("apiId") apiId: String,
@@ -1246,10 +1247,9 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
-
-
+    
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("event/{featureName}/{appScreen}")
+    @POST("event/{appScreen}/{featureName}")
     fun postEvent(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1263,4 +1263,21 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("featureName") featureName: String,
             @Path("appScreen") appScreen: String): Call<Response>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("location/validateSelectedSuburb/{suburbId}")
+    fun validateSelectedSuburb(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("suburbId") suburbId: String,
+            @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
+
 }

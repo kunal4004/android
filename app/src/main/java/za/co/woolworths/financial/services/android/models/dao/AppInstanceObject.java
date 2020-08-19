@@ -76,6 +76,7 @@ public class AppInstanceObject {
 		public String absaLoginAliasID;
 		public String absaDeviceID;
 		public boolean isVirtualTemporaryStoreCardPopupShown;
+		public boolean didShowDeliverySelectionModal;
 
 		public User() {
 			id = AppInstanceObject.getCurrentUsersID();
@@ -108,6 +109,8 @@ public class AppInstanceObject {
 	}
 
 	public static String getCurrentUsersID() {
+		if (!SessionUtilities.getInstance().isUserAuthenticated())
+			return "";
 		ArrayList<String> arrEmail = SessionUtilities.getInstance().getJwt().email;
 		return arrEmail == null ? "" : arrEmail.get(0);
 	}

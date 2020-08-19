@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util
 
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse
 import za.co.woolworths.financial.services.android.models.dto.VoucherCount
@@ -9,6 +10,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import java.util.*
 
 class QueryBadgeCounter : Observable() {
@@ -85,11 +87,12 @@ class QueryBadgeCounter : Observable() {
     }
 
     private fun loadShoppingCartCount(): Call<CartSummaryResponse>? {
-        return request(OneAppService.getCartSummary(), object : IGenericAPILoaderView<Any> {
-            override fun onSuccess(response: Any?) {
-                (response as? CartSummaryResponse)?.apply {
-                    if (httpCode == 200) {
-                        data?.get(0)?.apply {
+
+        return GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
+            override fun onSuccess(response: CartSummaryResponse?) {
+                when (response?.httpCode) {
+                    200 -> {
+                        response.data.get(0)?.apply {
                             setCartCount(totalItemsCount)
                         }
                     }
