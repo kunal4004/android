@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import kotlinx.android.synthetic.main.my_orders_upcoming_order_item.view.*
 import za.co.woolworths.financial.services.android.contracts.IPresentOrderDetailInterface
 import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -50,6 +51,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             itemView.total.text = WFormatter.formatAmount(item.total)
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
             itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
+            itemView.deliveryItemsType.text = bindString(if (item.clickAndCollectOrder) R.string.collection_date else R.string.delivery_date)
             if (!item.deliveryDates.isJsonNull) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 deliveryDates.clear()
