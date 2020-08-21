@@ -453,6 +453,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						break;
 					}
 				}
+
+				if (cartItemGroup.type.equalsIgnoreCase("GIFT")) {
+					boolean isGiftsThere = false;
+					for (CartItemGroup UpdatedCartItemGroup : cartResponse.cartItems) {
+						if (UpdatedCartItemGroup.type.equalsIgnoreCase("GIFT")) {
+							cartItemGroup.commerceItems = UpdatedCartItemGroup.commerceItems;
+							isGiftsThere = true;
+						}
+					}
+					if (!isGiftsThere)
+						cartItemGroup.commerceItems.clear();
+				}
+
 				/***
 				 * Remove header when commerceItems is empty
 				 */
