@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -21,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -103,8 +106,23 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) }
-                            ?: 0
+                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) } ?: 0
+//                    when {
+//                        enteredAmount < 1 -> {
+//                            continueToPaymentButton?.isEnabled = false
+//                            reducePaymentAmountTextView?.visibility = VISIBLE
+//                            reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_min_input_error)
+//                        }
+//                        enteredAmount > 5000000 -> {
+//                            continueToPaymentButton?.isEnabled = false
+//                            reducePaymentAmountTextView?.visibility = VISIBLE
+//                            reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_max_input_error)
+//                        }
+//                        else -> {
+//                            continueToPaymentButton?.isEnabled = true
+//                            reducePaymentAmountTextView?.visibility = GONE
+//                        }
+//                    }
                     enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
                     amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
                 }
@@ -146,7 +164,7 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
             R.id.continueToPaymentButton -> {
                 val amountEntered = paymentAmountInputEditText?.text?.toString()
                 findNavController().previousBackStackEntry?.savedStateHandle?.set("amountEntered", amountEntered)
-                (activity as? PayMyAccountActivity)?.amountEntered = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()
+                (activity as? PayMyAccountActivity)?.amountEntered = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()!!
                 navController?.navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
             }
         }

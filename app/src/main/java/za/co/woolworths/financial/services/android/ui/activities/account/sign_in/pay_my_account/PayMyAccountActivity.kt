@@ -32,7 +32,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     private lateinit var navigationHost: NavController
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
-    var amountEntered: Int? = 0
+    var amountEntered: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putString(PAYMENT_METHOD, getString(PAYMENT_METHOD, ""))
             args.putString(ADD_CARD_RESPONSE, getString(ADD_CARD_RESPONSE, ""))
 
-            amountEntered = getString(AMOUNT_ENTERED, "")?.replace("[,.R ]".toRegex(), "")?.toInt()
+            amountEntered = getString(AMOUNT_ENTERED, "0")?.replace("[,.R ]".toRegex(), "")?.toInt()!!
 
             val graph = navigationHost.graph
             graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType

@@ -16,20 +16,24 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
+import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
@@ -162,12 +166,15 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                     manageCardAdapter?.notifyItemRemoved(position)
                     manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount
                             ?: 0)
+                    if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
+                        request(deletedPaymentMethod?.token?.let { OneAppService.queryServicePayURemovePaymentMethod(it) }, object : IGenericAPILoaderView<Any> {
+                            override fun onSuccess(response: Any?) {
 
-                    val snack = Snackbar.make(pmaManageCardRecyclerView, "Product", Snackbar.LENGTH_LONG)
-                    snack.setAction("UNDO") {
-                        deletedPaymentMethod?.let { paymentMethod -> mPaymentMethod?.add(position, paymentMethod) }
-                        manageCardAdapter?.notifyItemInserted(position)
-                    }.show()
+                            }
+                        })
+                    } else {
+                        ErrorHandlerView(context).showToast()
+                    }
                 }
             }
         }

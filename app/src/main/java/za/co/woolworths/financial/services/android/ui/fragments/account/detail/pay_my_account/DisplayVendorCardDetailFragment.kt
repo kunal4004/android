@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -109,7 +108,6 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             R.id.editAmountImageView -> ScreenManager.presentPayMyAccountActivity(activity, mAccounts, args.paymentMethod, null, amountEntered, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
             R.id.changeTextView -> ScreenManager.presentPayMyAccountActivity(activity, mAccounts, args.paymentMethod, null, amountEntered, PayMyAccountStartDestinationType.MANAGE_CARD)
             R.id.pmaConfirmPaymentButton -> {
-
                 val paymentMethod = paymentMethodList?.get(0)
                 val cvv = ccvEditTextInput?.text?.toString() ?: "0"
 
@@ -125,10 +123,5 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
                 ScreenManager.presentPayMyAccountActivity(activity, Gson().toJson(accounts.second), args.paymentMethod, Gson().toJson(cardResponse), amountEntered, PayMyAccountStartDestinationType.SECURE_3D)
             }
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
     }
 }

@@ -45,9 +45,9 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/button_selected_deselected_bg"
+        android:enabled="false"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.18"
-        android:enabled="false"
         android:text="@string/confirm_payment"
         android:textAllCaps="true"
         android:textColor="@color/white"
@@ -101,9 +101,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
-            android:ems="4"
+            android:digits="0123456789"
             android:gravity="center"
-            android:inputType="number|numberPassword"
+            android:inputType="numberPassword"
             android:maxLength="3"
             android:textCursorDrawable="@drawable/cursor_custom_color" />
 
@@ -141,7 +141,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
-        android:background="@color/onBoarding_3"
+        android:background="@color/bpi_background"
         app:layout_constraintBottom_toTopOf="@+id/ccvTextInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -202,7 +202,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:background="@color/onBoarding_3"
+        android:background="@color/bpi_background"
         app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
