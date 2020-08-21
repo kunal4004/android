@@ -2,16 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.webkit.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
@@ -25,6 +25,8 @@ import java.util.*
 class AddNewPayUCardFragment : Fragment() {
 
     private var navController: NavController? = null
+
+    val args: AddNewPayUCardFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +44,11 @@ class AddNewPayUCardFragment : Fragment() {
         navController = Navigation.findNavController(view)
 
         configureToolbar()
-        configureWebview()
+        configureWebView()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun configureWebview() {
+    private fun configureWebView() {
         with(addNewUserPayUWebView) {
 
             with(settings) {
@@ -57,33 +59,39 @@ class AddNewPayUCardFragment : Fragment() {
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
                 GlobalScope.doAfterDelay(100) {
+                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    addNewUserPayUWebView?.visibility = GONE
                     processCardNavHostLinearLayout?.visibility = VISIBLE
                 }
             }, { addCardResponse ->
                 // onSuccess
                 GlobalScope.doAfterDelay(100) {
-                    processCardNavHostLinearLayout?.visibility = GONE
-                    val navigateToSaveCardAndPayNow = AddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
-                    navController?.navigate(navigateToSaveCardAndPayNow)
+                        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                        addNewUserPayUWebView?.visibility = GONE
+                        processCardNavHostLinearLayout?.visibility = VISIBLE
+                        val navigateToSaveCardAndPayNow = AddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
+                        navController?.navigate(navigateToSaveCardAndPayNow)
                 }
             }, {
                 // on failure
                 GlobalScope.doAfterDelay(100) {
+                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    addNewUserPayUWebView?.visibility = VISIBLE
                     processCardNavHostLinearLayout?.visibility = GONE
                 }
 
             }), "JSBridge")
 
-            webChromeClient = object : WebChromeClient() {
-                override fun onConsoleMessage(cm: ConsoleMessage): Boolean {
-                    Log.d("onConsoleMessage", String.format("%s @ %d: %s", cm.message(), cm.lineNumber(), cm.sourceId()))
-                    return super.onConsoleMessage(cm)
-                }
-            }
-
             val postData = "?api_id=" + URLEncoder.encode(WoolworthsApplication.getApiId()?.toLowerCase(Locale.getDefault()), "UTF-8").toString() + "&sha1=" + URLEncoder.encode(BuildConfig.SHA1, "UTF-8") + "&agent=" + URLEncoder.encode("android", "UTF-8")
-            loadUrl("https://payu-qa.wfs.wigroup.io/$postData")
+            val getPayUCardUrl = "https://payu-qa.wfs.wigroup.io/$postData"
+
+            loadUrl(getPayUCardUrl)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        configureToolbar()
     }
 
     private fun configureToolbar() {

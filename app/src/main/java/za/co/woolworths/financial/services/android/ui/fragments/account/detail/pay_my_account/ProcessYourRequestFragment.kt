@@ -17,7 +17,7 @@ open class ProcessYourRequestFragment : Fragment() {
     private var stateAnimation: IProgressAnimationState? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.process_your_request_fragment, container, false)
+        return inflater.inflate(R.layout.process_request_fragment, container, false)
     }
 
     fun circularProgressListener(codeSuccess: () -> Unit, codeFailure: () -> Unit) {
@@ -27,6 +27,7 @@ open class ProcessYourRequestFragment : Fragment() {
                     if (isAPICallSuccessFul) {
                         success_tick?.apply {
                             visibility = View.VISIBLE
+                            colorCode = R.color.success_tick_color
                             startTickAnim()
                             codeSuccess()
                         }

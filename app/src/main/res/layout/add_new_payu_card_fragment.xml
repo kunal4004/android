@@ -39,15 +39,17 @@
         android:id="@+id/processCardNavHostLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:orientation="vertical">
-    <fragment
-        android:id="@+id/processCardNavHostFragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/process_request_nav_host" />
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/processCardNavHostFragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/process_request_nav_host" />
     </LinearLayout>
 
 </FrameLayout>

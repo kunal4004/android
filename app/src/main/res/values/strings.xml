@@ -504,7 +504,7 @@
     <string name="added_to">added to </string>
     <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
     <string name="start_shopping">start shopping</string>
-    <string name="delete">delete</string>
+    <string name="delete">DELETE</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
@@ -1610,6 +1610,11 @@
     <string name="credit_debit_cards_label">Credit &amp; Debit Cards</string>
     <string name="enter_cvv_number_label">Enter your CVV Number:</string>
     <string name="undo">Undo</string>
+    <string name="add_a_new_card_button_label">Add A New Card</string>
+    <string name="remove_this_card_button_label">Remove this card</string>
+    <string name="card_expired_title">Your Card Has Expired</string>
+    <string name="card_expired_description">Please update your card details; or add\na new card.</string>
+    <string name="secure_3d_title">3D Secure</string>
 
 </resources>
 

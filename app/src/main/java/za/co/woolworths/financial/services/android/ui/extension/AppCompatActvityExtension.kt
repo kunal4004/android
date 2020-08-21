@@ -15,6 +15,7 @@ import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +26,6 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
-import java.lang.ref.WeakReference
-import java.text.DecimalFormat
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -235,3 +233,9 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
     }
 }
 
+fun <T> Fragment.getNavigationResult(key: String) =
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<T>(key)
+
+fun <T> Fragment.setNavigationResult(result: T, key: String) {
+    findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
+}

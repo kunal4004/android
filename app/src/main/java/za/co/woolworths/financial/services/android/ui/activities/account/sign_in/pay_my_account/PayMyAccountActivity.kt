@@ -8,12 +8,15 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.ACCOUNT_INFO
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.ADD_CARD_RESPONSE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.AMOUNT_ENTERED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.PAYMENT_METHOD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
@@ -27,7 +30,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         const val PAY_MY_ACCOUNT_REQUEST_CODE = 8003
     }
 
-    private val navigationHost by lazy { findNavController(R.id.payMyAccountNavHostFragmentContainerView) }
+    private lateinit var navigationHost: NavController
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
     var amountEntered: Int? = 0
 
@@ -35,6 +38,9 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.pay_my_account_activity)
+
+        navigationHost = findNavController(R.id.payMyAccountNavHostFragmentContainerView)
+
         configureToolbar()
         preventStatusBarToBlink()
         setupPresenter()
@@ -46,6 +52,9 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             val args = Bundle()
             args.putString(ACCOUNT_INFO, getString(ACCOUNT_INFO, ""))
             args.putString(PAYMENT_METHOD, getString(PAYMENT_METHOD, ""))
+            args.putString(ADD_CARD_RESPONSE, getString(ADD_CARD_RESPONSE, ""))
+
+            amountEntered = getString(AMOUNT_ENTERED, "")?.replace("[,.R ]".toRegex(), "")?.toInt()
 
             val graph = navigationHost.graph
             graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -53,6 +62,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 PayMyAccountStartDestinationType.CREATE_USER -> R.id.creditAndDebitCardPaymentsFragment
                 PayMyAccountStartDestinationType.MANAGE_CARD -> R.id.manageCardFragment
                 PayMyAccountStartDestinationType.PAYMENT_AMOUNT -> R.id.enterPaymentAmountFragment
+                PayMyAccountStartDestinationType.SECURE_3D -> R.id.pmaProcessRequestFragment
             }
 
             navigationHost.setGraph(graph, args)
@@ -118,16 +128,19 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     override fun onBackPressed() {
         when (currentFragment) {
             is PMAManageCardFragment, is CreditAndDebitCardPaymentsFragment -> {
+                setResult(RESULT_OK)
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
             else -> {
-                if (navigationHost.graph.startDestination == R.id.enterPaymentAmountFragment) {
-                    finish()
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                    return
+                when (navigationHost.graph.startDestination) {
+                    R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {
+                        setResult(RESULT_OK)
+                        finish()
+                        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    }
+                    else -> navigationHost.popBackStack()
                 }
-                navigationHost.popBackStack()
             }
         }
     }

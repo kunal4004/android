@@ -149,7 +149,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                             mainView?.hideUserOfferActiveProgress()
                             handleUserOfferActiveSuccessResult(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440, 502 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.hideUserOfferActiveProgress()
                             handleUnknownHttpResponse(response?.desc)

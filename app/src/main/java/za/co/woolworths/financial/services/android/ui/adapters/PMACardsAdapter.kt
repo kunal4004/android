@@ -23,10 +23,12 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
             bindItems(paymentMethod)
 
             itemView.setOnClickListener {
-                paymentMethodList?.forEach { it.isCardChecked = !it.isCardChecked }
-                paymentMethod?.isCardChecked = true
-                paymentMethod?.let { item -> onClickListener(item) }
-                notifyDataSetChanged()
+                paymentMethodList?.forEach { it.isCardChecked = false }
+                paymentMethod?.apply {
+                    isCardChecked = !cardExpired
+                    onClickListener(this)
+                    notifyDataSetChanged()
+                }
             }
 
             itemView.pmaSaveCardImageView?.setImageResource(if (paymentMethod?.isCardChecked == true) R.drawable.checked_item else R.drawable.uncheck_item)

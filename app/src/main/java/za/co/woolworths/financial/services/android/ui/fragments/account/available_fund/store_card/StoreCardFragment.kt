@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
@@ -9,6 +11,7 @@ import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -38,7 +41,18 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 navigateToCardOptionsOrPayMyAccount(payUMethodType) {
                     val paymentMethod = Gson().toJson(mPaymentMethodsResponse?.paymentMethods)
                     val accountDetail = Gson().toJson(mAvailableFundPresenter?.getAccountDetail())
-                    navController?.navigate(StoreCardFragmentDirections.actionStoreCardFragmentToEnterPaymentAmountDetailFragment(accountDetail,paymentMethod))
+                    navController?.navigate(StoreCardFragmentDirections.actionStoreCardFragmentToEnterPaymentAmountDetailFragment(accountDetail, paymentMethod))
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            PAY_MY_ACCOUNT_REQUEST_CODE -> {
+                if (resultCode == RESULT_OK) {
+                    queryPaymentMethod()
                 }
             }
         }

@@ -10,7 +10,7 @@
         android:id="@+id/enterPaymentAmountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:text="@string/enter_payment_amount_label"
         android:textColor="@color/black"
@@ -44,7 +44,7 @@
         style="@style/pmaOutstandingValueStyle"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="27dp"
+        android:layout_marginBottom="24dp"
         android:text="R 0.00"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
@@ -55,7 +55,7 @@
         android:id="@+id/amountOutstandingDividerView"
         android:layout_width="1dp"
         android:layout_height="0dp"
-        android:background="@color/onBoarding_3"
+        android:background="@color/bpi_background"
         app:layout_constraintBottom_toBottomOf="@+id/amountOutstandingValueTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="27dp"
+        android:layout_marginBottom="24dp"
         android:text="R 500.00"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
@@ -90,23 +90,22 @@
         android:layout_width="wrap_content"
         android:layout_height="1dp"
         android:layout_marginBottom="24dp"
-        android:background="@color/onBoarding_3"
+        android:background="@color/bpi_background"
         app:layout_constraintBottom_toTopOf="@+id/amountOutstandingDividerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <za.co.woolworths.financial.services.android.ui.views.CurrencyEditText
+    <za.co.woolworths.financial.services.android.util.CurrencyEditText
         android:id="@+id/paymentAmountInputEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:background="@color/transparent"
         android:cursorVisible="true"
         android:digits="0123456789,. "
-        android:inputType="numberDecimal"
         android:fontFamily="@font/futura_medium_ttf"
         android:gravity="center"
         android:imeOptions="actionDone|actionGo"
+        android:inputType="numberDecimal"
         android:maxLength="13"
         android:maxLines="1"
         android:minWidth="@dimen/twenty_four_dp"
@@ -115,15 +114,13 @@
         android:textColorHint="@color/black"
         android:textCursorDrawable="@drawable/cursor_custom_color"
         android:textSize="55sp"
-        app:currencySymbol="R"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalDividerView"
+        app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="@+id/startGuideline">
 
         <requestFocus />
 
-    </za.co.woolworths.financial.services.android.ui.views.CurrencyEditText>
+    </za.co.woolworths.financial.services.android.util.CurrencyEditText>
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -156,4 +153,10 @@
         app:constraint_referenced_ids="endGuideline"
         tools:layout_editor_absoluteX="387dp" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/centerGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
 </androidx.constraintlayout.widget.ConstraintLayout>

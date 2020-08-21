@@ -66,6 +66,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         super.handleStoreCardCardsSuccess(storeCardResponse)
         hideStoreCardProgress()
         accountStoreCardCallWasCompleted = true
+
         when (storeCardResponse.httpCode) {
             200 -> {
                 when (mCardPresenterImpl?.getStoreCardBlockType()) {
@@ -98,11 +99,11 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         val storeCardResponse = mCardPresenterImpl?.getStoreCardResponse()
         val temporaryFreezeStoreCard = TemporaryFreezeStoreCard(storeCardResponse, object : ITemporaryCardFreeze {
 
-                    override fun onTemporaryCardUnFreezeConfirmed() {
-                        super.onTemporaryCardUnFreezeConfirmed()
-                        mCardPresenterImpl?.navigateToMyCardDetailActivity(true)
-                    }
-                })
+            override fun onTemporaryCardUnFreezeConfirmed() {
+                super.onTemporaryCardUnFreezeConfirmed()
+                mCardPresenterImpl?.navigateToMyCardDetailActivity(true)
+            }
+        })
 
         temporaryFreezeStoreCard.showUnFreezeStoreCardDialog(childFragmentManager)
     }

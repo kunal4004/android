@@ -91,14 +91,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection) {
                         true -> {
-                            when ((mAvailableFundPresenter?.isPersonalLoanAndStoreCardVisible() == true && !isQueryPayUPaymentMethodComplete)) {
-                                true -> {
-                                    initShimmer()
-                                    startProgress()
-                                    mAvailableFundPresenter?.queryPayUPaymentMethod()
-                                }
-                                false -> return
-                            }
+                            queryPaymentMethod()
                         }
                         else -> {
                             ErrorHandlerView(act).showToast()
@@ -107,6 +100,17 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
                 }
             })
+        }
+    }
+
+    fun queryPaymentMethod() {
+        when ((mAvailableFundPresenter?.isPersonalLoanAndStoreCardVisible() == true && !isQueryPayUPaymentMethodComplete)) {
+            true -> {
+                initShimmer()
+                startProgress()
+                mAvailableFundPresenter?.queryPayUPaymentMethod()
+            }
+            false -> return
         }
     }
 
@@ -280,7 +284,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                     }
                 }
 
-                440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response?.stsParams
+                440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams
                         ?: "", activity)
 
                 else -> {

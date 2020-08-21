@@ -1,33 +1,48 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
+import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+
 
 class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private var accountInfo: String? = null
     private var paymentMethod: String? = null
-    private var mAccounts: Account? = null
+    private var mAccountDetails: Pair<ApplyNowState, Account>? = null
     private var manageCardAdapter: PMACardsAdapter? = null
     private var mPaymentMethod: MutableList<GetPaymentMethod>? = null
     private var navController: NavController? = null
+    private var deletedPaymentMethod: GetPaymentMethod? = null
+    private var root: View? = null
 
     val args: PMAProcessRequestFragmentArgs by navArgs()
 
@@ -36,13 +51,15 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         arguments?.apply {
             accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
             paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
-            mAccounts = Gson().fromJson(accountInfo, Account::class.java)
+            mAccountDetails = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
             mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.pma_manage_card_fragment, container, false)
+        if (root == null)
+            root = inflater.inflate(R.layout.pma_manage_card_fragment, container, false)
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,27 +81,29 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     }
 
     private fun configureRecyclerview() {
+        // ensure first item is checked
 
-//        val array = mutableListOf<GetPaymentMethod>()
-//        val payM = mPaymentMethod?.get(0)
-//        payM?.let { array.add(it) }
-//        payM?.let { array.add(it) }
-//        payM?.let { array.add(it) }
-//        payM?.let { array.add(it) }
-//        payM?.let { array.add(it) }
-//        payM?.let { array.add(it) }
-//
-//        for (list in array) {
-//            mPaymentMethod?.add(list)
-//        }
+        val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
+
+        if (isPaymentChecked?.isEmpty()!!)
+            mPaymentMethod?.get(0)?.isCardChecked = true
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
             manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod ->
-                Log.e("xxPaymentMethod",Gson().toJson(paymentMethod))
+                when (paymentMethod.cardExpired) {
+                    true -> {
+                        val cardExpiredFragmentDirections = PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment()
+                        navController?.navigate(cardExpiredFragmentDirections)
+                    }
+                }
             }
             adapter = manageCardAdapter
+
+            val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
+            itemTouchHelper.attachToRecyclerView(this)
+
         }
     }
 
@@ -97,16 +116,76 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+
+        paymentMethod = Gson().toJson(mPaymentMethod?.filter { s -> s.isCardChecked })
+        val accounts = mAccountDetails?.second
+
         when (v?.id) {
             R.id.useThisCardButton -> {
-                val vendorCardDetail = PMAManageCardFragmentDirections.actionManageCardFragmentToDisplayVendorCardDetailFragment(paymentMethod, mAccounts)
+                val account = Gson().toJson(accounts)
+                val vendorCardDetail = PMAManageCardFragmentDirections.actionManageCardFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                 navController?.navigate(vendorCardDetail)
             }
 
             R.id.addCardTextView -> {
-                val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(mAccounts)
+                val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
                 navController?.navigate(manageCard)
             }
+        }
+    }
+
+
+    private val paymentMethodItemSwipeLeft: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            return false
+        }
+
+        override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+            //Disable swipe if card is expired
+            val position = viewHolder.adapterPosition
+            val swipedProduct = mPaymentMethod?.get(position)
+            if (swipedProduct?.cardExpired == true) return 0
+            return super.getSwipeDirs(recyclerView, viewHolder)
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+            val position = viewHolder.adapterPosition
+
+            when (direction) {
+                ItemTouchHelper.LEFT -> {
+
+                    deletedPaymentMethod = mPaymentMethod?.get(position)
+
+                    mPaymentMethod?.removeAt(position)
+                    manageCardAdapter?.notifyItemRemoved(position)
+                    manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount
+                            ?: 0)
+
+                    val snack = Snackbar.make(pmaManageCardRecyclerView, "Product", Snackbar.LENGTH_LONG)
+                    snack.setAction("UNDO") {
+                        deletedPaymentMethod?.let { paymentMethod -> mPaymentMethod?.add(position, paymentMethod) }
+                        manageCardAdapter?.notifyItemInserted(position)
+                    }.show()
+                }
+            }
+        }
+
+        override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float = 0.7f
+
+        override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+
+            RecyclerViewSwipeDecorator.Builder(canvas, pmaManageCardRecyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addSwipeLeftLabel(bindString(R.string.delete))
+                    .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
+                    .addBackgroundColor(bindColor(R.color.delete_red_bg))
+                    .setSwipeLeftLabelTypeface(getMyriadProSemiBoldFont() ?: Typeface.DEFAULT)
+                    .setSwipeLeftTextColor(Color.WHITE)
+                    .create()
+                    .decorate()
+
+            super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
 }

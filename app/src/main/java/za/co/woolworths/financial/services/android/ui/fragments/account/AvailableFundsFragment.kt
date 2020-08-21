@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -85,9 +84,5 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
-    }
-
-    fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAccountPair) }
     }
 }

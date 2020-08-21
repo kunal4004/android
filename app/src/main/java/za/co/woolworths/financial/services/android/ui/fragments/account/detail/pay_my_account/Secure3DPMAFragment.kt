@@ -5,15 +5,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
+import za.co.woolworths.financial.services.android.models.dto.PayUPayResultRequest
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 
 class Secure3DPMAFragment : Fragment() {
 
+    private var merchantUrl: String? = null
+    private var merchantSiteUrl: String? = null
     private var navController: NavController? = null
 
     val args: Secure3DPMAFragmentArgs by navArgs()
@@ -31,32 +37,67 @@ class Secure3DPMAFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val redirection = args.pmaRedirection
+        initArgument()
+        configureToolbar()
+
         navController = Navigation.findNavController(view)
 
-        secureWebView?.apply {
+        setupWebView()
+    }
 
+    private fun initArgument() {
+        val redirection = args.pmaRedirection
+
+        merchantSiteUrl = redirection?.merchantSiteUrl?.replace("[\\u003d]".toRegex(), "=") ?: ""
+        merchantUrl = redirection?.url?.replace("[\\u003d]".toRegex(), "=") ?: ""
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setupWebView() {
+        secureWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
                 domStorageEnabled = true
+
+                webViewClient = object : WebViewClient() {
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        if (merchantSiteUrl?.let { url?.contains(it) }!!) {
+                            val siteUrl = url?.substring(url.indexOf("?"), url.length)
+
+                            val urlParams = siteUrl?.split("&")
+                            val customer = urlParams?.get(0)
+                            val paymentId = urlParams?.get(1)
+                            val chargeId = urlParams?.get(2)
+                            val status = urlParams?.get(3)
+
+                            val payUPayResultRequest = PayUPayResultRequest(
+                                    customer?.substring(customer.indexOf("=").plus(1), customer.length)
+                                            ?: "",
+                                    paymentId?.substring(paymentId.indexOf("=").plus(1), paymentId.length)
+                                            ?: "",
+                                    chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length)
+                                            ?: "",
+                                    status?.substring(status.indexOf("=").plus(1), status.length)
+                                            ?: "")
+
+                            val secure3DPMAFragmentDirections = Secure3DPMAFragmentDirections.actionSecure3DPMAFragmentToPMA3DSecureProcessRequestFragment(payUPayResultRequest)
+                            navController?.navigate(secure3DPMAFragmentDirections)
+                        }
+                    }
+                }
             }
-
-            loadUrl(redirection?.merchantSiteUrl)
+            loadUrl(merchantUrl)
         }
-
-        val response = "{\n" +
-                "    \"redirection\": {\n" +
-                "        \"created\": \"1596640255430\",\n" +
-                "        \"merchantSiteUrl\": \"http://localhost:8080/wfs/app/v4/payments/payu/result?customer=13897641\",\n" +
-                "        \"url\": \"https://staging.payu.co.za/merchant/secure3DRedirect.do?PayUReference=17893934651488\"\n" +
-                "    },\n" +
-                "    \"response\": {\n" +
-                "        \"code\": \"-1\",\n" +
-                "        \"desc\": \"Success\"\n" +
-                "    },\n" +
-                "    \"httpCode\": 200\n" +
-                "}"
-
-
     }
+
+    private fun configureToolbar() {
+        (activity as? PayMyAccountActivity)?.apply {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            displayToolbarDivider(true)
+            configureToolbar(bindString(R.string.secure_3d_title))
+        }
+    }
+
 }

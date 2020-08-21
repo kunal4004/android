@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.app.Activity.RESULT_OK
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
@@ -12,53 +13,36 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
+import kotlinx.android.synthetic.main.processing_request_success_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import java.lang.Exception
 import java.net.ConnectException
 
-class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickListener {
-
-    private lateinit var cardResponse: String
-    private lateinit var accountInfo: String
-    private lateinit var paymentMethod: String
+class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickListener {
 
     private var menuItem: MenuItem? = null
-    private var paymentMethodArgs: MutableList<GetPaymentMethod>? = null
-    private var cardDetailArgs: AddCardResponse? = null
-    private var accountArgs: Account? = null
     private var navController: NavController? = null
     private var hasPMAPostPayUPayCompleted: Boolean = false
 
-    val args: PMAProcessRequestFragmentArgs by navArgs()
+    val args: PMA3DSecureProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
-            paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
-            cardResponse = getString(PayMyAccountPresenterImpl.ADD_CARD_RESPONSE, "")
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
-        setArguments()
 
         navController = Navigation.findNavController(view)
 
@@ -66,12 +50,18 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         }, { updateUIOnFailure() }) // onSuccess(), onFailure()
 
         btnRetryProcessPayment?.apply {
-            setOnClickListener(this@PMAProcessRequestFragment)
+            setOnClickListener(this@PMA3DSecureProcessRequestFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
         tvCallCenterNumber?.apply {
-            setOnClickListener(this@PMAProcessRequestFragment)
+            setOnClickListener(this@PMA3DSecureProcessRequestFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
+
+        backToMyAccountButton?.apply {
+            setOnClickListener(this@PMA3DSecureProcessRequestFragment)
             AnimationUtilExtension.animateViewPushDown(this)
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
@@ -98,22 +88,11 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection && !hasPMAPostPayUPayCompleted) {
-                        true -> postPayUMethod()
+                        true -> postUPayResult()
                         else -> return
                     }
                 }
             })
-        }
-    }
-
-    private fun setArguments() {
-        try {
-            accountArgs = args.account
-            cardDetailArgs = args.tokenReceivedFromAddCard
-        } catch (e: Exception) {
-            accountArgs = Gson().fromJson(accountInfo, Account::class.java)
-            paymentMethodArgs = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-            cardDetailArgs = Gson().fromJson(cardResponse, AddCardResponse::class.java)
         }
     }
 
@@ -126,20 +105,21 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         }
     }
 
-    private fun postPayUMethod() {
-        val payURequestBody = payURequestBody(cardDetailArgs, accountArgs)
+    private fun postUPayResult() {
         startSpinning()
-        request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
+        val payUPayResultRequest = args.payUPayResult
+        request(payUPayResultRequest?.let { pay -> OneAppService.queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {
 
             override fun onSuccess(response: Any?) {
                 if (!isAdded) return
                 isAPICallSuccessFul = true
                 hasPMAPostPayUPayCompleted = true
-                (response as? PayUResponse)?.apply {
+                (response as? PayUPayResultResponse)?.apply {
                     when (httpCode) {
                         200 -> {
                             stopSpinning(true)
-                            navController?.navigate(PMAProcessRequestFragmentDirections.actionPMAProcessRequestFragmentToSecure3DPMAFragment(accountArgs, redirection))
+                            paymentValueTextView?.text = amount.replace("ZAR", "R ")
+                            updateUIOnSuccess()
                         }
                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
                         502 -> {
@@ -169,27 +149,17 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         })
     }
 
-    private fun showError(response: PayUResponse) {
+    private fun updateUIOnSuccess() {
+        menuItem?.isVisible = true
+        includePMAProcessingSuccess?.visibility = VISIBLE
+        includePMAProcessing?.visibility = GONE
+        includePMAProcessingFailure?.visibility = GONE
+    }
+
+    private fun showError(response: PayUPayResultResponse) {
         activity?.supportFragmentManager?.let { fragmentManager ->
             Utils.showGeneralErrorDialog(fragmentManager, response.response.desc ?: "")
         }
-    }
-
-    private fun payURequestBody(cardDetailArgs: AddCardResponse?, accountArgs: Account?): PayUPay {
-
-        val amountEntered = (activity as? PayMyAccountActivity)?.amountEntered ?: 0
-
-        val creditCardCVV = cardDetailArgs?.card?.cvv ?: ""
-        val token = cardDetailArgs?.token ?: "0"
-        val type = cardDetailArgs?.card?.type ?: ""
-        val isSaveCardChecked = cardDetailArgs?.saveChecked ?: false
-        val currency = "ZAR"
-
-        val accountNumber = accountArgs?.accountNumber ?: "0"
-        val productOfferingId = accountArgs?.productOfferingId ?: 0
-        val paymentMethod = PayUPaymentMethod(token, creditCardCVV, type)
-
-        return PayUPay(amountEntered, currency, productOfferingId, isSaveCardChecked, paymentMethod, accountNumber)
     }
 
     override fun onClick(view: View?) {
@@ -197,13 +167,21 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
             R.id.btnRetryProcessPayment -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     showPMAProcess()
-                    postPayUMethod()
+                    postUPayResult()
                 } else {
                     ErrorHandlerView(activity).showToast()
                 }
             }
             R.id.tvCallCenterNumber -> {
                 Utils.makeCall("0861 50 20 20")
+            }
+
+            R.id.backToMyAccountButton -> {
+                activity?.apply {
+                    setResult(RESULT_OK)
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                }
             }
         }
     }

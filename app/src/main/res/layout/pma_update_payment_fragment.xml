@@ -30,7 +30,7 @@
         android:text="@string/enter_payment_amount_label"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
-        app:layout_constraintBottom_toTopOf="@+id/pmaTotalAmountDueTextView"
+        app:layout_constraintBottom_toTopOf="@+id/pmaAmountOutstandingTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/enter_payment_amount_label" />
@@ -59,7 +59,7 @@
         tools:ignore="UnusedAttribute" />
 
     <TextView
-        android:id="@+id/pmaTotalAmountDueTextView"
+        android:id="@+id/pmaAmountOutstandingTextView"
         style="@style/amountDescriptionStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,12 +78,12 @@
     <ImageView
         android:id="@+id/editAmountImageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="56dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/pmaTotalAmountDueTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/pmaAmountOutstandingTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pmaTotalAmountDueTextView"
+        app:layout_constraintTop_toTopOf="@+id/pmaAmountOutstandingTextView"
         app:srcCompat="@drawable/edit_amount" />
 
 
@@ -102,9 +102,10 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:ems="4"
-            android:maxLength="3"
             android:gravity="center"
-            android:inputType="number" />
+            android:inputType="number|numberPassword"
+            android:maxLength="3"
+            android:textCursorDrawable="@drawable/cursor_custom_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -169,16 +170,17 @@
     <TextView
         android:id="@+id/changeTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="24dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
         android:letterSpacing="0.12"
         android:text="@string/change_label"
         android:textAllCaps="true"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cardNumberItemTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView" />
+        app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem" />
 
     <TextView
         android:id="@+id/cardNumberItemTextView"

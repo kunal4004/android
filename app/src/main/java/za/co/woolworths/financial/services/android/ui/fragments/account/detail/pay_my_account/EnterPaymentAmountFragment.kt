@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -12,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
+import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -91,21 +92,28 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
 
     private fun configureCurrencyEditText() {
         paymentAmountInputEditText?.apply {
-            inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+            setCurrency(CurrencySymbols.NONE)
+            setDelimiter(false)
+            setSpacing(true)
+            setDecimals(true)
+            setSeparator(".")
 
             addTextChangedListener(object : TextWatcher {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-//                    if (s.isEmpty()) return
-//                    val enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount * 100) } ?: 0
-//                    amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
+                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) }
+                            ?: 0
+                    enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
+                    amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
                 }
 
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
+
         }
     }
 
@@ -136,7 +144,9 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.continueToPaymentButton -> {
-                (activity as? PayMyAccountActivity)?.amountEntered = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()
+                val amountEntered = paymentAmountInputEditText?.text?.toString()
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("amountEntered", amountEntered)
+                (activity as? PayMyAccountActivity)?.amountEntered = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()
                 navController?.navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
             }
         }
