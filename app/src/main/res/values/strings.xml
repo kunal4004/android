@@ -1539,5 +1539,14 @@
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
     <string name="cli_got_it">GOT IT</string>
+    <string name="layout_gift_items">layoutGiftItems</string>
+    <string name="gwp_img_gift">imgGift</string>
+    <string name="gwp_product_name">txtGiftTitle</string>
+    <string name="gwp_product_desc">txtGiftDescription</string>
+    <string name="gwp_free_gift_disclaimer">txtFreeGiftDisclaimer</string>
+    <string name="gwp_popup_title">txtGiftLayoutTitle</string>
+    <string name="gwp_popup_desc">txtGiftLayoutDescription</string>
+    <string name="gwp_popup_btn_got_it">btnGotIt</string>
+    <string name="gwp_popup_layout_divider_view">layoutDividerView</string>
 </resources>
 
