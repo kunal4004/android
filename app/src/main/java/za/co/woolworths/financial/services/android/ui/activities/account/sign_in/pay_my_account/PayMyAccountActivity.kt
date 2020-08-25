@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.PAYMENT_METHOD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.EnterPaymentAmountFragment.Companion.SHOULD_DISPLAY_AMOUNT_ENTERED
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAManageCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
@@ -53,6 +54,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putString(ACCOUNT_INFO, getString(ACCOUNT_INFO, ""))
             args.putString(PAYMENT_METHOD, getString(PAYMENT_METHOD, ""))
             args.putString(ADD_CARD_RESPONSE, getString(ADD_CARD_RESPONSE, ""))
+            args.putBoolean(SHOULD_DISPLAY_AMOUNT_ENTERED, getBoolean(SHOULD_DISPLAY_AMOUNT_ENTERED, false))
 
             amountEntered = getString(AMOUNT_ENTERED, "0")?.replace("[,.R ]".toRegex(), "")?.toInt()!!
 

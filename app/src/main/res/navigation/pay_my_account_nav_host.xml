@@ -64,6 +64,10 @@
             android:name="ACCOUNT"
             app:argType="za.co.woolworths.financial.services.android.models.dto.Account"
             app:nullable="true" />
+        <argument
+            android:name="shouldEnterPaymentAmount"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_enterPaymentAmountFragment_to_addNewPayUCardFragment"
             app:destination="@id/addNewPayUCardFragment" />
@@ -168,6 +172,12 @@
             app:destination="@id/pmaProcessRequestFragment" />
         <action
             android:id="@+id/action_displayVendorCardDetailFragment_to_secure3DPMAFragment"
+            app:destination="@id/secure3DPMAFragment" />
+        <action
+            android:id="@+id/action_displayVendorCardDetailFragment_to_enterPaymentAmountFragment"
+            app:destination="@id/enterPaymentAmountFragment" />
+        <action
+            android:id="@+id/action_displayVendorCardDetailFragment_to_secure3DPMAFragment2"
             app:destination="@id/secure3DPMAFragment" />
     </dialog>
     <dialog

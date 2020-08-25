@@ -34,6 +34,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.account.
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.EnterPaymentAmountFragment.SHOULD_DISPLAY_AMOUNT_ENTERED;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -210,6 +211,18 @@ public class ScreenManager {
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.ADD_CARD_RESPONSE, cardResponse);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.AMOUNT_ENTERED, amountEntered);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
+        activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
+        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+    }
+
+    public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String amountEntered, boolean isAmountEntered, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
+        Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
+        howToPayIntent.putExtra(PayMyAccountPresenterImpl.ACCOUNT_INFO, account);
+        howToPayIntent.putExtra(PayMyAccountPresenterImpl.PAYMENT_METHOD, paymentMethod);
+        howToPayIntent.putExtra(PayMyAccountPresenterImpl.ADD_CARD_RESPONSE, cardResponse);
+        howToPayIntent.putExtra(PayMyAccountPresenterImpl.AMOUNT_ENTERED, amountEntered);
+        howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
+        howToPayIntent.putExtra(SHOULD_DISPLAY_AMOUNT_ENTERED, isAmountEntered);
         activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }

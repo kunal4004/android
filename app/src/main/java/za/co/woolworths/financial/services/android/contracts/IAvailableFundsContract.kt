@@ -38,6 +38,7 @@ interface IAvailableFundsContract {
         fun queryPayUPaymentMethod()
         fun isPersonalLoanAndStoreCardVisible(): Boolean?
         fun getAccountDetail(): Pair<ApplyNowState, Account>?
+        fun productHasAmountOverdue(): Boolean
 
     }
 

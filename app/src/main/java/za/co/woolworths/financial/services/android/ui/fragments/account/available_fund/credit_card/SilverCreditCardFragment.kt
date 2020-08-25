@@ -6,8 +6,10 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.util.Utils
 
 class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
@@ -28,7 +30,12 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
-            R.id.incPayMyAccountButton -> navigateToPayMyAccountActivity()
+            R.id.incPayMyAccountButton -> {
+                if (mAvailableFundPresenter?.productHasAmountOverdue()!!) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
+                }
+                navigateToPayMyAccountActivity()
+            }
 
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }

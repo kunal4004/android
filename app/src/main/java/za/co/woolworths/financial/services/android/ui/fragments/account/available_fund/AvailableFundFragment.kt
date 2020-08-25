@@ -11,6 +11,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -43,6 +45,9 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     private var isQueryPayUPaymentMethodComplete: Boolean = false
     var navController: NavController? = null
 
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+
+
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE }
 
     var payUMethodType = PAYUMethodType.CREATE_USER
@@ -51,6 +56,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         super.onCreate(savedInstanceState)
         mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
         mAvailableFundPresenter?.setBundle(arguments)
+        mAvailableFundPresenter?.getBundle()?.let { payMyAccountViewModel.setAccountProduct(it) }
     }
 
     override fun onAttach(context: Context) {
@@ -269,7 +275,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 200 -> {
                     mPaymentMethodsResponse = paymentMethodsResponse
                     payUMethodType = when (paymentMethods.isNotEmpty()) {
-                        true -> PAYUMethodType.CARD_UPDATE
+                        true -> {
+                            payMyAccountViewModel.setPaymentMethod(paymentMethodsResponse.paymentMethods)
+                            PAYUMethodType.CARD_UPDATE
+                        }
                         else -> PAYUMethodType.CREATE_USER
                     }
                 }

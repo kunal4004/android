@@ -62,6 +62,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="20dp"
         android:text="@string/use_this_card_button_label"
+        android:background="@drawable/button_selected_deselected_bg"
         android:textAllCaps="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

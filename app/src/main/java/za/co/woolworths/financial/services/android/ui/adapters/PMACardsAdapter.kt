@@ -70,4 +70,6 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
             })
         }
     }
+
+    fun getList() = paymentMethodList
 }

@@ -20,7 +20,6 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
-
     override fun setBundle(bundle: Bundle?) {
         val account = bundle?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
                 ?: throw RuntimeException("Accounts object is null or not found")
@@ -82,6 +81,8 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     }
 
     override fun getAccount(): Account? = mAccount
+
+    override fun productHasAmountOverdue(): Boolean = getAccount()?.amountOverdue ?: 0 > 0
 
     override fun onDestroy() {
         mainView = null

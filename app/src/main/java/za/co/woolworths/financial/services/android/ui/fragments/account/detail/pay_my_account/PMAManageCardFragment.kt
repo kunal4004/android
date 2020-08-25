@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -47,6 +49,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     private var navController: NavController? = null
     private var deletedPaymentMethod: GetPaymentMethod? = null
     private var root: View? = null
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     val args: PMAProcessRequestFragmentArgs by navArgs()
 
@@ -89,13 +92,17 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
         val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
 
-        if (isPaymentChecked?.isEmpty()!!)
+        if (isPaymentChecked?.isEmpty()!!) {
             mPaymentMethod?.get(0)?.isCardChecked = true
+            payMyAccountViewModel.setPaymentMethod(mPaymentMethod)
+        } else {
+            mPaymentMethod = payMyAccountViewModel.getPaymentMethod()
+        }
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
-
             manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod ->
+                payMyAccountViewModel.setPaymentMethod(manageCardAdapter?.getList())
                 when (paymentMethod.cardExpired) {
                     true -> {
                         val cardExpiredFragmentDirections = PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment()

@@ -67,13 +67,13 @@
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="41dp"
         android:gravity="center"
-        android:text="R 500.00"
+        android:text="R -"
         android:textColor="#222222"
         android:textSize="55sp"
         app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toStartOf="@+id/editAmountImageView"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="R 500.00" />
+        tools:text="R -" />
 
     <ImageView
         android:id="@+id/editAmountImageView"
@@ -87,36 +87,30 @@
         app:srcCompat="@drawable/edit_amount" />
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ccvTextInput"
+    <EditText
+        android:id="@+id/ccvEditTextInput"
         android:layout_width="80dp"
         android:layout_height="50dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/rectangle_bg"
+        android:digits="0123456789"
+        android:gravity="center"
+        android:hint="CVV"
+        android:inputType="numberPassword"
+        android:maxLength="3"
+        android:textCursorDrawable="@drawable/cursor_custom_color"
+        android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/pmaConfirmPaymentButton"
-        app:layout_constraintEnd_toEndOf="@+id/pmaConfirmPaymentButton">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ccvEditTextInput"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:digits="0123456789"
-            android:gravity="center"
-            android:inputType="numberPassword"
-            android:maxLength="3"
-            android:textCursorDrawable="@drawable/cursor_custom_color" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintEnd_toEndOf="@+id/pmaConfirmPaymentButton" />
 
     <ImageView
         android:id="@+id/ccvIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/ccvTextInput"
-        app:layout_constraintEnd_toStartOf="@+id/ccvTextInput"
-        app:layout_constraintTop_toTopOf="@+id/ccvTextInput"
+        app:layout_constraintBottom_toBottomOf="@+id/ccvEditTextInput"
+        app:layout_constraintEnd_toStartOf="@+id/ccvEditTextInput"
+        app:layout_constraintTop_toTopOf="@+id/ccvEditTextInput"
         app:srcCompat="@drawable/card_cvv" />
 
     <TextView
@@ -142,7 +136,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
         android:background="@color/bpi_background"
-        app:layout_constraintBottom_toTopOf="@+id/ccvTextInput"
+        app:layout_constraintBottom_toTopOf="@+id/ccvEditTextInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -189,7 +183,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="**** **** **** 7239"
+        android:text="@string/placeholder"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/cardItemImageView"
         app:layout_constraintEnd_toStartOf="@+id/changeTextView"

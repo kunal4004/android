@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
@@ -13,7 +11,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -34,7 +31,12 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+
                 val personalLoanAccount = mAvailableFundPresenter?.getAccount()
+                if (mAvailableFundPresenter?.productHasAmountOverdue()!!) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
+                }
+
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {
                     personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
                 } else {
@@ -53,15 +55,4 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         }
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    queryPaymentMethod()
-                }
-            }
-        }
-    }
 }

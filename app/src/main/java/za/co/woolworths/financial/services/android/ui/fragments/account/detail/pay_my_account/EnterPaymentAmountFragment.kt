@@ -1,19 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -24,22 +26,29 @@ import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.lang.Exception
 
-class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
+class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
+    private var isAmountEnteredPopulated: Boolean = false
     private var mPaymentMethod: MutableList<GetPaymentMethod>? = null
     private var paymentMethod: String? = null
     private var accountInfo: String? = null
     private var account: Account? = null
-
     private var navController: NavController? = null
 
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     val args: EnterPaymentAmountFragmentArgs by navArgs()
+
+    companion object {
+        const val SHOULD_DISPLAY_AMOUNT_ENTERED = "SHOULD_DISPLAY_AMOUNT_ENTERED"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +56,7 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         arguments?.apply {
             accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
             paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
+            isAmountEnteredPopulated = getBoolean(SHOULD_DISPLAY_AMOUNT_ENTERED, false)
         }
     }
 
@@ -71,10 +81,8 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue
-                ?: 0))
-        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue
-                ?: 0))
+        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
+        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
     }
 
     private fun configureToolbar() {
@@ -87,6 +95,7 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
 
     private fun configureButton() {
         continueToPaymentButton?.apply {
+            text = if (isAmountEnteredPopulated) bindString(R.string.done) else bindString(R.string.confirm_payment)
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
         }
@@ -106,30 +115,18 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) } ?: 0
-//                    when {
-//                        enteredAmount < 1 -> {
-//                            continueToPaymentButton?.isEnabled = false
-//                            reducePaymentAmountTextView?.visibility = VISIBLE
-//                            reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_min_input_error)
-//                        }
-//                        enteredAmount > 5000000 -> {
-//                            continueToPaymentButton?.isEnabled = false
-//                            reducePaymentAmountTextView?.visibility = VISIBLE
-//                            reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_max_input_error)
-//                        }
-//                        else -> {
-//                            continueToPaymentButton?.isEnabled = true
-//                            reducePaymentAmountTextView?.visibility = GONE
-//                        }
-//                    }
+                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) }
+                            ?: 0
                     enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
                     amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
+
                 }
 
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    reducePaymentAmountTextView?.visibility = INVISIBLE
+                }
             })
 
         }
@@ -143,7 +140,6 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                hideKeyboard()
                 activity?.onBackPressed()
                 true
             }
@@ -163,7 +159,31 @@ class EnterPaymentAmountFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.continueToPaymentButton -> {
                 val amountEntered = paymentAmountInputEditText?.text?.toString()
-                findNavController().previousBackStackEntry?.savedStateHandle?.set("amountEntered", amountEntered)
+                val enteredAmount = amountEntered?.replace("[R ]".toRegex(), "")?.toDouble() ?: 0.0
+                when {
+                    enteredAmount < 1.toDouble() -> {
+                        continueToPaymentButton?.isEnabled = false
+                        reducePaymentAmountTextView?.visibility = VISIBLE
+                        reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_min_input_error)
+                        return
+                    }
+                    enteredAmount > 50000.toDouble() -> {
+                        Log.e("enteredAmountAmount", enteredAmount.toString())
+                        continueToPaymentButton?.isEnabled = false
+                        reducePaymentAmountTextView?.visibility = VISIBLE
+                        reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_max_input_error)
+                        return
+                    }
+                }
+
+                if (continueToPaymentButton?.text?.toString() == bindString(R.string.done)) {
+                    payMyAccountViewModel.setAmountEntered(amountEntered)
+                    navController?.navigateUp()
+                    activity?.setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", amountEntered))
+                    activity?.finish()
+                    return
+                }
+
                 (activity as? PayMyAccountActivity)?.amountEntered = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()!!
                 navController?.navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
             }

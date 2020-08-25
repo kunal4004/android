@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -24,6 +26,8 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -40,6 +44,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
+
+    private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,7 +139,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun bottomSheetIsExpanded(): Boolean {
-        return sheetBehavior?.state ==  BottomSheetBehavior.STATE_EXPANDED
+        return sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun onClick(v: View?) {
@@ -173,13 +179,22 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.e("activityResult", data.toString())
         when (requestCode) {
+            PAY_MY_ACCOUNT_REQUEST_CODE -> {
+                if (resultCode == RESULT_OK) {
+                    val extras = data?.extras
+                    val amountEntered = extras?.getString("AMOUNT_ENTERED")
+                    payMyAccountViewModel.amountEntered.value = amountEntered
+                }
+            }
             REQUEST_CODE_ACCOUNT_INFORMATION -> sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
             else -> supportFragmentManager.fragments.apply {
                 if (this.isNotEmpty()) {
                     this[1].let {
                         it.childFragmentManager.fragments.let { childFragments ->
                             if (childFragments.isNotEmpty()) {
+                                Log.e("activityResultEmpty", data.toString())
                                 childFragments[0].onActivityResult(requestCode, resultCode, data)
                             }
                         }

@@ -59,6 +59,7 @@ class AddNewPayUCardFragment : Fragment() {
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
                 GlobalScope.doAfterDelay(100) {
+                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
                     addNewUserPayUWebView?.visibility = GONE
                     processCardNavHostLinearLayout?.visibility = VISIBLE
                 }
@@ -74,7 +75,7 @@ class AddNewPayUCardFragment : Fragment() {
             }, {
                 // on failure
                 GlobalScope.doAfterDelay(100) {
-                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     addNewUserPayUWebView?.visibility = VISIBLE
                     processCardNavHostLinearLayout?.visibility = GONE
                 }
