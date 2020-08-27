@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -20,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceDropdownAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbDropdownAdapter
@@ -27,7 +32,6 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.HashMap
 
 class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.EditDeliveryLocationView, View.OnClickListener {
 
@@ -39,9 +43,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
+    var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
+    var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
+    var rootView :View ? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
+        if (rootView == null)
+            rootView = inflater.inflate(R.layout.edit_delivery_location_fragment, container, false)
+        return rootView
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,15 +81,21 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun onClick(v: View?) {
+        if(progressGetProvinces.visibility == View.VISIBLE || progressGetSuburb.visibility == View.VISIBLE ) return
         when (v?.id) {
             R.id.confirmLocation -> {
                 if (selectedSuburb != null || selectedStore != null) {
-                    showSetSuburbProgressBar()
-                    presenter?.initSetSuburb(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb?.id!! else selectedStore?.id!!)
-                    if (deliveryType == DeliveryType.STORE_PICKUP) {
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm)
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)))
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)))
+                    when (deliveryType) {
+                        DeliveryType.STORE_PICKUP -> {
+                            validatedSuburbProductsForStore?.let {
+                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                            }
+                        }
+                        DeliveryType.DELIVERY -> {
+                            validatedSuburbProductsForDelivery?.let {
+                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                            }
+                        }
                     }
                 }
             }
@@ -104,9 +119,16 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun onGetProvincesSuccess(regions: List<Province>) {
         this.regions = regions
         hideGetProvincesProgress()
-        val adapter = activity?.let { ProvinceDropdownAdapter(it, 0, regions, ::onProvinceSelected) }
-        tvSelectedProvince.setAdapter(adapter)
-        tvSelectedProvince.showDropDown()
+        activity?.let { activity ->
+            this.regions?.let {
+                ProvinceDropdownAdapter(activity, 0, it, ::onProvinceSelected).let {
+                    tvSelectedProvince?.apply {
+                        setAdapter(it)
+                        showDropDown()
+                    }
+                }
+            }
+        }
     }
 
     override fun onGetProvincesFailure() {
@@ -119,9 +141,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         if (suburbs.isNullOrEmpty()) {
             showNoStoresError()
         } else {
-            val adapter = activity?.let { SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected) }
-            tvSelectedSuburb.setAdapter(adapter)
-            tvSelectedSuburb.showDropDown()
+            activity?.let { it ->
+                SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected).let {
+                    tvSelectedSuburb?.apply {
+                        setAdapter(it)
+                        showDropDown()
+                    }
+                }
+            }
         }
     }
 
@@ -178,10 +205,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun onSetSuburbSuccess() {
         hideSetSuburbProgressBar()
         Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
-        bundle?.putString(DELIVERY_TYPE, deliveryType.name)
-        bundle?.putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
-        bundle?.putString("PROVINCE", Utils.toJson(selectedProvince))
-        navController?.navigate(R.id.action_to_editDeliveryLocationConfirmationFragment, bundleOf("bundle" to bundle))
+        navigateToSuburbConfirmationFragment()
     }
 
     override fun onSetSuburbFailure() {
@@ -201,24 +225,30 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             this.selectedSuburb = suburb
         else
             this.selectedStore = suburb
+        hideStoreClosedMessage()
         tvSelectedSuburb?.setText(suburb?.name)
         tvSelectedSuburb?.dismissDropDown()
-        validateConfirmLocationButtonAvailability()
+        suburb?.id?.let { validateSelectedSuburb(it, deliveryType == DeliveryType.STORE_PICKUP) }
     }
 
 
     private fun resetSuburbSelection() {
         selectedSuburb = null
         selectedStore = null
+        validatedSuburbProductsForStore = null
+        validatedSuburbProductsForDelivery = null
         tvSelectedSuburb.text.clear()
         tvSelectedSuburb.hint = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
         validateConfirmLocationButtonAvailability()
+        hideAvailableDeliveryDateMessagee()
+        hideStoreClosedMessage()
     }
 
     private fun setDeliveryOption(type: DeliveryType) {
         deliveryType = type
         subTitle?.text = bindString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
         maxItemsInfoMessageLayout?.visibility = if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
+        confirmLocation.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.confirm_suburb else R.string.confirm_store)
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
@@ -243,14 +273,15 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 }
             }
         }
+        showAvailableDeliveryDateMessage()
         validateConfirmLocationButtonAvailability()
     }
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null && !isStoreClosed(validatedSuburbProductsForDelivery))
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null && !isStoreClosed(validatedSuburbProductsForStore))
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -268,6 +299,28 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         }
     }
 
+    override fun validateSelectedSuburb(suburbId: String, isStore: Boolean) {
+        if (progressGetProvinces?.visibility == View.VISIBLE) return
+        showGetSuburbProgress()
+        presenter?.validateSelectedSetSuburb(suburbId, isStore)
+
+    }
+
+    override fun onValidateSelectedSuburbSuccess(validatedSuburbProducts: ValidatedSuburbProducts?) {
+        hideGetSuburbProgress()
+        if (deliveryType == DeliveryType.DELIVERY)
+            this.validatedSuburbProductsForDelivery = validatedSuburbProducts
+        else
+            this.validatedSuburbProductsForStore = validatedSuburbProducts
+
+        showAvailableDeliveryDateMessage()
+    }
+
+    override fun onValidateSelectedSuburbFailure() {
+        hideGetSuburbProgress()
+        showErrorDialog()
+    }
+
     private fun setUsersCurrentDeliveryDetails() {
         Utils.getPreferredDeliveryLocation()?.apply {
             if (province?.id.isNullOrEmpty()) return
@@ -278,12 +331,16 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             else
                 selectedSuburb = suburb
             setDeliveryOption(deliveryType)
+
+            (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.let {
+                validateSelectedSuburb(it.id, deliveryType == DeliveryType.STORE_PICKUP)
+            }
         }
     }
 
     private fun showNoStoresError() {
         noStoresForProvinceMsg?.visibility = View.VISIBLE
-        noStoresForProvinceMsg.text =bindString(R.string.no_stores_for_province_message)+selectedProvince?.name+"."
+        noStoresForProvinceMsg.text = bindString(R.string.no_stores_for_province_message) + selectedProvince?.name + "."
         selectProvince?.setBackgroundResource(R.drawable.input_error_background)
         tvSelectedSuburb.setText(bindString(R.string.no_stores_available))
     }
@@ -297,5 +354,80 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         }
     }
 
+    override fun showAvailableDeliveryDateMessage() {
+        hideAvailableDeliveryDateMessagee()
+        hideStoreClosedMessage()
+        (if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.let {
+            if (isStoreClosed(it)) {
+                showStoreClosedMessage()
+            } else {
+                foodDeliveryDateMessage?.apply {
+                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name + ", " + selectedProvince?.name, it.firstAvailableFoodDeliveryDate
+                            ?: "")
+                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
+                    visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
+
+                otherDeliveryDateMessage?.apply {
+                    val message = getString(R.string.first_available_other_delivery_date, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name+ ", " + selectedProvince?.name, it.firstAvailableOtherDeliveryDate
+                            ?: "")
+                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
+                    visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
+            }
+            validateConfirmLocationButtonAvailability()
+        }
+
+    }
+
+    override fun hideAvailableDeliveryDateMessagee() {
+        foodDeliveryDateMessage?.visibility = View.GONE
+        otherDeliveryDateMessage?.visibility = View.GONE
+    }
+
+    override fun showStoreClosedMessage() {
+        storeClosedMsg?.visibility = View.VISIBLE
+        selectSuburb?.setBackgroundResource(R.drawable.input_error_background)
+    }
+
+    override fun hideStoreClosedMessage() {
+        storeClosedMsg?.visibility = View.GONE
+        selectSuburb?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+    }
+
+    override fun executeSetSuburb() {
+        showSetSuburbProgressBar()
+        presenter?.initSetSuburb(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb?.id!! else selectedStore?.id!!)
+        if (deliveryType == DeliveryType.STORE_PICKUP) {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)))
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)))
+        }
+    }
+
+    override fun navigateToSuburbConfirmationFragment() {
+        bundle?.apply {
+            putString(DELIVERY_TYPE, deliveryType.name)
+            putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
+            putString("PROVINCE", Utils.toJson(selectedProvince))
+        }
+        navController?.navigate(R.id.action_to_editDeliveryLocationConfirmationFragment, bundleOf("bundle" to bundle))
+    }
+
+    override fun navigateToUnsellableItemsFragment() {
+        bundle?.apply {
+            putString(DELIVERY_TYPE, deliveryType.name)
+            putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
+            putString("PROVINCE", Utils.toJson(selectedProvince))
+            putString("PROVINCE", Utils.toJson(selectedProvince))
+            putString("UnSellableCommerceItems", Utils.toJson((if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.unSellableCommerceItems))
+        }
+        navController?.navigate(R.id.action_to_unsellableItemsFragment, bundleOf("bundle" to bundle))
+    }
+
+    private fun isStoreClosed(validatedSuburbProducts: ValidatedSuburbProducts?): Boolean {
+        val deliveryStatus: HashMap<String, Boolean?>? = validatedSuburbProducts?.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
+        return (validatedSuburbProducts?.storeClosed == true && deliveryStatus?.get("01") == false)
+    }
 
 }
