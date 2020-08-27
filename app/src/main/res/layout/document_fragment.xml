@@ -230,6 +230,7 @@
                             <za.co.woolworths.financial.services.android.ui.views.WEditTextView
                                 android:id="@+id/etAccountNumber"
                                 style="@style/editCurrencyValue"
+                                android:maxLength="20"
                                 />
                         </LinearLayout>
 

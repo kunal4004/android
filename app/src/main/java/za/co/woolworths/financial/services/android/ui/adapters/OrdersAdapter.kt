@@ -52,6 +52,8 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
             itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
             itemView.deliveryItemsType.text = bindString(if (item.clickAndCollectOrder) R.string.collection_date else R.string.delivery_date)
+            itemView.deliveryItemsType.contentDescription = bindString(if (item.clickAndCollectOrder) R.string.collection_date_title else R.string.delivery_date_title)
+            itemView.deliveryDate.contentDescription = bindString(if (item.clickAndCollectOrder) R.string.collection_date_value else R.string.delivery_date_value)
             if (!item.deliveryDates.isJsonNull) {
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 deliveryDates.clear()
