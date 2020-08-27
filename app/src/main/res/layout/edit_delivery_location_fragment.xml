@@ -34,6 +34,7 @@
 
 
         <TextView
+            android:id="@+id/txtDelivery"
             style="@style/myriad_pro_regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,6 +55,7 @@
         app:layout_constraintTop_toTopOf="@id/delivery">
 
         <TextView
+            android:id="@+id/txtclickAndCollect"
             style="@style/myriad_pro_regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
