@@ -25,6 +25,7 @@
         tools:showIn="@layout/whatsapp_chat_activity">
 
         <TextView
+            android:id="@+id/whatsAppTitleToolbar"
             style="@style/appToolbarStyle"
             android:layout_width="wrap_content"
             android:text="@string/whatsapp_chat_to_us_title" />
@@ -66,6 +67,7 @@
         app:layout_constraintGuide_end="24dp" />
 
     <TextView
+        android:id="@+id/chatToUsWhatsAppTitleTextView"
         style="@style/chat_with_us_title_style"
         android:text="@string/whatsapp_chat_with_us_row_title"
         app:layout_constraintBottom_toTopOf="@+id/chatToUsTitleGuideLine"

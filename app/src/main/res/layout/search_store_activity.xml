@@ -8,6 +8,7 @@
     <include layout="@layout/no_connection_handler"/>
 
     <LinearLayout
+        android:id="@+id/search_store_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/recent_search_bg"

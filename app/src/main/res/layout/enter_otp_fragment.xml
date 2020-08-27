@@ -73,6 +73,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
 
     <za.co.woolworths.financial.services.android.ui.views.LoadingDots
+        android:id="@+id/loadingDotsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"

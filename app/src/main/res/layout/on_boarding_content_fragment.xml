@@ -40,12 +40,14 @@
 
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/phoneImageStartGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.06" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/phoneImageEndGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

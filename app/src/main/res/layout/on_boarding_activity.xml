@@ -73,6 +73,7 @@
         app:layout_constraintGuide_end="82dp" />
 
     <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/skipLetsGoBarrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
