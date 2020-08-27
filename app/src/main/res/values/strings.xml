@@ -1550,5 +1550,13 @@
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
     <string name="freeze_temp_label">Temp Freeze</string>
     <string name="food_only">food only</string>
+    <string name="collection_date_title">labelCollectionDate</string>
+    <string name="collection_date_value">txtCollectionDateValue</string>
+    <string name="collection_details_date_title">labelCollectionDetailsDate</string>
+    <string name="collection_details_date_value">txtCollectionDetailsDateValue</string>
+    <string name="collection_location_title">labelCollectionDetailsDate</string>
+    <string name="collection_location_value">txtCollectionDetailsDateValue</string>
+    <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
+    <string name="delivery_location_value">txtDeliveryLocationValue</string>
 </resources>
 
