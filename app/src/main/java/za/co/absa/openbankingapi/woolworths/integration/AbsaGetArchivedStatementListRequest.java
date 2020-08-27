@@ -31,7 +31,7 @@ public class AbsaGetArchivedStatementListRequest {
             Crashlytics.logException(e);
         }
 
-        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatementList.exp", StatementListResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<StatementListResponse>() {
+        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/BalanceEnquiryFacadeGetAllBalances.exp", StatementListResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<StatementListResponse>() {
             @Override
             public void onResponse(StatementListResponse response, List<HttpCookie> cookies) {
                 responseDelegate.onSuccess(response, cookies);

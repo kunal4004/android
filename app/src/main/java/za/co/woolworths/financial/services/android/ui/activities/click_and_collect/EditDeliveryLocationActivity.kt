@@ -54,8 +54,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     override fun onBackPressed() {
         setResult(Activity.RESULT_CANCELED)
         finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-    }
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)    }
 
     private fun loadNavHostFragment() {
         findNavController(R.id.nav_host_fragment)
@@ -64,4 +63,5 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
                         bundleOf("bundle" to bundle)
                 )
     }
+
 }

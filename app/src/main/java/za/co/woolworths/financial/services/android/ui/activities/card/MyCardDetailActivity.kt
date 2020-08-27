@@ -17,12 +17,16 @@ import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.RESULT_CODE_BLOCK_CODE_SUCCESS
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
+import java.util.*
 
 
 class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
@@ -30,8 +34,11 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
         const val CARD_NUMBER = "CARD_NUMBER"
+        const val TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE = 3212
     }
 
+    var shouldActivateUnblockCardOnLanding: Boolean  = false
+    var shouldNotifyStateChanged = false
     private var mStoreCardDetail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +49,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
         intent?.extras?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
+            shouldActivateUnblockCardOnLanding = getBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, false)
         }
         addCardDetailFragment()
 
@@ -54,13 +62,17 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     }
 
     private fun addCardDetailFragment() {
-        val blockCode = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode
+        val primaryCard =  Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
+        val shouldDisplayStoreCardDetail =  TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
         val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
         // Determine if card is blocked: if blockCode is not null, card is blocked.
-        when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true) || TextUtils.isEmpty(blockCode)) {
+        when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+                || shouldDisplayStoreCardDetail
+                && blockType != TemporaryFreezeStoreCard.PERMANENT) {
             true -> {
                 addFragment(
-                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
+                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail,shouldActivateUnblockCardOnLanding),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
@@ -95,9 +107,12 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     override fun onBackPressed() = navigateBack()
 
-
     private fun navigateBack() {
         supportFragmentManager?.apply {
+            // Disable onBackPressed when temporary freeze card api is executing
+            if (getCurrentFragment() is MyCardDetailFragment) {
+                if ((getCurrentFragment() as? MyCardDetailFragment)?.isTemporaryCardFreezeInProgress() == true) return@apply
+            }
             if (backStackEntryCount > 0) {
                 popBackStack()
                 when (getCurrentFragment()) {
@@ -119,6 +134,9 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         when (getCurrentFragment()) {
             // back pressed from replacement card
             is MyCardBlockedFragment, is MyCardDetailFragment -> {
+                if (shouldNotifyStateChanged) {
+                    setResult(TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                }
                 this.finish()
                 this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
@@ -156,6 +174,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         } else if ((requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_OK) ||
                 (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_CODE_BLOCK_CODE_SUCCESS) ||
                 (requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == RESULT_CODE_BLOCK_CODE_SUCCESS)) { // close previous cart detail
+            setResult(TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
             finish() // will close previous activity in stack
         } else {
             supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
