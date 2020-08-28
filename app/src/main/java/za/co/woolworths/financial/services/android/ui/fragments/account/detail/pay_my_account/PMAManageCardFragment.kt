@@ -98,10 +98,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             mPaymentMethod?.get(0)?.isCardChecked = true
             payMyAccountViewModel.setPaymentMethodList(mPaymentMethod)
         } else {
-           val list = payMyAccountViewModel.getPaymentMethodList()
-            list?.get(2)?.cardExpired = true
-            list?.get(4)?.cardExpired = true
-            mPaymentMethod = list
+            mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
         }
 
         pmaManageCardRecyclerView?.apply {
