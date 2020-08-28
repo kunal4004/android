@@ -4,6 +4,7 @@
     xmlns:fresco="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="@color/white"
+    android:contentDescription="@string/layout_gift_items"
     android:layout_height="90dp">
 
     <View
@@ -36,6 +37,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="0dp"
         android:text="@string/free_gift"
+        android:contentDescription="@string/gwp_img_gift"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,6 +50,7 @@
         android:layout_marginEnd="16dp"
         android:layout_toStartOf="@+id/price"
         android:layout_toEndOf="@+id/imProductImage"
+        android:contentDescription="@string/gwp_product_name"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="@string/placeholder"
