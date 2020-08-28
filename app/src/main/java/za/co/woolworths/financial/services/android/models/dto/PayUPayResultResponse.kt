@@ -7,7 +7,7 @@ data class PayUPayResultResponse(
         @SerializedName("status") val status: String,
         @SerializedName("paymentSuccessful") val paymentSuccessful: Boolean,
         @SerializedName("paymentId") val paymentId: String,
-        @SerializedName("amount") val amount: String,
+        @SerializedName("amount") val amount: Int,
         @SerializedName("response") val response: Response,
         @SerializedName("httpCode") val httpCode: Int
 ) : Serializable
