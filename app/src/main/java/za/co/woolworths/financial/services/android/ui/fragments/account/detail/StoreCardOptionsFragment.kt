@@ -73,7 +73,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                     true -> {
                         cardDetailImageView?.setImageDrawable(bindDrawable(R.drawable.card_freeze))
                         manageMyCardTextView?.text = bindString(R.string.unfreeze_my_card_label)
-                        KotlinUtils.roundCornerDrawable(tempFreezeTextView, "#FF7000")
+                        tempFreezeTextView?.let{KotlinUtils.roundCornerDrawable(it, "#FF7000")}
                         tempFreezeTextView?.text = bindString(R.string.freeze_temp_label)
                         tempFreezeTextView?.visibility = VISIBLE
                         myCardDetailTextView?.visibility = GONE

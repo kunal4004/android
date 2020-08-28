@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,13 +12,16 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
+
 import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.PayUPayResultRequest
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 
+
 class Secure3DPMAFragment : Fragment() {
 
+    private var root: View? = null
     private var merchantUrl: String? = null
     private var merchantSiteUrl: String? = null
     private var navController: NavController? = null
@@ -30,7 +34,9 @@ class Secure3DPMAFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.secure_3d_webview_fragment, container, false)
+        if (root == null)
+            root = inflater.inflate(R.layout.secure_3d_webview_fragment, container, false)
+        return root
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -41,13 +47,11 @@ class Secure3DPMAFragment : Fragment() {
         configureToolbar()
 
         navController = Navigation.findNavController(view)
-
         setupWebView()
     }
 
     private fun initArgument() {
         val redirection = args.pmaRedirection
-
         merchantSiteUrl = redirection?.merchantSiteUrl?.replace("[\\u003d]".toRegex(), "=") ?: ""
         merchantUrl = redirection?.url?.replace("[\\u003d]".toRegex(), "=") ?: ""
     }
@@ -61,9 +65,9 @@ class Secure3DPMAFragment : Fragment() {
 
                 webViewClient = object : WebViewClient() {
 
-                    override fun onPageFinished(view: WebView?, url: String?) {
-                        super.onPageFinished(view, url)
+                    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         if (merchantSiteUrl?.let { url?.contains(it) }!!) {
+                            stopLoading()
                             val siteUrl = url?.substring(url.indexOf("?"), url.length)
 
                             val urlParams = siteUrl?.split("&")
@@ -84,13 +88,16 @@ class Secure3DPMAFragment : Fragment() {
 
                             val secure3DPMAFragmentDirections = Secure3DPMAFragmentDirections.actionSecure3DPMAFragmentToPMA3DSecureProcessRequestFragment(payUPayResultRequest)
                             navController?.navigate(secure3DPMAFragmentDirections)
+                            return
                         }
+                        super.onPageStarted(view, url, favicon)
                     }
                 }
             }
             loadUrl(merchantUrl)
         }
     }
+
 
     private fun configureToolbar() {
         (activity as? PayMyAccountActivity)?.apply {

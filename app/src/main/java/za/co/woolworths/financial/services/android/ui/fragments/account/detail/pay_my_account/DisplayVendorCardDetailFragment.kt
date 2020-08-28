@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
@@ -40,6 +39,11 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var navController: NavController? = null
 
+    override fun onActivityCreated(arg0: Bundle?) {
+        super.onActivityCreated(arg0)
+        dialog?.window?.attributes?.windowAnimations = R.style.DialogWithoutAnimation
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (root == null)
             root = inflater.inflate(R.layout.pma_update_payment_fragment, container, false)
@@ -57,16 +61,17 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             navController = NavHostFragment.findNavController(this)
 
         paymentMethodList = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethodArgs, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-        val accountArgs = Gson().fromJson<Account>(mAccounts, Account::class.java)
+        val accountArgs = Gson().fromJson(mAccounts, Account::class.java)
         val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(accountArgs?.amountOverdue
                 ?: 0), 1, activity))
         setupListener()
 
-        payMyAccountViewModel.amountEntered.observe(viewLifecycleOwner, Observer<String> { amountEntered ->
-            pmaAmountOutstandingTextView?.text = amountEntered ?: amountOverdue
+        payMyAccountViewModel.amountEntered.observe(viewLifecycleOwner, { amountEntered ->
+            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty()) amountOverdue else amountEntered
+            pmaConfirmPaymentButton.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != "R 0.00")
         })
 
-        payMyAccountViewModel.paymentMethodList?.observe(viewLifecycleOwner, Observer<MutableList<GetPaymentMethod>> {
+        payMyAccountViewModel.paymentMethodList?.observe(viewLifecycleOwner, {
             initPaymentMethod()
         })
 
@@ -119,15 +124,16 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
 
     override fun onClick(v: View?) {
         val amountEntered = pmaAmountOutstandingTextView?.text?.toString()
-
+        paymentMethodArgs = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
         if (activity is PayMyAccountActivity) {
             when (v?.id) {
                 R.id.editAmountImageView -> {
-                    val account = payMyAccountViewModel.getAccountProduct()?.second
-                    val cardVendorDirections = DisplayVendorCardDetailFragmentDirections.actionDisplayVendorCardDetailFragmentToEnterPaymentAmountFragment(account)
-                    navController?.navigate(cardVendorDirections)
+                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, amountEntered, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
-                R.id.changeTextView -> dismiss()
+
+                R.id.changeTextView -> {
+                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, amountEntered, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                }
 
                 R.id.pmaConfirmPaymentButton -> {
                     val (account, cardResponse) = payMyAccountViewModel.createCard()
@@ -138,17 +144,17 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         } else {
             when (v?.id) {
                 R.id.editAmountImageView -> {
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, args.paymentMethod, null, amountEntered, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
+                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, amountEntered, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
                 R.id.changeTextView -> {
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, args.paymentMethod, null, amountEntered, PayMyAccountStartDestinationType.MANAGE_CARD)
+                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, amountEntered, true, PayMyAccountStartDestinationType.MANAGE_CARD)
                 }
                 R.id.pmaConfirmPaymentButton -> {
                     val cvv = ccvEditTextInput?.text?.toString() ?: "0"
                     with(payMyAccountViewModel) {
                         setCVVNumber(cvv)
                         val (accounts, cardResponse) = createCard()
-                        ScreenManager.presentPayMyAccountActivity(activity, Gson().toJson(accounts?.second), args.paymentMethod, Gson().toJson(cardResponse), amountEntered, PayMyAccountStartDestinationType.SECURE_3D)
+                        ScreenManager.presentPayMyAccountActivity(activity, Gson().toJson(accounts?.second), paymentMethodArgs, Gson().toJson(cardResponse), amountEntered, PayMyAccountStartDestinationType.SECURE_3D)
                     }
                     dismiss()
                 }

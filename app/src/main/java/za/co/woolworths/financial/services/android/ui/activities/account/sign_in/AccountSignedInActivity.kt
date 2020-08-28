@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -18,16 +17,20 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -179,13 +182,28 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.e("activityResult", data.toString())
+        val extras = data?.extras
         when (requestCode) {
             PAY_MY_ACCOUNT_REQUEST_CODE -> {
-                if (resultCode == RESULT_OK) {
-                    val extras = data?.extras
-                    val amountEntered = extras?.getString("AMOUNT_ENTERED")
-                    payMyAccountViewModel.amountEntered.value = amountEntered
+                when (resultCode) {
+                    RESULT_OK -> {
+                        val amountEntered = extras?.getString("AMOUNT_ENTERED")
+                        if (amountEntered != null)
+                            payMyAccountViewModel.setAmountEntered(amountEntered)
+                        val paymentMethod = extras?.getString("PAYMENT_METHOD_LIST")
+                        if (paymentMethod != null)
+                            payMyAccountViewModel.setPaymentMethodList(Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type))
+                    }
+
+                    PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
+                        payMyAccountViewModel.queryPaymentMethod.value = true
+                    }
+
+                    PMA_UPDATE_CARD_RESULT_CODE -> {
+                        val paymentMethod = extras?.getString("PAYMENT_METHOD_LIST")
+                        if (paymentMethod != null)
+                            payMyAccountViewModel.setPaymentMethodList(Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type))
+                    }
                 }
             }
             REQUEST_CODE_ACCOUNT_INFORMATION -> sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -194,7 +212,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                     this[1].let {
                         it.childFragmentManager.fragments.let { childFragments ->
                             if (childFragments.isNotEmpty()) {
-                                Log.e("activityResultEmpty", data.toString())
                                 childFragments[0].onActivityResult(requestCode, resultCode, data)
                             }
                         }

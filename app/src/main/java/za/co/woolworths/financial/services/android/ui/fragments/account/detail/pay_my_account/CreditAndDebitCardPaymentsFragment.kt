@@ -8,9 +8,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
 import kotlinx.android.synthetic.main.debit_or_credit_card_item.*
@@ -21,6 +24,7 @@ import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
@@ -28,9 +32,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
@@ -38,6 +42,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     private var payMyAccountPresenter: PayMyAccountPresenterImpl? = null
     private var navController: NavController? = null
     private var layout: View? = null
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Prevent layout to reload when fragment refresh
@@ -75,6 +80,49 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         }
 
         setWhatsAppChatWithUsVisibility(payMyAccountPresenter?.getWhatsAppVisibility() ?: false)
+
+        activity?.let { act ->
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    when (hasConnection) {
+                        true -> {
+                            if (payMyAccountViewModel.getPaymentMethodList()?.isNotEmpty() == true) return
+
+                            initShimmer()
+                            startProgress()
+                            payMyAccountViewModel.queryServiceGetPaymentMethod({ paymentMethodsResponse ->
+                                with(paymentMethodsResponse) {
+                                    when (httpCode) {
+                                        200 -> {
+                                            payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
+                                        }
+                                        440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams
+                                                ?: "", activity)
+
+                                        else -> {
+                                            activity?.let {
+                                                Utils.showGeneralErrorDialog(it, response.desc
+                                                        ?: "")
+                                            }
+                                        }
+                                    }
+                                    initShimmer()
+                                    stopProgress()
+                                }
+                            }, { throwable ->
+                                stopProgress()
+                            })
+                        }
+                        else -> {
+                            ErrorHandlerView(act).showToast()
+                        }
+                    }
+                }
+            })
+        }
+
+        initShimmer()
+        stopProgress()
     }
 
     private fun configureClickEvent() {
@@ -138,9 +186,22 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
-                val account = payMyAccountPresenter?.getAccount() ?: Account()
-                val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account)
-                navController?.navigate(toEnterPaymentAmountDirection)
+                val paymentMethod = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
+
+                when (payMyAccountViewModel.getPaymentMethodType()) {
+
+                    PayMyAccountViewModel.PAYUMethodType.CREATE_USER -> {
+                        val account = payMyAccountPresenter?.getAccount() ?: Account()
+                        val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account, true)
+                        navController?.navigate(toEnterPaymentAmountDirection)
+                    }
+                    PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE -> {
+                        val account = Gson().toJson(payMyAccountPresenter?.getAccount() ?: Account())
+                        val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
+                        navController?.navigate(toDisplayCard)
+                    }
+                    else -> return
+                }
             }
 
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
@@ -159,11 +220,9 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                     whatsAppUnavailableFragment.show(childFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName)
                     return
                 }
-
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
                 ScreenManager.presentWhatsAppChatToUsActivity(activity, WhatsAppChatToUs.FEATURE_WHATSAPP, payMyAccountPresenter?.getAppScreenName())
             }
-
         }
     }
 
@@ -185,5 +244,19 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         } else {
             incWhatsAppAnyQuestions?.visibility = GONE
         }
+    }
+
+    fun initShimmer() {
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        payByCardNowButtonShimmerLayout?.setShimmer(shimmer)
+    }
+
+    fun startProgress() {
+        payByCardNowButtonShimmerLayout?.startShimmer()
+    }
+
+    private fun stopProgress() {
+        payByCardNowButtonShimmerLayout?.setShimmer(null)
+        payByCardNowButtonShimmerLayout?.stopShimmer()
     }
 }

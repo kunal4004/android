@@ -18,17 +18,19 @@ import java.lang.RuntimeException
 class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.PayMyAccountView?, private var model: IPaymentOptionContract.PayMyAccountModel) : IPaymentOptionContract.PayMyAccountPresenter, IPaymentOptionContract.PayMyAccountModel {
 
     companion object {
-        const val PAYMENT_METHOD: String = "PAYMENT_METHOD"
-        const val ACCOUNT_INFO = "ACCOUNT_INFO"
-        const val ADD_CARD_RESPONSE = "ADD_CARD_RESPONSE"
+        const val GET_PAYMENT_METHOD: String = "PAYMENT_METHOD"
+        const val GET_ACCOUNT_INFO = "ACCOUNT_INFO"
+        const val GET_CARD_RESPONSE = "ADD_CARD_RESPONSE"
         const val SCREEN_TYPE: String = "SCREEN_TYPE"
         const val AMOUNT_ENTERED: String = "AMOUNT_ENTERED"
+        const val IS_DONE_BUTTON_ENABLED: String = "IS_DONE_BUTTON_ENABLED"
+        const val IS_PAYMENT_METHOD: String = "IS_DONE_BUTTON_ENABLED"
     }
 
     var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
     override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountDetails = Gson().fromJson(intent?.getStringExtra(GET_ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     override fun getAccount(): Account? {

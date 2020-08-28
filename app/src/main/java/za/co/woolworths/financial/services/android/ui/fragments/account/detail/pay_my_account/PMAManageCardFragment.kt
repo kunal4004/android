@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -56,10 +58,11 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
-            paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
+            accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
+            paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
             mAccountDetails = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
             mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
+            payMyAccountViewModel.setPaymentMethodList(mPaymentMethod)
         }
     }
 
@@ -91,18 +94,18 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         // ensure first item is checked
 
         val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
-
         if (isPaymentChecked?.isEmpty()!!) {
             mPaymentMethod?.get(0)?.isCardChecked = true
-            payMyAccountViewModel.setPaymentMethod(mPaymentMethod)
+            payMyAccountViewModel.setPaymentMethodList(mPaymentMethod)
         } else {
-            mPaymentMethod = payMyAccountViewModel.getPaymentMethod()
+            mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
         }
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
             manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod ->
-                payMyAccountViewModel.setPaymentMethod(manageCardAdapter?.getList())
+                payMyAccountViewModel.setPaymentMethodList(manageCardAdapter?.getList())
+                useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
                 when (paymentMethod.cardExpired) {
                     true -> {
                         val cardExpiredFragmentDirections = PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment()
@@ -166,9 +169,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
             when (direction) {
                 ItemTouchHelper.LEFT -> {
-
                     deletedPaymentMethod = mPaymentMethod?.get(position)
-
                     mPaymentMethod?.removeAt(position)
                     manageCardAdapter?.notifyItemRemoved(position)
                     manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount
@@ -179,6 +180,8 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
                             }
                         })
+                        // Disable use this card button when no item is selected
+                        useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
                     } else {
                         ErrorHandlerView(context).showToast()
                     }
@@ -201,5 +204,20 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
             super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                if (navController?.graph?.startDestination == R.id.manageCardFragment) {
+                    activity?.setResult(PMA3DSecureProcessRequestFragment.PMA_UPDATE_CARD_RESULT_CODE, Intent().putExtra("PAYMENT_METHOD_LIST", Gson().toJson(manageCardAdapter?.getList())))
+                    activity?.finish()
+                    activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    return true
+                }
+                activity?.onBackPressed()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

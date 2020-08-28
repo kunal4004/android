@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
@@ -11,7 +12,10 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
@@ -21,6 +25,12 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         availableFundBackground?.setBackgroundResource(R.drawable.personal_loan_background)
 
         navController = Navigation.findNavController(view)
+
+        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner, {
+            isQueryPayUPaymentMethodComplete = false
+            queryPaymentMethod()
+        })
+
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
@@ -40,8 +50,8 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {
                     personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
                 } else {
-                    navigateToCardOptionsOrPayMyAccount(payUMethodType) {
-                        val paymentMethods = Gson().toJson(mPaymentMethodsResponse?.paymentMethods)
+                    navigateToPayMyAccount(payUMethodType) {
+                        val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                         val accountDetail: Pair<ApplyNowState, Account>? = mAvailableFundPresenter?.getAccountDetail()
                         navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment(Gson().toJson(accountDetail), paymentMethods))
                     }
@@ -55,4 +65,15 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE -> {
+                if (resultCode == PMA_TRANSACTION_COMPLETED_RESULT_CODE) {
+                    if (NetworkManager.getInstance().isConnectedToNetwork(context))
+                        queryPaymentMethod()
+                }
+            }
+        }
+    }
 }

@@ -209,7 +209,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
                 }
-                R.id.viewPaymentOptions -> mCardPresenterImpl?.navigateToPayMyAccountActivity()
+                R.id.viewPaymentOptions -> {mCardPresenterImpl?.navigateToPayMyAccountActivity()}
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
                         navigateToCreditCardActivation()

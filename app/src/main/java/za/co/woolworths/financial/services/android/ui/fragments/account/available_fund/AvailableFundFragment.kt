@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -42,15 +43,12 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     var mPaymentMethodsResponse: PaymentMethodsResponse? = null
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
-    private var isQueryPayUPaymentMethodComplete: Boolean = false
+    var isQueryPayUPaymentMethodComplete: Boolean = false
     var navController: NavController? = null
 
-    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
-
-    enum class PAYUMethodType { CREATE_USER, CARD_UPDATE }
-
-    var payUMethodType = PAYUMethodType.CREATE_USER
+    var payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +65,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             throw RuntimeException("AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
         }
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.account_available_fund_overview_fragment, container, false)
@@ -96,12 +93,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection) {
-                        true -> {
-                            queryPaymentMethod()
-                        }
-                        else -> {
-                            ErrorHandlerView(act).showToast()
-                        }
+                        true -> queryPaymentMethod()
+                        else -> ErrorHandlerView(act).showToast()
                     }
 
                 }
@@ -270,23 +263,23 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     override fun onPayUMethodSuccess(paymentMethodsResponse: PaymentMethodsResponse?) {
         stopProgress()
         isQueryPayUPaymentMethodComplete = true
+        payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
         paymentMethodsResponse?.apply {
             when (httpCode) {
                 200 -> {
                     mPaymentMethodsResponse = paymentMethodsResponse
                     payUMethodType = when (paymentMethods.isNotEmpty()) {
                         true -> {
-                            payMyAccountViewModel.setPaymentMethod(paymentMethodsResponse.paymentMethods)
-                            PAYUMethodType.CARD_UPDATE
+                            PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE
                         }
-                        else -> PAYUMethodType.CREATE_USER
+                        else -> PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                     }
                 }
 
                 400 -> {
                     val code = response.code
                     when (code.startsWith("P0453")) {
-                        true -> payUMethodType = PAYUMethodType.CREATE_USER
+                        true -> payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                         false -> activity?.let {
                             Utils.showGeneralErrorDialog(it, response.desc ?: "")
                         }
@@ -332,14 +325,19 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         viewPaymentOptionTextShimmerLayout?.stopShimmer()
     }
 
-    fun navigateToCardOptionsOrPayMyAccount(payUMethodType: PAYUMethodType, openCardOptionsDialog: () -> Unit) {
+    fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
         when (payUMethodType) {
-            PAYUMethodType.CREATE_USER -> {
+            PayMyAccountViewModel.PAYUMethodType.CREATE_USER -> {
                 navigateToPayMyAccountActivity()
             }
-            PAYUMethodType.CARD_UPDATE -> openCardOptionsDialog()
+            PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE -> openCardOptionsDialog()
         }
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.e("pour", "pour")
+    }
 
 }

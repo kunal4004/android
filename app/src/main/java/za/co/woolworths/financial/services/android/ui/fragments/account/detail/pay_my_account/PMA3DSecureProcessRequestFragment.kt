@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
-import android.app.Activity.RESULT_OK
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
@@ -13,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_success_fragment.*
@@ -32,6 +32,11 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     private var navController: NavController? = null
     private var hasPMAPostPayUPayCompleted: Boolean = false
 
+    companion object {
+        const val PMA_TRANSACTION_COMPLETED_RESULT_CODE = 4470
+        const val PMA_UPDATE_CARD_RESULT_CODE = 4471
+    }
+
     val args: PMA3DSecureProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +50,8 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         setupToolbar()
 
         navController = Navigation.findNavController(view)
+
+        success_tick?.colorCode = R.color.success_tick_color
 
         circularProgressListener({
         }, { updateUIOnFailure() }) // onSuccess(), onFailure()
@@ -63,7 +70,6 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         backToMyAccountButton?.apply {
             setOnClickListener(this@PMA3DSecureProcessRequestFragment)
             AnimationUtilExtension.animateViewPushDown(this)
-            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
 
         autoConnection()
@@ -117,9 +123,14 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                 (response as? PayUPayResultResponse)?.apply {
                     when (httpCode) {
                         200 -> {
-                            stopSpinning(true)
-                            paymentValueTextView?.text = amount.replace("ZAR", "R ")
-                            updateUIOnSuccess()
+                            if (paymentSuccessful) {
+                                stopSpinning(true)
+                                paymentValueTextView?.text = amount.replace("ZAR", "R ").replace(",", " ");
+                                updateUIOnSuccess()
+                            } else {
+                                stopSpinning(false)
+                                updateUIOnFailure()
+                            }
                         }
                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
                         502 -> {
@@ -178,7 +189,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
 
             R.id.backToMyAccountButton -> {
                 activity?.apply {
-                    setResult(RESULT_OK)
+                    setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
                     finish()
                     overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                 }
@@ -196,6 +207,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
+                activity?.setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
                 activity?.finish()
                 activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                 true

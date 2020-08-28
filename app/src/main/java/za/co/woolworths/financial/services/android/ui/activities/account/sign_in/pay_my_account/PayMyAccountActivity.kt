@@ -6,21 +6,28 @@ import android.transition.Fade
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.ACCOUNT_INFO
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.ADD_CARD_RESPONSE
+import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_ACCOUNT_INFO
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.AMOUNT_ENTERED
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.PAYMENT_METHOD
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_PAYMENT_METHOD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.EnterPaymentAmountFragment.Companion.SHOULD_DISPLAY_AMOUNT_ENTERED
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAManageCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
@@ -34,6 +41,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     private lateinit var navigationHost: NavController
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
     var amountEntered: Int = 0
+    private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +59,15 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     private fun setNavHostStartDestination() {
         intent?.extras?.apply {
             val args = Bundle()
-            args.putString(ACCOUNT_INFO, getString(ACCOUNT_INFO, ""))
-            args.putString(PAYMENT_METHOD, getString(PAYMENT_METHOD, ""))
-            args.putString(ADD_CARD_RESPONSE, getString(ADD_CARD_RESPONSE, ""))
-            args.putBoolean(SHOULD_DISPLAY_AMOUNT_ENTERED, getBoolean(SHOULD_DISPLAY_AMOUNT_ENTERED, false))
+            args.putString(GET_ACCOUNT_INFO, getString(GET_ACCOUNT_INFO, ""))
+            args.putString(GET_PAYMENT_METHOD, getString(GET_PAYMENT_METHOD, ""))
+            args.putString(GET_CARD_RESPONSE, getString(GET_CARD_RESPONSE, ""))
+            args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
 
-            amountEntered = getString(AMOUNT_ENTERED, "0")?.replace("[,.R ]".toRegex(), "")?.toInt()!!
+            val amount = getString(AMOUNT_ENTERED, "R 0.00")
+            amountEntered = amount?.replace("[,.R ]".toRegex(), "")?.toInt()!!
+
+            payMyAccountViewModel.setAmountEntered(amount)
 
             val graph = navigationHost.graph
             graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -96,24 +107,11 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         }
     }
 
-    override fun getPayMyAccountPresenter(): PayMyAccountPresenterImpl? {
-        return mPayMyAccountPresenterImpl
-    }
+    override fun getPayMyAccountPresenter(): PayMyAccountPresenterImpl? = mPayMyAccountPresenterImpl
 
     override fun configureToolbar(title: String?) {
         super.configureToolbar(title)
         payMyAccountTitleBar?.text = title
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val navHostFragment: NavHostFragment? = supportFragmentManager.fragments.first() as? NavHostFragment
-        if (navHostFragment != null) {
-            val childFragments = navHostFragment.childFragmentManager.fragments
-            childFragments.forEach { fragment ->
-                fragment.onActivityResult(requestCode, resultCode, data)
-            }
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -129,7 +127,15 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     override fun onBackPressed() {
         when (currentFragment) {
-            is PMAManageCardFragment, is CreditAndDebitCardPaymentsFragment -> {
+            is PMAManageCardFragment -> {
+                val paymentMethodList = payMyAccountViewModel.getPaymentMethodList()
+                val paymentMethodIntent = Intent().putExtra("PAYMENT_METHOD_LIST", Gson().toJson(paymentMethodList))
+                payMyAccountViewModel.setPaymentMethodList(paymentMethodList)
+                setResult(PMA_UPDATE_CARD_RESULT_CODE, paymentMethodIntent)
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
+            is CreditAndDebitCardPaymentsFragment -> {
                 setResult(RESULT_OK)
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
@@ -159,5 +165,38 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     fun displayToolbarDivider(isDividerVisible: Boolean) {
         payMyAccountDivider?.visibility = if (isDividerVisible) VISIBLE else GONE
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        val extras = data?.extras
+        when (requestCode) {
+            PAY_MY_ACCOUNT_REQUEST_CODE -> {
+                when (resultCode) {
+                    RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
+                        val amountEntered = extras?.getString("AMOUNT_ENTERED")
+                        if (amountEntered != null)
+                            payMyAccountViewModel.setAmountEntered(amountEntered)
+                        val paymentMethod = extras?.getString("PAYMENT_METHOD_LIST")
+                        if (paymentMethod != null)
+                            payMyAccountViewModel.setPaymentMethodList(Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type))
+                    }
+
+                    PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> payMyAccountViewModel.queryPaymentMethod.value = true
+
+                    else -> {
+                        val navHostFragment: NavHostFragment
+                        ? = supportFragmentManager.fragments.first() as? NavHostFragment
+                        if (navHostFragment != null) {
+                            val childFragments = navHostFragment.childFragmentManager.fragments
+                            childFragments.forEach { fragment ->
+                                fragment.onActivityResult(requestCode, resultCode, data)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

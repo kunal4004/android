@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.inputmethod.InputMethodManager
@@ -23,8 +22,10 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
@@ -35,28 +36,23 @@ import java.lang.Exception
 
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
-    private var isAmountEnteredPopulated: Boolean = false
     private var mPaymentMethod: MutableList<GetPaymentMethod>? = null
     private var paymentMethod: String? = null
     private var accountInfo: String? = null
     private var account: Account? = null
     private var navController: NavController? = null
+    private var isDoneButtonEnabled: Boolean = false
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     val args: EnterPaymentAmountFragmentArgs by navArgs()
-
-    companion object {
-        const val SHOULD_DISPLAY_AMOUNT_ENTERED = "SHOULD_DISPLAY_AMOUNT_ENTERED"
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
-            paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
-            isAmountEnteredPopulated = getBoolean(SHOULD_DISPLAY_AMOUNT_ENTERED, false)
+            accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
+            paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
+            isDoneButtonEnabled = getBoolean(IS_DONE_BUTTON_ENABLED, false)
         }
     }
 
@@ -73,7 +69,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         try {
             account = args.account
         } catch (e: Exception) {
-            account = Gson().fromJson(accountInfo, Account::class.java)
+            val accountArgs = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+            account = accountArgs.second
             mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
         }
 
@@ -81,8 +78,12 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
-        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
+        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue
+                ?: 0))
+        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue
+                ?: 0))
+        (activity as? PayMyAccountActivity)?.amountEntered?.toString()?.let { paymentAmountInputEditText?.setText(it) }
+
     }
 
     private fun configureToolbar() {
@@ -95,7 +96,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private fun configureButton() {
         continueToPaymentButton?.apply {
-            text = if (isAmountEnteredPopulated) bindString(R.string.done) else bindString(R.string.confirm_payment)
+            text = if (isDoneButtonEnabled) bindString(R.string.done) else bindString(R.string.confirm_payment)
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
         }
@@ -168,7 +169,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                         return
                     }
                     enteredAmount > 50000.toDouble() -> {
-                        Log.e("enteredAmountAmount", enteredAmount.toString())
                         continueToPaymentButton?.isEnabled = false
                         reducePaymentAmountTextView?.visibility = VISIBLE
                         reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_max_input_error)
@@ -178,9 +178,14 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 if (continueToPaymentButton?.text?.toString() == bindString(R.string.done)) {
                     payMyAccountViewModel.setAmountEntered(amountEntered)
-                    navController?.navigateUp()
-                    activity?.setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", amountEntered))
-                    activity?.finish()
+                    activity?.apply {
+                        if (isDoneButtonEnabled) {
+                            setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", amountEntered))
+                            finish()
+                        } else {
+                            activity?.onBackPressed()
+                        }
+                    }
                     return
                 }
 

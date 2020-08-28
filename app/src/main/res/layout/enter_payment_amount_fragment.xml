@@ -10,7 +10,7 @@
         android:id="@+id/enterPaymentAmountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="22dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:text="@string/enter_payment_amount_label"
         android:textColor="@color/black"
@@ -45,7 +45,7 @@
         style="@style/pmaOutstandingValueStyle"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="22dp"
+        android:layout_marginBottom="16dp"
         android:text="R 0.00"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
@@ -79,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:text="R 500.00"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
@@ -90,7 +90,7 @@
         android:id="@+id/horizontalDividerView"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_marginBottom="22dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/bpi_background"
         app:layout_constraintBottom_toTopOf="@+id/amountOutstandingDividerView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -151,22 +151,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="start"
-        app:constraint_referenced_ids="endGuideline"
-        tools:layout_editor_absoluteX="387dp" />
+        app:constraint_referenced_ids="endGuideline" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/centerGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.38" />
+        app:layout_constraintGuide_percent="0.345" />
 
     <TextView
         android:id="@+id/reducePaymentAmountTextView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="24dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|top"
         android:lineSpacingExtra="4sp"

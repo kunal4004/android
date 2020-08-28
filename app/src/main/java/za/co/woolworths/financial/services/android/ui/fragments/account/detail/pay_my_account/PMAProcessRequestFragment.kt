@@ -48,9 +48,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.ACCOUNT_INFO, "")
-            paymentMethod = getString(PayMyAccountPresenterImpl.PAYMENT_METHOD, "")
-            cardResponse = getString(PayMyAccountPresenterImpl.ADD_CARD_RESPONSE, "")
+            accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
+            paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
+            cardResponse = getString(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, "")
         }
     }
 

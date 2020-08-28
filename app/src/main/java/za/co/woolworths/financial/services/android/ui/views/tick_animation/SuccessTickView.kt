@@ -39,7 +39,6 @@ class SuccessTickView : View {
 
     private fun init() {
         mPaint = Paint()
-        mPaint?.color = bindColor(colorCode)
         mLeftRectWidth = CONST_LEFT_RECT_W
         mRightRectWidth = CONST_RIGHT_RECT_W
         mLeftRectGrowMode = false
@@ -91,6 +90,7 @@ class SuccessTickView : View {
         mLeftRectWidth = 0f
         mRightRectWidth = 0f
         invalidate()
+        mPaint?.color = bindColor(colorCode)
         val tickAnim = object : Animation() {
             override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
                 super.applyTransformation(interpolatedTime, t)

@@ -1265,7 +1265,7 @@ interface ApiInterface {
             @Path("featureName") featureName: String,
             @Path("appScreen") appScreen: String): Call<Response>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("payments/payu/methods")
     fun getPaymentPAYUMethod(
             @Header("apiId") apiId: String,
@@ -1295,7 +1295,7 @@ interface ApiInterface {
             @Body payUPay: PayUPay): Call<PayUResponse>
 
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("payments/payu/result")
     fun getPaymentPayUResult(
             @Header("apiId") apiId: String,

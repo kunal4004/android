@@ -78,6 +78,11 @@
             android:name="paymentMethod"
             app:argType="string"
             app:nullable="true" />
+
+        <argument
+            android:name="isAccountStartDestination"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </dialog>
 
 </navigation>

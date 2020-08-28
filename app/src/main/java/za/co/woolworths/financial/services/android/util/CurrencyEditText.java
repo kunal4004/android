@@ -48,10 +48,16 @@ public class CurrencyEditText extends AppCompatEditText {
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                if (!s.toString().equals(current)) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String s = editable.toString();
+                if (!s.equals(current)) {
                     editText.removeTextChangedListener(this);
 
-                    String cleanString = s.toString().replaceAll("[$,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
+                    String cleanString = s.replaceAll("[$,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
 
                     if (cleanString.length() != 0) {
                         try {
@@ -107,11 +113,6 @@ public class CurrencyEditText extends AppCompatEditText {
                     editText.addTextChangedListener(this);
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
         });
     }
 
@@ -164,6 +165,11 @@ public class CurrencyEditText extends AppCompatEditText {
     public void setDelimiter(boolean value) {
         this.Delimiter = value;
     }
+
+    public void setCurrent(String value) {
+        this.current = value;
+    }
+
 
     /**
      * Separator allows a custom symbol to be used as the thousand separator. Default is set as comma (e.g: 20,000)
