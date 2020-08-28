@@ -57,9 +57,11 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val list = paymentMethodList?.value
-        val checkedList = list?.filter { it.isCardChecked }
-        if (checkedList?.isNullOrEmpty() == true) {
-            list[0].isCardChecked = true
+        if(list?.isNotEmpty() == true) {
+            val checkedList = list.filter { it.isCardChecked }
+            if (checkedList.isNullOrEmpty()) {
+                list[0].isCardChecked = true
+            }
         }
         return list
     }

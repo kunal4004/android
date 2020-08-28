@@ -98,7 +98,10 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             mPaymentMethod?.get(0)?.isCardChecked = true
             payMyAccountViewModel.setPaymentMethodList(mPaymentMethod)
         } else {
-            mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
+           val list = payMyAccountViewModel.getPaymentMethodList()
+            list?.get(2)?.cardExpired = true
+            list?.get(4)?.cardExpired = true
+            mPaymentMethod = list
         }
 
         pmaManageCardRecyclerView?.apply {
@@ -182,6 +185,12 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                         })
                         // Disable use this card button when no item is selected
                         useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
+
+                        // navigate to add new user activity
+                        if (mPaymentMethod?.isEmpty() == true) {
+                            val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(mAccountDetails?.second)
+                            navController?.navigate(manageCard)
+                        }
                     } else {
                         ErrorHandlerView(context).showToast()
                     }

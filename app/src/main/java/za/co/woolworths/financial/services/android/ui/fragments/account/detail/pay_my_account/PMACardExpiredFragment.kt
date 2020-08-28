@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pma_card_has_expired_dialog.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -22,7 +22,7 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = parentFragment?.view?.let { parentView -> Navigation.findNavController(parentView) }
+        navController = NavHostFragment.findNavController(this)
 
         removeCardButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
@@ -37,8 +37,8 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.removeCardButton -> navController?.popBackStack()
-            R.id.addNewCardExpiredButton -> navController?.popBackStack()
+            R.id.removeCardButton -> dismiss()
+            R.id.addNewCardExpiredButton -> dismiss()
         }
     }
 
