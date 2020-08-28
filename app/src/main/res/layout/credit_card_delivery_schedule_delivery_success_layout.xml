@@ -7,6 +7,7 @@
     <TextView
         android:id="@+id/description"
         style="@style/dialog_description_text_style"
+        android:contentDescription="@string/cd_ccd_labeltimeslotdeliverydescription"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:text="@string/delivery_success_desc"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
@@ -17,6 +18,7 @@
     <TextView
         android:id="@+id/title"
         style="@style/dialog_title_text_style"
+        android:contentDescription="@string/cd_ccd_lableconfirmdeliverytitle"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:text="@string/delivery_success_title"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"

@@ -8,6 +8,7 @@
     <TextView
         android:id="@+id/editAddressTitle"
         style="@style/futura_semi_bold_black"
+        android:contentDescription="@string/cd_ccd_labeladdressdateandtime"
         android:letterSpacing="0.1"
         android:text="@string/address_date_time"
         android:textAllCaps="true"
@@ -20,6 +21,7 @@
     <TextView
         android:id="@+id/editAddress"
         style="@style/futura_medium_black"
+        android:contentDescription="@string/cd_ccd_btnedit"
         android:letterSpacing="0.1"
         android:text="@string/edit"
         android:textColor="@color/offer_title_50"
@@ -30,6 +32,7 @@
     <TextView
         android:id="@+id/deliveryDate"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_txtdayanddate"
         android:layout_marginTop="@dimen/twenty_dp"
         android:lineSpacingMultiplier="1.33"
         android:text="Tuesday 30 April, 2019"
@@ -42,6 +45,7 @@
     <TextView
         android:id="@+id/deliveryTime"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_txttimeslot"
         android:lineSpacingMultiplier="1.33"
         android:text="12pm - 2pm"
         android:textColor="@color/offer_title"
@@ -52,6 +56,7 @@
     <TextView
         android:id="@+id/deliveryAddress"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_txtdeliveryaddress"
         android:layout_marginTop="@dimen/twenty_dp"
         android:lineSpacingMultiplier="1.33"
         android:text="MakeReign, 201, Salt Circle 17 Kent Street, Woodstock, Cape Town, Western Cape, 7925"
@@ -64,6 +69,7 @@
     <TextView
         android:id="@+id/editRecipientTitle"
         style="@style/futura_semi_bold_black"
+        android:contentDescription="@string/cd_ccd_labelrecipient"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:letterSpacing="0.1"
         android:text="@string/recipient"
@@ -81,12 +87,14 @@
         android:text="@string/edit"
         android:textColor="@color/offer_title_50"
         android:textSize="@dimen/twelve_sp"
+        android:contentDescription="@string/cd_ccd_btneditrecipient"
         app:layout_constraintRight_toRightOf="@id/right_guideline"
         app:layout_constraintTop_toTopOf="@id/editRecipientTitle" />
 
     <TextView
         android:id="@+id/nameTitle"
         style="@style/futura_medium"
+        android:contentDescription="@string/cd_ccd_labelname"
         android:layout_marginTop="@dimen/twenty_dp"
         android:letterSpacing="0.08"
         android:text="Name"
@@ -100,6 +108,7 @@
     <TextView
         android:id="@+id/name"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_txtvalue"
         android:text="Thuli Sandile"
         android:textColor="@color/offer_title"
         android:textSize="@dimen/fifteen_sp"
@@ -115,6 +124,7 @@
         android:textAllCaps="true"
         android:textColor="@color/offer_title"
         android:textSize="@dimen/twelve_sp"
+        android:contentDescription="@string/cd_ccd_labelbookingref"
         app:layout_constraintLeft_toLeftOf="@id/left_guideline"
         app:layout_constraintRight_toRightOf="@id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/space1" />
@@ -122,6 +132,7 @@
     <TextView
         android:id="@+id/bookingReference"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_txtbookingref"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:lineSpacingMultiplier="1.33"
         android:text="NBGH67589"
@@ -135,6 +146,7 @@
     <TextView
         android:id="@+id/createdDateTitle"
         style="@style/futura_semi_bold_black"
+        android:contentDescription="@string/cd_ccd_labelcreated"
         android:layout_marginTop="@dimen/thirty_dp"
         android:letterSpacing="0.1"
         android:text="@string/created"
@@ -148,6 +160,7 @@
     <TextView
         android:id="@+id/createdDate"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_txtcreatedvalue"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:lineSpacingMultiplier="1.33"
         android:text="12 April 2019"
@@ -201,6 +214,7 @@
     <RelativeLayout
         android:id="@+id/cancelDelivery"
         style="@style/card_item_click_no_pad_style"
+        android:contentDescription="@string/cd_ccd_btncanceldelivery"
         android:layout_width="0dp"
         android:layout_marginTop="@dimen/ten_dp"
         android:visibility="visible"

@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/seventy_dp"
         android:orientation="horizontal"
+        android:contentDescription="@string/cd_ccd_btnconfirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pageDesc">
@@ -39,6 +40,7 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:visibility="visible"
+            android:contentDescription="@string/cd_ccd_listdayanddate"
             app:wv_curvedArcDirection="left"
             app:wv_curvedArcDirectionFactor="0.5"
             app:wv_dividerColor="#12000000"
@@ -66,6 +68,7 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:visibility="visible"
+            android:contentDescription="@string/cd_ccd_listtime"
             app:wv_curvedArcDirection="right"
             app:wv_curvedArcDirectionFactor="0.5"
             app:wv_dividerColor="#12000000"
@@ -113,6 +116,7 @@
     <TextView
         android:id="@+id/pageTitle"
         style="@style/futura_medium_black"
+        android:contentDescription="@string/cd_ccd_lableconfirmtimeslottitle"
         android:letterSpacing="0.1"
         android:lineSpacingMultiplier="1.20"
         android:text="@string/time_slots_page_title"
@@ -124,6 +128,7 @@
     <TextView
         android:id="@+id/pageDesc"
         style="@style/myriad_pro_regular"
+        android:contentDescription="@string/cd_ccd_labeltimeslotdescription"
         android:layout_marginTop="@dimen/eight_dp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/time_slots_page_desc"

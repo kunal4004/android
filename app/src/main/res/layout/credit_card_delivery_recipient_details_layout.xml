@@ -20,6 +20,7 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
+        android:contentDescription="@string/cd_ccd_btnnext"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -42,6 +43,7 @@
             <EditText
                 android:id="@+id/recipientName"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtrecipientname"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/recipientNamePlaceHolder" />
@@ -49,6 +51,7 @@
             <EditText
                 android:id="@+id/cellphoneNumber"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtcellphonenumber"
                 android:inputType="number"
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -59,6 +62,7 @@
             <EditText
                 android:id="@+id/alternativeNumber"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtalternatecontactnumberr"
                 android:inputType="number"
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -69,6 +73,7 @@
             <EditText
                 android:id="@+id/idNumber"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtidnumber"
                 android:maxLength="13"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -88,6 +93,7 @@
                     android:id="@+id/mySelf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_ccd_radiobtnmyself"
                     android:button="@drawable/shopping_list_item_selector"
                     android:checked="true"
                     android:fontFamily="@font/myriad_pro_regular"
@@ -99,6 +105,7 @@
                     android:id="@+id/anotherPerson"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
                     android:layout_marginStart="@dimen/fifty_dp"
                     android:button="@drawable/shopping_list_item_selector"
                     android:fontFamily="@font/myriad_pro_regular"
@@ -163,6 +170,7 @@
             <TextView
                 android:id="@+id/recipientDetailsDesc"
                 style="@style/myriad_pro_regular"
+                android:contentDescription="@string/cd_ccd_lablerecipientdetailsdescription"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/recipient_details_desc"
@@ -175,6 +183,7 @@
             <TextView
                 android:id="@+id/recipientNamePlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelrecipientname"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:text="@string/recipient_name"
                 android:textSize="@dimen/fourteen_sp"
@@ -185,6 +194,7 @@
             <TextView
                 android:id="@+id/recipientDetailsTitle"
                 style="@style/futura_medium_black"
+                android:contentDescription="@string/cd_ccd_lablerecipientdetailstitle"
                 android:letterSpacing="0.1"
                 android:text="@string/recipient_details"
                 android:textSize="@dimen/twenty_sp"
@@ -195,6 +205,7 @@
             <TextView
                 android:id="@+id/cellphoneNumberPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelcellphonenumber"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/cellphone_number"
                 android:textSize="@dimen/fourteen_sp"
@@ -205,6 +216,7 @@
             <TextView
                 android:id="@+id/alternativeNumberPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelalternatecontactnumber"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/alternate_contact_numberr"
                 android:textSize="@dimen/fourteen_sp"
@@ -215,6 +227,7 @@
             <TextView
                 android:id="@+id/idNumberPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelidnumber"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/id_number"
                 android:textSize="@dimen/fourteen_sp"

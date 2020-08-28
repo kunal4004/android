@@ -19,6 +19,7 @@
         android:text="@string/please_confirm_your_address"
         android:textColor="@color/offer_title"
         android:textSize="20sp"
+        android:contentDescription="@string/cd_ccd_lableconfirmaddresstitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,6 +37,7 @@
         android:lineSpacingMultiplier="1.40"
         android:textColor="@color/charcoal_grey"
         android:textSize="15sp"
+        android:contentDescription="@string/cd_ccd_txtvalueaddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/failureTitleTextView" />
@@ -56,6 +58,7 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
+        android:contentDescription="@string/cd_ccd_btnconfirm"
         app:layout_constraintBottom_toTopOf="@+id/editAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,6 +69,7 @@
         style="@style/link_text_style"
         android:layout_marginBottom="@dimen/thirty_two_dp"
         android:text="@string/edit_address"
+        android:contentDescription="@string/cd_ccd_linkeditaddress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

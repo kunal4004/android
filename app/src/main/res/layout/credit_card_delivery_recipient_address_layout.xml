@@ -11,6 +11,7 @@
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/next_button_icon"
+        android:contentDescription="@string/cd_ccd_btnnext"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -32,6 +33,7 @@
             <EditText
                 android:id="@+id/complexOrBuildingName"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtcomplexname"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/complexPlaceHolder" />
@@ -46,6 +48,7 @@
             <EditText
                 android:id="@+id/streetAddress"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtstreetaddress"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/streetAddressPlaceHolder" />
@@ -53,6 +56,7 @@
             <EditText
                 android:id="@+id/suburb"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtsuburb"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder" />
@@ -60,6 +64,7 @@
             <EditText
                 android:id="@+id/cityOrTown"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtcity"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/cityPlaceHolder" />
@@ -67,6 +72,7 @@
             <EditText
                 android:id="@+id/province"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtprovince"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />
@@ -75,6 +81,7 @@
             <EditText
                 android:id="@+id/postalCode"
                 style="@style/credi_card_delivery_edittext_style"
+                android:contentDescription="@string/cd_ccd_txtpostalcode"
                 android:imeOptions="actionDone"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -98,6 +105,7 @@
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/residential"
+                    android:contentDescription="@string/cd_ccd_radiobtnresidential"
                     android:textSize="@dimen/sixteen_sp" />
 
                 <RadioButton
@@ -109,6 +117,7 @@
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/business"
+                    android:contentDescription="@string/cd_ccd_radiobtnbusiness"
                     android:textSize="@dimen/sixteen_sp" />
             </RadioGroup>
 
@@ -211,6 +220,7 @@
                 android:text="@string/delivery_details_desc"
                 android:textColor="#50333333"
                 android:textSize="@dimen/fifteen_sp"
+                android:contentDescription="@string/cd_ccd_labledeliverydetailsdescription"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/deliveryDetailsTitle" />
@@ -218,6 +228,7 @@
             <TextView
                 android:id="@+id/complexPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelcomplexname"
                 android:layout_marginTop="@dimen/thirty_two_dp"
                 android:text="@string/complex_building"
                 android:textSize="@dimen/fourteen_sp"
@@ -231,6 +242,7 @@
                 android:letterSpacing="0.1"
                 android:text="@string/delivery_details"
                 android:textSize="@dimen/twenty_sp"
+                android:contentDescription="@string/cd_ccd_labledeliverydetailstitle"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toTopOf="@id/top_guideline" />
@@ -248,6 +260,7 @@
             <TextView
                 android:id="@+id/streetAddressPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelstreetaddress"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/street_address"
                 android:textSize="@dimen/fourteen_sp"
@@ -258,6 +271,7 @@
             <TextView
                 android:id="@+id/suburbPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelsuburb"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/suburb"
                 android:textSize="@dimen/fourteen_sp"
@@ -268,6 +282,7 @@
             <TextView
                 android:id="@+id/cityPlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelcity"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/city_town"
                 android:textSize="@dimen/fourteen_sp"
@@ -278,6 +293,7 @@
             <TextView
                 android:id="@+id/provincePlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelprovince"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/province"
                 android:textSize="@dimen/fourteen_sp"
@@ -288,6 +304,7 @@
             <TextView
                 android:id="@+id/postalCodePlaceHolder"
                 style="@style/myriad_pro_regular_black"
+                android:contentDescription="@string/cd_ccd_labelpostalcode"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:text="@string/postal_code"
                 android:textSize="@dimen/fourteen_sp"
