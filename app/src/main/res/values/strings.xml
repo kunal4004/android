@@ -1597,6 +1597,7 @@
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
     <string name="freeze_temp_label">Temp Freeze</string>
     <string name="food_only">food only</string>
+
     <string name="unable_to_process_your_request_title">Unable to process payment</string>
     <string name="unable_to_process_your_request_desc" >We are unable to process your payment. For queries, call us on 0861 50 20 20.</string>
     <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 48 hours to reflect on your account.</string>
@@ -1618,8 +1619,13 @@
     <string name="enter_payment_amount_max_input_error">Please reduce your payment amount. The maximum amount you can pay is R50 000.00</string>
     <string name="enter_payment_amount_min_input_error">Please increase your payment amount. The minimum amount you can pay is R 1.00</string>
 
-
-
-
+    <string name="collection_date_title">labelCollectionDate</string>
+    <string name="collection_date_value">txtCollectionDateValue</string>
+    <string name="collection_details_date_title">labelCollectionDetailsDate</string>
+    <string name="collection_details_date_value">txtCollectionDetailsDateValue</string>
+    <string name="collection_location_title">labelCollectionDetailsDate</string>
+    <string name="collection_location_value">txtCollectionDetailsDateValue</string>
+    <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
+    <string name="delivery_location_value">txtDeliveryLocationValue</string>
 </resources>
 

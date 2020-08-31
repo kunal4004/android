@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import android.os.Build
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -252,7 +254,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         when (type) {
             DeliveryType.DELIVERY -> {
                 clickAndCollect?.setBackgroundResource(R.drawable.delivery_type_store_pickup_un_selected_bg)
-                delivery?.setBackgroundResource(R.drawable.onde_dp_black_border_bg)
+                delivery?.setBackgroundColor(Color.BLACK)
+                txtDelivery.setTextColor(Color.WHITE)
+                txtclickAndCollect.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.offer_title))
                 noStoresForProvinceMsg?.visibility = View.GONE
                 selectProvince?.setBackgroundResource(R.drawable.input_box_inactive_bg)
                 if (selectedSuburb != null) {
@@ -263,8 +267,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 }
             }
             DeliveryType.STORE_PICKUP -> {
-                clickAndCollect?.setBackgroundResource(R.drawable.onde_dp_black_border_bg)
+                clickAndCollect?.setBackgroundColor(Color.BLACK)
                 delivery?.setBackgroundResource(R.drawable.delivery_type_delivery_un_selected_bg)
+                txtclickAndCollect.setTextColor(Color.WHITE)
+                txtDelivery.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.offer_title))
                 if (selectedStore != null) {
                     tvSelectedSuburb.setText(selectedStore?.name)
                 } else {
