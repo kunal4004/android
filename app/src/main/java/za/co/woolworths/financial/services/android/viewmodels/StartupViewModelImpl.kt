@@ -101,6 +101,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 this@StartupViewModelImpl.isSplashScreenDisplay = splashScreenDisplay
                 this@StartupViewModelImpl.isSplashScreenPersist = splashScreenPersist
 
+                WoolworthsApplication.setPayMyAccountOption(payMyAccount)
                 WoolworthsApplication.setStoreCardBlockReasons(storeCardBlockReasons)
                 WoolworthsApplication.setSsoRedirectURI(getSsoRedirectURI())
                 WoolworthsApplication.setStsURI(getStsURI())
@@ -140,9 +141,9 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             if (absaBankingOpenApiServices == null) {
                 absaBankingOpenApiServices = AbsaBankingOpenApiServices(false, "", "", "", "")
             } else {
-                absaBankingOpenApiServices.isEnabled =
-                        Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
+                absaBankingOpenApiServices.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
             }
+
 
 
             var presenceInAppChat: PresenceInAppChat? = presenceInAppChat

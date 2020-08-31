@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.view_statement_button.*
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -326,11 +327,17 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
-        when (payUMethodType) {
-            PayMyAccountViewModel.PAYUMethodType.CREATE_USER -> {
+
+        val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+        val isFeatureEnabled = payMyAccountOption.isFeatureEnabled()
+
+        when {
+            (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                 navigateToPayMyAccountActivity()
             }
-            PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE -> openCardOptionsDialog()
+            (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> openCardOptionsDialog()
+
+            else -> navigateToPayMyAccountActivity()
         }
     }
 

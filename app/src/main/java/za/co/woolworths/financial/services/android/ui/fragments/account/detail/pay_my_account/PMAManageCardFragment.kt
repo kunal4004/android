@@ -216,9 +216,11 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         when (item.itemId) {
             android.R.id.home -> {
                 if (navController?.graph?.startDestination == R.id.manageCardFragment) {
-                    activity?.setResult(PMA3DSecureProcessRequestFragment.PMA_UPDATE_CARD_RESULT_CODE, Intent().putExtra("PAYMENT_METHOD_LIST", Gson().toJson(manageCardAdapter?.getList())))
-                    activity?.finish()
-                    activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    activity?.apply {
+                        setResult(PMA3DSecureProcessRequestFragment.PMA_UPDATE_CARD_RESULT_CODE, Intent().putExtra("PAYMENT_METHOD_LIST", Gson().toJson(manageCardAdapter?.getList())))
+                        finish()
+                        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    }
                     return true
                 }
                 activity?.onBackPressed()

@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -59,8 +60,15 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             configureToolbar("")
             displayToolbarDivider(false)
 
-            incDebitOrCreditCardButton?.visibility = when (payMyAccountPresenter?.getPayMyAccountSection()) {
-                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> GONE
+            val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+            val isFeatureEnabled = !payMyAccountOption.isFeatureEnabled()
+            val isCreditCardSection = when (payMyAccountPresenter?.getPayMyAccountSection()) {
+                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> true
+                else -> false
+            }
+            
+            incDebitOrCreditCardButton?.visibility = when {
+                isCreditCardSection || isFeatureEnabled -> GONE
                 else -> VISIBLE
             }
         }
@@ -186,17 +194,23 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
+
+                val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+                val payUMethodType = payMyAccountViewModel.getPaymentMethodType()
+                val isFeatureEnabled = payMyAccountOption.isFeatureEnabled()
+
                 val paymentMethod = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
 
-                when (payMyAccountViewModel.getPaymentMethodType()) {
+                when {
 
-                    PayMyAccountViewModel.PAYUMethodType.CREATE_USER -> {
+                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                         val account = payMyAccountPresenter?.getAccount() ?: Account()
                         val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account, true)
                         navController?.navigate(toEnterPaymentAmountDirection)
                     }
-                    PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE -> {
-                        val account = Gson().toJson(payMyAccountPresenter?.getAccount() ?: Account())
+                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> {
+                        val account = Gson().toJson(payMyAccountPresenter?.getAccount()
+                                ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }

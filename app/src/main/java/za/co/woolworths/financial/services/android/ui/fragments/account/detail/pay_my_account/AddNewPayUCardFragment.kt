@@ -12,15 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import java.net.URLEncoder
-import java.util.*
 
 class AddNewPayUCardFragment : Fragment() {
 
@@ -66,11 +63,11 @@ class AddNewPayUCardFragment : Fragment() {
             }, { addCardResponse ->
                 // onSuccess
                 GlobalScope.doAfterDelay(100) {
-                        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                        addNewUserPayUWebView?.visibility = GONE
-                        processCardNavHostLinearLayout?.visibility = VISIBLE
-                        val navigateToSaveCardAndPayNow = AddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
-                        navController?.navigate(navigateToSaveCardAndPayNow)
+                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    addNewUserPayUWebView?.visibility = GONE
+                    processCardNavHostLinearLayout?.visibility = VISIBLE
+                    val navigateToSaveCardAndPayNow = AddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
+                    navController?.navigate(navigateToSaveCardAndPayNow)
                 }
             }, {
                 // on failure
@@ -82,10 +79,8 @@ class AddNewPayUCardFragment : Fragment() {
 
             }), "JSBridge")
 
-            val postData = "?api_id=" + URLEncoder.encode(WoolworthsApplication.getApiId()?.toLowerCase(Locale.getDefault()), "UTF-8").toString() + "&sha1=" + URLEncoder.encode(BuildConfig.SHA1, "UTF-8") + "&agent=" + URLEncoder.encode("android", "UTF-8")
-            val getPayUCardUrl = "https://payu-qa.wfs.wigroup.io/$postData"
-
-            loadUrl(getPayUCardUrl)
+            val payMyAccount = WoolworthsApplication.getPayMyAccountOption()
+            payMyAccount?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
         }
     }
 

@@ -50,7 +50,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
                 }
                 navigateToPayMyAccount(payUMethodType) {
-                    val paymentMethods = Gson().toJson(payMyAccountViewModel?.getPaymentMethodList())
+                    val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                     val accountDetail: Pair<ApplyNowState, Account>? = mAvailableFundPresenter?.getAccountDetail()
                     navController?.navigate(StoreCardFragmentDirections.actionStoreCardFragmentToEnterPaymentAmountDetailFragment(Gson().toJson(accountDetail), paymentMethods))
                 }

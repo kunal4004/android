@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
@@ -70,6 +71,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Context mContextApplication;
 	private static WhatsApp whatsApp;
 	private static List<ContactUs> mContactUs;
+	private static PayMyAccount mPayMyAccount;
 	private UserManager mUserManager;
 	private Tracker mTracker;
 	private static ApplyNowLinks applyNowLink;
@@ -82,7 +84,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static String cartCheckoutLink;
 	private static JsonElement storeCardBlockReasons;
 	private static String authenticVersionReleaseNote;
-
 
 	private WGlobalState mWGlobalState;
 
@@ -554,5 +555,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
 		WoolworthsApplication.clickAndCollect = clickAndCollect;
+	}
+
+	public static void setPayMyAccountOption(@Nullable PayMyAccount payMyAccount) {
+		mPayMyAccount = payMyAccount;
+	}
+
+	public static PayMyAccount getPayMyAccountOption() {
+		return mPayMyAccount;
 	}
 }

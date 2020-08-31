@@ -13,7 +13,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -146,7 +145,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         frameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
         sixMonthArrearsFrameLayout?.visibility = VISIBLE
-        mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
+        val sixMonthArrearsNavHost = supportFragmentManager.findFragmentById(R.id.six_month_arrears_nav_host) as NavHostFragment
+        mAccountSignedInPresenter?.setAccountSixMonthInArrears(sixMonthArrearsNavHost.navController)
     }
 
     override fun bottomSheetIsExpanded(): Boolean {
@@ -172,7 +172,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        findNavController(R.id.nav_host_available_fund_fragment).navigate(R.id.accountInArrearsFragmentDialog, bundle)
+        val navHostAvailableFundFragment = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as NavHostFragment
+        navHostAvailableFundFragment.navController.navigate(R.id.accountInArrearsFragmentDialog, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {

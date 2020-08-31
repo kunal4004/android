@@ -14,6 +14,7 @@ public class Configs {
     public Expiry expiry;
     public Defaults defaults;
     public AbsaBankingOpenApiServices absaBankingOpenApiServices;
+    public PayMyAccount payMyAccount;
     public PresenceInAppChat presenceInAppChat;
     public QuickShopDefaultValues quickShopDefaultValues;
     public InstantCardReplacement instantCardReplacement;
