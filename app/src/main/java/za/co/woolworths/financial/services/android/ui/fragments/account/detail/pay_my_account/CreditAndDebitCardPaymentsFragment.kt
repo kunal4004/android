@@ -23,16 +23,19 @@ import kotlinx.android.synthetic.main.pma_at_your_nearest_woolies_store_item.*
 import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -44,6 +47,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     private var navController: NavController? = null
     private var layout: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    private var payMyAccountOption: PayMyAccount? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Prevent layout to reload when fragment refresh
@@ -60,16 +64,18 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             configureToolbar("")
             displayToolbarDivider(false)
 
-            val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
-            val isFeatureEnabled = !payMyAccountOption.isFeatureEnabled()
+            payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+            val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() == false
             val isCreditCardSection = when (payMyAccountPresenter?.getPayMyAccountSection()) {
                 ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> true
                 else -> false
             }
-            
-            incDebitOrCreditCardButton?.visibility = when {
-                isCreditCardSection || isFeatureEnabled -> GONE
-                else -> VISIBLE
+
+            GlobalScope.doAfterDelay(10) {
+                incDebitOrCreditCardButton?.visibility = when {
+                    isFeatureEnabled || isCreditCardSection -> GONE
+                    else -> VISIBLE
+                }
             }
         }
 
@@ -94,7 +100,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection) {
                         true -> {
-                            if (payMyAccountViewModel.getPaymentMethodList()?.isNotEmpty() == true) return
+                            if (payMyAccountViewModel.getPaymentMethodList()?.isNotEmpty() == true || payMyAccountOption?.isFeatureEnabled() == false) return
 
                             initShimmer()
                             startProgress()

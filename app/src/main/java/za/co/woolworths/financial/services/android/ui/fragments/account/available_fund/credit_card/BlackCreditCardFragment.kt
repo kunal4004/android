@@ -30,9 +30,7 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
             R.id.incPayMyAccountButton -> {
-                if (mAvailableFundPresenter?.productHasAmountOverdue()!!) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
-                }
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
                 navigateToPayMyAccountActivity()
             }
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()

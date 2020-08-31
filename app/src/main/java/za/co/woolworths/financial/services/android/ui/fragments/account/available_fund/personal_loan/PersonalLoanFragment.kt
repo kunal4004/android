@@ -41,12 +41,8 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
-
                 val personalLoanAccount = mAvailableFundPresenter?.getAccount()
-                if (mAvailableFundPresenter?.productHasAmountOverdue()!!) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
-                }
-
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {
                     personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
                 } else {

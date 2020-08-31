@@ -46,9 +46,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
-                if (mAvailableFundPresenter?.productHasAmountOverdue()!!) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
-                }
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
                 navigateToPayMyAccount(payUMethodType) {
                     val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                     val accountDetail: Pair<ApplyNowState, Account>? = mAvailableFundPresenter?.getAccountDetail()
