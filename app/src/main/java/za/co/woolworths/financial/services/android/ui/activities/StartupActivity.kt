@@ -58,7 +58,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
             try {
                 appVersion = packageManager.getPackageInfo(packageName, 0).versionName
-                environment = BuildConfig.FLAVOR
+                environment = BuildConfig.ENV
             } catch (e: PackageManager.NameNotFoundException) {
                 appVersion = "6.1.0"
                 environment = "QA"
