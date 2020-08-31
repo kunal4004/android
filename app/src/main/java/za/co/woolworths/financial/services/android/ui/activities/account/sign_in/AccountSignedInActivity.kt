@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
@@ -59,8 +60,15 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
-            setAvailableFundBundleInfo(findNavController(R.id.nav_host_available_fund_fragment))
-            setAccountCardDetailInfo(findNavController(R.id.nav_host_overlay_bottom_sheet_fragment))
+
+            val availableFundNavHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as NavHostFragment
+            val navAvailableFund = availableFundNavHostFragment.navController
+
+            val accountOptions = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as NavHostFragment
+            val accountOptionsNavHostFragment = accountOptions.navController
+
+            setAvailableFundBundleInfo(navAvailableFund)
+            setAccountCardDetailInfo(accountOptionsNavHostFragment)
             setToolbarTopMargin()
         }
 

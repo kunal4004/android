@@ -31,7 +31,6 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
             queryPaymentMethod()
         })
 
-
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)

@@ -20,6 +20,10 @@ android {
         enabled = true
     }
 
+    ext {
+        enableCrashlytics = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -55,7 +59,7 @@ android {
 
     defaultConfig {
         applicationId "com.awfs.coordination"
-        manifestPlaceholders = [appLabel: "Woolworths", app_links_host:"www.woolworths.co.za"]
+        manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 28
         compileSdkVersion 28
@@ -64,7 +68,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionCode jobNumber
-        ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         dexOptions {
             javaMaxHeapSize "2560M"
         }
@@ -78,23 +82,22 @@ android {
 
         String env = ""
 
-        if (host.contains("-qa")){
+        if (host.contains("-qa")) {
             defaultConfig.applicationIdSuffix = ".qa"
-            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host:"www-win-qa.woolworths.co.za"]
+            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host: "www-win-qa.woolworths.co.za"]
             env = "QA"
-        }else{
+        } else {
             //assume prod
             jobNumber = 134
         }
 
-            defaultConfig {
+        defaultConfig {
             versionCode jobNumber
             buildConfigField("String", "HOST", '"' + host + '"')
             buildConfigField("String", "SHA1", '"' + hash + '"')
             buildConfigField("String", "ENV", '"' + env + '"')
         }
-    }
-    else {
+    } else {
 
         def apiKey = "ANDROID_V" + major + "." + minor
         def wigroupServicesProperties = new Properties()
@@ -134,18 +137,18 @@ android {
             qa {
                 applicationIdSuffix ".qa"
                 manifestPlaceholders = [appLabel: "Woolworths Q"]
-                buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
+                buildConfigField("String", "HOST", '"' + wigroupServicesProperties['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
                 manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
                 signingConfig signingConfigs.woneappQa
             }
 
             production {
-                buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
+                buildConfigField("String", "HOST", '"' + wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
-                manifestPlaceholders = [app_links_host:"www.woolworths.co.za"]
+                manifestPlaceholders = [app_links_host: "www.woolworths.co.za"]
                 signingConfig signingConfigs.woolworths
             }
         }
