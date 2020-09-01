@@ -167,7 +167,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_FREEZE_CARD)
                         OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
                         temporaryFreezeCard?.setBlockType(TEMPORARY)
-                        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+                        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus, blockCard)
                     }
 
                     440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams
@@ -195,7 +195,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                         temporaryFreezeCard?.setBlockType(NOW)
                         OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_unfrozen_label).toUpperCase(Locale.getDefault())).show()
                         temporaryCardFreezeSwitch?.isChecked = false
-                        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+                        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus, blockCard)
                     }
 
                     440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams ?: "", activity)
@@ -255,7 +255,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             }
         })
 
-        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus)
+        temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus, blockCard)
 
     }
 
@@ -306,7 +306,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
         when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
             true -> {
-                blockCardViews?.visibility = GONE
+                manageView?.visibility = GONE
+                blockCard?.visibility = GONE
+                cardNumberLayout?.visibility = GONE
                 tvCardNumberHeader?.visibility = INVISIBLE
                 cardStatus?.text = getString(R.string.store_card_status_temporay)
                 cardExpireDate?.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
