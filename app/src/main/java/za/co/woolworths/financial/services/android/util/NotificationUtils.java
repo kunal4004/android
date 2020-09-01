@@ -12,6 +12,9 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApi;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
@@ -56,12 +59,7 @@ public class NotificationUtils {
             //this notification channel was not found, remove any other channels that exists
             List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
 
-            notificationChannels.forEach(new Consumer<NotificationChannel>() {
-                @Override
-                public void accept(NotificationChannel notificationChannel) {
-                    notificationManager.deleteNotificationChannel(notificationChannel.getId());
-                }
-            });
+            notificationChannels.forEach(notificationChannel -> notificationManager.deleteNotificationChannel(notificationChannel.getId()));
         }
 
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -86,10 +84,12 @@ public class NotificationUtils {
     }
 
     public void sendRegistrationToServer(){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (task.isSuccessful())
-                sendRegistrationToServer(task.getResult().getToken());
-        });
+        if (isGooglePlayServicesAvailable()){
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+                if (task.isSuccessful())
+                    sendRegistrationToServer(task.getResult().getToken());
+            });
+        }
 	}
 
     public void sendRegistrationToServer(String token) {
@@ -120,5 +120,21 @@ public class NotificationUtils {
 
             }
         },CreateUpdateDeviceResponse.class));
+    }
+
+    private Boolean isGooglePlayServicesAvailable() {
+        // 1
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(appContext);
+        // 2
+
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e(TAG, "Error");
+            // ask user to update google play services and manage the error.
+            return false;
+        } else {
+            // 3
+            Log.i(TAG, "Google play services updated");
+            return true;
+        }
     }
 }
