@@ -351,11 +351,5 @@
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="howItWorks,payWithCard,expireDetailsLayout" />
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/blockCardViews"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="manageView,blockCard,cardNumberLayout" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
