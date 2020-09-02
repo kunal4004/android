@@ -1003,7 +1003,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		Activity activity = getActivity();
 		if (activity == null) return;
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, String.valueOf(INDEX_ACCOUNT));
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		activity.startActivity(intent);
 		activity.finish();
