@@ -5,16 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
 
 class PayMyAccountViewModel : ViewModel() {
 
@@ -28,7 +24,6 @@ class PayMyAccountViewModel : ViewModel() {
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
 
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
-    var amountEntered: MutableLiveData<String> = MutableLiveData()
 
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
@@ -49,7 +44,7 @@ class PayMyAccountViewModel : ViewModel() {
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
         val list = cardDetail?.paymentMethodList
-        if (!list?.isNullOrEmpty()!!) {
+        if (list != null && list.isNotEmpty()) {
             setPaymentMethodType(PAYUMethodType.CARD_UPDATE)
             val checkedList = list.filter { it.isCardChecked }
             if (checkedList.isNullOrEmpty()) {
@@ -65,18 +60,6 @@ class PayMyAccountViewModel : ViewModel() {
         val cardDetail = getCardDetail()
         val list = cardDetail?.paymentMethodList
         return list?.filter { it.isCardChecked }?.isNullOrEmpty() ?: false
-    }
-
-    fun setAmountEntered(amount: String?) {
-        amountEntered.value = amount
-    }
-
-    fun getAmountEntered() = if (amountEntered.value?.isNotEmpty() == true) {
-        amountEntered.value
-    } else {
-        val amountOverdue = getAccountProduct()?.second?.totalAmountDue ?: 0
-        val amountDueOutput = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amountOverdue), 1, WoolworthsApplication.getAppContext()))
-        amountDueOutput
     }
 
     fun setCVVNumber(number: String) {

@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
+import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
@@ -108,6 +109,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                                 with(paymentMethodsResponse) {
                                     when (httpCode) {
                                         200 -> {
+                                            if (payMyAccountViewModel.getCardDetail() == null){
+                                               val account =  (activity as? PayMyAccountActivity)?.getPayMyAccountPresenter()?.getAccountDetail()
+                                               val amountEntered =  Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.second?.totalAmountDue ?: 0))
+                                                val card = PaymentAmountCard(amountEntered,paymentMethods,account)
+                                                payMyAccountViewModel.setPMAVendorCard(card)
+                                            }
                                             payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
                                         }
                                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams

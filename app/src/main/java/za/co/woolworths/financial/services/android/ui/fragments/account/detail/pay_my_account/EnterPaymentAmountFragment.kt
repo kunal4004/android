@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.*
@@ -113,7 +114,11 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) } ?: 0
+                    var paymentAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")
+                    if (TextUtils.isEmpty(paymentAmount)){
+                        paymentAmount = "0"
+                    }
+                    var enteredAmount = paymentAmount?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) } ?: 0
                     enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
                     amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
 

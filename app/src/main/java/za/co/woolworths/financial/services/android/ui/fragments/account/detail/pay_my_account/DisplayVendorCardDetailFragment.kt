@@ -85,7 +85,7 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         })
 
         initPaymentMethod()
-        pmaAmountOutstandingTextView?.text = payMyAccountViewModel.getAmountEntered()
+//        pmaAmountOutstandingTextView?.text = payMyAccountViewModel.getAmountEntered()
     }
 
     private fun setupListener() {
@@ -143,7 +143,11 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
                 }
 
                 R.id.changeTextView -> {
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                    if (navController?.currentDestination?.id == R.id.displayVendorCardDetailFragment) {
+                        dismiss()
+                    } else {
+                        ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                    }
                 }
 
                 R.id.pmaConfirmPaymentButton -> {
