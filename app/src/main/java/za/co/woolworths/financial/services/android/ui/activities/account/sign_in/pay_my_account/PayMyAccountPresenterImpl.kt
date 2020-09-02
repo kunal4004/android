@@ -4,6 +4,7 @@ import android.content.Intent
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
@@ -57,6 +58,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         return model.getATMPaymentInfo()
     }
 
+    @Throws(RuntimeException::class)
     override fun getPayMyAccountCardDrawable() {
         val drawableHeader = getDrawableHeader()
         mainView?.setHowToPayLogo(when (mAccountDetails?.first) {
@@ -113,6 +115,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         loadABSACreditCardInfoIfNeeded()
     }
 
+    @Throws(RuntimeException::class)
     override fun getPayMyCardCardItem(): PayMyCardHeaderItem {
         val drawableHeader = getDrawableHeader()
         return when (mAccountDetails?.first) {
@@ -137,6 +140,16 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         return mAccountDetails?.first ?: ApplyNowState.STORE_CARD
     }
 
+    @Throws(RuntimeException::class)
+    override fun payByCardNowFirebaseEvent() {
+        return when (mAccountDetails?.first) {
+            ApplyNowState.STORE_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY)
+            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_PAY)
+            ApplyNowState.PERSONAL_LOAN -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_PAY)
+            else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
+        }
+    }
+
     fun getWhatsAppVisibility(): Boolean {
         with(WhatsAppChatToUs()) {
             return when (mAccountDetails?.first) {
@@ -147,4 +160,6 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
             }
         }
     }
+
+    fun getAccountDetail() = mAccountDetails
 }

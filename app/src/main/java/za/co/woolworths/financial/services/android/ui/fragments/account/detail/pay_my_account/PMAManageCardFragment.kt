@@ -62,7 +62,6 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
             mAccountDetails = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
             mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-            payMyAccountViewModel.setPaymentMethodList(mPaymentMethod)
         }
     }
 
@@ -96,7 +95,9 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
         if (isPaymentChecked?.isEmpty()!!) {
             mPaymentMethod?.get(0)?.isCardChecked = true
-            payMyAccountViewModel.setPaymentMethodList(mPaymentMethod)
+            val cardInfo = payMyAccountViewModel.getCardDetail()
+            cardInfo?.paymentMethodList = mPaymentMethod
+            payMyAccountViewModel.setPMAVendorCard(cardInfo)
         } else {
             mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
         }
@@ -104,7 +105,9 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
             manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod ->
-                payMyAccountViewModel.setPaymentMethodList(manageCardAdapter?.getList())
+                val cardDetail = payMyAccountViewModel.getCardDetail()
+                cardDetail?.paymentMethodList = manageCardAdapter?.getList()
+                payMyAccountViewModel.setPMAVendorCard(cardDetail)
                 useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
                 when (paymentMethod.cardExpired) {
                     true -> {
@@ -132,22 +135,21 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
 
         paymentMethod = Gson().toJson(mPaymentMethod?.filter { s -> s.isCardChecked })
-        val accounts = mAccountDetails?.second
 
         when (v?.id) {
             R.id.useThisCardButton -> {
-                val account = Gson().toJson(accounts)
+                val account = Gson().toJson(mAccountDetails)
                 val vendorCardDetail = PMAManageCardFragmentDirections.actionManageCardFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                 navController?.navigate(vendorCardDetail)
             }
 
             R.id.addCardTextView -> {
+                val accounts = mAccountDetails?.second
                 val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
                 navController?.navigate(manageCard)
             }
         }
     }
-
 
     private val paymentMethodItemSwipeLeft: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 

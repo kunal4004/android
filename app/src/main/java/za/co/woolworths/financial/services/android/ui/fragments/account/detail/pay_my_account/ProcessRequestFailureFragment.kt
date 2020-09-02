@@ -27,7 +27,7 @@ class ProcessRequestFailureFragment : Fragment(), View.OnClickListener {
 //            AnimationUtilExtension.animateViewPushDown(this)
 //        }
 
-        tvCallCenterNumber?.apply {
+        callCenterNumberTextView?.apply {
             setOnClickListener(this@ProcessRequestFailureFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -37,7 +37,7 @@ class ProcessRequestFailureFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.btnRetryOnFailure -> {
             }
-            R.id.tvCallCenterNumber -> {
+            R.id.callCenterNumberTextView -> {
             }
         }
     }

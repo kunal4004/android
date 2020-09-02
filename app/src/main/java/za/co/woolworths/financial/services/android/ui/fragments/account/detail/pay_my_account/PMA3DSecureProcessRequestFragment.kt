@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
@@ -16,21 +17,26 @@ import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_success_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
+import java.util.*
 
 class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickListener {
 
     private var menuItem: MenuItem? = null
     private var navController: NavController? = null
     private var hasPMAPostPayUPayCompleted: Boolean = false
+
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     companion object {
         const val PMA_TRANSACTION_COMPLETED_RESULT_CODE = 4470
@@ -61,7 +67,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        tvCallCenterNumber?.apply {
+        callCenterNumberTextView?.apply {
             setOnClickListener(this@PMA3DSecureProcessRequestFragment)
             AnimationUtilExtension.animateViewPushDown(this)
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -125,7 +131,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                         200 -> {
                             if (paymentSuccessful) {
                                 stopSpinning(true)
-                                paymentValueTextView?.text =Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amount))
+                                paymentValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amount))
                                 updateUIOnSuccess()
                             } else {
                                 stopSpinning(false)
@@ -165,6 +171,16 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         includePMAProcessingSuccess?.visibility = VISIBLE
         includePMAProcessing?.visibility = GONE
         includePMAProcessingFailure?.visibility = GONE
+        sendFirebaseEvent()
+    }
+
+    private fun sendFirebaseEvent() {
+        val productGroupCode = payMyAccountViewModel.getAccountProduct()?.second?.productGroupCode
+        when (productGroupCode?.toLowerCase(Locale.getDefault())) {
+            "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY_CMPLT)
+            "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_PAY_CMPLT)
+            "cc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_PAY_CMPLT)
+        }
     }
 
     private fun showError(response: PayUPayResultResponse) {
@@ -183,7 +199,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                     ErrorHandlerView(activity).showToast()
                 }
             }
-            R.id.tvCallCenterNumber -> {
+            R.id.callCenterNumberTextView -> {
                 Utils.makeCall("0861 50 20 20")
             }
 

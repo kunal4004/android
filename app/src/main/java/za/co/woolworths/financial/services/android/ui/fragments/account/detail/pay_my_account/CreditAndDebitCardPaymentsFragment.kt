@@ -200,23 +200,20 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
-
                 val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
                 val payUMethodType = payMyAccountViewModel.getPaymentMethodType()
                 val isFeatureEnabled = payMyAccountOption.isFeatureEnabled()
-
                 val paymentMethod = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
+                payMyAccountPresenter?.payByCardNowFirebaseEvent()
 
                 when {
-
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                         val account = payMyAccountPresenter?.getAccount() ?: Account()
                         val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account, true)
                         navController?.navigate(toEnterPaymentAmountDirection)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> {
-                        val account = Gson().toJson(payMyAccountPresenter?.getAccount()
-                                ?: Account())
+                        val account = Gson().toJson(payMyAccountPresenter?.getAccount() ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }

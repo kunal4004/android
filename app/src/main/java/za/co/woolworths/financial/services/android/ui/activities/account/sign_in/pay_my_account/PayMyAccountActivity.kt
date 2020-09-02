@@ -14,10 +14,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
-import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_ACCOUNT_INFO
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.AMOUNT_ENTERED
@@ -40,7 +39,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     private lateinit var navigationHost: NavController
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
-    var amountEntered: Int = 0
     private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,10 +62,11 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putString(GET_CARD_RESPONSE, getString(GET_CARD_RESPONSE, ""))
             args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
 
-            val amount = getString(AMOUNT_ENTERED, "R 0.00")
-            amountEntered = amount?.replace("[,.R ]".toRegex(), "")?.toInt()!!
+            val amount = getString(AMOUNT_ENTERED, "")
+            //amountEntered = amount?.replace("[,.R ]".toRegex(), "")?.toInt()!!
 
-            payMyAccountViewModel.setAmountEntered(amount)
+            val paymentAmountCard = Gson().fromJson(amount, PaymentAmountCard::class.java)
+            payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
 
             val graph = navigationHost.graph
             graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -128,15 +127,12 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     override fun onBackPressed() {
         when (currentFragment) {
             is PMAManageCardFragment -> {
-                val paymentMethodList = payMyAccountViewModel.getPaymentMethodList()
-                val paymentMethodIntent = Intent().putExtra("PAYMENT_METHOD_LIST", Gson().toJson(paymentMethodList))
-                payMyAccountViewModel.setPaymentMethodList(paymentMethodList)
-                setResult(PMA_UPDATE_CARD_RESULT_CODE, paymentMethodIntent)
+                setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
             is CreditAndDebitCardPaymentsFragment -> {
-                setResult(RESULT_OK)
+                setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
@@ -175,12 +171,9 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             PAY_MY_ACCOUNT_REQUEST_CODE -> {
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
-                        val amountEntered = extras?.getString("AMOUNT_ENTERED")
-                        if (amountEntered != null)
-                            payMyAccountViewModel.setAmountEntered(amountEntered)
-                        val paymentMethod = extras?.getString("PAYMENT_METHOD_LIST")
-                        if (paymentMethod != null)
-                            payMyAccountViewModel.setPaymentMethodList(Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type))
+                        extras?.getString("AMOUNT_ENTERED")?.apply {
+                            payMyAccountViewModel.setPMAVendorCard(this)
+                        }
                     }
 
                     PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> payMyAccountViewModel.queryPaymentMethod.value = true

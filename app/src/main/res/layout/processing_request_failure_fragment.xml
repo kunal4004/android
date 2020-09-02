@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvProcessingYourRequestDuration"
+        android:id="@+id/processResultFailureTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -40,7 +40,7 @@
 
 
     <TextView
-        android:id="@+id/tvCallCenterNumber"
+        android:id="@+id/callCenterNumberTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/thirty_two_dp"
@@ -65,7 +65,7 @@
         android:layout_marginEnd="32dp"
         android:letterSpacing="0.13"
         android:text="@string/retry"
-        app:layout_constraintBottom_toTopOf="@+id/tvCallCenterNumber"
+        app:layout_constraintBottom_toTopOf="@+id/callCenterNumberTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />

@@ -26,7 +26,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.T
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
 
@@ -138,8 +137,8 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         model?.queryServiceGetCreditCartToken(this)
     }
 
-    override fun onSuccess(apiResponse: Any?) {
-        with(apiResponse) {
+    override fun onSuccess(response: Any?) {
+        with(response) {
             when (this) {
 
                 is OfferActive -> {
@@ -149,10 +148,10 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                             mainView?.hideUserOfferActiveProgress()
                             handleUserOfferActiveSuccessResult(this)
                         }
-                        440, 502 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440, 502 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.hideUserOfferActiveProgress()
-                            handleUnknownHttpResponse(response?.desc)
+                            handleUnknownHttpResponse(this.response?.desc)
                         }
                     }
                 }
@@ -162,14 +161,14 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                         200 -> {
                             mainView?.onGetCreditCArdTokenSuccess(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.onGetCreditCardTokenFailure()
                         }
                     }
                 }
 
-                else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
+                else -> throw RuntimeException("onSuccess:: unknown response $response")
             }
         }
     }
@@ -255,12 +254,13 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun isCreditCardSection(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase() == CREDIT_CARD_PRODUCT_GROUP_CODE
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == CREDIT_CARD_PRODUCT_GROUP_CODE
     }
 
     override fun navigateToPayMyAccountActivity() {
         mainView?.navigateToPayMyAccountActivity()
     }
+
 
     override fun getStoreCardBlockType(): Boolean {
         val storeCardsData = getStoreCardResponse()?.storeCardsData

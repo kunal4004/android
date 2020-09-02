@@ -34,18 +34,18 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
         model?.queryABSAServiceGetUserCreditCardToken(this)
     }
 
-    override fun onSuccess(apiResponse: Any?) {
-        with(apiResponse) {
+    override fun onSuccess(response: Any?) {
+        with(response) {
             when (this) {
                 is CreditCardTokenResponse -> {
                     when (httpCode) {
                         200 -> handleUserCreditCardToken(this)
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
-                        else -> mainView?.handleUnknownHttpResponse(response?.desc)
+                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> mainView?.handleUnknownHttpResponse(this.response?.desc)
                     }
                     mainView?.hideABSAServiceGetUserCreditCardTokenProgressBar()
                 }
-                else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
+                else -> throw RuntimeException("onSuccess:: unknown response $response")
             }
         }
     }
@@ -99,7 +99,6 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
                 super.onFailure(error)
                 mainView?.onPayUMethodFailure(error)
             }
-
         })
     }
 

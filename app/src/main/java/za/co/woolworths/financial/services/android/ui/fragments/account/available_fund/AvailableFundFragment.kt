@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -27,6 +26,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
@@ -48,7 +48,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     var navController: NavController? = null
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
     var payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,17 +130,11 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     private fun setUpView() {
         mAvailableFundPresenter?.getAccount()?.apply {
             activity?.apply {
-                val availableFund =
-                        Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1, this))
-                val currentBalance =
-                        Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-                val creditLimit =
-                        Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, this))
-                val paymentDueDate =
-                        paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
-                                ?: "N/A"
-                val totalAmountDueAmount =
-                        Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+                val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1, this))
+                val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
+                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, this))
+                val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) } ?: "N/A"
+                val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
                 currentBalanceAmountTextView?.text = currentBalance
@@ -163,12 +156,12 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     override fun navigateToPaymentOptionsActivity() {
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle()) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
     }
 
     override fun navigateToPayMyAccountActivity() {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle()) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
     }
 
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
@@ -271,10 +264,15 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                     mPaymentMethodsResponse = paymentMethodsResponse
                     payUMethodType = when (paymentMethods.isNotEmpty()) {
                         true -> {
+                            val account = mAvailableFundPresenter?.getAccountDetail()
+                            val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+                            val card = PaymentAmountCard(amountEntered, mPaymentMethodsResponse?.paymentMethods, account)
+                            payMyAccountViewModel.setPMAVendorCard(card)
                             PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE
                         }
                         else -> PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                     }
+                    payMyAccountViewModel.setPaymentMethodType(payUMethodType)
                 }
 
                 400 -> {
@@ -339,12 +337,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
             else -> navigateToPayMyAccountActivity()
         }
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.e("pour", "pour")
     }
 
 }

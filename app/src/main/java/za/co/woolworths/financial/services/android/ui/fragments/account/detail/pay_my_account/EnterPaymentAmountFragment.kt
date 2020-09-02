@@ -22,7 +22,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
@@ -69,8 +68,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         try {
             account = args.account
         } catch (e: Exception) {
-            val accountArgs = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
-            account = accountArgs.second
+            val cardInfo = payMyAccountViewModel.getCardDetail()
+            account = cardInfo?.account?.second
             mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
         }
 
@@ -78,11 +77,9 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue
-                ?: 0))
-        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue
-                ?: 0))
-        (activity as? PayMyAccountActivity)?.amountEntered?.toString()?.let { paymentAmountInputEditText?.setText(it) }
+        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
+        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
+        paymentAmountInputEditText?.setText(payMyAccountViewModel.getCardDetail()?.amountEntered)
 
     }
 
@@ -116,8 +113,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) }
-                            ?: 0
+                    var enteredAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) } ?: 0
                     enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
                     amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
 
@@ -176,11 +172,15 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                     }
                 }
 
+                val selectedCard = payMyAccountViewModel.getCardDetail()
+                selectedCard?.amountEntered = amountEntered
+                payMyAccountViewModel.setPMAVendorCard(selectedCard)
+
                 if (continueToPaymentButton?.text?.toString() == bindString(R.string.done)) {
-                    payMyAccountViewModel.setAmountEntered(amountEntered)
+
                     activity?.apply {
                         if (isDoneButtonEnabled) {
-                            setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", amountEntered))
+                            setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", Gson().toJson(selectedCard)))
                             finish()
                         } else {
                             activity?.onBackPressed()
@@ -189,7 +189,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                     return
                 }
 
-                (activity as? PayMyAccountActivity)?.amountEntered = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()!!
                 navController?.navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
             }
         }

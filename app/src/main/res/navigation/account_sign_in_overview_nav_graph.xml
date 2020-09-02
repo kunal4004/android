@@ -11,7 +11,7 @@
         android:label="Store Card Fragment"
         tools:layout="@layout/account_available_fund_overview_fragment">
         <action
-            android:id="@+id/action_storeCardFragment_to_enterPaymentAmountDetailFragment"
+            android:id="@+id/storeCardFragmentToDisplayVendorDetailFragmentAction"
             app:destination="@id/toCardDetailFragmentDialog" />
     </fragment>
     <fragment

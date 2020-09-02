@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
@@ -24,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.lang.Exception
@@ -41,7 +43,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
     private var accountArgs: Account? = null
     private var navController: NavController? = null
     private var hasPMAPostPayUPayCompleted: Boolean = false
+    private var callUsNumber: String? = "0861 50 20 20"
 
+    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     val args: PMAProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,15 +66,14 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
 
         navController = Navigation.findNavController(view)
 
-        circularProgressListener({
-        }, { updateUIOnFailure() }) // onSuccess(), onFailure()
+        circularProgressListener({}, {}) // onSuccess(), onFailure()
 
         btnRetryProcessPayment?.apply {
             setOnClickListener(this@PMAProcessRequestFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        tvCallCenterNumber?.apply {
+        callCenterNumberTextView?.apply {
             setOnClickListener(this@PMAProcessRequestFragment)
             AnimationUtilExtension.animateViewPushDown(this)
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -79,8 +82,21 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         autoConnection()
     }
 
-    private fun updateUIOnFailure() {
+    private fun updateUIOnFailure(desc: String?) {
         menuItem?.isVisible = true
+        desc?.apply {
+            // keep numeric characters only
+            val number = this.replace("[^\\d.]", "")
+            if (number.isNotEmpty()) {
+                callCenterNumberTextView?.visibility = VISIBLE
+                callUsNumber = number
+            } else {
+                callUsNumber = "0861 50 20 20"
+                callCenterNumberTextView?.visibility = GONE
+            }
+        }
+        stopSpinning(false)
+        processResultFailureTextView?.text = desc
         includePMAProcessingSuccess?.visibility = GONE
         includePMAProcessingFailure?.visibility = VISIBLE
         includePMAProcessing?.visibility = GONE
@@ -143,14 +159,13 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
                         }
                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
                         502 -> {
-                            stopSpinning(false)
                             if (response.response.code.startsWith("P0"))
-                                updateUIOnFailure()
+                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                             else
-                                showError(response)
+                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                         }
                         else -> {
-                            showError(response)
+                            response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                         }
                     }
                 }
@@ -169,15 +184,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         })
     }
 
-    private fun showError(response: PayUResponse) {
-        activity?.supportFragmentManager?.let { fragmentManager ->
-            Utils.showGeneralErrorDialog(fragmentManager, response.response.desc ?: "")
-        }
-    }
-
     private fun payURequestBody(cardDetailArgs: AddCardResponse?, accountArgs: Account?): PayUPay {
 
-        val amountEntered = (activity as? PayMyAccountActivity)?.amountEntered ?: 0
+        val amountEntered = payMyAccountViewModel.getCardDetail()?.amountEnteredInInt() ?: 0
 
         val creditCardCVV = cardDetailArgs?.card?.cvv ?: ""
         val token = cardDetailArgs?.token ?: "0"
@@ -202,8 +211,8 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
                     ErrorHandlerView(activity).showToast()
                 }
             }
-            R.id.tvCallCenterNumber -> {
-                Utils.makeCall("0861 50 20 20")
+            R.id.callCenterNumberTextView -> {
+                Utils.makeCall(callUsNumber)
             }
         }
     }

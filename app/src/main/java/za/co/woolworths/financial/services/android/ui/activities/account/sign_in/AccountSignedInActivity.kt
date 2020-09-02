@@ -17,13 +17,11 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
@@ -195,23 +193,14 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         when (requestCode) {
             PAY_MY_ACCOUNT_REQUEST_CODE -> {
                 when (resultCode) {
-                    RESULT_OK -> {
-                        val amountEntered = extras?.getString("AMOUNT_ENTERED")
-                        if (amountEntered != null)
-                            payMyAccountViewModel.setAmountEntered(amountEntered)
-                        val paymentMethod = extras?.getString("PAYMENT_METHOD_LIST")
-                        if (paymentMethod != null)
-                            payMyAccountViewModel.setPaymentMethodList(Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type))
+                    RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
+                        extras?.getString("AMOUNT_ENTERED")?.apply {
+                            payMyAccountViewModel.setPMAVendorCard(this)
+                        }
                     }
 
                     PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
                         payMyAccountViewModel.queryPaymentMethod.value = true
-                    }
-
-                    PMA_UPDATE_CARD_RESULT_CODE -> {
-                        val paymentMethod = extras?.getString("PAYMENT_METHOD_LIST")
-                        if (paymentMethod != null)
-                            payMyAccountViewModel.setPaymentMethodList(Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type))
                     }
                 }
             }
