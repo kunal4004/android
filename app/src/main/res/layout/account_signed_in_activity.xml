@@ -99,7 +99,7 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/six_month_arrears_nav_host"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
