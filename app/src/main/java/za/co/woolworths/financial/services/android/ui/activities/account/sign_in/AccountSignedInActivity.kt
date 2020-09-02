@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
@@ -50,8 +50,13 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
-            setAvailableFundBundleInfo(findNavController(R.id.nav_host_available_fund_fragment))
-            setAccountCardDetailInfo(findNavController(R.id.nav_host_overlay_bottom_sheet_fragment))
+
+
+            val availableFundNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+            val accountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
+
+            setAvailableFundBundleInfo(availableFundNavHost?.navController)
+            setAccountCardDetailInfo(accountOptionsNavHost?.navController)
             setToolbarTopMargin()
         }
 
@@ -129,11 +134,12 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         frameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
         sixMonthArrearsFrameLayout?.visibility = VISIBLE
-        mAccountSignedInPresenter?.setAccountSixMonthInArrears(findNavController(R.id.six_month_arrears_nav_host))
+        val accountSixMonthInArrearsNavHost = supportFragmentManager.findFragmentById(R.id.six_month_arrears_nav_host) as? NavHostFragment
+        mAccountSignedInPresenter?.setAccountSixMonthInArrears(accountSixMonthInArrearsNavHost?.navController)
     }
 
     override fun bottomSheetIsExpanded(): Boolean {
-        return sheetBehavior?.state ==  BottomSheetBehavior.STATE_EXPANDED
+        return sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun onClick(v: View?) {
@@ -155,7 +161,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        findNavController(R.id.nav_host_available_fund_fragment).navigate(R.id.accountInArrearsFragmentDialog, bundle)
+        val availableFundNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+        availableFundNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
