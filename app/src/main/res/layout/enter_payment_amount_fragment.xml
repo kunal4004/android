@@ -115,6 +115,7 @@
         android:textColorHint="@color/black"
         android:textCursorDrawable="@drawable/cursor_custom_color"
         android:textSize="55sp"
+        app:currencySymbol="R"
         app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline">

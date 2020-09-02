@@ -114,7 +114,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    var paymentAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R ]".toRegex(), "")
+                    var paymentAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R$ ]".toRegex(), "")
                     if (TextUtils.isEmpty(paymentAmount)){
                         paymentAmount = "0"
                     }

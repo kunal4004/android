@@ -57,7 +57,7 @@ public class CurrencyEditText extends AppCompatEditText {
                 if (!s.equals(current)) {
                     editText.removeTextChangedListener(this);
 
-                    String cleanString = s.replaceAll("[$,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
+                    String cleanString = s.replaceAll("[R $,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
 
                     if (cleanString.length() != 0) {
                         try {
@@ -83,13 +83,13 @@ public class CurrencyEditText extends AppCompatEditText {
 
                             if (Decimals) {
                                 parsed = Double.parseDouble(cleanString);
-                                formatted = NumberFormat.getCurrencyInstance(Locale.US).format((parsed / 100)).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
+                                formatted = NumberFormat.getCurrencyInstance(Locale.US).format((parsed / 100)).replace(NumberFormat.getCurrencyInstance(Locale.US).getCurrency().getSymbol(), "R ");
                             } else {
                                 parsedInt = Integer.parseInt(cleanString);
-                                formatted = currencyFormat + NumberFormat.getNumberInstance(Locale.US).format(parsedInt);
+                                formatted = "R " + NumberFormat.getNumberInstance(Locale.US).format(parsedInt);
                             }
 
-                            formatted = formatted.replaceAll(",", " ");
+                            formatted = formatted.replaceAll(",", " ").replace("$", currencyFormat);
                             current = formatted;
 
                             //if decimals are turned off and Separator is set as anything other than commas..
