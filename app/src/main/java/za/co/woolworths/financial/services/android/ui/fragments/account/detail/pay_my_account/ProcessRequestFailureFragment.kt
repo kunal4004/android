@@ -22,11 +22,6 @@ class ProcessRequestFailureFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setupOnClickListener() {
-//        btnRetryOnFailure?.apply {
-//            setOnClickListener(this@ProcessRequestFailureFragment)
-//            AnimationUtilExtension.animateViewPushDown(this)
-//        }
-
         callCenterNumberTextView?.apply {
             setOnClickListener(this@ProcessRequestFailureFragment)
             AnimationUtilExtension.animateViewPushDown(this)

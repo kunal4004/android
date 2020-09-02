@@ -86,7 +86,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         menuItem?.isVisible = true
         desc?.apply {
             // keep numeric characters only
-            val number = this.replace("[^\\d. ]", "")
+            val number = this.replace("[^0-9]".toRegex(), "")
             if (number.isNotEmpty()) {
                 callCenterNumberTextView?.visibility = VISIBLE
                 callUsNumber = number

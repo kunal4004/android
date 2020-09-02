@@ -37,6 +37,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     private var hasPMAPostPayUPayCompleted: Boolean = false
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    private var callUsNumber: String? = "0861 50 20 20"
 
     companion object {
         const val PMA_TRANSACTION_COMPLETED_RESULT_CODE = 4470
@@ -60,7 +61,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         success_tick?.colorCode = R.color.success_tick_color
 
         circularProgressListener({
-        }, { updateUIOnFailure() }) // onSuccess(), onFailure()
+        }, { }) // onSuccess(), onFailure()
 
         btnRetryProcessPayment?.apply {
             setOnClickListener(this@PMA3DSecureProcessRequestFragment)
@@ -83,6 +84,27 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
 
     private fun updateUIOnFailure() {
         menuItem?.isVisible = true
+        includePMAProcessingSuccess?.visibility = GONE
+        includePMAProcessingFailure?.visibility = VISIBLE
+        includePMAProcessing?.visibility = GONE
+
+    }
+
+    private fun updateUIOnFailure(desc: String?) {
+        menuItem?.isVisible = true
+        desc?.apply {
+            // keep numeric characters only
+            val number = this.replace("[^0-9]".toRegex(), "")
+            if (number.isNotEmpty()) {
+                callCenterNumberTextView?.visibility = VISIBLE
+                callUsNumber = number
+            } else {
+                callUsNumber = "0861 50 20 20"
+                callCenterNumberTextView?.visibility = GONE
+            }
+        }
+        stopSpinning(false)
+        processResultFailureTextView?.text = desc
         includePMAProcessingSuccess?.visibility = GONE
         includePMAProcessingFailure?.visibility = VISIBLE
         includePMAProcessing?.visibility = GONE
@@ -135,19 +157,19 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                                 updateUIOnSuccess()
                             } else {
                                 stopSpinning(false)
-                                updateUIOnFailure()
+                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                             }
                         }
                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
                         502 -> {
                             stopSpinning(false)
                             if (response.response.code.startsWith("P0"))
-                                updateUIOnFailure()
+                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                             else
-                                showError(response)
+                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                         }
                         else -> {
-                            showError(response)
+                            response.response.desc?.let { desc -> updateUIOnFailure(desc) }
                         }
                     }
                 }
@@ -183,12 +205,6 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         }
     }
 
-    private fun showError(response: PayUPayResultResponse) {
-        activity?.supportFragmentManager?.let { fragmentManager ->
-            Utils.showGeneralErrorDialog(fragmentManager, response.response.desc ?: "")
-        }
-    }
-
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.btnRetryProcessPayment -> {
@@ -200,7 +216,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                 }
             }
             R.id.callCenterNumberTextView -> {
-                Utils.makeCall("0861 50 20 20")
+                Utils.makeCall(callUsNumber)
             }
 
             R.id.backToMyAccountButton -> {
