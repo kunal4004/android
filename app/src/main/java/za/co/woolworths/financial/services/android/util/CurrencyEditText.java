@@ -83,7 +83,7 @@ public class CurrencyEditText extends AppCompatEditText {
 
                             if (Decimals) {
                                 parsed = Double.parseDouble(cleanString);
-                                formatted = NumberFormat.getCurrencyInstance().format((parsed / 100)).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
+                                formatted = NumberFormat.getCurrencyInstance(Locale.US).format((parsed / 100)).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
                             } else {
                                 parsedInt = Integer.parseInt(cleanString);
                                 formatted = currencyFormat + NumberFormat.getNumberInstance(Locale.US).format(parsedInt);
