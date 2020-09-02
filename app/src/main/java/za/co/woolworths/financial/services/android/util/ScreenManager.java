@@ -45,25 +45,6 @@ public class ScreenManager {
     public static final int BIOMETRICS_LAUNCH_VALUE = 1983;
     public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
 
-    public static void presentMain(Activity activity, String notificationUtils) {
-
-        Intent intent = new Intent(activity, BottomNavigationActivity.class);
-        intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
-        activity.startActivityForResult(intent, 0);
-        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        activity.finish();
-    }
-
-    public static void presentMain(Activity activity, String notificationUtils, Uri data) {
-
-        Intent intent = new Intent(activity, BottomNavigationActivity.class);
-        intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
-        intent.setData(data);
-        activity.startActivityForResult(intent, 0);
-        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        activity.finish();
-    }
-
     public static void presentSSOSignin(Activity activity) {
         Intent intent = new Intent(activity, SSOActivity.class);
         intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
@@ -215,7 +196,7 @@ public class ScreenManager {
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
 
-    public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String amountEntered,Boolean isDoneButtonEnabled, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
+    public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String amountEntered, Boolean isDoneButtonEnabled, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
         Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, account);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, paymentMethod);
@@ -228,7 +209,7 @@ public class ScreenManager {
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
 
-    public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String amountEntered,Boolean isDoneButtonEnabled,Boolean isPaymentMethodUpdated, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
+    public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String amountEntered, Boolean isDoneButtonEnabled, Boolean isPaymentMethodUpdated, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
         Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, account);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, paymentMethod);
@@ -291,5 +272,22 @@ public class ScreenManager {
         openChatToUsWhatsAppActivity.putExtra(APP_SCREEN, appScreen);
         activity.startActivity(openChatToUsWhatsAppActivity);
         activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+    }
+
+
+    public static void presentMain(Activity activity, Uri data) {
+
+        Intent intent = new Intent(activity, BottomNavigationActivity.class);
+        intent.setData(data);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.finish();
+    }
+
+    public static void presentMain(Activity activity) {
+        Intent intent = new Intent(activity, BottomNavigationActivity.class);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.finish();
     }
 }

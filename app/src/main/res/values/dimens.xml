@@ -143,7 +143,6 @@
     <dimen name="available_fund_40dp_margin">40dp</dimen>
     <dimen name="available_fund_16sp_amount">16sp</dimen>
     <dimen name="available_fund_16dp_margin">16dp</dimen>
-    <dimen name="available_fund_46dp_margin">46dp</dimen>
     <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
     <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
     <dimen name="voucher_date_text_size_11sp">11sp</dimen>

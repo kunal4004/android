@@ -1576,6 +1576,9 @@
     <string name="atm_payment_note">Note: Steps in this process might vary from bank to bank.</string>
    <string name="atm_banking_details">Banking Details</string>
     <!-- End Pay My Account -->
+    <string name="default_notification_channel_id">woolworths_notification_channel_01</string>
+    <string name="default_notification_channel_name">All Notifications</string>
+    <string name="default_notification_channel_description">Woolworths Notification Channel</string>
 
     <string name="store_closed_message">Sorry, we aren’t accepting food orders in your chosen area as the store is temporarily closed</string>
     <string name="first_available_food_delivery_date">The earliest available delivery slot for &lt;b>food&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>

@@ -10,25 +10,6 @@
     </string-array>
     <!-- navigation drawer item labels  -->
 
-    <string-array name="accounts_walkthrough_descriptions">
-        <item>@string/accounts_walkthrough_desc_1</item>
-        <item>@string/accounts_walkthrough_desc_2</item>
-        <item>@string/accounts_walkthrough_desc_3</item>
-        <item>@string/accounts_walkthrough_desc_4</item>
-    </string-array>
-    <string-array name="accounts_walkthrough_titles">
-        <item>@string/accounts_walkthrough_title_1</item>
-        <item>@string/accounts_walkthrough_title_2</item>
-        <item>@string/accounts_walkthrough_title_3</item>
-        <item>@string/accounts_walkthrough_title_4</item>
-    </string-array>
-    <integer-array name="accounts_walkthrough_images">
-        <item>@drawable/accounts_walkthrough_1</item>
-        <item>@drawable/accounts_walkthrough_2</item>
-        <item>@drawable/accounts_walkthrough_3</item>
-        <item>@drawable/accounts_walkthrough_4</item>
-    </integer-array>
-
     <integer-array name="empty_state_icon">
         <item>@drawable/emptyvouchers</item>
         <item>@drawable/emptytierhistory</item>
@@ -41,19 +22,6 @@
         <item>@drawable/emptyoopssomethingwentwrong</item>
         <item>@drawable/statement_icon</item>
     </integer-array>
-
-    <string-array name="on_boarding_walkthrough_descriptions">
-        <item>@string/onboarding_desc_screen_1</item>
-        <item>@string/onboarding_desc_screen_2</item>
-        <item>@string/onboarding_desc_screen_3</item>
-        <item>@string/onboarding_desc_screen_4</item>
-    </string-array>
-    <string-array name="on_boarding_walkthrough_titles">
-        <item>@string/on_boarding_title_1</item>
-        <item>@string/on_boarding_title_2</item>
-        <item>@string/on_boarding_title_3</item>
-        <item>@string/on_boarding_title_4</item>
-    </string-array>
 
     <string-array name="death_cover_required_forms">
         <item>@string/balance_protection_claim_form</item>

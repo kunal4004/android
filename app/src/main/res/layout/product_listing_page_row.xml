@@ -96,6 +96,13 @@
         app:layout_constraintTop_toBottomOf="@+id/brandNameFakeView"
         tools:ignore="HardcodedText,UnusedAttribute" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="brandNameFakeView,tvSaveText" />
+
     <View
         android:id="@+id/horizontalProductSeparator"
         android:layout_width="0dp"
