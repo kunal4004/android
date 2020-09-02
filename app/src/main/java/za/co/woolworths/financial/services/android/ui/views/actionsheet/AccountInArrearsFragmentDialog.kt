@@ -44,7 +44,8 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
         when (view?.id) {
             R.id.gotITButton -> dismiss()
             R.id.paymentOptionButton -> {
-                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards,payMyAccountViewModel.getAmountEntered())
+                val cardDetail = payMyAccountViewModel.getCardDetail()
+                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards,Gson().toJson(cardDetail))
                 dismiss()
             }
         }

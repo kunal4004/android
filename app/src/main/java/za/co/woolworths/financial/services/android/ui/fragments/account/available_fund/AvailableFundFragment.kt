@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -327,8 +328,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
 
         val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
-        val isFeatureEnabled = payMyAccountOption.isFeatureEnabled()
-
+        val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         when {
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                 navigateToPayMyAccountActivity()
