@@ -5,10 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
-import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ProcessRequestSuccessFragment : Fragment(), View.OnClickListener {
 
@@ -19,16 +16,8 @@ class ProcessRequestSuccessFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupOnClickListener()
     }
 
-    private fun setupOnClickListener() {
-
-        tvCallCenterNumber?.apply {
-            setOnClickListener(this@ProcessRequestSuccessFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
