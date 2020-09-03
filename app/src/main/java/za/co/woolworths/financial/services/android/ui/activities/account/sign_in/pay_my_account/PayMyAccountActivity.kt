@@ -171,7 +171,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
-                            Log.e("extraLog",this)
                             payMyAccountViewModel.setPMAVendorCard(this)
                         }
                     }

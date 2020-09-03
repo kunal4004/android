@@ -195,7 +195,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
-                            Log.e("extraLogAcc",this)
                             payMyAccountViewModel.setPMAVendorCard(this)
                         }
                     }
