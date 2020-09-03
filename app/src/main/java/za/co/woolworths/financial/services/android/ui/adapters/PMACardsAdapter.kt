@@ -23,9 +23,11 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
             bindItems(paymentMethod)
 
             itemView.setOnClickListener {
-                paymentMethodList?.forEach { it.isCardChecked = false }
                 paymentMethod?.apply {
-                    isCardChecked = !cardExpired
+                    if (!cardExpired) {
+                        paymentMethodList?.forEach { it.isCardChecked = false }
+                        isCardChecked = true
+                    }
                     onClickListener(this)
                     notifyDataSetChanged()
                 }

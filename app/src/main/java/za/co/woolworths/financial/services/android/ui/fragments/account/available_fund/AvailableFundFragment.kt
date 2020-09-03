@@ -258,10 +258,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     override fun onPayUMethodSuccess(paymentMethodsResponse: PaymentMethodsResponse?) {
         stopProgress()
         isQueryPayUPaymentMethodComplete = true
-        payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
         paymentMethodsResponse?.apply {
             when (httpCode) {
                 200 -> {
+                    payMyAccountViewModel.setPaymentMethodsResponse(this)
                     mPaymentMethodsResponse = paymentMethodsResponse
                     payUMethodType = when (paymentMethods.isNotEmpty()) {
                         true -> {
@@ -326,7 +326,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
-
         val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         when {

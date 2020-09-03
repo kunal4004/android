@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto
 
+import java.io.Serializable
+
 data class GetPaymentMethod(
         var cardExpired: Boolean,
         var cardNumber: String,
@@ -8,4 +10,4 @@ data class GetPaymentMethod(
         val token: String,
         val type: String,
         val vendor: String,
-        var isCardChecked: Boolean = false)
+        var isCardChecked: Boolean = false) : Serializable

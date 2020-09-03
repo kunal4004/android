@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
@@ -192,7 +194,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             PAY_MY_ACCOUNT_REQUEST_CODE -> {
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
-                        extras?.getString("AMOUNT_ENTERED")?.apply {
+                        extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
+                            Log.e("extraLogAcc",this)
                             payMyAccountViewModel.setPMAVendorCard(this)
                         }
                     }

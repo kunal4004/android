@@ -23,9 +23,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         const val GET_ACCOUNT_INFO = "ACCOUNT_INFO"
         const val GET_CARD_RESPONSE = "ADD_CARD_RESPONSE"
         const val SCREEN_TYPE: String = "SCREEN_TYPE"
-        const val AMOUNT_ENTERED: String = "AMOUNT_ENTERED"
         const val IS_DONE_BUTTON_ENABLED: String = "IS_DONE_BUTTON_ENABLED"
-        const val IS_PAYMENT_METHOD: String = "IS_DONE_BUTTON_ENABLED"
     }
 
     var mAccountDetails: Pair<ApplyNowState, Account>? = null
@@ -128,12 +126,12 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         }
     }
 
-    override fun getTotalAmountDue(totalAmountOverdue: Int): String {
-        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountOverdue))
+    override fun getTotalAmountDue(totalAmountDue: Int): String {
+        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
     }
 
-    override fun getAmountOutstanding(amountOverdue: Int): String {
-        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountOverdue))
+    override fun getAmountOutstanding(amountOutstanding: Int): String {
+        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountOutstanding))
     }
 
     override fun getPayMyAccountSection(): ApplyNowState {

@@ -64,6 +64,7 @@
         android:text="@string/use_this_card_button_label"
         android:background="@drawable/button_selected_deselected_bg"
         android:textAllCaps="true"
+        android:enabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

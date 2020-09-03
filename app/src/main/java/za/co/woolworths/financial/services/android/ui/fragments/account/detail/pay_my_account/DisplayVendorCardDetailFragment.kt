@@ -85,7 +85,6 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         })
 
         initPaymentMethod()
-//        pmaAmountOutstandingTextView?.text = payMyAccountViewModel.getAmountEntered()
     }
 
     private fun setupListener() {
@@ -143,11 +142,7 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
                 }
 
                 R.id.changeTextView -> {
-                    if (navController?.currentDestination?.id == R.id.displayVendorCardDetailFragment) {
-                        dismiss()
-                    } else {
-                        ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
-                    }
+                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
                 }
 
                 R.id.pmaConfirmPaymentButton -> {
@@ -181,9 +176,9 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
 
     private fun sendFirebaseEvent() {
         when (accountArgs?.productGroupCode?.toLowerCase(Locale.getDefault())) {
-            "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY)
+            "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_AMTEDIT)
             "cc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_AMTEDIT)
-            "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY)
+            "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_AMTEDIT)
         }
     }
 }

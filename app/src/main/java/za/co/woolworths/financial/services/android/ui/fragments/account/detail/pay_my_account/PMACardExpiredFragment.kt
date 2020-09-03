@@ -6,14 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pma_card_has_expired_dialog.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import java.util.*
 
 class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var navController: NavController? = null
+
+    private val pmaCardExpiredNavArgs: PMACardExpiredFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.pma_card_has_expired_dialog, container, false)
@@ -24,6 +28,14 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
 
         navController = NavHostFragment.findNavController(this)
 
+        val paymentMethod = pmaCardExpiredNavArgs.paymentMethod
+        val vendor = paymentMethod.vendor.toLowerCase(Locale.getDefault())
+
+        mastercardImageView?.setImageResource(when (vendor) {
+            "mastercard" -> R.drawable.card_mastercard_large
+            "visa" -> R.drawable.card_visa
+            else -> R.drawable.card_visa_grey
+        })
         removeCardButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@PMACardExpiredFragment)
@@ -37,8 +49,13 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.removeCardButton -> dismiss()
-            R.id.addNewCardExpiredButton -> dismiss()
+            R.id.removeCardButton -> {
+
+                dismiss()
+            }
+            R.id.addNewCardExpiredButton -> {
+                dismiss()
+            }
         }
     }
 

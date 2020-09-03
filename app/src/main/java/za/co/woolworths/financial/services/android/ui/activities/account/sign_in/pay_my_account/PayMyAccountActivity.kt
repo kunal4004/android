@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
+import android.util.Log
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -19,7 +20,6 @@ import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContr
 import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_ACCOUNT_INFO
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.AMOUNT_ENTERED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_PAYMENT_METHOD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
@@ -35,6 +35,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     companion object {
         const val PAY_MY_ACCOUNT_REQUEST_CODE = 8003
+        const val PAYMENT_DETAIL_CARD_UPDATE = "PAYMENT_DETAIL_CARD_UPDATE"
     }
 
     private lateinit var navigationHost: NavController
@@ -61,12 +62,10 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putString(GET_PAYMENT_METHOD, getString(GET_PAYMENT_METHOD, ""))
             args.putString(GET_CARD_RESPONSE, getString(GET_CARD_RESPONSE, ""))
             args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
+            val card = getString(PAYMENT_DETAIL_CARD_UPDATE, "")
 
-            val amount = getString(AMOUNT_ENTERED, "")
-            //amountEntered = amount?.replace("[,.R ]".toRegex(), "")?.toInt()!!
-
-            val paymentAmountCard = Gson().fromJson(amount, PaymentAmountCard::class.java)
-            payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
+             val paymentAmountCard = Gson().fromJson(card, PaymentAmountCard::class.java)
+             payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
 
             val graph = navigationHost.graph
             graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -127,12 +126,12 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     override fun onBackPressed() {
         when (currentFragment) {
             is PMAManageCardFragment -> {
-                setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", Gson().toJson(payMyAccountViewModel.getCardDetail())))
+                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
             is CreditAndDebitCardPaymentsFragment -> {
-                setResult(RESULT_OK, Intent().putExtra("AMOUNT_ENTERED", Gson().toJson(payMyAccountViewModel.getCardDetail())))
+                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
@@ -171,7 +170,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             PAY_MY_ACCOUNT_REQUEST_CODE -> {
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
-                        extras?.getString("AMOUNT_ENTERED")?.apply {
+                        extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
+                            Log.e("extraLog",this)
                             payMyAccountViewModel.setPMAVendorCard(this)
                         }
                     }

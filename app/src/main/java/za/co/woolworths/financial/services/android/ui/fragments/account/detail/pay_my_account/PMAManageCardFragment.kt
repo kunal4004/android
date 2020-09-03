@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
-import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -23,6 +23,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.contracts.IPMAExpiredCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -41,7 +42,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
-class PMAManageCardFragment : Fragment(), View.OnClickListener {
+class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardListener {
 
     private var accountInfo: String? = null
     private var paymentMethod: String? = null
@@ -91,31 +92,37 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private fun configureRecyclerview() {
         // ensure first item is checked
-
         val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
         if (isPaymentChecked?.isEmpty()!!) {
             mPaymentMethod?.get(0)?.isCardChecked = true
-            val cardInfo = payMyAccountViewModel.getCardDetail()
-            cardInfo?.paymentMethodList = mPaymentMethod
-            payMyAccountViewModel.setPMAVendorCard(cardInfo)
         } else {
             mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
         }
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
+
+//            try {
+//                mPaymentMethod?.get(2)?.cardExpired = true
+//                mPaymentMethod?.get(1)?.cardExpired = true
+//                mPaymentMethod?.get(5)?.cardExpired = true
+//            } catch (e: Exception) {
+//            }
+
             manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod ->
-                val cardDetail = payMyAccountViewModel.getCardDetail()
-                cardDetail?.paymentMethodList = manageCardAdapter?.getList()
-                payMyAccountViewModel.setPMAVendorCard(cardDetail)
-                useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
+
+                val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
+
+                useThisCardButton?.isEnabled = isCardSelected ?: false
+
                 when (paymentMethod.cardExpired) {
                     true -> {
-                        val cardExpiredFragmentDirections = PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment()
+                        val cardExpiredFragmentDirections = PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment(paymentMethod)
                         navController?.navigate(cardExpiredFragmentDirections)
                     }
                 }
             }
+
             adapter = manageCardAdapter
 
             val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
@@ -123,6 +130,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
         }
     }
+
 
     private fun configureToolbar() {
         (activity as? PayMyAccountActivity)?.apply {
@@ -133,14 +141,12 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-
-        paymentMethod = Gson().toJson(mPaymentMethod?.filter { s -> s.isCardChecked })
-
         when (v?.id) {
             R.id.useThisCardButton -> {
-                val account = Gson().toJson(mAccountDetails)
-                val vendorCardDetail = PMAManageCardFragmentDirections.actionManageCardFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
-                navController?.navigate(vendorCardDetail)
+                val cardDetail = payMyAccountViewModel.getCardDetail()
+                cardDetail?.paymentMethodList = manageCardAdapter?.getList()
+                payMyAccountViewModel.setPMAVendorCard(cardDetail)
+                activity?.onBackPressed()
             }
 
             R.id.addCardTextView -> {
@@ -217,17 +223,17 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (navController?.graph?.startDestination == R.id.manageCardFragment) {
-                    activity?.apply {
-                        setResult(PMA3DSecureProcessRequestFragment.PMA_UPDATE_CARD_RESULT_CODE, Intent().putExtra("PAYMENT_METHOD_LIST", Gson().toJson(manageCardAdapter?.getList())))
-                        finish()
-                        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                    }
-                    return true
-                }
                 activity?.onBackPressed()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onItemRemoved() {
+        Log.e("onItemRemoved", "onItemRemoved")
+    }
+
+    override fun onAddNewCard() {
+        Log.e("onAddNewCard", "onAddNewCard")
     }
 }
