@@ -332,7 +332,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
         val payMyAccountOption : PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
-        val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: true
+        val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         when {
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                 navigateToPayMyAccountActivity()

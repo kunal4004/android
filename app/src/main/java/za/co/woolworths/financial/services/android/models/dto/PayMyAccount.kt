@@ -15,5 +15,5 @@ data class PayMyAccount(var minimumSupportedAppBuildNumber: String? = "0", priva
                 ?.replace("{{agent}}", "android") ?: ""
     }
 
-    fun isFeatureEnabled(): Boolean? = minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) } ?: false
+    fun isFeatureEnabled(): Boolean? = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)  ?: false
 }

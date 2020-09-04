@@ -101,7 +101,6 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 this@StartupViewModelImpl.isSplashScreenDisplay = splashScreenDisplay
                 this@StartupViewModelImpl.isSplashScreenPersist = splashScreenPersist
 
-                WoolworthsApplication.setPayMyAccountOption(payMyAccount)
                 WoolworthsApplication.setStoreCardBlockReasons(storeCardBlockReasons)
                 WoolworthsApplication.setSsoRedirectURI(getSsoRedirectURI())
                 WoolworthsApplication.setStsURI(getStsURI())
@@ -131,6 +130,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 showWhatsAppButton = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setWhatsAppConfig(this)
             }
+
+            WoolworthsApplication.setPayMyAccountOption(payMyAccount)
 
             WoolworthsApplication.setQuickShopDefaultValues(quickShopDefaultValues)
             WoolworthsApplication.setWhitelistedDomainsForQRScanner(whitelistedDomainsForQRScanner)
