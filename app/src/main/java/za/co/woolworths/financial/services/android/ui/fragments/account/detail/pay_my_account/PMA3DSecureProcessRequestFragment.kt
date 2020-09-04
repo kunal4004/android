@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
@@ -84,6 +85,9 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
 
     private fun updateUIOnFailure() {
         menuItem?.isVisible = true
+        val failureMessage = bindString(R.string.unable_to_process_your_request_desc)
+        processResultFailureTextView?.text = failureMessage
+        callUsNumber = failureMessage.replace("[^0-9]".toRegex(), "")
         includePMAProcessingSuccess?.visibility = GONE
         includePMAProcessingFailure?.visibility = VISIBLE
         includePMAProcessing?.visibility = GONE
@@ -157,7 +161,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                                 updateUIOnSuccess()
                             } else {
                                 stopSpinning(false)
-                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
+                                updateUIOnFailure()
                             }
                         }
                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
@@ -193,7 +197,6 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         includePMAProcessingSuccess?.visibility = VISIBLE
         includePMAProcessing?.visibility = GONE
         includePMAProcessingFailure?.visibility = GONE
-        sendFirebaseEvent()
     }
 
     private fun sendFirebaseEvent() {
@@ -220,6 +223,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
             }
 
             R.id.backToMyAccountButton -> {
+                sendFirebaseEvent()
                 activity?.apply {
                     setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
                     finish()
@@ -239,9 +243,12 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                activity?.setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
-                activity?.finish()
-                activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                sendFirebaseEvent()
+                activity?.apply {
+                    setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

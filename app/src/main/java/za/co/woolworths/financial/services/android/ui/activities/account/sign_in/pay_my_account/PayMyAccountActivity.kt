@@ -63,8 +63,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
             val card = getString(PAYMENT_DETAIL_CARD_UPDATE, "")
 
-             val paymentAmountCard = Gson().fromJson(card, PaymentAmountCard::class.java)
-             payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
+            val paymentAmountCard = Gson().fromJson(card, PaymentAmountCard::class.java)
+            payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
 
             val graph = navigationHost.graph
             graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -124,13 +124,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     override fun onBackPressed() {
         when (currentFragment) {
-            is PMAManageCardFragment -> {
-                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
-                finish()
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-            }
-            is CreditAndDebitCardPaymentsFragment -> {
-                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
+            is PMAManageCardFragment, is CreditAndDebitCardPaymentsFragment -> {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }

@@ -94,7 +94,7 @@ class PayMyAccountViewModel : ViewModel() {
                 setPaymentMethodType(PAYUMethodType.CREATE_USER)
                 (response as? PaymentMethodsResponse)?.apply {
                     when (httpCode) {
-                        200 -> setPaymentMethodType(when (this.paymentMethods.size > 0) {
+                        200 -> setPaymentMethodType(when (paymentMethods?.size ?: 0 > 0) {
                             true -> PAYUMethodType.CARD_UPDATE
                             else -> PAYUMethodType.CREATE_USER
                         })

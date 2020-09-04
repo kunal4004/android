@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -265,7 +264,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 200 -> {
                     payMyAccountViewModel.setPaymentMethodsResponse(this)
                     mPaymentMethodsResponse = paymentMethodsResponse
-                    payUMethodType = when (paymentMethods.isNotEmpty()) {
+                    val hasFirstCardExpired =  paymentMethods?.get(0)?.cardExpired ?: false
+                    payUMethodType = when ( paymentMethods?.isNullOrEmpty() == false || !hasFirstCardExpired) {
                         true -> {
                             val account = mAvailableFundPresenter?.getAccountDetail()
                             val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }

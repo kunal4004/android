@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
@@ -29,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
@@ -146,6 +149,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
                 val cardDetail = payMyAccountViewModel.getCardDetail()
                 cardDetail?.paymentMethodList = manageCardAdapter?.getList()
                 payMyAccountViewModel.setPMAVendorCard(cardDetail)
+                activity?.setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 activity?.onBackPressed()
             }
 
