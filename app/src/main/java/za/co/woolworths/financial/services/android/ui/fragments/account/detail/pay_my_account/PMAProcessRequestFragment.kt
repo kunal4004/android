@@ -10,6 +10,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
@@ -143,7 +144,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
     }
 
     private fun postPayUMethod() {
-        val payURequestBody = payURequestBody(cardDetailArgs, accountArgs)
+        val cardInfo = payMyAccountViewModel.getCardDetail()
+        val account = cardInfo?.account?.second
+        val payURequestBody = payURequestBody(cardDetailArgs, account)
         startSpinning()
         request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
 
@@ -155,7 +158,8 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
                     when (httpCode) {
                         200 -> {
                             stopSpinning(true)
-                            navController?.navigate(PMAProcessRequestFragmentDirections.actionPMAProcessRequestFragmentToSecure3DPMAFragment(accountArgs, redirection))
+                            val options = NavOptions.Builder().setPopUpTo(R.id.pmaProcessRequestFragment, true).build()
+                            navController?.navigate(PMAProcessRequestFragmentDirections.actionPMAProcessRequestFragmentToSecure3DPMAFragment(accountArgs, redirection), options)
                         }
                         440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
                         502 -> {

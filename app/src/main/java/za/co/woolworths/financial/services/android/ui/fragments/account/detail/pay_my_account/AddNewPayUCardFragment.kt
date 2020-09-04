@@ -79,8 +79,7 @@ class AddNewPayUCardFragment : Fragment() {
 
             }), "JSBridge")
 
-            val payMyAccount = WoolworthsApplication.getPayMyAccountOption()
-            payMyAccount?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
+            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
         }
     }
 

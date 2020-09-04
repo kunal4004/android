@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
@@ -17,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.util.*
+
 
 class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
 
@@ -81,7 +83,8 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
                 tokenFromAddCard?.saveChecked = pmaSaveCardCheckbox.isChecked
                 val account = (activity as? PayMyAccountActivity)?.getPayMyAccountPresenter()?.getAccount()
                 val navigateToProcessPayment = SaveCardAndPayNowFragmentDirections.actionSaveCardAndPayNowFragmentToPMAProcessRequestFragment(account, tokenFromAddCard)
-                navController?.navigate(navigateToProcessPayment)
+                val options = NavOptions.Builder().setPopUpTo(R.id.saveCardAndPayNowFragment, true).build()
+                navController?.navigate(navigateToProcessPayment, options)
             }
         }
     }

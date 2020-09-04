@@ -65,7 +65,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             configureToolbar("")
             displayToolbarDivider(false)
 
-            payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+            payMyAccountOption  = WoolworthsApplication.getPayMyAccountOption()
             val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() == false
             val isCreditCardSection = when (payMyAccountPresenter?.getPayMyAccountSection()) {
                 ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> true
@@ -109,10 +109,10 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                                 with(paymentMethodsResponse) {
                                     when (httpCode) {
                                         200 -> {
-                                            if (payMyAccountViewModel.getCardDetail() == null){
-                                               val account =  (activity as? PayMyAccountActivity)?.getPayMyAccountPresenter()?.getAccountDetail()
-                                               val amountEntered =  Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.second?.totalAmountDue ?: 0))
-                                                val card = PaymentAmountCard(amountEntered,paymentMethods,account)
+                                            if (payMyAccountViewModel.getCardDetail() == null) {
+                                                val account = (activity as? PayMyAccountActivity)?.getPayMyAccountPresenter()?.getAccountDetail()
+                                                val amountEntered = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.second?.totalAmountDue ?: 0))
+                                                val card = PaymentAmountCard(amountEntered, paymentMethods, account)
                                                 payMyAccountViewModel.setPMAVendorCard(card)
                                             }
                                             payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
@@ -207,9 +207,9 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
-                val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+                val payMyAccountOption : PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
                 val payUMethodType = payMyAccountViewModel.getPaymentMethodType()
-                val isFeatureEnabled = payMyAccountOption.isFeatureEnabled()
+                val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
                 val paymentMethod = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                 payMyAccountPresenter?.payByCardNowFirebaseEvent()
 
@@ -220,7 +220,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(toEnterPaymentAmountDirection)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> {
-                        val account = Gson().toJson(payMyAccountPresenter?.getAccount() ?: Account())
+                        val account = Gson().toJson(payMyAccountPresenter?.getAccount()
+                                ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }

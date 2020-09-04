@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
-import android.util.Log
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE

@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
+import com.crashlytics.android.Crashlytics
 
 import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.PayUPayResultRequest
@@ -85,9 +86,12 @@ class Secure3DPMAFragment : Fragment() {
                                             ?: "",
                                     status?.substring(status.indexOf("=").plus(1), status.length)
                                             ?: "")
-
-                            val secure3DPMAFragmentDirections = Secure3DPMAFragmentDirections.actionSecure3DPMAFragmentToPMA3DSecureProcessRequestFragment(payUPayResultRequest)
-                            navController?.navigate(secure3DPMAFragmentDirections)
+                            try {
+                                val secure3DPMAFragmentDirections = Secure3DPMAFragmentDirections.actionSecure3DPMAFragmentToPMA3DSecureProcessRequestFragment(payUPayResultRequest)
+                                navController?.navigate(secure3DPMAFragmentDirections)
+                            } catch (iex: IllegalArgumentException) {
+                                Crashlytics.log(iex.toString())
+                            }
                             return
                         }
                         super.onPageStarted(view, url, favicon)

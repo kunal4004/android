@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -21,8 +20,8 @@ class PayMyAccountViewModel : ViewModel() {
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
     private var accountAndCardItem: MutableLiveData<Pair<Pair<ApplyNowState, Account>, AddCardResponse>> = MutableLiveData()
     private var payUMethodType: MutableLiveData<PAYUMethodType?> = MutableLiveData()
-    var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
 
+    var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
 
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
@@ -44,13 +43,13 @@ class PayMyAccountViewModel : ViewModel() {
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
         val list = cardDetail?.paymentMethodList
-        if (list != null && list.isNotEmpty()) {
+        if (list != null && !list.isNullOrEmpty()) {
             setPaymentMethodType(PAYUMethodType.CARD_UPDATE)
             val checkedList = list.filter { it.isCardChecked }
             if (checkedList.isNullOrEmpty()) {
                 list[0].isCardChecked = true
             }
-        }else {
+        } else {
             setPaymentMethodType(PAYUMethodType.CREATE_USER)
         }
         return list
@@ -72,8 +71,6 @@ class PayMyAccountViewModel : ViewModel() {
         accountAndCardItem.value = item
     }
 
-    fun getPaymentAccountDetail() = accountAndCardItem.value
-
     fun getSelectedPaymentMethodCard(): GetPaymentMethod? {
         val paymentMethod: MutableList<GetPaymentMethod>? = getPaymentMethodList()
         paymentMethod?.forEach { item ->
@@ -83,10 +80,6 @@ class PayMyAccountViewModel : ViewModel() {
         }
         paymentMethod?.get(0)?.isCardChecked = true
         return paymentMethod?.get(0)
-    }
-
-    fun setAccount(name: String) {
-        accountWithApplyNowState.value = Gson().fromJson(name, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
     fun setAccountProduct(accounts: Pair<ApplyNowState, Account>) {
@@ -123,11 +116,11 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun setPaymentMethodsResponse(paymentMethodResponse: PaymentMethodsResponse?) {
         val cardDetail = getCardDetail()
-        val listOfCards = paymentMethodResponse?.paymentMethods
-        cardDetail?.paymentMethodList = listOfCards
+        val cardLists = paymentMethodResponse?.paymentMethods
+        cardDetail?.paymentMethodList = cardLists
         setPMAVendorCard(cardDetail)
 
-        setPaymentMethodType(if (listOfCards?.size!! > 0) PAYUMethodType.CARD_UPDATE else PAYUMethodType.CREATE_USER)
+        setPaymentMethodType(if (cardLists?.isNullOrEmpty() == true) PAYUMethodType.CREATE_USER else PAYUMethodType.CARD_UPDATE)
 
         paymentMethodsResponse.value = paymentMethodResponse
     }

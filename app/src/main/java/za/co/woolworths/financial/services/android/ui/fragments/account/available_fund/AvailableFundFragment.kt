@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -134,7 +135,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1, this))
                 val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
                 val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, this))
-                val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) } ?: "N/A"
+                val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
+                        ?: "N/A"
                 val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
@@ -279,7 +281,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 400 -> {
                     val code = response.code
                     when (code.startsWith("P0453")) {
-                        true -> payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                        true -> {
+                             payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.CREATE_USER)
+                            payUMethodType =PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                        }
                         false -> activity?.let {
                             Utils.showGeneralErrorDialog(it, response.desc ?: "")
                         }
@@ -326,8 +331,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
-        val payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
-        val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
+        val payMyAccountOption : PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: true
         when {
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                 navigateToPayMyAccountActivity()
