@@ -61,10 +61,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
 
 
-            val availableFundNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+            val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
             val accountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
 
-            setAvailableFundBundleInfo(availableFundNavHost?.navController)
+            setAvailableFundBundleInfo(availableFundsNavHost?.navController)
             setAccountCardDetailInfo(accountOptionsNavHost?.navController)
             setToolbarTopMargin()
         }
@@ -170,8 +170,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        val availableFundNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-        availableFundNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
+        val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+        availableFundsNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {

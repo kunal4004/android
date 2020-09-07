@@ -425,9 +425,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 		}
 
-		if (!sc && !cc && !pl && httpCode != 502) {
+		if (!sc && !cc && !pl) {
 			hideView(linkedAccountsLayout);
-			disableRefresh();
 		}
 
 		moveLinkedLayoutPosition();
