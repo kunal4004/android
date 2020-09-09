@@ -16,19 +16,24 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.Utils;
 
 public class AbsaBalanceEnquiryFacadeGetAllBalances {
 
-    public void make(String nonce, String esessionid, final AbsaBankingOpenApiResponse.ResponseDelegate<AbsaBalanceEnquiryResponse> responseDelegate) {
+    public void make(String nonce, String esessionid, String timestampString, final AbsaBankingOpenApiResponse.ResponseDelegate<AbsaBalanceEnquiryResponse> responseDelegate) {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Cookie", AbsaLoginRequest.jsessionCookie.getCookie().toString());
         Header header = new Header();
+        header.setService("BalanceEnquiryFacade");
+        header.setOperation("GetAllBalances");
+        header.setChannel("I");
+        header.setLanguage("en");
+        header.setOrganization("WCOBMOBAPP");
+        header.setBrand("WCOBMOBAPP");
         header.setEsessionId(esessionid);
         header.setNonce(nonce);
-        header.setTimestamp(Utils.getDate(0));
+        header.setTimestamp(timestampString);
 
         String body = null;
         try {
@@ -54,11 +59,6 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
                     responseDelegate.onFailure(response.header.getResultMessages()[0].getResponseMessage());
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                responseDelegate.onFatalError(error);
-            }
-        });
+        }, error -> responseDelegate.onFatalError(error));
     }
 }
