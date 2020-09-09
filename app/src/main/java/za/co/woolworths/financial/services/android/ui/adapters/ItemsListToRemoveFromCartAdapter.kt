@@ -40,9 +40,9 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
                     ?: "")
             if (commerceItem.priceInfo.discountedAmount > 0) {
                 itemView.promotionalText.text = " " + WFormatter.formatAmount(commerceItem.priceInfo.discountedAmount)
-                itemView.promotionalText.visibility = View.VISIBLE
+                itemView.promotionalTextLayout.visibility = View.VISIBLE
             } else {
-                itemView.promotionalText.visibility = View.GONE
+                itemView.promotionalTextLayout.visibility = View.GONE
             }
 
             if (commerceItem.commerceItemClassType == "foodCommerceItem") {

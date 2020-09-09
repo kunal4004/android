@@ -31,7 +31,6 @@ open class RetrieveProductDetail(private val activity: Activity?, private val pr
                                 ScreenManager.presentOnboarding(activity)
                             } else {
                                 val openBottomActivity = Intent(activity, BottomNavigationActivity::class.java)
-                                openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "")
                                 activity.startActivity(openBottomActivity)
                                 activity.overridePendingTransition(0, 0)
                             }

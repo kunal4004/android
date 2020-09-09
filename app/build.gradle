@@ -8,10 +8,10 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "7"
-    def minor = "1"
+    def minor = "3"
     def fix = "0"
 
-    def jobNumber = 4061
+    def jobNumber = 450
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -37,6 +37,11 @@ android {
             // Set to null to override default debug keystore and defer to the product flavor.
         }
         release {
+            lintOptions {
+                disable 'MissingTranslation'
+                checkReleaseBuilds false
+                abortOnError false
+            }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
@@ -45,7 +50,7 @@ android {
 
     defaultConfig {
         applicationId "com.awfs.coordination"
-        manifestPlaceholders = [appLabel: "Woolworths", deep_link_host:"www.woolworths.co.za"]
+        manifestPlaceholders = [appLabel: "Woolworths", app_links_host:"www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 28
         compileSdkVersion 28
@@ -70,11 +75,11 @@ android {
 
         if (host.contains("-qa")){
             defaultConfig.applicationIdSuffix = ".qa"
-            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", deep_link_host:"www-win-qa.woolworths.co.za"]
+            defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host:"www-win-qa.woolworths.co.za"]
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 129
+            jobNumber = 134
         }
 
             defaultConfig {
@@ -127,7 +132,7 @@ android {
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
-                manifestPlaceholders = [deep_link_host: "www-win-qa.woolworths.co.za"]
+                manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
                 signingConfig signingConfigs.woneappQa
             }
 
@@ -135,7 +140,7 @@ android {
                 buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
                 buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
-                manifestPlaceholders = [deep_link_host:"www.woolworths.co.za"]
+                manifestPlaceholders = [app_links_host:"www.woolworths.co.za"]
                 signingConfig signingConfigs.woolworths
             }
         }
@@ -168,23 +173,23 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'com.google.android.gms:play-services-tagmanager:17.0.0'
     implementation 'com.google.android.gms:play-services-analytics:17.0.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
-    implementation 'com.google.firebase:firebase-core:17.4.1'
-    implementation 'com.google.firebase:firebase-config:19.1.4'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-core:17.5.0'
+    implementation 'com.google.firebase:firebase-config:19.2.0'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
-    implementation 'com.google.firebase:firebase-perf:19.0.7'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.0.7'
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.7'
-    implementation 'com.google.firebase:firebase-analytics:17.4.1'
+    implementation 'com.google.firebase:firebase-perf:19.0.8'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
 
     implementation 'com.google.android:flexbox:1.1.0'
     //noinspection GradleCompatible
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
-    implementation 'androidx.appcompat:appcompat:1.2.0-beta01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -209,27 +214,27 @@ dependencies {
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
     implementation 'me.relex:circleindicator:2.1.0@aar'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
     implementation "com.github.skydoves:balloon:1.0.4"
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'
 
     implementation 'com.android.volley:volley:1.1.1'
-    implementation "com.google.android.gms:play-services-auth-api-phone:17.3.0"
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation "com.google.android.gms:play-services-auth-api-phone:17.4.0"
+    implementation 'androidx.core:core-ktx:1.3.1'
 
-    implementation "androidx.navigation:navigation-fragment-ktx:2.2.1"
-    implementation "androidx.navigation:navigation-ui-ktx:2.2.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.fragment:fragment-ktx:1.2.4'
+    implementation 'androidx.fragment:fragment-ktx:1.2.5'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     testImplementation 'junit:junit:4.13'
