@@ -16,9 +16,7 @@ class PayMyAccountViewModel : ViewModel() {
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
 
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
-    private var accountWithApplyNowState: MutableLiveData<Pair<ApplyNowState, Account>> = MutableLiveData()
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
-    private var accountAndCardItem: MutableLiveData<Pair<Pair<ApplyNowState, Account>, AddCardResponse>> = MutableLiveData()
     private var payUMethodType: MutableLiveData<PAYUMethodType?> = MutableLiveData()
 
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
@@ -26,7 +24,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
-        val account = getAccountProduct() ?: getCardDetail()?.account
+        val selectedAccountProduct = getCardDetail()?.account
         val cvvNumber = getCVVNumber()
         val expiryDate = paymentMethod?.expirationDate?.split("/")
         val expDate = expiryDate?.get(0) ?: ""
@@ -35,9 +33,8 @@ class PayMyAccountViewModel : ViewModel() {
         val pmaCard = PMACard(paymentMethod?.cardNumber
                 ?: "", "", expDate, expYear, cvvNumber, 1, paymentMethod?.vendor
                 ?: "", paymentMethod?.type ?: "")
-        val cardResponse = AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
-        account?.let { setPaymentAccountDetail(Pair(it, cardResponse)) }
-        return Pair(account, cardResponse)
+        return Pair(selectedAccountProduct, AddCardResponse(paymentMethod?.token
+                ?: "", pmaCard, false))
     }
 
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
@@ -67,10 +64,6 @@ class PayMyAccountViewModel : ViewModel() {
 
     private fun getCVVNumber() = cvvNumber.value ?: ""
 
-    private fun setPaymentAccountDetail(item: Pair<Pair<ApplyNowState, Account>, AddCardResponse>) {
-        accountAndCardItem.value = item
-    }
-
     fun getSelectedPaymentMethodCard(): GetPaymentMethod? {
         val paymentMethod: MutableList<GetPaymentMethod>? = getPaymentMethodList()
         paymentMethod?.forEach { item ->
@@ -82,12 +75,6 @@ class PayMyAccountViewModel : ViewModel() {
             paymentMethod?.get(0)?.isCardChecked = true
         return paymentMethod?.get(0)
     }
-
-    fun setAccountProduct(accounts: Pair<ApplyNowState, Account>) {
-        accountWithApplyNowState.value = accounts
-    }
-
-    fun getAccountProduct() = accountWithApplyNowState.value
 
     fun queryServiceGetPaymentMethod(onPaymentMethodSuccess: (PaymentMethodsResponse) -> Unit, onPaymentMethodFailure: (Throwable?) -> Unit) {
         request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {

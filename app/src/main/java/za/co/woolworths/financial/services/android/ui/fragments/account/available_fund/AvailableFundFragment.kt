@@ -56,7 +56,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         super.onCreate(savedInstanceState)
         mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
         mAvailableFundPresenter?.setBundle(arguments)
-        mAvailableFundPresenter?.getBundle()?.let { payMyAccountViewModel.setAccountProduct(it) }
     }
 
     override fun onAttach(context: Context) {
