@@ -67,14 +67,15 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
             }
         })
 
-        tagVoucherDescription(cardSwipeStackView?.topIndex ?: 0)
+        tagVoucherDescription()
     }
 
     private fun moveVoucherItemToLastPosition() {
-        cardSwipeStackView?.topIndex?.let { tagVoucherDescription(it) }
+        tagVoucherDescription()
         vouchers?.apply {
-            removeAt(0)
-            get(0)?.let { add(it) }
+            val item = vouchers?.get(0)
+            removeAt(0) // remove visible card
+            add(item) // add visible card to last position in array
         }
     }
 
@@ -90,7 +91,8 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
         Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_VOUCHERS_BARCODE)
     }
 
-    private fun tagVoucherDescription(position: Int) {
+    private fun tagVoucherDescription() {
+        val position = if (vouchers?.size == 1) 0 else cardSwipeStackView?.topIndex ?: 0
         vouchers?.get(position)?.description?.apply {
             val arguments: MutableMap<String, String> = HashMap()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.VOUCHERDESCRIPTION] = Utils.ellipsizeVoucherDescription(this)
