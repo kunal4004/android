@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAcc
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.net.ConnectException
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
@@ -157,13 +158,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         }
     }
 
-    override fun navigateToPaymentOptionsActivity() {
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
+    override fun navigateToPaymentOptionsActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType) {
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail()),payMyAccountStartDestinationType) }
     }
 
-    override fun navigateToPayMyAccountActivity() {
+    override fun navigateToPayMyAccountActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType) {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail()),payMyAccountStartDestinationType) }
     }
 
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
@@ -260,12 +261,16 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         stopProgress()
         isQueryPayUPaymentMethodComplete = true
         paymentMethodsResponse?.apply {
+            val account = mAvailableFundPresenter?.getAccountDetail()
+            val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+            val card = PaymentAmountCard(amountEntered, paymentMethodsResponse?.paymentMethods, account)
+            payMyAccountViewModel.setPMAVendorCard(card)
             when (httpCode) {
                 200 -> {
                     payMyAccountViewModel.setPaymentMethodsResponse(this)
                     mPaymentMethodsResponse = paymentMethodsResponse
-                    val hasFirstCardExpired =  paymentMethods?.get(0)?.cardExpired ?: false
-                    payUMethodType = when ( paymentMethods?.isNullOrEmpty() == false || !hasFirstCardExpired) {
+                    val hasFirstCardExpired =  if (paymentMethods?.size ?: 0 > 0) paymentMethods?.get(0)?.cardExpired  ?: false else false
+                    payUMethodType = when (paymentMethods?.size ?: 0 > 0 || paymentMethods?.isNullOrEmpty() == false || hasFirstCardExpired) {
                         true -> {
                             val account = mAvailableFundPresenter?.getAccountDetail()
                             val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
@@ -335,11 +340,11 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         when {
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
-                navigateToPayMyAccountActivity()
+                navigateToPayMyAccountActivity(PayMyAccountStartDestinationType.CREATE_USER)
             }
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> openCardOptionsDialog()
 
-            else -> navigateToPayMyAccountActivity()
+            else -> navigateToPayMyAccountActivity(PayMyAccountStartDestinationType.CREATE_USER)
         }
     }
 

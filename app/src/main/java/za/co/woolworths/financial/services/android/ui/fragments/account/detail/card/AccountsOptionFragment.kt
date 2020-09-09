@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.T
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
@@ -359,12 +360,12 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun navigateToPaymentOptionActivity() {
         val cardDetail = Gson().toJson(payMyAccountViewModel.getCardDetail())
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair, cardDetail) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair, cardDetail, PayMyAccountStartDestinationType.CREATE_USER) }
     }
 
     override fun navigateToPayMyAccountActivity() {
         val cardDetail = Gson().toJson(payMyAccountViewModel.getCardDetail())
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair, cardDetail) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair, cardDetail,PayMyAccountStartDestinationType.CREATE_USER) }
     }
 
     private fun hideCLIView() {

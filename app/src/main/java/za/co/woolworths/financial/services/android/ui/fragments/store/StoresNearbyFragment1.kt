@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
+import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
@@ -181,7 +182,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 checkLocationPermission()
             }
         }
-        v.findViewById<View>(R.id.btnRetry).setOnClickListener {
+        v.findViewById<WButton>(R.id.btnRetry)?.setOnClickListener {
             if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                 mErrorHandlerView?.hideErrorHandlerLayout()
                 initLocationCheck()

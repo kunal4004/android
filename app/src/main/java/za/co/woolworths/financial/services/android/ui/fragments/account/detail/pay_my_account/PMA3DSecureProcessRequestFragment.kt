@@ -200,7 +200,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     }
 
     private fun sendFirebaseEvent() {
-        val productGroupCode = payMyAccountViewModel.getAccountProduct()?.second?.productGroupCode
+        val productGroupCode = payMyAccountViewModel.getCardDetail()?.account?.second?.productGroupCode
         when (productGroupCode?.toLowerCase(Locale.getDefault())) {
             "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY_CMPLT)
             "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_PAY_CMPLT)

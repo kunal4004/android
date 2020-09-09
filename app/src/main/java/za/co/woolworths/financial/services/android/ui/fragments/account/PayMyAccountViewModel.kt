@@ -78,7 +78,8 @@ class PayMyAccountViewModel : ViewModel() {
                 return item
             }
         }
-        paymentMethod?.get(0)?.isCardChecked = true
+        if (paymentMethod?.size ?: 0 > 0)
+            paymentMethod?.get(0)?.isCardChecked = true
         return paymentMethod?.get(0)
     }
 

@@ -5,6 +5,7 @@ import android.view.View
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 interface IAvailableFundsContract {
 
@@ -17,9 +18,9 @@ interface IAvailableFundsContract {
         fun hideABSAServiceGetUserCreditCardTokenProgressBar()
         fun navigateToRecentTransactionActivity(cardType: String)
         fun navigateToLoanWithdrawalActivity()
-        fun navigateToPayMyAccountActivity()
+        fun navigateToPayMyAccountActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType)
         fun navigateToStatementActivity()
-        fun navigateToPaymentOptionsActivity()
+        fun navigateToPaymentOptionsActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType)
         fun setPushViewDownAnimation(view: View)
         fun onABSACreditCardFailureHandler(error: Throwable?)
         fun navigateToABSAStatementActivity()

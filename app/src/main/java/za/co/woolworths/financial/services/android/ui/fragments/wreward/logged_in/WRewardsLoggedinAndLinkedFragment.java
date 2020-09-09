@@ -153,7 +153,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 			public void onPageSelected(int position) {
 				if (position == 1) {
-					KotlinUtils.Companion.postOneAppEvent(OneAppEvents.AppScreen.WREWARDS, OneAppEvents.FeatureName.WREWARDS_VIEW_VOUCHERS);
+					KotlinUtils.Companion.postOneAppEvent(OneAppEvents.AppScreen.WREWARDS, OneAppEvents.FeatureName.VIEW_VOUCHERS);
 				}
 			}
 		});

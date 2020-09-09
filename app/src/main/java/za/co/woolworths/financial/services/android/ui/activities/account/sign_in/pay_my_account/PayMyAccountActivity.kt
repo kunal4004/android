@@ -125,6 +125,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     override fun onBackPressed() {
         when (currentFragment) {
             is PMAManageCardFragment, is CreditAndDebitCardPaymentsFragment -> {
+                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }

@@ -91,6 +91,9 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         ccvEditTextInput?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != "R 0.00")
+                if (s.length == 3) {
+                    activity?.let { Utils.hideSoftKeyboard(it) }
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

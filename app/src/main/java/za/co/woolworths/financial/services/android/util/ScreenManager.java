@@ -177,10 +177,11 @@ public class ScreenManager {
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
 
-    public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, String card) {
+    public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, String card,PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
         Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
         howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
+        howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
         activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }

@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
@@ -30,7 +31,7 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
             R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity("CC")
             R.id.incPayMyAccountButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
-                navigateToPayMyAccountActivity()
+                navigateToPayMyAccountActivity(PayMyAccountStartDestinationType.CREATE_USER)
             }
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }

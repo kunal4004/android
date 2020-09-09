@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -79,7 +80,9 @@ class AddNewPayUCardFragment : Fragment() {
 
             }), "JSBridge")
 
-            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
+//            Log.e("connectionUrl",WoolworthsApplication.getPayMyAccountOption()?.addCardUrl())
+//            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
+            loadUrl("https://payu-qa.wfs.wigroup.io/?api_id=android_v7.21&sha1=6eca0a4417fdb9b3a6377ccfdedb7e58c24f9493&agent=android")
         }
     }
 

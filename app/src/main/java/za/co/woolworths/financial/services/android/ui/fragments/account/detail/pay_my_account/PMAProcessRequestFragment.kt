@@ -198,8 +198,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         val isSaveCardChecked = cardDetailArgs?.saveChecked ?: false
         val currency = "ZAR"
 
-        val accountNumber = accountArgs?.accountNumber ?: "0"
-        val productOfferingId = accountArgs?.productOfferingId ?: 0
+        val account = payMyAccountViewModel.getCardDetail()?.account?.second
+        val accountNumber = account?.accountNumber ?: "0"
+        val productOfferingId = account?.productOfferingId ?: 0
         val paymentMethod = PayUPaymentMethod(token, creditCardCVV, type)
 
         return PayUPay(amountEntered, currency, productOfferingId, isSaveCardChecked, paymentMethod, accountNumber)

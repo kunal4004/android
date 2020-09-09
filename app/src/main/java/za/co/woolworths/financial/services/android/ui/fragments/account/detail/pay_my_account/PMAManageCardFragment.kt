@@ -97,7 +97,8 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
         // ensure first item is checked
         val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
         if (isPaymentChecked?.isEmpty()!!) {
-            mPaymentMethod?.get(0)?.isCardChecked = true
+            if (mPaymentMethod?.size ?: 0 > 0)
+                mPaymentMethod?.get(0)?.isCardChecked = true
         } else {
             mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
         }

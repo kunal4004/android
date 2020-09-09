@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAcc
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClickListener {
 
@@ -45,7 +46,7 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
             R.id.gotITButton -> dismiss()
             R.id.paymentOptionButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
-                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards,Gson().toJson(cardDetail))
+                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards,Gson().toJson(cardDetail), PayMyAccountStartDestinationType.CREATE_USER)
                 dismiss()
             }
         }
