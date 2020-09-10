@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -44,6 +45,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         supportActionBar?.hide()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationUtils.createNotificationChannelIfNeeded(this);
+        };
+
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
 
         // Disable first time launch splash video screen, remove to enable video on startup
@@ -54,11 +59,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             this.intent = getIntent()
             val bundle = getIntent()?.extras
 
-            pushNotificationUpdate = bundle?.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT)
-
             try {
                 appVersion = packageManager.getPackageInfo(packageName, 0).versionName
-                environment = BuildConfig.FLAVOR
+                environment = BuildConfig.ENV
             } catch (e: PackageManager.NameNotFoundException) {
                 appVersion = "6.1.0"
                 environment = "QA"

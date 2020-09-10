@@ -271,9 +271,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onResume() {
         super.onResume();
         if (mBundle != null) {
-            if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
-                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-            }
 
             String mSessionExpiredAtTabSection = mBundle.getString("sessionExpiredAtTabSection");
             if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {

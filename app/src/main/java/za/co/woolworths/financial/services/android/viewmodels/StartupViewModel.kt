@@ -16,7 +16,7 @@ interface StartupViewModel {
     var isVideoPlaying: Boolean
     var videoPlayerShouldPlay: Boolean
 
-    var pushNotificationUpdate: String?
+    //var pushNotificationUpdate: String?
     val randomVideoPath: String
     val splashScreenText: String
     var environment: String?
