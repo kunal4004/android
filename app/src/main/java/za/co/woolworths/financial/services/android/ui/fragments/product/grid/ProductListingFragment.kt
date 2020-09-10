@@ -561,7 +561,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onWalkthroughActionButtonClick() {
+    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
         if (refineProducts?.isClickable == true)
             refineProducts?.let { refineProducts -> onClick(refineProducts) }
     }

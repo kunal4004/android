@@ -1259,8 +1259,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
-		this.onClick(rlLocationSelectedLayout);
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
+		if (feature == WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+			this.onClick(rlLocationSelectedLayout);
 	}
 
 	@Override
@@ -1292,6 +1293,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	private void showMaxItemView() {
 		Utils.showGeneralErrorDialog(requireActivity().getSupportFragmentManager(), getString(R.string.click_and_collect_max_quantity_info, String.valueOf(WoolworthsApplication.getClickAndCollect().getMaxNumberOfItemsAllowed())));
+	}
+
+	public void showRedeemVoucherFeatureWalkthrough(){
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.cartRedeemVoucher)
+			return;
+		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
+				.setTarget(new View(getActivity()))
+				.setTitle(R.string.redeem_voucher_walkthrough_title)
+				.setDescription(R.string.redeem_voucher_walkthrough_desc)
+				.setActionText(R.string.got_it)
+				.setImage(R.drawable.tips_tricks_ic_redeem_voucher)
+				.setAction(this)
+				.setShouldRender(false)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		CartActivity.walkThroughPromtView.show(getActivity());
 	}
 
 }

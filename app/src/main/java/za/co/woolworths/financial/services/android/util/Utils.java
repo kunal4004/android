@@ -1223,6 +1223,9 @@ public class Utils {
 			case STATEMENTS:
 				appInstanceObject.featureWalkThrough.statements = true;
 				break;
+			case CART_REDEEM_VOUCHERS:
+				appInstanceObject.featureWalkThrough.cartRedeemVoucher = true;
+				break;
 			default:
 				break;
 		}
