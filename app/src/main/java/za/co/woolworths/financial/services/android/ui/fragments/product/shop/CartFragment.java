@@ -103,7 +103,7 @@ import static za.co.woolworths.financial.services.android.ui.views.actionsheet.A
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
 	private String mSuburbName, mProvinceName;
-	private int mQuantity;
+		private int mQuantity;
 
 	private RelativeLayout rlLocationSelectedLayout;
 	private boolean onRemoveItemFailed = false;
@@ -268,6 +268,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	 */
 
 	private void queryServiceChangeQuantity() {
+		mChangeQuantity.setQuantity(mQuantity);
 		mChangeQuantityList.add(mChangeQuantity);
 		changeQuantityAPI(mChangeQuantityList.get(0));
 		mChangeQuantityList.remove(0);
