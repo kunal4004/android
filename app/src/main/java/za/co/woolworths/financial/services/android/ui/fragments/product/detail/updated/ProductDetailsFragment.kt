@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
@@ -680,7 +681,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         val allAuxImages = Gson().fromJson<Map<String, AuxiliaryImage>>(this.productDetails?.auxiliaryImages, object : TypeToken<Map<String, AuxiliaryImage>>() {}.type)
 
-        getImageCodeForAuxiliaryImages(groupKey).let { imageCode ->
+        getImageCodeForAuxiliaryImages(groupKey).forEach { imageCode ->
             allAuxImages.entries.forEach { entry ->
                 if (entry.key.contains(imageCode, true))
                     auxiliaryImagesForGroupKey.add(entry.value.externalImageRef)
@@ -690,22 +691,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         return if (auxiliaryImagesForGroupKey.isNotEmpty()) auxiliaryImagesForGroupKey else auxiliaryImages
     }
 
-    private fun getImageCodeForAuxiliaryImages(groupKey: String?): String {
+    private fun getImageCodeForAuxiliaryImages(groupKey: String?): ArrayList<String> {
         var imageCode = ""
-
+        val imageCodesList = arrayListOf<String>()
         groupKey?.split("\\s".toRegex())?.let {
-            imageCode = when (it.size) {
-                1 -> it[0]
+                when (it.size) {
+                1 -> imageCodesList.add(it[0])
                 else -> {
                     it.forEachIndexed { i, s ->
                         imageCode = if (i == 0) s[0].toString() else imageCode.plus(s)
                     }
-                    imageCode
+                    imageCodesList.add(imageCode)
+                    imageCodesList.add(it.joinToString(""))
                 }
             }
         }
 
-        return imageCode
+        return imageCodesList
     }
 
     override fun onCartSummarySuccess(cartSummaryResponse: CartSummaryResponse) {

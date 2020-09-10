@@ -38,6 +38,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version:String = ""
+    private var deliveryType: DeliveryType = DeliveryType.DELIVERY
 
     companion object{
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -175,15 +176,19 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
         } else {
+            this.deliveryType = deliveryType
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
+        if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+        } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
             mDepartmentAdapter?.notifyDataSetChanged()
     }
+
 
     override fun onResume() {
         super.onResume()
