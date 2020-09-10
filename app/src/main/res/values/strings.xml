@@ -1530,6 +1530,11 @@
     <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
+
+    <string name="default_notification_channel_id">woolworths_notification_channel_01</string>
+    <string name="default_notification_channel_name">All Notifications</string>
+    <string name="default_notification_channel_description">Woolworths Notification Channel</string>
+
     <string name="store_closed_message">Sorry, we aren’t accepting food orders in your chosen area as the store is temporarily closed</string>
     <string name="first_available_food_delivery_date">The earliest available delivery slot for &lt;b>food&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="first_available_other_delivery_date">The earliest available delivery for &lt;b>fashion, beauty &amp; home&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
@@ -1550,5 +1555,13 @@
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
     <string name="freeze_temp_label">Temp Freeze</string>
     <string name="food_only">food only</string>
+    <string name="collection_date_title">labelCollectionDate</string>
+    <string name="collection_date_value">txtCollectionDateValue</string>
+    <string name="collection_details_date_title">labelCollectionDetailsDate</string>
+    <string name="collection_details_date_value">txtCollectionDetailsDateValue</string>
+    <string name="collection_location_title">labelCollectionDetailsDate</string>
+    <string name="collection_location_value">txtCollectionDetailsDateValue</string>
+    <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
+    <string name="delivery_location_value">txtDeliveryLocationValue</string>
 </resources>
 
