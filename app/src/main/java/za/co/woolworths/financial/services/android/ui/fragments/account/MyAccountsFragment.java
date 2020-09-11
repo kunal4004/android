@@ -1110,7 +1110,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
 		switch (promptsActionListener) {
 			case 1:
 				if (unavailableAccounts.size() == 3) {

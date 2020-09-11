@@ -1563,5 +1563,10 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+    <string name="redeem_voucher_walkthrough_title">Redeem your vouchers online</string>
+    <string name="redeem_voucher_walkthrough_desc">Save more than ever – use your WRewards vouchers for instant savings when you checkout in the Woolies app or on our website.</string>
+    <string name="apply_promo_code_title">Promo Code</string>
+    <string name="apply">apply</string>
+    <string name="enter_promo_code_hint">Enter promo code</string>
 </resources>
 
