@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.extension.getNavigationResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -65,7 +66,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             configureToolbar("")
             displayToolbarDivider(false)
 
-            payMyAccountOption  = WoolworthsApplication.getPayMyAccountOption()
+            payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
             val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() == false
             val isCreditCardSection = when (payMyAccountPresenter?.getPayMyAccountSection()) {
                 ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> true
@@ -76,6 +77,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 incDebitOrCreditCardButton?.visibility = when {
                     isFeatureEnabled || isCreditCardSection -> GONE
                     else -> VISIBLE
+                }
+            }
+
+            getNavigationResult(Constant.GET_PAYMENT_METHOD_ERROR)?.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    Constant.queryServiceGetPaymentMethod -> queryPaymentMethod()
                 }
             }
         }
@@ -103,36 +110,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         true -> {
                             if (payMyAccountViewModel.getPaymentMethodList()?.isNotEmpty() == true || payMyAccountOption?.isFeatureEnabled() == false) return
 
-                            initShimmer()
-                            startProgress()
-                            payMyAccountViewModel.queryServiceGetPaymentMethod({ paymentMethodsResponse ->
-                                with(paymentMethodsResponse) {
-                                    when (httpCode) {
-                                        200 -> {
-                                            if (payMyAccountViewModel.getCardDetail() == null) {
-                                                val account = (activity as? PayMyAccountActivity)?.getPayMyAccountPresenter()?.getAccountDetail()
-                                                val amountEntered = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.second?.totalAmountDue ?: 0))
-                                                val card = PaymentAmountCard(amountEntered, paymentMethods, account)
-                                                payMyAccountViewModel.setPMAVendorCard(card)
-                                            }
-                                            payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
-                                        }
-                                        440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams
-                                                ?: "", activity)
-
-                                        else -> {
-                                            activity?.let {
-                                                Utils.showGeneralErrorDialog(it, response.desc
-                                                        ?: "")
-                                            }
-                                        }
-                                    }
-                                    initShimmer()
-                                    stopProgress()
-                                }
-                            }, { throwable ->
-                                stopProgress()
-                            })
+                            queryPaymentMethod()
                         }
                         else -> {
                             ErrorHandlerView(act).showToast()
@@ -144,6 +122,36 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
         initShimmer()
         stopProgress()
+    }
+
+    private fun queryPaymentMethod() {
+        initShimmer()
+        startProgress()
+        payMyAccountViewModel.queryServiceGetPaymentMethod({ paymentMethodsResponse ->
+            with(paymentMethodsResponse) {
+                when (httpCode) {
+                    200 -> {
+                        if (payMyAccountViewModel.getCardDetail() == null) {
+                            val account = (activity as? PayMyAccountActivity)?.getPayMyAccountPresenter()?.getAccountDetail()
+                            val amountEntered = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.second?.totalAmountDue
+                                    ?: 0))
+                            val card = PaymentAmountCard(amountEntered, paymentMethods, account)
+                            payMyAccountViewModel.setPMAVendorCard(card)
+                        }
+                        payMyAccountViewModel.setPaymentMethodsResponse(paymentMethodsResponse)
+                    }
+                    440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams
+                            ?: "", activity)
+
+                    else -> payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
+                }
+                initShimmer()
+                stopProgress()
+            }
+        }, {
+            payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
+            stopProgress()
+        })
     }
 
     private fun configureClickEvent() {
@@ -207,13 +215,18 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
 
             R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
-                val payMyAccountOption : PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+                val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
                 val payUMethodType = payMyAccountViewModel.getPaymentMethodType()
                 val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
                 val paymentMethod = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                 payMyAccountPresenter?.payByCardNowFirebaseEvent()
 
+
                 when {
+                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.ERROR) -> {
+                        navController?.navigate(R.id.payMyAccountRetryErrorFragment)
+                        return
+                    }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
                         val account = payMyAccountPresenter?.getAccount() ?: Account()
                         val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account, true)
@@ -225,7 +238,6 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }
-                    else -> return
                 }
             }
 

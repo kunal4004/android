@@ -71,9 +71,11 @@ class PayMyAccountViewModel : ViewModel() {
                 return item
             }
         }
-        if (paymentMethod?.size ?: 0 > 0)
+        if (paymentMethod?.size ?: 0 > 0) {
             paymentMethod?.get(0)?.isCardChecked = true
-        return paymentMethod?.get(0)
+            return paymentMethod?.get(0)
+        }
+        return null
     }
 
     fun queryServiceGetPaymentMethod(onPaymentMethodSuccess: (PaymentMethodsResponse) -> Unit, onPaymentMethodFailure: (Throwable?) -> Unit) {

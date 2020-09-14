@@ -1630,5 +1630,6 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+    <string name="pma_retry_error_desc">Oops! Unfortunately, we’re having trouble retrieving your information, please try again.</string>
 </resources>
 

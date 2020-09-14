@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -40,7 +41,14 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.incPayMyAccountButton -> {
+
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+
+                if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
+                    navController?.navigate(R.id.payMyAccountRetryErrorFragment)
+                    return
+                }
+
                 val personalLoanAccount = mAvailableFundPresenter?.getAccount()
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {

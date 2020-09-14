@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -59,7 +58,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
-
 
             val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
             val accountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment

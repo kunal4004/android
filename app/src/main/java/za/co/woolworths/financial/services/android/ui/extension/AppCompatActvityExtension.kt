@@ -233,9 +233,9 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
     }
 }
 
-fun <T> Fragment.getNavigationResult(key: String) =
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<T>(key)
+fun Fragment.getNavigationResult(key: String = "result") =
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(key)
 
-fun <T> Fragment.setNavigationResult(result: T, key: String) {
+fun Fragment.setNavigationResult(key: String = "result", result: String) {
     findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
 }

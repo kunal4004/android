@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -44,7 +45,14 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incPayMyAccountButton -> {
+
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+
+                if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
+                    navController?.navigate(R.id.payMyAccountRetryErrorFragment)
+                    return
+                }
+
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
                 navigateToPayMyAccount(payUMethodType) {
                     val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
