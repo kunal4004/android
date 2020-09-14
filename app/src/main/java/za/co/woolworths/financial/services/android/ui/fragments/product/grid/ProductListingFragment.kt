@@ -829,7 +829,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onResetFilter() {
-        (activity as? BottomNavigationActivity)?.popFragment()
+        val pushedFragmentCount = (activity as? BottomNavigationActivity)?.supportFragmentManager?.fragments?.filter { it.tag.toString().contains("ProductListingFragment", true) }?.size
+                ?: 1
+        if (pushedFragmentCount > 1)
+            (activity as? BottomNavigationActivity)?.popFragment()
+        else {
+            updateProductRequestBodyForRefinement("")
+            reloadProductsWithSortAndFilter()
+        }
     }
 
     companion object {
