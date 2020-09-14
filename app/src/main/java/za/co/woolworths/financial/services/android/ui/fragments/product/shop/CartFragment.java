@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -135,7 +136,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private WTextView tvDeliveryLocation;
 	private WTextView tvDeliveringToText;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
-	private RelativeLayout rlCheckOut;
+	private LinearLayout rlCheckOut;
 	private ChangeQuantity mChangeQuantity;
 	private BroadcastReceiver mConnectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
