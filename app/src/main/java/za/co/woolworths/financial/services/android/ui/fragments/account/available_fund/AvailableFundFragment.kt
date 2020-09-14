@@ -91,6 +91,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
 
             getNavigationResult(Constant.GET_PAYMENT_METHOD_ERROR)?.observe(viewLifecycleOwner) { result ->
+                isQueryPayUPaymentMethodComplete = false
                 when (result) {
                     Constant.queryServiceGetPaymentMethod -> queryPaymentMethod()
                 }
@@ -291,14 +292,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
                 400 -> {
                     val code = response.code
-                    when (code.startsWith("P0453")) {
+                    payUMethodType = when (code.startsWith("P0453")) {
                         true -> {
                             payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.CREATE_USER)
-                            payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                            PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                         }
-                        false -> activity?.let {
-                            Utils.showGeneralErrorDialog(it, response.desc ?: "")
-                        }
+                        false -> PayMyAccountViewModel.PAYUMethodType.ERROR
+
                     }
                 }
 
@@ -308,7 +308,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 else -> payUMethodType = PayMyAccountViewModel.PAYUMethodType.ERROR
             }
             payMyAccountViewModel.setPaymentMethodType(payUMethodType)
-            payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
         }
     }
 

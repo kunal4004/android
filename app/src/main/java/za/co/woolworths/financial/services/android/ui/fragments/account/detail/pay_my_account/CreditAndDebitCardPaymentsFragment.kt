@@ -143,7 +143,9 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                     440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams
                             ?: "", activity)
 
-                    else -> payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
+                    else -> {
+                        payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
+                    }
                 }
                 initShimmer()
                 stopProgress()
@@ -152,6 +154,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
             stopProgress()
         })
+        payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
     }
 
     private fun configureClickEvent() {
@@ -233,8 +236,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(toEnterPaymentAmountDirection)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> {
-                        val account = Gson().toJson(payMyAccountPresenter?.getAccount()
-                                ?: Account())
+                        val account = Gson().toJson(payMyAccountPresenter?.getAccount() ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }
@@ -283,12 +285,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun initShimmer() {
+    private fun initShimmer() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         payByCardNowButtonShimmerLayout?.setShimmer(shimmer)
     }
 
-    fun startProgress() {
+    private fun startProgress() {
         payByCardNowButtonShimmerLayout?.startShimmer()
     }
 
