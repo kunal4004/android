@@ -45,6 +45,7 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -76,7 +77,6 @@ import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserPro
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -109,6 +109,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private RelativeLayout signOutRelativeLayout;
 	private RelativeLayout profileRelativeLayout;
 	private RelativeLayout preferenceRelativeLayout;
+	private RelativeLayout creditReportView;
 
 	private WTextView sc_available_funds;
 	private WTextView cc_available_funds;
@@ -231,6 +232,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
 			imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
 			myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
+			creditReportView = view.findViewById(R.id.creditReport);
 
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
@@ -247,6 +249,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
 			myOrdersRelativeLayout.setOnClickListener(this);
+			creditReportView.setOnClickListener(this);
 
 			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
 			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
@@ -565,6 +568,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			showView(updatePasswordRelativeLayout);
 			showView(preferenceRelativeLayout);
 			showView(loginUserOptionsLayout);
+			showView(creditReportView);
 			mUpdateMyAccount.swipeToRefreshAccount(true);
 			if (SessionUtilities.getInstance().isC2User())
 				showView(linkedAccountsLayout);
@@ -593,6 +597,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(unlinkedLayout);
 		hideView(loginUserOptionsLayout);
 		hideView(preferenceRelativeLayout);
+		hideView(creditReportView);
 	}
 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -734,7 +739,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				}
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders);
 				break;
-
+			case R.id.creditReport:
+				Utils.openBrowserWithUrl(WoolworthsApplication.getFaqLink());
+				break;
 			default:
 				break;
 
