@@ -649,7 +649,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					}
 					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 			}
 
@@ -693,7 +693,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						onChangeQuantityComplete();
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 			}
 
@@ -750,7 +750,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							resetItemDelete(true);
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 			}
 
@@ -916,7 +916,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.cartItems = cartItemGroups;
 
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 			return null;
 		}
 

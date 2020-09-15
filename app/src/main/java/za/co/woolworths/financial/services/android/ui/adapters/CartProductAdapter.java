@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -515,9 +516,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
     private String productImageUrl(String imgUrl) {
         try {
-            String url = "https://images.woolworthsstatic.co.za/" + imgUrl;
+            String url = KotlinUtils.productImageUrlPrefix + imgUrl;
             //TODO:: get domain name dynamically
-            return TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za/" : url;
+            return TextUtils.isEmpty(imgUrl) ? KotlinUtils.productImageUrlPrefix : url;
         } catch (IllegalArgumentException ex) {
             return imgUrl;
         }

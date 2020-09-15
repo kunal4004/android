@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cart_product_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -63,9 +64,9 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
         }
 
         private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
-            val url = "https://images.woolworthsstatic.co.za/$imgUrl";
+            val url = KotlinUtils.productImageUrlPrefix + imgUrl
             //TODO:: get domain name dynamically
-            image.setImageURI(if (TextUtils.isEmpty(imgUrl)) "https://images.woolworthsstatic.co.za/" else url)
+            image.setImageURI(if (TextUtils.isEmpty(imgUrl)) KotlinUtils.productImageUrlPrefix else url)
         }
     }
 
