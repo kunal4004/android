@@ -150,6 +150,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private Account mCreditCardAccount;
 	private View linkedAccountBottomDivider;
 	private RelativeLayout myOrdersRelativeLayout;
+	private ImageView creditReportIcon;
+	private RelativeLayout contactUs;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -190,7 +192,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			setToolbarBackgroundColor(R.color.white);
 			openMessageActivity = view.findViewById(R.id.openMessageActivity);
 			ImageView openShoppingList = view.findViewById(R.id.openShoppingList);
-			RelativeLayout contactUs = view.findViewById(R.id.contactUs);
+			contactUs = view.findViewById(R.id.contactUs);
 			pbAccount = view.findViewById(R.id.pbAccount);
 			applyStoreCardView = view.findViewById(R.id.applyStoreCard);
 			applyCreditCardView = view.findViewById(R.id.applyCrediCard);
@@ -233,6 +235,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
 			myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
 			creditReportView = view.findViewById(R.id.creditReport);
+			creditReportIcon = view.findViewById(R.id.creditReportIcon);
 
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
@@ -405,7 +408,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 
 		}
-		
+
 		//hide content for unavailable products
 		boolean sc = true, cc = true, pl = true;
 		for (String s : unavailableAccounts) {
@@ -1046,6 +1049,46 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			showFeatureWalkthroughAccounts(unavailableAccounts);
 		}
 	}
+	@SuppressLint("StaticFieldLeak")
+	public void showCreditScoreFeatureWalkthrough() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
+			return;
+
+		Activity activity = getActivity();
+		if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
+		final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
+
+		mScrollView.post(() -> ObjectAnimator.ofInt(mScrollView, "scrollY", contactUs.getBottom()).setDuration(600).start());
+
+		new AsyncTask<Void,Void,Void>(){
+
+			@Override
+			protected Void doInBackground(Void... voids) {
+				Activity activity = getActivity();
+				if (activity != null || isAdded()){
+					activity.runOnUiThread(creditReportIcon::invalidate);
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
+						.setTarget(creditReportIcon)
+						.setTitle(R.string.get_your_free_credit_report)
+						.setDescription(R.string.get_your_free_credit_report_desc)
+						.setActionText(R.string.get_started)
+						.setImage(R.drawable.ic_statements)
+						.setAction(listener)
+						.setShapePadding(24)
+						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+				getBottomNavigationActivity().walkThroughPromtView.show(activity);
+
+			}
+		}.execute();
+	}
 
 	@SuppressLint("StaticFieldLeak")
 	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
@@ -1137,6 +1180,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
 	@Override
 	public void onPromptDismiss() {
+		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
+			showCreditScoreFeatureWalkthrough();
 	}
 
 	public View getTargetView(List<String> unavailableAccounts) {

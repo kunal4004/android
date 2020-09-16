@@ -1094,7 +1094,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         REFINE(5),
         ACCOUNTS(6),
         SHOPPING_LIST(7),
-        STATEMENTS(8);
+        STATEMENTS(8),
+        CREDIT_SCORE(9);
 
         private int value;
 

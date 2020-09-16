@@ -1564,5 +1564,6 @@
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
     <string name="get_your_free_credit_report">Get Your Free Credit Report</string>
+    <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
 </resources>
 

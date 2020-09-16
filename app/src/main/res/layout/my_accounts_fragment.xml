@@ -150,9 +150,17 @@
                             android:background="@drawable/stores_details_background"
                             android:visibility="gone">
 
+                            <ImageView
+                                android:id="@+id/creditReportIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ic_credit_report"
+                                android:layout_centerVertical="true"
+                                />
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 style="@style/accountsItem"
-                                android:drawableLeft="@drawable/ic_credit_report"
+                                android:layout_toRightOf="@id/creditReportIcon"
+                                android:layout_marginLeft="@dimen/sixteen_dp"
                                 android:text="@string/get_your_free_credit_report" />
 
                             <ImageView
