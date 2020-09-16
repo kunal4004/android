@@ -18,6 +18,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,6 +47,7 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -76,7 +79,6 @@ import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserPro
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -109,6 +111,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private RelativeLayout signOutRelativeLayout;
 	private RelativeLayout profileRelativeLayout;
 	private RelativeLayout preferenceRelativeLayout;
+	private RelativeLayout creditReportView;
 
 	private WTextView sc_available_funds;
 	private WTextView cc_available_funds;
@@ -149,6 +152,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private Account mCreditCardAccount;
 	private View linkedAccountBottomDivider;
 	private RelativeLayout myOrdersRelativeLayout;
+	private ImageView creditReportIcon;
+	private RelativeLayout contactUs;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -189,7 +194,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			setToolbarBackgroundColor(R.color.white);
 			openMessageActivity = view.findViewById(R.id.openMessageActivity);
 			ImageView openShoppingList = view.findViewById(R.id.openShoppingList);
-			RelativeLayout contactUs = view.findViewById(R.id.contactUs);
+			contactUs = view.findViewById(R.id.contactUs);
 			pbAccount = view.findViewById(R.id.pbAccount);
 			applyStoreCardView = view.findViewById(R.id.applyStoreCard);
 			applyCreditCardView = view.findViewById(R.id.applyCrediCard);
@@ -231,6 +236,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
 			imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
 			myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
+			creditReportView = view.findViewById(R.id.creditReport);
+			creditReportIcon = view.findViewById(R.id.creditReportIcon);
 
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
@@ -247,6 +254,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			helpSectionRelativeLayout.setOnClickListener(this);
 			storeLocatorRelativeLayout.setOnClickListener(this);
 			myOrdersRelativeLayout.setOnClickListener(this);
+			creditReportView.setOnClickListener(this);
 
 			NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
 			KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
@@ -402,7 +410,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			}
 
 		}
-		
+
 		//hide content for unavailable products
 		boolean sc = true, cc = true, pl = true;
 		for (String s : unavailableAccounts) {
@@ -565,6 +573,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			showView(updatePasswordRelativeLayout);
 			showView(preferenceRelativeLayout);
 			showView(loginUserOptionsLayout);
+			showView(creditReportView);
 			mUpdateMyAccount.swipeToRefreshAccount(true);
 			if (SessionUtilities.getInstance().isC2User())
 				showView(linkedAccountsLayout);
@@ -593,6 +602,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(unlinkedLayout);
 		hideView(loginUserOptionsLayout);
 		hideView(preferenceRelativeLayout);
+		hideView(creditReportView);
 	}
 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -734,7 +744,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				}
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders);
 				break;
-
+			case R.id.creditReport:
+				Utils.openBrowserWithUrl(WoolworthsApplication.getFaqLink());
+				break;
 			default:
 				break;
 
@@ -1039,6 +1051,48 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			showFeatureWalkthroughAccounts(unavailableAccounts);
 		}
 	}
+	@SuppressLint("StaticFieldLeak")
+	public void showCreditScoreFeatureWalkthrough() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
+			return;
+
+		Activity activity = getActivity();
+		if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
+		final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
+
+		mScrollView.post(() -> ObjectAnimator.ofInt(mScrollView, "scrollY", contactUs.getBottom()).setDuration(300).start());
+
+		new AsyncTask<Void,Void,Void>(){
+
+			@Override
+			protected Void doInBackground(Void... voids) {
+				Activity activity = getActivity();
+				if (activity != null || isAdded()){
+					activity.runOnUiThread(creditReportIcon::invalidate);
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
+					return;
+				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
+						.setTarget(creditReportIcon)
+						.setTitle(R.string.get_your_free_credit_report)
+						.setDescription(R.string.get_your_free_credit_report_desc)
+						.setActionText(R.string.get_started)
+						.setImage(R.drawable.ic_statements)
+						.setAction(listener)
+						.setShapePadding(48)
+						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+				getBottomNavigationActivity().walkThroughPromtView.show(activity);
+
+			}
+		}.execute();
+	}
 
 	@SuppressLint("StaticFieldLeak")
 	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
@@ -1110,26 +1164,38 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
-		switch (promptsActionListener) {
-			case 1:
-				if (unavailableAccounts.size() == 3) {
-					onClick(applyStoreCardView);
-				} else {
-					if (!unavailableAccounts.contains("SC")) {
-						onClick(linkedStoreCardView);
-					} else if (!unavailableAccounts.contains("CC")) {
-						onClick(linkedCreditCardView);
-					} else if (!unavailableAccounts.contains("PL")) {
-						onClick(linkedPersonalCardView);
-					}
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
+		switch (feature){
+			case ACCOUNTS:{
+				switch (promptsActionListener) {
+					case 1:
+						if (unavailableAccounts.size() == 3) {
+							onClick(applyStoreCardView);
+						} else {
+							if (!unavailableAccounts.contains("SC")) {
+								onClick(linkedStoreCardView);
+							} else if (!unavailableAccounts.contains("CC")) {
+								onClick(linkedCreditCardView);
+							} else if (!unavailableAccounts.contains("PL")) {
+								onClick(linkedPersonalCardView);
+							}
+						}
+						break;
 				}
-				break;
+			}break;
+			case CREDIT_SCORE:{
+				onClick(creditReportView);
+			}break;
+			default:break;
 		}
+
 	}
 
 	@Override
 	public void onPromptDismiss() {
+		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+			showCreditScoreFeatureWalkthrough();
+		}
 	}
 
 	public View getTargetView(List<String> unavailableAccounts) {
