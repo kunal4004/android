@@ -18,6 +18,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
@@ -1058,7 +1060,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
 		final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
 
-		mScrollView.post(() -> ObjectAnimator.ofInt(mScrollView, "scrollY", contactUs.getBottom()).setDuration(600).start());
+		mScrollView.post(() -> ObjectAnimator.ofInt(mScrollView, "scrollY", contactUs.getBottom()).setDuration(300).start());
 
 		new AsyncTask<Void,Void,Void>(){
 
@@ -1074,6 +1076,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 			@Override
 			protected void onPostExecute(Void aVoid) {
 				super.onPostExecute(aVoid);
+				if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
+					return;
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
 						.setTarget(creditReportIcon)
 						.setTitle(R.string.get_your_free_credit_report)
@@ -1081,7 +1085,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 						.setActionText(R.string.get_started)
 						.setImage(R.drawable.ic_statements)
 						.setAction(listener)
-						.setShapePadding(24)
+						.setShapePadding(48)
 						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
 						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 				getBottomNavigationActivity().walkThroughPromtView.show(activity);
@@ -1160,28 +1164,38 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
-		switch (promptsActionListener) {
-			case 1:
-				if (unavailableAccounts.size() == 3) {
-					onClick(applyStoreCardView);
-				} else {
-					if (!unavailableAccounts.contains("SC")) {
-						onClick(linkedStoreCardView);
-					} else if (!unavailableAccounts.contains("CC")) {
-						onClick(linkedCreditCardView);
-					} else if (!unavailableAccounts.contains("PL")) {
-						onClick(linkedPersonalCardView);
-					}
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
+		switch (feature){
+			case ACCOUNTS:{
+				switch (promptsActionListener) {
+					case 1:
+						if (unavailableAccounts.size() == 3) {
+							onClick(applyStoreCardView);
+						} else {
+							if (!unavailableAccounts.contains("SC")) {
+								onClick(linkedStoreCardView);
+							} else if (!unavailableAccounts.contains("CC")) {
+								onClick(linkedCreditCardView);
+							} else if (!unavailableAccounts.contains("PL")) {
+								onClick(linkedPersonalCardView);
+							}
+						}
+						break;
 				}
-				break;
+			}break;
+			case CREDIT_SCORE:{
+				onClick(creditReportView);
+			}break;
+			default:break;
 		}
+
 	}
 
 	@Override
 	public void onPromptDismiss() {
-		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
+		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
 			showCreditScoreFeatureWalkthrough();
+		}
 	}
 
 	public View getTargetView(List<String> unavailableAccounts) {
