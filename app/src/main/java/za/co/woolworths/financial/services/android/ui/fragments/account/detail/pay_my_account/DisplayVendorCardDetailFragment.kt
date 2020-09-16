@@ -10,14 +10,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -29,18 +26,20 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.util.*
 
+
 class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var accountArgs: Account? = null
     private var paymentMethodArgs: String? = null
     private var mAccounts: String? = null
-    private var paymentMethodList: MutableList<GetPaymentMethod>? = null
     private var root: View? = null
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var navController: NavController? = null
 
-    val args: DisplayVendorCardDetailFragmentArgs by navArgs()
+    companion object {
+        const val ZERO_RAND = "R 0.00"
+    }
 
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
@@ -50,11 +49,10 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        paymentMethodArgs = args.paymentMethod
-        mAccounts = args.accounts
-
-        paymentMethodList = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethodArgs, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-        accountArgs = Gson().fromJson(mAccounts, Account::class.java)
+       val card =  payMyAccountViewModel.getCardDetail()
+        paymentMethodArgs = Gson().toJson(card?.paymentMethodList)
+        accountArgs = card?.account?.second
+        mAccounts = Gson().toJson(accountArgs)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,8 +75,11 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         payMyAccountViewModel.paymentAmountCard.observe(viewLifecycleOwner, { card ->
             // set amount amounted
             val amountEntered = card?.amountEntered
-            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == "R 0.00") totalAmountDue else amountEntered
-            pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != "R 0.00")
+            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) totalAmountDue else amountEntered
+            pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() !=ZERO_RAND)
+
+            //Disable change button when amount is R0.00
+            changeCardHorizontalView?.isEnabled =ZERO_RAND ==  amountEntered
 
             // set payment method
             initPaymentMethod()
@@ -90,7 +91,7 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     private fun setupListener() {
         ccvEditTextInput?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != "R 0.00")
+                pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
                 if (s.length == 3) {
                     activity?.let { Utils.hideSoftKeyboard(it) }
                 }
@@ -136,7 +137,6 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     override fun onClick(v: View?) {
         val paymentCard = payMyAccountViewModel.getCardDetail()
         val cardInfo = Gson().toJson(paymentCard)
-        paymentMethodArgs = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
         if (activity is PayMyAccountActivity) {
             when (v?.id) {
                 R.id.editAmountImageView -> {

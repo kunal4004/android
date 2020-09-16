@@ -12,16 +12,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
-import kotlinx.android.synthetic.main.debit_or_credit_card_item.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.payment_options_activity.whatsAppIconImageView
 import kotlinx.android.synthetic.main.pma_at_your_nearest_woolies_store_item.*
 import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
+import kotlinx.android.synthetic.main.pma_credit_card_item.*
+import kotlinx.android.synthetic.main.pma_debit_card_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
+import kotlinx.android.synthetic.main.pma_pay_by_debit_order_item.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -74,10 +75,18 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             }
 
             GlobalScope.doAfterDelay(10) {
-                incDebitOrCreditCardButton?.visibility = when {
+
+                val visible = when {
                     isFeatureEnabled || isCreditCardSection -> GONE
                     else -> VISIBLE
                 }
+
+                easilyPayYourWooliesAccountTextView?.visibility = visible
+                incDebitCardButton?.visibility = visible
+                incCreditCardButton?.visibility = visible
+                easilyPayYourWooliesAccountTextView?.visibility = visible
+                payYourWooliesAccountTextView?.visibility = visible
+                incSetupMyDebitOrder?.visibility = visible
             }
 
             getNavigationResult(Constant.GET_PAYMENT_METHOD_ERROR)?.observe(viewLifecycleOwner) { result ->
@@ -119,14 +128,13 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 }
             })
         }
-
-        initShimmer()
-        stopProgress()
+//        initShimmer()
+//        stopProgress()
     }
 
     private fun queryPaymentMethod() {
-        initShimmer()
-        startProgress()
+//        initShimmer()
+//        startProgress()
         payMyAccountViewModel.queryServiceGetPaymentMethod({ paymentMethodsResponse ->
             with(paymentMethodsResponse) {
                 when (httpCode) {
@@ -147,83 +155,47 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
                     }
                 }
-                initShimmer()
-                stopProgress()
+//                initShimmer()
+//                stopProgress()
             }
         }, {
             payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
-            stopProgress()
+//            stopProgress()
         })
         payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
     }
 
     private fun configureClickEvent() {
-        pmaCardImageView?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        incDebitOrCreditCardButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        incByElectronicFundTransferEFTButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        incAtAnyAbsaBranchButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        incAtYourNearestWoolworthsStoreButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        incPayAtAnyATMButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        incWhatsAppAnyQuestions?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        payByCardNowButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        viewBankingDetailButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        payAtAnyATMButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        findAWooliesStoreButton?.apply {
-            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
+        setListener(pmaCardImageView)
+        setListener(setUpDebitOrderButton)
+        setListener(setupMyDebitOrderContainer)
+        setListener(payByDebitCardNowButton)
+        setListener(payByCreditCardNowButton)
+        setListener(viewBankingDetailButton)
+        setListener(payAtAnyATMButton)
+        setListener(findAWooliesStoreButton)
+        setListener(incCreditCardButton)
+        setListener(incSetupMyDebitOrder)
+        setListener(incDebitCardButton)
+        setListener(incByElectronicFundTransferEFTButton)
+        setListener(incAtAnyAbsaBranchButton)
+        setListener(incAtYourNearestWoolworthsStoreButton)
+        setListener(incPayAtAnyATMButton)
+        setListener(incWhatsAppAnyQuestions)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
+            R.id.incCreditCardButton,
+            R.id.payByCreditCardNowButton,
+            R.id.incDebitCardButton,
+            R.id.payByDebitCardNowButton -> {
 
-            R.id.incDebitOrCreditCardButton, R.id.payByCardNowButton -> {
                 val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
                 val payUMethodType = payMyAccountViewModel.getPaymentMethodType()
                 val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
                 val paymentMethod = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                 payMyAccountPresenter?.payByCardNowFirebaseEvent()
-
 
                 when {
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.ERROR) -> {
@@ -236,7 +208,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(toEnterPaymentAmountDirection)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> {
-                        val account = Gson().toJson(payMyAccountPresenter?.getAccount() ?: Account())
+                        val account = Gson().toJson(payMyAccountPresenter?.getAccount()
+                                ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }
@@ -252,6 +225,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.incPayAtAnyATMButton, R.id.payAtAnyATMButton -> navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment)
+
+            R.id.incSetupMyDebitOrder, R.id.setUpDebitOrderButton -> {
+                GlobalScope.doAfterDelay(200) {
+                    navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_PMAPayByDebitOrderFragment)
+                }
+            }
 
             R.id.incWhatsAppAnyQuestions -> {
                 if (!WhatsAppChatToUs().isCustomerServiceAvailable) {
@@ -285,17 +264,25 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun initShimmer() {
-        val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        payByCardNowButtonShimmerLayout?.setShimmer(shimmer)
+
+    fun setListener(view: View?) {
+        view?.apply {
+            setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
     }
 
-    private fun startProgress() {
-        payByCardNowButtonShimmerLayout?.startShimmer()
-    }
-
-    private fun stopProgress() {
-        payByCardNowButtonShimmerLayout?.setShimmer(null)
-        payByCardNowButtonShimmerLayout?.stopShimmer()
-    }
+//    private fun initShimmer() {
+//        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+//        payByCardNowButtonShimmerLayout?.setShimmer(shimmer)
+//    }
+//
+//    private fun startProgress() {
+//        payByCardNowButtonShimmerLayout?.startShimmer()
+//    }
+//
+//    private fun stopProgress() {
+//        payByCardNowButtonShimmerLayout?.setShimmer(null)
+//        payByCardNowButtonShimmerLayout?.stopShimmer()
+//    }
 }

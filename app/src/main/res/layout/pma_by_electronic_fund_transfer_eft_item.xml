@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/round_corner_white_bg"
@@ -56,5 +57,16 @@
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/byElectronicFundTransferDescTextView"
         style="@style/pmaViewBankingButton" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/quickAndEasyBandImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/band_quick_easy"
+        tools:srcCompat="@drawable/band_quick_easy" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

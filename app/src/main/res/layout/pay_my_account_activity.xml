@@ -41,7 +41,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payMyAccountToolbar" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/payMyAccountNavHostFragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"

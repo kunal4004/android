@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -37,7 +36,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         const val PAYMENT_DETAIL_CARD_UPDATE = "PAYMENT_DETAIL_CARD_UPDATE"
     }
 
-    private lateinit var navigationHost: NavController
+    private var navigationHost: NavController? = null
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
 
@@ -46,7 +45,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.pay_my_account_activity)
 
-        navigationHost = findNavController(R.id.payMyAccountNavHostFragmentContainerView)
+        val payMyAccountFragmentContainer = supportFragmentManager.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
+        navigationHost = payMyAccountFragmentContainer?.navController
 
         configureToolbar()
         preventStatusBarToBlink()
@@ -66,8 +66,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             val paymentAmountCard = Gson().fromJson(card, PaymentAmountCard::class.java)
             payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
 
-            val graph = navigationHost.graph
-            graph.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
+            val graph = navigationHost?.graph
+            graph?.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
                     ?: PayMyAccountStartDestinationType.CREATE_USER) {
                 PayMyAccountStartDestinationType.CREATE_USER -> R.id.creditAndDebitCardPaymentsFragment
                 PayMyAccountStartDestinationType.MANAGE_CARD -> R.id.manageCardFragment
@@ -75,7 +75,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 PayMyAccountStartDestinationType.SECURE_3D -> R.id.pmaProcessRequestFragment
             }
 
-            navigationHost.setGraph(graph, args)
+            graph?.let { navigationHost?.setGraph(it, args) }
         }
     }
 
@@ -130,13 +130,13 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
             else -> {
-                when (navigationHost.graph.startDestination) {
+                when (navigationHost?.graph?.startDestination) {
                     R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {
                         setResult(RESULT_OK)
                         finish()
                         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                     }
-                    else -> navigationHost.popBackStack()
+                    else -> navigationHost?.popBackStack()
                 }
             }
         }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/method_card_background"
+    android:background="@drawable/round_corner_white_bg"
     android:paddingBottom="32dp">
 
     <ImageView
@@ -13,13 +13,14 @@
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/method_card_white" />
+        app:srcCompat="@drawable/method_card" />
 
     <TextView
         android:id="@+id/debitOrCreditCardTextView"
         style="@style/payMyAccountCardTitleStyle"
         android:fontFamily="@font/futura_semi_bold"
-        android:text="@string/debit_or_credit_card_title"
+        android:text="@string/credit_card_title"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/methodCardWhiteImageView" />
@@ -45,53 +46,46 @@
         android:layout_marginTop="13dp"
         android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="8sp"
-        android:text="@string/pay_your_account_desc_label"
-        android:textColor="@color/semi_transparent_white"
+        android:text="@string/pay_by_credit_card_desc"
+        android:textColor="@color/npc_description"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardTextView" />
 
     <ImageView
-        android:id="@+id/visaIconImageView"
+        android:id="@+id/absaImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="29dp"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardDescTextView"
-        app:srcCompat="@drawable/card_visa_grey" />
+        app:srcCompat="@drawable/card_visa_colour" />
 
     <ImageView
-        android:id="@+id/mastercardIconImageView"
+        android:id="@+id/NedbankImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@+id/visaIconImageView"
-        app:layout_constraintTop_toTopOf="@+id/visaIconImageView"
-        app:srcCompat="@drawable/card_mastercard_grey" />
+        app:layout_constraintStart_toEndOf="@+id/absaImageView"
+        app:layout_constraintTop_toTopOf="@+id/absaImageView"
+        app:srcCompat="@drawable/card_mastercard_colour" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/payByCardNowButtonShimmerLayout"
+    <Button
+        android:id="@+id/payByCreditCardNowButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.15"
+        android:text="@string/pay_by_credit_card_button_label"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/visaIconImageView">
-
-        <Button
-            android:id="@+id/payByCardNowButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/white"
-            android:fontFamily="@font/futura_semi_bold"
-            android:letterSpacing="0.15"
-            android:text="@string/pay_by_card_button_label"
-            android:textAllCaps="true"
-            android:textSize="12sp" />
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/absaImageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

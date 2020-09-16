@@ -3,7 +3,9 @@
     android:id="@+id/creditDebitCardPaymentsScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,14 +16,14 @@
 
         <include
             android:id="@+id/incStoreCardHeaderItem"
+            layout="@layout/card_payment_option_header_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            layout="@layout/card_payment_option_header_item"
             android:layout_marginBottom="28dp" />
 
         <include
-            android:id="@+id/incDebitOrCreditCardButton"
-            layout="@layout/debit_or_credit_card_item"
+            android:id="@+id/incSetupMyDebitOrder"
+            layout="@layout/pma_pay_by_debit_order_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" />
@@ -32,6 +34,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/easilyPayYourWooliesAccountTextView"
+            style="@style/pma_title_textview_style"
+            android:text="@string/easily_pay_your_woolies_account_in_the_app" />
+
+        <include
+            android:id="@+id/incDebitCardButton"
+            layout="@layout/pma_debit_card_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <include
+            android:id="@+id/incCreditCardButton"
+            layout="@layout/pma_credit_card_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/payYourWooliesAccountTextView"
+            style="@style/pma_title_textview_style"
+            android:text="@string/you_can_also_pay_your_woolies_account_at_desc" />
 
         <include
             android:id="@+id/incAtAnyAbsaBranchButton"

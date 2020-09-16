@@ -14,9 +14,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.*
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
+import android.text.style.*
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -25,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.pay_my_account_learn_more_fragment.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
@@ -34,6 +33,8 @@ import za.co.woolworths.financial.services.android.ui.activities.click_and_colle
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -63,8 +64,7 @@ class KotlinUtils {
                 }
             }
 
-            val typeface: Typeface? =
-                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+            val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
             if (textIsClickable) spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             val dimenPix =
                     context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
@@ -173,7 +173,7 @@ class KotlinUtils {
         }
 
         fun capitaliseFirstLetter(str: String): CharSequence? {
-           val value = str.toLowerCase()
+            val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
             var output = ""
             for (word in words) {
@@ -349,6 +349,16 @@ class KotlinUtils {
             } catch (e: IllformedLocaleException) {
                 Locale.getDefault()
             }
+        }
+
+        fun highlightText(string: String, key: String): SpannableStringBuilder {
+            val noteStringBuilder = SpannableStringBuilder(string)
+            val start = string.indexOf(key)
+            val end = start.plus(key.length) + 1
+            val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+            noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            return noteStringBuilder
         }
     }
 }

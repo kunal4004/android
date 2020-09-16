@@ -21,7 +21,6 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.05" />
 
-
     <TextView
         android:id="@+id/availableFundTextView"
         style="@style/accountAvailableFundTextViewStyle"
@@ -54,7 +53,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="@dimen/availableFundMaximumHeight" />
+        app:layout_constraintGuide_percent="0.7"
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startGuide"
@@ -121,7 +121,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBottom_toTopOf="@+id/incPayMyAccountButton"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/paymentDueDateTextView" />
@@ -138,7 +137,6 @@
     <TextView
         android:id="@+id/totalAmountDueAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBaseline_toBaselineOf="@+id/totalAmountDueTextView"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
@@ -157,7 +155,6 @@
     <TextView
         android:id="@+id/creditLimitAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBottom_toTopOf="@+id/totalAmountDueAmountTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide" />
 
@@ -174,7 +171,6 @@
     <TextView
         android:id="@+id/currentBalanceAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBottom_toTopOf="@+id/creditLimitAmountTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"

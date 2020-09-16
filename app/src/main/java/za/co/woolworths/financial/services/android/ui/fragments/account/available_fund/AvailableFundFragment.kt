@@ -276,9 +276,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 200 -> {
                     payMyAccountViewModel.setPaymentMethodsResponse(this)
                     mPaymentMethodsResponse = paymentMethodsResponse
-                    val hasFirstCardExpired = if (paymentMethods?.size ?: 0 > 0) paymentMethods?.get(0)?.cardExpired
-                            ?: false else false
-                    payUMethodType = when (paymentMethods?.size ?: 0 > 0 || paymentMethods?.isNullOrEmpty() == false || hasFirstCardExpired) {
+                    payUMethodType = when (paymentMethods?.size ?: 0 > 0 || paymentMethods?.isNullOrEmpty() == false) {
                         true -> {
                             account = mAvailableFundPresenter?.getAccountDetail()
                             amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }

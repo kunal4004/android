@@ -44,6 +44,13 @@
             app:destination="@id/displayVendorCardDetailFragment"
             app:popUpTo="@id/displayVendorCardDetailFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_PMAPayByDebitOrderFragment"
+            app:destination="@id/PMAPayByDebitOrderFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
     </fragment>
     <fragment
         android:id="@+id/payMyAccountLearnMoreFragment"
@@ -81,7 +88,7 @@
     </fragment>
     <fragment
         android:id="@+id/addNewPayUCardFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.AddNewPayUCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAAddNewPayUCardFragment"
         android:label="AddNewPayUCardFragment"
         tools:layout="@layout/add_new_payu_card_fragment">
         <argument
@@ -217,7 +224,12 @@
     </fragment>
     <fragment
         android:id="@+id/payMyAccountRetryErrorFragment"
-        tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment"
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"
-        android:label="PayMyAccountRetryErrorFragment" />
+        android:label="PayMyAccountRetryErrorFragment"
+        tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment" />
+    <fragment
+        android:id="@+id/PMAPayByDebitOrderFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAPayByDebitOrderFragment"
+        android:label="PMAPayByDebitOrderFragment"
+        tools:layout="@layout/pma_pay_by_debit_order_fragment" />
 </navigation>

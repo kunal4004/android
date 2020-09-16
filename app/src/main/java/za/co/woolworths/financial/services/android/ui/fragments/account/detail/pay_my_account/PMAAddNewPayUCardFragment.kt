@@ -20,11 +20,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
-class AddNewPayUCardFragment : Fragment() {
+class PMAAddNewPayUCardFragment : Fragment() {
 
     private var navController: NavController? = null
 
-    val args: AddNewPayUCardFragmentArgs by navArgs()
+    val args: PMAAddNewPayUCardFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,7 @@ class AddNewPayUCardFragment : Fragment() {
                     (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     addNewUserPayUWebView?.visibility = GONE
                     processCardNavHostLinearLayout?.visibility = VISIBLE
-                    val navigateToSaveCardAndPayNow = AddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
+                    val navigateToSaveCardAndPayNow = PMAAddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
                     navController?.navigate(navigateToSaveCardAndPayNow)
                 }
             }, {
@@ -80,9 +80,8 @@ class AddNewPayUCardFragment : Fragment() {
 
             }), "JSBridge")
 
-//            Log.e("connectionUrl",WoolworthsApplication.getPayMyAccountOption()?.addCardUrl())
-//            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
-            loadUrl("https://payu-qa.wfs.wigroup.io/?api_id=android_v7.21&sha1=6eca0a4417fdb9b3a6377ccfdedb7e58c24f9493&agent=android")
+
+            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
         }
     }
 
