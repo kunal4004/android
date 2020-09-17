@@ -1568,5 +1568,8 @@
     <string name="apply_promo_code_title">Promo Code</string>
     <string name="apply">apply</string>
     <string name="enter_promo_code_hint">Enter promo code</string>
+    <string name="available_voucher_toast_message">\u0020voucher</string>
+    <string name="available_vouchers_toast_message">\u0020vouchers</string>
+    <string name="available">available</string>
 </resources>
 

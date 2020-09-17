@@ -76,6 +76,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutAct
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -96,7 +97,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.C
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
@@ -150,6 +150,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private ImageView deliverLocationIcon;
 	private ImageView deliverLocationRightArrow;
 	private WTextView editLocation;
+	private final String TAG_AVAILABLE_VOUCHERS_TOAST ="AVAILABLE_VOUCHERS";
+	private final String TAG_ADDED_TO_LIST_TOAST ="ADDED_TO_LIST";
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -236,7 +238,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 										break;
 									case CLOSE_PDP_FROM_ADD_TO_LIST:
 										mToastUtils.setActivity(activity);
-										mToastUtils.setCurrentState(TAG);
+										mToastUtils.setCurrentState(TAG_ADDED_TO_LIST_TOAST);
 										String shoppingList = getString(R.string.shopping_list);
 										mNumberOfListSelected = productState.getCount();
 										// shopping list vs shopping lists
@@ -1204,27 +1206,40 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onToastButtonClicked(String currentState) {
-		Activity activity = getActivity();
-		if (activity == null) return;
-		Intent intent = new Intent();
-		intent.putExtra("count", mNumberOfListSelected);
-		if (mNumberOfListSelected == 1) {
-			WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-			if (woolworthsApplication == null) return;
-			WGlobalState globalState = woolworthsApplication.getWGlobalState();
-			List<ShoppingList> shoppingListRequest = globalState.getShoppingListRequest();
-			if (shoppingListRequest != null) {
-				for (ShoppingList shoppingList : shoppingListRequest) {
-					if (shoppingList.shoppingListRowWasSelected) {
-						intent.putExtra("listId", shoppingList.listId);
-						intent.putExtra("listName", shoppingList.listName);
+		switch (currentState) {
+			case TAG_ADDED_TO_LIST_TOAST: {
+				Activity activity = getActivity();
+				if (activity == null) return;
+				Intent intent = new Intent();
+				intent.putExtra("count", mNumberOfListSelected);
+				if (mNumberOfListSelected == 1) {
+					WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+					if (woolworthsApplication == null) return;
+					WGlobalState globalState = woolworthsApplication.getWGlobalState();
+					List<ShoppingList> shoppingListRequest = globalState.getShoppingListRequest();
+					if (shoppingListRequest != null) {
+						for (ShoppingList shoppingList : shoppingListRequest) {
+							if (shoppingList.shoppingListRowWasSelected) {
+								intent.putExtra("listId", shoppingList.listId);
+								intent.putExtra("listName", shoppingList.listName);
+							}
+						}
 					}
 				}
+				activity.setResult(MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED, intent);
+				activity.finish();
+				activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 			}
+			break;
+			case TAG_AVAILABLE_VOUCHERS_TOAST: {
+				Intent openCheckOutActivity = new Intent(getContext(), AvailableVouchersToRedeemInCart.class);
+				startActivity(openCheckOutActivity);
+			}
+			break;
+			default:
+				break;
 		}
-		activity.setResult(MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED, intent);
-		activity.finish();
-		activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+
 	}
 
 	public void setDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
@@ -1310,6 +1325,18 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				.setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		CartActivity.walkThroughPromtView.show(getActivity());
+	}
+
+	public void showAvailableVouchersToast(int availableVouchersCount) {
+		mToastUtils.setActivity(getActivity());
+		mToastUtils.setCurrentState(TAG_AVAILABLE_VOUCHERS_TOAST);
+		mToastUtils.setCartText(getString(R.string.available));
+		mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
+		mToastUtils.setView(btnCheckOut);
+		mToastUtils.setMessage(availableVouchersCount + getString(availableVouchersCount > 1 ? R.string.available_vouchers_toast_message : R.string.available_voucher_toast_message));
+		mToastUtils.setAllCapsUpperCase(true);
+		mToastUtils.setViewState(true);
+		mToastUtils.build();
 	}
 
 }
