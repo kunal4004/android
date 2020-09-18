@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 
-class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMethod>?, val onClickListener: (GetPaymentMethod) -> Unit) : RecyclerView.Adapter<PMACardsAdapter.PMAManageCardItemViewHolder>() {
+class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMethod>?, val onClickListener: (GetPaymentMethod, Int) -> Unit) : RecyclerView.Adapter<PMACardsAdapter.PMAManageCardItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PMAManageCardItemViewHolder {
         val v: View = LayoutInflater.from(parent.context).inflate(R.layout.pma_manage_card_item, parent, false)
@@ -28,7 +28,7 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
                         paymentMethodList?.forEach { it.isCardChecked = false }
                         isCardChecked = true
                     }
-                    onClickListener(this)
+                    onClickListener(this, adapterPosition)
                     notifyDataSetChanged()
                 }
             }
@@ -37,7 +37,11 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
         }
     }
 
-    override fun getItemCount(): Int = paymentMethodList?.size ?: 0
+    override fun getItemCount(): Int {
+        // ensure only 10 cards are visible
+        val size = paymentMethodList?.size ?: 0
+        return if (size > 10) 10 else size
+    }
 
     class PMAManageCardItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(paymentMethod: GetPaymentMethod?) {
@@ -74,4 +78,5 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
     }
 
     fun getList() = paymentMethodList
+
 }

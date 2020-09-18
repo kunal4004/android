@@ -41,11 +41,11 @@
 
     <TextView
         android:id="@+id/debitOrCreditCardDescTextView"
+        style="@style/debitCreditStyle"
         android:text="@string/pay_your_account_desc_label"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardTextView"
-        style="@style/debitCreditStyle" />
+        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardTextView" />
 
     <ImageView
         android:id="@+id/absaImageView"
@@ -65,21 +65,27 @@
         app:layout_constraintTop_toTopOf="@+id/absaImageView"
         app:srcCompat="@drawable/card_mastercard_colour" />
 
-    <Button
-        android:id="@+id/payByDebitCardNowButton"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/payByDebitCardNowButtonShimmerLayout"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
-        android:background="@color/black"
-        android:fontFamily="@font/futura_semi_bold"
-        android:letterSpacing="0.15"
-        android:text="@string/pay_by_card_button_label"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/absaImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/absaImageView">
+
+        <Button
+            android:id="@+id/payByDebitCardNowButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:fontFamily="@font/futura_semi_bold"
+            android:letterSpacing="0.15"
+            android:text="@string/pay_by_card_button_label"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

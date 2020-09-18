@@ -4,23 +4,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class PayMyAccountViewModel : ViewModel() {
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
+    enum class OnBackNavigation { RETRY,REMOVE,ADD, NONE } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
-    private var payUMethodType: MutableLiveData<PAYUMethodType?> = MutableLiveData()
 
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
+    private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
 
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
@@ -41,13 +40,13 @@ class PayMyAccountViewModel : ViewModel() {
         val cardDetail = getCardDetail()
         val list = cardDetail?.paymentMethodList
         if (list != null && !list.isNullOrEmpty()) {
-            setPaymentMethodType(PAYUMethodType.CARD_UPDATE)
+//            cardDetail.payuMethodType = PAYUMethodType.CARD_UPDATE
             val checkedList = list.filter { it.isCardChecked }
             if (checkedList.isNullOrEmpty()) {
                 list[0].isCardChecked = true
             }
         } else {
-            setPaymentMethodType(PAYUMethodType.CREATE_USER)
+//            cardDetail?.payuMethodType = PAYUMethodType.CREATE_USER
         }
         return list
     }
@@ -78,58 +77,89 @@ class PayMyAccountViewModel : ViewModel() {
         return null
     }
 
-    fun queryServiceGetPaymentMethod(onPaymentMethodSuccess: (PaymentMethodsResponse) -> Unit, onPaymentMethodFailure: (Throwable?) -> Unit) {
-        request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
-            override fun onSuccess(response: Any?) {
-                setPaymentMethodType(PAYUMethodType.CREATE_USER)
-                (response as? PaymentMethodsResponse)?.apply {
-                    when (httpCode) {
-                        200 -> setPaymentMethodType(when (paymentMethods?.size ?: 0 > 0) {
-                            true -> PAYUMethodType.CARD_UPDATE
-                            else -> PAYUMethodType.CREATE_USER
-                        })
-                        400 -> setPaymentMethodType(PAYUMethodType.CREATE_USER)
-                        440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams)
-                        else -> setPaymentMethodType(PAYUMethodType.ERROR)
-                    }
-                    setPaymentMethodsResponse(this)
-                    onPaymentMethodSuccess(this)
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                super.onFailure(error)
-                onPaymentMethodFailure(error)
-            }
-        })
-    }
-
     fun setPaymentMethodsResponse(paymentMethodResponse: PaymentMethodsResponse?) {
         val cardDetail = getCardDetail()
         val cardLists = paymentMethodResponse?.paymentMethods
         cardDetail?.paymentMethodList = cardLists
-        setPMAVendorCard(cardDetail)
 
-        setPaymentMethodType(if (cardLists?.isNullOrEmpty() == true) PAYUMethodType.CREATE_USER else PAYUMethodType.CARD_UPDATE)
+        cardDetail?.payuMethodType = if (cardLists?.isNullOrEmpty() == true) PAYUMethodType.CREATE_USER else PAYUMethodType.CARD_UPDATE
 
+        setPMACardInfo(cardDetail)
         paymentMethodsResponse.value = paymentMethodResponse
     }
 
-    fun setPaymentMethodType(type: PAYUMethodType) {
-        payUMethodType.value = type
-    }
+    fun getPaymentMethodType(): PAYUMethodType? = getCardDetail()?.payuMethodType
 
-    fun getPaymentMethodType(): PAYUMethodType? = payUMethodType.value
-
-    fun setPMAVendorCard(card: PaymentAmountCard?) {
+    fun setPMACardInfo(card: PaymentAmountCard?) {
         paymentAmountCard.value = card
     }
 
-    fun setPMAVendorCard(card: String) {
+    fun setPMACardInfo(card: String) {
         val cardInfo = Gson().fromJson(card, PaymentAmountCard::class.java)
         paymentAmountCard.value = cardInfo
     }
 
     fun getCardDetail(): PaymentAmountCard? = paymentAmountCard.value
 
+    fun setNavigationResult(onDismiss: OnBackNavigation) {
+        onDialogDismiss.value = onDismiss
+        onDialogDismiss.value = OnBackNavigation.NONE
+    }
+
+    fun getNavigationResult(): MutableLiveData<OnBackNavigation> {
+        return onDialogDismiss
+    }
+
+    fun queryServicePayUPaymentMethod(onSuccessResult: (MutableList<GetPaymentMethod>?) -> Unit, onSessionExpired: (String?) -> Unit, onGeneralError: (String) -> Unit, onFailureHandler: (Throwable?) -> Unit) {
+        var payUMethodType: PAYUMethodType
+        request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
+            override fun onSuccess(response: Any?) {
+                (response as? PaymentMethodsResponse)?.apply {
+                    setPaymentMethodsResponse(this)
+                    when (httpCode) {
+                        200 -> {
+                            payUMethodType = when (paymentMethods?.size ?: 0 > 0 || paymentMethods?.isNullOrEmpty() == false) {
+                                true -> PAYUMethodType.CARD_UPDATE
+                                else -> PAYUMethodType.CREATE_USER
+                            }
+
+                            onSuccessResult(paymentMethods)
+                        }
+
+                        400 -> {
+                            val code = response.response.code
+                            payUMethodType = when (code.startsWith("P0453")) {
+                                true -> PAYUMethodType.CREATE_USER
+                                else -> PAYUMethodType.ERROR
+                            }
+
+                            onSuccessResult(paymentMethods)
+                        }
+
+                        440 -> {
+                            payUMethodType = PAYUMethodType.ERROR
+                            onSessionExpired(response.response.stsParams)
+                        }
+
+                        else -> {
+                            payUMethodType = PAYUMethodType.ERROR
+                            onGeneralError(response.response.desc)
+                        }
+                    }
+                    val cardInfo = getCardDetail()
+                    val updatedCard = PaymentAmountCard(cardInfo?.amountEntered, paymentMethods, cardInfo?.account, payUMethodType)
+                    setPMACardInfo(updatedCard)
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                super.onFailure(error)
+                onFailureHandler(error)
+            }
+        })
+    }
+
+    fun isPaymentMethodListSizeLimitedToTenItem(): Boolean {
+        return getCardDetail()?.paymentMethodList?.size ?: 0 >= 9
+    }
 }

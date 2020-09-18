@@ -68,7 +68,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
-        return accountsResponse.accountList?.filter { account -> account.productGroupCode == getProductCode(mApplyNowState) }?.get(0)
+        return accountsResponse.accountList?.filter { account -> account?.productGroupCode == getProductCode(mApplyNowState) }?.get(0)
     }
 
     override fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>? {
@@ -126,7 +126,12 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
-        return (height.div(100)).times(23)
+        return (height.div(100)).times(if (isAccountInArrearsState() == true) 14 else 23)
+    }
+
+    override fun isAccountInArrearsState(): Boolean? {
+        val productOfferingGoodStanding = getAccount()?.productOfferingGoodStanding ?: false
+        return !productOfferingGoodStanding
     }
 
     private fun getAccount(): Account? {

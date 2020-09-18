@@ -16,7 +16,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAcc
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
-import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClickListener {
 
@@ -30,10 +29,8 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val accountInStringFormat =
-                arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        mAccountCards =
-                Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        val accountInStringFormat = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
+        mAccountCards = Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
 
         accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
 
@@ -46,7 +43,7 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
             R.id.gotITButton -> dismiss()
             R.id.paymentOptionButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
-                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards,Gson().toJson(cardDetail), PayMyAccountStartDestinationType.CREATE_USER)
+                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards, Gson().toJson(cardDetail))
                 dismiss()
             }
         }

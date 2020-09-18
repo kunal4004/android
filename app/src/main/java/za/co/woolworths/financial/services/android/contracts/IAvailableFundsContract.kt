@@ -5,7 +5,6 @@ import android.view.View
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
 interface IAvailableFundsContract {
 
@@ -18,14 +17,12 @@ interface IAvailableFundsContract {
         fun hideABSAServiceGetUserCreditCardTokenProgressBar()
         fun navigateToRecentTransactionActivity(cardType: String)
         fun navigateToLoanWithdrawalActivity()
-        fun navigateToPayMyAccountActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType)
+        fun navigateToPayMyAccountActivity()
         fun navigateToStatementActivity()
-        fun navigateToPaymentOptionsActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType)
+        fun navigateToPaymentOptionsActivity()
         fun setPushViewDownAnimation(view: View)
         fun onABSACreditCardFailureHandler(error: Throwable?)
         fun navigateToABSAStatementActivity()
-        fun onPayUMethodSuccess(paymentMethodsResponse: PaymentMethodsResponse?)
-        fun onPayUMethodFailure(error: Throwable?)
     }
 
     interface AvailableFundsPresenter {
@@ -36,7 +33,6 @@ interface IAvailableFundsContract {
         fun getCreditCardNumber(cards: ArrayList<Card>?): String?
         fun getAccount(): Account?
         fun onDestroy()
-        fun queryPayUPaymentMethod()
         fun isPersonalLoanAndStoreCardVisible(): Boolean?
         fun getAccountDetail(): Pair<ApplyNowState, Account>?
         fun productHasAmountOverdue(): Boolean
@@ -45,6 +41,5 @@ interface IAvailableFundsContract {
 
     interface AvailableFundsModel {
         fun queryABSAServiceGetUserCreditCardToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>?
-        fun queryPayUPaymentMethods(requestListener: IGenericAPILoaderView<Any>): Call<PaymentMethodsResponse>?
     }
 }

@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -24,8 +23,8 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.contracts.IPMAExpiredCardListener
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -34,10 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
-import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
-import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -45,8 +41,9 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
-class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardListener {
+class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
+    private var itemToBeDeletedPosition: Int = 0
     private var accountInfo: String? = null
     private var paymentMethod: String? = null
     private var mAccountDetails: Pair<ApplyNowState, Account>? = null
@@ -91,6 +88,25 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
             setOnClickListener(this@PMAManageCardFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
+
+        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                PayMyAccountViewModel.OnBackNavigation.REMOVE -> {
+                    // deleteRow(position)
+                    GlobalScope.doAfterDelay(300) {
+                        removeCardProduct(itemToBeDeletedPosition)
+                    }
+                }
+                PayMyAccountViewModel.OnBackNavigation.ADD -> {
+                    GlobalScope.doAfterDelay(300) {
+                        val accounts = mAccountDetails?.second
+                        val addCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
+                        navController?.navigate(addCard)
+                    }
+                }
+                else -> return@observe
+            }
+        }
     }
 
     private fun configureRecyclerview() {
@@ -106,14 +122,8 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
-//            try {
-//                mPaymentMethod?.get(2)?.cardExpired = true
-//                mPaymentMethod?.get(1)?.cardExpired = true
-//                mPaymentMethod?.get(5)?.cardExpired = true
-//            } catch (e: Exception) {
-//            }
-
-            manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod ->
+            manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod, position ->
+                itemToBeDeletedPosition = position
 
                 val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
 
@@ -149,12 +159,18 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
             R.id.useThisCardButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
                 cardDetail?.paymentMethodList = manageCardAdapter?.getList()
-                payMyAccountViewModel.setPMAVendorCard(cardDetail)
-                activity?.setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
-                activity?.onBackPressed()
+                payMyAccountViewModel.setPMACardInfo(cardDetail)
+                activity?.apply {
+                    setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardDetail)))
+                    onBackPressed()
+                }
             }
 
             R.id.addCardTextView -> {
+                if (payMyAccountViewModel.isPaymentMethodListSizeLimitedToTenItem()) {
+                    navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
+                    return
+                }
                 val accounts = mAccountDetails?.second
                 val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
                 navController?.navigate(manageCard)
@@ -177,33 +193,11 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
             val position = viewHolder.adapterPosition
 
             when (direction) {
                 ItemTouchHelper.LEFT -> {
-                    deletedPaymentMethod = mPaymentMethod?.get(position)
-                    mPaymentMethod?.removeAt(position)
-                    manageCardAdapter?.notifyItemRemoved(position)
-                    manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount
-                            ?: 0)
-                    if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
-                        request(deletedPaymentMethod?.token?.let { OneAppService.queryServicePayURemovePaymentMethod(it) }, object : IGenericAPILoaderView<Any> {
-                            override fun onSuccess(response: Any?) {
-
-                            }
-                        })
-                        // Disable use this card button when no item is selected
-                        useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
-
-                        // navigate to add new user activity
-                        if (mPaymentMethod?.isEmpty() == true) {
-                            val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(mAccountDetails?.second)
-                            navController?.navigate(manageCard)
-                        }
-                    } else {
-                        ErrorHandlerView(context).showToast()
-                    }
+                    removeCardProduct(position)
                 }
             }
         }
@@ -225,6 +219,35 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
         }
     }
 
+    private fun removeCardProduct(position: Int) {
+        deletedPaymentMethod = mPaymentMethod?.get(position)
+        mPaymentMethod?.removeAt(position)
+        manageCardAdapter?.notifyItemRemoved(position)
+        manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount ?: 0)
+
+        if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
+            request(deletedPaymentMethod?.token?.let { OneAppService.queryServicePayURemovePaymentMethod(it) }, object : IGenericAPILoaderView<Any> {
+                override fun onSuccess(response: Any?) {
+
+                }
+            })
+            // Disable use this card button when no item is selected
+            useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
+
+            // set and display add new card as start destination in graph
+            if (mPaymentMethod?.isEmpty() == true) {
+
+                val card = payMyAccountViewModel.getCardDetail()
+                card?.payuMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                val graph = navController?.graph
+                graph?.startDestination = R.id.addNewPayUCardFragment
+                graph?.let { navController?.setGraph(it) }
+            }
+        } else {
+            ErrorHandlerView(context).showToast()
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -232,13 +255,5 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener, IPMAExpiredCardL
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onItemRemoved() {
-        Log.e("onItemRemoved", "onItemRemoved")
-    }
-
-    override fun onAddNewCard() {
-        Log.e("onAddNewCard", "onAddNewCard")
     }
 }

@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pay_my_account_retry_on_error_dialog_fragment.*
-import za.co.woolworths.financial.services.android.ui.extension.setNavigationResult
-import za.co.woolworths.financial.services.android.util.Constant
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
 class PayMyAccountRetryErrorFragment : WBottomSheetDialogFragment(), View.OnClickListener {
+
+    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.pay_my_account_retry_on_error_dialog_fragment, container, false)
@@ -30,7 +32,7 @@ class PayMyAccountRetryErrorFragment : WBottomSheetDialogFragment(), View.OnClic
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.pmaErrorRetryButton -> {
-                setNavigationResult(Constant.GET_PAYMENT_METHOD_ERROR, Constant.queryServiceGetPaymentMethod)
+                payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.RETRY)
                 dismiss()
             }
         }

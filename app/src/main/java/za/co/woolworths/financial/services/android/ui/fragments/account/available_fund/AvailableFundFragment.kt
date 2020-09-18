@@ -10,6 +10,8 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -18,40 +20,34 @@ import com.crashlytics.android.Crashlytics
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
-import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.bottomGuide
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.android.synthetic.main.view_statement_button.*
-import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
-import za.co.woolworths.financial.services.android.models.dto.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
-import za.co.woolworths.financial.services.android.ui.extension.getNavigationResult
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.net.ConnectException
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
-    var mPaymentMethodsResponse: PaymentMethodsResponse? = null
     var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
     var isQueryPayUPaymentMethodComplete: Boolean = false
     var navController: NavController? = null
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    var payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +76,17 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incPayMyAccountButton)
 
+        val bottomViewGuideline = view.findViewById<Guideline>(R.id.bottomGuide)
+        val constParam: ConstraintLayout.LayoutParams = bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
+        constParam.guidePercent = if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInArrearsState() == true) {
+            paymentOverdueGroup?.visibility = VISIBLE
+            0.8f
+        } else {
+            paymentOverdueGroup?.visibility = GONE
+            0.7f
+        }
+        bottomViewGuideline.layoutParams = constParam
+
         availableFundBackground?.post {
             val dm = DisplayMetrics()
             (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
@@ -90,12 +97,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
 
-            getNavigationResult(Constant.GET_PAYMENT_METHOD_ERROR)?.observe(viewLifecycleOwner) { result ->
-                isQueryPayUPaymentMethodComplete = false
-                when (result) {
-                    Constant.queryServiceGetPaymentMethod -> queryPaymentMethod()
-                }
-            }
         }
 
         activity?.let { act ->
@@ -109,6 +110,16 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 }
             })
         }
+
+        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                PayMyAccountViewModel.OnBackNavigation.RETRY -> {
+                    isQueryPayUPaymentMethodComplete = false
+                    queryPaymentMethod()
+                }
+                else -> return@observe
+            }
+        }
     }
 
     fun queryPaymentMethod() {
@@ -116,7 +127,45 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             true -> {
                 initShimmer()
                 startProgress()
-                mAvailableFundPresenter?.queryPayUPaymentMethod()
+
+                val cardInfo = payMyAccountViewModel.getCardDetail()
+                val account = mAvailableFundPresenter?.getAccountDetail()
+                val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+                val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                val paymentMethodList = cardInfo?.paymentMethodList
+
+                val card = PaymentAmountCard(amountEntered, paymentMethodList, account, payUMethodType)
+                payMyAccountViewModel.setPMACardInfo(card)
+
+                payMyAccountViewModel.queryServicePayUPaymentMethod(
+                        { // onSuccessResult
+                            if (!isAdded) return@queryServicePayUPaymentMethod
+                            stopProgress()
+                            isQueryPayUPaymentMethodComplete = true
+
+                        }, { onSessionExpired ->
+                    if (!isAdded) return@queryServicePayUPaymentMethod
+                    activity?.let {
+                        stopProgress()
+                        isQueryPayUPaymentMethodComplete = true
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
+
+                    }
+                }, { // on unknown http error / general error
+                    if (!isAdded) return@queryServicePayUPaymentMethod
+                    stopProgress()
+                    isQueryPayUPaymentMethodComplete = true
+
+                }, { throwable ->
+                    if (!isAdded) return@queryServicePayUPaymentMethod
+                    activity?.runOnUiThread {
+                        stopProgress()
+                    }
+                    isQueryPayUPaymentMethodComplete = true
+                    if (throwable is ConnectException) {
+                        isQueryPayUPaymentMethodComplete = false
+                    }
+                })
             }
             false -> return
         }
@@ -144,6 +193,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, this))
                 val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
                         ?: "N/A"
+                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amountOverdue), 1, this))
+
                 val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
@@ -151,6 +202,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 creditLimitAmountTextView?.text = creditLimit
                 totalAmountDueAmountTextView?.text = totalAmountDueAmount
                 nextPaymentDueDateTextView?.text = paymentDueDate
+                amountPayableNowAmountTextView?.text = amountOverdue
             }
         }
     }
@@ -165,13 +217,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         }
     }
 
-    override fun navigateToPaymentOptionsActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType) {
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail()), payMyAccountStartDestinationType) }
+    override fun navigateToPaymentOptionsActivity() {
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
     }
 
-    override fun navigateToPayMyAccountActivity(payMyAccountStartDestinationType: PayMyAccountStartDestinationType) {
+    override fun navigateToPayMyAccountActivity() {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail()), payMyAccountStartDestinationType) }
+        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
     }
 
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
@@ -264,69 +316,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         }
     }
 
-    override fun onPayUMethodSuccess(paymentMethodsResponse: PaymentMethodsResponse?) {
-        stopProgress()
-        isQueryPayUPaymentMethodComplete = true
-        paymentMethodsResponse?.apply {
-            var account = mAvailableFundPresenter?.getAccountDetail()
-            var amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
-            var card = PaymentAmountCard(amountEntered, paymentMethodsResponse?.paymentMethods, account)
-            payMyAccountViewModel.setPMAVendorCard(card)
-            when (httpCode) {
-                200 -> {
-                    payMyAccountViewModel.setPaymentMethodsResponse(this)
-                    mPaymentMethodsResponse = paymentMethodsResponse
-                    payUMethodType = when (paymentMethods?.size ?: 0 > 0 || paymentMethods?.isNullOrEmpty() == false) {
-                        true -> {
-                            account = mAvailableFundPresenter?.getAccountDetail()
-                            amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
-                            card = PaymentAmountCard(amountEntered, mPaymentMethodsResponse?.paymentMethods, account)
-                            payMyAccountViewModel.setPMAVendorCard(card)
-                            PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE
-                        }
-                        else -> PayMyAccountViewModel.PAYUMethodType.CREATE_USER
-                    }
-                }
-
-                400 -> {
-                    val code = response.code
-                    payUMethodType = when (code.startsWith("P0453")) {
-                        true -> {
-                            payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.CREATE_USER)
-                            PayMyAccountViewModel.PAYUMethodType.CREATE_USER
-                        }
-                        false -> PayMyAccountViewModel.PAYUMethodType.ERROR
-
-                    }
-                }
-
-                440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams
-                        ?: "", activity)
-
-                else -> payUMethodType = PayMyAccountViewModel.PAYUMethodType.ERROR
-            }
-            payMyAccountViewModel.setPaymentMethodType(payUMethodType)
-        }
-    }
-
-    override fun onPayUMethodFailure(error: Throwable?) {
-        payMyAccountViewModel.setPaymentMethodType(PayMyAccountViewModel.PAYUMethodType.ERROR)
-        isQueryPayUPaymentMethodComplete = true
-        if (error is ConnectException) {
-            isQueryPayUPaymentMethodComplete = false
-        }
-        activity?.runOnUiThread {
-            stopProgress()
-        }
-    }
-
     fun initShimmer() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         viewPaymentOptionImageShimmerLayout?.setShimmer(shimmer)
         viewPaymentOptionTextShimmerLayout?.setShimmer(shimmer)
     }
 
-    fun startProgress() {
+    private fun startProgress() {
         viewPaymentOptionImageShimmerLayout?.startShimmer()
         viewPaymentOptionTextShimmerLayout?.startShimmer()
     }
@@ -339,16 +335,14 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         viewPaymentOptionTextShimmerLayout?.stopShimmer()
     }
 
-    fun navigateToPayMyAccount(payUMethodType: PayMyAccountViewModel.PAYUMethodType, openCardOptionsDialog: () -> Unit) {
+    fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
         val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
+        val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {
-            (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
-                navigateToPayMyAccountActivity(PayMyAccountStartDestinationType.CREATE_USER)
-            }
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> openCardOptionsDialog()
 
-            else -> navigateToPayMyAccountActivity(PayMyAccountStartDestinationType.CREATE_USER)
+            else -> navigateToPayMyAccountActivity()
         }
     }
 

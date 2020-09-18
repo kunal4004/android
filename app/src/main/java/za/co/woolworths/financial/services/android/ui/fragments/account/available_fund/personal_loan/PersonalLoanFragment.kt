@@ -54,7 +54,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {
                     personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
                 } else {
-                    navigateToPayMyAccount(payUMethodType) {
+                    navigateToPayMyAccount {
                         val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                         val accountDetail: Pair<ApplyNowState, Account>? = mAvailableFundPresenter?.getAccountDetail()
                         navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment(Gson().toJson(accountDetail), paymentMethods))

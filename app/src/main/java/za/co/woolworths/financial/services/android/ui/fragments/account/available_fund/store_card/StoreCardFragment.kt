@@ -45,7 +45,6 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incPayMyAccountButton -> {
-
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
                 if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
@@ -54,7 +53,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 }
 
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
-                navigateToPayMyAccount(payUMethodType) {
+                navigateToPayMyAccount {
                     val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                     val accountDetail: Account? = mAvailableFundPresenter?.getAccount()
                     navController?.navigate(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction(Gson().toJson(accountDetail), paymentMethods))

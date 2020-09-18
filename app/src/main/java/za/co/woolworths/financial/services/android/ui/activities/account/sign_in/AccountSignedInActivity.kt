@@ -42,8 +42,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         const val REQUEST_CODE_ACCOUNT_INFORMATION = 2112
     }
 
+    var mAccountOptionsNavHost: NavHostFragment? = null
+    var mAvailableFundsNavHost: NavHostFragment? = null
     private var mPeekHeight: Int = 0
-    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
+    var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 
@@ -59,11 +61,11 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
 
-            val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-            val accountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
+            mAvailableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+            mAccountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
 
-            setAvailableFundBundleInfo(availableFundsNavHost?.navController)
-            setAccountCardDetailInfo(accountOptionsNavHost?.navController)
+            setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController)
+            setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
             setToolbarTopMargin()
         }
 
@@ -83,16 +85,13 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private fun configureBottomSheetDialog() {
-        val bottomSheetBehaviourLinearLayout =
-                findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
+        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
-        layoutParams?.height =
-                mAccountSignedInPresenter?.bottomSheetBehaviourHeight()
+        layoutParams?.height = mAccountSignedInPresenter?.bottomSheetBehaviourHeight()
         bottomSheetBehaviourLinearLayout?.requestLayout()
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
-        sheetBehavior?.peekHeight =
-                mAccountSignedInPresenter?.bottomSheetBehaviourPeekHeight()
-                        ?: 0
+        sheetBehavior?.peekHeight = mAccountSignedInPresenter?.bottomSheetBehaviourPeekHeight()
+                ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -193,7 +192,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
-                            payMyAccountViewModel.setPMAVendorCard(this)
+                            payMyAccountViewModel.setPMACardInfo(this)
                         }
                     }
 

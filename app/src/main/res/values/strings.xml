@@ -1630,7 +1630,8 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
-    <string name="pma_retry_error_desc">Oops! Unfortunately, we’re having trouble retrieving your information, please try again.</string>
+    <string name="pma_retry_error_title">Oops!</string>
+    <string name="pma_retry_error_desc">Unfortunately, we’re having trouble retrieving your information, please try again.</string>
     <string name="pma_pay_by_debit_order">"Pay By Debit Order  "</string>
     <string name="pay_by_debit_order_desc">Make your life easier and have your account debited when it best suits you. It\'s quick and safe.</string>
     <string name="set_up_by_debit_order_button_label">"Setup my debit order "</string>
@@ -1649,5 +1650,7 @@
     <string name="debit_order_amount_label">Debit order amount: (this can be either full payment, minimum payment, fixed amount or fixed percentage)</string>
     <string name="debit_order_deduction_date_label">"Debit order deduction date: "</string>
     <string name="debit_order_deduction_desc">"Note: If you are setting up a debit order for a Woolies Personal Loan, remember to also attach a clear copy of your valid SA Identity Document (if its an ID card include both sides).  "</string>
+    <string name="amount_payable_now">"Overdue Amount, Payable Now"</string>
+    <string name="pma_ten_card_limit_error_desc">You have reached the maximum number of  cards allowed. Please delete a card before  adding a new one.</string>
 </resources>
 

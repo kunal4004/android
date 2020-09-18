@@ -6,6 +6,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -16,6 +18,7 @@ import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
@@ -26,21 +29,14 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.util.*
 
-
 class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var accountArgs: Account? = null
     private var paymentMethodArgs: String? = null
     private var mAccounts: String? = null
     private var root: View? = null
-
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var navController: NavController? = null
-
-    companion object {
-        const val ZERO_RAND = "R 0.00"
-    }
-
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogWithoutAnimation
@@ -49,7 +45,7 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-       val card =  payMyAccountViewModel.getCardDetail()
+        val card = payMyAccountViewModel.getCardDetail()
         paymentMethodArgs = Gson().toJson(card?.paymentMethodList)
         accountArgs = card?.account?.second
         mAccounts = Gson().toJson(accountArgs)
@@ -76,10 +72,10 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             // set amount amounted
             val amountEntered = card?.amountEntered
             pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) totalAmountDue else amountEntered
-            pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() !=ZERO_RAND)
+            pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
 
             //Disable change button when amount is R0.00
-            changeCardHorizontalView?.isEnabled =ZERO_RAND ==  amountEntered
+            changeTextView.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND
 
             // set payment method
             initPaymentMethod()
@@ -106,6 +102,14 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         val paymentMethod = payMyAccountViewModel.getSelectedPaymentMethodCard()
         paymentMethod?.apply {
             cardNumberItemTextView?.text = cardNumber
+            changeTextView.text = if (cardExpired) {
+                cardExpiredTagTextView?.visibility = VISIBLE
+                bindString(R.string.add_card_label)
+            } else {
+                cardExpiredTagTextView?.visibility = GONE
+                bindString(R.string.change_label)
+            }
+
             cardItemImageView?.setImageResource(when (vendor.toLowerCase(Locale.getDefault())) {
                 "visa" -> R.drawable.card_visa
                 "mastercard" -> R.drawable.card_mastercard
@@ -132,8 +136,11 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@DisplayVendorCardDetailFragment)
         }
+
+
     }
 
+    @SuppressLint("DefaultLocale")
     override fun onClick(v: View?) {
         val paymentCard = payMyAccountViewModel.getCardDetail()
         val cardInfo = Gson().toJson(paymentCard)
@@ -162,7 +169,11 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
                     ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
                 R.id.changeTextView -> {
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                    if (changeTextView.text.toString().toLowerCase() == bindString(R.string.add_card_label).toLowerCase()) {
+                        ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.ADD_NEW_CARD)
+                    } else {
+                        ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                    }
                 }
                 R.id.pmaConfirmPaymentButton -> {
                     val cvv = ccvEditTextInput?.text?.toString() ?: "0"
@@ -183,5 +194,9 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             "cc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_AMTEDIT)
             "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_AMTEDIT)
         }
+    }
+
+    companion object {
+        const val ZERO_RAND = "R 0.00"
     }
 }

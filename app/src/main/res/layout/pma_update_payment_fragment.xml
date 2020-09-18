@@ -186,7 +186,7 @@
         android:text="@string/placeholder"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/cardItemImageView"
-        app:layout_constraintEnd_toStartOf="@+id/changeTextView"
+        app:layout_constraintEnd_toStartOf="@+id/cardExpiredTagTextView"
         app:layout_constraintStart_toEndOf="@+id/cardItemImageView"
         app:layout_constraintTop_toTopOf="@+id/cardItemImageView" />
 
@@ -200,5 +200,24 @@
         app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/cardExpiredTagTextView"
+        style="@style/accountInArrearsTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:paddingStart="7dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="4dp"
+        android:text="@string/card_expired"
+        android:textAllCaps="true"
+        android:textSize="10sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/cardNumberItemTextView"
+        app:layout_constraintEnd_toStartOf="@+id/changeTextView"
+        app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

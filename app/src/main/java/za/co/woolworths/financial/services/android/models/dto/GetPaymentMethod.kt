@@ -9,5 +9,5 @@ data class GetPaymentMethod(
         val last4Digits: String,
         val token: String,
         val type: String,
-        val vendor: String,
+        var vendor: String,
         var isCardChecked: Boolean = false) : Serializable

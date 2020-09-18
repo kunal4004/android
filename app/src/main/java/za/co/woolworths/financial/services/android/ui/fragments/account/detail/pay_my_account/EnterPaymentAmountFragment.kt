@@ -163,6 +163,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             R.id.continueToPaymentButton -> {
                 val amountEntered = paymentAmountInputEditText?.text?.toString()
                 val enteredAmount = amountEntered?.replace("[R ]".toRegex(), "")?.toDouble() ?: 0.0
+
                 when {
                     enteredAmount < 1.toDouble() -> {
                         continueToPaymentButton?.isEnabled = false
@@ -180,7 +181,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 val selectedCard = payMyAccountViewModel.getCardDetail()
                 selectedCard?.amountEntered = amountEntered
-                payMyAccountViewModel.setPMAVendorCard(selectedCard)
+                payMyAccountViewModel.setPMACardInfo(selectedCard)
 
                 if (continueToPaymentButton?.text?.toString() == bindString(R.string.done)) {
 

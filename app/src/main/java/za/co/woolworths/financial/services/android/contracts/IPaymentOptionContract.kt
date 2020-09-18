@@ -37,7 +37,7 @@ interface IPaymentOptionContract {
         fun getTotalAmountDue(totalAmountDue : Int): String
         fun getAmountOutstanding(amountOutstanding: Int): String
         fun getPayMyAccountSection(): ApplyNowState
-        fun payByCardNowFirebaseEvent()
+        fun setFirebaseEventForPayByCardNow()
     }
 
     interface PayMyAccountModel {

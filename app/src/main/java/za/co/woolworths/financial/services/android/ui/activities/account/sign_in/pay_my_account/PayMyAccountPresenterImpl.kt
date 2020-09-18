@@ -139,7 +139,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     @Throws(RuntimeException::class)
-    override fun payByCardNowFirebaseEvent() {
+    override fun setFirebaseEventForPayByCardNow() {
         return when (mAccountDetails?.first) {
             ApplyNowState.STORE_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY)
             ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_PAY)

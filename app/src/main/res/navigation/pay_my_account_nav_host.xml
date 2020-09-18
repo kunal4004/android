@@ -124,12 +124,23 @@
         <action
             android:id="@+id/action_manageCardFragment_to_addNewPayUCardFragment"
             app:destination="@id/addNewPayUCardFragment" />
+
+        <action
+            android:id="@+id/action_manageCardFragment_popup_to_addNewPayUCardFragment"
+            app:destination="@id/addNewPayUCardFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/addNewPayUCardFragment"
+            app:popUpToInclusive="true" />
+
         <action
             android:id="@+id/action_manageCardFragment_to_displayVendorCardDetailFragment"
             app:destination="@id/displayVendorCardDetailFragment" />
         <action
             android:id="@+id/action_manageCardFragment_to_PMACardExpiredFragment"
             app:destination="@id/PMACardExpiredFragment" />
+        <action
+            android:id="@+id/action_manageCardFragment_to_PMATenCardLimitDialogFragment"
+            app:destination="@id/PMATenCardLimitDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/pmaProcessRequestFragment"
@@ -222,7 +233,7 @@
             app:argType="za.co.woolworths.financial.services.android.models.dto.PayUPayResultRequest"
             app:nullable="true" />
     </fragment>
-    <fragment
+    <dialog
         android:id="@+id/payMyAccountRetryErrorFragment"
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"
         android:label="PayMyAccountRetryErrorFragment"
@@ -232,4 +243,9 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAPayByDebitOrderFragment"
         android:label="PMAPayByDebitOrderFragment"
         tools:layout="@layout/pma_pay_by_debit_order_fragment" />
+    <dialog
+        android:id="@+id/PMATenCardLimitDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PMATenCardLimitDialogFragment"
+        android:label="PMATenCardLimitDialogFragment"
+        tools:layout="@layout/pma_ten_card_limit_exceed_fragment" />
 </navigation>

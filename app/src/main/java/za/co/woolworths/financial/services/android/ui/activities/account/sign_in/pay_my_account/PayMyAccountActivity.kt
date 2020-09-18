@@ -64,7 +64,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             val card = getString(PAYMENT_DETAIL_CARD_UPDATE, "")
 
             val paymentAmountCard = Gson().fromJson(card, PaymentAmountCard::class.java)
-            payMyAccountViewModel.setPMAVendorCard(paymentAmountCard)
+            payMyAccountViewModel.setPMACardInfo(paymentAmountCard)
 
             val graph = navigationHost?.graph
             graph?.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -73,6 +73,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 PayMyAccountStartDestinationType.MANAGE_CARD -> R.id.manageCardFragment
                 PayMyAccountStartDestinationType.PAYMENT_AMOUNT -> R.id.enterPaymentAmountFragment
                 PayMyAccountStartDestinationType.SECURE_3D -> R.id.pmaProcessRequestFragment
+                else -> R.id.addNewPayUCardFragment
             }
 
             graph?.let { navigationHost?.setGraph(it, args) }
@@ -131,7 +132,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             }
             else -> {
                 when (navigationHost?.graph?.startDestination) {
-                    R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {
+                    R.id.addNewPayUCardFragment, R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {
                         setResult(RESULT_OK)
                         finish()
                         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
@@ -165,7 +166,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
-                            payMyAccountViewModel.setPMAVendorCard(this)
+                            payMyAccountViewModel.setPMACardInfo(this)
                         }
                     }
 
