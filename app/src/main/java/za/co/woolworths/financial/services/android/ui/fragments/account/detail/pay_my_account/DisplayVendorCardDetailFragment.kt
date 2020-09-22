@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -89,7 +91,10 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             override fun afterTextChanged(s: Editable) {
                 pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
                 if (s.length == 3) {
-                    activity?.let { Utils.hideSoftKeyboard(it) }
+                    try {
+                        val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm ?. hideSoftInputFromWindow (ccvEditTextInput.windowToken, 0)
+                    }catch (ex : Exception){}
                 }
             }
 
@@ -102,6 +107,7 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         val paymentMethod = payMyAccountViewModel.getSelectedPaymentMethodCard()
         paymentMethod?.apply {
             cardNumberItemTextView?.text = cardNumber
+            cardExpired = true
             changeTextView.text = if (cardExpired) {
                 cardExpiredTagTextView?.visibility = VISIBLE
                 bindString(R.string.add_card_label)
