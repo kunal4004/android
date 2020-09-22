@@ -19,22 +19,21 @@ class DeepLinkingUtils {
                 WoolworthsApplication.getWhitelistedDomainsForQRScanner()?.apply {
                     if (domain in this) {
                         when {
-                            domain.contains(DOMAIN_WOOLWORTHS, true) -> {
-                                var searchTerm = uri.getQueryParameter("Ntt")
-                                if (searchTerm.isNullOrEmpty())
-                                    searchTerm = uri.getQueryParameter("searchTerm")
-
-                                if (!searchTerm.isNullOrEmpty()) {
-                                    productSearchTypeAndTerm.searchTerm = searchTerm
+                            domain.contains(DOMAIN_WOOLWORTHS, true) -> when {
+                                !uri.getQueryParameter("Ntt").isNullOrEmpty() -> {
+                                    productSearchTypeAndTerm.searchTerm = uri.getQueryParameter("Ntt")!!
                                     productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
-                                } else {
-                                    searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
-                                    if (!searchTerm.isNullOrEmpty()) {
-                                        productSearchTypeAndTerm.searchTerm = searchTerm
-                                        productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
-                                    } else {
-                                        productSearchTypeAndTerm.searchTerm = WHITE_LISTED_DOMAIN
-                                    }
+                                }
+                                !uri.getQueryParameter("searchTerm").isNullOrEmpty() -> {
+                                    productSearchTypeAndTerm.searchTerm = uri.getQueryParameter("searchTerm")!!
+                                    productSearchTypeAndTerm.searchType = if (productSearchTypeAndTerm.searchTerm.startsWith("cat", true)) ProductsRequestParams.SearchType.NAVIGATE else ProductsRequestParams.SearchType.SEARCH
+                                }
+                                !uri.pathSegments?.find { it.startsWith("N-") }.isNullOrEmpty() -> {
+                                    productSearchTypeAndTerm.searchTerm = uri.pathSegments?.find { it.startsWith("N-") }!!
+                                    productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                                }
+                                else -> {
+                                    productSearchTypeAndTerm.searchTerm = WHITE_LISTED_DOMAIN
                                 }
                             }
                             else -> {

@@ -3,7 +3,6 @@
     <color name="black">#000</color>
     <color name="white">#FFF</color>
     <color name="drawer_color">#333333</color>
-    <color name="onboarding_desc_text">#80ffffff</color>
     <color name="gray_circle">#CCC</color>
     <color name="light_gray">#EFEFEF</color>
     <color name="dark_grey">#22efefef</color>
@@ -91,13 +90,6 @@
     <color name="light_gray_background">#60D8D8D8</color>
     <color name="semi_transparent">#20ffffff</color>
     <color name="searchBarHintColor">#20000000</color>
-    <color name="walk_through_welcome">#FFEADF</color>
-    <color name="bottom_shop_background">#9cb9af</color>
-    <color name="top_shop_background">#9cb9af</color>
-    <color name="onBoarding_1">#FFEADF</color>
-    <color name="onBoarding_2">#BED3CA</color>
-    <color name="onBoarding_3">#F7F8EC</color>
-    <color name="onBoarding_4">#D6DADD</color>
     <color name="transaction_date_color">#66030303</color>
     <color name="accounts_sales_page_bg">#F8F8F8</color>
     <color name="offer_title_70">#70222222</color>
@@ -106,4 +98,5 @@
     <color name="arrears_red_color_code">#F43F37</color>
     <color name="sign_in_register_button_border">#E5E5E5</color>
     <color name="block_card_color" >#424244</color>
+    <color name="gray_35">#35D8D8D8</color>
 </resources>

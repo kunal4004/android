@@ -1,106 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginEnd="@dimen/thirty_two_dp"
-            android:layout_marginStart="@dimen/thirty_two_dp">
+    android:paddingBottom="@dimen/thirty_two_dp"
+    >
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:letterSpacing="0.07"
-                android:text="@string/delivery_location_title"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:WTextView_font="medium_bold"/>
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/deliverLocationIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
 
 
-            <ImageView
-                android:id="@+id/imCloseIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/close_24"/>
+    <TextView
+        android:id="@+id/title"
+        style="@style/dialog_title_text_style"
+        android:layout_marginTop="@dimen/fifty_dp"
+        android:text="@string/set_your_collection_location"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/deliverLocationIcon" />
 
-        </RelativeLayout>
+    <TextView
+        android:id="@+id/description"
+        style="@style/dialog_description_text_style"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:text="@string/your_collection_location_is_currently_set_to"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/recent_search_bg"
-            />
+    <TextView
+        android:id="@+id/tvLocation"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_marginTop="@dimen/five_dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/description" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/four_dp"
-            android:layout_marginTop="@dimen/thirty_two_dp"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp"
-            android:text="@string/your_delivery_location_is_set_to"
-            android:textColor="@color/description_color"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/thirty_two_dp"
-            android:layout_marginStart="@dimen/thirty_two_dp"
-            android:orientation="vertical">
+    <Button
+        android:id="@+id/btnDefaultLocation"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/order_add_to_cart_button_bg"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.13"
+        android:text="@string/confirm_your_location"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/tvLocation" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvLocation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/thirty_two_dp"
-                android:gravity="center"
-                android:lineSpacingExtra="4dp"
-                android:text="@string/your_delivery_location_is_set_to"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:WTextView_font="medium_bold"/>
+    <TextView
+        android:id="@+id/btnSetNewLocation"
+        style="@style/link_text_style"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:text="@string/edit_collection_location"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/btnDefaultLocation"
+        />
 
-            <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/btnDefaultLocation"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/four_dp"
-                android:background="@color/black"
-                android:gravity="center"
-                android:letterSpacing="0.2"
-                android:text="@string/confirm_your_location"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:WButton_font="medium_bold"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/btnSetNewLocation"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:gravity="center"
-                android:letterSpacing="0.2"
-                android:text="@string/edit_delivery_location"
-                android:textAllCaps="true"
-                android:textSize="12sp"
-                android:textColor="@color/black"
-                app:WButton_font="medium"/>
-        </LinearLayout>
-</LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

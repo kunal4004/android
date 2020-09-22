@@ -7,6 +7,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
@@ -1316,7 +1317,7 @@ interface ApiInterface {
             @Body requestBody: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("event/{featureName}/{appScreen}")
+    @POST("event/{appScreen}/{featureName}")
     fun postEvent(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1345,6 +1346,22 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Query("envelopeNumber") envelopeNumber: String): Call<RecipientDetailsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("location/validateSelectedSuburb/{suburbId}")
+    fun validateSelectedSuburb(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("suburbId") suburbId: String,
+            @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/cardDelivery/address")
@@ -1409,4 +1426,5 @@ interface ApiInterface {
             @Query("envelopeNumber") envelopeNumber: String,
             @Query("bookingReference") bookingReference: String,
             @Body requestBody: UpdateAddressAndTimeSlotsRequestBody): Call<CreditCardDeliveryStatusResponse>
+
 }

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/cardNestedScrollView"
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:overScrollMode="never">
@@ -57,9 +58,9 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="4dp"
+                android:textAllCaps="true"
                 android:textColor="@color/active_card_color"
                 android:textSize="10sp"
-                android:textAllCaps="true"
                 app:layout_constraintStart_toStartOf="@+id/imStoreCard"
                 app:layout_constraintTop_toTopOf="@+id/imStoreCard"
                 tools:ignore="UnusedAttribute" />
@@ -85,7 +86,6 @@
                 app:layout_constraintStart_toStartOf="@+id/imStoreCard"
                 app:layout_constraintTop_toBottomOf="@+id/cardStatus"
                 tools:targetApi="lollipop" />
-
 
             <TextView
                 android:id="@+id/tvCardHolderHeader"
@@ -162,9 +162,9 @@
             <TextView
                 android:id="@+id/textViewCardHolderName"
                 style="@style/card_item_semi_bold_text_style"
+                android:layout_alignParentEnd="true"
                 android:contentDescription="@string/text_cardHolderName"
-                android:textAllCaps="true"
-                android:layout_alignParentEnd="true" />
+                android:textAllCaps="true" />
 
         </RelativeLayout>
 
@@ -206,10 +206,56 @@
 
             <TextView
                 style="@style/card_items_header_text_style"
-                android:contentDescription="@string/label_manage_card_details"
                 android:layout_alignParentStart="true"
+                android:contentDescription="@string/label_manage_card_details"
                 android:text="@string/manage" />
 
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/temporaryCardFreezeRelativeLayout"
+            style="@style/clickable_card_item_layout_style"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/manageView">
+
+            <ImageView
+                android:id="@+id/temporaryCardFreezeImageView"
+                style="@style/card_item_start_icon_style"
+                android:layout_width="wrap_content"
+                android:alpha="0.8"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/icon_freeze_grey" />
+
+            <TextView
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_toEndOf="@+id/temporaryCardFreezeImageView"
+                android:text="@string/temporary_card_freeze_title" />
+
+            <FrameLayout
+                android:id="@+id/temporaryFreezeCardSwitcher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true">
+
+                <ProgressBar
+                    android:id="@+id/temporaryFreezeCardProgressBar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:indeterminateTintMode="src_in"
+                    android:indeterminateTint="@color/black"
+                    android:visibility="gone" />
+
+                <Switch
+                    android:id="@+id/temporaryCardFreezeSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:theme="@style/SwitchTheme"
+                    android:thumb="@drawable/customswitchselector"
+                    android:track="@drawable/custom_track" />
+
+            </FrameLayout>
         </RelativeLayout>
 
         <RelativeLayout
@@ -217,15 +263,14 @@
             style="@style/clickable_card_item_layout_style"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/manageView">
+            app:layout_constraintTop_toBottomOf="@+id/temporaryCardFreezeRelativeLayout">
 
             <ImageView
                 android:id="@+id/logoBlockCard"
                 style="@style/card_item_start_icon_style"
-                app:srcCompat="@drawable/icon_card"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
-                />
+                app:srcCompat="@drawable/icon_card" />
 
             <TextView
                 style="@style/card_item_semi_bold_text_style"
@@ -247,10 +292,9 @@
             <ImageView
                 android:id="@+id/logoPayWithCard"
                 style="@style/card_item_start_icon_style"
-                app:srcCompat="@drawable/icon_card"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
-                />
+                app:srcCompat="@drawable/icon_card" />
 
             <TextView
                 style="@style/card_item_semi_bold_text_style"
@@ -296,6 +340,7 @@
                 style="@style/card_item_semi_bold_text_style"
                 android:layout_toEndOf="@+id/logoHowItWorks"
                 android:text="@string/how_it_works" />
+
             <ImageView style="@style/card_item_end_icon_style" />
 
         </RelativeLayout>
@@ -305,12 +350,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="howItWorks,payWithCard,expireDetailsLayout" />
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/blockCardViews"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="manageView,blockCard,cardNumberLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

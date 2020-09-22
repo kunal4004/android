@@ -11,6 +11,8 @@ import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
 import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.OneAppEvents
 import java.io.FileOutputStream
 import java.lang.Exception
 
@@ -66,7 +68,10 @@ class WPdfViewerActivity : AppCompatActivity() {
     }
 
     private fun shareInvoice() {
-        gtmTag?.let { Utils.triggerFireBaseEvents(it) }
+        gtmTag?.let {
+            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_SHARE_STATEMENT,OneAppEvents.FeatureName.ABSA)
+            Utils.triggerFireBaseEvents(it)
+        }
         try {
             cacheFile = File(cacheDir, "$fileName.pdf")
 

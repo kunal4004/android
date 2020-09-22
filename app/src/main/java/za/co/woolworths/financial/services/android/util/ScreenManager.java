@@ -19,13 +19,12 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
-import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
-import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionPresenterImpl;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
@@ -45,19 +44,17 @@ public class ScreenManager {
 	public static final int BIOMETRICS_LAUNCH_VALUE = 1983;
 	public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
 
-	public static void presentMain(Activity activity, String notificationUtils) {
+	public static void presentMain(Activity activity) {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 		activity.finish();
 	}
 
-	public static void presentMain(Activity activity, String notificationUtils, Uri data) {
+	public static void presentMain(Activity activity, Uri data) {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		intent.setData(data);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -145,7 +142,6 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PROFILE.rawValue());
-		Log.e("updateDetail_PROFILE", SSOActivity.Path.UPDATE_PROFILE.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
@@ -244,12 +240,6 @@ public class ScreenManager {
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
 		presentProductDetails(activity, bundle);
-	}
-
-	public static void presentDeliveryLocationActivity(Activity activity, int requestCode) {
-		Intent openDeliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
-		activity.startActivityForResult(openDeliveryLocationSelectionActivity, requestCode);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	public static void presentWhatsAppChatToUsActivity(Activity activity, String featureName, String appScreen) {

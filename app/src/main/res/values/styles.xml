@@ -163,12 +163,21 @@
         <item name="windowActionBar">false</item>
         <item name="android:background">@color/semi_per_black</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
 
+    <style name="SSOActivityKMSIStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@color/semi_per_black</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
     <style name="whiteButtonStyle" parent="android:Theme">
@@ -264,9 +273,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:singleLine">true</item>
-        <item name="WTextView_font">myriadpro_regular</item>
         <item name="android:textSize">15sp</item>
-
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <style name="contact_us_item_desc_textview" parent="android:Theme">
@@ -274,9 +284,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">#4d000000</item>
         <item name="android:singleLine">true</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:textSize">13sp</item>
-
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">0dp</item>
     </style>
 
     <!-- Barcode Style-->
@@ -301,6 +312,7 @@
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:lineSpacingExtra">-2dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
     <!--Alerter-->
@@ -918,22 +930,6 @@
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
-    <style name="style_delivery_location_item_title">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-    </style>
-
-    <style name="style_delivery_location_item_description">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">#B3B3B3</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-    </style>
-
     <style name="style_province_item_title">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/black</item>
@@ -941,31 +937,6 @@
         <item name="android:gravity">start</item>
         <item name="WTextView_font">myriadpro_regular</item>
         <item name="android:alpha">0.5</item>
-    </style>
-
-    <style name="style_suburb_item_title">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:alpha">0.5</item>
-    </style>
-
-    <style name="style_suburb_item_header">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">start|center_vertical</item>
-        <item name="WTextView_font">medium_bold</item>
-    </style>
-
-    <style name="style_suburb_scrollbar_item">
-        <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="android:gravity">start</item>
-        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
@@ -2022,8 +1993,8 @@
     </style>
 
     <style name="promotionLayoutStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/twenty_dp</item>
+        <item name="android:layout_height">@dimen/twenty_dp</item>
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:contentDescription">@string/plp_newPromotionalImage</item>
     </style>
@@ -2101,4 +2072,5 @@
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
+
 </resources>

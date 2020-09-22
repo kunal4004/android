@@ -107,6 +107,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
+import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -270,9 +271,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onResume() {
         super.onResume();
         if (mBundle != null) {
-            if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
-                getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-            }
 
             String mSessionExpiredAtTabSection = mBundle.getString("sessionExpiredAtTabSection");
             if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {
@@ -704,7 +702,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case INDEX_TODAY:
                 return new WTodayFragment();
             case INDEX_PRODUCT:
-                return new ShopFragment();
             case INDEX_CART:
                 return new ShopFragment();
             case INDEX_REWARD:
@@ -897,7 +894,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         //Open shopping from Tips and trick activity requestCode
         if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE){
-            if (resultCode == OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE){
+            switch (resultCode){
+                case  OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE:
                 if (getBottomNavigationById() == null) return;
                 getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
                 Fragment fragment = mNavController.getCurrentFrag();
@@ -907,6 +905,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     shopFragment.navigateToMyListFragment();
                     return;
                 }
+                break;
+                case RESULT_CODE_MY_ACCOUNT_FRAGMENT:
+                    navigateToDepartmentFragment();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1187,19 +1191,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         switch (getCurrentSection()) {
             case R.id.navigate_to_account:
             case R.id.navigation_today:
-                mQueryBadgeCounter.queryCartSummaryCount();
-                mQueryBadgeCounter.queryVoucherCount();
-                break;
-
             case R.id.navigate_to_shop:
-                /**
-                 * Trigger cart count when delivery location address was set
-                 * if delivery location is empty or null, cart summary call will occur
-                 * in ProductDetailActivity.
-                 * It ensure only one cart count call is made on sign in
-                 */
-                if (Utils.getPreferredDeliveryLocation() != null)
-                    mQueryBadgeCounter.queryCartSummaryCount();
+                mQueryBadgeCounter.queryCartSummaryCount();
                 mQueryBadgeCounter.queryVoucherCount();
                 break;
             case R.id.navigate_to_wreward:
@@ -1280,14 +1273,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         mQueryBadgeCounter.cancelCounterRequest();
     }
 
-    private void navigateToDepartmentFragment() {
+    public void navigateToDepartmentFragment() {
         getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
         clearStack();
         Fragment currentFragment = mNavController.getCurrentFrag();
         if (currentFragment instanceof ShopFragment) {
             ShopFragment shopFragment = (ShopFragment) currentFragment;
             shopFragment.onStartShopping();
-            return;
         }
     }
 

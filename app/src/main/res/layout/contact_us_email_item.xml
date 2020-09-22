@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="70dp"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/email1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/message_24" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/img1"
+            android:layout_toEndOf="@+id/email1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/contactUsEmailTextView"
+                style="@style/contact_us_item_header_textview"
+                android:text="@string/txt_black_credit_card_query" />
+
+            <TextView
+                android:id="@+id/contactUsEmailDescriptionTextView"
+                style="@style/contact_us_item_desc_textview"
+                android:layout_marginTop="5dp"
+                android:text="@string/email_black_credit_card_query" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_caret_black" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#0a000000" />
+</LinearLayout>

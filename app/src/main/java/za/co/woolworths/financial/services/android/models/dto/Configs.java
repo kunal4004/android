@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDelivery;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
@@ -23,4 +24,6 @@ public class Configs {
     public CreditCardActivation creditCardActivation;
     public CreditCardDelivery creditCardDelivery;
     public WhatsApp whatsApp;
+    public ArrayList<ContactUs> contactUs;
+    public ClickAndCollect clickAndCollect;
 }
