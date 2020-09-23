@@ -276,24 +276,7 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
     }
 
     fun removeAllFragments() {
-
-        childFragmentManager.fragments.let {
-            if (it.isNotEmpty()) {
-                childFragmentManager.beginTransaction().apply {
-                    for (fragment in it) {
-                        remove(fragment)
-                    }
-                    commitAllowingStateLoss()
-                }
-            }
-        }
-
-        childFragmentManager.let {
-            while (it.backStackEntryCount > 0) {
-                it.popBackStackImmediate();
-            }
-        }
-
+        fragment_container?.removeAllViewsInLayout()
     }
 
     private fun resetRefinementData() {
