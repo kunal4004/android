@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.freeze
 
+import android.view.View
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.Switch
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
@@ -50,7 +52,7 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
         childFragmentManager?.let { cfm -> temporaryUnFreezeCardFragment.show(cfm, TemporaryUnFreezeCardFragment::class.java.simpleName) }
     }
 
-    fun showActiveTemporaryFreezeCard(switch: Switch?, cardFreezeImageView: ImageView?, cardStatusTextView: TextView?) {
+    fun showActiveTemporaryFreezeCard(switch: Switch?, cardFreezeImageView: ImageView?, cardStatusTextView: TextView?, blockCardLayout: RelativeLayout?) {
 
         val isFreezeCardChecked = when (blockType()) {
             TEMPORARY -> true
@@ -63,10 +65,12 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
             true -> {
                 cardStatusTextView?.text = bindString(R.string.temp_freeze_label)
                 cardFreezeImageView?.setImageDrawable(bindDrawable(R.drawable.card_freeze))
+                blockCardLayout?.visibility = View.GONE
             }
             false -> {
                 cardStatusTextView?.text = bindString(R.string.active)
                 cardFreezeImageView?.setImageDrawable(bindDrawable(R.drawable.w_store_card))
+                blockCardLayout?.visibility = View.VISIBLE
             }
         }
     }

@@ -1,162 +1,80 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApi;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
 
 public class NotificationUtils {
 
     private static String TAG = NotificationUtils.class.getSimpleName();
-    public static final String PUSH_NOTIFICATION_INTENT = "PUSH_NOTIFICATION_INTENT";
-    public static final String CHANNEL_ID = "com.awfs.coordination_channel_id_01";
-    public static final String CHANNEL_NAME = "Inbox Messages";
+    private static NotificationUtils instance;
 
-    public Context mContext;
+    private final Context appContext;
 
-    private static final String GROUP_KEY = "Woolworths";
-    private static final int SUMMARY_ID = 0;
-    private final NotificationManager notificationManager;
-    private final PendingIntent contentIntent;
-
-    private static NotificationUtils instance;//singleton
 
     public static NotificationUtils getInstance() {
         if (instance == null)
-            instance = NotificationUtils.newInstance(WoolworthsApplication.getInstance().getApplicationContext());
+            instance = new NotificationUtils();
 
         return instance;
     }
 
-    public static NotificationUtils newInstance(Context context) {
-        Context appContext = context.getApplicationContext();
-        Context safeContext = ContextCompat.createDeviceProtectedStorageContext(appContext);
-        if (safeContext == null) {
-            safeContext = appContext;
-        }
+    public NotificationUtils() {
+        this.appContext = WoolworthsApplication.getInstance().getApplicationContext();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void createNotificationChannelIfNeeded(Context context){
+        final String channelId = context.getResources().getString(R.string.default_notification_channel_id);
+        final CharSequence channelName = context.getResources().getString(R.string.default_notification_channel_name);
+        final String channelDescription = context.getResources().getString(R.string.default_notification_channel_description);
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent myIntent = new Intent(safeContext, StartupActivity.class);
-        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        myIntent.setAction(Intent.ACTION_MAIN);
-        myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        myIntent.putExtra(PUSH_NOTIFICATION_INTENT, PUSH_NOTIFICATION_INTENT);
-        PendingIntent contentIntent = PendingIntent.getActivity(safeContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (notificationManager.getNotificationChannel(channelId) == null){
+            //this notification channel was not found, remove any other channels that exists
+            List<NotificationChannel> notificationChannels = notificationManager.getNotificationChannels();
 
-        NotificationUtils.instance = new NotificationUtils(safeContext, notificationManager, contentIntent);
-        return NotificationUtils.instance;
-    }
-
-    private NotificationUtils(Context context,
-                              NotificationManager notificationManager,
-                              PendingIntent contentIntent) {
-        this.mContext = context.getApplicationContext();
-        this.notificationManager = notificationManager;
-        this.contentIntent = contentIntent;
-    }
-
-    public void sendBundledNotification(String title, String body, int badgeCount) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_HIGH);
-            notificationManager.createNotificationChannel(channel);
-        }
-        Notification notification = buildNotification(title, body, GROUP_KEY).build();
-        ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
-        notificationManager.notify(getNotificationId(), notification);
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            NotificationCompat.Builder summary = buildSummary(GROUP_KEY);
-            notificationManager.notify(SUMMARY_ID, summary.build());
-        }
-    }
-
-    private NotificationCompat.Builder buildNotification(String title, String body, String groupKey) {
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
-                .setContentIntent(contentIntent)
-                .setShowWhen(true)
-                .setAutoCancel(true)
-                .setGroup(groupKey)
-                .setPriority(NotificationManager.IMPORTANCE_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE);
-
-        return notification;
-    }
-
-    private NotificationCompat.Builder buildSummary(String groupKey) {
-        return new NotificationCompat.Builder(mContext,CHANNEL_ID)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setContentIntent(contentIntent)
-                .setShowWhen(true)
-                .setGroup(groupKey)
-                .setAutoCancel(true)
-                .setGroupSummary(true);
-    }
-
-    private int getNotificationId() {
-
-        String bundleId = Utils.getSessionDaoValue(SessionDao.KEY.NOTIFICATION_ID);
-        int id = bundleId == null ? SUMMARY_ID + 1 : Integer.parseInt(bundleId) + 1;
-        while (id == SUMMARY_ID) {
-            id++;
-        }
-        Utils.sessionDaoSave(SessionDao.KEY.NOTIFICATION_ID, String.valueOf(id));
-        return id;
-    }
-
-    public static boolean isAppIsInBackground(Context context) {
-        boolean isInBackground = true;
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-        if (runningProcesses == null) {
-            return false;
-        }
-        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String activeProcess : processInfo.pkgList) {
-                    if (activeProcess.equals(context.getPackageName())) {
-                        isInBackground = false;
-                    }
-                }
-            }
+            notificationChannels.forEach(notificationChannel -> notificationManager.deleteNotificationChannel(notificationChannel.getId()));
         }
 
-        return isInBackground;
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+
+        //create notification channel
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setDescription(channelDescription);
+        notificationChannel.enableVibration(true);
+        notificationChannel.setVibrationPattern(new long[]{0, 500, 500});
+        notificationChannel.setSound(soundUri, audioAttributes);
+        notificationManager.createNotificationChannel(notificationChannel);
     }
 
     // Clears notification tray messages
@@ -166,22 +84,17 @@ public class NotificationUtils {
     }
 
     public void sendRegistrationToServer(){
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
-				if (refreshedToken == null){
-					sendRegistrationToServer();
-				}else{
-					sendRegistrationToServer(refreshedToken);
-				}
-			}
-		}).start();
+        if (isGooglePlayServicesAvailable()){
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+                if (task.isSuccessful())
+                    sendRegistrationToServer(task.getResult().getToken());
+            });
+        }
 	}
 
     public void sendRegistrationToServer(String token) {
 
+        Log.d("FCM", token);
         // sending gcm token to server
         final CreateUpdateDevice device = new CreateUpdateDevice();
         device.appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().getApplicationContext());
@@ -207,5 +120,21 @@ public class NotificationUtils {
 
             }
         },CreateUpdateDeviceResponse.class));
+    }
+
+    private Boolean isGooglePlayServicesAvailable() {
+        // 1
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(appContext);
+        // 2
+
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e(TAG, "Error");
+            // ask user to update google play services and manage the error.
+            return false;
+        } else {
+            // 3
+            Log.i(TAG, "Google play services updated");
+            return true;
+        }
     }
 }
