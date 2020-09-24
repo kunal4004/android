@@ -21,11 +21,6 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.amplifyframework.AmplifyException;
-import com.amplifyframework.api.aws.AWSApiPlugin;
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
-import com.amplifyframework.core.Amplify;
-import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
@@ -66,6 +61,7 @@ import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceAWSAmplify;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
@@ -126,14 +122,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
-		try {
-			Amplify.configure(WoolworthsApplication.getAppContext());
-			Amplify.addPlugin(new AWSCognitoAuthPlugin());
-			Amplify.addPlugin(new AWSApiPlugin());
-		} catch (AmplifyException ex) {
-			Log.e("Tutorial", "Could not initialize Amplify", ex);
-		}
 
         String prefix = "ANDROID_V";
         String majorMinorVersion = packageInfo.versionName.substring(0, packageInfo.versionName.lastIndexOf('.'));
@@ -263,6 +251,9 @@ public class WoolworthsApplication extends Application implements Application.Ac
         StrictMode.setVmPolicy(builder.build());
         Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore()).build());
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+        ChatCustomerServiceAWSAmplify AWSAmplify = new ChatCustomerServiceAWSAmplify();
+        AWSAmplify.init(WoolworthsApplication.this);
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
                 .setDownsampleEnabled(true)
@@ -570,4 +561,5 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
     }
+
 }

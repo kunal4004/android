@@ -18,12 +18,15 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -50,7 +53,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
-
 
             val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
             val accountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
@@ -142,6 +144,11 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         return sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED
     }
 
+    override fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>?) {
+        val chatToCollectionAgentView = ChatCustomerServiceBubbleView(this@AccountSignedInActivity, ChatCustomerServiceBubbleVisibility(accountList), chatWithAgentFloatingButton, applyNowState)
+        chatToCollectionAgentView.build()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.accountInArrearsTextView -> mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { account -> showAccountInArrearsDialog(account) }
@@ -177,6 +184,17 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             configureBottomSheetDialog()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (!mAccountSignedInPresenter?.isAccountInArrearsState!!)
+            showChatToCollectionAgent()
+    }
+
+    private fun showChatToCollectionAgent() {
+        mAccountSignedInPresenter?.chatWithCollectionAgent()
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

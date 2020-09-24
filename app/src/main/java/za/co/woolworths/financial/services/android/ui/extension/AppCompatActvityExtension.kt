@@ -15,6 +15,8 @@ import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -220,3 +222,8 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
 fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
+
+fun Any.navOptions()  = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
+        .setExitAnim(R.anim.slide_out_to_left)
+        .setPopEnterAnim(R.anim.slide_from_left)
+        .setPopExitAnim(R.anim.slide_to_right).build()

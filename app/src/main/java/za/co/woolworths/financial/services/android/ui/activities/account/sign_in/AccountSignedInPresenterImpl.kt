@@ -21,6 +21,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
+    var isAccountInArrearsState : Boolean = false
 
     companion object {
         private const val STORE_CARD: String = "SC"
@@ -99,6 +100,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.blackCreditCard_title)
             ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.goldCreditCard_title)
             ApplyNowState.PERSONAL_LOAN -> resources?.getString(R.string.personal_loan)
+            else ->  ""
         }
     }
 
@@ -130,6 +132,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             return (height.div(100)).times(23)
         }
         return 0
+    }
+
+    override fun chatWithCollectionAgent() {
+        mainView?.chatToCollectionAgent(mApplyNowState, mAccountResponse?.accountList)
     }
 
     private fun getAccount(): Account? {

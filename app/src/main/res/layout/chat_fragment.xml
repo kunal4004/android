@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background"
+    android:fitsSystemWindows="false">
+
+    <RelativeLayout
+        android:id="@+id/offlineBanner"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:background="@color/chat_offline_banner_bg_color"
+        android:elevation="@dimen/two_dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:drawableStart="@drawable/ic_time_white"
+            android:drawablePadding="@dimen/five_dp"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:gravity="center_vertical"
+            android:text="@string/check_back_during_working_hours"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sixteen_sp"
+            tools:ignore="UseCompatTextViewDrawableXml" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messageListRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/sixteen_dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="@dimen/sixteen_dp"
+        android:paddingBottom="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/offlineBanner" />
+
+    <LinearLayout
+        android:id="@+id/layout_chatbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sixteen_dp"
+        android:layout_marginRight="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/chat_edittext_bg"
+        android:elevation="1dp"
+        android:minHeight="@dimen/fifty_dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <za.co.woolworths.financial.services.android.ui.views.EmojiExcludeEditText
+            android:id="@+id/edittext_chatbox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/sixteen_dp"
+            android:layout_marginRight="@dimen/sixteen_dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/start_typing"
+            android:imeOptions="actionDone"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:paddingTop="@dimen/eight_dp"
+            android:paddingBottom="@dimen/eight_dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/chat_hint"
+            android:textCursorDrawable="@drawable/cursor_custom_color"
+            android:textSize="@dimen/fifteen_sp"
+            app:WEditTextView_font="myriadpro_regular" />
+
+        <Button
+            android:id="@+id/button_send"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/sixteen_dp"
+            android:background="@drawable/ic_send_background"
+            android:enabled="false"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

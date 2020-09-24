@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -116,6 +118,13 @@ public class SSOActivity extends WebViewActivity {
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
 		isKMSIChecked = Utils.getUserKMSIState();
+		if (isKMSIChecked) {
+			Window w = getWindow(); // in Activity's onCreate() for instance
+			w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
+					WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+			w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+					WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 	}
 
@@ -752,10 +761,11 @@ public class SSOActivity extends WebViewActivity {
 		loadingProgressBarKMSI.setVisibility(showKMSIView ? View.VISIBLE : View.GONE);
 	}
 
+
 	@Override
-	public Resources.Theme getTheme() {
-		Resources.Theme theme = super.getTheme();
-		theme.applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
-		return theme;
+	public void onAttachedToWindow() {
+		getTheme().applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
+		super.onAttachedToWindow();
 	}
+
 }

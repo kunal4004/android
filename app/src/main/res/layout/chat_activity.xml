@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/default_background"
-    android:fitsSystemWindows="false"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.WChatActivity">
+    android:fitsSystemWindows="false">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -36,131 +33,56 @@
                 android:layout_gravity="center|center_vertical"
                 android:orientation="vertical">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/agentName"
+                <TextView
+                    android:id="@+id/agentNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/futura_semi_bold_ttf"
                     android:letterSpacing="0.2"
                     android:text="@string/chat_activity_title"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="12sp"
-                    app:WTextView_font="medium_bold" />
+                    android:textSize="12sp" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/chatState"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/chat_state_indicator_bg"
                     android:drawablePadding="@dimen/five_dp"
+                    android:fontFamily="@font/myriad_pro_regular_otf"
                     android:textColor="@color/black_50"
-                    android:textSize="12sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/endSession"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:letterSpacing="0.15"
+            <TextView
+                android:id="@+id/endSessionTextView"
+                style="@style/chatEndSessionMenuStyle"
+                android:layout_marginEnd="16dp"
                 android:text="@string/chat_end_session"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:visibility="gone"
-                android:paddingBottom="@dimen/eight_dp"
-                android:paddingTop="@dimen/eight_dp"
-                android:paddingLeft="@dimen/eight_dp"
-                app:WTextView_font="medium" />
+                android:textColor="@color/black" />
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
-        android:id="@+id/offlineBanner"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/fifty_dp"
-        android:visibility="gone"
-        android:background="@color/chat_offline_banner_bg_color"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appbar"
-        android:elevation="@dimen/two_dp"
-        >
+    <View
+        android:id="@+id/horizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/dark_divider"
+        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:drawableStart="@drawable/ic_time_white"
-            android:drawablePadding="@dimen/five_dp"
-            android:gravity="center_vertical"
-            android:text="Check back during working hours."
-            android:textColor="@color/white"
-            android:textSize="@dimen/sixteen_sp"
-            app:WTextView_font="myriadpro_regular" />
-    </RelativeLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reyclerview_message_list"
-        android:layout_width="0dp"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/chatNavHost"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:padding="@dimen/sixteen_dp"
-        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/offlineBanner" />
-
-
-    <LinearLayout
-        android:id="@+id/layout_chatbox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sixteen_dp"
-        android:layout_marginRight="@dimen/sixteen_dp"
-        android:layout_marginBottom="@dimen/thirty_two_dp"
-        android:background="@drawable/chat_edittext_bg"
-        android:elevation="1dp"
-        android:minHeight="@dimen/fifty_dp"
-        android:orientation="horizontal"
+        app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <za.co.woolworths.financial.services.android.ui.views.EmojiExcludeEditText
-            android:id="@+id/edittext_chatbox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/sixteen_dp"
-            android:layout_marginRight="@dimen/sixteen_dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:hint="@string/start_typing"
-            android:imeOptions="actionDone"
-            android:inputType="textMultiLine"
-            android:maxLines="4"
-            android:paddingTop="@dimen/eight_dp"
-            android:paddingBottom="@dimen/eight_dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/chat_hint"
-            android:textCursorDrawable="@drawable/cursor_custom_color"
-            android:textSize="@dimen/fifteen_sp"
-            app:WEditTextView_font="myriadpro_regular" />
-
-        <Button
-            android:id="@+id/button_send"
-            android:layout_width="@dimen/twenty_four_dp"
-            android:layout_height="@dimen/twenty_four_dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/sixteen_dp"
-            android:background="@drawable/ic_send_background"
-            android:enabled="false"
-            android:gravity="center" />
-
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalDivider"
+        app:navGraph="@navigation/chat_navhost" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -202,6 +203,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
                 if (cardType == "CC" && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }
+                intent.putExtra(ACCOUNTS, Gson().toJson(this))
                 intent.putExtra("cardType", cardType)
                 activity.startActivityForResult(intent, 0)
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

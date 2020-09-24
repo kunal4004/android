@@ -21,10 +21,12 @@ import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -39,7 +41,9 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
+import java.io.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 class KotlinUtils {
     companion object {
@@ -317,6 +321,21 @@ class KotlinUtils {
             }
         }
 
+        fun sendEmail(activity: Activity?, emailAddress: String, subjectLine: String?, emailMessage: String) {
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
+            emailIntent.data = Uri.parse("mailto:" + emailAddress +
+                    "?subject=" + Uri.encode(subjectLine) +
+                    "&body=" + Uri.encode(emailMessage))
+            val listOfEmail =
+                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+            if (listOfEmail.size > 0) {
+                activity?.startActivity(emailIntent)
+            } else {
+                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.INFO, activity?.resources?.getString(R.string.contact_us_no_email_error)?.replace("email_address", emailAddress)?.replace("subject_line", subjectLine
+                        ?: ""))
+            }
+        }
+
         fun postOneAppEvent(appScreen: String, featureName: String) {
             request(OneAppService.queryServicePostEvent(featureName, appScreen))
         }
@@ -328,6 +347,30 @@ class KotlinUtils {
                 }
             }
             return false
+        }
+
+
+        fun getGSONFileFromRAWResFolder(context: Context?, @RawRes id: Int): JSONObject {
+            val awsConfiguration: InputStream? = context?.resources?.openRawResource(id)
+            val writer: Writer = StringWriter()
+            val buffer = CharArray(1024)
+            awsConfiguration?.use { config ->
+                val reader: Reader = BufferedReader(InputStreamReader(config, "UTF-8"))
+                var n: Int
+                while (reader.read(buffer).also {
+                            n = it
+                        } != -1) {
+                    writer.run { write(buffer, 0, n) }
+                }
+            }
+            val awsConfigurationEnvelop = writer.toString()
+            return JSONObject(awsConfigurationEnvelop)
+        }
+
+        fun firstLetterCapitalization(name: String?): String? {
+            val capitaliseFirstLetterInName = name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
+            val lowercaseOtherLetterInnAME = name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
+            return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInnAME)
         }
     }
 }

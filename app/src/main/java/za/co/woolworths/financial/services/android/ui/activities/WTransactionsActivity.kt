@@ -1,26 +1,30 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
+import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.wtransactions_activity.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAccountTransactionHistory
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getListOfTransaction
@@ -32,11 +36,11 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var chatAccountProductLandingPage: String? = null
     var productOfferingId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var mExecuteTransactionRequest: Call<TransactionHistoryResponse>? = null
     private var accountNumber: String? = null
-    private var lastPosition = -1
     private var cardType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,8 +51,8 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         intent?.extras?.apply {
             productOfferingId = getString("productOfferingId")
             accountNumber = getString("accountNumber")
+            chatAccountProductLandingPage = getString(ACCOUNTS)
             cardType = getString("cardType")
-
         }
 
         val woolworthApplication = this@WTransactionsActivity.application as WoolworthsApplication
@@ -73,7 +77,8 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                 loadTransactionHistory(productOfferingId)
             }
         }
-        initInAppChat()
+
+        chatToCollectionAgent(ApplyNowState.PERSONAL_LOAN,null)
     }
 
     override fun onResume() {
@@ -126,6 +131,10 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         }, TransactionHistoryResponse::class.java))
     }
 
+    private fun showChatBubble() {
+
+    }
+
     private fun setupTransactionRecyclerview(transactionHistoryResponse: TransactionHistoryResponse) {
         val transactionsAdapter = WTransactionAdapter(getListOfTransaction(transactionHistoryResponse.transactions))
         val linearLayoutManager: LinearLayoutManager? = LinearLayoutManager(this@WTransactionsActivity)
@@ -161,60 +170,18 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.closeTransactionImageButton -> onBackPressed()
-            R.id.chatIcon -> {
-                Utils.triggerFireBaseEvents(if (Utils.isOperatingHoursForInAppChat()) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
-                val intent = Intent(this, WChatActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId)
-                intent.putExtra("accountNumber", accountNumber)
-                startActivity(intent)
-            }
         }
     }
 
-    private fun initInAppChat() {
-        if (cardType.equals("CC", ignoreCase = true) && chatIsEnabled()) {
-            chatIcon?.apply {
-                expand(true)
-                setStatusIndicatorIcon(if (Utils.isOperatingHoursForInAppChat()) R.drawable.indicator_online else R.drawable.indicator_offline)
-                transactionRecyclerview?.apply {
-                    addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                            super.onScrolled(recyclerView, dx, dy)
-                            val layoutManager = layoutManager as? LinearLayoutManager
-                            val firstVisibleItem: Int = layoutManager?.findFirstVisibleItemPosition() ?: 0
-                            if (lastPosition == firstVisibleItem) {
-                                return
-                            }
-                            if (firstVisibleItem > lastPosition) {
-                                if (visibility == View.VISIBLE) collapse(true)
-                            } else {
-                                if (visibility == View.VISIBLE) expand(true)
-                            }
-                            lastPosition = firstVisibleItem
-                        }
-                    })
-                }
-
-                setOnClickListener(this@WTransactionsActivity)
-            }
-        }
-    }
-
-    private fun showChatBubble() {
-        if (cardType.equals("CC", ignoreCase = true) && chatIsEnabled()) {
-            Handler().postDelayed({
-                chatIcon?.visibility = View.VISIBLE
-                chatIcon?.expand(true)
-            }, 100)
-        }
-    }
-
-    private fun chatIsEnabled(): Boolean {
-        return try {
-           WoolworthsApplication.getPresenceInAppChat()?.isEnabled ?: false
-        } catch (npe: NullPointerException) {
-            false
-        }
+    fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: ArrayList<Account>?) {
+//        Utils.triggerFireBaseEvents(if (Utils.isOperatingHoursForInAppChat()) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
+        ChatCustomerServiceBubbleView(
+                activity = this@WTransactionsActivity,
+                chatCustomerServiceBubbleVisibility = ChatCustomerServiceBubbleVisibility(accountList),
+                floatingActionButton = chatWithAgentFloatingButton,
+                applyNowState = applyNowState,
+                isAppScreenPaymentOptions = true,
+                scrollView = paymentOptionScrollView)
+                .build()
     }
 }

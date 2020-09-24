@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_nav_host"
+    app:startDestination="@id/chatToUsWhatsAppFragment">
+
+    <fragment
+        android:id="@+id/chatToUsWhatsAppFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsFragment"
+        android:label="ChatToUsWhatsAppFragment"
+        tools:layout="@layout/chat_to_us_via_whatsapp_fragment" />
+    <fragment
+        android:id="@+id/chatToCollectionAgentOfflineFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceOfflineFragment"
+        android:label="ChatToCollectionAgentOfflineFragment"
+        tools:layout="@layout/chat_to_collection_agent_offline_fragment" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceFragment"
+        android:label="ChatFragment"
+        tools:layout="@layout/chat_fragment">
+        <action
+            android:id="@+id/action_chatFragment_to_chatToCollectionAgentOfflineFragment"
+            app:destination="@id/chatToCollectionAgentOfflineFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment"
+            app:destination="@id/chatCustomerServiceEndSessionDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/chatCustomerServiceEndSessionDialogFragment"
+        tools:layout="@layout/ccs_end_session_dialog_fragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.ChatCustomerServiceEndSessionDialogFragment"
+        android:label="ChatCustomerServiceEndSessionDialogFragment" />
+</navigation>
