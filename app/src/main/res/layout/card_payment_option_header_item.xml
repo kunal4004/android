@@ -40,7 +40,7 @@
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="8sp"
-        android:text="@string/store_card_payment_options_desc"
+        android:text="@string/store_card_payment_option_desc"
         android:textColor="@color/black_overlay"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"

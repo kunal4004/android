@@ -1450,7 +1450,6 @@
 
     <string name="payment_option_title">Payment Options</string>
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
-    <string name="store_card_payment_options_desc">You can pay your Woolies Store Card using any of the following payment options:</string>
 
     <string name="personal_loan_payment_options_title">Personal Loan Payment Options</string>
     <string name="personal_loan_payment_options_desc">You can pay your Woolies Personal Loan using any of the following payment options:</string>
@@ -1532,7 +1531,7 @@
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
 
     <!-- Pay My Account -->
-    <string name="store_card_payment_option_desc">You can pay your Woolies Store Card using any of the following payment options:</string>
+    <string name="store_card_payment_option_desc">You can easily pay your Woolies Store Card using any of the following payment options:</string>
     <string name="debit_card_title">Debit Card</string>
     <string name="debit_or_credit_card_desc">Pay your account now using a different debit card or credit card.</string>
     <string name="pay_by_card_button_label">Pay By Debit Card Now</string>

@@ -40,12 +40,12 @@
 
     <ImageView
         android:id="@+id/methodCardWhiteImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/method_calendar_white" />
+        app:srcCompat="@drawable/white_circle_icon" />
 
     <TextView
         android:id="@+id/debitOrCreditCardTextView"
@@ -78,7 +78,7 @@
         android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="8sp"
         android:text="@string/pay_by_debit_order_desc"
-        android:textColor="@color/semi_transparent_white"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
@@ -126,5 +126,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/band_recommended" />
+
+    <ImageView
+        android:id="@+id/calendarWhiteImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/methodCardWhiteImageView"
+        app:layout_constraintEnd_toEndOf="@+id/methodCardWhiteImageView"
+        app:layout_constraintStart_toStartOf="@+id/methodCardWhiteImageView"
+        app:layout_constraintTop_toTopOf="@+id/methodCardWhiteImageView"
+        app:srcCompat="@drawable/calendar_white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

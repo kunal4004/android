@@ -12,7 +12,7 @@ class PayMyAccountModelImpl : IPaymentOptionContract.PayMyAccountModel {
     }
 
     override fun getDrawableHeader(): List<PayMyCardHeaderItem> {
-        return listOf(PayMyCardHeaderItem(R.string.store_card_payment_options_title, R.string.store_card_payment_options_desc, R.drawable.w_store_card),
+        return listOf(PayMyCardHeaderItem(R.string.store_card_payment_options_title, R.string.store_card_payment_option_desc, R.drawable.w_store_card),
                 PayMyCardHeaderItem(R.string.credit_card_payment_options_title, R.string.credit_card_payment_options_desc, R.drawable.w_black_credit_card),
                 PayMyCardHeaderItem(R.string.credit_card_payment_options_title, R.string.credit_card_payment_options_desc, R.drawable.w_gold_credit_card),
                 PayMyCardHeaderItem(R.string.credit_card_payment_options_title, R.string.credit_card_payment_options_desc, R.drawable.w_silver_credit_card),
