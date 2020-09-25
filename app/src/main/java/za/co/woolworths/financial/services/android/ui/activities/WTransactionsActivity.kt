@@ -78,7 +78,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        chatToCollectionAgent(ApplyNowState.PERSONAL_LOAN,null)
+       // chatToCollectionAgent(ApplyNowState.PERSONAL_LOAN,null)
     }
 
     override fun onResume() {

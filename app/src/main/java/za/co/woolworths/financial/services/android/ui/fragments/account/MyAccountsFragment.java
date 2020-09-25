@@ -1216,12 +1216,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void showInAppChat(Activity activity) {
-        ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(activity, new ChatCustomerServiceBubbleVisibility(mAccountResponse.accountList), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
-        inAppChatTipAcknowledgement.build();
-//		if(!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account){
-//			ChatToCollectionAgentView inAppChatTipAcknowledgement = new ChatToCollectionAgentView(activity, new ChatCollectionsAgent(mAccountResponse.accountList),chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
-//			inAppChatTipAcknowledgement.build();
-//		}
+		if(!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account){
+			ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(activity, new ChatCustomerServiceBubbleVisibility(mAccountResponse.accountList),chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
+			inAppChatTipAcknowledgement.build();
+		}
     }
 
 }
