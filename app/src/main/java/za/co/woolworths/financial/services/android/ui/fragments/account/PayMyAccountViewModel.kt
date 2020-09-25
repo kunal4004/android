@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 class PayMyAccountViewModel : ViewModel() {
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
-    enum class OnBackNavigation { RETRY,REMOVE,ADD, NONE } // TODO: Navigation graph: Communicate result from dialog to fragment destination
+    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
@@ -115,6 +115,7 @@ class PayMyAccountViewModel : ViewModel() {
         request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? PaymentMethodsResponse)?.apply {
+
                     setPaymentMethodsResponse(this)
                     when (httpCode) {
                         200 -> {
@@ -127,7 +128,7 @@ class PayMyAccountViewModel : ViewModel() {
                         }
 
                         400 -> {
-                            val code = response.response.code
+                            val code = this.response.code
                             payUMethodType = when (code.startsWith("P0453")) {
                                 true -> PAYUMethodType.CREATE_USER
                                 else -> PAYUMethodType.ERROR
@@ -138,12 +139,12 @@ class PayMyAccountViewModel : ViewModel() {
 
                         440 -> {
                             payUMethodType = PAYUMethodType.ERROR
-                            onSessionExpired(response.response.stsParams)
+                            onSessionExpired(this.response.stsParams)
                         }
 
                         else -> {
                             payUMethodType = PAYUMethodType.ERROR
-                            onGeneralError(response.response.desc)
+                            onGeneralError(this.response.desc)
                         }
                     }
                     val cardInfo = getCardDetail()

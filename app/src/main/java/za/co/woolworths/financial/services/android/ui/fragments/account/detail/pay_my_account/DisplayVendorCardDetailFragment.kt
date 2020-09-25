@@ -107,7 +107,6 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         val paymentMethod = payMyAccountViewModel.getSelectedPaymentMethodCard()
         paymentMethod?.apply {
             cardNumberItemTextView?.text = cardNumber
-            cardExpired = true
             changeTextView.text = if (cardExpired) {
                 cardExpiredTagTextView?.visibility = VISIBLE
                 bindString(R.string.add_card_label)
