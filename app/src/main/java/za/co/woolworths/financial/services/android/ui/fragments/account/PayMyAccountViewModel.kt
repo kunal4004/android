@@ -163,4 +163,9 @@ class PayMyAccountViewModel : ViewModel() {
     fun isPaymentMethodListSizeLimitedToTenItem(): Boolean {
         return getCardDetail()?.paymentMethodList?.size ?: 0 >= 9
     }
+
+    fun getProductGroupCode(): String {
+        val account = getCardDetail()?.account?.second
+        return account?.productGroupCode ?: ""
+    }
 }

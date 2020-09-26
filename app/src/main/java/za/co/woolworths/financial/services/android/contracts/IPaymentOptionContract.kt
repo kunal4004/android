@@ -42,7 +42,7 @@ interface IPaymentOptionContract {
 
     interface PayMyAccountModel {
         fun getAccountDetailValues(): HashMap<String, String?>
-        fun getDrawableHeader(): List<PayMyCardHeaderItem>
+        fun getHeaderItem(): List<PayMyCardHeaderItem>
         fun getATMPaymentInfo(): MutableList<Int>
     }
 }

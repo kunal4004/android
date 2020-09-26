@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
@@ -19,12 +20,13 @@ import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 
 class PMAAddNewPayUCardFragment : Fragment() {
 
     private var navController: NavController? = null
 
-    val args: PMAAddNewPayUCardFragmentArgs by navArgs()
+    val payMyAccountViewModel : PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,8 +82,8 @@ class PMAAddNewPayUCardFragment : Fragment() {
 
             }), "JSBridge")
 
-
-            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl()?.let { cardUrl -> loadUrl(cardUrl) }
+            val productGroupCode = payMyAccountViewModel.getProductGroupCode()
+            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl(productGroupCode)?.let { cardUrl -> loadUrl(cardUrl) }
         }
     }
 

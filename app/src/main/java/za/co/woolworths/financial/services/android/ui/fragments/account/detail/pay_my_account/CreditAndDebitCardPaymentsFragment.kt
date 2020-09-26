@@ -21,10 +21,12 @@ import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.payment_options_activity.whatsAppIconImageView
 import kotlinx.android.synthetic.main.pma_at_your_nearest_woolies_store_item.*
 import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.*
+import kotlinx.android.synthetic.main.pma_by_electronic_fund_transfer_eft_item.byElectronicFundTransferDescTextView
 import kotlinx.android.synthetic.main.pma_credit_card_item.*
 import kotlinx.android.synthetic.main.pma_debit_card_item.*
 import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_pay_by_debit_order_item.*
+import kotlinx.android.synthetic.main.pma_personal_loan_electronic_fund_transfer.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -69,38 +71,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             payMyAccountPresenter = getPayMyAccountPresenter()
             configureToolbar("")
             displayToolbarDivider(false)
-
             payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
-            val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() == false
-            val isCreditCardSection = when (payMyAccountPresenter?.getPayMyAccountSection()) {
-                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> true
-                else -> false
-            }
-
-            GlobalScope.doAfterDelay(10) {
-
-                val visible = when {
-                    isFeatureEnabled || isCreditCardSection -> GONE
-                    else -> VISIBLE
-                }
-
-                easilyPayYourWooliesAccountTextView?.visibility = visible
-                incDebitCardButton?.visibility = visible
-                incCreditCardButton?.visibility = visible
-                easilyPayYourWooliesAccountTextView?.visibility = visible
-                payYourWooliesAccountTextView?.visibility = visible
-                incSetupMyDebitOrder?.visibility = visible
-            }
-
-            payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
-                when (result) {
-                    PayMyAccountViewModel.OnBackNavigation.RETRY -> {
-                        queryServicePaymentMethod()
-                    }
-                    else -> return@observe
-                }
-            }
+            createCardOption()
+            onRetry()
         }
+
+        creditCardDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.pay_by_credit_card_desc), "Note:")
 
         creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
         pmaBottomView?.visibility = VISIBLE
@@ -120,6 +96,50 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
         initShimmer()
         stopProgress()
+    }
+
+    private fun onRetry() {
+        payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                PayMyAccountViewModel.OnBackNavigation.RETRY -> {
+                    queryServicePaymentMethod()
+                }
+                else -> return@observe
+            }
+        }
+    }
+
+    private fun createCardOption() {
+        when (payMyAccountPresenter?.getPayMyAccountSection()) {
+            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> {
+                hidePaymentMethod()
+            }
+            ApplyNowState.STORE_CARD -> {
+                incAtAnyAbsaBranchButton?.visibility = VISIBLE
+                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
+            }
+            ApplyNowState.PERSONAL_LOAN -> {
+                incSetupMyDebitOrder?.visibility = GONE
+                incAtAnyAbsaBranchButton?.visibility = VISIBLE
+                incByElectronicFundTransferEFTButton?.visibility = GONE
+                incPersonalLoanElectronicFundTransfer?.visibility = VISIBLE
+                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_trasfer_personal_loan_desc)
+            }
+        }
+
+        // Disable payments if isFeatureEnabled is false
+        if (payMyAccountOption?.isFeatureEnabled() == false) {
+            hidePaymentMethod()
+        }
+    }
+
+    private fun hidePaymentMethod() {
+        incSetupMyDebitOrder?.visibility = GONE
+        easilyPayYourWooliesAccountTextView?.visibility = GONE
+        incDebitCardButton?.visibility = GONE
+        incCreditCardButton?.visibility = GONE
+        payYourWooliesAccountTextView?.visibility = VISIBLE
+        incAtAnyAbsaBranchButton?.visibility = VISIBLE
     }
 
     private fun queryServicePaymentMethod() {
@@ -198,6 +218,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         setViewListener(incAtYourNearestWoolworthsStoreButton)
         setViewListener(incPayAtAnyATMButton)
         setViewListener(incWhatsAppAnyQuestions)
+        setViewListener(incPersonalLoanElectronicFundTransfer)
+        setViewListener(plViewBankingDetailButton)
     }
 
     override fun onClick(v: View?) {
@@ -237,7 +259,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1)
             }
 
-            R.id.incByElectronicFundTransferEFTButton, R.id.viewBankingDetailButton -> {
+            R.id.incPersonalLoanElectronicFundTransfer, R.id.plViewBankingDetailButton, R.id.incByElectronicFundTransferEFTButton, R.id.viewBankingDetailButton -> {
                 navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment)
             }
 

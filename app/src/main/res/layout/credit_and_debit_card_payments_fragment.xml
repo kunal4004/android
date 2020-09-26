@@ -3,7 +3,7 @@
     android:id="@+id/creditDebitCardPaymentsScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/black_white_gradient_bg"
     android:fillViewport="true"
     android:scrollbars="none">
 
@@ -20,6 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="28dp" />
+
+        <include
+            android:id="@+id/incPersonalLoanElectronicFundTransfer"
+            layout="@layout/pma_personal_loan_electronic_fund_transfer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/incSetupMyDebitOrder"
@@ -64,8 +72,15 @@
             layout="@layout/pma_at_any_absa_branch_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:visibility="gone" />
+            android:layout_marginBottom="24dp" />
+
+
+        <include
+            android:id="@+id/incPayAtAnyATMButton"
+            layout="@layout/pma_pay_at_any_atm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
 
         <include
             android:id="@+id/incAtYourNearestWoolworthsStoreButton"
@@ -74,12 +89,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" />
 
-        <include
-            android:id="@+id/incPayAtAnyATMButton"
-            layout="@layout/pma_pay_at_any_atm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp" />
 
         <include
             android:id="@+id/incWhatsAppAnyQuestions"

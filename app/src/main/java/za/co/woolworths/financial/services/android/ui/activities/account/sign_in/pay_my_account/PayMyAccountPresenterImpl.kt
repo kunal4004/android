@@ -48,8 +48,8 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         return model.getAccountDetailValues()
     }
 
-    override fun getDrawableHeader(): List<PayMyCardHeaderItem> {
-        return model.getDrawableHeader()
+    override fun getHeaderItem(): List<PayMyCardHeaderItem> {
+        return model.getHeaderItem()
     }
 
     override fun getATMPaymentInfo(): MutableList<Int> {
@@ -58,7 +58,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
 
     @Throws(RuntimeException::class)
     override fun getPayMyAccountCardDrawable() {
-        val drawableHeader = getDrawableHeader()
+        val drawableHeader = getHeaderItem()
         mainView?.setHowToPayLogo(when (mAccountDetails?.first) {
             ApplyNowState.STORE_CARD -> drawableHeader[0]
             ApplyNowState.SILVER_CREDIT_CARD -> drawableHeader[3]
@@ -115,13 +115,13 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
 
     @Throws(RuntimeException::class)
     override fun getPayMyCardCardItem(): PayMyCardHeaderItem {
-        val drawableHeader = getDrawableHeader()
+        val headerItem = getHeaderItem()
         return when (mAccountDetails?.first) {
-            ApplyNowState.STORE_CARD -> drawableHeader[0]
-            ApplyNowState.SILVER_CREDIT_CARD -> drawableHeader[3]
-            ApplyNowState.GOLD_CREDIT_CARD -> drawableHeader[2]
-            ApplyNowState.BLACK_CREDIT_CARD -> drawableHeader[1]
-            ApplyNowState.PERSONAL_LOAN -> drawableHeader[4]
+            ApplyNowState.STORE_CARD -> headerItem[0]
+            ApplyNowState.SILVER_CREDIT_CARD -> headerItem[3]
+            ApplyNowState.GOLD_CREDIT_CARD -> headerItem[2]
+            ApplyNowState.BLACK_CREDIT_CARD -> headerItem[1]
+            ApplyNowState.PERSONAL_LOAN -> headerItem[4]
             else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
         }
     }
@@ -158,6 +158,4 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
             }
         }
     }
-
-    fun getAccountDetail() = mAccountDetails
 }

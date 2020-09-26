@@ -8,11 +8,12 @@ import java.util.*
 
 data class PayMyAccount(var minimumSupportedAppBuildNumber: String? = "0", private var addCardBaseUrl: String?="") {
 
-    fun addCardUrl(): String {
+    fun addCardUrl(productGroupCode: String): String {
         return addCardBaseUrl
                 ?.replace("{{api_id}}", URLEncoder.encode(WoolworthsApplication.getApiId()?.toLowerCase(Locale.getDefault()), "UTF-8").toString())
                 ?.replace("{{sha1}}", URLEncoder.encode(BuildConfig.SHA1, "UTF-8"))
-                ?.replace("{{agent}}", "android") ?: ""
+                ?.replace("{{agent}}", "android")
+                ?.replace("{{productgroupcode}}", productGroupCode.toLowerCase(Locale.getDefault())) ?: ""
     }
 
     fun isFeatureEnabled(): Boolean? = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)  ?: false

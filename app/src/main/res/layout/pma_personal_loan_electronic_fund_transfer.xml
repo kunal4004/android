@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/round_corner_white_bg"
+    android:background="@drawable/method_card_background"
     android:paddingBottom="32dp">
 
     <ImageView
-        android:id="@+id/electronicFundTransferIconImageView"
+        android:id="@+id/personalLoanElectronicFundTransferIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/method_woolworths" />
+        app:srcCompat="@drawable/ic_method_eft_white" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startMargin"
@@ -30,31 +31,45 @@
         app:layout_constraintGuide_end="32dp" />
 
     <TextView
-        android:id="@+id/atYourWooliesStoreTitleTextView"
+        android:id="@+id/plElectronicFundTransferTextView"
         style="@style/payMyAccountCardTitleStyle"
         android:fontFamily="@font/futura_semi_bold"
         android:lineSpacingExtra="4sp"
-        android:text="@string/at_your_nearest_woolworths_store_title"
+        android:text="@string/by_electronic_fund_transfer_title"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/personalLoanElectronicFundTransferIconImageView" />
+
+    <TextView
+        android:id="@+id/plElectronicFundTransferDescTextView"
+        style="@style/pmaWhiteCardDescriptionStyle"
+        android:lineSpacingExtra="8sp"
+        android:text="@string/by_electronic_fund_trasfer_personal_loan_desc"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/plElectronicFundTransferTextView" />
+
+    <Button
+        android:id="@+id/plViewBankingDetailButton"
+        style="@style/pmaViewBankingButton"
+        android:background="@drawable/white_tag_bg"
+        android:text="@string/view_banking_details_button_label"
         android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/electronicFundTransferIconImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/plElectronicFundTransferDescTextView" />
 
-    <TextView
-        android:id="@+id/atYourWooliesStoreDescTextView"
-        style="@style/pmaWhiteCardDescriptionStyle"
-        android:lineSpacingExtra="8sp"
-        android:text="@string/at_your_nearest_woolworths_store_desc"
-        app:layout_constraintEnd_toStartOf="@+id/endMargin"
-        app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/atYourWooliesStoreTitleTextView" />
-
-    <Button
-        android:id="@+id/findAWooliesStoreButton"
-        android:text="@string/find_a_woolies_store_label"
-        app:layout_constraintEnd_toStartOf="@+id/endMargin"
-        app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/atYourWooliesStoreDescTextView"
-        style="@style/pmaViewBankingButton" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/quickAndEasyBandImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/band_recommended"
+        tools:srcCompat="@drawable/band_recommended" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

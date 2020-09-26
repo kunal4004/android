@@ -40,7 +40,7 @@
         app:layout_constraintGuide_end="32dp" />
 
     <TextView
-        android:id="@+id/debitOrCreditCardDescTextView"
+        android:id="@+id/creditCardDescTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="29dp"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardDescTextView"
+        app:layout_constraintTop_toBottomOf="@+id/creditCardDescTextView"
         app:srcCompat="@drawable/card_visa_colour" />
 
     <ImageView

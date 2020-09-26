@@ -1452,7 +1452,7 @@
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
 
     <string name="personal_loan_payment_options_title">Personal Loan Payment Options</string>
-    <string name="personal_loan_payment_options_desc">You can pay your Woolies Personal Loan using any of the following payment options:</string>
+    <string name="personal_loan_payment_options_desc">You can easily pay your Woolies Personal Loan using any of the following payment options:</string>
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="credit_card_payment_options_desc">You can pay your Woolies Credit Card using any of the following payment options:</string>
@@ -1531,20 +1531,20 @@
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
 
     <!-- Pay My Account -->
-    <string name="store_card_payment_option_desc">You can easily pay your Woolies Store Card using any of the following payment options:</string>
+    <string name="store_card_payment_option_desc">You can easily pay your Woolies Store Card using\nany of the following payment options:</string>
     <string name="debit_card_title">Debit Card</string>
     <string name="debit_or_credit_card_desc">Pay your account now using a different debit card or credit card.</string>
     <string name="pay_by_card_button_label">Pay By Debit Card Now</string>
     <string name="by_electronic_fund_transfer_title">By Electronic Fund\nTransfer (EFT)</string>
-    <string name="by_electronic_fund_transfer_desc">Pay your account by EFT or a direct payment into your Store Card account.</string>
+    <string name="by_electronic_fund_transfer_store_card_desc">Pay your account by EFT or a direct payment into your Store Card account.</string>
     <string name="view_banking_details_button_label">View Banking Details</string>
     <string name="at_any_absa_branch_title">At any Absa Branch</string>
     <string name="at_any_absa_branch_desc">Pay your account at any branch of Absa Bank. Use your 16-digit Woolworths Card number as the bill account number.</string>
-    <string name="at_your_nearest_woolworths_store_title">At your Nearest  Woolworths Store</string>
+    <string name="at_your_nearest_woolworths_store_title">Your Nearest Woolworths Store</string>
     <string name="at_your_nearest_woolworths_store_desc">Pay your account at any Woolworths store.</string>
     <string name="find_a_woolies_store_label">Find a Woolies Store</string>
     <string name="pay_at_any_atm_title">Pay at any ATM</string>
-    <string name="pay_at_any_atm_desc">Pay your account at any South African bank\'s ATM.</string>
+    <string name="pay_at_any_atm_desc">Pay your account at any South African bank ATM.</string>
     <string name="pay_at_any_atm_button_label">Learn More</string>
     <string name="whatsapp_any_questions_title">Any Questions?</string>
     <string name="whatsapp_any_questions_desc">Chat to us on WhatsApp</string>
@@ -1634,8 +1634,8 @@
     <string name="pma_pay_by_debit_order">"Pay By Debit Order  "</string>
     <string name="pay_by_debit_order_desc">Make your life easier and have your account debited when it best suits you. It\'s quick and safe.</string>
     <string name="set_up_by_debit_order_button_label">"Setup my debit order "</string>
-    <string name="easily_pay_your_woolies_account_in_the_app">Easily Pay Your Woolies Account In The App:</string>
-    <string name="you_can_also_pay_your_woolies_account_at_desc"> You Can Also Pay Your Woolies Account At:</string>
+    <string name="easily_pay_your_woolies_account_in_the_app">Easily Pay Your Woolies\nAccount In The App:</string>
+    <string name="you_can_also_pay_your_woolies_account_at_desc"> You Can Also Pay Your\nWoolies Account At:</string>
     <string name="credit_card_title">Credit Card</string>
     <string name="pay_by_credit_card_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account.</string>
     <string name="pay_by_credit_card_button_label">Pay By Credit Card Now</string>
@@ -1651,5 +1651,7 @@
     <string name="debit_order_deduction_desc">"Note: If you are setting up a debit order for a Woolies Personal Loan, remember to also attach a clear copy of your valid SA Identity Document (if its an ID card include both sides).  "</string>
     <string name="amount_payable_now">"Overdue Amount, Payable Now"</string>
     <string name="pma_ten_card_limit_error_desc">You have reached the maximum number of  cards allowed. Please delete a card before  adding a new one.</string>
+
+    <string name="by_electronic_fund_trasfer_personal_loan_desc">Pay your account by EFT or a direct payment into your loan account.</string>
 </resources>
 

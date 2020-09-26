@@ -11,7 +11,7 @@ class PayMyAccountModelImpl : IPaymentOptionContract.PayMyAccountModel {
         return hashMapOf("AccountHolder" to getString(R.string.account_details_account_holder), "AccountNumber" to getString(R.string.account_details_account_number), "Bank" to getString(R.string.account_details_bank), "BranchCode" to getString(R.string.account_details_branch_code), "ReferenceNumber" to getString(R.string.account_details_reference_number), "SwiftCode" to getString(R.string.account_details_swift_code))
     }
 
-    override fun getDrawableHeader(): List<PayMyCardHeaderItem> {
+    override fun getHeaderItem(): List<PayMyCardHeaderItem> {
         return listOf(PayMyCardHeaderItem(R.string.store_card_payment_options_title, R.string.store_card_payment_option_desc, R.drawable.w_store_card),
                 PayMyCardHeaderItem(R.string.credit_card_payment_options_title, R.string.credit_card_payment_options_desc, R.drawable.w_black_credit_card),
                 PayMyCardHeaderItem(R.string.credit_card_payment_options_title, R.string.credit_card_payment_options_desc, R.drawable.w_gold_credit_card),

@@ -8,8 +8,10 @@
 
     <ImageView
         android:id="@+id/pmaCardImageView"
-        android:layout_width="205dp"
-        android:layout_height="132dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="53dp"
+        android:layout_marginEnd="53dp"
         android:contentDescription="@string/placeholder"
         android:transitionName="accountCardImageViewTransition"
         app:layout_constraintEnd_toEndOf="parent"
