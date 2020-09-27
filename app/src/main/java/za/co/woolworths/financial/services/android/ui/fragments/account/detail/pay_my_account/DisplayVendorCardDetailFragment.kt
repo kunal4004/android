@@ -77,11 +77,17 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
             pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
 
             //Disable change button when amount is R0.00
-            changeTextView.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND
+            changeTextView?.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND
 
             // set payment method
             initPaymentMethod()
+
+            // Dismiss popup if payment method list is empty
+            if (card?.paymentMethodList?.isEmpty() == true) {
+                dismiss()
+            }
         })
+
 
         initPaymentMethod()
     }
@@ -93,8 +99,9 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
                 if (s.length == 3) {
                     try {
                         val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm ?. hideSoftInputFromWindow (ccvEditTextInput.windowToken, 0)
-                    }catch (ex : Exception){}
+                        imm?.hideSoftInputFromWindow(ccvEditTextInput.windowToken, 0)
+                    } catch (ex: Exception) {
+                    }
                 }
             }
 

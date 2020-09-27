@@ -65,12 +65,12 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
+        val cardInfo = payMyAccountViewModel.getCardDetail()
 
         // TODO:: R&D and implement, pass data from activity to fragment with safeArgs directions
         try {
             account = args.account
         } catch (e: Exception) {
-            val cardInfo = payMyAccountViewModel.getCardDetail()
             account = cardInfo?.account?.second
             mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
         }
@@ -81,7 +81,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
         totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
         amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
-        paymentAmountInputEditText?.setText(payMyAccountViewModel.getCardDetail()?.amountEntered)
+        paymentAmountInputEditText?.setText(if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.totalAmountDue?.toString() else cardInfo?.amountEntered)
 
     }
 
@@ -116,10 +116,11 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
                     var paymentAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R$ ]".toRegex(), "")
-                    if (TextUtils.isEmpty(paymentAmount)){
+                    if (TextUtils.isEmpty(paymentAmount)) {
                         paymentAmount = "0"
                     }
-                    var enteredAmount = paymentAmount?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) } ?: 0
+                    var enteredAmount = paymentAmount?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) }
+                            ?: 0
                     enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
                     amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
 

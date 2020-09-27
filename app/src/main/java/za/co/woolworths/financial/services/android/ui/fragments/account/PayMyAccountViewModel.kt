@@ -40,13 +40,10 @@ class PayMyAccountViewModel : ViewModel() {
         val cardDetail = getCardDetail()
         val list = cardDetail?.paymentMethodList
         if (list != null && !list.isNullOrEmpty()) {
-//            cardDetail.payuMethodType = PAYUMethodType.CARD_UPDATE
             val checkedList = list.filter { it.isCardChecked }
             if (checkedList.isNullOrEmpty()) {
                 list[0].isCardChecked = true
             }
-        } else {
-//            cardDetail?.payuMethodType = PAYUMethodType.CREATE_USER
         }
         return list
     }
@@ -115,7 +112,6 @@ class PayMyAccountViewModel : ViewModel() {
         request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? PaymentMethodsResponse)?.apply {
-
                     setPaymentMethodsResponse(this)
                     when (httpCode) {
                         200 -> {
