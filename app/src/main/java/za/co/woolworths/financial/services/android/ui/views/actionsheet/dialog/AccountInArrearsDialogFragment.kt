@@ -39,7 +39,7 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
+        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_overdue_error_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
 
         payNowButton?.apply {
             setOnClickListener(this@AccountInArrearsDialogFragment)
