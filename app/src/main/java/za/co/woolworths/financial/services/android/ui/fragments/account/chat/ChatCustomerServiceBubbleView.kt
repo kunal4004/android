@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.SESSION_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
-import za.co.woolworths.financial.services.android.util.RecycleViewClickListner
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -45,6 +44,12 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
                                     private var applyNowState: ApplyNowState,
                                     private var isAppScreenPaymentOptions: Boolean = false,
                                     private var view: Any? = null) {
+
+    private var isLiveChatEnabled = false
+
+    init {
+        isLiveChatEnabled = isLiveChatEnabled()
+    }
 
     private fun getSessionType(): SessionType {
         val collectionsList = mutableListOf(AccountSignedInActivity::class.java.simpleName, BottomNavigationActivity::class.java.simpleName, PaymentOptionActivity::class.java.simpleName)
@@ -60,7 +65,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
 
     @SuppressLint("InflateParams")
     private fun showChatToolTip() {
-        if (chatCustomerServiceBubbleVisibility?.shouldPresentChatTooltip(applyNowState, isAppScreenPaymentOptions) == false) return
+        if (!isLiveChatEnabled || chatCustomerServiceBubbleVisibility?.shouldPresentChatTooltip(applyNowState, isAppScreenPaymentOptions) == false) return
         val tooltip = activity?.let { act -> Dialog(act) }
         tooltip?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -103,6 +108,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
     }
 
     fun build() {
+        if (!isLiveChatEnabled) return
         activity?.runOnUiThread {
             chatIconAnimation()
             showChatIcon()
@@ -137,10 +143,10 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
                 }
             }
 
-            is RecycleViewClickListner -> {
+            is RecyclerView -> {
                 (view as? RecyclerView)?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown!!) floatingActionButton?.hide()
+                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) floatingActionButton?.hide()
                     }
 
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -171,30 +177,37 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
         }
     }
 
-    private fun isLiveChatEnabled() {
+    private fun isLiveChatEnabled(): Boolean {
         WoolworthsApplication.getLiveChatEnabled()?.apply {
             floatingActionButton?.visibility = when (activity) {
+
                 is BottomNavigationActivity -> if (accountsLanding) VISIBLE else GONE
+
                 is AccountSignedInActivity -> when (applyNowState) {
-                    ApplyNowState.STORE_CARD -> { if (storeCard.landing) VISIBLE else GONE }
-
-                    ApplyNowState.PERSONAL_LOAN -> {
-
-                        GONE
-                    }
-
-                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> {
-                        GONE
-                    }
-
+                    ApplyNowState.STORE_CARD -> if (storeCard.landing) VISIBLE else GONE
+                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.landing) VISIBLE else GONE
+                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.landing) VISIBLE else GONE
                     else -> GONE
                 }
 
-                else -> {
-
-                    VISIBLE
+                is PaymentOptionActivity -> when (applyNowState) {
+                    ApplyNowState.STORE_CARD -> if (storeCard.paymentOptions) VISIBLE else GONE
+                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.paymentOptions) VISIBLE else GONE
+                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.paymentOptions) VISIBLE else GONE
+                    else -> GONE
                 }
+
+                is WTransactionsActivity -> when (applyNowState) {
+                    ApplyNowState.STORE_CARD -> if (storeCard.transactions) VISIBLE else GONE
+                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.transactions) VISIBLE else GONE
+                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.transactions) VISIBLE else GONE
+                    else -> GONE
+                }
+
+                else -> GONE
             }
         }
+
+        return floatingActionButton?.visibility == VISIBLE
     }
 }
