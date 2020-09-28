@@ -159,6 +159,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
             }
 
+            WoolworthsApplication.setLiveChatEnabled(liveChatEnabled)
+
             WoolworthsApplication.setContactUsDetails(contactUs)
 
             WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)

@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.contracts.IAvailableFundsCont
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -144,10 +145,10 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
     override fun displayCardNumberNotFound() {
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
-        try{
-        val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
-            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager,AccountsErrorHandlerFragment::class.java.simpleName ) }
-        }catch (ex : IllegalStateException){
+        try {
+            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
+            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
+        } catch (ex: IllegalStateException) {
             Crashlytics.logException(ex)
         }
     }
@@ -203,7 +204,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
                 if (cardType == "CC" && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }
-                intent.putExtra(ACCOUNTS, Gson().toJson(this))
+                intent.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), this)))
                 intent.putExtra("cardType", cardType)
                 activity.startActivityForResult(intent, 0)
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

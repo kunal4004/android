@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.chat.LiveChatEnabled;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -71,6 +72,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Context mContextApplication;
     private static WhatsApp whatsApp;
     private static List<ContactUs> mContactUs;
+    private static LiveChatEnabled liveChatEnabled;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -562,4 +564,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.clickAndCollect = clickAndCollect;
     }
 
+    public static void setLiveChatEnabled(@Nullable LiveChatEnabled liveChatEnabled) {
+        WoolworthsApplication.liveChatEnabled = liveChatEnabled;
+    }
+
+    public static LiveChatEnabled getLiveChatEnabled() {
+        return liveChatEnabled;
+    }
 }

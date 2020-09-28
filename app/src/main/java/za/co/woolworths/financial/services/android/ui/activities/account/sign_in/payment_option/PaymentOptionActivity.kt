@@ -110,7 +110,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
                 floatingActionButton = chatWithAgentFloatingButton,
                 applyNowState = applyNowState,
                 isAppScreenPaymentOptions = true,
-                scrollView = paymentOptionScrollView)
+                view = paymentOptionScrollView)
                 .build()
     }
 

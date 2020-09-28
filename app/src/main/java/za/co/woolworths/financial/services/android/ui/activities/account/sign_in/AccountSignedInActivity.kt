@@ -40,7 +40,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private var mPeekHeight: Int = 0
-    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
+    var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
     private var sheetBehavior: BottomSheetBehavior<*>? = null
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 

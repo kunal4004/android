@@ -76,10 +76,12 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     override fun getCreditCardNumber(cards: ArrayList<Card>?): String? {
         return cards?.filter { card -> card.cardStatus?.trim { it <= ' ' } == "AAA" }
                 ?.takeIf { it.isNotEmpty() }
-                ?.let {  it[0].absaCardToken}
+                ?.let { it[0].absaCardToken }
     }
 
     override fun getAccount(): Account? = mAccount
+    override fun getApplyNowState(): ApplyNowState? = mAccountPair?.first
+
 
     override fun onDestroy() {
         mainView = null

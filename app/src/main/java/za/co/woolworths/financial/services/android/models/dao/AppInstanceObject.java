@@ -32,7 +32,7 @@ public class AppInstanceObject {
     public AppInstanceObject() {
         users = new ArrayList<>();
         featureWalkThrough = new FeatureWalkThrough();
-        inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new StoreCard(false, false), new CreditCard(false, false), new PersonalLoan(false, false), false);
+        inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new StoreCard(false, false, false, false), new CreditCard(false, false, false, false), new PersonalLoan(false, false, false, false), false);
     }
 
     public static AppInstanceObject get() {

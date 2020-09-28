@@ -74,7 +74,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             val intent = Intent(activity, WTransactionsActivity::class.java)
             intent.putExtra("productOfferingId", mAccount?.productOfferingId?.toString())
             intent.putExtra("accountNumber", mAccount?.accountNumber?.toString())
-            intent.putExtra(ACCOUNTS, Gson().toJson(mAccount))
+            intent.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
             intent.putExtra("cardType", "SC")
             activity.startActivityForResult(intent, 0)
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

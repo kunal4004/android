@@ -14,10 +14,12 @@ import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
@@ -32,31 +34,27 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.SESSION_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
+import za.co.woolworths.financial.services.android.util.RecycleViewClickListner
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+
 
 class ChatCustomerServiceBubbleView(private var activity: Activity?,
                                     private val chatCustomerServiceBubbleVisibility: ChatCustomerServiceBubbleVisibility? = null,
                                     private var floatingActionButton: FloatingActionButton?,
                                     private var applyNowState: ApplyNowState,
                                     private var isAppScreenPaymentOptions: Boolean = false,
-                                    private var scrollView: NestedScrollView? = null) {
+                                    private var view: Any? = null) {
 
     private fun getSessionType(): SessionType {
         val collectionsList = mutableListOf(AccountSignedInActivity::class.java.simpleName, BottomNavigationActivity::class.java.simpleName, PaymentOptionActivity::class.java.simpleName)
         val customerServicesList = mutableListOf(WTransactionsActivity::class.java.simpleName, StatementActivity::class.java.simpleName)
-        val name = activity?.javaClass?.simpleName
+        val name = activity?.javaClass?.simpleName ?: ""
 
         return when {
-            collectionsList.contains(name) -> {
-                SessionType.Collections
-            }
-            customerServicesList.contains(name) -> {
-                SessionType.CustomerService
-            }
-            else -> {
-                SessionType.Fraud
-            }
+            collectionsList.contains(name) -> SessionType.Collections
+            customerServicesList.contains(name) -> SessionType.CustomerService
+            else -> SessionType.Fraud
         }
     }
 
@@ -121,25 +119,42 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
 
         if (!shouldAnimateChatIcon) return
 
-        scrollView?.apply {
-            viewTreeObserver?.addOnScrollChangedListener {
-                val scrollViewHeight: Double =
-                        getChildAt(0)?.bottom?.minus(height.toDouble()) ?: 0.0
+        when (view) {
+            is NestedScrollView -> {
+                (view as? NestedScrollView)?.apply {
+                    viewTreeObserver?.addOnScrollChangedListener {
+                        val scrollViewHeight: Double =
+                                getChildAt(0)?.bottom?.minus(height.toDouble()) ?: 0.0
 
-                val getScrollY: Double = scrollY.toDouble()
-                val scrollPosition = getScrollY / scrollViewHeight * 100.0
-                if (scrollPosition.toInt() > 30) {
-                    floatingActionButton?.hide()
-                } else {
-                    floatingActionButton?.show()
+                        val getScrollY: Double = scrollY.toDouble()
+                        val scrollPosition = getScrollY / scrollViewHeight * 100.0
+                        if (scrollPosition.toInt() > 30) {
+                            floatingActionButton?.hide()
+                        } else {
+                            floatingActionButton?.show()
+                        }
+                    }
                 }
+            }
+
+            is RecycleViewClickListner -> {
+                (view as? RecyclerView)?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown!!) floatingActionButton?.hide()
+                    }
+
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) floatingActionButton?.show()
+                        super.onScrollStateChanged(recyclerView, newState)
+                    }
+                })
             }
         }
     }
 
     private fun floatingActionButtonEvent() {
         activity?.apply {
-            Log.e("floatingActionButton",Gson().toJson(getSessionType()))
+            Log.e("floatingActionButton", Gson().toJson(getSessionType()))
             val chatAccountProductLandingPage = if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatCustomerServiceBubbleVisibility.getAccountInProductLandingPage() else chatCustomerServiceBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
             floatingActionButton?.setOnClickListener {
@@ -148,10 +163,37 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
                 val intent = Intent(this, WChatActivity::class.java)
                 intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
                 intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)
-                intent.putExtra(SESSION_TYPE , getSessionType())
+                intent.putExtra(SESSION_TYPE, getSessionType())
                 intent.putExtra(ACCOUNTS, Gson().toJson(chatAccountProductLandingPage))
                 intent.putExtra(CHAT_TO_COLLECTION_AGENT, true)
                 startActivity(intent)
+            }
+        }
+    }
+
+    private fun isLiveChatEnabled() {
+        WoolworthsApplication.getLiveChatEnabled()?.apply {
+            floatingActionButton?.visibility = when (activity) {
+                is BottomNavigationActivity -> if (accountsLanding) VISIBLE else GONE
+                is AccountSignedInActivity -> when (applyNowState) {
+                    ApplyNowState.STORE_CARD -> { if (storeCard.landing) VISIBLE else GONE }
+
+                    ApplyNowState.PERSONAL_LOAN -> {
+
+                        GONE
+                    }
+
+                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> {
+                        GONE
+                    }
+
+                    else -> GONE
+                }
+
+                else -> {
+
+                    VISIBLE
+                }
             }
         }
     }

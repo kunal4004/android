@@ -7,6 +7,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.wtransactions_activity.*
@@ -33,9 +35,9 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var applyNowAccountHashPair: Pair<ApplyNowState, Account>? = null
     private var chatAccountProductLandingPage: String? = null
     var productOfferingId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -56,6 +58,8 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         val woolworthApplication = this@WTransactionsActivity.application as WoolworthsApplication
+
+        applyNowAccountHashPair = Gson().fromJson(chatAccountProductLandingPage, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
 
         mErrorHandlerView = ErrorHandlerView(this, woolworthApplication,
                 findViewById(R.id.relEmptyStateHandler),
@@ -78,7 +82,10 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-       // chatToCollectionAgent(ApplyNowState.PERSONAL_LOAN,null)
+        applyNowAccountHashPair?.apply {
+            chatToCollectionAgent(first, mutableListOf(second))
+        }
+
     }
 
     override fun onResume() {
@@ -173,15 +180,14 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: ArrayList<Account>?) {
-//        Utils.triggerFireBaseEvents(if (Utils.isOperatingHoursForInAppChat()) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
+    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+        Utils.triggerFireBaseEvents(if (Utils.isOperatingHoursForInAppChat()) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
         ChatCustomerServiceBubbleView(
                 activity = this@WTransactionsActivity,
                 chatCustomerServiceBubbleVisibility = ChatCustomerServiceBubbleVisibility(accountList),
                 floatingActionButton = chatWithAgentFloatingButton,
                 applyNowState = applyNowState,
-                isAppScreenPaymentOptions = true,
-                scrollView = paymentOptionScrollView)
+                view = paymentOptionScrollView)
                 .build()
     }
 }
