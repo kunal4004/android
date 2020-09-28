@@ -46,7 +46,7 @@
         style="@style/pmaWhiteCardDescriptionStyle"
         android:lineSpacingExtra="8sp"
         android:text="@string/by_electronic_fund_trasfer_personal_loan_desc"
-        android:textColor="@color/white"
+        android:textColor="@color/white_desc"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/plElectronicFundTransferTextView" />

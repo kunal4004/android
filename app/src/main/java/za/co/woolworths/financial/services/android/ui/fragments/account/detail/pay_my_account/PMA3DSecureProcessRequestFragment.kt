@@ -15,8 +15,9 @@ import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
+import kotlinx.android.synthetic.main.process_payment_success_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
-import kotlinx.android.synthetic.main.processing_request_success_fragment.*
+import kotlinx.android.synthetic.main.processing_request_fragment.processingLayoutTitle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -144,6 +145,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     }
 
     private fun postUPayResult() {
+        processingLayoutTitle?.text = bindString(R.string.processing_your_payment_label)
         startSpinning()
         val payUPayResultRequest = args.payUPayResult
         request(payUPayResultRequest?.let { pay -> OneAppService.queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {

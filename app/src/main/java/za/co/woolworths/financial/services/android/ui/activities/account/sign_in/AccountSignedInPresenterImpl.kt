@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -129,9 +130,12 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return (height.div(100)).times(if (isAccountInArrearsState() == true) 14 else 23)
     }
 
+    @SuppressLint("DefaultLocale")
     override fun isAccountInArrearsState(): Boolean? {
-        val productOfferingGoodStanding = getAccount()?.productOfferingGoodStanding ?: false
-        return !productOfferingGoodStanding
+        val account = getAccount()
+        val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
+        //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
+        return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != CREDIT_CARD
     }
 
     private fun getAccount(): Account? {

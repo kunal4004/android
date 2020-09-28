@@ -40,7 +40,7 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
     override fun getItemCount(): Int {
         // ensure only 10 cards are visible
         val size = paymentMethodList?.size ?: 0
-        return if (size > 10) 10 else size
+        return if (size >= 10) 10 else size
     }
 
     class PMAManageCardItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -14,7 +14,7 @@
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:lineSpacingExtra="10sp"
-        android:text="@string/processing_your_request"
+        android:text="@string/processing_your_card_label"
         android:textColor="@color/offer_title"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

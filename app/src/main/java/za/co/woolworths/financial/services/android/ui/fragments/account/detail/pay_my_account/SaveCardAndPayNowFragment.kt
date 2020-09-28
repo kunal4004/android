@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.util.*
 
-
 class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
 
     private var navController: NavController? = null

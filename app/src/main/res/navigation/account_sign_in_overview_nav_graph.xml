@@ -107,5 +107,10 @@
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"
         android:label="PayMyAccountRetryErrorFragment"
         tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment" />
+    <dialog
+        android:id="@+id/accountInArrearsDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment"
+        android:label="AccountInArrearsDialogFragment"
+        tools:layout="@layout/account_in_arrears_alert_dialog_fragment" />
 
 </navigation>

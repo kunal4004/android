@@ -157,7 +157,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isPaymentMethodListSizeLimitedToTenItem(): Boolean {
-        return getCardDetail()?.paymentMethodList?.size ?: 0 >= 9
+        return getCardDetail()?.paymentMethodList?.size ?: 0 >= 10
     }
 
     fun getProductGroupCode(): String {

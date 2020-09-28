@@ -9,8 +9,6 @@ import com.awfs.coordination.R
 
 class ProcessRequestFragment : Fragment() {
 
-    private var root: View? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
            return inflater.inflate(R.layout.processing_request_fragment, container, false)
     }

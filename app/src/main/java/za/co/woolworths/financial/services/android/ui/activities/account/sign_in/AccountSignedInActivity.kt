@@ -168,7 +168,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
         val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-        availableFundsNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
+        availableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {

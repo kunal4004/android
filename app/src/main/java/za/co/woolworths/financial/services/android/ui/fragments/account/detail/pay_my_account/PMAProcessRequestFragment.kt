@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
@@ -108,6 +109,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         includePMAProcessingSuccess?.visibility = GONE
         includePMAProcessingFailure?.visibility = GONE
         includePMAProcessing?.visibility = VISIBLE
+        processingLayoutTitle?.text = bindString(R.string.processing_your_request)
     }
 
     private fun autoConnection() {
