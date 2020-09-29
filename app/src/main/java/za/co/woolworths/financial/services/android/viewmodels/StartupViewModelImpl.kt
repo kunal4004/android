@@ -148,7 +148,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             var presenceInAppChat: PresenceInAppChat? = presenceInAppChat
             if (presenceInAppChat == null) {
-                presenceInAppChat = PresenceInAppChat(ArrayList(),"", false, Collections("","","",""))
+                presenceInAppChat = PresenceInAppChat(ArrayList(), "", null,false, Collections("", "", "", ""))
             } else {
                 presenceInAppChat.isEnabled =
                         Utils.isFeatureEnabled(presenceInAppChat.minimumSupportedAppBuildNumber)
@@ -159,14 +159,13 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
             }
 
-            WoolworthsApplication.setLiveChatEnabled(liveChatEnabled)
-
             WoolworthsApplication.setContactUsDetails(contactUs)
 
             WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
             WoolworthsApplication.setPresenceInAppChat(presenceInAppChat)
 
-            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) } ?: false
+            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
+                    ?: false
             WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
             WoolworthsApplication.setVirtualTempCard(virtualTempCard)
 

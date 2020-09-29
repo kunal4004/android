@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.models.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.chat.LiveChatEnabled;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -18,7 +17,6 @@ public class Configs {
     public PresenceInAppChat presenceInAppChat;
     public QuickShopDefaultValues quickShopDefaultValues;
     public InstantCardReplacement instantCardReplacement;
-    public LiveChatEnabled liveChatEnabled;
     public VirtualTempCard virtualTempCard;
     public ApplyNowLinks applyNowLinks;
     public ArrayList<String> whitelistedDomainsForQRScanner;

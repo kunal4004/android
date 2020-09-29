@@ -563,12 +563,4 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
     }
-
-    public static void setLiveChatEnabled(@Nullable LiveChatEnabled liveChatEnabled) {
-        WoolworthsApplication.liveChatEnabled = liveChatEnabled;
-    }
-
-    public static LiveChatEnabled getLiveChatEnabled() {
-        return liveChatEnabled;
-    }
 }

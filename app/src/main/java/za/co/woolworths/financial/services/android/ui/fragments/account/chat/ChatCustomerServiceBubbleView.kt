@@ -178,7 +178,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
     }
 
     private fun isLiveChatEnabled(): Boolean {
-        WoolworthsApplication.getLiveChatEnabled()?.apply {
+        WoolworthsApplication.getPresenceInAppChat()?.liveChatEnabled?.apply {
             floatingActionButton?.visibility = when (activity) {
 
                 is BottomNavigationActivity -> if (accountsLanding) VISIBLE else GONE

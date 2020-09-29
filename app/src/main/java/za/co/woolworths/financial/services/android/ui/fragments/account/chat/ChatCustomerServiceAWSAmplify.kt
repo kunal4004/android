@@ -114,6 +114,7 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
         when (sessionState) {
             SessionStateType.ONLINE, SessionStateType.CONNECT, SessionStateType.DISCONNECT -> {
                 val sessionVars = getSessionVars()
+                Log.e("sesisonVars", getSessionVars())
                 variables["sessionVars"] = sessionVars
                 variables["name"] = getCustomerUsername()
                 variables["email"] = getCustomerEmail()

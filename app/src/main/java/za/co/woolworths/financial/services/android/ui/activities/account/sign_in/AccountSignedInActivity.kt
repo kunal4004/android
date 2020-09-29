@@ -191,9 +191,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     override fun onResume() {
         super.onResume()
 
-        if (!mAccountSignedInPresenter?.isAccountInArrearsState!!)
-            showChatToCollectionAgent()
-
         when (currentFragment) {
             is AccountInArrearsFragmentDialog -> {
                 Log.e("currentFragment", "AccountInArrearsFragmentDialog")
@@ -209,7 +206,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showChatToCollectionAgent() {
         mAccountSignedInPresenter?.chatWithCollectionAgent()
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
