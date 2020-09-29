@@ -1051,7 +1051,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     @SuppressLint("StaticFieldLeak")
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
-        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
+        if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
         View viewToScrollUp = null;
         String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
@@ -1120,20 +1120,18 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onWalkthroughActionButtonClick() {
-        switch (promptsActionListener) {
-            case 1:
-                if (unavailableAccounts.size() == 3) {
-                    onClick(applyStoreCardView);
-                } else {
-                    if (!unavailableAccounts.contains("SC")) {
-                        onClick(linkedStoreCardView);
-                    } else if (!unavailableAccounts.contains("CC")) {
-                        onClick(linkedCreditCardView);
-                    } else if (!unavailableAccounts.contains("PL")) {
-                        onClick(linkedPersonalCardView);
-                    }
+        if (promptsActionListener == 1) {
+            if (unavailableAccounts.size() == 3) {
+                onClick(applyStoreCardView);
+            } else {
+                if (!unavailableAccounts.contains("SC")) {
+                    onClick(linkedStoreCardView);
+                } else if (!unavailableAccounts.contains("CC")) {
+                    onClick(linkedCreditCardView);
+                } else if (!unavailableAccounts.contains("PL")) {
+                    onClick(linkedPersonalCardView);
                 }
-                break;
+            }
         }
     }
 
@@ -1216,10 +1214,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void showInAppChat(Activity activity) {
-		if(!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account){
-			ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(activity, new ChatCustomerServiceBubbleVisibility(mAccountResponse.accountList),chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
-			inAppChatTipAcknowledgement.build();
-		}
+        if (AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account) {
+            ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(activity, new ChatCustomerServiceBubbleVisibility(mAccountResponse.accountList), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
+            inAppChatTipAcknowledgement.build();
+        }
     }
 
 }

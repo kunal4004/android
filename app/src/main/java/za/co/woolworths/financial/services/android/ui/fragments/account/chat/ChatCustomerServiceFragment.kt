@@ -5,8 +5,11 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
@@ -15,16 +18,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.util.Utils
 import java.lang.Exception
-
 
 class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -77,43 +79,53 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
     }
 
     private fun amplifyListener() {
+        chatLoaderProgressBar?.visibility = VISIBLE
         with(chatViewModel) {
             signIn({
                 subscribeToMessageByConversationId({ result ->
+                    Log.e("resultSubs",Gson().toJson(result))
                     activity?.runOnUiThread {
                         when (result?.sessionState) {
 
-                            SessionStateType.CONNECT -> enableChatButton(false)
+                            SessionStateType.CONNECT -> {
+                                chatLoaderProgressBar?.visibility = GONE
+                                enableChatButton(false)
+                            }
 
                             SessionStateType.ONLINE -> {
-                                if (!result.content.startsWith("Hello"))
-                                    showAgentsMessage(result.content)
+                                chatLoaderProgressBar?.visibility = GONE
+                                showAgentsMessage(result.content)
                                 enableChatButton(true)
                             }
 
-                            SessionStateType.DISCONNECT -> enableChatButton(false)
+                            SessionStateType.DISCONNECT -> {
+                                chatLoaderProgressBar?.visibility = GONE
+                                enableChatButton(false)
+                            }
 
                             else -> {
+                                chatLoaderProgressBar?.visibility = GONE
                             }
                         }
                     }
-                }, { showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR) })
-            }, { showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR) })
+                }, {
+                    chatLoaderProgressBar?.visibility = GONE
+                    showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
+                })
+            }, {
+                chatLoaderProgressBar?.visibility = GONE
+                showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
+            })
         }
     }
 
     private fun inputListener() {
         edittext_chatbox?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                chatViewModel.userStoppedTyping()
-            }
+            override fun afterTextChanged(s: Editable) { chatViewModel.userStoppedTyping() }
 
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                chatViewModel.userStartedTyping()
-            }
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { chatViewModel.userStartedTyping() }
         })
     }
 
@@ -154,11 +166,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
             true -> {
                 activity?.apply {
                     when (isOnline) {
-                        true -> {
-                            showAgentsMessage("Hey ${chatViewModel.getAmplify()?.getCustomerUsername()}")
-                            showAgentsMessage(bindString(R.string.chat_greeting_description))
-                            amplifyListener()
-                        }
+                        true -> amplifyListener()
                         else -> {
                             val bundle = Bundle()
                             bundle.putString(WhatsAppChatToUsVisibility.FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
@@ -172,7 +180,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
             }
             false -> {
                 isOnline.apply {
-                    activity?.offlineBanner?.visibility = if (this) View.GONE else View.VISIBLE
+                    activity?.offlineBanner?.visibility = if (this) GONE else VISIBLE
                     if (!this) edittext_chatbox?.text?.clear()
                     showAgentsMessage(if (this) "Hi " + chatViewModel.getAmplify()?.getCustomerUsername() + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + getInAppTradingHoursForToday().opens + " and " + getInAppTradingHoursForToday().closes + ".")
                 }
