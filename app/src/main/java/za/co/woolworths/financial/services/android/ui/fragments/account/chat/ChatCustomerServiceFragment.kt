@@ -6,27 +6,25 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.util.Utils
-import java.lang.Exception
+
 
 class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -36,6 +34,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         arguments?.apply {
             appScreen = getString(APP_SCREEN, ChatCustomerServiceFragment::class.java.simpleName)
         }
@@ -83,7 +82,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         with(chatViewModel) {
             signIn({
                 subscribeToMessageByConversationId({ result ->
-                    Log.e("resultSubs",Gson().toJson(result))
+                    Log.e("resultSubs", Gson().toJson(result))
                     activity?.runOnUiThread {
                         when (result?.sessionState) {
 
@@ -121,11 +120,15 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
 
     private fun inputListener() {
         edittext_chatbox?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) { chatViewModel.userStoppedTyping() }
+            override fun afterTextChanged(s: Editable) {
+                chatViewModel.userStoppedTyping()
+            }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { chatViewModel.userStartedTyping() }
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                chatViewModel.userStartedTyping()
+            }
         })
     }
 

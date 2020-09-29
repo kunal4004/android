@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -12,6 +13,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -27,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountInArrearsFragmentDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -187,8 +190,20 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     override fun onResume() {
         super.onResume()
+
         if (!mAccountSignedInPresenter?.isAccountInArrearsState!!)
             showChatToCollectionAgent()
+
+        when (currentFragment) {
+            is AccountInArrearsFragmentDialog -> {
+                Log.e("currentFragment", "AccountInArrearsFragmentDialog")
+            }
+            else -> {
+                Log.e("currentFragment", "currentFragment")
+                if (!mAccountSignedInPresenter?.isAccountInArrearsState!!)
+                    showChatToCollectionAgent()
+            }
+        }
     }
 
     private fun showChatToCollectionAgent() {
@@ -213,4 +228,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             }
         }
     }
+
+    val currentFragment: Fragment?
+        get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.chatNavHost)
+
 }

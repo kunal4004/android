@@ -18,18 +18,17 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNT_NUMBER
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceOfflineFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.util.Utils
-import java.io.Serializable
 
 class WChatActivity : AppCompatActivity(), IDialogListener {
 
@@ -104,9 +103,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         }
         chatNavGraph?.let { graph -> chatNavHostController?.setGraph(graph, bundle) }
 
-        endSessionTextView?.setOnClickListener {
-            chatNavHostController?.navigate(R.id.action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment)
-        }
+        endSessionTextView?.setOnClickListener { endSessionPopup() }
     }
 
     override fun onResume() {
@@ -140,16 +137,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         endSessionTextView?.visibility = if (isOnline) VISIBLE else GONE
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
-            android.R.id.home -> {
-                super.onBackPressed()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(menuItem)
-    }
-
     override fun onBackPressed() {
         when (currentFragment) {
             is ChatCustomerServiceOfflineFragment -> {
@@ -158,9 +145,12 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
             }
             else -> {
                 when (chatNavHostController?.graph?.startDestination) {
-                    R.id.chatToUsWhatsAppFragment, R.id.chatFragment -> {
+                    R.id.chatToUsWhatsAppFragment -> {
                         finish()
                         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    }
+                    R.id.chatFragment -> {
+                        endSessionPopup()
                     }
                     else -> chatNavHostController?.popBackStack()
                 }
@@ -168,7 +158,21 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         }
     }
 
+    private fun endSessionPopup() {
+        chatNavHostController?.navigate(R.id.action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment)
+    }
+
     val currentFragment: Fragment?
         get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.chatNavHost)
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(menuItem)
+    }
 
 }

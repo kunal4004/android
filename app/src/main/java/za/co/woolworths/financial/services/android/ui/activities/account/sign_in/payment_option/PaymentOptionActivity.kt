@@ -146,7 +146,6 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun hideABSAInfo() {
         llAbsaAccount?.visibility = GONE
         tvPaymentOtherAccountDesc?.visibility = GONE
-
     }
 
     override fun onBackPressed() {
