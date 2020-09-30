@@ -19,8 +19,10 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
+import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
@@ -30,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
-class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
+class ChatCustomerServiceAWSAmplify(private var account: Account? = null, private var listOfCards: List<Card>? = null) {
 
     private var jWTDecodedModel: JWTDecodedModel? = SessionUtilities.getInstance().jwt
     private var subscription: ApiOperation<*>? = null
@@ -78,9 +80,11 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
     fun subscribeToMessageByConversationId(conversationMessagesId: String, sessionType: SessionType, result: (SendMessageResponse?) -> Unit, failure: (ApiException) -> Unit) {
         subscription = API.subscribe(onSubscribeMessageByConversationId(conversationMessagesId),
                 {
+                    Log.i("subscriptionLeg", "Connection Established")
                     sendMessage(conversationMessagesId, sessionType, SessionStateType.CONNECT, "")
                 },
                 { data ->
+                    Log.i("subscriptionLeg", Gson().toJson(data) ?: "")
                     result(data.data)
                 },
                 { onFailure -> failure(onFailure) },
@@ -103,8 +107,9 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
 
         val messageGraphQL: String = Assets.readAsString("graphql/mutation-event-send-message.graphql")
         val serializer = GsonVariablesSerializer()
-
         val variables = HashMap<String, Any>()
+
+        val sessionVars = getSessionVars()
 
         variables["sessionId"] = sessionId
         variables["sessionType"] = sessionType
@@ -112,27 +117,20 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
         variables["content"] = content
         variables["contentType"] = "text"
         variables["relatedMessageId"] = ""
+        variables["sessionVars"] = sessionVars
+        variables["name"] = getCustomerUsername()
+        variables["email"] = getCustomerEmail()
 
-        when (sessionState) {
-            SessionStateType.ONLINE, SessionStateType.CONNECT, SessionStateType.DISCONNECT -> {
-                val sessionVars = getSessionVars()
-                Log.e("prsAccountNumber", sessionVars)
-                Log.e("sesisonVars", getSessionVars())
-                variables["sessionVars"] = sessionVars
-                variables["name"] = getCustomerUsername()
-                variables["email"] = getCustomerEmail()
-            }
-            else -> {
-            }
-        }
+        Log.e("sesisonVars", getSessionVars())
+
         return SimpleGraphQLRequest(messageGraphQL, variables, String::class.java, serializer)
     }
 
     fun sendMessage(sessionId: String, sessionType: SessionType, sessionState: SessionStateType, content: String) {
         API.mutate(
                 sendMessageRequest(sessionId, sessionType, sessionState, content),
-                { response -> Log.i("sendMessageSuccess", response.data ?: "") },
-                { error -> Log.i("sendMessageError", error.toString()) }
+                { response -> Log.d("sendMessageSuccess", response.data ?: "") },
+                { error -> Log.d("sendMessageError", error.toString()) }
         )
     }
 
@@ -151,14 +149,16 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
     private fun getCustomerC2ID() = jWTDecodedModel?.C2Id ?: ""
 
     private fun getSessionVars(): String {
+
         val prsAccountNumber = account?.accountNumber ?: ""
-        val prsCardNumber = if (account?.productGroupCode?.toLowerCase(Locale.getDefault()) == "cc") account?.accountNumber
+        val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
+        val prsCardNumber = if (productGroupCode == "cc") getABSACardToken()
                 ?: "" else account?.accountNumber ?: ""
         val prsC2id = getCustomerC2ID()
         val prsFirstname = getCustomerUsername()
         val prsSurname = getCustomerFamilyName()
         val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
-        val prsProductOfferingDescription = when (account?.productGroupCode?.toLowerCase(Locale.getDefault())) {
+        val prsProductOfferingDescription = when (productGroupCode) {
             "sc" -> "StoreCard"
             "pl" -> "PersonalLoan"
             "cc" -> "CreditCard"
@@ -166,5 +166,9 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
         }
 
         return bindString(R.string.chat_send_message_session_var_params, prsAccountNumber, prsCardNumber, prsC2id, prsFirstname, prsSurname, prsProductOfferingId, prsProductOfferingDescription)
+    }
+
+    fun getABSACardToken(): String? {
+        return account?.cards?.get(0)?.absaCardToken ?: listOfCards?.get(0)?.absaCardToken
     }
 }

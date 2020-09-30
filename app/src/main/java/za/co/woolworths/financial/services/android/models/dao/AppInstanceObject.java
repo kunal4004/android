@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.Card;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.chat.CreditCard;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;

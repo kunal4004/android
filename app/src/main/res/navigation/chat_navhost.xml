@@ -27,10 +27,18 @@
         <action
             android:id="@+id/action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment"
             app:destination="@id/chatCustomerServiceEndSessionDialogFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_retryErrorFragment"
+            app:destination="@id/retryErrorFragment" />
     </fragment>
     <dialog
         android:id="@+id/chatCustomerServiceEndSessionDialogFragment"
-        tools:layout="@layout/ccs_end_session_dialog_fragment"
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.ChatCustomerServiceEndSessionDialogFragment"
-        android:label="ChatCustomerServiceEndSessionDialogFragment" />
+        android:label="ChatCustomerServiceEndSessionDialogFragment"
+        tools:layout="@layout/ccs_end_session_dialog_fragment" />
+    <dialog
+        android:id="@+id/retryErrorFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.RetryErrorFragment"
+        android:label="RetryErrorFragment"
+        tools:layout="@layout/retry_on_error_dialog_fragment" />
 </navigation>

@@ -9,17 +9,24 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class ChatCustomerServiceViewModel : ViewModel() {
 
+    private var creditCardTokenAPI: Call<CreditCardTokenResponse>? = null
     private var customerServiceAWSAmplify: ChatCustomerServiceAWSAmplify? = null
     private var conversation: Conversation? = null
     private var mAccount: MutableLiveData<Account?> = MutableLiveData()
@@ -27,16 +34,18 @@ class ChatCustomerServiceViewModel : ViewModel() {
     private var sessionType: MutableLiveData<SessionType?> = MutableLiveData()
     var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
+    var absaCardToken: MutableLiveData<MutableList<Card>?> = MutableLiveData()
 
     init {
+        absaCardToken.value = getAccount()?.cards
         isChatToCollectionAgent.value = false
         isCustomerSignOut.value = false
         setSessionStateType(SessionStateType.DISCONNECT)
         setSessionType(SessionType.Collections)
     }
 
-    fun initAmplify() {
-        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify(getAccount())
+    fun initAmplify(listOfCards: List<Card>? = null) {
+        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify(getAccount(), listOfCards)
     }
 
     fun getAmplify(): ChatCustomerServiceAWSAmplify? {
@@ -49,6 +58,11 @@ class ChatCustomerServiceViewModel : ViewModel() {
 
     fun getAccount(): Account? {
         return mAccount.value
+    }
+
+
+    fun isCreditCardAccount(): Boolean {
+        return getAccount()?.productGroupCode == "cc"
     }
 
     fun setSessionStateType(type: SessionStateType) {
@@ -87,6 +101,11 @@ class ChatCustomerServiceViewModel : ViewModel() {
 
     override fun onCleared() {
         customerServiceAWSAmplify?.cancelSubscribeMessageByConversationId()
+        creditCardTokenAPI?.apply {
+            if (!isCanceled)
+                cancel()
+
+        }
         super.onCleared()
     }
 
@@ -128,7 +147,7 @@ class ChatCustomerServiceViewModel : ViewModel() {
 
     fun offlineMessageTemplate(onClick: (Triple<String, String, String>) -> Unit): SpannableString {
         val presenceInAppChat = WoolworthsApplication.getPresenceInAppChat()
-        return when (getSessionType()) {
+        when (getSessionType()) {
             SessionType.Collections, SessionType.Fraud -> {
                 val collections = presenceInAppChat.collections
                 val emailAddress = collections.emailAddress
@@ -176,5 +195,23 @@ class ChatCustomerServiceViewModel : ViewModel() {
                 return spannableOfflineMessageTemplate
             }
         }
+    }
+
+    fun getCreditCardToken(result: (CreditCardTokenResponse?) -> Unit, error: (Throwable?) -> Unit) {
+        creditCardTokenAPI = request(OneAppService.getCreditCardToken(), object : IGenericAPILoaderView<Any> {
+
+            override fun onSuccess(response: Any?) {
+
+                (response as? CreditCardTokenResponse)?.apply {
+                    cards?.apply { initAmplify(this) }
+                    result(this)
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                super.onFailure(error)
+                error(error)
+            }
+        })
     }
 }

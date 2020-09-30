@@ -1575,5 +1575,7 @@
     <string name="end_session_desc">"Leaving the Chat window will end your conversation. Are you sure you want to end your session?  "</string>
     <string name="no_continue_session">No, continue session</string>
     <string name="end_session_button_caption">yes, end session</string>
+    <string name="pma_retry_error_title">Oops!</string>
+    <string name="pma_retry_error_desc">Unfortunately, we’re having trouble retrieving your information, please try again.</string>
 </resources>
 

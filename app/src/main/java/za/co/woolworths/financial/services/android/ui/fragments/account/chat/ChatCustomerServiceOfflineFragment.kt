@@ -105,11 +105,6 @@ class ChatCustomerServiceOfflineFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onResume() {
-        super.onResume()
-        activity?.chatState?.visibility = GONE
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.closeChatIcon -> {

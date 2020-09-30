@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.chat_activity.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNT_NUMBER
@@ -128,8 +127,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
 
     fun setChatState(isOnline: Boolean) {
         runOnUiThread {
-            chatState?.isEnabled = isOnline
-            chatState?.text = if (isOnline) bindString(R.string.chat_state_online) else bindString(R.string.chat_state_offline)
             setEndSessionTextView(isOnline)
         }
     }

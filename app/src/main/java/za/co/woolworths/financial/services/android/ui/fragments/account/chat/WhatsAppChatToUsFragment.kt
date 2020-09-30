@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -44,7 +43,6 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
         (activity as? AppCompatActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             agentNameTextView?.text = bindString(R.string.whatsapp_chat_to_us_title)
-            chatState?.visibility = View.GONE
         }
 
         with(WhatsAppChatToUsVisibility()) {

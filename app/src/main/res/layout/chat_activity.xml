@@ -24,13 +24,13 @@
             android:background="@drawable/appbar_background"
             android:gravity="center"
             android:minHeight="?attr/actionBarSize"
-            android:paddingRight="@dimen/sixteen_dp"
+            android:paddingEnd="@dimen/sixteen_dp"
             app:layout_scrollFlags="scroll|enterAlways">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|center_vertical"
+                android:layout_gravity="center"
                 android:orientation="vertical">
 
                 <TextView
@@ -43,16 +43,6 @@
                     android:text="@string/chat_activity_title"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/chatState"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/chat_state_indicator_bg"
-                    android:drawablePadding="@dimen/five_dp"
-                    android:fontFamily="@font/myriad_pro_regular_otf"
-                    android:textColor="@color/black_50"
                     android:textSize="12sp" />
             </LinearLayout>
 
