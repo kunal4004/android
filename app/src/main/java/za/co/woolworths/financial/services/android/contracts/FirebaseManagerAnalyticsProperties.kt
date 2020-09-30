@@ -106,6 +106,8 @@ class FirebaseManagerAnalyticsProperties {
 
         const val SC_UNFREEZE_CARD = "sc_unfreeze_card"
         const val SC_FREEZE_CARD = "sc_freeze_card"
+
+        const val Myaccounts_creditview = "myaccounts_creditview"
     }
 
     class PropertyNames {
