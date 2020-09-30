@@ -197,6 +197,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     override fun onClick(v: View?) {
+        KotlinUtils.avoidDoubleClicks(v)
         mCardPresenterImpl?.apply {
             when (v?.id) {
                 R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsurance()

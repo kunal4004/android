@@ -23,17 +23,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.pay_my_account_learn_more_fragment.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
@@ -46,6 +45,8 @@ import java.util.*
 
 class KotlinUtils {
     companion object {
+        const val DELAY: Long = 900
+
         fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
@@ -359,6 +360,12 @@ class KotlinUtils {
             noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             return noteStringBuilder
+        }
+
+        fun avoidDoubleClicks(view: View?) {
+            if (view?.isClickable != true) return
+            view.isClickable = false
+            view.postDelayed({ view.isClickable = true }, DELAY)
         }
     }
 }

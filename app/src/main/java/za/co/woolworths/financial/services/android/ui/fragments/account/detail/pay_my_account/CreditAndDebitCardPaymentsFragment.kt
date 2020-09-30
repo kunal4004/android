@@ -223,6 +223,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        KotlinUtils.avoidDoubleClicks(v)
         when (v?.id) {
             R.id.incCreditCardButton,
             R.id.payByCreditCardNowButton,

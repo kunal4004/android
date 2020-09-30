@@ -76,7 +76,6 @@ import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserPro
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -269,14 +268,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				}
 			});
 
-			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-						loadAccounts(false);
-					}
+			view.findViewById(R.id.btnRetry).setOnClickListener(v -> {
+				KotlinUtils.Companion.avoidDoubleClicks(v);
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+					loadAccounts(false);
 				}
-
 			});
 		}
 
@@ -598,6 +594,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			KotlinUtils.Companion.avoidDoubleClicks(v);
 			if (mUpdateMyAccount.accountUpdateActive()) return;
 			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN);
 			ScreenManager.presentSSOSignin(getActivity());
@@ -607,6 +604,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			KotlinUtils.Companion.avoidDoubleClicks(v);
 			if (mUpdateMyAccount.accountUpdateActive()) return;// disable tap to next view until account response completed
 			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER);
 			ScreenManager.presentSSORegister(getActivity());
@@ -616,6 +614,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			KotlinUtils.Companion.avoidDoubleClicks(v);
 			if (mUpdateMyAccount.accountUpdateActive()) return;
 			ScreenManager.presentSSOLinkAccounts(getActivity());
 		}
@@ -624,6 +623,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onClick(View v) {
 		Activity activity = getActivity();
+		KotlinUtils.Companion.avoidDoubleClicks(v);
 		if (activity == null ||  mUpdateMyAccount.accountUpdateActive()) return;
 		switch (v.getId()) {
 			case R.id.openMessageActivity:

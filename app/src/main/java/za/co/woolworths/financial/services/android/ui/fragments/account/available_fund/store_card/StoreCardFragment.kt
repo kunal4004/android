@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -38,6 +39,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
+        KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
