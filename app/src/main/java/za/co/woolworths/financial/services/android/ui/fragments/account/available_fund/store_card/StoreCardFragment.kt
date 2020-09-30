@@ -49,12 +49,13 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
             R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
+
                 if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
                     navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     return
                 }
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
                 navigateToPayMyAccount {
                     val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
                     val accountDetail: Account? = mAvailableFundPresenter?.getAccount()

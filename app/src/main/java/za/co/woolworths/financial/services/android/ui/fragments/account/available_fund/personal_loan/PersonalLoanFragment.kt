@@ -11,13 +11,13 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
@@ -46,15 +46,20 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
+
                 if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
                     navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     return
                 }
 
                 val personalLoanAccount = mAvailableFundPresenter?.getAccount()
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
+
                 if (personalLoanAccount?.productOfferingGoodStanding != true) {
-                    personalLoanAccount?.let { account -> (activity as? AccountSignedInActivity)?.showAccountInArrears(account) }
+                    val cardDetail = payMyAccountViewModel.getCardDetail()
+                    val accountApplyNow = mAvailableFundPresenter?.getBundle()
+                    ScreenManager.presentPayMyAccountActivity(activity, accountApplyNow, Gson().toJson(cardDetail))
+
                 } else {
                     navigateToPayMyAccount {
                         val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
