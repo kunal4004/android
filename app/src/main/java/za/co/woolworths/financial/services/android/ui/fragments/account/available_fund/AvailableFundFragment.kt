@@ -130,7 +130,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val account = mAvailableFundPresenter?.getAccountDetail()
-                val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+                val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList
 

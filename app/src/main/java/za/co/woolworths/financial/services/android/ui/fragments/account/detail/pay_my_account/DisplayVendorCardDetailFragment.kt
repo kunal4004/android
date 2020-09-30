@@ -39,6 +39,8 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
     private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var navController: NavController? = null
+
+
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogWithoutAnimation
@@ -66,14 +68,13 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         if (activity is PayMyAccountActivity)
             navController = NavHostFragment.findNavController(this)
 
-        val totalAmountDue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(accountArgs?.totalAmountDue
-                ?: 0), 1, activity))
+        val overdueAmount = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(accountArgs?.amountOverdue ?: 0), 1, activity))
         setupListener()
 
         payMyAccountViewModel.paymentAmountCard.observe(viewLifecycleOwner, { card ->
             // set amount amounted
             val amountEntered = card?.amountEntered
-            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) totalAmountDue else amountEntered
+            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) overdueAmount else amountEntered
             pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
 
             //Disable change button when amount is R0.00

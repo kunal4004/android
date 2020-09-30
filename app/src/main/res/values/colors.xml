@@ -108,5 +108,5 @@
     <color name="success_tick_color">#0085AD</color>
     <color name="currency_color">#222222</color>
     <color name="red_color">#D0021B</color>
-    <color name="white_desc">#50ffffff</color>
+    <color name="white_desc">#70ffffff</color>
 </resources>
