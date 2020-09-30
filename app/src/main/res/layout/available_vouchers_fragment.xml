@@ -6,6 +6,24 @@
     android:background="@color/white">
 
     <TextView
+        android:id="@+id/errorMessage"
+        style="@style/futura_semi_bold_white_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/header_red"
+        android:gravity="center"
+        android:minHeight="@dimen/sixty_dp"
+        android:paddingLeft="@dimen/thirty_two_dp"
+        android:paddingTop="@dimen/sixteen_dp"
+        android:paddingRight="@dimen/thirty_two_dp"
+        android:paddingBottom="@dimen/sixteen_dp"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/redeemVoucher"
         style="@style/futura_semi_bold_black_12_text_style"
         android:layout_width="wrap_content"
@@ -65,7 +83,7 @@
         app:layout_constraintBottom_toTopOf="@id/redeemVoucher"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/errorMessage">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

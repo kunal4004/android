@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.available_vouchers_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchersToRedeemListAdapter
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVoucherContract.AvailableVoucherView {
@@ -67,7 +68,13 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVouc
     override fun onVoucherRedeemFailure(message: String) {
         activity?.apply {
             hideRedeemVoucherProgress()
-            ErrorHandlerView(this).showToast(message)
+            errorMessage?.let {
+                it.text = message
+                it.visibility = View.VISIBLE
+                Handler().postDelayed({
+                    it.visibility = View.GONE
+                }, 3000)
+            }
         }
     }
 
@@ -75,6 +82,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVouc
         voucherDetails?.vouchers?.let {
             presenter?.getSelectedVouchersToApply()?.let { selectedVouchers ->
                 if (selectedVouchers.isNotEmpty()) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_voucher_redeem)
                     showRedeemVoucherProgress()
                     presenter?.initRedeemVouchers(selectedVouchers)
                 }

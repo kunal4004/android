@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.DiscountDetails;
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -75,6 +76,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         void onOpenProductDetail(CommerceItem commerceItem);
 
         void onViewVouchers();
+
+        void updateBasketTotal();
     }
 
     private OnItemClick onItemClick;
@@ -235,25 +238,48 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 CartPricesViewHolder priceHolder = ((CartPricesViewHolder) holder);
                 if (orderSummary != null) {
                     priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
-                    priceHolder.txtPriceEstimatedDelivery.setText("TBC");
-                    if (orderSummary.getStaffDiscount() > 0) {
-                        setPriceValue(priceHolder.txtPriceCompanyDiscount, orderSummary.getStaffDiscount());
-                        priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
-                    } else {
-                        priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
+                    setPriceValue(priceHolder.txtYourCartPrice, orderSummary.getTotal());
+
+                    if(orderSummary.discountDetails!=null){
+                        DiscountDetails discountDetails = orderSummary.discountDetails;
+                        if (discountDetails.getCompanyDiscount() > 0) {
+                            setPriceValue(priceHolder.txtCompanyDiscount, discountDetails.getCompanyDiscount());
+                            priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getTotalDiscount() > 0) {
+                            setPriceValue(priceHolder.txtTotalDiscount, discountDetails.getTotalDiscount());
+                            priceHolder.rlTotalDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlTotalDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getTotalOrderDiscount() > 0) {
+                            setPriceValue(priceHolder.txtDiscount, discountDetails.getTotalOrderDiscount());
+                            priceHolder.rlDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getWrewardsDiscount() > 0) {
+                            setPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getWrewardsDiscount());
+                            priceHolder.rlWrewardsDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlWrewardsDiscount.setVisibility(View.GONE);
+                        }
+
                     }
-                    if (orderSummary.getSavedAmount() > 0) {
-                        setPriceValue(priceHolder.txtPriceWRewardsSavings, orderSummary.getSavedAmount());
-                        priceHolder.rlOtherDiscount.setVisibility(View.VISIBLE);
-                    } else {
-                        priceHolder.rlOtherDiscount.setVisibility(View.GONE);
-                    }
-                    setPriceValue(priceHolder.txtPriceTotal, orderSummary.getTotal());
                 } else {
                     priceHolder.orderSummeryLayout.setVisibility(View.GONE);
                 }
 
-                priceHolder.viewVouchers.setOnClickListener(v -> onItemClick.onViewVouchers());
+                priceHolder.viewVouchers.setOnClickListener(v -> {
+                            onItemClick.onViewVouchers();
+                            Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view);
+                        }
+                );
                 int activeVouchersCount = voucherDetails.getActiveVouchersCount();
                 if (activeVouchersCount > 0) {
                     if (getAppliedVouchersCount() > 0) {
@@ -466,25 +492,27 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     private class CartPricesViewHolder extends RecyclerView.ViewHolder {
-        private WTextView
-                txtPriceEstimatedDelivery, txtPriceCompanyDiscount,
-                txtPriceWRewardsSavings, txtPriceTotal;
+        private WTextView txtYourCartPrice, txtDiscount, txtCompanyDiscount, txtWrewardsDiscount, txtTotalDiscount ;
         private LinearLayout orderSummeryLayout;
-        private RelativeLayout rlOtherDiscount, rlCompanyDiscount;
+        private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount;
         private TextView availableVouchersCount,viewVouchers;
 
 
         public CartPricesViewHolder(View view) {
             super(view);
-            txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery);
-            txtPriceCompanyDiscount = view.findViewById(R.id.txtPriceCompanyDiscount);
-            txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
-            txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
+            txtYourCartPrice = view.findViewById(R.id.txtYourCartPrice);
             orderSummeryLayout = view.findViewById(R.id.orderSummeryLayout);
-            rlOtherDiscount = view.findViewById(R.id.rlOtherDiscount);
             rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
             availableVouchersCount = view.findViewById(R.id.availableVouchersCount);
             viewVouchers = view.findViewById(R.id.viewVouchers);
+            txtDiscount = view.findViewById(R.id.txtDiscount);
+            txtCompanyDiscount = view.findViewById(R.id.txtCompanyDiscount);
+            txtWrewardsDiscount = view.findViewById(R.id.txtWrewardsDiscount);
+            txtTotalDiscount = view.findViewById(R.id.txtTotalDiscount);
+            rlDiscount = view.findViewById(R.id.rlDiscount);
+            rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
+            rlWrewardsDiscount = view.findViewById(R.id.rlWrewardsDiscount);
+            rlTotalDiscount = view.findViewById(R.id.rlTotalDiscount);
         }
     }
 
@@ -518,6 +546,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         this.voucherDetails = voucherDetails;
         resetQuantityState(false);
         notifyDataSetChanged();
+        onItemClick.updateBasketTotal();
     }
 
     public void onChangeQuantityComplete() {

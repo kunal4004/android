@@ -79,6 +79,7 @@
                     android:textAllCaps="true" />
 
                 <TextView
+                    android:id="@+id/basketTotal"
                     style="@style/futura_semi_bold_black_12_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

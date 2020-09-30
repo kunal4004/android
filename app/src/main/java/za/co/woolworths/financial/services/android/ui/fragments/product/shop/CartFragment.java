@@ -92,6 +92,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
@@ -155,6 +156,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private final String TAG_ADDED_TO_LIST_TOAST ="ADDED_TO_LIST";
 	private VoucherDetails voucherDetails;
 	public static final int REDEEM_VOUCHERS_REQUEST_CODE = 1979;
+	private TextView basketTotal;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -202,6 +204,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		deliverLocationIcon = view.findViewById(R.id.deliverLocationIcon);
 		editLocation = view.findViewById(R.id.editLocation);
 		deliverLocationRightArrow = view.findViewById(R.id.iconCaretRight);
+		basketTotal = view.findViewById(R.id.basketTotal);
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (lastDeliveryLocation != null) {
 			setDeliveryLocation(lastDeliveryLocation);
@@ -421,8 +424,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
-			if (voucherDetails != null)
-				showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
+			updateBasketTotal();
 		} else {
 			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
@@ -985,6 +987,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				case REDEEM_VOUCHERS_REQUEST_CODE:
 					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
 					updateCart(convertResponseToCartResponseObject(shoppingCartResponse));
+					showVouchersAppliedToast();
 					break;
 				default:
 					break;
@@ -1184,8 +1187,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 			}
 		}
-		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate)
+		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
 			fadeCheckoutButton(false);
+			if (voucherDetails != null)
+				showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
+		}
 
 		if (itemsTobeRemovedFromCart.size() > 0) {
 			if (getActivity() != null && isAdded()) {
@@ -1246,6 +1252,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 			break;
 			case TAG_AVAILABLE_VOUCHERS_TOAST: {
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view);
 				navigateToAvailableVouchersPage();
 			}
 			break;
@@ -1354,6 +1361,18 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mToastUtils.build();
 	}
 
+	public void showVouchersAppliedToast() {
+		mToastUtils.setActivity(getActivity());
+		mToastUtils.setCurrentState(TAG);
+		mToastUtils.setCartText("");
+		mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
+		mToastUtils.setView(btnCheckOut);
+		mToastUtils.setMessage(getString(R.string.vouchers_applied_toast_message));
+		mToastUtils.setAllCapsUpperCase(true);
+		mToastUtils.setViewState(false);
+		mToastUtils.build();
+	}
+
 	@Override
 	public void onViewVouchers() {
 		navigateToAvailableVouchersPage();
@@ -1371,5 +1390,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		this.orderSummary = cartResponse.orderSummary;
 		this.voucherDetails = cartResponse.voucherDetails;
 		cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
+	}
+
+	@Override
+	public void updateBasketTotal() {
+		if (orderSummary != null) {
+			basketTotal.setText(WFormatter.formatAmount(orderSummary.basketTotal));
+		}
 	}
 }
