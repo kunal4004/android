@@ -2,6 +2,10 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
+
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
+
 /**
  * Created by w7099877 on 2018/02/28.
  */
@@ -20,4 +24,8 @@ public class Data {
 	public GlobalMessages globalMessages;
 
 	public String jSessionId;
+
+	public VoucherDetails voucherDetails;
+
+	public ArrayList<String> messages;
 }

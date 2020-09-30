@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
@@ -34,6 +35,8 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
@@ -70,6 +73,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         void totalItemInBasket(int total);
 
         void onOpenProductDetail(CommerceItem commerceItem);
+
+        void onViewVouchers();
     }
 
     private OnItemClick onItemClick;
@@ -79,12 +84,14 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     private ArrayList<CartItemGroup> cartItems;
     private OrderSummary orderSummary;
     private Activity mContext;
+    private VoucherDetails voucherDetails;
 
-    public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context) {
+    public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context, VoucherDetails voucherDetails) {
         this.cartItems = cartItems;
         this.onItemClick = onItemClick;
         this.orderSummary = orderSummary;
         this.mContext = context;
+        this.voucherDetails = voucherDetails;
     }
 
     @Override
@@ -245,6 +252,27 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 } else {
                     priceHolder.orderSummeryLayout.setVisibility(View.GONE);
                 }
+
+                priceHolder.viewVouchers.setOnClickListener(v -> onItemClick.onViewVouchers());
+                int activeVouchersCount = voucherDetails.getActiveVouchersCount();
+                if (activeVouchersCount > 0) {
+                    if (getAppliedVouchersCount() > 0) {
+                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
+                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                        priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
+                        priceHolder.viewVouchers.setEnabled(true);
+                    } else {
+                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
+                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                        priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                        priceHolder.viewVouchers.setEnabled(true);
+                    }
+                } else {
+                    priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
+                    priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                    priceHolder.viewVouchers.setEnabled(false);
+                }
+
 
                 break;
 
@@ -443,6 +471,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 txtPriceWRewardsSavings, txtPriceTotal;
         private LinearLayout orderSummeryLayout;
         private RelativeLayout rlOtherDiscount, rlCompanyDiscount;
+        private TextView availableVouchersCount,viewVouchers;
 
 
         public CartPricesViewHolder(View view) {
@@ -454,6 +483,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             orderSummeryLayout = view.findViewById(R.id.orderSummeryLayout);
             rlOtherDiscount = view.findViewById(R.id.rlOtherDiscount);
             rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
+            availableVouchersCount = view.findViewById(R.id.availableVouchersCount);
+            viewVouchers = view.findViewById(R.id.viewVouchers);
         }
     }
 
@@ -481,9 +512,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     public void notifyAdapter(ArrayList<CartItemGroup> cartItems,
-                              OrderSummary orderSummary) {
+                              OrderSummary orderSummary, VoucherDetails voucherDetails) {
         this.cartItems = cartItems;
         this.orderSummary = orderSummary;
+        this.voucherDetails = voucherDetails;
         resetQuantityState(false);
         notifyDataSetChanged();
     }
@@ -578,5 +610,14 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
     public ArrayList<CartItemGroup> getCartItems() {
         return cartItems;
+    }
+
+    public int getAppliedVouchersCount() {
+        int count = 0;
+        for (Voucher voucher : voucherDetails.getVouchers()) {
+            if (voucher.getVoucherApplied())
+                count++;
+        }
+        return count;
     }
 }

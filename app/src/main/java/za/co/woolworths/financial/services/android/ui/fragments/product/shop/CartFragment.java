@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -152,6 +153,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private WTextView editLocation;
 	private final String TAG_AVAILABLE_VOUCHERS_TOAST ="AVAILABLE_VOUCHERS";
 	private final String TAG_ADDED_TO_LIST_TOAST ="ADDED_TO_LIST";
+	private VoucherDetails voucherDetails;
+	public static final int REDEEM_VOUCHERS_REQUEST_CODE = 1979;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -411,12 +414,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
-			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
+			voucherDetails = cartResponse.voucherDetails;
+			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
+			if (voucherDetails != null)
+				showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
 		} else {
 			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
@@ -435,6 +441,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.orderSummary = cartResponse.orderSummary;
+		this.voucherDetails = cartResponse.voucherDetails;
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
 			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
@@ -456,7 +463,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartItems.remove(cartItemGroup);
 			}
 
-			cartProductAdapter.notifyAdapter(cartItems, orderSummary);
+			cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
 		} else {
 
 			cartProductAdapter.clear();
@@ -499,7 +506,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					}
 				}
 				orderSummary = cartResponse.orderSummary;
-				cartProductAdapter.notifyAdapter(cartItems, orderSummary);
+				voucherDetails = cartResponse.voucherDetails;
+				cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
 			}else {
 				ArrayList<CartItemGroup> currentCartItemGroup = cartProductAdapter.getCartItems();
 				for (CartItemGroup cartItemGroup : currentCartItemGroup) {
@@ -526,7 +534,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 				if (shouldEnableCheckOutAndEditButton) {
 					orderSummary = cartResponse.orderSummary;
-					cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary);
+					voucherDetails = cartResponse.voucherDetails;
+					cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails);
 					fadeCheckoutButton(false);
 				}
 			}
@@ -820,6 +829,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.httpCode = response.httpCode;
 			Data data = response.data[0];
 			cartResponse.orderSummary = data.orderSummary;
+			cartResponse.voucherDetails = data.voucherDetails;
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Province province = new Province();
@@ -971,6 +981,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				case PDP_REQUEST_CODE:
 				case REQUEST_SUBURB_CHANGE:
                     loadShoppingCartAndSetDeliveryLocation();
+					break;
+				case REDEEM_VOUCHERS_REQUEST_CODE:
+					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
+					updateCart(convertResponseToCartResponseObject(shoppingCartResponse));
 					break;
 				default:
 					break;
@@ -1232,8 +1246,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 			break;
 			case TAG_AVAILABLE_VOUCHERS_TOAST: {
-				Intent openCheckOutActivity = new Intent(getContext(), AvailableVouchersToRedeemInCart.class);
-				startActivity(openCheckOutActivity);
+				navigateToAvailableVouchersPage();
 			}
 			break;
 			default:
@@ -1328,6 +1341,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void showAvailableVouchersToast(int availableVouchersCount) {
+		if (availableVouchersCount < 1)
+			return;
 		mToastUtils.setActivity(getActivity());
 		mToastUtils.setCurrentState(TAG_AVAILABLE_VOUCHERS_TOAST);
 		mToastUtils.setCartText(getString(R.string.available));
@@ -1339,4 +1354,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mToastUtils.build();
 	}
 
+	@Override
+	public void onViewVouchers() {
+		navigateToAvailableVouchersPage();
+	}
+
+	void navigateToAvailableVouchersPage() {
+		Intent intent = new Intent(getContext(), AvailableVouchersToRedeemInCart.class);
+		intent.putExtra("VoucherDetails", Utils
+				.toJson(voucherDetails));
+		startActivityForResult(intent
+				, REDEEM_VOUCHERS_REQUEST_CODE);
+	}
+
+	void updateCart(CartResponse cartResponse) {
+		this.orderSummary = cartResponse.orderSummary;
+		this.voucherDetails = cartResponse.voucherDetails;
+		cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
+	}
 }

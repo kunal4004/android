@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.JsonElement;
 
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.DiscountDetails;
+
 /**
  * Created by W7099877 on 2018/02/08.
  */
@@ -19,6 +21,7 @@ public class OrderSummary {
 	public String state;
 	public String submittedDate;
 	public JsonElement deliveryDates;
+	public DiscountDetails discountDetails;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;

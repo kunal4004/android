@@ -19,6 +19,8 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.SelectedVoucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
 import za.co.woolworths.financial.services.android.util.Utils
 
 object OneAppService : RetrofitConfig() {
@@ -352,5 +354,9 @@ object OneAppService : RetrofitConfig() {
 
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {
         return mApiInterface.validateSelectedSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), suburbId, isStore)
+    }
+
+    fun applyVouchers(vouchers: List<SelectedVoucher>): Call<ShoppingCartResponse> {
+        return mApiInterface.applyVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), vouchers)
     }
 }

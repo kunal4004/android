@@ -6,7 +6,7 @@
     android:background="@color/white">
 
     <RelativeLayout
-        android:id="@+id/inEnvelope"
+        android:id="@+id/rlAvailableVouchers"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
         android:padding="0dp"
@@ -21,20 +21,22 @@
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/black_background_with_corner_5"
+            android:background="@drawable/view_button_drawble_state"
             android:gravity="center"
             android:letterSpacing="0.1"
             android:text="@string/view"
             android:textAllCaps="true" />
 
         <TextView
-            style="@style/card_item_regular_text_style"
+            android:id="@+id/availableVouchersCount"
+            style="@style/futura_semi_bold_black_12_text_style"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/sixteen_dp"
             android:layout_toStartOf="@+id/viewVouchers"
-            android:text="3 vouchers available"
-            android:textAllCaps="true"
-            android:textColor="@color/account_amount_color" />
+            android:letterSpacing=".15"
+            android:textAllCaps="true" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -42,6 +44,7 @@
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
         android:padding="0dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/inEnvelope">

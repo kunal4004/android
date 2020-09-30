@@ -1570,6 +1570,14 @@
     <string name="enter_promo_code_hint">Enter promo code</string>
     <string name="available_voucher_toast_message">\u0020voucher</string>
     <string name="available_vouchers_toast_message">\u0020vouchers</string>
-    <string name="available">available</string>
+    <string name="available">\u0020available</string>
+    <string name="available_vouchers">available vouchers</string>
+    <string name="redeeming_your_vouchers">Redeeming Your Vouchers</string>
+    <string name="redeem">Redeem</string>
+    <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>
+    <string name="no_vouchers_available">NO VOUCHERS AVAILABLE</string>
+    <string name="applied">\u0020Applied</string>
+    <string name="available_vouchers_title">Select the vouchers that you\'d like to redeem.</string>
+    <string name="available_vouchers_sub_title"><b>Note:</b> Vouchers can\'t be used in conjunction with other offers or promotions.</string>
 </resources>
 

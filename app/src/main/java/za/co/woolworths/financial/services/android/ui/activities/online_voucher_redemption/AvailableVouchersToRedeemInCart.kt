@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.cart_available_vouchers_to_redeem.*
-import kotlinx.android.synthetic.main.credit_card_activation_activity.toolbar
-import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchersToRedeemListAdapter
+import kotlinx.android.synthetic.main.credit_card_activation_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AvailableVouchersToRedeemInCart : AppCompatActivity() {
@@ -20,15 +18,9 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
         setContentView(R.layout.cart_available_vouchers_to_redeem)
         Utils.updateStatusBarBackground(this)
         actionBar()
-        loadVouchersList()
+        loadNavHostFragment()
     }
 
-    private fun loadVouchersList() {
-        rcvVoucherList?.apply {
-            layoutManager = LinearLayoutManager(this@AvailableVouchersToRedeemInCart)
-            adapter = AvailableVouchersToRedeemListAdapter()
-        }
-    }
 
     private fun actionBar() {
         setSupportActionBar(toolbar)
@@ -54,5 +46,12 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
         setResult(Activity.RESULT_CANCELED)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+
+    private fun loadNavHostFragment() {
+        findNavController(R.id.nav_host_fragment)
+                .setGraph(
+                        R.navigation.voucher_redmeeption_nav_graph)
     }
 }
