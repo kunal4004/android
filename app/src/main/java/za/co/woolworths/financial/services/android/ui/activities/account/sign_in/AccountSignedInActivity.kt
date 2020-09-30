@@ -213,5 +213,4 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     override fun showChatBubble() {
         showChatToCollectionAgent()
     }
-
 }
