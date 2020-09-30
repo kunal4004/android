@@ -64,7 +64,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String): Call<LocationResponse> {
-           return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
+        return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
     }
 
     fun getStoresForNPC(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, npc: Boolean): Call<LocationResponse> {
@@ -350,7 +350,8 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
-        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
+        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName
+                ?: "", appScreen ?: "")
     }
 
     fun queryServicePayUMethod(): Call<PaymentMethodsResponse> {
@@ -362,7 +363,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun queryServicePaymentResult(request: PayUPayResultRequest): Call<PayUPayResultResponse> {
-        return mApiInterface.getPaymentPayUResult(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), request.customer, request.payment_id, request.charge_id, request.status)
+        return mApiInterface.getPaymentPayUResult(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), request.customer, request.payment_id, request.charge_id, request.status, request.productOfferingID)
     }
 
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {

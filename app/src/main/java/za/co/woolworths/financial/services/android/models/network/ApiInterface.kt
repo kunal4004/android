@@ -1311,7 +1311,8 @@ interface ApiInterface {
             @Query("customer") customer: String,
             @Query("payment_id") payment_id: String,
             @Query("charge_id") charge_id: String,
-            @Query("status") status: String): Call<PayUPayResultResponse>
+            @Query("status") status: String,
+            @Query("productOfferingId") productOfferingID: String): Call<PayUPayResultResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

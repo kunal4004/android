@@ -164,4 +164,8 @@ class PayMyAccountViewModel : ViewModel() {
         val account = getCardDetail()?.account?.second
         return account?.productGroupCode ?: ""
     }
+
+    fun getProductOfferingId(): Int? {
+        return getCardDetail()?.account?.second?.productOfferingId
+    }
 }
