@@ -28,11 +28,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getListOfTransaction
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
@@ -181,7 +178,8 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
-        Utils.triggerFireBaseEvents(if (Utils.isOperatingHoursForInAppChat()) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
+        val tradingHours = WoolworthsApplication.getPresenceInAppChat().customerService.tradingHours
+        Utils.triggerFireBaseEvents(if (KotlinUtils.isOperatingHoursForInAppChat(tradingHours) == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
         ChatCustomerServiceBubbleView(
                 activity = this@WTransactionsActivity,
                 chatCustomerServiceBubbleVisibility = ChatCustomerServiceBubbleVisibility(accountList),

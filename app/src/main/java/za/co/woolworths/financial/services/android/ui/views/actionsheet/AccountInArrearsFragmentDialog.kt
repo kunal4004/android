@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,10 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.*
+import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -19,6 +22,14 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
 
     private var mAccountCards: Pair<ApplyNowState, Account>? = null
 
+    private var showChatBubbleInterface: IShowChatBubble? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is AccountSignedInActivity)
+            showChatBubbleInterface = context
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.account_in_arrears_fragment_dialog, container, false)
     }
@@ -26,13 +37,10 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val accountInStringFormat =
-                arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        mAccountCards =
-                Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        val accountInStringFormat = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
+        mAccountCards = Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
 
-        accountInArrearsDescriptionTextView?.text =
-                mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
+        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.totalAmountDue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_options_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
 
         paymentOptionButton?.setOnClickListener(this)
         gotITButton?.setOnClickListener(this)
@@ -46,5 +54,10 @@ class AccountInArrearsFragmentDialog : WBottomSheetDialogFragment(), View.OnClic
                 dismiss()
             }
         }
+    }
+
+    override fun onDestroy() {
+        showChatBubbleInterface?.showChatBubble()
+        super.onDestroy()
     }
 }

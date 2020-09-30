@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -60,9 +61,9 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.chatWithUsButton -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    (activity as? WChatActivity)?.shouldDismissChatNavigationModel  = true
+                    (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
-                    KotlinUtils.postOneAppEvent(appScreen ?: "",featureName ?: "")
+                    KotlinUtils.postOneAppEvent(appScreen ?: "", featureName ?: "")
                     Utils.openBrowserWithUrl(WhatsAppChatToUsVisibility().whatsAppChatWithUsUrlBreakout)
                 } else {
                     ErrorHandlerView(activity).showToast()

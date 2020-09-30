@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -34,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.SESSION_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -101,9 +101,25 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
     }
 
     private fun showChatIcon() {
-        floatingActionButton?.visibility = when (applyNowState) {
-            ApplyNowState.ACCOUNT_LANDING -> if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountLanding() == true) VISIBLE else GONE
-            ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountDetailProduct(applyNowState) == true) VISIBLE else GONE
+        floatingActionButton?.visibility = when (activity) {
+            // PaymentOptionActivity:: Show to all Customer
+            is PaymentOptionActivity -> VISIBLE
+
+            // show to all CC customers
+            is WTransactionsActivity -> {
+                when (applyNowState) {
+                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> VISIBLE
+                    else -> GONE
+                }
+            }
+            else -> {
+                when (applyNowState) {
+                    // Account Landing: show only to Customer in arrears
+                    ApplyNowState.ACCOUNT_LANDING -> if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountLanding() == true) VISIBLE else GONE
+                    // Product Landing Page: show only to Personal Loan and Store Card and CC in arrears
+                    ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountDetailProduct(applyNowState) == true) VISIBLE else GONE
+                }
+            }
         }
     }
 
@@ -160,12 +176,20 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
 
     private fun floatingActionButtonEvent() {
         activity?.apply {
-            Log.e("floatingActionButton", Gson().toJson(getSessionType()))
             val chatAccountProductLandingPage = if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatCustomerServiceBubbleVisibility.getAccountInProductLandingPage() else chatCustomerServiceBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
+
+            val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
+
+            val tradingHours = when (this) {
+                is BottomNavigationActivity, is AccountSignedInActivity, is PaymentOptionActivity -> presenceInChat?.collections?.tradingHours
+                is WTransactionsActivity -> presenceInChat?.customerService?.tradingHours
+                else -> presenceInChat?.customerService?.tradingHours
+            }
+
             floatingActionButton?.setOnClickListener {
                 val initChatDetails = chatCustomerServiceBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
-                Utils.triggerFireBaseEvents(if (Utils.isOperatingHoursForInAppChat()) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
+                Utils.triggerFireBaseEvents(if (tradingHours?.let { hours -> KotlinUtils.isOperatingHoursForInAppChat(hours) } == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
                 val intent = Intent(this, WChatActivity::class.java)
                 intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
                 intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)

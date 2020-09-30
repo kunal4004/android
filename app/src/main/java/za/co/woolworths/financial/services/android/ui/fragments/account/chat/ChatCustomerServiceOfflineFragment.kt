@@ -14,12 +14,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.android.synthetic.main.chat_to_collection_agent_offline_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -40,6 +40,7 @@ class ChatCustomerServiceOfflineFragment : Fragment() {
 
     private var featureName: String? = null
     private var appScreen: String? = null
+    private val chatViewModel: ChatCustomerServiceViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,15 +65,10 @@ class ChatCustomerServiceOfflineFragment : Fragment() {
         val chatCollectionsAgent = ChatCustomerServiceBubbleVisibility()
         hiClientTextView?.text = "Hi ${chatCollectionsAgent.getUsername()},"
 
-        val presenceInAppChat = WoolworthsApplication.getPresenceInAppChat()
-        val collections = presenceInAppChat.collections
-        val emailAddress = collections.emailAddress
-
-        var offlineMessageTemplate = collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
-        offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
-        val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
-        spannableOfflineMessageTemplate.setSpan(spanOfflineMessageTemplate, spannableOfflineMessageTemplate.indexOf(emailAddress), spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        chatCollectionDescriptionTextView?.text = spannableOfflineMessageTemplate
+        chatCollectionDescriptionTextView?.text = chatViewModel.offlineMessageTemplate { result ->
+            KotlinUtils.sendEmail(activity, result.first, result.second, result.third)
+            (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
+        }
 
         val currentTime: String? = SimpleDateFormat("hh : mm a", Locale.getDefault()).format(Calendar.getInstance().time)
         timeTextView?.text = currentTime
@@ -123,22 +119,6 @@ class ChatCustomerServiceOfflineFragment : Fragment() {
 
         }
         return true
-    }
-
-    private var spanOfflineMessageTemplate: ClickableSpan = object : ClickableSpan() {
-        override fun updateDrawState(ds: TextPaint) {
-            ds.color = Color.WHITE
-            ds.isUnderlineText = true
-        }
-
-        override fun onClick(textView: View) {
-            val presenceInAppChat = WoolworthsApplication.getPresenceInAppChat()
-            val emailAddress = presenceInAppChat.collections.emailAddress
-            val emailSubjectLine = presenceInAppChat.collections.emailSubjectLine
-            val emailMessage = presenceInAppChat.collections.emailMessage
-            KotlinUtils.sendEmail(activity, emailAddress, emailSubjectLine, emailMessage)
-            (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
-        }
     }
 
     private var tapWhatsAppTemplate: ClickableSpan = object : ClickableSpan() {

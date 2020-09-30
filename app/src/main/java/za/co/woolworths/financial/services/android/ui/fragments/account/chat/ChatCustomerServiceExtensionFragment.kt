@@ -29,20 +29,6 @@ open class ChatCustomerServiceExtensionFragment : Fragment() {
         const val ACCOUNTS = "accounts"
         const val SESSION_TYPE = "SESSION_TYPE"
         const val CHAT_TO_COLLECTION_AGENT = "CHAT_TO_COLLECTION_AGENT"
-
-        fun getInAppTradingHoursForToday(): TradingHours {
-
-            var tradingHoursForToday: TradingHours? = null
-            WoolworthsApplication.getPresenceInAppChat()?.tradingHours?.let {
-                it.forEach { tradingHours ->
-                    if (tradingHours.day.equals(Utils.getCurrentDay(), true)) {
-                        tradingHoursForToday = tradingHours
-                        return tradingHours
-                    }
-                }
-            }
-            return tradingHoursForToday ?: TradingHours("sunday", "00:00", "00:00")
-        }
     }
 
     fun updateMessageList(message: ChatMessage) {

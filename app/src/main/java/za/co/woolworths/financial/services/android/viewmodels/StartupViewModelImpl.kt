@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.Collections
+import za.co.woolworths.financial.services.android.models.dto.chat.CustomerService
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -148,7 +149,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             var presenceInAppChat: PresenceInAppChat? = presenceInAppChat
             if (presenceInAppChat == null) {
-                presenceInAppChat = PresenceInAppChat(ArrayList(), "", null,false, Collections("", "", "", ""))
+                presenceInAppChat = PresenceInAppChat(ArrayList(), "", null, false, Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()))
             } else {
                 presenceInAppChat.isEnabled =
                         Utils.isFeatureEnabled(presenceInAppChat.minimumSupportedAppBuildNumber)

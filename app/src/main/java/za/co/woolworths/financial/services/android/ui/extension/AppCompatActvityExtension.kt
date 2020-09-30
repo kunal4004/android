@@ -3,6 +3,7 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 
+import android.app.Activity
 import android.content.Context.INPUT_METHOD_SERVICE
 
 import android.os.CountDownTimer
@@ -15,7 +16,11 @@ import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavOptions
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -223,7 +228,7 @@ fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
 
-fun Any.navOptions()  = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
+fun Any.navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
         .setExitAnim(R.anim.slide_out_to_left)
         .setPopEnterAnim(R.anim.slide_from_left)
         .setPopExitAnim(R.anim.slide_to_right).build()

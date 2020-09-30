@@ -1388,9 +1388,8 @@ public class Utils {
 		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
 	}
 
-	public static Boolean isOperatingHoursForInAppChat() {
+	public static Boolean isOperatingHoursForInAppChat(TradingHours tradingHours) {
 
-		TradingHours tradingHours = ChatCustomerServiceExtensionFragment.Companion.getInAppTradingHoursForToday();
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
 		int minute = now.get(Calendar.MINUTE);

@@ -1,13 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.style.ClickableSpan
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class ChatCustomerServiceViewModel : ViewModel() {
 
@@ -54,7 +63,7 @@ class ChatCustomerServiceViewModel : ViewModel() {
         sessionType.value = type
     }
 
-    private fun getSessionType(): SessionType {
+    fun getSessionType(): SessionType {
         return sessionType.value ?: SessionType.Collections
     }
 
@@ -98,5 +107,74 @@ class ChatCustomerServiceViewModel : ViewModel() {
         customerServiceAWSAmplify?.queryServiceSignOut(getConversationMessageId(), SessionType.Collections, SessionStateType.DISCONNECT, "", { result() }, {
             error()
         })
+    }
+
+
+    private fun getTradingHours(): MutableList<TradingHours>? {
+        return when (getSessionType()) {
+            SessionType.Collections -> WoolworthsApplication.getPresenceInAppChat()?.collections?.tradingHours
+            SessionType.CustomerService -> WoolworthsApplication.getPresenceInAppChat()?.customerService?.tradingHours
+            else -> WoolworthsApplication.getPresenceInAppChat().tradingHours
+        }
+    }
+
+    fun isOperatingHoursForInAppChat(): Boolean? {
+        return getTradingHours()?.let { KotlinUtils.isOperatingHoursForInAppChat(it) } ?: false
+    }
+
+    fun getInAppTradingHoursForToday(): TradingHours? {
+        return getTradingHours()?.let { KotlinUtils.getInAppTradingHoursForToday(it) }
+    }
+
+    fun offlineMessageTemplate(onClick: (Triple<String, String, String>) -> Unit): SpannableString {
+        val presenceInAppChat = WoolworthsApplication.getPresenceInAppChat()
+        return when (getSessionType()) {
+            SessionType.Collections, SessionType.Fraud -> {
+                val collections = presenceInAppChat.collections
+                val emailAddress = collections.emailAddress
+
+                var offlineMessageTemplate = collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
+                spannableOfflineMessageTemplate.setSpan(object : ClickableSpan() {
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.color = Color.WHITE
+                        ds.isUnderlineText = true
+                    }
+
+                    override fun onClick(textView: View) {
+                        val emailSubjectLine = collections.emailSubjectLine
+                        val emailMessage = collections.emailMessage
+                        onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
+                    }
+                }, spannableOfflineMessageTemplate.indexOf(emailAddress), spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+
+                return spannableOfflineMessageTemplate
+            }
+
+            SessionType.CustomerService -> {
+                val customerService = presenceInAppChat.customerService
+                val emailAddress = customerService.emailAddress
+
+                var offlineMessageTemplate = customerService.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
+                spannableOfflineMessageTemplate.setSpan(object : ClickableSpan() {
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.color = Color.WHITE
+                        ds.isUnderlineText = true
+                    }
+
+                    override fun onClick(textView: View) {
+                        val emailSubjectLine = customerService.emailSubjectLine
+                        val emailMessage = customerService.emailMessage
+                        onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
+                    }
+                }, spannableOfflineMessageTemplate.indexOf(emailAddress), spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                return spannableOfflineMessageTemplate
+            }
+        }
     }
 }

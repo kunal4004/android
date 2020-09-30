@@ -5,7 +5,6 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -15,7 +14,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -23,8 +21,6 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
-import za.co.woolworths.financial.services.android.util.Utils
-
 
 class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -35,6 +31,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
         arguments?.apply {
             appScreen = getString(APP_SCREEN, ChatCustomerServiceFragment::class.java.simpleName)
         }
@@ -46,18 +43,16 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        chatViewModel.initAmplify()
-        chatViewModel.isCustomerSignOut.observe(viewLifecycleOwner) { shouldSignOut ->
-            when (shouldSignOut) {
-                true -> {
-                    chatViewModel.signOut({
-                        activity?.apply {
-                            finish()
-                            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                        }
-                    }, {
-                        showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
-                    })
+        with(chatViewModel) {
+            initAmplify()
+            isCustomerSignOut.observe(viewLifecycleOwner) { shouldSignOut ->
+                when (shouldSignOut) {
+                    true -> {
+                        signOut({ closeChat() }, {
+                            closeChat()
+                            showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
+                        })
+                    }
                 }
             }
         }
@@ -65,12 +60,21 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         initView()
     }
 
+    private fun closeChat() {
+        activity?.apply {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        }
+    }
+
     private fun initView() {
         setupRecyclerview()
         inputListener()
-        enableChatButton(false)
+        isChatButtonEnabled(false)
         onClickListener()
-        setAgentAvailableState(Utils.isOperatingHoursForInAppChat())
+//        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
+        setAgentAvailableState(true)
+
     }
 
     private fun onClickListener() {
@@ -82,24 +86,29 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         with(chatViewModel) {
             signIn({
                 subscribeToMessageByConversationId({ result ->
-                    Log.e("resultSubs", Gson().toJson(result))
                     activity?.runOnUiThread {
                         when (result?.sessionState) {
 
                             SessionStateType.CONNECT -> {
                                 chatLoaderProgressBar?.visibility = GONE
-                                enableChatButton(false)
+                                isChatButtonEnabled(false)
                             }
 
                             SessionStateType.ONLINE -> {
                                 chatLoaderProgressBar?.visibility = GONE
                                 showAgentsMessage(result.content)
-                                enableChatButton(true)
+                                isChatButtonEnabled(true)
+                            }
+
+                            SessionStateType.QUEUEING -> {
+                                chatLoaderProgressBar?.visibility = GONE
+                                showAgentsMessage(result.content)
+                                isChatButtonEnabled(false)
                             }
 
                             SessionStateType.DISCONNECT -> {
                                 chatLoaderProgressBar?.visibility = GONE
-                                enableChatButton(false)
+                                isChatButtonEnabled(false)
                             }
 
                             else -> {
@@ -132,7 +141,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         })
     }
 
-    private fun enableChatButton(isEnabled: Boolean) {
+    private fun isChatButtonEnabled(isEnabled: Boolean) {
         (activity as? WChatActivity)?.setChatState(isEnabled)
         edittext_chatbox?.isEnabled = isEnabled
         button_send?.isEnabled = isEnabled
@@ -185,7 +194,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
                 isOnline.apply {
                     activity?.offlineBanner?.visibility = if (this) GONE else VISIBLE
                     if (!this) edittext_chatbox?.text?.clear()
-                    showAgentsMessage(if (this) "Hi " + chatViewModel.getAmplify()?.getCustomerUsername() + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + getInAppTradingHoursForToday().opens + " and " + getInAppTradingHoursForToday().closes + ".")
+                    showAgentsMessage(if (this) "Hi " + chatViewModel.getAmplify()?.getCustomerUsername() + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + chatViewModel.getInAppTradingHoursForToday()?.opens + " and " + chatViewModel.getInAppTradingHoursForToday()?.closes + ".")
                 }
             }
         }

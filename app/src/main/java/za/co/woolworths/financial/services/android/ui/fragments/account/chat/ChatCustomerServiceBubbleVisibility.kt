@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -24,9 +25,7 @@ class ChatCustomerServiceBubbleVisibility(private var accountList: List<Account>
 
     // config.presenceInAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
     private val isPresenceInAppChatEnabled: Boolean
-        //        get() = WoolworthsApplication.getPresenceInAppChat().isEnabled ?: false
-        get() = true
-
+        get() = WoolworthsApplication.getPresenceInAppChat().isEnabled ?: false
 
     /**
      * In Accounts Landing: Loop through all the Products returned with the Accounts Response.

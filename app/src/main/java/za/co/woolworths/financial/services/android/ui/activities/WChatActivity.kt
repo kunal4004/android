@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceOfflineFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
@@ -79,7 +80,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         when (chatScreenType) {
             ChatType.AGENT_COLLECT -> {
                 chatScreenType = ChatType.AGENT_COLLECT
-                if (Utils.isOperatingHoursForInAppChat()) {
+                if (chatViewModel.isOperatingHoursForInAppChat() == true) {
                     chatNavGraph?.startDestination = R.id.chatFragment
                 } else {
                     bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
@@ -139,16 +140,15 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
 
     override fun onBackPressed() {
         when (currentFragment) {
+            is WhatsAppChatToUsFragment -> chatNavHostController?.popBackStack()
+
             is ChatCustomerServiceOfflineFragment -> {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
             else -> {
                 when (chatNavHostController?.graph?.startDestination) {
-                    R.id.chatToUsWhatsAppFragment -> {
-                        finish()
-                        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                    }
+
                     R.id.chatFragment -> {
                         endSessionPopup()
                     }

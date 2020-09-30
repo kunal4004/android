@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.models.dto.chat
 
-import com.google.gson.annotations.SerializedName
-
-data class Collections(
-        @SerializedName("offlineMessageTemplate") val offlineMessageTemplate: String,
-        @SerializedName("emailAddress") val emailAddress: String,
-        @SerializedName("emailSubjectLine") val emailSubjectLine: String,
-        @SerializedName("emailMessage") val emailMessage: String
+data class Collections (
+	val offlineMessageTemplate : String,
+	val emailAddress : String,
+	val emailSubjectLine : String,
+	val emailMessage : String,
+	val tradingHours : MutableList<TradingHours>,
+	var isEnabled: Boolean? = false
 )

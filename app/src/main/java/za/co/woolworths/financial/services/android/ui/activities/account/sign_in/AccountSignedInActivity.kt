@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -13,7 +12,6 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -23,18 +21,18 @@ import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
+import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountInArrearsFragmentDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, IBottomSheetBehaviourPeekHeightListener, View.OnClickListener {
+class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, IBottomSheetBehaviourPeekHeightListener, View.OnClickListener, IShowChatBubble {
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
@@ -71,6 +69,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
+
     }
 
     private fun setToolbarTopMargin() {
@@ -172,6 +171,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
         val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+
         availableFundsNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
     }
 
@@ -185,21 +185,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         runOnUiThread {
             mPeekHeight = pixel
             configureBottomSheetDialog()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        when (currentFragment) {
-            is AccountInArrearsFragmentDialog -> {
-                Log.e("currentFragment", "AccountInArrearsFragmentDialog")
-            }
-            else -> {
-                Log.e("currentFragment", "currentFragment")
-                if (!mAccountSignedInPresenter?.isAccountInArrearsState!!)
-                    showChatToCollectionAgent()
-            }
         }
     }
 
@@ -225,7 +210,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         }
     }
 
-    val currentFragment: Fragment?
-        get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.chatNavHost)
+    override fun showChatBubble() {
+        showChatToCollectionAgent()
+    }
 
 }

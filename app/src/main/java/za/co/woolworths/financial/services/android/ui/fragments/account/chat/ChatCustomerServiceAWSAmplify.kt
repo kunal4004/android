@@ -14,6 +14,7 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.Amplify.API
 import com.amplifyframework.core.Amplify.Auth
 import com.amplifyframework.core.AmplifyConfiguration
+import com.amplifyframework.devmenu.DeveloperMenu
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import com.awfs.coordination.R
@@ -41,6 +42,7 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.addPlugin(AWSApiPlugin())
             Amplify.configure(awsConfiguration, context)
+            DeveloperMenu.singletonInstance(context).setVisible(false)
         } catch (ex: Exception) {
             Crashlytics.log(ex.message)
         }
@@ -114,6 +116,7 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null) {
         when (sessionState) {
             SessionStateType.ONLINE, SessionStateType.CONNECT, SessionStateType.DISCONNECT -> {
                 val sessionVars = getSessionVars()
+                Log.e("prsAccountNumber", sessionVars)
                 Log.e("sesisonVars", getSessionVars())
                 variables["sessionVars"] = sessionVars
                 variables["name"] = getCustomerUsername()

@@ -7,9 +7,10 @@ import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenRes
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
 
-class AvailableFundsModelImpl : IAvailableFundsContract.AvailableFundsModel  {
+class AvailableFundsModelImpl : IAvailableFundsContract.AvailableFundsModel {
 
     override fun queryABSAServiceGetUserCreditCardToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>? {
         return request(OneAppService.getCreditCardToken(), requestListener)
     }
+
 }

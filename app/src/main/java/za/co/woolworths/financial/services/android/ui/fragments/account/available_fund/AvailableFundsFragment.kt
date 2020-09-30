@@ -20,7 +20,6 @@ import za.co.woolworths.financial.services.android.contracts.IAvailableFundsCont
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -76,6 +75,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
         }
     }
+
 
     override fun setPushViewDownAnimation(view: View) {
         AnimationUtilExtension.animateViewPushDown(view)
@@ -133,8 +133,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
-            val openABSAOnlineBanking =
-                    Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
+            val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
             openABSAOnlineBanking.putExtra(ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN, isRegistered)
             openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber)
             startActivityForResult(openABSAOnlineBanking, ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
