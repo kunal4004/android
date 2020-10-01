@@ -85,7 +85,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
                 val dm = DisplayMetrics()
                 windowManager.defaultDisplay.getMetrics(dm)
 
-                val dialogPosition = dm.heightPixels.div(if (applyNowState == ApplyNowState.ACCOUNT_LANDING) 5f else 7.8f)
+                val dialogPosition = dm.heightPixels.div(if (applyNowState == ApplyNowState.ACCOUNT_LANDING) 3.9f else 6.2f)
 
                 val windowManagerLayoutParams: WindowManager.LayoutParams = attributes
                 windowManagerLayoutParams.y = dialogPosition.toInt()

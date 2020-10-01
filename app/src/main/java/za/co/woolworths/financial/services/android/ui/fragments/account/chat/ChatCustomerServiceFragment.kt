@@ -17,15 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import java.net.ConnectException
 
 class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -62,7 +58,6 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
                             showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
                         })
                     }
-
                 }
             }
         }
@@ -79,12 +74,9 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
 
     private fun initView() {
         setupRecyclerview()
-        inputListener()
         isChatButtonEnabled(false)
         onClickListener()
-      //  setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
-        setAgentAvailableState(true)
-
+        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
     }
 
     private fun onClickListener() {
@@ -94,36 +86,10 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
     private fun getUserTokenAndSignIn() {
         chatLoaderProgressBar?.visibility = VISIBLE
         with(chatViewModel) {
-            val absaCardToken = getAmplify()?.getABSACardToken()
+            var absaCardToken = getAmplify()?.getABSACardToken()
             if (absaCardToken.isNullOrEmpty()) {
-                getCreditCardToken({ result ->
-                    when (result?.httpCode) {
-                        200 -> {
-                            val cards = result.cards
-                            if (cards.isNullOrEmpty()) {
-                                chatNavController?.navigate(R.id.retryErrorFragment)
-                            } else {
-                                chatViewModel.absaCardToken.value = cards
-                                amplifyListener()
-                            }
-                        }
-                        440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, result.response.stsParams, it) }
-
-                        else -> {
-                            chatNavController?.navigate(R.id.retryErrorFragment)
-                        }
-                    }
-                }, { error ->
-                    chatLoaderProgressBar?.visibility = GONE
-                    when (error) {
-                        is ConnectException -> {
-                            activity?.let { ErrorHandlerView(it).showToast() }
-                        }
-                        else -> {
-                            showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
-                        }
-                    }
-                })
+                // show retrieve ABSA card token retry screen
+                chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
             } else {
                 amplifyListener()
             }

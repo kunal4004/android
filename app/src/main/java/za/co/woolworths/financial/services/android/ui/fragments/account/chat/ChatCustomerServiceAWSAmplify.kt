@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
-import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
@@ -84,7 +83,6 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
                     sendMessage(conversationMessagesId, sessionType, SessionStateType.CONNECT, "")
                 },
                 { data ->
-                    Log.i("subscriptionLeg", Gson().toJson(data) ?: "")
                     result(data.data)
                 },
                 { onFailure -> failure(onFailure) },
@@ -177,6 +175,6 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
     }
 
     fun getABSACardToken(): String? {
-        return account?.cards?.get(0)?.absaCardToken ?: listOfCards?.get(0)?.absaCardToken
+       return account?.cards?.get(0)?.absaCardToken ?: listOfCards?.get(0)?.absaCardToken
     }
 }
