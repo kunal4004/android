@@ -746,7 +746,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 				break;
 			case R.id.creditReport:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
-				Utils.openBrowserWithUrl(WoolworthsApplication.getFaqLink());
+				Utils.openBrowserWithUrl(WoolworthsApplication.getTransUnionLink());
 				break;
 			default:
 				break;

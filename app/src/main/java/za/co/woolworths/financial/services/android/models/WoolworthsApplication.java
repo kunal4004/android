@@ -110,6 +110,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Sts stsValues;
 	private static CreditCardActivation creditCardActivation;
 	private static ClickAndCollect clickAndCollect;
+	private static String transUnionLink;
 
 	private Activity mCurrentActivity = null;
 
@@ -554,5 +555,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
 		WoolworthsApplication.clickAndCollect = clickAndCollect;
+	}
+
+	public static String getTransUnionLink() {
+		return transUnionLink;
+	}
+
+	public static void setTransUnionLink(String transUnionLink) {
+		WoolworthsApplication.transUnionLink = transUnionLink;
 	}
 }
