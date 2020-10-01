@@ -232,9 +232,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 if (payByDebitCardNowButtonShimmerLayout?.isShimmerStarted == true) return
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
-                val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
                 val payUMethodType = cardInfo?.payuMethodType
-                val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
                 val paymentMethod = Gson().toJson(cardInfo?.paymentMethodList)
                 payMyAccountPresenter?.setFirebaseEventForPayByCardNow()
 
@@ -242,12 +240,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.ERROR) -> {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
-                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) && isFeatureEnabled -> {
+                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
                         val account = payMyAccountPresenter?.getAccount() ?: Account()
                         val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account, true)
                         navController?.navigate(toEnterPaymentAmountDirection)
                     }
-                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> {
+                    (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
                         val account = Gson().toJson(payMyAccountPresenter?.getAccount()
                                 ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)

@@ -43,12 +43,12 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
-    private var itemToBeDeletedPosition: Int = 0
+    private var selectedProductPosition: Int = 0
     private var accountInfo: String? = null
     private var paymentMethod: String? = null
     private var mAccountDetails: Pair<ApplyNowState, Account>? = null
     private var manageCardAdapter: PMACardsAdapter? = null
-    private var mPaymentMethod: MutableList<GetPaymentMethod>? = null
+    private var mPaymentMethodList: MutableList<GetPaymentMethod>? = null
     private var navController: NavController? = null
     private var deletedPaymentMethod: GetPaymentMethod? = null
     private var root: View? = null
@@ -62,7 +62,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
             paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
             mAccountDetails = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
-            mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
+            mPaymentMethodList = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
         }
     }
 
@@ -94,7 +94,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                 PayMyAccountViewModel.OnBackNavigation.REMOVE -> {
                     // deleteRow(position)
                     GlobalScope.doAfterDelay(300) {
-                        removeCardProduct(itemToBeDeletedPosition)
+                        removeCardProduct(selectedProductPosition)
                     }
                 }
                 PayMyAccountViewModel.OnBackNavigation.ADD -> {
@@ -111,19 +111,19 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private fun configureRecyclerview() {
         // ensure first item is checked
-        val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethod?.filter { s -> s.isCardChecked }
+        val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethodList?.filter { s -> s.isCardChecked }
         if (isPaymentChecked?.isEmpty()!!) {
-            if (mPaymentMethod?.size ?: 0 > 0)
-                mPaymentMethod?.get(0)?.isCardChecked = true
+            if (mPaymentMethodList?.size ?: 0 > 0)
+                mPaymentMethodList?.get(0)?.isCardChecked = true
         } else {
-            mPaymentMethod = payMyAccountViewModel.getPaymentMethodList()
+            mPaymentMethodList = payMyAccountViewModel.getPaymentMethodList()
         }
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
-            manageCardAdapter = PMACardsAdapter(mPaymentMethod) { paymentMethod, position ->
-                itemToBeDeletedPosition = position
+            manageCardAdapter = PMACardsAdapter(mPaymentMethodList) { paymentMethod, position ->
+                selectedProductPosition = position
 
                 val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
 
@@ -158,6 +158,8 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.useThisCardButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
+                cardDetail?.selectedCardPosition = selectedProductPosition
+
                 cardDetail?.paymentMethodList = manageCardAdapter?.getList()
                 payMyAccountViewModel.setPMACardInfo(cardDetail)
                 activity?.apply {
@@ -187,7 +189,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
             //Disable swipe if card is expired
             val position = viewHolder.adapterPosition
-            val swipedProduct = mPaymentMethod?.get(position)
+            val swipedProduct = mPaymentMethodList?.get(position)
             if (swipedProduct?.cardExpired == true) return 0
             return super.getSwipeDirs(recyclerView, viewHolder)
         }
@@ -220,25 +222,28 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     }
 
     private fun removeCardProduct(position: Int) {
-        deletedPaymentMethod = mPaymentMethod?.get(position)
-        mPaymentMethod?.removeAt(position)
+        deletedPaymentMethod = mPaymentMethodList?.get(position)
+        mPaymentMethodList?.removeAt(position)
         manageCardAdapter?.notifyItemRemoved(position)
         manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount ?: 0)
 
+        val cardPosition = payMyAccountViewModel.getCardDetail()?.selectedCardPosition
+        if (cardPosition != null && cardPosition >= 1)
+            payMyAccountViewModel.getCardDetail()?.selectedCardPosition = if (deletedPaymentMethod?.isCardChecked == true) 0 else cardPosition.minus(1)
+
         if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
             request(deletedPaymentMethod?.token?.let { OneAppService.queryServicePayURemovePaymentMethod(it) }, object : IGenericAPILoaderView<Any> {
-                override fun onSuccess(response: Any?) {
-
-                }
+                override fun onSuccess(response: Any?) {}
             })
             // Disable use this card button when no item is selected
             useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
 
             // set and display add new card as start destination in graph
-            if (mPaymentMethod?.isEmpty() == true) {
+            if (mPaymentMethodList?.isEmpty() == true) {
 
                 val card = payMyAccountViewModel.getCardDetail()
                 card?.payuMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                card?.paymentMethodList = mutableListOf()
                 val graph = navController?.graph
                 graph?.startDestination = R.id.addNewPayUCardFragment
                 graph?.let { navController?.setGraph(it) }

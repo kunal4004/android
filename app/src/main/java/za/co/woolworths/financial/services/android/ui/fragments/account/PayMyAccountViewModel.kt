@@ -11,16 +11,11 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 
 class PayMyAccountViewModel : ViewModel() {
 
-    enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
-    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE } // TODO: Navigation graph: Communicate result from dialog to fragment destination
-
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
-
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
-
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
         val selectedAccountProduct = getCardDetail()?.account
@@ -38,14 +33,14 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
         val cardDetail = getCardDetail()
-        val list = cardDetail?.paymentMethodList
-        if (list != null && !list.isNullOrEmpty()) {
-            val checkedList = list.filter { it.isCardChecked }
-            if (checkedList.isNullOrEmpty()) {
-                list[0].isCardChecked = true
-            }
+        val paymentList = cardDetail?.paymentMethodList
+        val selectedPosition = cardDetail?.selectedCardPosition ?: 0
+        paymentList?.forEach {
+            it.isCardChecked = false
         }
-        return list
+        if (paymentList?.size!! > 0)
+            paymentList[selectedPosition].isCardChecked = true
+        return paymentList
     }
 
     fun isPaymentMethodListChecked(): Boolean {
@@ -59,17 +54,17 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     private fun getCVVNumber() = cvvNumber.value ?: ""
-
     fun getSelectedPaymentMethodCard(): GetPaymentMethod? {
-        val paymentMethod: MutableList<GetPaymentMethod>? = getPaymentMethodList()
-        paymentMethod?.forEach { item ->
-            if (item.isCardChecked) {
-                return item
-            }
-        }
-        if (paymentMethod?.size ?: 0 > 0) {
-            paymentMethod?.get(0)?.isCardChecked = true
-            return paymentMethod?.get(0)
+        val paymentMethodList: MutableList<GetPaymentMethod>? = getPaymentMethodList()
+        if (paymentMethodList?.size ?: 0 > 0) {
+            val cardDetail = getCardDetail()
+            val selectedPosition = cardDetail?.selectedCardPosition ?: 0
+
+            cardDetail?.paymentMethodList?.forEach { it.isCardChecked = false }
+
+            paymentMethodList?.get(selectedPosition)?.isCardChecked = true
+
+            return paymentMethodList?.get(selectedPosition)
         }
         return null
     }
@@ -86,7 +81,6 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getPaymentMethodType(): PAYUMethodType? = getCardDetail()?.payuMethodType
-
     fun setPMACardInfo(card: PaymentAmountCard?) {
         paymentAmountCard.value = card
     }
@@ -97,7 +91,6 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getCardDetail(): PaymentAmountCard? = paymentAmountCard.value
-
     fun setNavigationResult(onDismiss: OnBackNavigation) {
         onDialogDismiss.value = onDismiss
         onDialogDismiss.value = OnBackNavigation.NONE
@@ -144,7 +137,8 @@ class PayMyAccountViewModel : ViewModel() {
                         }
                     }
                     val cardInfo = getCardDetail()
-                    val updatedCard = PaymentAmountCard(cardInfo?.amountEntered, paymentMethods, cardInfo?.account, payUMethodType)
+                    val updatedCard = PaymentAmountCard(cardInfo?.amountEntered, paymentMethods, cardInfo?.account, payUMethodType, cardInfo?.selectedCardPosition
+                            ?: 0)
                     setPMACardInfo(updatedCard)
                 }
             }
@@ -168,4 +162,7 @@ class PayMyAccountViewModel : ViewModel() {
     fun getProductOfferingId(): Int? {
         return getCardDetail()?.account?.second?.productOfferingId
     }
+
+    enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
+    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 }

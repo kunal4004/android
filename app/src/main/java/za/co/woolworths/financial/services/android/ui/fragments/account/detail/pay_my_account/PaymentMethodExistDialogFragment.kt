@@ -15,6 +15,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -23,15 +25,12 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 import java.util.*
 
-class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnClickListener {
+class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var accountArgs: Account? = null
     private var paymentMethodArgs: String? = null
@@ -68,8 +67,12 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         if (activity is PayMyAccountActivity)
             navController = NavHostFragment.findNavController(this)
 
-        val overdueAmount = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(accountArgs?.amountOverdue ?: 0), 1, activity))
+        val overdueAmount = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(accountArgs?.amountOverdue
+                ?: 0), 1, activity))
         setupListener()
+
+        initShimmer(changeTextViewShimmerLayout)
+        stopProgress(changeTextViewShimmerLayout)
 
         payMyAccountViewModel.paymentAmountCard.observe(viewLifecycleOwner, { card ->
             // set amount amounted
@@ -88,7 +91,6 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
                 dismiss()
             }
         })
-
 
         initPaymentMethod()
     }
@@ -132,22 +134,22 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
 
         with(pmaConfirmPaymentButton) {
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@DisplayVendorCardDetailFragment)
+            setOnClickListener(this@PaymentMethodExistDialogFragment)
         }
 
         with(changeCardHorizontalView) {
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@DisplayVendorCardDetailFragment)
+            setOnClickListener(this@PaymentMethodExistDialogFragment)
         }
 
         with(changeTextView) {
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@DisplayVendorCardDetailFragment)
+            setOnClickListener(this@PaymentMethodExistDialogFragment)
         }
 
         with(editAmountImageView) {
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@DisplayVendorCardDetailFragment)
+            setOnClickListener(this@PaymentMethodExistDialogFragment)
         }
 
 
@@ -201,6 +203,12 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        queryGetPaymentMethod()
+    }
+
+
     private fun sendFirebaseEvent() {
         when (accountArgs?.productGroupCode?.toLowerCase(Locale.getDefault())) {
             "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_AMTEDIT)
@@ -211,5 +219,37 @@ class DisplayVendorCardDetailFragment : WBottomSheetDialogFragment(), View.OnCli
 
     companion object {
         const val ZERO_RAND = "R 0.00"
+    }
+
+
+    private fun initShimmer(view: ShimmerFrameLayout?) {
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        view?.setShimmer(shimmer)
+        view?.isEnabled = true
+    }
+
+    private fun startProgress(view: ShimmerFrameLayout?) {
+        view?.startShimmer()
+        view?.isEnabled = false
+    }
+
+    private fun stopProgress(view: ShimmerFrameLayout?) {
+        view?.setShimmer(null)
+        view?.stopShimmer()
+        view?.isEnabled = true
+    }
+
+
+    private fun queryGetPaymentMethod() {
+        startProgress(changeTextViewShimmerLayout)
+        payMyAccountViewModel.queryServicePayUPaymentMethod({
+            stopProgress(changeTextViewShimmerLayout)
+        }, {
+            stopProgress(changeTextViewShimmerLayout)
+        }, {
+            stopProgress(changeTextViewShimmerLayout)
+        }, {
+            stopProgress(changeTextViewShimmerLayout)
+        })
     }
 }

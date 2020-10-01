@@ -6,7 +6,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAcc
 class PaymentAmountCard(var amountEntered: String?,
                         var paymentMethodList: MutableList<GetPaymentMethod>?,
                         var account: Pair<ApplyNowState, Account>?,
-                        var payuMethodType: PayMyAccountViewModel.PAYUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER) {
+                        var payuMethodType: PayMyAccountViewModel.PAYUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER,
+                        var selectedCardPosition: Int = 0) {
 
 
     fun amountEnteredInInt() = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()
