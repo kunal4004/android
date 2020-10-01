@@ -152,8 +152,8 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
 
         val prsAccountNumber = account?.accountNumber ?: ""
         val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
-        val prsCardNumber = if (productGroupCode == "cc") getABSACardToken()
-                ?: "" else account?.accountNumber ?: ""
+        val isCreditCard = productGroupCode == "cc"
+        val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
         val prsC2id = getCustomerC2ID()
         val prsFirstname = getCustomerUsername()
         val prsSurname = getCustomerFamilyName()
@@ -165,7 +165,15 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
             else -> ""
         }
 
-        return bindString(R.string.chat_send_message_session_var_params, prsAccountNumber, prsCardNumber, prsC2id, prsFirstname, prsSurname, prsProductOfferingId, prsProductOfferingDescription)
+        return bindString(R.string.chat_send_message_session_var_params,
+                prsAccountNumber,
+                prsCardNumber,
+                prsC2id,
+                prsFirstname,
+                prsSurname,
+                prsProductOfferingId,
+                prsProductOfferingDescription)
+
     }
 
     fun getABSACardToken(): String? {

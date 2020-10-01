@@ -44,8 +44,8 @@ class ChatCustomerServiceViewModel : ViewModel() {
         setSessionType(SessionType.Collections)
     }
 
-    fun initAmplify(listOfCards: List<Card>? = null) {
-        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify(getAccount(), listOfCards)
+    fun initAmplify() {
+        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify(getAccount())
     }
 
     fun getAmplify(): ChatCustomerServiceAWSAmplify? {
@@ -203,7 +203,7 @@ class ChatCustomerServiceViewModel : ViewModel() {
             override fun onSuccess(response: Any?) {
 
                 (response as? CreditCardTokenResponse)?.apply {
-                    cards?.apply { initAmplify(this) }
+                    cards?.apply { initAmplify() }
                     result(this)
                 }
             }

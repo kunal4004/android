@@ -82,7 +82,9 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         inputListener()
         isChatButtonEnabled(false)
         onClickListener()
-        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
+      //  setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
+        setAgentAvailableState(true)
+
     }
 
     private fun onClickListener() {
