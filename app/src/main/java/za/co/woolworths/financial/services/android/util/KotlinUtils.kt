@@ -329,5 +329,12 @@ class KotlinUtils {
             }
             return false
         }
+
+        fun avoidDoubleClicks(view: View?) {
+            if (view?.isClickable != true) return
+            view.isClickable = false
+            view.postDelayed({ view.isClickable = true }, 900)
+        }
+
     }
 }
