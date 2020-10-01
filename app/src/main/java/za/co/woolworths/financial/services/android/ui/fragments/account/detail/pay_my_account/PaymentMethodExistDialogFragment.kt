@@ -173,7 +173,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
                 R.id.pmaConfirmPaymentButton -> {
                     ccvEditTextInput?.text?.toString()?.let { cvvNumber -> payMyAccountViewModel.setCVVNumber(cvvNumber) }
                     val (account, cardResponse) = payMyAccountViewModel.createCard()
-                    val cardVendorDirections = DisplayVendorCardDetailFragmentDirections.actionDisplayVendorCardDetailFragmentToPMAProcessRequestFragment(account?.second, cardResponse)
+                    val cardVendorDirections = PaymentMethodExistDialogFragmentDirections.actionDisplayVendorCardDetailFragmentToPMAProcessRequestFragment(account?.second, cardResponse)
                     navController?.navigate(cardVendorDirections)
                 }
             }
