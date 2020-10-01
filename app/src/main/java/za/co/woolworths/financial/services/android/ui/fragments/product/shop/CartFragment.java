@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -157,6 +158,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private VoucherDetails voucherDetails;
 	public static final int REDEEM_VOUCHERS_REQUEST_CODE = 1979;
 	private TextView basketTotal;
+	private RelativeLayout orderTotalLayout;
+	private NestedScrollView nestedScrollView;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -205,6 +208,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		editLocation = view.findViewById(R.id.editLocation);
 		deliverLocationRightArrow = view.findViewById(R.id.iconCaretRight);
 		basketTotal = view.findViewById(R.id.basketTotal);
+		orderTotalLayout = view.findViewById(R.id.orderTotalLayout);
+		orderTotalLayout.setOnClickListener(this);
+		nestedScrollView = view.findViewById(R.id.nestedScrollView);
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (lastDeliveryLocation != null) {
 			setDeliveryLocation(lastDeliveryLocation);
@@ -326,6 +332,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
 				}
+				break;
+			case R.id.orderTotalLayout:
+				nestedScrollView.post(() -> nestedScrollView.fullScroll(View.FOCUS_DOWN));
 				break;
 			default:
 				break;
