@@ -24,6 +24,10 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -232,3 +236,11 @@ fun Any.navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_ri
         .setExitAnim(R.anim.slide_out_to_left)
         .setPopEnterAnim(R.anim.slide_from_left)
         .setPopExitAnim(R.anim.slide_to_right).build()
+
+
+fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
+    launch {
+        delay(time)
+        launch(Dispatchers.Main) { code() }
+    }
+}

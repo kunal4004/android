@@ -19,21 +19,15 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Assets
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
-class ChatCustomerServiceAWSAmplify(private var account: Account? = null, private var listOfCards: List<Card>? = null) {
+class ChatCustomerServiceAWSAmplify {
 
-    private var jWTDecodedModel: JWTDecodedModel? = SessionUtilities.getInstance().jwt
     private var subscription: ApiOperation<*>? = null
 
     fun init(context: Context) {
@@ -76,16 +70,28 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
         return SimpleGraphQLRequest(onSubscribeMessageByConversationIdDocument, variables, SendMessageResponse::class.java, serializer)
     }
 
-    fun subscribeToMessageByConversationId(conversationMessagesId: String, sessionType: SessionType, result: (SendMessageResponse?) -> Unit, failure: (ApiException) -> Unit) {
+    fun subscribeToMessageByConversationId(conversationMessagesId: String,
+                                           sessionType: SessionType,
+                                           sessionVars: String,
+                                           name: String,
+                                           email: String,
+                                           result: (SendMessageResponse?) -> Unit, failure: (ApiException) -> Unit) {
         subscription = API.subscribe(onSubscribeMessageByConversationId(conversationMessagesId),
                 {
-                    Log.i("subscriptionLeg", "Connection Established")
-                    sendMessage(conversationMessagesId, sessionType, SessionStateType.CONNECT, "")
+                    Log.d("subscriptionLeg", "Connection Established")
+                    sendMessage(conversationMessagesId,
+                            sessionType,
+                            SessionStateType.CONNECT,
+                            "",
+                            sessionVars,
+                            name,
+                            email)
                 },
-                { data ->
-                    result(data.data)
+                { data -> result(data.data) },
+                { onFailure ->
+                    Log.d("subscribeToConversation", "Subscription completed")
+                    failure(onFailure)
                 },
-                { onFailure -> failure(onFailure) },
                 { Log.d("subscribeToConversation", "Subscription completed") }
         )
     }
@@ -94,20 +100,33 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
         subscription?.cancel()
     }
 
-    fun queryServiceSignOut(conversationMessagesId: String, sessionType: SessionType, sessionState: SessionStateType, content: String, onResult: () -> Unit, onError: () -> Unit) {
+    fun queryServiceSignOut(conversationMessagesId: String,
+                            sessionType: SessionType,
+                            sessionState: SessionStateType,
+                            content: String,
+                            sessionVars: String,
+                            name: String,
+                            email: String, onResult: () -> Unit, onError: () -> Unit) {
 
-        sendMessage(conversationMessagesId, sessionType, sessionState, content)
+        sendMessage(conversationMessagesId, sessionType, sessionState, content,
+                sessionVars,
+                name,
+                email)
         // Ensure sign out from all device
         Auth.signOut(AuthSignOutOptions.builder().globalSignOut(true).build(), { onResult() }, { onError() })
     }
 
-    private fun sendMessageRequest(sessionId: String, sessionType: SessionType, sessionState: SessionStateType, content: String): GraphQLRequest<String> {
+    private fun sendMessageRequest(sessionId: String,
+                                   sessionType: SessionType,
+                                   sessionState: SessionStateType,
+                                   content: String,
+                                   sessionVars: String,
+                                   name: String,
+                                   email: String): GraphQLRequest<String> {
 
         val messageGraphQL: String = Assets.readAsString("graphql/mutation-event-send-message.graphql")
         val serializer = GsonVariablesSerializer()
         val variables = HashMap<String, Any>()
-
-        val sessionVars = getSessionVars()
 
         variables["sessionId"] = sessionId
         variables["sessionType"] = sessionType
@@ -116,65 +135,32 @@ class ChatCustomerServiceAWSAmplify(private var account: Account? = null, privat
         variables["contentType"] = "text"
         variables["relatedMessageId"] = ""
         variables["sessionVars"] = sessionVars
-        variables["name"] = getCustomerUsername()
-        variables["email"] = getCustomerEmail()
+        variables["name"] = name
+        variables["email"] = email
 
-        Log.e("sesisonVars", getSessionVars())
+        Log.e("sesisonVars", sessionVars)
 
         return SimpleGraphQLRequest(messageGraphQL, variables, String::class.java, serializer)
     }
 
-    fun sendMessage(sessionId: String, sessionType: SessionType, sessionState: SessionStateType, content: String) {
-        API.mutate(
-                sendMessageRequest(sessionId, sessionType, sessionState, content),
+    fun sendMessage(sessionId: String,
+                    sessionType: SessionType,
+                    sessionState: SessionStateType,
+                    content: String,
+                    sessionVars: String,
+                    name: String,
+                    email: String) {
+
+        API.mutate(sendMessageRequest(sessionId,
+                sessionType,
+                sessionState,
+                content,
+                sessionVars,
+                name,
+                email),
                 { response -> Log.d("sendMessageSuccess", response.data ?: "") },
                 { error -> Log.d("sendMessageError", error.toString()) }
         )
     }
 
-    private fun getCustomerFamilyName(): String {
-        val familyName = jWTDecodedModel?.family_name?.get(0)
-        return KotlinUtils.firstLetterCapitalization(familyName) ?: ""
-    }
-
-    fun getCustomerUsername(): String {
-        val username = jWTDecodedModel?.name?.get(0)
-        return KotlinUtils.firstLetterCapitalization(username) ?: ""
-    }
-
-    private fun getCustomerEmail() = jWTDecodedModel?.email?.get(0) ?: ""
-
-    private fun getCustomerC2ID() = jWTDecodedModel?.C2Id ?: ""
-
-    private fun getSessionVars(): String {
-
-        val prsAccountNumber = account?.accountNumber ?: ""
-        val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
-        val isCreditCard = productGroupCode == "cc"
-        val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
-        val prsC2id = getCustomerC2ID()
-        val prsFirstname = getCustomerUsername()
-        val prsSurname = getCustomerFamilyName()
-        val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
-        val prsProductOfferingDescription = when (productGroupCode) {
-            "sc" -> "StoreCard"
-            "pl" -> "PersonalLoan"
-            "cc" -> "CreditCard"
-            else -> ""
-        }
-
-        return bindString(R.string.chat_send_message_session_var_params,
-                prsAccountNumber,
-                prsCardNumber,
-                prsC2id,
-                prsFirstname,
-                prsSurname,
-                prsProductOfferingId,
-                prsProductOfferingDescription)
-
-    }
-
-    fun getABSACardToken(): String? {
-       return account?.cards?.get(0)?.absaCardToken ?: listOfCards?.get(0)?.absaCardToken
-    }
 }

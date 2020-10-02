@@ -3,18 +3,17 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.app.Activity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -32,8 +31,6 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
         arguments?.apply {
             appScreen = getString(APP_SCREEN, ChatCustomerServiceFragment::class.java.simpleName)
         }
@@ -46,31 +43,15 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
 
-        with(chatViewModel) {
-            initAmplify()
-            isCustomerSignOut.observe(viewLifecycleOwner) { shouldSignOut ->
-                when (shouldSignOut) {
-                    true -> {
-                        signOut({ closeChat() }, {
-                            closeChat()
-                            showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
-                        })
-                    }
-                }
-            }
-        }
+        chatViewModel.initAmplify()
 
         initView()
     }
 
-    private fun closeChat() {
-        activity?.apply {
-            finish()
-            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-        }
-    }
 
     private fun initView() {
         setupRecyclerview()
@@ -84,9 +65,8 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
     }
 
     private fun getUserTokenAndSignIn() {
-        chatLoaderProgressBar?.visibility = VISIBLE
         with(chatViewModel) {
-            var absaCardToken = getAmplify()?.getABSACardToken()
+            val absaCardToken = getABSACardToken()
             if (absaCardToken.isNullOrEmpty()) {
                 // show retrieve ABSA card token retry screen
                 chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
@@ -101,13 +81,14 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         with(chatViewModel) {
             signIn({
                 subscribeToMessageByConversationId({ result ->
+                    Log.e("subscribeToMessage", Gson().toJson(result))
                     activity?.runOnUiThread {
                         when (result?.sessionState) {
 
                             SessionStateType.CONNECT -> {
                                 chatLoaderProgressBar?.visibility = GONE
                                 showAgentsMessage(result.content)
-                                isChatButtonEnabled(true)
+                                isChatButtonEnabled(false)
                                 isUserOnline(true)
                             }
 
@@ -139,7 +120,6 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
                     }
                 }, {
                     chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
                 })
             }, {
                 chatLoaderProgressBar?.visibility = GONE
@@ -148,27 +128,13 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         }
     }
 
-    private fun inputListener() {
-        edittext_chatbox?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                chatViewModel.userStoppedTyping()
-            }
-
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                chatViewModel.userStartedTyping()
-            }
-        })
-    }
-
     private fun isChatButtonEnabled(isEnabled: Boolean) {
         button_send?.isEnabled = isEnabled
     }
 
-    private fun isUserOnline(visible: Boolean) {
-        (activity as? WChatActivity)?.setChatState(visible)
-        edittext_chatbox?.isEnabled = visible
+    private fun isUserOnline(isVisible: Boolean) {
+        (activity as? WChatActivity)?.setChatState(isVisible)
+        edittext_chatbox?.isEnabled = isVisible
     }
 
     private fun setupRecyclerview() {
@@ -216,7 +182,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
                 isOnline.apply {
                     activity?.offlineBanner?.visibility = if (this) GONE else VISIBLE
                     if (!this) edittext_chatbox?.text?.clear()
-                    showAgentsMessage(if (this) "Hi " + chatViewModel.getAmplify()?.getCustomerUsername() + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + chatViewModel.getInAppTradingHoursForToday()?.opens + " and " + chatViewModel.getInAppTradingHoursForToday()?.closes + ".")
+                    showAgentsMessage(if (this) "Hi " + chatViewModel.getCustomerUsername() + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + chatViewModel.getInAppTradingHoursForToday()?.opens + " and " + chatViewModel.getInAppTradingHoursForToday()?.closes + ".")
                 }
             }
         }

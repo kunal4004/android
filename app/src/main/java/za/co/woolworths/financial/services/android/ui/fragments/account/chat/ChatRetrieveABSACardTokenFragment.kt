@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_retrieve_absa_card_token_fragment.*
 import kotlinx.android.synthetic.main.chat_retrieve_absa_card_token_fragment.chatLoaderProgressBar
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -21,6 +22,14 @@ import java.net.ConnectException
 class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
 
     private val chatViewModel: ChatCustomerServiceViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (activity as? WChatActivity)?.apply {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            setChatState(true)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.chat_retrieve_absa_card_token_fragment, container, false)
@@ -38,7 +47,6 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.retryErrorButton -> if (NetworkManager.getInstance().isConnectedToNetwork(activity)) getCardToken() else noConnectionToast()
-
         }
     }
 
@@ -46,24 +54,29 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
         with(chatViewModel) {
             showProgress()
             getCreditCardToken({ result ->
+                result?.cards = null
                 when (result?.httpCode) {
                     200 -> {
                         val cards = result.cards
                         if (cards.isNullOrEmpty()) {
+                            (activity as? WChatActivity)?.setStartDestination(R.id.chatToCollectionAgentOfflineFragment)
                         } else {
-                            chatViewModel.absaCardToken.value = cards
+                            chatViewModel.absaCreditCard.value = cards
+                            (activity as? WChatActivity)?.setStartDestination(R.id.chatFragment)
                         }
                     }
                     440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, result.response.stsParams, it) }
 
-                    else -> {
-                    }
+                    else -> (activity as? WChatActivity)?.setStartDestination(R.id.chatToCollectionAgentOfflineFragment)
+
                 }
                 stopProgress()
             }, { error ->
-                stopProgress()
-                when (error) {
-                    is ConnectException -> noConnectionToast()
+                activity?.runOnUiThread {
+                    stopProgress()
+                    when (error) {
+                        is ConnectException -> noConnectionToast()
+                    }
                 }
             })
         }

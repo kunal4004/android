@@ -134,7 +134,7 @@
         android:id="@+id/groupRetryErrorUI"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:constraint_referenced_ids="errorDialogIconImageView,descriptionTextView,arrearsTitleTextView,pinkErrorIconImageView,retryErrorButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,14 +10,11 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.*
-import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.android.synthetic.main.chat_to_collection_agent_offline_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -60,7 +57,10 @@ class ChatCustomerServiceOfflineFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as? WChatActivity)?.apply {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            setChatState(false)
+        }
 
         val chatCollectionsAgent = ChatCustomerServiceBubbleVisibility()
         hiClientTextView?.text = "Hi ${chatCollectionsAgent.getUsername()},"

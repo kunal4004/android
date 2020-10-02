@@ -40,5 +40,15 @@
         android:id="@+id/chatRetrieveABSACardTokenFragment"
         tools:layout="@layout/chat_retrieve_absa_card_token_fragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatRetrieveABSACardTokenFragment"
-        android:label="ChatRetrieveABSACardTokenFragment" />
+        android:label="ChatRetrieveABSACardTokenFragment" >
+        <action
+            android:id="@+id/action_chatRetrieveABSACardTokenFragment_to_chatCustomerServiceEndSessionDialogFragment"
+            app:destination="@id/chatCustomerServiceEndSessionDialogFragment" />
+        <action
+            android:id="@+id/action_chatRetrieveABSACardTokenFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_chatRetrieveABSACardTokenFragment_to_chatToCollectionAgentOfflineFragment"
+            app:destination="@id/chatToCollectionAgentOfflineFragment" />
+    </fragment>
 </navigation>

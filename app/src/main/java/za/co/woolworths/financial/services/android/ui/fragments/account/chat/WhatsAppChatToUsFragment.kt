@@ -13,10 +13,7 @@ import kotlinx.android.synthetic.main.chat_to_us_via_whatsapp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
@@ -61,7 +58,8 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
-                    KotlinUtils.postOneAppEvent(appScreen ?: "", featureName ?: "")
+                    KotlinUtils.postOneAppEvent(appScreen ?: "", featureName
+                            ?: OneAppEvents.FeatureName.WHATSAPP)
                     Utils.openBrowserWithUrl(WhatsAppChatToUsVisibility().whatsAppChatWithUsUrlBreakout)
                 } else {
                     ErrorHandlerView(activity).showToast()

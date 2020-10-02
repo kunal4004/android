@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 class ChatCustomerServiceBubbleView(private var activity: Activity?,
                                     private val chatCustomerServiceBubbleVisibility: ChatCustomerServiceBubbleVisibility? = null,
                                     private var floatingActionButton: FloatingActionButton?,
@@ -85,7 +84,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
                 val dm = DisplayMetrics()
                 windowManager.defaultDisplay.getMetrics(dm)
 
-                val dialogPosition = dm.heightPixels.div(if (applyNowState == ApplyNowState.ACCOUNT_LANDING) 3.9f else 6.2f)
+                val dialogPosition = dm.heightPixels.div(if (applyNowState == ApplyNowState.ACCOUNT_LANDING) 4.2f else 7.0f)
 
                 val windowManagerLayoutParams: WindowManager.LayoutParams = attributes
                 windowManagerLayoutParams.y = dialogPosition.toInt()

@@ -5,12 +5,13 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.style.ClickableSpan
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
@@ -21,11 +22,15 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendM
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import java.util.*
 
 class ChatCustomerServiceViewModel : ViewModel() {
 
+    private var jWTDecodedModel: JWTDecodedModel? = SessionUtilities.getInstance().jwt
     private var creditCardTokenAPI: Call<CreditCardTokenResponse>? = null
     private var customerServiceAWSAmplify: ChatCustomerServiceAWSAmplify? = null
     private var conversation: Conversation? = null
@@ -34,10 +39,10 @@ class ChatCustomerServiceViewModel : ViewModel() {
     private var sessionType: MutableLiveData<SessionType?> = MutableLiveData()
     var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
-    var absaCardToken: MutableLiveData<MutableList<Card>?> = MutableLiveData()
+    var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
 
     init {
-        absaCardToken.value = getAccount()?.cards
+        absaCreditCard.value = getAccount()?.cards
         isChatToCollectionAgent.value = false
         isCustomerSignOut.value = false
         setSessionStateType(SessionStateType.DISCONNECT)
@@ -45,11 +50,7 @@ class ChatCustomerServiceViewModel : ViewModel() {
     }
 
     fun initAmplify() {
-        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify(getAccount())
-    }
-
-    fun getAmplify(): ChatCustomerServiceAWSAmplify? {
-        return customerServiceAWSAmplify
+        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify()
     }
 
     fun setAccount(account: Account?) {
@@ -77,7 +78,7 @@ class ChatCustomerServiceViewModel : ViewModel() {
         sessionType.value = type
     }
 
-    fun getSessionType(): SessionType {
+    private fun getSessionType(): SessionType {
         return sessionType.value ?: SessionType.Collections
     }
 
@@ -91,13 +92,16 @@ class ChatCustomerServiceViewModel : ViewModel() {
     }
 
     fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
-        customerServiceAWSAmplify?.subscribeToMessageByConversationId(getConversationMessageId(), getSessionType(), { data -> result(data) }, { failure(failure) })
+        customerServiceAWSAmplify?.subscribeToMessageByConversationId(
+                getConversationMessageId(),
+                getSessionType(),
+                getSessionVars(),
+                getCustomerFamilyName(),
+                getCustomerEmail(),
+                { data -> result(data) }, { failure(failure) })
     }
 
-    private fun getConversationMessageId(): String {
-        Log.e("subscribeToMessageId", conversation?.id)
-        return conversation?.id ?: ""
-    }
+    private fun getConversationMessageId(): String = conversation?.id ?: ""
 
     override fun onCleared() {
         customerServiceAWSAmplify?.cancelSubscribeMessageByConversationId()
@@ -109,23 +113,28 @@ class ChatCustomerServiceViewModel : ViewModel() {
         super.onCleared()
     }
 
-    fun userStartedTyping() {
-        setSessionStateType(SessionStateType.TYPING)
-        customerServiceAWSAmplify?.sendMessage(getConversationMessageId(), getSessionType(), getSessionStateType(), "")
+
+    fun sendMessage(content: String) {
+        customerServiceAWSAmplify?.sendMessage(
+                getConversationMessageId(),
+                getSessionType(),
+                getSessionStateType(),
+                content,
+                getSessionVars(),
+                getCustomerFamilyName(),
+                getCustomerEmail())
     }
 
-    //TODO:: how to stop typing
-    fun userStoppedTyping() {
-    }
-
-    fun sendMessage(message: String) {
-        customerServiceAWSAmplify?.sendMessage(getConversationMessageId(), getSessionType(), getSessionStateType(), message)
-    }
-
-    fun signOut(result: () -> Unit, error: () -> Unit) {
-        customerServiceAWSAmplify?.queryServiceSignOut(getConversationMessageId(), SessionType.Collections, SessionStateType.DISCONNECT, "", { result() }, {
-            error()
-        })
+    fun signOut(result: () -> Unit) {
+        customerServiceAWSAmplify?.queryServiceSignOut(
+                getConversationMessageId(),
+                getSessionType(),
+                SessionStateType.DISCONNECT,
+                "",
+                getSessionVars(),
+                getCustomerFamilyName(),
+                getCustomerEmail(),
+                { result() }, { result() })
     }
 
 
@@ -214,4 +223,51 @@ class ChatCustomerServiceViewModel : ViewModel() {
             }
         })
     }
+
+    private fun getSessionVars(): String {
+
+        val account = getAccount()
+
+        val prsAccountNumber = account?.accountNumber ?: ""
+        val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
+        val isCreditCard = productGroupCode == "cc"
+        val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
+        val prsC2id = getCustomerC2ID()
+        val prsFirstname = getCustomerUsername()
+        val prsSurname = getCustomerFamilyName()
+        val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
+        val prsProductOfferingDescription = when (productGroupCode) {
+            "sc" -> "StoreCard"
+            "pl" -> "PersonalLoan"
+            "cc" -> "CreditCard"
+            else -> ""
+        }
+
+        return bindString(R.string.chat_send_message_session_var_params,
+                prsAccountNumber,
+                prsCardNumber,
+                prsC2id,
+                prsFirstname,
+                prsSurname,
+                prsProductOfferingId,
+                prsProductOfferingDescription)
+
+    }
+
+    private fun getCustomerFamilyName(): String {
+        val familyName = jWTDecodedModel?.family_name?.get(0)
+        return KotlinUtils.firstLetterCapitalization(familyName) ?: ""
+    }
+
+    internal fun getCustomerUsername(): String {
+        val username = jWTDecodedModel?.name?.get(0)
+        return KotlinUtils.firstLetterCapitalization(username) ?: ""
+    }
+
+    private fun getCustomerEmail() = jWTDecodedModel?.email?.get(0) ?: ""
+
+    private fun getCustomerC2ID() = jWTDecodedModel?.C2Id ?: ""
+
+    fun getABSACardToken(): String? = getAccount()?.cards?.get(0)?.absaCardToken
+            ?: absaCreditCard.value?.get(0)?.absaCardToken
 }

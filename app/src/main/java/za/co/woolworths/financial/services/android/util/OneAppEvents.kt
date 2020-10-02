@@ -6,6 +6,7 @@ class OneAppEvents {
         companion object {
             const val ABSA: String = "absa"
             const val WREWARDS_VIEW_VOUCHERS: String = "viewVouchers"
+            const val WHATSAPP = "WhatsApp"
         }
     }
 
@@ -18,6 +19,7 @@ class OneAppEvents {
             const val ABSA_SHARE_STATEMENT: String = "shareStatement"
 
             const val WREWARDS: String = "wRewards"
+            const val CONTACT_US = "Contact Us"
         }
     }
 }
