@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.app.Activity
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.view.View.GONE
@@ -51,7 +52,6 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
 
         initView()
     }
-
 
     private fun initView() {
         setupRecyclerview()
@@ -149,6 +149,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         when (v?.id) {
             R.id.button_send -> {
                 val message = edittext_chatbox?.text?.toString() ?: ""
+                if (TextUtils.isEmpty(message)) return
                 val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
                 updateMessageList(chatMessage)
                 chatViewModel.setSessionStateType(SessionStateType.ONLINE)

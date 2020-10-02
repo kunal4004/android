@@ -103,22 +103,28 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
         bundle.putString(APP_SCREEN, appScreen)
 
+        chatScreenType = ChatType.AGENT_COLLECT
         when (chatScreenType) {
             ChatType.AGENT_COLLECT -> {
                 chatScreenType = ChatType.AGENT_COLLECT
                 if (chatViewModel.isOperatingHoursForInAppChat() == true) {
                     chatNavGraph?.startDestination = R.id.chatFragment
                 } else {
-
+                    bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
+                    bundle.putString(APP_SCREEN, appScreen)
                     chatNavGraph?.startDestination = R.id.chatToCollectionAgentOfflineFragment
                 }
             }
             ChatType.WHATSAPP_ONBOARDING -> {
                 chatScreenType = ChatType.WHATSAPP_ONBOARDING
+                bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
+                bundle.putString(APP_SCREEN, appScreen)
                 chatNavGraph?.startDestination = R.id.chatToUsWhatsAppFragment
             }
             ChatType.DEFAULT -> {
                 chatScreenType = ChatType.AGENT_COLLECT
+                bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
+                bundle.putString(APP_SCREEN, appScreen)
                 chatNavGraph?.startDestination = R.id.chatFragment
             }
         }

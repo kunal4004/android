@@ -37,6 +37,8 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? WChatActivity)?.setChatState(false)
+
         (activity as? AppCompatActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             agentNameTextView?.text = bindString(R.string.whatsapp_chat_to_us_title)
