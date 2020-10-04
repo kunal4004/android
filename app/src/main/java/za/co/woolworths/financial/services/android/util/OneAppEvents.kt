@@ -7,6 +7,8 @@ class OneAppEvents {
             const val ABSA: String = "absa"
             const val WREWARDS_VIEW_VOUCHERS: String = "viewVouchers"
             const val WHATSAPP = "WhatsApp"
+            const val CHAT_COLLECTIONS = "chatCollections"
+            const val CHAT_CUSTOMER_SERVICES = "chatCustomerServices"
         }
     }
 
@@ -20,6 +22,15 @@ class OneAppEvents {
 
             const val WREWARDS: String = "wRewards"
             const val CONTACT_US = "Contact Us"
+            const val CHAT_OFFLINE_STORE_CARD = "Chat Offline Store Card"
+            const val CHAT_OFFLINE_PERSONAL_LOAN = "Chat Offline Personal Loan"
+            const val CHAT_OFFLINE_CREDIT_LOAN = "Chat Offline Credit Card"
+            const val CHAT_ACCOUNT_CC_LANDING_INITIATE_SESSION = "CC Landing InitiateSession"
+            const val CHAT_PAY_OPTIONS_CC_LANDING_INITIATE_SESSION = "CC PayOptions InitiateSession"
+            const val CHAT_COLLECTIONS_CC_END_SESSION = "CC EndSession"
+            const val CHAT_COLLECTIONS_CC_Transactions_InitiateSession = "CC Transactions InitiateSession"
+
+
         }
     }
 }
