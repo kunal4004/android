@@ -9,8 +9,7 @@ android {
 
     def major = "7"
     def minor = "3"
-    def fix = "0"
-
+    def fix = "1"
     def jobNumber = 452
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -72,13 +71,15 @@ android {
 
         String env = ""
 
-        if (host.contains("-qa")){
+        if (host.contains("-qa") || host.contains("-staging")){
             defaultConfig.applicationIdSuffix = ".qa"
             defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host:"www-win-qa.woolworths.co.za"]
             env = "QA"
-        }else{
+        } else if (host.contains("-staging")){
+            jobNumber = 1
+        } else{
             //assume prod
-            jobNumber = 134
+            jobNumber = 137
         }
 
             defaultConfig {
