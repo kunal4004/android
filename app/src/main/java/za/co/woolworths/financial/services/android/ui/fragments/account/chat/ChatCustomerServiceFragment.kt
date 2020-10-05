@@ -4,7 +4,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -14,7 +13,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -81,7 +79,6 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
         with(chatViewModel) {
             signIn({
                 subscribeToMessageByConversationId({ result ->
-                    Log.e("subscribeToMessage", Gson().toJson(result))
                     activity?.runOnUiThread {
                         when (result?.sessionState) {
 

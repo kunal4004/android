@@ -19,7 +19,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -71,11 +74,24 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
             val view = layoutInflater.inflate(R.layout.inapp_chat_tip_acknowledgement_dialog, null)
             val dismissChatTipImageView = view.findViewById<ImageButton>(R.id.dismissChatTipImageView)
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
-            greetingTextView?.text = bindString(R.string.chat_greeting_label, chatCustomerServiceBubbleVisibility?.getUsername()
-                    ?: "")
-            dismissChatTipImageView?.setOnClickListener {
-                chatCustomerServiceBubbleVisibility?.saveInAppChatTooltip(applyNowState, isAppScreenPaymentOptions)
-                dismiss()
+            val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
+            AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
+            val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
+            val chatAccountProductLandingPage = if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatCustomerServiceBubbleVisibility.getAccountInProductLandingPage() else chatCustomerServiceBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
+            activity?.apply {
+                val tradingHours = getTradingHours(presenceInChat)
+                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatCustomerServiceBubbleVisibility?.getUsername()
+                        ?: "")
+                dismissChatTipImageView?.setOnClickListener {
+                    chatCustomerServiceBubbleVisibility?.saveInAppChatTooltip(applyNowState, isAppScreenPaymentOptions)
+                    dismiss()
+                }
+
+                chatToUsNowTextView?.setOnClickListener {
+                    chatCustomerServiceBubbleVisibility?.saveInAppChatTooltip(applyNowState, isAppScreenPaymentOptions)
+                    navigateToChatActivity(tradingHours, chatAccountProductLandingPage)
+                    dismiss()
+                }
             }
             setContentView(view)
 
@@ -180,24 +196,32 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
 
             val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
 
-            val tradingHours = when (this) {
-                is BottomNavigationActivity, is AccountSignedInActivity, is PaymentOptionActivity -> presenceInChat?.collections?.tradingHours
-                is WTransactionsActivity -> presenceInChat?.customerService?.tradingHours
-                else -> presenceInChat?.customerService?.tradingHours
-            }
+            val tradingHours = getTradingHours(presenceInChat)
 
             floatingActionButton?.setOnClickListener {
-                val initChatDetails = chatCustomerServiceBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
-                Utils.triggerFireBaseEvents(if (tradingHours?.let { hours -> KotlinUtils.isOperatingHoursForInAppChat(hours) } == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
-                val intent = Intent(this, WChatActivity::class.java)
-                intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
-                intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)
-                intent.putExtra(SESSION_TYPE, getSessionType())
-                intent.putExtra(ACCOUNTS, Gson().toJson(chatAccountProductLandingPage))
-                intent.putExtra(CHAT_TO_COLLECTION_AGENT, true)
-                startActivity(intent)
+                navigateToChatActivity(tradingHours, chatAccountProductLandingPage)
             }
         }
+    }
+
+    private fun Activity.getTradingHours(presenceInChat: PresenceInAppChat?): MutableList<TradingHours>? {
+        return when (this) {
+            is BottomNavigationActivity, is AccountSignedInActivity, is PaymentOptionActivity -> presenceInChat?.collections?.tradingHours
+            is WTransactionsActivity -> presenceInChat?.customerService?.tradingHours
+            else -> presenceInChat?.customerService?.tradingHours
+        }
+    }
+
+    private fun Activity.navigateToChatActivity(tradingHours: MutableList<TradingHours>?, chatAccountProductLandingPage: Account?) {
+        val initChatDetails = chatCustomerServiceBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
+        Utils.triggerFireBaseEvents(if (tradingHours?.let { hours -> KotlinUtils.isOperatingHoursForInAppChat(hours) } == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
+        val intent = Intent(this, WChatActivity::class.java)
+        intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
+        intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)
+        intent.putExtra(SESSION_TYPE, getSessionType())
+        intent.putExtra(ACCOUNTS, Gson().toJson(chatAccountProductLandingPage))
+        intent.putExtra(CHAT_TO_COLLECTION_AGENT, true)
+        startActivity(intent)
     }
 
     private fun isLiveChatEnabled(): Boolean {
