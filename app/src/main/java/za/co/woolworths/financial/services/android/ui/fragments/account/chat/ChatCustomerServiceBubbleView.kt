@@ -80,8 +80,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
             val chatAccountProductLandingPage = if (chatCustomerServiceBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatCustomerServiceBubbleVisibility.getAccountInProductLandingPage() else chatCustomerServiceBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             activity?.apply {
                 val tradingHours = getTradingHours(presenceInChat)
-                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatCustomerServiceBubbleVisibility?.getUsername()
-                        ?: "")
+                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatCustomerServiceBubbleVisibility?.getUsername() ?: "")
                 dismissChatTipImageView?.setOnClickListener {
                     chatCustomerServiceBubbleVisibility?.saveInAppChatTooltip(applyNowState, isAppScreenPaymentOptions)
                     dismiss()
