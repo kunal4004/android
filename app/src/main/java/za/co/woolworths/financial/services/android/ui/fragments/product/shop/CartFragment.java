@@ -85,6 +85,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.ProductType;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -863,20 +864,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 				Log.e("giftWithPurchase",key);
 
-				if (key.contains("default"))
-					cartItemGroup.setType("GENERAL");
-				else if (key.contains("gwpCommerceItem"))
-					cartItemGroup.setType("GIFT");
-				else if (key.contains("homeCommerceItem"))
-					cartItemGroup.setType("HOME");
-				else if (key.contains("foodCommerceItem"))
-					cartItemGroup.setType("FOOD");
-				else if (key.contains("clothingCommerceItem"))
-					cartItemGroup.setType("CLOTHING");
-				else if (key.contains("premiumBrandCommerceItem"))
-					cartItemGroup.setType("PREMIUM BRAND");
+				if (key.contains(ProductType.DEFAULT.getValue()))
+					cartItemGroup.setType(ProductType.DEFAULT.getShortHeader());
+				else if (key.contains(ProductType.GIFT_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.GIFT_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.HOME_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.HOME_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.FOOD_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.FOOD_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.CLOTHING_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.getShortHeader());
 				else
-					cartItemGroup.setType("OTHER");
+					cartItemGroup.setType(ProductType.OTHER_ITEMS.getShortHeader());
 
 				JSONArray productsArray = itemsObject.getJSONArray(key);
 				if (productsArray.length() > 0) {

@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsAct
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.util.ProductType
 import java.lang.IllegalStateException
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation, OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss {
@@ -129,12 +130,12 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
             val productsArray = itemsObject.getJSONArray(key)
             val orderItemLength = productsArray.length()
             val orderDetailsItem = when {
-                key.contains("Odefault") -> OrderDetailsItem("YOUR GENERAL ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("homeCommerceItem") -> OrderDetailsItem("YOUR HOME ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("foodCommerceItem") -> OrderDetailsItem("YOUR FOOD ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("clothingCommerceItem") -> OrderDetailsItem("YOUR CLOTHING ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains("premiumBrandCommerceItem") -> OrderDetailsItem("YOUR PREMIUM BRAND ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                else -> OrderDetailsItem("YOUR OTHER ITEM", OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.DEFAULT.value) -> OrderDetailsItem(ProductType.DEFAULT.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.HOME_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.HOME_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.FOOD_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.FOOD_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.CLOTHING_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                else -> OrderDetailsItem(ProductType.OTHER_ITEMS.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
             }
 
             dataList.add(orderDetailsItem)
