@@ -34,6 +34,6 @@ class ErrorDialogFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         tvDescription?.text = mDescription
 
-        okButtonTapped?.setOnClickListener { dismissAllowingStateLoss() }
+        gotITButton?.setOnClickListener { dismissAllowingStateLoss() }
     }
 }
