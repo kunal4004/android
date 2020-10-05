@@ -70,34 +70,35 @@ class Secure3DPMAFragment : Fragment() {
                 webViewClient = object : WebViewClient() {
 
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                        if (merchantSiteUrl?.let { url?.contains(it) }!!) {
-                            stopLoading()
-                            val siteUrl = url?.substring(url.indexOf("?"), url.length)
+                        if (!isAdded) return
+                        try {
+                            if (merchantSiteUrl?.let { url?.contains(it) }!!) {
+                                stopLoading()
+                                val siteUrl = url?.substring(url.indexOf("?"), url.length)
 
-                            val urlParams = siteUrl?.split("&")
-                            val customer = urlParams?.get(0)
-                            val paymentId = urlParams?.get(1)
-                            val chargeId = urlParams?.get(2)
-                            val status = urlParams?.get(3)
+                                val urlParams = siteUrl?.split("&")
+                                val customer = urlParams?.get(0)
+                                val paymentId = urlParams?.get(1)
+                                val chargeId = urlParams?.get(2)
+                                val status = urlParams?.get(3)
 
-                            val payUPayResultRequest = PayUPayResultRequest(
-                                    customer?.substring(customer.indexOf("=").plus(1), customer.length)
-                                            ?: "",
-                                    paymentId?.substring(paymentId.indexOf("=").plus(1), paymentId.length)
-                                            ?: "",
-                                    chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length)
-                                            ?: "",
-                                    status?.substring(status.indexOf("=").plus(1), status.length)
-                                            ?: "", payMyAccountViewModel.getProductOfferingId()?.toString()
-                                    ?: "")
-                            try {
+                                val payUPayResultRequest = PayUPayResultRequest(
+                                        customer?.substring(customer.indexOf("=").plus(1), customer.length)
+                                                ?: "",
+                                        paymentId?.substring(paymentId.indexOf("=").plus(1), paymentId.length)
+                                                ?: "",
+                                        chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length)
+                                                ?: "",
+                                        status?.substring(status.indexOf("=").plus(1), status.length)
+                                                ?: "", payMyAccountViewModel.getProductOfferingId()?.toString()
+                                        ?: "")
+
                                 val secure3DPMAFragmentDirections = Secure3DPMAFragmentDirections.actionSecure3DPMAFragmentToPMA3DSecureProcessRequestFragment(payUPayResultRequest)
                                 navController?.navigate(secure3DPMAFragmentDirections)
+                            }
                             } catch (iex: IllegalArgumentException) {
                                 Crashlytics.log(iex.toString())
                             }
-                            return
-                        }
                         super.onPageStarted(view, url, favicon)
                     }
                 }

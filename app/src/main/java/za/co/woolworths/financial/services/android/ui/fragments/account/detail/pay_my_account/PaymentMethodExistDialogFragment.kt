@@ -75,6 +75,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         stopProgress(changeTextViewShimmerLayout)
 
         payMyAccountViewModel.paymentAmountCard.observe(viewLifecycleOwner, { card ->
+            if (!isAdded) return@observe
             // set amount amounted
             val amountEntered = card?.amountEntered
             pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) overdueAmount else amountEntered
@@ -241,6 +242,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
 
 
     private fun queryGetPaymentMethod() {
+        if (!isAdded) return
         startProgress(changeTextViewShimmerLayout)
         payMyAccountViewModel.queryServicePayUPaymentMethod({
             stopProgress(changeTextViewShimmerLayout)
