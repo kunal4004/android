@@ -31,14 +31,14 @@ import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartD
 
 class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAccountView {
 
+    private var navigationHost: NavController? = null
+    private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
+    private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
+    
     companion object {
         const val PAY_MY_ACCOUNT_REQUEST_CODE = 8003
         const val PAYMENT_DETAIL_CARD_UPDATE = "PAYMENT_DETAIL_CARD_UPDATE"
     }
-
-    private var navigationHost: NavController? = null
-    private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
-    private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
