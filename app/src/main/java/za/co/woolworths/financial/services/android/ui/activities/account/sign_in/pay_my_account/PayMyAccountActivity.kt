@@ -130,6 +130,12 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
+            is PMA3DSecureProcessRequestFragment -> {
+                val cardDetail = payMyAccountViewModel.getCardDetail()
+                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardDetail)))
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
             else -> {
                 when (navigationHost?.graph?.startDestination) {
                     R.id.addNewPayUCardFragment, R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {
@@ -147,7 +153,9 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) { android.R.id.home -> onBackPressed() }
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
         return super.onOptionsItemSelected(item)
     }
 

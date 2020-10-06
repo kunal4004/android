@@ -37,8 +37,8 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
     private var mAccounts: String? = null
     private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    private var navController: NavController? = null
 
+    private var navController: NavController? = null
 
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
@@ -158,6 +158,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
 
     @SuppressLint("DefaultLocale")
     override fun onClick(v: View?) {
+        KotlinUtils.avoidDoubleClicks(v)
         val paymentCard = payMyAccountViewModel.getCardDetail()
         val cardInfo = Gson().toJson(paymentCard)
         if (activity is PayMyAccountActivity) {
@@ -239,7 +240,6 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         view?.stopShimmer()
         view?.isEnabled = true
     }
-
 
     private fun queryGetPaymentMethod() {
         if (!isAdded) return
