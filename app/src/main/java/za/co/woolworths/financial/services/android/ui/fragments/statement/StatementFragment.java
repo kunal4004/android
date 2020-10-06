@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,9 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +39,8 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
@@ -46,6 +54,9 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -58,6 +69,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.ACCOUNTS;
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
@@ -79,9 +91,20 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private Call<ResponseBody> mGetPdfFile;
     private UserStatement mSelectedStatement;
     private View topMarginView;
-    private boolean arrayContainTrue = false;
+    private FloatingActionButton chatWithAgentFloatingButton;
+    private Pair<ApplyNowState, List<Account>> applyNowAccountHashPair;
 
     public StatementFragment() {
+    }
+
+    public static StatementFragment newInstance(String account) {
+        StatementFragment myFragment = new StatementFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ACCOUNTS, account);
+        myFragment.setArguments(args);
+
+        return myFragment;
     }
 
     @Override
@@ -100,6 +123,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (savedInstanceState == null & !viewWasCreated) {
             init(view);
             listener();
+            Bundle arguments = getArguments();
+            if (arguments != null) {
+                String chatAccountProductLandingPage = arguments.getString(ACCOUNTS, "");
+                applyNowAccountHashPair = new Gson().fromJson(chatAccountProductLandingPage, new TypeToken<ArrayList<Pair<ApplyNowState, Account>>>() {
+                }.getType());
+            }
+
+            chatWithAgentFloatingButton = view.findViewById(R.id.chatWithAgentFloatingButton);
             setRecyclerView(rclEStatement);
             disableButton();
             loadState = new LoadState();
@@ -107,8 +138,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
             viewWasCreated = true;
         }
+
+        initChat();
     }
 
+    private void initChat() {
+        ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(getActivity(), new ChatCustomerServiceBubbleVisibility(applyNowAccountHashPair.second), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, rclEStatement);
+        inAppChatTipAcknowledgement.build();
+    }
 
     private void setAdapter() {
         mStatementAdapter = new StatementAdapter(this);
@@ -196,7 +233,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     @Override
     public void onClick(View v) {
         Activity activity = getActivity();
-        if (activity==null)return;
+        if (activity == null) return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
@@ -231,7 +268,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         cliGetStatements.enqueue(new CompletionHandler<>(new IResponseListener<StatementResponse>() {
             @Override
             public void onSuccess(StatementResponse statementResponse) {
-                if (statementResponse != null && getActivity() !=null) {
+                if (statementResponse != null && getActivity() != null) {
                     switch (statementResponse.httpCode) {
                         case 200:
                             setAdapter();
@@ -270,16 +307,16 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
             @Override
             public void onFailure(final Throwable error) {
-                if (error == null)return;
+                if (error == null) return;
                 Activity activity = getActivity();
-                if (activity !=null) {
+                if (activity != null) {
                     activity.runOnUiThread(() -> {
                         onLoadComplete();
                         mErrorHandlerView.networkFailureHandler(error.getMessage());
                     });
                 }
             }
-        },StatementResponse.class));
+        }, StatementResponse.class));
 
     }
 
@@ -320,7 +357,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                         if (response.code() == 200) {
                             try {
                                 if (response.body() != null) {
-                                    String fileName = "statement_"+mSelectedStatement.docDesc;
+                                    String fileName = "statement_" + mSelectedStatement.docDesc;
                                     Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
                                     openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
                                     openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());

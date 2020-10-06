@@ -120,6 +120,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
             val openStatement = Intent(this, StatementActivity::class.java)
+            openStatement.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), mAvailableFundPresenter?.getAccount())))
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }

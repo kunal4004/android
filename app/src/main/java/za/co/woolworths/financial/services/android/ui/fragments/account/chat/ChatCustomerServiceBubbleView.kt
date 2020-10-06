@@ -206,7 +206,7 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
     private fun Activity.getTradingHours(presenceInChat: PresenceInAppChat?): MutableList<TradingHours>? {
         return when (this) {
             is BottomNavigationActivity, is AccountSignedInActivity, is PaymentOptionActivity -> presenceInChat?.collections?.tradingHours
-            is WTransactionsActivity -> presenceInChat?.customerService?.tradingHours
+            is WTransactionsActivity,is StatementActivity -> presenceInChat?.customerService?.tradingHours
             else -> presenceInChat?.customerService?.tradingHours
         }
     }
@@ -249,6 +249,14 @@ class ChatCustomerServiceBubbleView(private var activity: Activity?,
                     ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.transactions) VISIBLE else GONE
                     else -> GONE
                 }
+
+                is StatementActivity -> when (applyNowState) {
+                    ApplyNowState.STORE_CARD -> if (storeCard.statements) VISIBLE else GONE
+                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.statements) VISIBLE else GONE
+                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.statements) VISIBLE else GONE
+                    else -> GONE
+                }
+
 
                 else -> GONE
             }

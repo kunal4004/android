@@ -26,7 +26,7 @@ open class ChatCustomerServiceExtensionFragment : Fragment() {
     companion object {
         const val PRODUCT_OFFERING_ID = "productOfferingId"
         const val ACCOUNT_NUMBER = "accountNumber"
-        const val ACCOUNTS = "accounts"
+        const val ACCOUNTS : String = "accounts"
         const val SESSION_TYPE = "SESSION_TYPE"
         const val CHAT_TO_COLLECTION_AGENT = "CHAT_TO_COLLECTION_AGENT"
     }

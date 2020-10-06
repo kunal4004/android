@@ -85,7 +85,7 @@ class ChatCustomerServiceFragment : ChatCustomerServiceExtensionFragment(), IDia
                             SessionStateType.CONNECT -> {
                                 chatLoaderProgressBar?.visibility = GONE
                                 showAgentsMessage(result.content)
-                                isChatButtonEnabled(false)
+                                isChatButtonEnabled(true)
                                 isUserOnline(true)
                             }
 
