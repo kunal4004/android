@@ -83,7 +83,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         with(chatViewModel) {
             signIn({
                 subscribeToMessageByConversationId({ result ->
-                    Log.e("subscriptionResult", Gson().toJson(result))
+
                     activity?.runOnUiThread {
                         when (result?.sessionState) {
 

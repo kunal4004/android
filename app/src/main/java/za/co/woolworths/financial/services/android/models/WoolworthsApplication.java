@@ -55,7 +55,6 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.chat.LiveChatEnabled;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -73,7 +72,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Context mContextApplication;
     private static WhatsApp whatsApp;
     private static List<ContactUs> mContactUs;
-    private static LiveChatEnabled liveChatEnabled;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -248,12 +246,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         super.onCreate();
         mInstance = this;
         WoolworthsApplication.context = this.getApplicationContext();
-        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
         this.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-        Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore()).build());
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
+        Fabric.with(this,new Crashlytics.Builder().core(new CrashlyticsCore()).build());
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         ChatAWSAmplify AWSAmplify = new ChatAWSAmplify();
@@ -284,16 +282,16 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 
     //#region ShowServerMessage
-    public void showServerMessageOrProceed(Activity activity) {
-        String passphrase = BuildConfig.VERSION_NAME + ", " + BuildConfig.SHA1;
+    public void showServerMessageOrProceed(Activity activity){
+        String passphrase = BuildConfig.VERSION_NAME+", "+BuildConfig.SHA1;
         byte[] hash = null;
         try {
-            hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase, Integer.toString(BuildConfig.VERSION_CODE), 1007, 256);
+            hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
         } catch (KeyGenerationFailureException | UnsupportedEncodingException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG,e.getMessage());
         }
-        String hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP);
-        if (!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)) {
+        String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
+        if(!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)){
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(getString(R.string.update_title));
             builder.setMessage(TextUtils.isEmpty(getAuthenticVersionReleaseNote()) ? getString(R.string.update_desc) : getAuthenticVersionReleaseNote());
@@ -314,7 +312,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         setCurrentActivity(activity);
-        if (activity.getClass().equals(OnBoardingActivity.class) || activity.getClass().equals(BottomNavigationActivity.class) && shouldDisplayServerMessage) {
+        if(activity.getClass().equals(OnBoardingActivity.class) || activity.getClass().equals(BottomNavigationActivity.class) && shouldDisplayServerMessage){
             showServerMessageOrProceed(activity);
             shouldDisplayServerMessage = false;
         }
@@ -430,7 +428,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static String getCartCheckoutLink() {
         return cartCheckoutLink;
     }
-
     public static String getAuthenticVersionStamp() {
         return authenticVersionStamp;
     }
@@ -439,7 +436,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.authenticVersionStamp = authenticVersionStamp;
     }
 
-    public static boolean isApplicationInForeground() {
+    public static boolean isApplicationInForeground(){
         return isApplicationInForeground;
     }
 
@@ -494,11 +491,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return quickShopDefaultValues;
     }
 
-    public Activity getCurrentActivity() {
+    public Activity getCurrentActivity(){
         return mCurrentActivity;
     }
-
-    public void setCurrentActivity(Activity mCurrentActivity) {
+    public void setCurrentActivity(Activity mCurrentActivity){
         this.mCurrentActivity = mCurrentActivity;
     }
 
