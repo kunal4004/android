@@ -1,20 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/orders_bg"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/sixteen_dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/locationSelectedLayout">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1A000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/myriad_pro_regular_black"
+            android:layout_alignParentStart="true"
+            android:text="Earliest Delivery date:"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp"
+            android:textSize="@dimen/thirteen_sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp">
+
+            <TextView
+                android:id="@+id/foodItemsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/myriad_pro_regular_black"
+                android:layout_alignParentStart="true"
+                android:text="Food Items"
+                android:textSize="@dimen/thirteen_sp" />
+
+            <TextView
+                android:id="@+id/foodItemsDeliveryDate"
+                style="@style/futura_semi_bold_black_12_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Sunday, 24 Jul 2020"
+                android:textSize="@dimen/thirteen_sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/five_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp">
+
+            <TextView
+                android:id="@+id/otherItemsLabel"
+                style="@style/myriad_pro_regular_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="Fashion, Beauty Home"
+                android:textSize="@dimen/thirteen_sp" />
+
+            <TextView
+                android:id="@+id/otherItemsDeliveryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/futura_semi_bold_black_12_text_style"
+                android:layout_alignParentEnd="true"
+                android:text="Sunday, 24 Jul 2020"
+                android:textSize="@dimen/thirteen_sp" />
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/locationSelectedLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sixty_dp"
         android:background="@drawable/white_bg_pressed"
-        android:paddingStart="@dimen/twenty_four_dp"
-        android:paddingTop="@dimen/twenty_six_dp"
-        android:paddingEnd="@dimen/twenty_four_dp"
-        android:paddingBottom="@dimen/twenty_six_dp">
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/deliverLocationIcon"
@@ -33,24 +120,10 @@
             android:layout_marginLeft="20dp"
             android:src="@drawable/ic_caret_black" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/editLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:WTextView_font="medium"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:letterSpacing="0.1"
-            android:visibility="invisible"
-            />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_toLeftOf="@+id/editLocation"
             android:layout_toRightOf="@+id/deliverLocationIcon"
@@ -79,5 +152,18 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/editLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:letterSpacing="0.1"
+            android:text="@string/edit"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:WTextView_font="medium" />
     </RelativeLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
