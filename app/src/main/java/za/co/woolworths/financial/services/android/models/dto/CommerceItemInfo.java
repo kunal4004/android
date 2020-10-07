@@ -13,6 +13,7 @@ public class CommerceItemInfo {
 	public String externalImageURL;
 	public String catalogRefId;
 	public String productDisplayName;
+	public boolean isGWP;
 	@SerializedName("id")
 	public String commerceId;
 	private String size;

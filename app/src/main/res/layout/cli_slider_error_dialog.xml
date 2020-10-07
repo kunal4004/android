@@ -55,7 +55,7 @@
             android:background="@color/description_color" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/okButtonTapped"
+            android:id="@+id/gotITButton"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

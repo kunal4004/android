@@ -1022,7 +1022,7 @@ public class Utils {
 	}
 
 	public static String getExternalImageRef() {
-		return "https://images.woolworthsstatic.co.za/";
+		return KotlinUtils.productImageUrlPrefix;
 	}
 
 

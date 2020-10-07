@@ -15,6 +15,7 @@ public class CommerceItem {
 	private boolean deleteSingleItem = false;
 	private boolean deleteRowPressed = false;
 	private CommerceItem deletedCommerceItemId;
+	public boolean isGWP;
 	public String fulfillmentType;
 	public String fulfillmentStoreId;
 	public int quantityInStock;
