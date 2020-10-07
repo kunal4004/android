@@ -205,11 +205,12 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                                  * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
                                  */
 
-                                val updatedList = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }
-                                mChatAdapter?.clear()
-                                updatedList?.values?.forEachIndexed { i, k ->
-                                    Log.e("messagesByConver", k[i].message)
-                                    updateMessageList(k[i])
+                                val updatedList: List<ChatMessage>? = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }?.entries?.map { it.value }?.flatten()
+                                val removeDuplicates = updatedList?.toSet()?.toMutableList()
+
+                                if (removeDuplicates?.size ?: 0 > 0) {
+                                    mChatAdapter?.clear()
+                                    removeDuplicates?.forEach { chat -> updateMessageList(chat) }
                                 }
                             }
                         }

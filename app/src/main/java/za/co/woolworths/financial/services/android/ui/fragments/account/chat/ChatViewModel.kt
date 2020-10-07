@@ -39,7 +39,6 @@ class ChatViewModel : ViewModel() {
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
     var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
     private var customerInfo: ChatCustomerInfo = ChatCustomerInfo()
-    private var postEventManager: ChatPostEventManager = ChatPostEventManager()
 
     init {
         absaCreditCard.value = getAccount()?.cards
@@ -282,6 +281,4 @@ class ChatViewModel : ViewModel() {
             result(messageList)
         }
     }
-
-    fun getPostEventManager() = postEventManager
 }
