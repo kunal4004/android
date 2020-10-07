@@ -89,7 +89,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         if (productGroupCode == CREDIT_CARD_PRODUCT_GROUP_CODE || productGroupCode == PERSONAL_LOAN_PRODUCT_GROUP_CORE) return
         val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
         mainView?.showStoreCardProgress()
-        mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object:IGenericAPILoaderView<Any>{
+        mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? StoreCardsResponse)?.apply {
                     mainView?.hideStoreCardProgress()
@@ -110,7 +110,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                 mainView?.showOnStoreCardFailure(error)
             }
 
-        } )
+        })
     }
 
     override fun getUserCLIOfferActive() {
@@ -157,7 +157,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                     }
                 }
 
-                is CreditCardTokenResponse->{
+                is CreditCardTokenResponse -> {
                     when (httpCode) {
                         200 -> {
                             mainView?.onGetCreditCArdTokenSuccess(this)
@@ -218,7 +218,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToMyCardDetailActivity(shouldStartWithUnblockStoreCardCall: Boolean) {
-        getStoreCardResponse()?.let { storeCardsResponse -> mainView?.navigateToMyCardDetailActivity(storeCardsResponse,shouldStartWithUnblockStoreCardCall) }
+        getStoreCardResponse()?.let { storeCardsResponse -> mainView?.navigateToMyCardDetailActivity(storeCardsResponse, shouldStartWithUnblockStoreCardCall) }
     }
 
     override fun getOfferActive(): OfferActive? = mOfferActive
@@ -261,6 +261,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun getStoreCardBlockType(): Boolean {
         val storeCardsData = getStoreCardResponse()?.storeCardsData
+        if (storeCardsData == null || storeCardsData?.primaryCards.isNullOrEmpty()) {
+            return false
+        }
         val primaryCard = storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
         return primaryCard?.blockType?.toLowerCase(Locale.getDefault()) == TemporaryFreezeStoreCard.TEMPORARY
     }
