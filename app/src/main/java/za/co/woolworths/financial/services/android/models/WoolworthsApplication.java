@@ -250,12 +250,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
         Fabric.with(this,new Crashlytics.Builder().core(new CrashlyticsCore()).build());
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
-        ChatAWSAmplify AWSAmplify = new ChatAWSAmplify();
-        AWSAmplify.init(WoolworthsApplication.this);
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
+
+        ChatAWSAmplify chatAWSAmplify = new ChatAWSAmplify();
+        chatAWSAmplify.init(this);
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
                 .setDownsampleEnabled(true)

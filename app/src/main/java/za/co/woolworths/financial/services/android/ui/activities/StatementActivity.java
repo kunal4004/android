@@ -4,14 +4,12 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.Manifest;
 import android.os.Bundle;
 import android.os.StrictMode;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,8 +32,6 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.ACCOUNTS;
-
 public class StatementActivity extends AppCompatActivity implements PermissionResultCallback {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -53,12 +49,9 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
         Utils.updateStatusBarBackground(this);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        Bundle intentExtras = getIntent().getExtras();
-		String account = intentExtras.getString(ACCOUNTS,"");
-
+        actionBar();
         initUI();
-        StatementFragment statementFragment = StatementFragment.newInstance(account);
+        StatementFragment statementFragment = new StatementFragment();
         openNextFragment(statementFragment);
         permissionUtils = new PermissionUtils(this, this);
         permissions = new ArrayList<>();

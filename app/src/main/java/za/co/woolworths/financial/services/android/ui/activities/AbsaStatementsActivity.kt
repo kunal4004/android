@@ -56,9 +56,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         if (savedInstanceState == null)
             getBundleArgument()
         initViews()
-//        applyNowAccountHashPair?.apply {
-//            chatToCollectionAgent(first, mutableListOf(second))
-        //      }
     }
 
     private fun actionBar() {
@@ -76,8 +73,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             nonce = getString(NONCE)
             eSessionId = getString(E_SESSION_ID)
             chatAccountProductLandingPage = getString(ACCOUNTS)
-            //applyNowAccountHashPair = Gson().fromJson(chatAccountProductLandingPage, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
-
         }
     }
 

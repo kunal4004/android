@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.Card;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.chat.CreditCard;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
@@ -32,7 +31,7 @@ public class AppInstanceObject {
 
     public AppInstanceObject() {
         users = new ArrayList<>();
-        featureWalkThrough = new FeatureWalkThrough();
+        featureWalkThrough =  new FeatureWalkThrough();
         inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new StoreCard(false, false, false, false), new CreditCard(false, false, false, false), new PersonalLoan(false, false, false, false), false);
     }
 
@@ -144,7 +143,6 @@ public class AppInstanceObject {
         public boolean shoppingList;
         public boolean statements;
     }
-
     /***
      * Check to determine if biometric custom popup should be displayed
      */
