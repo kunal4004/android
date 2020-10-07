@@ -1445,6 +1445,14 @@
     <string name="temp_store_card_contact_customer_service_desc">If you have issues using your temporary card please contact Woolworths financial services at 0861 50 20 20 or by email at queries@wfs.co.za.</string>
     <string name="free_gift_with_purchase_title">FREE GIFT WITH PURCHASE</string>
     <string name="free_gift_with_purchase_availabilty">Free Gift Available While Stocks Last</string>
+
+    <string name="retry_label">Retry</string>
+    <string name="error_occured">Error Occured</string>
+    <string name="gift_with_purchase_dialog_layout" >Gift with purchase dialog</string>
+    <string name="gift_item_title">This item is a Free Gift</string>
+    <string name="gift_item_description">To remove this item from your cart, you need to remove the qualifying product.</string>
+    <string name="free_gift">free gift</string>
+
     <string name="activate_new_credit_card">Activate New Credit Card</string>
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="recent_transactions_title">Recent Transactions</string>
@@ -1530,6 +1538,16 @@
     <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
     <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
     <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
+    <string name="cli_got_it">GOT IT</string>
+    <string name="layout_gift_items">layoutGiftItems</string>
+    <string name="gwp_img_gift">imgGift</string>
+    <string name="gwp_product_name">txtGiftTitle</string>
+    <string name="gwp_product_desc">txtGiftDescription</string>
+    <string name="gwp_free_gift_disclaimer">txtFreeGiftDisclaimer</string>
+    <string name="gwp_popup_title">txtGiftLayoutTitle</string>
+    <string name="gwp_popup_desc">txtGiftLayoutDescription</string>
+    <string name="gwp_popup_btn_got_it">btnGotIt</string>
+    <string name="gwp_popup_layout_divider_view">layoutDividerView</string>
 
     <string name="default_notification_channel_id">woolworths_notification_channel_01</string>
     <string name="default_notification_channel_name">All Notifications</string>

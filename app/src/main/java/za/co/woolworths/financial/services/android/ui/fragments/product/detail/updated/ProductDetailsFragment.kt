@@ -363,7 +363,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-          if (imageLink.isNullOrEmpty()) imageLink = "https://images.woolworthsstatic.co.za/"
+          if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
             return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
