@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
-open class ChatCustomerServiceExtensionFragment : Fragment() {
+open class ChatExtensionFragment : Fragment() {
 
     var mChatAdapter: WChatAdapter? = null
     var productOfferingId: String? = null

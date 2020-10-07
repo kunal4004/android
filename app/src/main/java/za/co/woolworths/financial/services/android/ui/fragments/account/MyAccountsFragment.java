@@ -65,8 +65,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
@@ -236,7 +236,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             SwipeRefreshLayout mSwipeToRefreshAccount = view.findViewById(R.id.swipeToRefreshAccount);
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
-            chatWithAgentFloatingButton = view.findViewById(R.id.chatWithAgentFloatingButton);
+            chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
 
             openMessageActivity.setOnClickListener(this);
             contactUs.setOnClickListener(this);
@@ -1216,7 +1216,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private void showInAppChat(Activity activity) {
         if ((AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account) ||
                 (!AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account)) {
-            ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(activity, new ChatCustomerServiceBubbleVisibility(mAccountResponse.accountList), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleVisibility(mAccountResponse.accountList), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
             inAppChatTipAcknowledgement.build();
         }
     }

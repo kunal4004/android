@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
@@ -25,14 +25,12 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
-class ChatCustomerServiceViewModel : ViewModel() {
+class ChatViewModel : ViewModel() {
 
-    private var jWTDecodedModel: JWTDecodedModel? = SessionUtilities.getInstance().jwt
     private var creditCardTokenAPI: Call<CreditCardTokenResponse>? = null
-    private var customerServiceAWSAmplify: ChatCustomerServiceAWSAmplify? = null
+    private var awsAmplify: ChatAWSAmplify? = null
     private var conversation: Conversation? = null
     private var mAccount: MutableLiveData<Account?> = MutableLiveData()
     private var sessionStateType: MutableLiveData<SessionStateType?> = MutableLiveData()
@@ -40,6 +38,8 @@ class ChatCustomerServiceViewModel : ViewModel() {
     var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
     var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
+    private var customerInfo: ChatCustomerInfo = ChatCustomerInfo()
+    private var postEventManager: ChatPostEventManager = ChatPostEventManager()
 
     init {
         absaCreditCard.value = getAccount()?.cards
@@ -50,7 +50,7 @@ class ChatCustomerServiceViewModel : ViewModel() {
     }
 
     fun initAmplify() {
-        this.customerServiceAWSAmplify = ChatCustomerServiceAWSAmplify()
+        this.awsAmplify = ChatAWSAmplify()
     }
 
     fun setAccount(account: Account?) {
@@ -83,28 +83,28 @@ class ChatCustomerServiceViewModel : ViewModel() {
     }
 
     fun signIn(result: () -> Unit, failure: (Any) -> Unit) {
-        customerServiceAWSAmplify?.apply {
+        awsAmplify?.apply {
             signIn({ conversation ->
-                this@ChatCustomerServiceViewModel.conversation = conversation
+                this@ChatViewModel.conversation = conversation
                 result()
             }, { failure -> failure(failure) })
         }
     }
 
     fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
-        customerServiceAWSAmplify?.subscribeToMessageByConversationId(
+        awsAmplify?.subscribeToMessageByConversationId(
                 getConversationMessageId(),
                 getSessionType(),
                 getSessionVars(),
-                getCustomerFamilyName(),
-                getCustomerEmail(),
+                customerInfo.getCustomerFamilyName(),
+                customerInfo.getCustomerEmail(),
                 { data -> result(data) }, { failure(failure) })
     }
 
     private fun getConversationMessageId(): String = conversation?.id ?: ""
 
     override fun onCleared() {
-        customerServiceAWSAmplify?.cancelSubscribeMessageByConversationId()
+        awsAmplify?.cancelSubscribeMessageByConversationId()
         creditCardTokenAPI?.apply {
             if (!isCanceled)
                 cancel()
@@ -115,25 +115,25 @@ class ChatCustomerServiceViewModel : ViewModel() {
 
 
     fun sendMessage(content: String) {
-        customerServiceAWSAmplify?.sendMessage(
+        awsAmplify?.sendMessage(
                 getConversationMessageId(),
                 getSessionType(),
                 getSessionStateType(),
                 content,
                 getSessionVars(),
-                getCustomerFamilyName(),
-                getCustomerEmail())
+                customerInfo.getCustomerFamilyName(),
+                customerInfo.getCustomerEmail())
     }
 
     fun signOut(result: () -> Unit) {
-        customerServiceAWSAmplify?.queryServiceSignOut(
+        awsAmplify?.queryServiceSignOut(
                 getConversationMessageId(),
                 getSessionType(),
                 SessionStateType.DISCONNECT,
                 "",
                 getSessionVars(),
-                getCustomerFamilyName(),
-                getCustomerEmail(),
+                customerInfo.getCustomerFamilyName(),
+                customerInfo.getCustomerEmail(),
                 { result() }, { result() })
     }
 
@@ -232,9 +232,9 @@ class ChatCustomerServiceViewModel : ViewModel() {
         val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
         val isCreditCard = productGroupCode == "cc"
         val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
-        val prsC2id = getCustomerC2ID()
-        val prsFirstname = getCustomerUsername()
-        val prsSurname = getCustomerFamilyName()
+        val prsC2id = customerInfo.getCustomerC2ID()
+        val prsFirstname = customerInfo.getCustomerUsername()
+        val prsSurname = customerInfo.getCustomerFamilyName()
         val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
         val prsProductOfferingDescription = when (productGroupCode) {
             "sc" -> "StoreCard"
@@ -254,20 +254,34 @@ class ChatCustomerServiceViewModel : ViewModel() {
 
     }
 
-    private fun getCustomerFamilyName(): String {
-        val familyName = jWTDecodedModel?.family_name?.get(0)
-        return KotlinUtils.firstLetterCapitalization(familyName) ?: ""
-    }
-
-    internal fun getCustomerUsername(): String {
-        val username = jWTDecodedModel?.name?.get(0)
-        return KotlinUtils.firstLetterCapitalization(username) ?: ""
-    }
-
-    private fun getCustomerEmail() = jWTDecodedModel?.email?.get(0) ?: ""
-
-    private fun getCustomerC2ID() = jWTDecodedModel?.C2Id ?: ""
-
     fun getABSACardToken(): String? = getAccount()?.cards?.get(0)?.absaCardToken
             ?: absaCreditCard.value?.get(0)?.absaCardToken
+
+    fun getCustomerInfo() = customerInfo
+
+    fun getMessagesListByConversation(result: ((MutableList<ChatMessage>?) -> Unit)) {
+
+        awsAmplify?.getMessagesListByConversation(getConversationMessageId()) { message ->
+
+            val messageList: MutableList<ChatMessage> = mutableListOf()
+            message?.items?.forEach { item ->
+                val chatMessage = ChatMessage(if (item.sender == "AGENT") ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, item.content)
+                messageList.add(chatMessage)
+            }
+
+            var messagesSize = messageList.size
+            if (messagesSize > 1) {
+                messagesSize -= 1
+                for (i in 1..messagesSize) {
+                    if (messageList[i].type == messageList[i - 1].type) {
+                        messageList[i].isWoolworthIconVisible = false
+                    }
+                }
+            }
+
+            result(messageList)
+        }
+    }
+
+    fun getPostEventManager() = postEventManager
 }

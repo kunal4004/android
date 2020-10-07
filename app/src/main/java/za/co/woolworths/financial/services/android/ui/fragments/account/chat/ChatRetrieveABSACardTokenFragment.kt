@@ -21,7 +21,7 @@ import java.net.ConnectException
 
 class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
 
-    private val chatViewModel: ChatCustomerServiceViewModel by activityViewModels()
+    private val chatViewModel: ChatViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

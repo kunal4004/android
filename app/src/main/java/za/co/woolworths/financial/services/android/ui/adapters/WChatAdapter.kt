@@ -15,7 +15,9 @@ private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 private const val VIEW_TYPE_SENT_MESSAGE = 2
 
 class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
-    private val messages: ArrayList<ChatMessage> = arrayListOf()
+    private val messages: MutableList<ChatMessage> = mutableListOf()
+
+    fun getMessageList() = messages
 
     fun addMessage(message: ChatMessage) {
         messages.add(message)
@@ -30,6 +32,10 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             }
         }
         notifyDataSetChanged()
+    }
+
+    fun updateList(values: MutableList<ChatMessage>) {
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -48,11 +54,16 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         holder.bind(messages[position])
     }
 
+
     override fun getItemViewType(position: Int): Int {
         return when (messages[position].type) {
             ChatMessage.Type.RECEIVED -> VIEW_TYPE_RECEIVED_MESSAGE
             ChatMessage.Type.SENT -> VIEW_TYPE_SENT_MESSAGE
         }
+    }
+
+    fun clear() {
+       messages.clear()
     }
 
     inner class ReceivedMessageViewHolder(view: View) : MessageViewHolder(view) {

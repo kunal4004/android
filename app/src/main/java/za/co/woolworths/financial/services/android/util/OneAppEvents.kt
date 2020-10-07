@@ -29,7 +29,11 @@ class OneAppEvents {
             const val CHAT_PAY_OPTIONS_CC_LANDING_INITIATE_SESSION = "CC PayOptions InitiateSession"
             const val CHAT_COLLECTIONS_CC_END_SESSION = "CC EndSession"
             const val CHAT_COLLECTIONS_CC_Transactions_InitiateSession = "CC Transactions InitiateSession"
-
+            const val CHAT_COLLECTIONS_CC_Statements_InitiateSession = "CC Statements InitiateSession"
+            const val CHAT_COLLECTIONS_SC_Landing_InitiateSession = "SC Landing InitiateSession"
+            const val CHAT_COLLECTIONS_SC_PayOptions_InitiateSession = "SC PayOptions InitiateSession"
+            const val CHAT_COLLECTIONS_SC_EndSession_InitiateSession = "SC EndSession"
+            const val CHAT_CUSTOMER_SERVICES_SC_Transactions_InitiateSession = "SC Transactions InitiateSession"
 
         }
     }

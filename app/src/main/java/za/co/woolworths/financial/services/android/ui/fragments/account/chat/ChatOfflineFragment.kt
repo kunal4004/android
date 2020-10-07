@@ -33,11 +33,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ChatCustomerServiceOfflineFragment : Fragment() {
+class ChatOfflineFragment : Fragment() {
 
     private var featureName: String? = null
     private var appScreen: String? = null
-    private val chatViewModel: ChatCustomerServiceViewModel by activityViewModels()
+    private val chatViewModel: ChatViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +62,7 @@ class ChatCustomerServiceOfflineFragment : Fragment() {
             setChatState(false)
         }
 
-        val chatCollectionsAgent = ChatCustomerServiceBubbleVisibility()
+        val chatCollectionsAgent = ChatBubbleVisibility()
         hiClientTextView?.text = "Hi ${chatCollectionsAgent.getUsername()},"
 
         chatCollectionDescriptionTextView?.text = chatViewModel.offlineMessageTemplate { result ->

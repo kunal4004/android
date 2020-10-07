@@ -20,9 +20,9 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNT_NUMBER
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.PRODUCT_OFFERING_ID
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNT_NUMBER
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
@@ -47,7 +47,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     enum class ChatType { AGENT_COLLECT, WHATSAPP_ONBOARDING, DEFAULT }
 
-    private val chatViewModel: ChatCustomerServiceViewModel by viewModels()
+    private val chatViewModel: ChatViewModel by viewModels()
 
     companion object {
         const val DELAY: Long = 300
@@ -63,7 +63,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
             productOfferingId = getString(PRODUCT_OFFERING_ID)
             accountNumber = getString(ACCOUNT_NUMBER)
             appScreen = getString(APP_SCREEN)
-            sessionType = getSerializable(ChatCustomerServiceExtensionFragment.SESSION_TYPE) as? SessionType
+            sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
             chatAccountProductLandingPage = getString(ACCOUNTS)
             chatViewModel.isChatToCollectionAgent.value = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
             chatViewModel.setSessionType(sessionType ?: SessionType.Collections)
@@ -77,7 +77,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         with(chatViewModel) {
             isCustomerSignOut.observe(this@WChatActivity, Observer { isSignOut ->
                 when (currentFragment) {
-                    is ChatCustomerServiceFragment -> {
+                    is ChatFragment -> {
                         when (isSignOut) {
                             true -> signOut { GlobalScope.doAfterDelay(DELAY) { closeChat() } }
                         }
@@ -169,7 +169,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         when (currentFragment) {
             is WhatsAppChatToUsFragment -> chatNavHostController?.popBackStack()
 
-            is ChatCustomerServiceOfflineFragment -> {
+            is ChatOfflineFragment -> {
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
@@ -189,7 +189,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     private fun endSessionPopup() {
         val navigationId = when (currentFragment) {
-            is ChatCustomerServiceFragment -> R.id.action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment
+            is ChatFragment -> R.id.action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment
             is ChatRetrieveABSACardTokenFragment -> R.id.action_chatRetrieveABSACardTokenFragment_to_chatCustomerServiceEndSessionDialogFragment
             else -> return
         }
@@ -225,5 +225,4 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         chatNavGraph?.startDestination = startDestination
         chatNavGraph?.let { chatNavHostController?.setGraph(it, bundle) }
     }
-
 }

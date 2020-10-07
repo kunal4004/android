@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -62,7 +63,7 @@ import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
@@ -247,6 +248,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         super.onCreate();
         mInstance = this;
         WoolworthsApplication.context = this.getApplicationContext();
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
         this.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -254,7 +256,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore()).build());
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
-        ChatCustomerServiceAWSAmplify AWSAmplify = new ChatCustomerServiceAWSAmplify();
+        ChatAWSAmplify AWSAmplify = new ChatAWSAmplify();
         AWSAmplify.init(WoolworthsApplication.this);
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)

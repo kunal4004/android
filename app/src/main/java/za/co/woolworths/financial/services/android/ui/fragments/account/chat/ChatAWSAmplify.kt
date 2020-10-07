@@ -15,18 +15,16 @@ import com.amplifyframework.core.Amplify.API
 import com.amplifyframework.core.Amplify.Auth
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.*
+
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.util.Assets
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 
-class ChatCustomerServiceAWSAmplify {
+class ChatAWSAmplify {
 
     private var subscription: ApiOperation<*>? = null
 
@@ -64,7 +62,7 @@ class ChatCustomerServiceAWSAmplify {
 
     // Arrange a request to start a subscription.
     private fun onSubscribeMessageByConversationId(conversationMessagesId: String): GraphQLRequest<SendMessageResponse> {
-        val onSubscribeMessageByConversationIdDocument: String = Assets.readAsString("graphql/subscribe-event-message-by-conversation-id.graphql")
+        val onSubscribeMessageByConversationIdDocument: String = Assets.readAsString("graphql/subscribe-event-on-message-by-conversation-id.graphql")
         val serializer = GsonVariablesSerializer()
         val variables = Collections.singletonMap<String, Any>("conversationMessagesId", conversationMessagesId)
         return SimpleGraphQLRequest(onSubscribeMessageByConversationIdDocument, variables, SendMessageResponse::class.java, serializer)
@@ -82,7 +80,7 @@ class ChatCustomerServiceAWSAmplify {
                     sendMessage(conversationMessagesId,
                             sessionType,
                             SessionStateType.CONNECT,
-                            "",
+                            "hi",
                             sessionVars,
                             name,
                             email)
@@ -108,10 +106,7 @@ class ChatCustomerServiceAWSAmplify {
                             name: String,
                             email: String, onResult: () -> Unit, onError: () -> Unit) {
 
-        sendMessage(conversationMessagesId, sessionType, sessionState, content,
-                sessionVars,
-                name,
-                email)
+        sendMessage(conversationMessagesId, sessionType, sessionState, content, sessionVars, name, email)
         // Ensure sign out from all device
         Auth.signOut(AuthSignOutOptions.builder().globalSignOut(true).build(), { onResult() }, { onError() })
     }
@@ -124,7 +119,7 @@ class ChatCustomerServiceAWSAmplify {
                                    name: String,
                                    email: String): GraphQLRequest<String> {
 
-        val messageGraphQL: String = Assets.readAsString("graphql/mutation-event-send-message.graphql")
+        val messageGraphQL: String = Assets.readAsString("graphql/send-message.graphql")
         val serializer = GsonVariablesSerializer()
         val variables = HashMap<String, Any>()
 
@@ -137,8 +132,6 @@ class ChatCustomerServiceAWSAmplify {
         variables["sessionVars"] = sessionVars
         variables["name"] = name
         variables["email"] = email
-
-        Log.e("sesisonVars", sessionVars)
 
         return SimpleGraphQLRequest(messageGraphQL, variables, String::class.java, serializer)
     }
@@ -163,4 +156,20 @@ class ChatCustomerServiceAWSAmplify {
         )
     }
 
+    // Arrange a request to start a subscription.
+    private fun listMessages(conversationMessagesId: String): GraphQLRequest<GetMessagesByConversation> {
+        val listMessageByConversation: String = Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
+        val serializer = GsonVariablesSerializer()
+        val variables = HashMap<String, Any>()
+        variables["conversationMessagesId"] = conversationMessagesId
+        return SimpleGraphQLRequest(listMessageByConversation, variables, GetMessagesByConversation::class.java, serializer)
+    }
+
+    fun getMessagesListByConversation(conversationMessagesId: String, result: (GetMessagesByConversation?) -> Unit) {
+        API.query(
+                listMessages(conversationMessagesId),
+                { response -> result(response.data) },
+                { error -> Log.d("MyAmplifyApp", "Query failed", error) }
+        )
+    }
 }

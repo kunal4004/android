@@ -24,9 +24,9 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAccountTransactionHistory
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getListOfTransaction
@@ -178,12 +178,13 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
-        val tradingHours = WoolworthsApplication.getPresenceInAppChat().customerService.tradingHours
-        Utils.triggerFireBaseEvents(if (KotlinUtils.isOperatingHoursForInAppChat(tradingHours) == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
-        ChatCustomerServiceBubbleView(
+        val inAppChat = WoolworthsApplication.getPresenceInAppChat()
+        val tradingHours = inAppChat?.customerService?.tradingHours ?: inAppChat?.tradingHours
+        Utils.triggerFireBaseEvents(if (tradingHours?.let { hour -> KotlinUtils.isOperatingHoursForInAppChat(hour) } == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
+        ChatFloatingActionButtonBubbleView(
                 activity = this@WTransactionsActivity,
-                chatCustomerServiceBubbleVisibility = ChatCustomerServiceBubbleVisibility(accountList),
-                floatingActionButton = chatWithAgentFloatingButton,
+                chatBubbleVisibility = ChatBubbleVisibility(accountList),
+                floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
                 view = paymentOptionScrollView)
                 .build()

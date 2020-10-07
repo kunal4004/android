@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.ccs_end_session_dialog_fragment.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class ChatCustomerServiceEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
+class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
-    private val chatViewModel: ChatCustomerServiceViewModel by activityViewModels()
+    private val chatViewModel: ChatViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.ccs_end_session_dialog_fragment, container, false)
@@ -24,13 +24,13 @@ class ChatCustomerServiceEndSessionDialogFragment : WBottomSheetDialogFragment()
 
         endSessionButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@ChatCustomerServiceEndSessionDialogFragment)
+            setOnClickListener(this@ChatEndSessionDialogFragment)
         }
 
         noContinueSessionButton?.apply {
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@ChatCustomerServiceEndSessionDialogFragment)
+            setOnClickListener(this@ChatEndSessionDialogFragment)
         }
     }
 

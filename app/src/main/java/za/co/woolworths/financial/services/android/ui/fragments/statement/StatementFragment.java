@@ -54,9 +54,8 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleView;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceBubbleVisibility;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -69,7 +68,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceExtensionFragment.ACCOUNTS;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.ACCOUNTS;
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
@@ -130,7 +129,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 }.getType());
             }
 
-            chatWithAgentFloatingButton = view.findViewById(R.id.chatWithAgentFloatingButton);
+            chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
             setRecyclerView(rclEStatement);
             disableButton();
             loadState = new LoadState();
@@ -143,7 +142,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     }
 
     private void initChat() {
-        ChatCustomerServiceBubbleView inAppChatTipAcknowledgement = new ChatCustomerServiceBubbleView(getActivity(), new ChatCustomerServiceBubbleVisibility(applyNowAccountHashPair.second), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, rclEStatement);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(applyNowAccountHashPair.second), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, rclEStatement);
         inAppChatTipAcknowledgement.build();
     }
 

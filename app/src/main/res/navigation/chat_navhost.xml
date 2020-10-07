@@ -12,12 +12,12 @@
         tools:layout="@layout/chat_to_us_via_whatsapp_fragment" />
     <fragment
         android:id="@+id/chatToCollectionAgentOfflineFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceOfflineFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatOfflineFragment"
         android:label="ChatToCollectionAgentOfflineFragment"
         tools:layout="@layout/chat_to_collection_agent_offline_fragment" />
     <fragment
         android:id="@+id/chatFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerServiceFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFragment"
         android:label="ChatFragment"
         tools:layout="@layout/chat_fragment">
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <dialog
         android:id="@+id/chatCustomerServiceEndSessionDialogFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.ChatCustomerServiceEndSessionDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.ChatEndSessionDialogFragment"
         android:label="ChatCustomerServiceEndSessionDialogFragment"
         tools:layout="@layout/ccs_end_session_dialog_fragment" />
     <fragment

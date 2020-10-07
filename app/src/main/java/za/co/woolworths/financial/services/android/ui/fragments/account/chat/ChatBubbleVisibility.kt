@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
-class ChatCustomerServiceBubbleVisibility(private var accountList: List<Account>? = null) {
+class ChatBubbleVisibility(private var accountList: List<Account>? = null) {
 
     private var mAppInstanceObject: AppInstanceObject? = null
 
@@ -16,7 +16,6 @@ class ChatCustomerServiceBubbleVisibility(private var accountList: List<Account>
         const val STORE_CARD_PRODUCT_GROUP_CODE = "sc"
         const val PERSONAL_LOAN_PRODUCT_GROUP_CODE = "pl"
         const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
-
     }
 
     init {
