@@ -62,7 +62,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -154,6 +154,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun onQuantitySelector() {
         activity?.supportFragmentManager?.apply {
+            if (getSelectedSku() == null) {
+                requestSelectSize()
+                return
+            }
             getSelectedSku()?.quantity?.let {
                 if (it > 0)
                     QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment).show(this, QuantitySelectorFragment::class.java.simpleName)
@@ -271,7 +275,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSessionTokenExpired() {
         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-        activity?.let {activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) }}
+        activity?.let { activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) } }
         updateStockAvailabilityLocation()
     }
 
@@ -321,7 +325,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onProductDetailedFailed(response: Response) {
         if (isAdded)
-        showErrorWhileLoadingProductDetails()
+            showErrorWhileLoadingProductDetails()
     }
 
     override fun onFailureResponse(error: String) {
@@ -363,7 +367,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-          if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
+            if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
             return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
@@ -393,7 +397,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
-        if(otherSKUsByGroupKey.size == 1 && !hasSize){
+        if (otherSKUsByGroupKey.size == 1 && !hasSize) {
             onColorSelection(this.defaultGroupKey)
         }
         productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this, spanCount, getSelectedGroupKey()).apply {
@@ -560,7 +564,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             when (index) {
                 -1 -> {
-                    var otherSku:OtherSkus? = null
+                    var otherSku: OtherSkus? = null
                     otherSKUsByGroupKey[getSelectedGroupKey()]?.forEach {
                         if (it.quantity > 0) {
                             otherSku = it
@@ -695,7 +699,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         var imageCode = ""
         val imageCodesList = arrayListOf<String>()
         groupKey?.split("\\s".toRegex())?.let {
-                when (it.size) {
+            when (it.size) {
                 1 -> imageCodesList.add(it[0])
                 else -> {
                     it.forEachIndexed { i, s ->
@@ -1095,8 +1099,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     is ShoppingDeliveryLocation -> {
                         when (it.suburb.storePickup) {
                             true -> {
-                                currentDeliveryLocation.text = resources?.getString(R.string.store)+it.suburb?.name
-                                defaultLocationPlaceholder.text = getString(R.string.collecting_from)+ " "
+                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.suburb?.name
+                                defaultLocationPlaceholder.text = getString(R.string.collecting_from) + " "
                             }
                             else -> {
                                 currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
@@ -1172,12 +1176,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             promotionalImages?.removeAllViews()
 
-            mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
+            mFreeGiftPromotionalImage?.let { freeGiftImage -> images.add(freeGiftImage) }
 
-                images.forEach { image ->
-                    layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                        ImageManager.loadImage(view.promotionImage, image)
-                        promotionalImages?.addView(view)
+            images.forEach { image ->
+                layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                    ImageManager.loadImage(view.promotionImage, image)
+                    promotionalImages?.addView(view)
                 }
             }
         }
@@ -1208,7 +1212,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 val suburbName = when (it) {
                     is ShoppingDeliveryLocation -> it.suburb.name
                     is QuickShopDefaultValues -> it.suburb.name
-                    else -> ""}
+                    else -> ""
+                }
                 val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
                 OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
                 updateAddToCartButtonForSelectedSKU()
@@ -1228,37 +1233,37 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun setUniqueIds() {
-            resources?.apply {
-                productLayout?.contentDescription = getString(R.string.pdp_layout)
-                productImagesViewPagerIndicator?.contentDescription = getString(R.string.store_card_image)
-                closePage?.contentDescription = getString(R.string.pdp_layout)
-                productName?.contentDescription = getString(R.string.pdp_textViewProductName)
-                priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
-                colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
-                selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
-                colorSelectorRecycleView?.contentDescription = getString(R.string.pdp_colorSelectorRecycleView)
-                addToCartAction?.contentDescription = getString(R.string.pdp_buttonAddToCart)
-                quantitySelector?.contentDescription = getString(R.string.pdp_quantitySelector)
-                quantityText?.contentDescription = getString(R.string.pdp_quantitySelected)
-                sizeColorSelectorLayout?.contentDescription = getString(R.string.pdp_sizeColourSelectorLayout)
-                sizeSelectorRecycleView?.contentDescription = getString(R.string.pdp_sizeSelectorRecycleView)
-                selectedSizePlaceholder?.contentDescription = getString(R.string.pdp_selectedSizePlaceholder)
-                selectedSize?.contentDescription = getString(R.string.pdp_textViewSelectedSize)
-                stockAvailabilityPlaceholder?.contentDescription = getString(R.string.pdp_stockAvailabilityPlaceholder)
-                deliveryLocationLayout?.contentDescription = getString(R.string.pdp_deliveryLocationLayout)
-                currentDeliveryLocation?.contentDescription = getString(R.string.pdp_txtCurrentDeliveryLocation)
-                defaultLocationPlaceholder?.contentDescription = getString(R.string.pdp_defaultLocationPlaceholder)
-                editDeliveryLocation?.contentDescription = getString(R.string.pdp_buttoneditDeliveryLocationn)
-                productDetailOptionsAndInformation?.contentDescription = getString(R.string.pdp_productDetailOptionsAndInformationLayout)
-                headerProductOptions?.contentDescription = getString(R.string.pdp_headerProductOptionsLayout)
-                checkInStoreAvailability?.contentDescription = getString(R.string.pdp_checkInStoreAvailabilityLayout)
-                buttonView?.contentDescription = getString(R.string.pdp_buttonView)
-                addToShoppingList?.contentDescription = getString(R.string.pdp_addToShoppingListLayout)
-                headerProductInformation?.contentDescription = getString(R.string.pdp_headerProductInformationLayout)
-                productDetailsInformation?.contentDescription = getString(R.string.pdp_productDetailsInformationLayout)
-                nutritionalInformation?.contentDescription = getString(R.string.pdp_productIngredientsInformationLayout)
-                productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
-            }
+        resources?.apply {
+            productLayout?.contentDescription = getString(R.string.pdp_layout)
+            productImagesViewPagerIndicator?.contentDescription = getString(R.string.store_card_image)
+            closePage?.contentDescription = getString(R.string.pdp_layout)
+            productName?.contentDescription = getString(R.string.pdp_textViewProductName)
+            priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
+            colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
+            selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
+            colorSelectorRecycleView?.contentDescription = getString(R.string.pdp_colorSelectorRecycleView)
+            addToCartAction?.contentDescription = getString(R.string.pdp_buttonAddToCart)
+            quantitySelector?.contentDescription = getString(R.string.pdp_quantitySelector)
+            quantityText?.contentDescription = getString(R.string.pdp_quantitySelected)
+            sizeColorSelectorLayout?.contentDescription = getString(R.string.pdp_sizeColourSelectorLayout)
+            sizeSelectorRecycleView?.contentDescription = getString(R.string.pdp_sizeSelectorRecycleView)
+            selectedSizePlaceholder?.contentDescription = getString(R.string.pdp_selectedSizePlaceholder)
+            selectedSize?.contentDescription = getString(R.string.pdp_textViewSelectedSize)
+            stockAvailabilityPlaceholder?.contentDescription = getString(R.string.pdp_stockAvailabilityPlaceholder)
+            deliveryLocationLayout?.contentDescription = getString(R.string.pdp_deliveryLocationLayout)
+            currentDeliveryLocation?.contentDescription = getString(R.string.pdp_txtCurrentDeliveryLocation)
+            defaultLocationPlaceholder?.contentDescription = getString(R.string.pdp_defaultLocationPlaceholder)
+            editDeliveryLocation?.contentDescription = getString(R.string.pdp_buttoneditDeliveryLocationn)
+            productDetailOptionsAndInformation?.contentDescription = getString(R.string.pdp_productDetailOptionsAndInformationLayout)
+            headerProductOptions?.contentDescription = getString(R.string.pdp_headerProductOptionsLayout)
+            checkInStoreAvailability?.contentDescription = getString(R.string.pdp_checkInStoreAvailabilityLayout)
+            buttonView?.contentDescription = getString(R.string.pdp_buttonView)
+            addToShoppingList?.contentDescription = getString(R.string.pdp_addToShoppingListLayout)
+            headerProductInformation?.contentDescription = getString(R.string.pdp_headerProductInformationLayout)
+            productDetailsInformation?.contentDescription = getString(R.string.pdp_productDetailsInformationLayout)
+            nutritionalInformation?.contentDescription = getString(R.string.pdp_productIngredientsInformationLayout)
+            productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
+        }
     }
 
     private fun showDeliveryOptionDialog() {
@@ -1295,8 +1300,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         this.findItemInStore()
     }
 
-    override fun clearStockAvailability(){
-        productDetails?.otherSkus?.forEach{
+    override fun clearStockAvailability() {
+        productDetails?.otherSkus?.forEach {
             it.quantity = -1
         }
         loadSizeAndColor()
