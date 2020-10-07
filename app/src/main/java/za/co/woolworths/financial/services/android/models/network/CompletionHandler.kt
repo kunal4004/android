@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,11 +17,15 @@ open class CompletionHandler<T>(private val requestListener: IResponseListener<T
                 when (isSuccessful) {
                     true -> onSuccess(body())
                     else -> errorBody()?.apply {
-                        if (response.code() == 504){
-                            onFailure(Throwable(this.string()));
-                        } else{
-                            val stream = InputStreamReader(byteStream());
-                            onSuccess(Gson().fromJson(stream, typeParameterClass));
+                        if (response.code() == 504) {
+                            onFailure(Throwable(this.string()))
+                        } else {
+                            try {
+                                val stream = InputStreamReader(byteStream())
+                                onSuccess(Gson().fromJson(stream, typeParameterClass))
+                            } catch (exception: JsonSyntaxException) {
+                                onFailure(Throwable(this.string()))
+                            }
                         }
                     }
                 }

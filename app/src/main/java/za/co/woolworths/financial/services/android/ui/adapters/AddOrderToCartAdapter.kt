@@ -22,20 +22,19 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     private var mAdapterIsClickable: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
-        when (viewType) {
+        return when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
-                return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+                HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
             }
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
-                return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
+                OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
             }
-            else -> return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+            else -> HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
         }
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
+    override fun getItemCount(): Int = dataList.size
+
 
     override fun onBindViewHolder(holder: OrdersBaseViewHolder, position: Int) {
         holder.bind(position)
@@ -162,8 +161,9 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
     inner class HeaderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            val item = dataList[position].item as String
-            itemView.header.text = item
+            val orderDetailsItem  = dataList[position] as? OrderDetailsItem
+            val headerText  = "${orderDetailsItem?.item}${if (orderDetailsItem?.orderItemLength!! > 1) "S" else "" }"
+            itemView.header?.text =headerText
         }
 
     }
@@ -238,5 +238,4 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
         }
     }
-
 }
