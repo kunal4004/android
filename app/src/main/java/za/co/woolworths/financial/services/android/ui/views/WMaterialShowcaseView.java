@@ -1106,6 +1106,4 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
             return value;
         }
     }
-
-
 }

@@ -60,7 +60,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.ACCOUNTS;
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
@@ -86,16 +85,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     public StatementFragment() {
     }
 
-    public static StatementFragment newInstance(String account) {
-        StatementFragment myFragment = new StatementFragment();
-
-        Bundle args = new Bundle();
-        args.putString(ACCOUNTS, account);
-        myFragment.setArguments(args);
-
-        return myFragment;
-    }
-
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,7 +101,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (savedInstanceState == null & !viewWasCreated) {
             init(view);
             listener();
-
             setRecyclerView(rclEStatement);
             disableButton();
             loadState = new LoadState();
@@ -121,6 +109,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             viewWasCreated = true;
         }
     }
+
 
     private void setAdapter() {
         mStatementAdapter = new StatementAdapter(this);
@@ -208,7 +197,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     @Override
     public void onClick(View v) {
         Activity activity = getActivity();
-        if (activity == null) return;
+        if (activity == null)return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
@@ -243,7 +232,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         cliGetStatements.enqueue(new CompletionHandler<>(new IResponseListener<StatementResponse>() {
             @Override
             public void onSuccess(StatementResponse statementResponse) {
-                if (statementResponse != null && getActivity() != null) {
+                if (statementResponse != null && getActivity() !=null) {
                     switch (statementResponse.httpCode) {
                         case 200:
                             setAdapter();
@@ -284,14 +273,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             public void onFailure(final Throwable error) {
                 if (error == null) return;
                 Activity activity = getActivity();
-                if (activity != null) {
+                if (activity !=null) {
                     activity.runOnUiThread(() -> {
                         onLoadComplete();
                         mErrorHandlerView.networkFailureHandler(error.getMessage());
                     });
                 }
             }
-        }, StatementResponse.class));
+        },StatementResponse.class));
 
     }
 
