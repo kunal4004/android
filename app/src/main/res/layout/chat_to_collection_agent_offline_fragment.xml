@@ -59,22 +59,10 @@
         android:layout_width="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@drawable/received_message_bubble_bg"
-        android:text="The Woolworths Chat service is only available between 08h00 - 16h30 (UTC+02:00). Please feel free to get in touch with us by sending an email to: nationwide@wfs.co.za and we will be in touch as soon as possible."
         android:textColor="@color/white"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/hiClientTextView"
         app:layout_constraintTop_toBottomOf="@+id/hiClientTextView" />
 
-    <TextView
-        android:id="@+id/chatWithWhatsAppTextView"
-        style="@style/chat_text_style"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/received_message_bubble_bg"
-        android:text="@string/chat_tap_here_label"
-        android:textColor="@color/white"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/chatCollectionDescriptionTextView"
-        app:layout_constraintTop_toBottomOf="@+id/chatCollectionDescriptionTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
