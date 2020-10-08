@@ -20,8 +20,12 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/received_message_text"
         style="@style/chat_text_style"
-        android:layout_marginLeft="@dimen/sixteen_dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
         android:background="@drawable/received_message_bubble_bg"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="14dp"
         android:textColor="@color/white"
         app:WTextView_font="myriadpro_regular"
         app:layout_constraintLeft_toRightOf="@+id/image_message_profile"

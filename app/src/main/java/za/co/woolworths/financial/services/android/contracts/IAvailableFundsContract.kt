@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.contracts
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
@@ -34,6 +33,7 @@ interface IAvailableFundsContract {
         fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse)
         fun getCreditCardNumber(cards: ArrayList<Card>?): String?
         fun getAccount(): Account?
+        fun getApplyNowState(): ApplyNowState?
         fun onDestroy()
     }
 

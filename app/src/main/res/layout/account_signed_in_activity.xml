@@ -109,4 +109,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:navGraph="@navigation/account_six_month_in_arrears_nav_host" />
     </FrameLayout>
+
+    <include layout="@layout/chat_collect_agent_floating_button_layout" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
