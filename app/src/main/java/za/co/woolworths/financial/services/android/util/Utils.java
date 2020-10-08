@@ -1387,19 +1387,6 @@ public class Utils {
 		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
 	}
 
-	public static Boolean isOperatingHoursForInAppChat(TradingHours tradingHours) {
-
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
-		int minute = now.get(Calendar.MINUTE);
-
-		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
-		Date openingTime = WFormatter.parseDate(tradingHours.getOpens());
-		Date closingTime = WFormatter.parseDate(tradingHours.getCloses());
-
-		return (currentTime.after(openingTime) && currentTime.before(closingTime));
-	}
-
 	public static String getCurrentDay() {
 		return new SimpleDateFormat("EEEE").format(new Date());
 	}
