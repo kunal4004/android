@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -159,6 +160,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                     val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
                     imm?.hideSoftInputFromWindow(view?.windowToken, 0)
                 } catch (ex: Exception) {
+                    Crashlytics.log("InputMethodManager close Keyboard $ex")
                 }
             }
         }
