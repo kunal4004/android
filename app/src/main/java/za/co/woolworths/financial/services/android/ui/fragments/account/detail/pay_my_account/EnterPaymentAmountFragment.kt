@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -188,7 +188,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                     activity?.apply {
                         if (isDoneButtonEnabled) {
-                            setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(selectedCard)))
+                            setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE, Gson().toJson(selectedCard)))
                             finish()
                         } else {
                             activity?.onBackPressed()

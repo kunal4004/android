@@ -61,10 +61,10 @@
     <TextView
         android:id="@+id/pmaAmountOutstandingTextView"
         style="@style/amountDescriptionStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginEnd="18dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginBottom="41dp"
         android:gravity="center"
         android:text="R -"
@@ -79,7 +79,7 @@
         android:id="@+id/editAmountImageView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginEnd="56dp"
+        android:layout_marginEnd="26dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/pmaAmountOutstandingTextView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -225,5 +225,13 @@
         app:layout_constraintBottom_toBottomOf="@+id/cardNumberItemTextView"
         app:layout_constraintEnd_toStartOf="@+id/changeTextViewShimmerLayout"
         app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView" />
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="editAmountImageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

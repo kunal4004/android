@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.root_device_info_fragment.*
+import kotlinx.android.synthetic.main.pma_ten_card_limit_exceed_fragment.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class PMATenCardLimitDialogFragment : WBottomSheetDialogFragment() {

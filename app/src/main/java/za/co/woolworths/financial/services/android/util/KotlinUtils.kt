@@ -45,7 +45,9 @@ import java.util.*
 
 class KotlinUtils {
     companion object {
+
         const val DELAY: Long = 900
+        const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
 
         fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)

@@ -264,6 +264,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun getStoreCardBlockType(): Boolean {
         val storeCardsData = getStoreCardResponse()?.storeCardsData
+        if (storeCardsData == null || storeCardsData?.primaryCards.isNullOrEmpty()) {
+            return false
+        }
         val primaryCard = storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
         return primaryCard?.blockType?.toLowerCase(Locale.getDefault()) == TemporaryFreezeStoreCard.TEMPORARY
     }

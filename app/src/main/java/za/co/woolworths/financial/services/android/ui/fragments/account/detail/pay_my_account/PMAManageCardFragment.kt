@@ -30,7 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.*
@@ -163,7 +163,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                 cardDetail?.paymentMethodList = manageCardAdapter?.getList()
                 payMyAccountViewModel.setPMACardInfo(cardDetail)
                 activity?.apply {
-                    setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardDetail)))
+                    setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE, Gson().toJson(cardDetail)))
                     onBackPressed()
                 }
             }

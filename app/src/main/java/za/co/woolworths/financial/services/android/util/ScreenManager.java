@@ -30,7 +30,7 @@ import za.co.woolworths.financial.services.android.ui.activities.product.shop.Sh
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType;
 
-import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE;
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
@@ -180,7 +180,7 @@ public class ScreenManager {
     public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, String card) {
         Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
-        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
+        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE, card);
         activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
@@ -188,7 +188,7 @@ public class ScreenManager {
     public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, String card,PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
         Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
-        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
+        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE, card);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
         activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
@@ -200,7 +200,7 @@ public class ScreenManager {
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, account);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, paymentMethod);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, cardResponse);
-        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
+        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE, card);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
         activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
@@ -211,7 +211,7 @@ public class ScreenManager {
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, account);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, paymentMethod);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, cardResponse);
-        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
+        howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE, card);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
         howToPayIntent.putExtra(PayMyAccountPresenterImpl.IS_DONE_BUTTON_ENABLED, isDoneButtonEnabled);
 
