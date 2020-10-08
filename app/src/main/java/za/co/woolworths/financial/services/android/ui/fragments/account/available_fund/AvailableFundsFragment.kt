@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -75,6 +76,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
         }
     }
 
+
     override fun setPushViewDownAnimation(view: View) {
         AnimationUtilExtension.animateViewPushDown(view)
     }
@@ -118,6 +120,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
             val openStatement = Intent(this, StatementActivity::class.java)
+            openStatement.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), mAvailableFundPresenter?.getAccount())))
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
@@ -131,8 +134,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
-            val openABSAOnlineBanking =
-                    Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
+            val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
             openABSAOnlineBanking.putExtra(ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN, isRegistered)
             openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber)
             startActivityForResult(openABSAOnlineBanking, ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
@@ -143,10 +145,10 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
     override fun displayCardNumberNotFound() {
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
-        try{
-        val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
-            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager,AccountsErrorHandlerFragment::class.java.simpleName ) }
-        }catch (ex : IllegalStateException){
+        try {
+            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
+            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
+        } catch (ex: IllegalStateException) {
             Crashlytics.logException(ex)
         }
     }
@@ -202,6 +204,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
                 if (cardType == "CC" && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }
+                intent.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), this)))
                 intent.putExtra("cardType", cardType)
                 activity.startActivityForResult(intent, 0)
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
