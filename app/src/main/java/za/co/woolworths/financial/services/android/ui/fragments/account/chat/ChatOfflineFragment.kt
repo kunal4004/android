@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
 import android.text.method.LinkMovementMethod
 import android.view.*
 import android.view.View.VISIBLE
@@ -10,7 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_to_collection_agent_offline_fragment.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.util.DelayConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,9 +58,10 @@ class ChatOfflineFragment : Fragment() {
         chatCollectionDescriptionTextView?.movementMethod = LinkMovementMethod.getInstance()
 
         if ((activity as? WChatActivity)?.shouldAnimateChatMessage == true) {
-            Handler().postDelayed({
+
+            GlobalScope.doAfterDelay(DELAY_300_MS){
                 chatCollectionDescriptionTextView?.visibility = VISIBLE
-            }, 600)
+            }
 
             (activity as? WChatActivity)?.shouldAnimateChatMessage = false
         } else {
