@@ -364,9 +364,11 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun triggerFirebaseEventChatOnline() {
+    fun triggerFirebaseOnlineOfflineChatEvent() {
         if (isOperatingHoursForInAppChat() == true)
             trackFirebaseEvent.chatOnline(getApplyNowState(), activityType)
+        else
+            trackFirebaseEvent.chatOffline(getApplyNowState(), activityType)
     }
 
     fun triggerFirebaseEventChatBreak() {

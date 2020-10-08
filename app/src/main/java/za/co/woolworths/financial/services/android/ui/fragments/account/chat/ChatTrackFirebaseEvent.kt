@@ -111,4 +111,39 @@ class ChatTrackFirebaseEvent {
 
         propertyName?.let { event -> Utils.triggerFireBaseEvents(event) }
     }
+
+    fun chatOffline(applyNowState: ApplyNowState, activityType: ActivityType?) {
+        val propertyName: String? = when (activityType) {
+            ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
+                ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_OFFLINE
+                ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_MYACCOUNTS_CHAT_OFFLINE
+                ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_MYACCOUNTS_CHAT_OFFLINE
+                else -> return
+            }
+
+            ActivityType.PAYMENT_OPTIONS -> when (applyNowState) {
+                ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_PAYMENT_OPTIONS_CHAT_OFFLINE
+                ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_PAYMENT_OPTIONS_CHAT_OFFLINE
+                ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_PAYMENT_OPTIONS_CHAT_OFFLINE
+                else -> return
+            }
+
+            ActivityType.TRANSACTION -> when (applyNowState) {
+                ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_TRANSACTION_CHAT_OFFLINE
+                ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_TRANSACTION_CHAT_OFFLINE
+                ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_TRANSACTION_CHAT_OFFLINE
+                else -> return
+            }
+
+            ActivityType.STATEMENT -> when (applyNowState) {
+                ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_STATEMENT_CHAT_OFFLINE
+                ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.PL_STATEMENT_CHAT_OFFLINE
+                ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.CC_STATEMENT_CHAT_OFFLINE
+                else -> return
+            }
+            else -> null
+        }
+
+        propertyName?.let { event -> Utils.triggerFireBaseEvents(event) }
+    }
 }

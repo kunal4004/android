@@ -70,7 +70,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
         chatViewModel.setScreenType(fromActivity)
         chatViewModel.setAccount(Gson().fromJson(chatAccountProductLandingPage, Account::class.java))
-        chatViewModel.triggerFirebaseEventChatOnline()
+        chatViewModel.triggerFirebaseOnlineOfflineChatEvent()
         chatViewModel.postChatEventInitiateSession()
         super.onStart()
     }
