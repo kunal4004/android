@@ -32,6 +32,7 @@ interface IAvailableFundsContract {
         fun handleUserCreditCardToken(creditCardTokenResponse: CreditCardTokenResponse)
         fun getCreditCardNumber(cards: ArrayList<Card>?): String?
         fun getAccount(): Account?
+        fun getApplyNowState(): ApplyNowState?
         fun onDestroy()
         fun isPersonalLoanAndStoreCardVisible(): Boolean?
         fun getAccountDetail(): Pair<ApplyNowState, Account>?

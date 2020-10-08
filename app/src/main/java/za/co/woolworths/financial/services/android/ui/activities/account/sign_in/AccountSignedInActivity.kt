@@ -19,8 +19,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
+import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -30,11 +32,13 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, IBottomSheetBehaviourPeekHeightListener, View.OnClickListener {
+class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, IBottomSheetBehaviourPeekHeightListener, View.OnClickListener, IShowChatBubble {
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
@@ -66,6 +70,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
             setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController)
             setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
+
             setToolbarTopMargin()
         }
 
@@ -75,6 +80,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
+
     }
 
     private fun setToolbarTopMargin() {
@@ -148,6 +154,12 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         return sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED
     }
 
+    override fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>?) {
+        val chatToCollectionAgentView = ChatFloatingActionButtonBubbleView(this@AccountSignedInActivity, ChatBubbleAvailability(accountList, this@AccountSignedInActivity), chatBubbleFloatingButton, applyNowState)
+        chatToCollectionAgentView.build()
+    }
+
+    @Throws(RuntimeException::class)
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.accountInArrearsTextView -> mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { account -> showAccountInArrearsDialog(account) }
@@ -167,8 +179,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        val availableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-        availableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)
+        mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
@@ -182,6 +193,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             mPeekHeight = pixel
             configureBottomSheetDialog()
         }
+    }
+
+    private fun showChatToCollectionAgent() {
+        mAccountSignedInPresenter?.chatWithCollectionAgent()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -215,5 +230,9 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 }
             }
         }
+    }
+
+    override fun showChatBubble() {
+        showChatToCollectionAgent()
     }
 }

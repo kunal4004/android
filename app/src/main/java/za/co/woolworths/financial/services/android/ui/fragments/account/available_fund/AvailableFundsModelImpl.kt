@@ -12,4 +12,5 @@ class AvailableFundsModelImpl : IAvailableFundsContract.AvailableFundsModel {
     override fun queryABSAServiceGetUserCreditCardToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>? {
         return request(OneAppService.getCreditCardToken(), requestListener)
     }
+
 }

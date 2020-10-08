@@ -18,6 +18,7 @@ interface IAccountSignedInContract {
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun showAccountChargeOffForMoreThan6Months()
         fun bottomSheetIsExpanded(): Boolean
+        fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
     }
 
     interface MyAccountPresenter {
@@ -35,6 +36,7 @@ interface IAccountSignedInContract {
         fun bottomSheetBehaviourHeight(): Int
         fun bottomSheetBehaviourPeekHeight(): Int
         fun isAccountInArrearsState(): Boolean?
+        fun chatWithCollectionAgent()
     }
 
     interface MyAccountModel {

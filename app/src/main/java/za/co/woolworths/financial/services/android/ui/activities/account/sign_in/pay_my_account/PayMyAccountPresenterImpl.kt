@@ -93,6 +93,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
                 ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> mainView?.setWhatsAppChatWithUsVisibility(isCCPaymentOptionsEnabled)
                 ApplyNowState.STORE_CARD -> mainView?.setWhatsAppChatWithUsVisibility(isSCPaymentOptionsEnabled)
                 ApplyNowState.PERSONAL_LOAN -> mainView?.setWhatsAppChatWithUsVisibility(isPLPaymentOptionsEnabled)
+                else -> return
             }
         }
     }

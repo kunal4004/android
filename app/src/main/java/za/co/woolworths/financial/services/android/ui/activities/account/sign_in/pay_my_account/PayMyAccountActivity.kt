@@ -34,7 +34,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     private var navigationHost: NavController? = null
     private var mPayMyAccountPresenterImpl: PayMyAccountPresenterImpl? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
-    
+
     companion object {
         const val PAY_MY_ACCOUNT_REQUEST_CODE = 8003
         const val PAYMENT_DETAIL_CARD_UPDATE_RESULT_CODE = "PAYMENT_DETAIL_CARD_UPDATE"

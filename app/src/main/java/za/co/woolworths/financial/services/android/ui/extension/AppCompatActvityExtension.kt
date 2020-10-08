@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavOptions
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -227,6 +229,13 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
 fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
+
+
+fun navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
+        .setExitAnim(R.anim.slide_out_to_left)
+        .setPopEnterAnim(R.anim.slide_from_left)
+        .setPopExitAnim(R.anim.slide_to_right).build()
+
 
 fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
     launch {

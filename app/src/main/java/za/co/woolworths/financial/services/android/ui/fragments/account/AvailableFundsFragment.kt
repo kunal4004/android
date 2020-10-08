@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -27,7 +28,8 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE) ?: throw RuntimeException("Accounts object is null or not found")
+        val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
+                ?: throw RuntimeException("Accounts object is null or not found")
         mAccountPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
         mAccount = mAccountPair?.second
     }
@@ -48,7 +50,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1, activity))
             val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
             val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, activity))
-            val paymentDueDate = paymentDueDate?.let{ paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate))}
+            val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
             val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
             availableFundAmountTextView?.text = availableFund
             currentBalanceAmountTextView?.text = currentBalance
@@ -71,6 +73,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             val intent = Intent(activity, WTransactionsActivity::class.java)
             intent.putExtra("productOfferingId", mAccount?.productOfferingId?.toString())
             intent.putExtra("accountNumber", mAccount?.accountNumber?.toString())
+            intent.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
             intent.putExtra("cardType", "SC")
             activity.startActivityForResult(intent, 0)
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

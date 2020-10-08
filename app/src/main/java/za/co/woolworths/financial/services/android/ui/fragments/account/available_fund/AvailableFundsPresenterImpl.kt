@@ -18,6 +18,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
+    @Throws(RuntimeException::class)
     override fun setBundle(bundle: Bundle?) {
         val account = bundle?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
                 ?: throw RuntimeException("Accounts object is null or not found")
@@ -32,6 +33,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
         model?.queryABSAServiceGetUserCreditCardToken(this)
     }
 
+    @Throws(RuntimeException::class)
     override fun onSuccess(response: Any?) {
         with(response) {
             when (this) {
@@ -79,6 +81,8 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     }
 
     override fun getAccount(): Account? = mAccount
+    override fun getApplyNowState(): ApplyNowState? = mAccountPair?.first
+
 
     override fun productHasAmountOverdue(): Boolean = getAccount()?.amountOverdue ?: 0 > 0
 
