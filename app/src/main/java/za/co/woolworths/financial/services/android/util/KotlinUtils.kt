@@ -353,7 +353,6 @@ class KotlinUtils {
             return false
         }
 
-
         fun getJSONFileFromRAWResFolder(context: Context?, @RawRes id: Int): JSONObject {
             val awsConfiguration: InputStream? = context?.resources?.openRawResource(id)
             val writer: Writer = StringWriter()
@@ -401,6 +400,12 @@ class KotlinUtils {
                 }
             }
             return tradingHoursForToday ?: TradingHours("sunday", "00:00", "00:00")
+        }
+
+        fun avoidDoubleClicks(view: View?) {
+            if (view?.isClickable != true) return
+            view.isClickable = false
+            view.postDelayed({ view.isClickable = true }, 900)
         }
     }
 }
