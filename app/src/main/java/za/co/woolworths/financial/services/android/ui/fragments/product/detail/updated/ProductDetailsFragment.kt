@@ -137,6 +137,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onClick(v: View?) {
+        KotlinUtils.avoidDoubleClicks(v)
         if (isApiCallInProgress)
             return
         when (v?.id) {
