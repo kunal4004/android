@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
@@ -37,7 +38,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
     private var mAccounts: String? = null
     private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
+    private  var previousCardNumber  : String? = null
     private var navController: NavController? = null
 
     override fun onActivityCreated(arg0: Bundle?) {
@@ -79,7 +80,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
             // set amount amounted
             val amountEntered = card?.amountEntered
             pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) overdueAmount else amountEntered
-            pmaConfirmPaymentButton?.isEnabled = ccvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
+            pmaConfirmPaymentButton?.isEnabled = cvvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
 
             //Disable change button when amount is R0.00
             changeTextView?.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND
@@ -97,13 +98,13 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
     }
 
     private fun setupListener() {
-        ccvEditTextInput?.addTextChangedListener(object : TextWatcher {
+        cvvEditTextInput?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
                 if (s.length == 3) {
                     try {
                         val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm?.hideSoftInputFromWindow(ccvEditTextInput.windowToken, 0)
+                        imm?.hideSoftInputFromWindow(cvvEditTextInput.windowToken, 0)
                     } catch (ex: Exception) {
                     }
                 }
@@ -131,6 +132,11 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
                 "mastercard" -> R.drawable.card_mastercard
                 else -> R.drawable.card_visa_grey
             })
+            if (previousCardNumber != cardNumber){
+                cvvEditTextInput?.text?.clear()
+            }
+                previousCardNumber = cardNumber
+
         }
 
         with(pmaConfirmPaymentButton) {
@@ -173,7 +179,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
                 }
 
                 R.id.pmaConfirmPaymentButton -> {
-                    ccvEditTextInput?.text?.toString()?.let { cvvNumber -> payMyAccountViewModel.setCVVNumber(cvvNumber) }
+                    cvvEditTextInput?.text?.toString()?.let { cvvNumber -> payMyAccountViewModel.setCVVNumber(cvvNumber) }
                     val (account, cardResponse) = payMyAccountViewModel.createCard()
                     val cardVendorDirections = PaymentMethodExistDialogFragmentDirections.actionDisplayVendorCardDetailFragmentToPMAProcessRequestFragment(account?.second, cardResponse)
                     navController?.navigate(cardVendorDirections)
@@ -193,7 +199,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
                     }
                 }
                 R.id.pmaConfirmPaymentButton -> {
-                    val cvv = ccvEditTextInput?.text?.toString() ?: "0"
+                    val cvv = cvvEditTextInput?.text?.toString() ?: "0"
                     with(payMyAccountViewModel) {
                         setCVVNumber(cvv)
                         val (accounts, cardResponse) = createCard()

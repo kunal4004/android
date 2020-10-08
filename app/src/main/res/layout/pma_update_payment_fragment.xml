@@ -88,7 +88,7 @@
 
 
     <EditText
-        android:id="@+id/ccvEditTextInput"
+        android:id="@+id/cvvEditTextInput"
         android:layout_width="80dp"
         android:layout_height="50dp"
         android:layout_marginBottom="32dp"
@@ -108,9 +108,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/ccvEditTextInput"
-        app:layout_constraintEnd_toStartOf="@+id/ccvEditTextInput"
-        app:layout_constraintTop_toTopOf="@+id/ccvEditTextInput"
+        app:layout_constraintBottom_toBottomOf="@+id/cvvEditTextInput"
+        app:layout_constraintEnd_toStartOf="@+id/cvvEditTextInput"
+        app:layout_constraintTop_toTopOf="@+id/cvvEditTextInput"
         app:srcCompat="@drawable/card_cvv" />
 
     <TextView
@@ -136,7 +136,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
         android:background="@color/bpi_background"
-        app:layout_constraintBottom_toTopOf="@+id/ccvEditTextInput"
+        app:layout_constraintBottom_toTopOf="@+id/cvvEditTextInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
