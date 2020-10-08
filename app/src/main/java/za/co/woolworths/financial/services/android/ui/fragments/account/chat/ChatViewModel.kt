@@ -364,16 +364,16 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun firebaseEventChatOnline() {
+    fun triggerFirebaseEventChatOnline() {
         if (isOperatingHoursForInAppChat() == true)
             trackFirebaseEvent.chatOnline(getApplyNowState(), activityType)
     }
 
-    fun firebaseEventChatBreak() {
+    fun triggerFirebaseEventChatBreak() {
         trackFirebaseEvent.chatBreak(getApplyNowState(), activityType)
     }
 
-    fun firebaseEventEndSession() {
+    fun triggerFirebaseEventEndSession() {
         trackFirebaseEvent.chatEnd(getApplyNowState(), activityType)
     }
 }
