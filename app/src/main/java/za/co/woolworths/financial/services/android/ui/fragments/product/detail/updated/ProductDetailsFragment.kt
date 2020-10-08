@@ -154,6 +154,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun onQuantitySelector() {
         activity?.supportFragmentManager?.apply {
+            if (getSelectedSku() == null) {
+                requestSelectSize()
+                return
+            }
             getSelectedSku()?.quantity?.let {
                 if (it > 0)
                     QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment).show(this, QuantitySelectorFragment::class.java.simpleName)
@@ -363,7 +367,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-          if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
+            if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
             return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
