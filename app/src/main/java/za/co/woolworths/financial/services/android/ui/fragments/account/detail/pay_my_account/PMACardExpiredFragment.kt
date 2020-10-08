@@ -34,11 +34,12 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
         val paymentMethod = pmaCardExpiredNavArgs.paymentMethod
         val vendor = paymentMethod.vendor.toLowerCase(Locale.getDefault())
 
-        mastercardImageView?.setImageResource(when (vendor) {
+        when (vendor) {
             "mastercard" -> R.drawable.card_mastercard_large
             "visa" -> R.drawable.card_visa_large
-            else -> R.drawable.card_visa_grey
-        })
+            else -> null
+        }?.let { drawable -> mastercardImageView?.setImageResource(drawable) }
+
         removeCardButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@PMACardExpiredFragment)
@@ -57,7 +58,11 @@ class PMACardExpiredFragment : WBottomSheetDialogFragment(), View.OnClickListene
                 dismiss()
             }
             R.id.addNewCardExpiredButton -> {
-                payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.ADD)
+                if (payMyAccountViewModel.isPaymentMethodListSizeLimitedToTenItem()) {
+                    payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.MAX_CARD_LIMIT)
+                } else {
+                    payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.ADD)
+                }
                 dismiss()
             }
         }

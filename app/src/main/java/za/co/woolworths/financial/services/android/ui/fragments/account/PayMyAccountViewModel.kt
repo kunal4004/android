@@ -39,8 +39,8 @@ class PayMyAccountViewModel : ViewModel() {
         paymentList?.forEach {
             it.isCardChecked = false
         }
-        if (paymentList?.size!! > 0)
-            paymentList[selectedPosition].isCardChecked = true
+        if (paymentList?.size ?: 0 > 0)
+            paymentList?.get(selectedPosition)?.isCardChecked = true
         return paymentList
     }
 
@@ -165,5 +165,5 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
-    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE } // TODO: Navigation graph: Communicate result from dialog to fragment destination
+    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 }

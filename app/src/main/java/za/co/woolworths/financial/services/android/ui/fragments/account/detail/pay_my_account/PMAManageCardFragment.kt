@@ -40,7 +40,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private var selectedProductPosition: Int = 0
@@ -104,6 +103,13 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(addCard)
                     }
                 }
+
+                PayMyAccountViewModel.OnBackNavigation.MAX_CARD_LIMIT -> {
+                    GlobalScope.doAfterDelay(350) {
+                        navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
+                    }
+                }
+
                 else -> return@observe
             }
         }
@@ -112,7 +118,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     private fun configureRecyclerview() {
         // ensure first item is checked
         val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethodList?.filter { s -> s.isCardChecked }
-        if (isPaymentChecked?.isEmpty()!!) {
+        if (isPaymentChecked?.isEmpty() == true) {
             if (mPaymentMethodList?.size ?: 0 > 0)
                 mPaymentMethodList?.get(0)?.isCardChecked = true
         } else {

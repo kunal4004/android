@@ -222,6 +222,9 @@
         <argument
             android:name="paymentMethod"
             app:argType="za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod" />
+        <action
+            android:id="@+id/action_PMACardExpiredFragment_to_PMATenCardLimitDialogFragment"
+            app:destination="@id/PMATenCardLimitDialogFragment" />
     </dialog>
     <fragment
         android:id="@+id/PMA3DSecureProcessRequestFragment"
