@@ -22,19 +22,30 @@ class OneAppEvents {
 
             const val WREWARDS: String = "wRewards"
             const val CONTACT_US = "Contact Us"
+
             const val CHAT_OFFLINE_STORE_CARD = "Chat Offline Store Card"
             const val CHAT_OFFLINE_PERSONAL_LOAN = "Chat Offline Personal Loan"
             const val CHAT_OFFLINE_CREDIT_LOAN = "Chat Offline Credit Card"
-            const val CHAT_ACCOUNT_CC_LANDING_INITIATE_SESSION = "CC Landing InitiateSession"
-            const val CHAT_PAY_OPTIONS_CC_LANDING_INITIATE_SESSION = "CC PayOptions InitiateSession"
-            const val CHAT_COLLECTIONS_CC_END_SESSION = "CC EndSession"
-            const val CHAT_COLLECTIONS_CC_Transactions_InitiateSession = "CC Transactions InitiateSession"
-            const val CHAT_COLLECTIONS_CC_Statements_InitiateSession = "CC Statements InitiateSession"
-            const val CHAT_COLLECTIONS_SC_Landing_InitiateSession = "SC Landing InitiateSession"
-            const val CHAT_COLLECTIONS_SC_PayOptions_InitiateSession = "SC PayOptions InitiateSession"
-            const val CHAT_COLLECTIONS_SC_EndSession_InitiateSession = "SC EndSession"
-            const val CHAT_CUSTOMER_SERVICES_SC_Transactions_InitiateSession = "SC Transactions InitiateSession"
 
+            const val CHAT_COLLECTIONS_CC_LANDING_INITIATE_SESSION = "CC Landing InitiateSession"
+            const val CHAT_COLLECTIONS_SC_LANDING_INITIATE_SESSION = "SC Landing InitiateSession"
+            const val CHAT_COLLECTIONS_PL_LANDING_INITIATE_SESSION = "PL Landing InitiateSession"
+
+            const val CHAT_PAY_OPTIONS_PL_LANDING_INITIATE_SESSION = "PL PayOptions InitiateSession"
+            const val CHAT_PAY_OPTIONS_CC_LANDING_INITIATE_SESSION = "CC PayOptions InitiateSession"
+            const val CHAT_PAY_OPTIONS_SC_LANDING_INITIATE_SESSION = "SC PayOptions InitiateSession"
+
+            const val CHAT_COLLECTIONS_CC_END_SESSION = "CC EndSession"
+            const val CHAT_COLLECTIONS_PL_END_SESSION = "PL EndSession"
+            const val CHAT_COLLECTIONS_SC_END_SESSION = "SC EndSession"
+
+            const val CHAT_CUSTOMER_SERVICE_CC_TRANSACTIONS_INITIATE_SESSION = "CC Transactions InitiateSession"
+            const val CHAT_CUSTOMER_SERVICE_PL_TRANSACTIONS_INITIATE_SESSION = "PL Transactions InitiateSession"
+            const val CHAT_CUSTOMER_SERVICE_SC_TRANSACTIONS_INITIATE_SESSION = "SC Transactions InitiateSession"
+
+            const val CHAT_CUSTOMER_SERVICE_CC_STATEMENT_INITIATE_SESSION = "CC Statements InitiateSession"
+            const val CHAT_CUSTOMER_SERVICE_PL_STATEMENT_INITIATE_SESSION = "PL Statements InitiateSession"
+            const val CHAT_CUSTOMER_SERVICE_SC_STATEMENT_INITIATE_SESSION = "SC Statements InitiateSession"
         }
     }
 }

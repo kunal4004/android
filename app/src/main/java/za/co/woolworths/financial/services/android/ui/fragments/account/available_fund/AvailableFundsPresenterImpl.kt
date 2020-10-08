@@ -19,6 +19,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     private var mAccount: Account? = null
 
 
+    @Throws(RuntimeException::class)
     override fun setBundle(bundle: Bundle?) {
         val account = bundle?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
                 ?: throw RuntimeException("Accounts object is null or not found")

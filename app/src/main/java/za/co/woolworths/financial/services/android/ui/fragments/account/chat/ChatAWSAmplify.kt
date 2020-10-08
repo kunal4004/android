@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.content.Context
-import android.util.Log
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.ApiOperation
 import com.amplifyframework.api.aws.AWSApiPlugin
@@ -30,7 +29,7 @@ class ChatAWSAmplify {
 
     fun init(context: Context) {
         try {
-            val awsConfigurationJSONObject = KotlinUtils.getGSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
+            val awsConfigurationJSONObject = KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
             val awsConfiguration = AmplifyConfiguration.fromJson(awsConfigurationJSONObject)
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.addPlugin(AWSApiPlugin())
@@ -76,7 +75,6 @@ class ChatAWSAmplify {
                                            result: (SendMessageResponse?) -> Unit, failure: (ApiException) -> Unit) {
         subscription = API.subscribe(onSubscribeMessageByConversationId(conversationMessagesId),
                 {
-                    Log.d("subscriptionLeg", "Connection Established")
                     sendMessage(conversationMessagesId,
                             sessionType,
                             SessionStateType.CONNECT,
@@ -87,10 +85,8 @@ class ChatAWSAmplify {
                 },
                 { data -> result(data.data) },
                 { onFailure ->
-                    Log.d("subscribeToConversation", "Subscription completed")
                     failure(onFailure)
-                },
-                { Log.d("subscribeToConversation", "Subscription completed") }
+                }, { }
         )
     }
 
@@ -151,8 +147,8 @@ class ChatAWSAmplify {
                 sessionVars,
                 name,
                 email),
-                { response -> Log.d("sendMessageSuccess", response.data ?: "") },
-                { error -> Log.d("sendMessageError", error.toString()) }
+                { },
+                { }
         )
     }
 
@@ -168,8 +164,7 @@ class ChatAWSAmplify {
     fun getMessagesListByConversation(conversationMessagesId: String, result: (GetMessagesByConversation?) -> Unit) {
         API.query(
                 listMessages(conversationMessagesId),
-                { response -> result(response.data) },
-                { error -> Log.d("MyAmplifyApp", "Query failed", error) }
+                { response -> result(response.data) }, { }
         )
     }
 }

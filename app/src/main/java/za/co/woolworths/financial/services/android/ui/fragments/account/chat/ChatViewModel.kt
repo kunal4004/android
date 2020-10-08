@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
@@ -16,15 +17,24 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
+import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.ActivityType
 import java.util.*
 
 class ChatViewModel : ViewModel() {
@@ -38,7 +48,12 @@ class ChatViewModel : ViewModel() {
     var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
     var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
+    private var activityType: ActivityType? = null
     private var customerInfo: ChatCustomerInfo = ChatCustomerInfo()
+
+    private var trackFirebaseEvent: ChatTrackFirebaseEvent = ChatTrackFirebaseEvent()
+
+    private var chatTrackPostEvent: ChatTrackPostEvent = ChatTrackPostEvent()
 
     init {
         absaCreditCard.value = getAccount()?.cards
@@ -60,9 +75,9 @@ class ChatViewModel : ViewModel() {
         return mAccount.value
     }
 
-
+    @SuppressLint("DefaultLocale")
     fun isCreditCardAccount(): Boolean {
-        return getAccount()?.productGroupCode == "cc"
+        return getAccount()?.productGroupCode?.toLowerCase() == "cc"
     }
 
     fun setSessionStateType(type: SessionStateType) {
@@ -280,5 +295,85 @@ class ChatViewModel : ViewModel() {
 
             result(messageList)
         }
+    }
+
+    @Throws(RuntimeException::class)
+    fun setScreenType(fromActivity: String?) {
+        activityType = when (fromActivity) {
+            BottomNavigationActivity::class.java.simpleName -> ActivityType.ACCOUNT_LANDING
+            AccountSignedInActivity::class.java.simpleName -> ActivityType.PRODUCT_LANDING
+            PaymentOptionActivity::class.java.simpleName -> ActivityType.PAYMENT_OPTIONS
+            WTransactionsActivity::class.java.simpleName -> ActivityType.TRANSACTION
+            StatementActivity::class.java.simpleName -> ActivityType.STATEMENT
+            AbsaStatementsActivity::class.java.simpleName -> ActivityType.ABSA_STATEMENT
+            else -> throw RuntimeException("$fromActivity value not supported")
+        }
+    }
+
+
+    @SuppressLint("DefaultLocale")
+    fun getApplyNowState(): ApplyNowState {
+        return when (getAccount()?.productGroupCode?.toLowerCase()) {
+            "sc" -> ApplyNowState.STORE_CARD
+            "pl" -> ApplyNowState.PERSONAL_LOAN
+            "cc" -> when (getAccount()?.accountNumberBin) {
+                Utils.SILVER_CARD -> ApplyNowState.SILVER_CREDIT_CARD
+                Utils.BLACK_CARD -> ApplyNowState.BLACK_CREDIT_CARD
+                Utils.GOLD_CARD -> ApplyNowState.GOLD_CREDIT_CARD
+                else -> ApplyNowState.STORE_CARD
+            }
+
+            else -> ApplyNowState.STORE_CARD
+        }
+    }
+
+    fun postEventChatOffline() = chatTrackPostEvent.onChatOffline(applyNowState = getApplyNowState())
+
+    fun postChatEventInitiateSession() {
+        if (isOperatingHoursForInAppChat() == false) return
+        val applyNowState = getApplyNowState()
+        with(chatTrackPostEvent) {
+            when (getSessionType()) {
+                SessionType.Collections -> {
+                    when (activityType) {
+                        ActivityType.ACCOUNT_LANDING -> onChatCollectionsLandingInitiateSession(applyNowState)
+                        ActivityType.PAYMENT_OPTIONS -> onPayOptionsInitiateSession(applyNowState)
+                        else -> return
+                    }
+                }
+                SessionType.CustomerService -> {
+                    when (activityType) {
+                        ActivityType.TRANSACTION -> onTransactionsInitiateSession(applyNowState)
+                        ActivityType.STATEMENT -> onStatementsInitiateSession(applyNowState)
+                        else -> return
+                    }
+                }
+                SessionType.Fraud -> return
+            }
+        }
+    }
+
+    fun postChatEventEndSession() {
+        val applyNowState = getApplyNowState()
+        with(chatTrackPostEvent) {
+            when (getSessionType()) {
+                SessionType.Collections -> onChatCollectionsEndSession(applyNowState)
+                SessionType.CustomerService -> onChatCustomerServicesEndSession(applyNowState)
+                SessionType.Fraud -> return
+            }
+        }
+    }
+
+    fun firebaseEventChatOnline() {
+        if (isOperatingHoursForInAppChat() == true)
+            trackFirebaseEvent.chatOnline(getApplyNowState(), activityType)
+    }
+
+    fun firebaseEventChatBreak() {
+        trackFirebaseEvent.chatBreak(getApplyNowState(), activityType)
+    }
+
+    fun firebaseEventEndSession() {
+        trackFirebaseEvent.chatEnd(getApplyNowState(), activityType)
     }
 }

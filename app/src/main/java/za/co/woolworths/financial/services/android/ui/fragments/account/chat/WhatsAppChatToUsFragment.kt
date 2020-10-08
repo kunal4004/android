@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.android.synthetic.main.chat_to_us_via_whatsapp_fragment.*
@@ -18,16 +19,11 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
 
-    private var appScreen: String? = null
-    private var featureName: String? = null
+    private val chatViewModel: ChatViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        arguments?.apply {
-            featureName = getString(WhatsAppChatToUsVisibility.FEATURE_NAME, "")
-            appScreen = getString(WhatsAppChatToUsVisibility.APP_SCREEN, "")
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,8 +56,7 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
-                    KotlinUtils.postOneAppEvent(appScreen ?: "", featureName
-                            ?: OneAppEvents.FeatureName.WHATSAPP)
+                    chatViewModel.postEventChatOffline()
                     Utils.openBrowserWithUrl(WhatsAppChatToUsVisibility().whatsAppChatWithUsUrlBreakout)
                 } else {
                     ErrorHandlerView(activity).showToast()

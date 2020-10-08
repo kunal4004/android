@@ -28,6 +28,7 @@ open class ChatExtensionFragment : Fragment() {
         const val ACCOUNT_NUMBER = "accountNumber"
         const val ACCOUNTS : String = "accounts"
         const val SESSION_TYPE = "SESSION_TYPE"
+        const val FROM_ACTIVITY = "FROM_ACTIVITY"
         const val CHAT_TO_COLLECTION_AGENT = "CHAT_TO_COLLECTION_AGENT"
     }
 

@@ -34,10 +34,6 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun updateList(values: MutableList<ChatMessage>) {
-
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return if (viewType == VIEW_TYPE_RECEIVED_MESSAGE) {
             ReceivedMessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.received_message_item, parent, false))

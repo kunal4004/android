@@ -11,6 +11,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.*
 import android.view.View.VISIBLE
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -35,16 +36,10 @@ import java.util.*
 
 class ChatOfflineFragment : Fragment() {
 
-    private var featureName: String? = null
-    private var appScreen: String? = null
     private val chatViewModel: ChatViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            featureName = getString(FEATURE_NAME, "")
-            appScreen = getString(APP_SCREEN, "")
-        }
 
         setHasOptionsMenu(true)
     }
@@ -62,8 +57,7 @@ class ChatOfflineFragment : Fragment() {
             setChatState(false)
         }
 
-        val chatCollectionsAgent = ChatBubbleVisibility()
-        hiClientTextView?.text = "Hi ${chatCollectionsAgent.getUsername()},"
+        hiClientTextView?.text = "Hi ${chatViewModel.getCustomerInfo().getUsername()},"
 
         chatCollectionDescriptionTextView?.text = chatViewModel.offlineMessageTemplate { result ->
             KotlinUtils.sendEmail(activity, result.first, result.second, result.third)
@@ -130,7 +124,7 @@ class ChatOfflineFragment : Fragment() {
                     activity?.apply {
                         if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
-                            request(OneAppService.queryServicePostEvent(featureName, appScreen))
+                            chatViewModel.postEventChatOffline()
                             Utils.openBrowserWithUrl(WhatsAppChatToUsVisibility().whatsAppChatWithUsUrlBreakout)
                             finish()
                             overridePendingTransition(0, 0)
@@ -142,10 +136,7 @@ class ChatOfflineFragment : Fragment() {
                 false -> {
                     appInstanceObject.inAppChatTipAcknowledgements.isWhatsAppOnBoardingScreenVisible = true
                     appInstanceObject.save()
-                    val bundle = Bundle()
-                    bundle.putString(FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
-                    bundle.putString(APP_SCREEN, appScreen)
-                    view?.findNavController()?.navigate(R.id.chatToUsWhatsAppFragment, bundle, navOptions())
+                    view?.findNavController()?.navigate(R.id.chatToUsWhatsAppFragment, bundleOf(), navOptions())
                 }
             }
         }

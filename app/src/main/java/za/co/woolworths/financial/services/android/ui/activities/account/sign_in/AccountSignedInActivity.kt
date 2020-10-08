@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountHel
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -147,7 +147,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>?) {
-        val chatToCollectionAgentView = ChatFloatingActionButtonBubbleView(this@AccountSignedInActivity, ChatBubbleVisibility(accountList), chatBubbleFloatingButton, applyNowState)
+        val chatToCollectionAgentView = ChatFloatingActionButtonBubbleView(this@AccountSignedInActivity, ChatBubbleAvailability(accountList, this@AccountSignedInActivity), chatBubbleFloatingButton, applyNowState)
         chatToCollectionAgentView.build()
     }
 

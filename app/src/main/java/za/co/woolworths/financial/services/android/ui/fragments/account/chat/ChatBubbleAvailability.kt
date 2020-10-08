@@ -1,25 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
+import android.app.Activity
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
-class ChatBubbleVisibility(private var accountList: List<Account>? = null) {
-
-    private var mAppInstanceObject: AppInstanceObject? = null
+class ChatBubbleAvailability(private var accountList: List<Account>? = null, private val activity: Activity) {
 
     companion object {
         const val STORE_CARD_PRODUCT_GROUP_CODE = "sc"
         const val PERSONAL_LOAN_PRODUCT_GROUP_CODE = "pl"
         const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
-    }
-
-    init {
-        mAppInstanceObject = AppInstanceObject.get()
     }
 
     // config.presenceInAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
@@ -163,18 +157,14 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null) {
                 return@forEach
             }
         }
+
         return if (applyNowState == ApplyNowState.STORE_CARD || applyNowState == ApplyNowState.PERSONAL_LOAN) Pair(productGroupCodeAccount?.productOfferingId?.toString()
                 ?: "0", productGroupCodeAccount?.accountNumber
                 ?: "") else Pair(productGroupCodeAccount?.productOfferingId?.toString()
                 ?: "0", productGroupCodeAccount?.primaryCard?.cards?.get(0)?.cardNumber ?: "")
     }
 
-    fun getUsername(): String? {
-        //logged in user's name and family name will be displayed on the page
-        val jwtDecoded = SessionUtilities.getInstance().jwt
-        val name = jwtDecoded.name[0]
-        val capitaliseFirstLetterInName = name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
-        val lowercaseOtherLetterInnAME = name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
-        return "$capitaliseFirstLetterInName$lowercaseOtherLetterInnAME"
-    }
+    fun getUsername(): String? = ChatCustomerInfo().getUsername()
+
+    fun getActivityName() : String? = activity::class.java.simpleName
 }

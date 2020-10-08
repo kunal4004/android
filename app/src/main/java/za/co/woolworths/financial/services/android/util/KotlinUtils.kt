@@ -354,7 +354,7 @@ class KotlinUtils {
         }
 
 
-        fun getGSONFileFromRAWResFolder(context: Context?, @RawRes id: Int): JSONObject {
+        fun getJSONFileFromRAWResFolder(context: Context?, @RawRes id: Int): JSONObject {
             val awsConfiguration: InputStream? = context?.resources?.openRawResource(id)
             val writer: Writer = StringWriter()
             val buffer = CharArray(1024)

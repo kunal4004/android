@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNT_NUMBER
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.FROM_ACTIVITY
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
+    private var fromActivity: String? = null
     private var sessionType: SessionType? = null
     private var chatAccountProductLandingPage: String? = null
     private var chatNavHostController: NavController? = null
@@ -53,16 +55,12 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         const val DELAY: Long = 300
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.chat_activity)
-        Utils.updateStatusBarBackground(this)
-        actionBar()
-
+    override fun onStart() {
         intent?.extras?.apply {
             productOfferingId = getString(PRODUCT_OFFERING_ID)
             accountNumber = getString(ACCOUNT_NUMBER)
             appScreen = getString(APP_SCREEN)
+            fromActivity = getString(FROM_ACTIVITY)
             sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
             chatAccountProductLandingPage = getString(ACCOUNTS)
             chatViewModel.isChatToCollectionAgent.value = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
@@ -70,8 +68,18 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
             chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
         }
 
+        chatViewModel.setScreenType(fromActivity)
         chatViewModel.setAccount(Gson().fromJson(chatAccountProductLandingPage, Account::class.java))
+        chatViewModel.firebaseEventChatOnline()
+        chatViewModel.postChatEventInitiateSession()
+        super.onStart()
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.chat_activity)
+        Utils.updateStatusBarBackground(this)
+        actionBar()
         initUI()
 
         with(chatViewModel) {
@@ -97,11 +105,13 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         chatNavHostController = chatNavHost?.navController
         val chatNavGraph = chatNavHostController?.graph
         // add featureName app string
-        bundle.putString(PRODUCT_OFFERING_ID, productOfferingId)
-        bundle.putString(ACCOUNT_NUMBER, accountNumber)
-        bundle.putBoolean(CHAT_TO_COLLECTION_AGENT, chatToCollectionAgent)
-        bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
-        bundle.putString(APP_SCREEN, appScreen)
+        with (bundle) {
+            putString(PRODUCT_OFFERING_ID, productOfferingId)
+            putString(ACCOUNT_NUMBER, accountNumber)
+            putBoolean(CHAT_TO_COLLECTION_AGENT, chatToCollectionAgent)
+            putString(FEATURE_NAME, FEATURE_WHATSAPP)
+            putString(APP_SCREEN, appScreen)
+        }
 
         chatScreenType = ChatType.AGENT_COLLECT
         when (chatScreenType) {

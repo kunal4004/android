@@ -34,6 +34,7 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
 
     override fun getPersonalLoan(): AccountSales = model.getPersonalLoan()
 
+    @Throws(RuntimeException::class)
     fun onApplyNowButtonTapped() {
         val applyNowLinks = WoolworthsApplication.getApplyNowLink()
         Utils.openBrowserWithUrl(when (getApplyNowState()) {

@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService.
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -110,7 +110,6 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                                 transactionRecyclerview?.visibility = View.GONE
                                 mErrorHandlerView?.showEmptyState(3)
                             }
-                            showChatBubble()
                         }
                         440 -> if (!this@WTransactionsActivity.isFinishing) {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, transactionHistoryResponse.response.stsParams, this@WTransactionsActivity)
@@ -135,9 +134,6 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         }, TransactionHistoryResponse::class.java))
     }
 
-    private fun showChatBubble() {
-
-    }
 
     private fun setupTransactionRecyclerview(transactionHistoryResponse: TransactionHistoryResponse) {
         val transactionsAdapter = WTransactionAdapter(getListOfTransaction(transactionHistoryResponse.transactions))
@@ -178,12 +174,9 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
-        val inAppChat = WoolworthsApplication.getPresenceInAppChat()
-        val tradingHours = inAppChat?.customerService?.tradingHours ?: inAppChat?.tradingHours
-        Utils.triggerFireBaseEvents(if (tradingHours?.let { hour -> KotlinUtils.isOperatingHoursForInAppChat(hour) } == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
         ChatFloatingActionButtonBubbleView(
                 activity = this@WTransactionsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList),
+                chatBubbleAvailability = ChatBubbleAvailability(accountList, this@WTransactionsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
                 view = paymentOptionScrollView)

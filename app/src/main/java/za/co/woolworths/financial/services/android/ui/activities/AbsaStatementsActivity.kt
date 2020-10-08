@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.*
@@ -246,12 +246,9 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
-        val inAppChat = WoolworthsApplication.getPresenceInAppChat()
-        val tradingHours = inAppChat?.customerService?.tradingHours ?: inAppChat?.tradingHours
-        Utils.triggerFireBaseEvents(if (tradingHours?.let { hour -> KotlinUtils.isOperatingHoursForInAppChat(hour) } == true) FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE else FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE)
         ChatFloatingActionButtonBubbleView(
                 activity = this@AbsaStatementsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList),
+                chatBubbleAvailability = ChatBubbleAvailability(accountList, this@AbsaStatementsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
                 view = paymentOptionScrollView)

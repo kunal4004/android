@@ -72,6 +72,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return accountsResponse.accountList?.filter { account -> account.productGroupCode == getProductCode(mApplyNowState) }?.get(0)
     }
 
+    @Throws(RuntimeException::class)
     override fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>? {
         val account: Account? = getAccount()
         account?.productOfferingId?.let { WoolworthsApplication.getInstance().setProductOfferingId(it) }

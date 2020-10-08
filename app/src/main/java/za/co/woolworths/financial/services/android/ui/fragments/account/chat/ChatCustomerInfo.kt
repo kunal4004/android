@@ -26,4 +26,10 @@ class ChatCustomerInfo {
 
     fun getCustomerC2ID() = jWTDecodedModel?.C2Id ?: ""
 
+    fun getUsername(): String? {
+        //logged in user's name and family name will be displayed on the page
+        val name = jWTDecodedModel?.name?.get(0) ?: ""
+        return KotlinUtils.firstLetterCapitalization(name)
+    }
+
 }

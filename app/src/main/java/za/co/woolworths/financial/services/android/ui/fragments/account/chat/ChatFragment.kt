@@ -4,7 +4,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -14,7 +13,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -205,12 +203,11 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                                  * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
                                  */
 
-                                val updatedList: List<ChatMessage>? = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }?.entries?.map { it.value }?.flatten()
-                                val removeDuplicates = updatedList?.toSet()?.toMutableList()
+                                val updatedList: List<ChatMessage>? = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }?.entries?.map { it.value }?.flatten()?.distinctBy { it.message }
 
-                                if (removeDuplicates?.size ?: 0 > 0) {
+                                if (updatedList?.size ?: 0 > 0) {
                                     mChatAdapter?.clear()
-                                    removeDuplicates?.forEach { chat -> updateMessageList(chat) }
+                                    updatedList?.forEach { chat -> updateMessageList(chat) }
                                 }
                             }
                         }
