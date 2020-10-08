@@ -24,7 +24,7 @@
       "awsAPIPlugin": {
         "api": {
           "endpointType": "GraphQL",
-          "endpoint": "https://vx3kepvubbcitbenggobxzy5kq.appsync-api.eu-west-1.amazonaws.com/graphql",
+          "endpoint": "https://xdckmn2jsrgbva4jr2c4zsne4a.appsync-api.eu-west-1.amazonaws.com/graphql",
           "region": "eu-west-1",
           "authorizationType": "AMAZON_COGNITO_USER_POOLS"
         }
