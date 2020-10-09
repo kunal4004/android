@@ -64,7 +64,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun initAmplify() {
-        this.awsAmplify = ChatAWSAmplify()
+        this.awsAmplify = ChatAWSAmplify
     }
 
     fun setAccount(account: Account?) {
