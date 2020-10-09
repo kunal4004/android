@@ -17,6 +17,7 @@ class PayMyAccountViewModel : ViewModel() {
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
 
+
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
         val selectedAccountProduct = getCardDetail()?.account

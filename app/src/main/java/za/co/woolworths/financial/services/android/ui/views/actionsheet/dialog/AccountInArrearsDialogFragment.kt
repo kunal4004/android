@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog
 
-
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,14 +9,10 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_in_arrears_alert_dialog_fragment.*
 import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.accountInArrearsDescriptionTextView
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -26,7 +21,6 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
 
-    private var mAccountCards: Pair<ApplyNowState, Account>? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
 
@@ -36,12 +30,6 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
             showChatBubbleInterface = context
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val accountInStringFormat = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, "")
-        mAccountCards = Gson().fromJson(accountInStringFormat, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.account_in_arrears_alert_dialog_fragment, container, false)
     }
@@ -49,7 +37,7 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accountInArrearsDescriptionTextView?.text = mAccountCards?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_overdue_error_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
+        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_overdue_error_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
 
         payNowButton?.apply {
             setOnClickListener(this@AccountInArrearsDialogFragment)
@@ -79,7 +67,8 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
 
             R.id.payNowButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
-                ScreenManager.presentPayMyAccountActivity(activity, mAccountCards, Gson().toJson(cardDetail))
+                val account = cardDetail?.account
+                ScreenManager.presentPayMyAccountActivity(activity, account, Gson().toJson(cardDetail))
                 dismiss()
             }
 
