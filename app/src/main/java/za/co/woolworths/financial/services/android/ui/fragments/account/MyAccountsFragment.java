@@ -1215,7 +1215,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private void showInAppChat(Activity activity) {
         if ((AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account) ||
                 (!AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account)) {
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleAvailability(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleAvailability(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING,  mScrollView);
             inAppChatTipAcknowledgement.build();
         }
     }

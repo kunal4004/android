@@ -310,7 +310,6 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-
     @SuppressLint("DefaultLocale")
     fun getApplyNowState(): ApplyNowState {
         return when (getAccount()?.productGroupCode?.toLowerCase()) {
@@ -322,7 +321,6 @@ class ChatViewModel : ViewModel() {
                 Utils.GOLD_CARD -> ApplyNowState.GOLD_CREDIT_CARD
                 else -> ApplyNowState.STORE_CARD
             }
-
             else -> ApplyNowState.STORE_CARD
         }
     }

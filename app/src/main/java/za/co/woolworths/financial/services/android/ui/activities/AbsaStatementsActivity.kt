@@ -251,7 +251,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 chatBubbleAvailability = ChatBubbleAvailability(accountList, this@AbsaStatementsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
-                view = paymentOptionScrollView)
+                scrollableView = paymentOptionScrollView)
                 .build()
     }
 }

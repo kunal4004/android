@@ -20,8 +20,6 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -42,8 +40,7 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
                                          private val chatBubbleAvailability: ChatBubbleAvailability? = null,
                                          private var floatingActionButton: FloatingActionButton?,
                                          private var applyNowState: ApplyNowState,
-                                         private var isAppScreenPaymentOptions: Boolean = false,
-                                         private var view: Any? = null) {
+                                         private var scrollableView: Any? = null) {
 
     private var isLiveChatEnabled = false
 
@@ -65,7 +62,7 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
 
     @SuppressLint("InflateParams")
     private fun showChatToolTip() {
-        if (!isLiveChatEnabled || chatBubbleAvailability?.shouldPresentChatTooltip(applyNowState, isAppScreenPaymentOptions) == false) return
+        if (!isLiveChatEnabled || chatBubbleAvailability?.shouldPresentChatTooltip(applyNowState) == false) return
         val tooltip = activity?.let { act -> Dialog(act) }
         tooltip?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -74,20 +71,18 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
             val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
-            val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
             val chatAccountProductLandingPage = if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) chatBubbleAvailability.getAccountInProductLandingPage() else chatBubbleAvailability?.getAccountForProductLandingPage(applyNowState)
             activity?.apply {
-                val tradingHours = getTradingHours(presenceInChat)
                 greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleAvailability?.getUsername()
                         ?: "")
                 dismissChatTipImageView?.setOnClickListener {
-                    chatBubbleAvailability?.saveInAppChatTooltip(applyNowState, isAppScreenPaymentOptions)
+                    chatBubbleAvailability?.saveInAppChatTooltip(applyNowState)
                     dismiss()
                 }
 
                 chatToUsNowTextView?.setOnClickListener {
-                    chatBubbleAvailability?.saveInAppChatTooltip(applyNowState, isAppScreenPaymentOptions)
-                    navigateToChatActivity(tradingHours, chatAccountProductLandingPage)
+                    chatBubbleAvailability?.saveInAppChatTooltip(applyNowState)
+                    navigateToChatActivity(chatAccountProductLandingPage)
                     dismiss()
                 }
             }
@@ -147,12 +142,12 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
 
         if (!shouldAnimateChatIcon) return
 
-        when (view) {
+        when (scrollableView) {
             is NestedScrollView -> {
-                (view as? NestedScrollView)?.apply {
+                (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        val scrollViewHeight: Double =
-                                getChildAt(0)?.bottom?.minus(height.toDouble()) ?: 0.0
+                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble())
+                                ?: 0.0
 
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
@@ -166,7 +161,7 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
             }
 
             is RecyclerView -> {
-                (view as? RecyclerView)?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                (scrollableView as? RecyclerView)?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) floatingActionButton?.hide()
                     }
@@ -184,26 +179,13 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
         activity?.apply {
             val chatAccountProductLandingPage = if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) chatBubbleAvailability.getAccountInProductLandingPage() else chatBubbleAvailability?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
-
-            val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
-
-            val tradingHours = getTradingHours(presenceInChat)
-
             floatingActionButton?.setOnClickListener {
-                navigateToChatActivity(tradingHours, chatAccountProductLandingPage)
+                navigateToChatActivity(chatAccountProductLandingPage)
             }
         }
     }
 
-    private fun Activity.getTradingHours(presenceInChat: PresenceInAppChat?): MutableList<TradingHours>? {
-        return when (this) {
-            is BottomNavigationActivity, is AccountSignedInActivity, is PayMyAccountActivity -> presenceInChat?.collections?.tradingHours
-            is WTransactionsActivity, is StatementActivity -> presenceInChat?.customerService?.tradingHours
-            else -> presenceInChat?.customerService?.tradingHours
-        }
-    }
-
-    private fun Activity.navigateToChatActivity(tradingHours: MutableList<TradingHours>?, chatAccountProductLandingPage: Account?) {
+    private fun Activity.navigateToChatActivity(chatAccountProductLandingPage: Account?) {
         val initChatDetails = chatBubbleAvailability?.getProductOfferingIdAndAccountNumber(applyNowState)
         val intent = Intent(this, WChatActivity::class.java)
         intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)

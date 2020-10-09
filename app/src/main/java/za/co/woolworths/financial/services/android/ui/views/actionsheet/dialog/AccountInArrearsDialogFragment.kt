@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_in_arrears_alert_dialog_fragment.*
 import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.accountInArrearsDescriptionTextView
+import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -25,6 +28,13 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
 
     private var mAccountCards: Pair<ApplyNowState, Account>? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    private var showChatBubbleInterface: IShowChatBubble? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is AccountSignedInActivity)
+            showChatBubbleInterface = context
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +66,12 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
+        chatToUsButton?.apply {
+            setOnClickListener(this@AccountInArrearsDialogFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
+
+
     }
 
     override fun onClick(v: View?) {
@@ -67,7 +83,17 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
                 dismiss()
             }
 
-            R.id.closeIconImageButton, R.id.chatToUsButton -> dismiss()
+            R.id.chatToUsButton -> {
+
+                dismiss()
+            }
+
+            R.id.closeIconImageButton -> dismiss()
         }
+    }
+
+    override fun onDestroy() {
+        showChatBubbleInterface?.showChatBubble()
+        super.onDestroy()
     }
 }

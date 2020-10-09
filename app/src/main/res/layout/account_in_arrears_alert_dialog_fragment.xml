@@ -86,7 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginTop="25dp"
-        android:background="@android:color/white"
+        android:background="@color/grey_90_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payNowButton" />
@@ -106,7 +106,7 @@
         android:textAllCaps="true"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="12sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payNowDivider"

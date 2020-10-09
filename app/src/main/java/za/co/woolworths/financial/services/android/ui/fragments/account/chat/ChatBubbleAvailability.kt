@@ -5,6 +5,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
+import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -99,26 +104,64 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
     /**
      *  Show the Chat Tip associated with the Floating Action Button (each time when parent screen is shown) in:
      */
-    fun shouldPresentChatTooltip(applyNowState: ApplyNowState, isAppScreenPaymentOptions: Boolean = false): Boolean {
+    fun shouldPresentChatTooltip(applyNowState: ApplyNowState): Boolean {
         val inAppChatTipAcknowledgements = AppInstanceObject.get().inAppChatTipAcknowledgements
         with(inAppChatTipAcknowledgements) {
             return when (applyNowState) {
                 ApplyNowState.ACCOUNT_LANDING -> isChatVisibleForAccountLanding() && !accountsLanding
-                ApplyNowState.PERSONAL_LOAN -> isChatVisibleForAccountDetailProduct(applyNowState) && (if (isAppScreenPaymentOptions) !personalLoan.paymentOptions else !personalLoan.landing)
-                ApplyNowState.STORE_CARD -> isChatVisibleForAccountDetailProduct(applyNowState) && (if (isAppScreenPaymentOptions) !storeCard.paymentOptions else !storeCard.landing)
-                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> isChatVisibleForAccountDetailProduct(applyNowState) && (if (isAppScreenPaymentOptions) !creditCard.paymentOptions else !creditCard.landing)
+                ApplyNowState.PERSONAL_LOAN -> isChatVisibleForAccountDetailProduct(applyNowState) && when (getActivityName()) {
+                    AccountSignedInActivity::class.java.simpleName -> !personalLoan.landing
+                    PayMyAccountActivity::class.java.simpleName -> !personalLoan.paymentOptions
+                    WTransactionsActivity::class.java.simpleName -> !personalLoan.transactions
+                    AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !personalLoan.statements
+                    else -> false
+                }
+
+                ApplyNowState.STORE_CARD -> isChatVisibleForAccountDetailProduct(applyNowState) &&
+                        when (getActivityName()) {
+                            AccountSignedInActivity::class.java.simpleName -> !storeCard.landing
+                            PayMyAccountActivity::class.java.simpleName -> !storeCard.paymentOptions
+                            WTransactionsActivity::class.java.simpleName -> !storeCard.transactions
+                            AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !storeCard.statements
+                            else -> false
+                        }
+                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> isChatVisibleForAccountDetailProduct(applyNowState) &&
+                        when (getActivityName()) {
+                            AccountSignedInActivity::class.java.simpleName -> !creditCard.landing
+                            PayMyAccountActivity::class.java.simpleName -> !creditCard.paymentOptions
+                            WTransactionsActivity::class.java.simpleName -> !creditCard.transactions
+                            AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !creditCard.statements
+                            else -> false
+                        }
             }
         }
     }
 
-    fun saveInAppChatTooltip(applyNowState: ApplyNowState, isAppScreenPaymentOptions: Boolean) {
+    fun saveInAppChatTooltip(applyNowState: ApplyNowState) {
         val appInstanceObject = AppInstanceObject.get()
         appInstanceObject.inAppChatTipAcknowledgements?.apply {
             when (applyNowState) {
                 ApplyNowState.ACCOUNT_LANDING -> accountsLanding = true
-                ApplyNowState.PERSONAL_LOAN -> if (isAppScreenPaymentOptions) personalLoan.paymentOptions = true else personalLoan.landing = true
-                ApplyNowState.STORE_CARD -> if (isAppScreenPaymentOptions) storeCard.paymentOptions = true else storeCard.landing = true
-                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> if (isAppScreenPaymentOptions) creditCard.paymentOptions = true else creditCard.landing = true
+                ApplyNowState.PERSONAL_LOAN -> when (getActivityName()) {
+                    AccountSignedInActivity::class.java.simpleName -> personalLoan.landing = true
+                    PayMyAccountActivity::class.java.simpleName -> personalLoan.paymentOptions = true
+                    WTransactionsActivity::class.java.simpleName -> personalLoan.transactions = true
+                    AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> personalLoan.statements = true
+                }
+                ApplyNowState.STORE_CARD -> when (getActivityName()) {
+                    AccountSignedInActivity::class.java.simpleName -> storeCard.landing = true
+                    PayMyAccountActivity::class.java.simpleName -> storeCard.paymentOptions = true
+                    WTransactionsActivity::class.java.simpleName -> storeCard.transactions = true
+                    AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> storeCard.statements = true
+                }
+
+
+                ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> when (getActivityName()) {
+                    AccountSignedInActivity::class.java.simpleName -> creditCard.landing = true
+                    PayMyAccountActivity::class.java.simpleName -> creditCard.paymentOptions = true
+                    WTransactionsActivity::class.java.simpleName -> creditCard.transactions = true
+                    AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> creditCard.statements = true
+                }
             }
         }
         appInstanceObject.save()
@@ -166,5 +209,5 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
 
     fun getUsername(): String? = ChatCustomerInfo().getUsername()
 
-    fun getActivityName() : String? = activity::class.java.simpleName
+    fun getActivityName(): String? = activity::class.java.simpleName
 }

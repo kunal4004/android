@@ -179,7 +179,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                 chatBubbleAvailability = ChatBubbleAvailability(accountList, this@WTransactionsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
-                view = paymentOptionScrollView)
+                scrollableView = paymentOptionScrollView)
                 .build()
     }
 }

@@ -179,7 +179,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsFragmentDialog, bundle)
+        mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
