@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +81,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private Call<ResponseBody> mGetPdfFile;
     private UserStatement mSelectedStatement;
     private View topMarginView;
-    private boolean arrayContainTrue = false;
 
     public StatementFragment() {
     }
@@ -196,7 +197,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     @Override
     public void onClick(View v) {
         Activity activity = getActivity();
-        if (activity==null)return;
+        if (activity == null)return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
@@ -270,7 +271,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
             @Override
             public void onFailure(final Throwable error) {
-                if (error == null)return;
+                if (error == null) return;
                 Activity activity = getActivity();
                 if (activity !=null) {
                     activity.runOnUiThread(() -> {
@@ -320,7 +321,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                         if (response.code() == 200) {
                             try {
                                 if (response.body() != null) {
-                                    String fileName = "statement_"+mSelectedStatement.docDesc;
+                                    String fileName = "statement_" + mSelectedStatement.docDesc;
                                     Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
                                     openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
                                     openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());

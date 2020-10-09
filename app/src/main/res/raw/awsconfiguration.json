@@ -1,0 +1,34 @@
+{
+  "UserAgent": "aws-amplify-cli/2.0",
+  "Version": "1.0",
+  "auth": {
+    "plugins": {
+      "awsCognitoAuthPlugin": {
+        "CognitoUserPool": {
+          "Default": {
+            "PoolId": "eu-west-1_bvVMuirkm",
+            "AppClientId": "5q86sfrnf2t21mfajk0ulh4d47",
+            "Region": "eu-west-1"
+          }
+        },
+        "Auth": {
+          "Default": {
+            "authenticationFlowType": "USER_SRP_AUTH"
+          }
+        }
+      }
+    }
+  },
+  "api": {
+    "plugins": {
+      "awsAPIPlugin": {
+        "api": {
+          "endpointType": "GraphQL",
+          "endpoint": "https://xdckmn2jsrgbva4jr2c4zsne4a.appsync-api.eu-west-1.amazonaws.com/graphql",
+          "region": "eu-west-1",
+          "authorizationType": "AMAZON_COGNITO_USER_POOLS"
+        }
+      }
+    }
+  }
+}

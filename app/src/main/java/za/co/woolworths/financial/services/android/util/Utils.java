@@ -68,10 +68,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,14 +97,11 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.account.Transaction;
-import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem;
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -1393,20 +1388,6 @@ public class Utils {
 			}
 		}
 		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
-	}
-
-	public static Boolean isOperatingHoursForInAppChat() {
-
-		TradingHours tradingHours = WChatActivityExtension.Companion.getInAppTradingHoursForToday();
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
-		int minute = now.get(Calendar.MINUTE);
-
-		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
-		Date openingTime = WFormatter.parseDate(tradingHours.getOpens());
-		Date closingTime = WFormatter.parseDate(tradingHours.getCloses());
-
-		return (currentTime.after(openingTime) && currentTime.before(closingTime));
 	}
 
 	public static String getCurrentDay() {

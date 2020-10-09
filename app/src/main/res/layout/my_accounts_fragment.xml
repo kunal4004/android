@@ -409,7 +409,9 @@
             android:indeterminateTint="@color/black"
             android:visibility="gone" />
 
-
         <include layout="@layout/no_connection_handler" />
+
+        <include layout="@layout/chat_collect_agent_floating_button_layout" />
+
     </FrameLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

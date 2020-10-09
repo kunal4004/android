@@ -112,4 +112,7 @@
     <include layout="@layout/no_result_layout"/>
 
     <include layout="@layout/no_connection_layout"/>
+
+    <include layout="@layout/chat_collect_agent_floating_button_layout" />
+
 </FrameLayout>

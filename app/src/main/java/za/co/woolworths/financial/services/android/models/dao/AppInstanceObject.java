@@ -7,6 +7,10 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.chat.CreditCard;
+import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
+import za.co.woolworths.financial.services.android.models.dto.chat.PersonalLoan;
+import za.co.woolworths.financial.services.android.models.dto.chat.StoreCard;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
@@ -16,112 +20,114 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class AppInstanceObject {
 
-	public ArrayList<User> users;
+    public ArrayList<User> users;
 
-	public static final int MAX_DELIVERY_LOCATION_HISTORY = 5;
-	public static final int MAX_USERS = 3;
-	public boolean biometric;
-	public FeatureWalkThrough featureWalkThrough;
+    public static final int MAX_DELIVERY_LOCATION_HISTORY = 5;
+    public static final int MAX_USERS = 3;
+    public boolean biometric;
+    public FeatureWalkThrough featureWalkThrough;
+    private InAppChatTipAcknowledgements inAppChatTipAcknowledgements;
 
 
-	public AppInstanceObject() {
-		users = new ArrayList<>();
-		featureWalkThrough =  new FeatureWalkThrough();
-	}
+    public AppInstanceObject() {
+        users = new ArrayList<>();
+        featureWalkThrough =  new FeatureWalkThrough();
+        inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new StoreCard(false, false, false, false), new CreditCard(false, false, false, false), new PersonalLoan(false, false, false, false), false);
+    }
 
-	public static AppInstanceObject get() {
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
-			if (sessionDao.value != null) {
-				return new Gson().fromJson(sessionDao.value, AppInstanceObject.class);
-			}
-		} catch (Exception e) {
+    public static AppInstanceObject get() {
+        try {
+            SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
+            if (sessionDao.value != null) {
+                return new Gson().fromJson(sessionDao.value, AppInstanceObject.class);
+            }
+        } catch (Exception e) {
 
-		}
+        }
 
-		return new AppInstanceObject();
-	}
+        return new AppInstanceObject();
+    }
 
-	public User getCurrentUserObject() {
+    public User getCurrentUserObject() {
 
-		if (this.users.size() == 0) {
-			return new User();
-		} else {
-			for (User user : this.users) {
-				if (user.id.equalsIgnoreCase(getCurrentUsersID())) {
-					return user;
-				}
-			}
-		}
+        if (this.users.size() == 0) {
+            return new User();
+        } else {
+            for (User user : this.users) {
+                if (user.id.equalsIgnoreCase(getCurrentUsersID())) {
+                    return user;
+                }
+            }
+        }
 
-		return new User();
-	}
+        return new User();
+    }
 
-	public void save() {
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
-		sessionDao.value = new Gson().toJson(this);
-		try {
-			sessionDao.save();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public void save() {
+        SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
+        sessionDao.value = new Gson().toJson(this);
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public class User {
-		public String id;
-		public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
-		public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
-		public SessionDao.BIOMETRIC_AUTHENTICATION_STATE biometricAuthenticationState;
-		public boolean kmsi;
-		public String absaLoginAliasID;
-		public String absaDeviceID;
-		public boolean isVirtualTemporaryStoreCardPopupShown;
-		public boolean didShowDeliverySelectionModal;
+    public class User {
+        public String id;
+        public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
+        public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
+        public SessionDao.BIOMETRIC_AUTHENTICATION_STATE biometricAuthenticationState;
+        public boolean kmsi;
+        public String absaLoginAliasID;
+        public String absaDeviceID;
+        public boolean isVirtualTemporaryStoreCardPopupShown;
+        public boolean didShowDeliverySelectionModal;
 
-		public User() {
-			id = AppInstanceObject.getCurrentUsersID();
-			shoppingDeliveryLocationHistory = new ArrayList<>();
-		}
+        public User() {
+            id = AppInstanceObject.getCurrentUsersID();
+            shoppingDeliveryLocationHistory = new ArrayList<>();
+        }
 
-		public void save() {
-			AppInstanceObject appInstanceObject = AppInstanceObject.get();
-			if (appInstanceObject.users.size() == 0) {
-				appInstanceObject.users.add(this);
-			} else {
-				int index = -1;
-				for (int i = 0; i < appInstanceObject.users.size(); i++) {
-					if (appInstanceObject.users.get(i).id.equalsIgnoreCase(this.id)) {
-						index = i;
-						break;
-					}
-				}
-				if (index == -1) {
-					appInstanceObject.users.add(this);
-					if (appInstanceObject.users.size() > AppInstanceObject.MAX_USERS)
-						appInstanceObject.users.remove(0);
-				} else
-					appInstanceObject.users.set(index, this);
+        public void save() {
+            AppInstanceObject appInstanceObject = AppInstanceObject.get();
+            if (appInstanceObject.users.size() == 0) {
+                appInstanceObject.users.add(this);
+            } else {
+                int index = -1;
+                for (int i = 0; i < appInstanceObject.users.size(); i++) {
+                    if (appInstanceObject.users.get(i).id.equalsIgnoreCase(this.id)) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index == -1) {
+                    appInstanceObject.users.add(this);
+                    if (appInstanceObject.users.size() > AppInstanceObject.MAX_USERS)
+                        appInstanceObject.users.remove(0);
+                } else
+                    appInstanceObject.users.set(index, this);
 
-			}
-			appInstanceObject.save();
-		}
+            }
+            appInstanceObject.save();
+        }
 
-	}
+    }
 
-	public static String getCurrentUsersID() {
-		if (!SessionUtilities.getInstance().isUserAuthenticated())
-			return "";
-		ArrayList<String> arrEmail = SessionUtilities.getInstance().getJwt().email;
-		return arrEmail == null ? "" : arrEmail.get(0);
-	}
+    public static String getCurrentUsersID() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated())
+            return "";
+        ArrayList<String> arrEmail = SessionUtilities.getInstance().getJwt().email;
+        return arrEmail == null ? "" : arrEmail.get(0);
+    }
 
-	public boolean isBiometricWalkthroughPresented() {
-		return biometric;
-	}
+    public boolean isBiometricWalkthroughPresented() {
+        return biometric;
+    }
 
-	public void setBiometricWalkthroughPresented(boolean biometric) {
-		this.biometric = biometric;
-	}
+    public void setBiometricWalkthroughPresented(boolean biometric) {
+        this.biometric = biometric;
+    }
 
     public class FeatureWalkThrough {
         //Show Tutorials
@@ -137,11 +143,16 @@ public class AppInstanceObject {
 		public boolean shoppingList;
 		public boolean statements;
 		public boolean creditScore;
+
     }
-	/***
-	 * Check to determine if biometric custom popup should be displayed
-	 */
-	public static boolean biometricWalkthroughIsPresented(Activity activity) {
-		return activity != null && !get().isBiometricWalkthroughPresented() && AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled();
-	}
+    /***
+     * Check to determine if biometric custom popup should be displayed
+     */
+    public static boolean biometricWalkthroughIsPresented(Activity activity) {
+        return activity != null && !get().isBiometricWalkthroughPresented() && AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled();
+    }
+
+    public InAppChatTipAcknowledgements getInAppChatTipAcknowledgements() {
+        return inAppChatTipAcknowledgements;
+    }
 }

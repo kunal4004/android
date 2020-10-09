@@ -423,6 +423,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onClick(view: View) {
+        KotlinUtils.avoidDoubleClicks(view)
         activity?.let { activity ->
             when (view.id) {
                 R.id.btnRetry -> {
