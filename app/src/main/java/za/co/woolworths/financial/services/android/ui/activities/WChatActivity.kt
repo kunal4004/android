@@ -56,6 +56,9 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     override fun onStart() {
+
+        chatViewModel.initAmplify()
+
         intent?.extras?.apply {
             productOfferingId = getString(PRODUCT_OFFERING_ID)
             accountNumber = getString(ACCOUNT_NUMBER)
@@ -105,7 +108,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         chatNavHostController = chatNavHost?.navController
         val chatNavGraph = chatNavHostController?.graph
         // add featureName app string
-        with (bundle) {
+        with(bundle) {
             putString(PRODUCT_OFFERING_ID, productOfferingId)
             putString(ACCOUNT_NUMBER, accountNumber)
             putBoolean(CHAT_TO_COLLECTION_AGENT, chatToCollectionAgent)

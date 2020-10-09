@@ -162,6 +162,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             WoolworthsApplication.setContactUsDetails(contactUs)
 
+            WoolworthsApplication.setInAppChat(inAppChat)
+
             WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
             WoolworthsApplication.setPresenceInAppChat(presenceInAppChat)
 
