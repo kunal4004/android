@@ -55,7 +55,6 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -63,7 +62,6 @@ import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
@@ -106,7 +104,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
     private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
-    private static PresenceInAppChat presenceInAppChat;
     private static QuickShopDefaultValues quickShopDefaultValues;
     private static InstantCardReplacement instantCardReplacement;
     private static VirtualTempCard virtualTempCard;
@@ -473,14 +470,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static String getAuthenticVersionReleaseNote() {
         return authenticVersionReleaseNote;
-    }
-
-    public static PresenceInAppChat getPresenceInAppChat() {
-        return presenceInAppChat;
-    }
-
-    public static void setPresenceInAppChat(PresenceInAppChat presenceInAppChat) {
-        WoolworthsApplication.presenceInAppChat = presenceInAppChat;
     }
 
     public static void setQuickShopDefaultValues(QuickShopDefaultValues quickShopDefaultValues) {
