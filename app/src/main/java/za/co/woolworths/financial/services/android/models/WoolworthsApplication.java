@@ -55,14 +55,13 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
@@ -72,6 +71,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Context mContextApplication;
     private static WhatsApp whatsApp;
     private static List<ContactUs> mContactUs;
+    private static InAppChat inAppChat;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -104,7 +104,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
     private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
-    private static PresenceInAppChat presenceInAppChat;
     private static QuickShopDefaultValues quickShopDefaultValues;
     private static InstantCardReplacement instantCardReplacement;
     private static VirtualTempCard virtualTempCard;
@@ -112,6 +111,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Sts stsValues;
     private static CreditCardActivation creditCardActivation;
     private static ClickAndCollect clickAndCollect;
+    private static String transUnionLink;
 
     private Activity mCurrentActivity = null;
 
@@ -254,9 +254,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
-
-        ChatAWSAmplify chatAWSAmplify = new ChatAWSAmplify();
-        chatAWSAmplify.init(this);
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
                 .setDownsampleEnabled(true)
@@ -476,14 +473,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return authenticVersionReleaseNote;
     }
 
-    public static PresenceInAppChat getPresenceInAppChat() {
-        return presenceInAppChat;
-    }
-
-    public static void setPresenceInAppChat(PresenceInAppChat presenceInAppChat) {
-        WoolworthsApplication.presenceInAppChat = presenceInAppChat;
-    }
-
     public static void setQuickShopDefaultValues(QuickShopDefaultValues quickShopDefaultValues) {
         WoolworthsApplication.quickShopDefaultValues = quickShopDefaultValues;
     }
@@ -561,5 +550,21 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
+    }
+
+    public static String getTransUnionLink() {
+        return transUnionLink;
+    }
+
+    public static void setTransUnionLink(String transUnionLink) {
+        WoolworthsApplication.transUnionLink = transUnionLink;
+    }
+
+    public static void setInAppChat(@Nullable InAppChat inAppChat) {
+        WoolworthsApplication.inAppChat = inAppChat;
+    }
+
+    public static InAppChat getInAppChat() {
+        return inAppChat;
     }
 }

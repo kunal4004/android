@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApi
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.Collections
 import za.co.woolworths.financial.services.android.models.dto.chat.CustomerService
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -126,6 +126,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setHowToSaveLink(howtosaveLink)
                 WoolworthsApplication.setWrewardsTCLink(wrewardsTCLink)
                 WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
+                WoolworthsApplication.setTransUnionLink(transUnionLink)
             }
 
             whatsApp?.apply {
@@ -147,12 +148,11 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             }
 
 
-            var presenceInAppChat: PresenceInAppChat? = presenceInAppChat
-            if (presenceInAppChat == null) {
-                presenceInAppChat = PresenceInAppChat(ArrayList(), "", null, false, Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()))
+            var inAppChat: InAppChat? = inAppChat
+            if (inAppChat == null) {
+                inAppChat = InAppChat("","","","", Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()),null, mutableListOf())
             } else {
-                presenceInAppChat.isEnabled =
-                        Utils.isFeatureEnabled(presenceInAppChat.minimumSupportedAppBuildNumber)
+                inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
             }
 
             val virtualTempCard = virtualTempCard
@@ -162,8 +162,9 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             WoolworthsApplication.setContactUsDetails(contactUs)
 
+            WoolworthsApplication.setInAppChat(inAppChat)
+
             WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
-            WoolworthsApplication.setPresenceInAppChat(presenceInAppChat)
 
             instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
                     ?: false
