@@ -160,7 +160,7 @@
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productIngredientsInformation">
+        app:layout_constraintTop_toBottomOf="@+id/allergensInformation">
 
         <View
             android:layout_width="match_parent"
@@ -176,7 +176,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/productIngredientsInformation"
+        android:id="@+id/dietaryInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
         android:layout_marginTop="0dp"
@@ -185,6 +185,54 @@
         app:layout_constraintRight_toRightOf="parent"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/productDetailsInformation">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1A000000" />
+
+        <TextView
+            style="@style/card_item_regular_text_style"
+            android:text="@string/dietary"
+            android:textColor="@color/account_amount_color" />
+
+        <ImageView style="@style/card_item_end_icon_style" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/allergensInformation"
+        style="@style/clickable_card_item_layout_style"
+        android:layout_height="@dimen/eighty_dp"
+        android:layout_marginTop="0dp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/dietaryInformation">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1A000000" />
+
+        <TextView
+            style="@style/card_item_regular_text_style"
+            android:text="@string/allergens"
+            android:textColor="@color/account_amount_color" />
+
+        <ImageView style="@style/card_item_end_icon_style" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/productIngredientsInformation"
+        style="@style/clickable_card_item_layout_style"
+        android:layout_height="@dimen/eighty_dp"
+        android:layout_marginTop="0dp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/nutritionalInformation">
 
         <View
             android:layout_width="match_parent"

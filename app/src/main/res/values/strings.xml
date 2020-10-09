@@ -233,6 +233,8 @@
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
     <string name="ingredients">Ingredients</string>
+    <string name="dietary">Dietary</string>
+    <string name="allergens">Allergen</string>
     <string name="savings_since">Savings Since</string>
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
 
