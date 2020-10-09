@@ -17,12 +17,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -37,8 +36,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.SESSION_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
@@ -77,10 +74,10 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
             val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
-            val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
+            val inAppChat = WoolworthsApplication.getInAppChat()
             val chatAccountProductLandingPage = if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) chatBubbleAvailability.getAccountInProductLandingPage() else chatBubbleAvailability?.getAccountForProductLandingPage(applyNowState)
             activity?.apply {
-                val tradingHours = getTradingHours(presenceInChat)
+                val tradingHours = getTradingHours(inAppChat)
                 greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleAvailability?.getUsername()
                         ?: "")
                 dismissChatTipImageView?.setOnClickListener {
@@ -188,7 +185,7 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
             val chatAccountProductLandingPage = if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) chatBubbleAvailability.getAccountInProductLandingPage() else chatBubbleAvailability?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
 
-            val presenceInChat = WoolworthsApplication.getPresenceInAppChat()
+            val presenceInChat = WoolworthsApplication.getInAppChat()
 
             val tradingHours = getTradingHours(presenceInChat)
 
@@ -198,11 +195,11 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
         }
     }
 
-    private fun Activity.getTradingHours(presenceInChat: PresenceInAppChat?): MutableList<TradingHours>? {
+    private fun Activity.getTradingHours(inAppChat: InAppChat?): MutableList<TradingHours>? {
         return when (this) {
-            is BottomNavigationActivity, is AccountSignedInActivity, is PaymentOptionActivity -> presenceInChat?.collections?.tradingHours
-            is WTransactionsActivity, is StatementActivity -> presenceInChat?.customerService?.tradingHours
-            else -> presenceInChat?.customerService?.tradingHours
+            is BottomNavigationActivity, is AccountSignedInActivity, is PaymentOptionActivity -> inAppChat?.collections?.tradingHours
+            is WTransactionsActivity, is StatementActivity -> inAppChat?.customerService?.tradingHours
+            else -> inAppChat?.customerService?.tradingHours
         }
     }
 
@@ -219,7 +216,7 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
     }
 
     private fun isLiveChatEnabled(): Boolean {
-        WoolworthsApplication.getPresenceInAppChat()?.liveChatEnabled?.apply {
+        WoolworthsApplication.getInAppChat()?.liveChatEnabled?.apply {
             floatingActionButton?.visibility = when (activity) {
 
                 is BottomNavigationActivity -> if (accountsLanding) VISIBLE else GONE

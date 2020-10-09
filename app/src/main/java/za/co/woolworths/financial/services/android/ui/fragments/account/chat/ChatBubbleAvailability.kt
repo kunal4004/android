@@ -17,8 +17,8 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
     }
 
     // config.presenceInAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
-    private val isPresenceInAppChatEnabled: Boolean
-        get() = WoolworthsApplication.getPresenceInAppChat().isEnabled ?: false
+    private val isInAppChatEnabled: Boolean
+        get() = WoolworthsApplication.getInAppChat().isEnabled ?: false
 
     /**
      * In Accounts Landing: Loop through all the Products returned with the Accounts Response.
@@ -27,7 +27,7 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
      */
 
     fun isChatVisibleForAccountLanding(): Boolean {
-        if (!isPresenceInAppChatEnabled) return false
+        if (!isInAppChatEnabled) return false
 
         accountList?.forEach { account ->
             if (!account.productOfferingGoodStanding && account.productOfferingStatus == Utils.ACCOUNT_ACTIVE)
@@ -44,7 +44,7 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
 
     fun isChatVisibleForAccountDetailProduct(applyNowState: ApplyNowState): Boolean {
         // Applicable for payment option section
-        if (!isPresenceInAppChatEnabled) return false
+        if (!isInAppChatEnabled) return false
 
         val productGroupCode = when (applyNowState) {
             ApplyNowState.STORE_CARD -> STORE_CARD_PRODUCT_GROUP_CODE
@@ -66,7 +66,7 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
 
     fun getAccountForProductLandingPage(applyNowState: ApplyNowState): Account? {
         // Applicable for payment option section
-        if (!isPresenceInAppChatEnabled) return null
+        if (!isInAppChatEnabled) return null
 
         val productGroupCode = when (applyNowState) {
             ApplyNowState.STORE_CARD -> STORE_CARD_PRODUCT_GROUP_CODE
