@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
@@ -72,6 +73,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Context mContextApplication;
     private static WhatsApp whatsApp;
     private static List<ContactUs> mContactUs;
+    private static InAppChat inAppChat;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -255,9 +257,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
-
-        ChatAWSAmplify chatAWSAmplify = new ChatAWSAmplify();
-        chatAWSAmplify.init(this);
 
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
                 .setDownsampleEnabled(true)
@@ -570,5 +569,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setTransUnionLink(String transUnionLink) {
         WoolworthsApplication.transUnionLink = transUnionLink;
+    }
+
+    public static void setInAppChat(@Nullable InAppChat inAppChat) {
+        WoolworthsApplication.inAppChat = inAppChat;
+    }
+
+    public static InAppChat getInAppChat() {
+        return inAppChat;
     }
 }
