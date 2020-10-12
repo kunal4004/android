@@ -85,7 +85,6 @@ object FuseLocationAPISingleton {
                 ?.addOnFailureListener { e ->
                     when ((e as? ApiException)?.statusCode) {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                            Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " + "location settings ")
                             try {
                                 mLocationCompletedProvider.onPopUpLocationDialogMethod()
                                 // Show the dialog by calling startResolutionForResult(), and check the
@@ -95,7 +94,6 @@ object FuseLocationAPISingleton {
                                 val activity : AppCompatActivity? = WoolworthsApplication.getInstance().currentActivity as? AppCompatActivity
                                 activity?.let { activity -> rae?.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)}
                             } catch (sie: IntentSender.SendIntentException) {
-                                Log.i(TAG, "PendingIntent unable to execute request.")
                             }
 
                         }
