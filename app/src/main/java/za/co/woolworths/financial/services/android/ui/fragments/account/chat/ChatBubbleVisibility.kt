@@ -24,7 +24,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
         const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
     }
 
-    // config.presenceInAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
+    // config.inAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
     private val isInAppChatFeatureEnabled: Boolean
         get() = WoolworthsApplication.getInAppChat().isEnabled ?: false
 
@@ -264,30 +264,27 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
             // PayMyAccountActivity:: Show to all Customer
             is PayMyAccountActivity, is WTransactionsActivity -> true
 
-            else -> {
-                when (activity) {
-                    // Account Landing: show only to Customer in arrears
-                    is MyAccountActivity, is BottomNavigationActivity -> isChatVisibleForAccountLanding()
-                    else -> isChatVisibleForAccountProductsLanding(applyNowState)
-                    // Product Landing Page: show only to Personal Loan and Store Card and CC in arrears
-                }
+            else -> when (activity) {
+                // Account Landing: show only to Customer in arrears
+                is MyAccountActivity, is BottomNavigationActivity -> isChatVisibleForAccountLanding()
+                else -> isChatVisibleForAccountProductsLanding(applyNowState)
+                // Product Landing Page: show only to Personal Loan and Store Card and CC in arrears
             }
         }
     }
 
-    fun getUsername(): String? = ChatCustomerInfo().getUsername()
+    fun getUsername(): String? = ChatCustomerInfo.getUsername()
 
     private fun getActivityName(): String? = activity::class.java.simpleName
-
 
     fun getSessionType(): SessionType {
         val collectionsList = mutableListOf(AccountSignedInActivity::class.java.simpleName, BottomNavigationActivity::class.java.simpleName, PayMyAccountActivity::class.java.simpleName)
         val customerServicesList = mutableListOf(WTransactionsActivity::class.java.simpleName, StatementActivity::class.java.simpleName)
-        val name = activity?.javaClass?.simpleName ?: ""
+        val activityName = getActivityName() ?: ""
 
         return when {
-            collectionsList.contains(name) -> SessionType.Collections
-            customerServicesList.contains(name) -> SessionType.CustomerService
+            collectionsList.contains(activityName) -> SessionType.Collections
+            customerServicesList.contains(activityName) -> SessionType.CustomerService
             else -> SessionType.Fraud
         }
     }

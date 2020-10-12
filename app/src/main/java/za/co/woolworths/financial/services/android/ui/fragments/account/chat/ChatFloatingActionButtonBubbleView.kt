@@ -30,12 +30,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class ChatFloatingActionButtonBubbleView(
-        var activity: Activity? = null,
-        var chatBubbleVisibility: ChatBubbleVisibility? = null,
-        var floatingActionButton: FloatingActionButton? = null,
-        var applyNowState: ApplyNowState,
-        var scrollableView: Any? = null) {
+class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
+                                         var chatBubbleVisibility: ChatBubbleVisibility? = null,
+                                         var floatingActionButton: FloatingActionButton? = null,
+                                         var applyNowState: ApplyNowState,
+                                         var scrollableView: Any? = null) {
 
     private var isLiveChatEnabled = false
 
@@ -57,7 +56,8 @@ class ChatFloatingActionButtonBubbleView(
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
             val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             activity?.apply {
-                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleVisibility?.getUsername() ?: "")
+                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleVisibility?.getUsername()
+                        ?: "")
                 dismissChatTipImageView?.setOnClickListener {
                     chatBubbleVisibility?.saveInAppChatTooltip(applyNowState)
                     dismiss()
@@ -106,7 +106,8 @@ class ChatFloatingActionButtonBubbleView(
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble()) ?: 0.0
+                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble())
+                                ?: 0.0
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
@@ -165,5 +166,4 @@ class ChatFloatingActionButtonBubbleView(
             floatingActionButtonEvent()
         }
     }
-
 }
