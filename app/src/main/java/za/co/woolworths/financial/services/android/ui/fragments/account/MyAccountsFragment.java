@@ -459,6 +459,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private void disableRefresh() {
         if (mUpdateMyAccount != null)
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+        imRefreshAccount.setVisibility(View.GONE);
         imRefreshAccount.setEnabled(false);
     }
 
