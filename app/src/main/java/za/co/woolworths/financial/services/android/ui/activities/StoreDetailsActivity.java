@@ -138,7 +138,6 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                Log.i(TAG, "onPanelSlide, offset " + slideOffset);
                 if (slideOffset == 0.0) {
                     mLayout.setAnchorPoint(1.0f);
                 }
@@ -146,7 +145,6 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 
             @Override
             public void onPanelStateChanged(final View panel, SlidingUpPanelLayout.PanelState previousState, final SlidingUpPanelLayout.PanelState newState) {
-                Log.i(TAG, "onPanelStateChanged " + newState);
 
                 if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
                     /*

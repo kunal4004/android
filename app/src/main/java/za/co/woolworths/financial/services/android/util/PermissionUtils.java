@@ -52,14 +52,9 @@ public class PermissionUtils {
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkAndRequestPermissions(permissions, request_code)) {
 				permissionResultCallback.PermissionGranted(request_code);
-				Log.i("all permissions", "granted");
-				Log.i("proceed", "to callback");
 			}
 		} else {
 			permissionResultCallback.PermissionGranted(request_code);
-
-			Log.i("all permissions", "granted");
-			Log.i("proceed", "to callback");
 		}
 
 	}
@@ -119,7 +114,6 @@ public class PermissionUtils {
 							if (ActivityCompat.shouldShowRequestPermissionRationale(current_activity, listPermissionsNeeded.get(i)))
 								pending_permissions.add(listPermissionsNeeded.get(i));
 							else {
-								Log.i("Go to settings", "and enable permissions");
 								permissionResultCallback.NeverAskAgain(req_code);
 								Toast.makeText(current_activity, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
 								return;
@@ -153,8 +147,6 @@ public class PermissionUtils {
 //                                 });
 
 					} else {
-						Log.i("all", "permissions granted");
-						Log.i("proceed", "to next step");
 						permissionResultCallback.PermissionGranted(req_code);
 
 					}
