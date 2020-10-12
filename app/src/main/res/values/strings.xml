@@ -1584,5 +1584,21 @@
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
+    <string name="get_your_free_credit_report">Get Your Free Credit Report</string>
+    <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
+    <string name="check_back_during_working_hours">Check back during working hours.</string>
+    <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
+    <string name="agent_chat_greeting_label">Have issues paying your\naccount? How can we\nassist you?</string>
+    <string name="chat_greeting_label">Hi %1$s,</string>
+    <string name="chat_to_us_now_label">CHAT TO US NOW</string>
+    <string name="chat_greeting_problems_paying_installement_desc">Having problems paying installments? Chat to us Now.</string>
+    <string name="chat_greeting_description">Having problems paying your account?\nWe can assist you.</string>
+    <string name="chat_send_message_session_var_params">PRS_AccountNumber=%1$s,PRS_CardNumber=%2$s,PRS_C2Id=%3$s,PRS_Firstname=%4$s,PRS_Surname=%5$s,PRS_ProductOfferingId=%6$s,PRS_ProductOfferingDescription=%7$s</string>
+    <string name="end_session_title">"End Session  "</string>
+    <string name="end_session_desc">"Leaving the Chat window will end your conversation. Are you sure you want to end your session?  "</string>
+    <string name="no_continue_session">No, continue session</string>
+    <string name="end_session_button_caption">yes, end session</string>
+    <string name="pma_retry_error_title">Oops!</string>
+    <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
 </resources>
 

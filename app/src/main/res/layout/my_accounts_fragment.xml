@@ -143,6 +143,34 @@
                                 android:background="@drawable/ic_caret_black" />
                         </RelativeLayout>
 
+                        <RelativeLayout
+                            android:id="@+id/creditReport"
+                            style="@style/listStyle"
+                            android:layout_marginBottom="16dp"
+                            android:background="@drawable/stores_details_background"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:id="@+id/creditReportIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ic_credit_report"
+                                android:layout_centerVertical="true"
+                                />
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:layout_toRightOf="@id/creditReportIcon"
+                                android:layout_marginLeft="@dimen/sixteen_dp"
+                                android:text="@string/get_your_free_credit_report" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/ic_caret_black" />
+                        </RelativeLayout>
+
                         <LinearLayout
                             android:id="@+id/loginUserOptionsLayout"
                             android:layout_width="match_parent"
@@ -381,7 +409,9 @@
             android:indeterminateTint="@color/black"
             android:visibility="gone" />
 
-
         <include layout="@layout/no_connection_handler" />
+
+        <include layout="@layout/chat_collect_agent_floating_button_layout" />
+
     </FrameLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

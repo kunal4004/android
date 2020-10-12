@@ -15,11 +15,19 @@ import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.json.JSONArray
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 
 /**
@@ -219,4 +227,17 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
 
 fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+}
+
+fun navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
+        .setExitAnim(R.anim.slide_out_to_left)
+        .setPopEnterAnim(R.anim.slide_from_left)
+        .setPopExitAnim(R.anim.slide_to_right).build()
+
+
+fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
+    launch {
+        delay(time)
+        launch(Dispatchers.Main) { code() }
+    }
 }

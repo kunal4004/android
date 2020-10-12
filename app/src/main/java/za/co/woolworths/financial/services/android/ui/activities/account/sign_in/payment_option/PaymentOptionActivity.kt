@@ -8,6 +8,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.payment_options_activity.whatsAppIconImageView
 import kotlinx.android.synthetic.main.payment_options_activity.whatsAppNextIconImageView
@@ -15,10 +16,14 @@ import kotlinx.android.synthetic.main.payment_options_activity.whatsAppTitleText
 import kotlinx.android.synthetic.main.payment_options_header.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.PaymentOptionHeaderItem
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_WHATSAPP
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -39,6 +44,7 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun onResume() {
         super.onResume()
         Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.HOW_TO_PAY)
+        mPaymentOptionPresenterImpl?.chatWithCollectionAgent()
     }
 
     private fun initViews() {
@@ -97,6 +103,17 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
         }
     }
 
+    override fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: ArrayList<Account>?) {
+        ChatFloatingActionButtonBubbleView(
+                activity = this@PaymentOptionActivity,
+                chatBubbleAvailability = ChatBubbleAvailability(accountList,this@PaymentOptionActivity),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = applyNowState,
+                isAppScreenPaymentOptions = true,
+                view = paymentOptionScrollView)
+                .build()
+    }
+
     override fun showPaymentDetail(paymentDetail: Map<String, String>?) {
         howToPayAccountDetails?.removeAllViews()
         paymentDetail?.forEach { paymentItem ->
@@ -129,7 +146,6 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun hideABSAInfo() {
         llAbsaAccount?.visibility = GONE
         tvPaymentOtherAccountDesc?.visibility = GONE
-
     }
 
     override fun onBackPressed() {

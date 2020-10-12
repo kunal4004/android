@@ -1304,8 +1304,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
-		this.onClick(rlLocationSelectedLayout);
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
+		if (feature == WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+			this.onClick(rlLocationSelectedLayout);
 	}
 
 	@Override

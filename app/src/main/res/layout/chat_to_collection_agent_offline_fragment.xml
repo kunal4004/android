@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/swatch_border_color">
+
+    <TextView
+        android:id="@+id/timeTextView"
+        style="@style/chatTimeDisplayStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
+        android:width="49dp"
+        android:gravity="center"
+        android:letterSpacing="0.012"
+        android:lineSpacingMultiplier="1.1"
+        android:text="6:07 AM"
+        android:textAllCaps="true"
+        android:textColor="@color/button_disable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_message_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/ic_bot"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startMarginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="32dp" />
+
+    <TextView
+        android:id="@+id/hiClientTextView"
+        style="@style/chat_text_style"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/received_message_bubble_bg"
+        android:text="Hi Brula"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
+        app:layout_constraintStart_toEndOf="@+id/image_message_profile"
+        app:layout_constraintTop_toTopOf="@+id/image_message_profile" />
+
+    <TextView
+        android:id="@+id/chatCollectionDescriptionTextView"
+        style="@style/chat_text_style"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/received_message_bubble_bg"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/hiClientTextView"
+        app:layout_constraintTop_toBottomOf="@+id/hiClientTextView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
