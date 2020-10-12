@@ -117,6 +117,7 @@ class FirebaseManagerAnalyticsProperties {
         const val PMA_CC_PAY_CMPLT = "pma_cc_pay_cmplt"
         const val PMA_SC_PAY_CMPLT = "pma_sc_pay_cmplt"
         const val PMA_PL_PAY_CMPLT = "pma_pl_pay_cmplt"
+        const val Myaccounts_creditview = "myaccounts_creditview"
 
         const val CC_MYACCOUNTS_CHAT_ONLINE = "cc_myaccounts_chat_online"
         const val SC_MYACCOUNTS_CHAT_ONLINE = "sc_myaccounts_chat_online"

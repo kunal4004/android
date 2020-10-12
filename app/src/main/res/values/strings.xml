@@ -1647,7 +1647,6 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
-
     <string name="pma_retry_error_title">Oops!</string>
     <string name="pma_retry_error_desc">Unfortunately, we’re having trouble retrieving your information, please try again.</string>
     <string name="pma_pay_by_debit_order">"Pay By Debit Order  "</string>
@@ -1678,6 +1677,8 @@
     <string name="payment_overdue_error_desc">To keep your account in good standing please pay overdue amount of %1$s today. Please pay now or contact us.</string>
     <string name="chat_to_us_label">CHAT TO US</string>
 
+    <string name="get_your_free_credit_report">Get Your Free Credit Report</string>
+    <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
     <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
     <string name="agent_chat_greeting_label">Have issues paying your\naccount? How can we\nassist you?</string>

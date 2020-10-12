@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
-import android.content.Context
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.ApiOperation
 import com.amplifyframework.api.aws.AWSApiPlugin
@@ -16,6 +15,7 @@ import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.*
 
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
@@ -23,13 +23,33 @@ import za.co.woolworths.financial.services.android.util.Assets
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 
-class ChatAWSAmplify {
+object ChatAWSAmplify {
 
     private var subscription: ApiOperation<*>? = null
 
-    fun init(context: Context) {
+    init {
         try {
+            val context = WoolworthsApplication.getAppContext()
             val awsConfigurationJSONObject = KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
+            val inAppChat = WoolworthsApplication.getInAppChat()
+            val auth = awsConfigurationJSONObject
+                    .getJSONObject("auth")
+                    .getJSONObject("plugins")
+                    .getJSONObject("awsCognitoAuthPlugin")
+                    .getJSONObject("CognitoUserPool")
+                    .getJSONObject("Default")
+
+            auth.put("PoolId", inAppChat.userPoolId)
+            auth.put("AppClientId", inAppChat.userPoolWebClientId)
+
+            val api = awsConfigurationJSONObject
+                    .getJSONObject("api")
+                    .getJSONObject("plugins")
+                    .getJSONObject("awsAPIPlugin")
+                    .getJSONObject("api")
+
+            api.put("endpoint", inAppChat.apiURI)
+
             val awsConfiguration = AmplifyConfiguration.fromJson(awsConfigurationJSONObject)
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.addPlugin(AWSApiPlugin())
@@ -39,7 +59,7 @@ class ChatAWSAmplify {
             Crashlytics.log(ex.message)
         }
     }
-
+    
     fun signIn(result: (Conversation?) -> Unit, error: (Any) -> Unit) {
 
         val networkConfig = NetworkConfig()

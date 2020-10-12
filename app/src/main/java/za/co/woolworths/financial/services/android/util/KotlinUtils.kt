@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -41,12 +42,9 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
-import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.getMyriadProSemiBoldFont
 
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
-import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
@@ -429,7 +427,7 @@ class KotlinUtils {
             return currentTime.after(openingTime) && currentTime.before(closingTime)
         }
 
-        fun getInAppTradingHoursForToday(tradingHours: MutableList<TradingHours>): TradingHours {
+        fun getInAppTradingHoursForToday(tradingHours: MutableList<TradingHours>?): TradingHours {
             var tradingHoursForToday: TradingHours? = null
             tradingHours?.let {
                 it.forEach { tradingHours ->
@@ -443,9 +441,12 @@ class KotlinUtils {
         }
 
         fun avoidDoubleClicks(view: View?) {
-            if (view?.isClickable != true) return
-            view.isClickable = false
-            view.postDelayed({ view.isClickable = true }, DELAY)
+            view?.apply {
+                if (!isClickable) return
+                GlobalScope.doAfterDelay(AppConstant.DELAY_900_MS) {
+                    isClickable = true
+                }
+            }
         }
     }
 }

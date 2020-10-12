@@ -63,7 +63,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun initAmplify() {
-        this.awsAmplify = ChatAWSAmplify()
+        this.awsAmplify = ChatAWSAmplify
     }
 
     fun setAccount(account: Account?) {
@@ -151,10 +151,11 @@ class ChatViewModel : ViewModel() {
 
 
     private fun getTradingHours(): MutableList<TradingHours>? {
+        val inAppChat = WoolworthsApplication.getInAppChat()
         return when (getSessionType()) {
-            SessionType.Collections -> WoolworthsApplication.getInAppChat()?.collections?.tradingHours
-            SessionType.CustomerService -> WoolworthsApplication.getInAppChat()?.customerService?.tradingHours
-            else -> WoolworthsApplication.getInAppChat().tradingHours
+            SessionType.Collections -> inAppChat?.collections?.tradingHours
+            SessionType.CustomerService ->  inAppChat?.customerService?.tradingHours
+            else -> inAppChat.tradingHours
         }
     }
 
@@ -167,10 +168,10 @@ class ChatViewModel : ViewModel() {
     }
 
     fun offlineMessageTemplate(onClick: (Triple<String, String, String>) -> Unit): SpannableString {
-        val presenceInAppChat = WoolworthsApplication.getInAppChat()
+        val inAppChat = WoolworthsApplication.getInAppChat()
         when (getSessionType()) {
             SessionType.Collections, SessionType.Fraud -> {
-                val collections = presenceInAppChat.collections
+                val collections = inAppChat.collections
                 val emailAddress = collections.emailAddress
 
                 var offlineMessageTemplate = collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
@@ -194,7 +195,7 @@ class ChatViewModel : ViewModel() {
             }
 
             SessionType.CustomerService -> {
-                val customerService = presenceInAppChat.customerService
+                val customerService = inAppChat.customerService
                 val emailAddress = customerService.emailAddress
 
                 var offlineMessageTemplate = customerService.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)

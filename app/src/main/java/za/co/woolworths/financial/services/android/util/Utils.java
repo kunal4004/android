@@ -1218,6 +1218,9 @@ public class Utils {
 			case STATEMENTS:
 				appInstanceObject.featureWalkThrough.statements = true;
 				break;
+			case CREDIT_SCORE:
+				appInstanceObject.featureWalkThrough.creditScore = true;
+				break;
 			default:
 				break;
 		}

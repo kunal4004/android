@@ -48,8 +48,6 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 
         chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
 
-        chatViewModel.initAmplify()
-
         initView()
     }
 

@@ -136,12 +136,14 @@ public class AppInstanceObject {
         //features
         public boolean barcodeScan;
         public boolean findInStore;
-        public boolean deliveryLocation;
-        public boolean vouchers;
-        public boolean refineProducts;
-        public boolean account;
-        public boolean shoppingList;
-        public boolean statements;
+		public boolean deliveryLocation;
+		public boolean vouchers;
+		public boolean refineProducts;
+		public boolean account;
+		public boolean shoppingList;
+		public boolean statements;
+		public boolean creditScore;
+
     }
     /***
      * Check to determine if biometric custom popup should be displayed
