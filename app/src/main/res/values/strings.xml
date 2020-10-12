@@ -1581,5 +1581,8 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+    <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="food_items">Food Items</string>
+    <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
 </resources>
 

@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -105,6 +106,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
+        executeValidateSuburb()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
@@ -166,7 +168,19 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         isFragmentVisible = isVisibleToUser
+        if (isFragmentVisible)
+            executeValidateSuburb()
     }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(!hidden){
+            activity?.apply {
+                executeValidateSuburb()
+            }
+        }
+    }
+
 
     fun scrollToTop() {
         rclDepartment?.scrollToPosition(0)
@@ -185,8 +199,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
-        } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
+        } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
+            executeValidateSuburb()
+        }
     }
 
 
@@ -198,4 +214,26 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun showDeliveryOptionDialog() {
         (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
     }
+
+    private fun executeValidateSuburb() {
+        Utils.getPreferredDeliveryLocation().let {
+            if (it == null) {
+                mDepartmentAdapter?.hideDeliveryDates()
+            } else {
+                mDepartmentAdapter?.showDeliveryDatesProgress(true)
+                OneAppService.validateSelectedSuburb(it.suburb.id, true).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                    override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                        when (response?.httpCode) {
+                            200 -> response.validatedSuburbProducts?.let { it1 -> mDepartmentAdapter?.updateDeliveryDate(it1) }
+                            else -> mDepartmentAdapter?.hideDeliveryDates()
+                        }
+                    }
+                    override fun onFailure(error: Throwable?) {
+                        mDepartmentAdapter?.hideDeliveryDates()
+                    }
+                }, ValidateSelectedSuburbResponse::class.java))
+            }
+        }
+    }
+
 }
