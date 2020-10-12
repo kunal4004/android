@@ -56,12 +56,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
-import java.lang.IllegalStateException
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -88,6 +86,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
+    private var mProductSearchMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -405,9 +404,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
+        this.mProductSearchMenu = menu
         inflater.inflate(R.menu.drill_down_category_menu, menu)
     }
 
+    private fun hideSearchIcon() {
+        val item = mProductSearchMenu!!.findItem(R.id.action_drill_search)
+        item.isVisible = false
+    }
+
+
+    private fun showSearchIcon() {
+        val item = mProductSearchMenu!!.findItem(R.id.action_drill_search)
+        item.isVisible = true
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_drill_search -> {
@@ -461,9 +471,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> {
+                    hideSearchIcon()
                     lockDrawerFragment()
                 }
                 else -> {
+                    showSearchIcon()
                     showToolbar()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
@@ -644,7 +656,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                 try {
                                     val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
                                     selectYourQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
-                                }catch (ex: IllegalStateException){
+                                } catch (ex: IllegalStateException) {
                                     Crashlytics.logException(ex)
                                 }
                             }
@@ -664,7 +676,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 if (!isAdded) return
                 activity.runOnUiThread {
                     dismissProgressBar()
-                   error?.let { onFailureHandler(it) }
+                    error?.let { onFailureHandler(it) }
                 }
             }
         }, SkusInventoryForStoreResponse::class.java))
@@ -740,7 +752,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
 
                         417 -> resources?.let {
-                            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,SET_DELIVERY_LOCATION_REQUEST_CODE) }
+                            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE) }
                         }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
@@ -787,27 +799,27 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 override fun onSuccess(locationResponse: LocationResponse?) {
                     if (!isAdded) return
                     dismissProgressBar()
-                        locationResponse?.apply {
-                            when (httpCode) {
-                                200 -> {
-                                    if (Locations != null && Locations.size > 0) {
-                                        WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList = Locations
-                                        val openStoreFinder = Intent(WoolworthsApplication.getAppContext(), WStockFinderActivity::class.java)
-                                        openStoreFinder.putExtra("PRODUCT_NAME", mSelectedProductList?.productName)
-                                        openStoreFinder.putExtra("CONTACT_INFO", "")
-                                        activity?.startActivity(openStoreFinder)
-                                        activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                                    } else {
-                                        activity?.let { activity -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "") }
-                                    }
+                    locationResponse?.apply {
+                        when (httpCode) {
+                            200 -> {
+                                if (Locations != null && Locations.size > 0) {
+                                    WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList = Locations
+                                    val openStoreFinder = Intent(WoolworthsApplication.getAppContext(), WStockFinderActivity::class.java)
+                                    openStoreFinder.putExtra("PRODUCT_NAME", mSelectedProductList?.productName)
+                                    openStoreFinder.putExtra("CONTACT_INFO", "")
+                                    activity?.startActivity(openStoreFinder)
+                                    activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                                } else {
+                                    activity?.let { activity -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "") }
                                 }
-                                440 -> {
-                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                    activity.let{ScreenManager.presentSSOSignin(it, QUERY_LOCATION_ITEM_REQUEST_CODE)}
-                                }
-                                else -> response?.desc?.let { desc -> Utils.displayValidationMessage(WoolworthsApplication.getAppContext(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc) }
                             }
+                            440 -> {
+                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                activity.let { ScreenManager.presentSSOSignin(it, QUERY_LOCATION_ITEM_REQUEST_CODE) }
+                            }
+                            else -> response?.desc?.let { desc -> Utils.displayValidationMessage(WoolworthsApplication.getAppContext(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc) }
                         }
+                    }
                 }
 
                 override fun onFailure(error: Throwable?) {
@@ -860,7 +872,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             putString(SEARCH_TERM, searchTerm)
         }
 
-        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?, navigationState: String?, sortOption:String ) = ProductListingFragment().withArgs {
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?, navigationState: String?, sortOption: String) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
@@ -896,8 +908,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
             override fun onSuccess(response: CartSummaryResponse?) {
                 dismissProgressBar()
-                when(response?.httpCode){
-                    200->{
+                when (response?.httpCode) {
+                    200 -> {
                         if (Utils.isCartSummarySuburbIDEmpty(response)) {
                             activity?.apply {
                                 KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
