@@ -94,7 +94,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
         }
     }
 
-    private fun chatIconAnimation() {
+    private fun animateChatIcon() {
         val shouldAnimateChatIcon = when (activity) {
             is BottomNavigationActivity -> chatBubbleVisibility?.isChatVisibleForAccountLanding() == true
             else -> chatBubbleVisibility?.isChatVisibleForAccountProductsLanding(applyNowState) == true
@@ -134,9 +134,9 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
         }
     }
 
-    private fun floatingActionButtonEvent() {
+    private fun floatingButtonListener() {
         activity?.apply {
-            val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage : Account? = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
             floatingActionButton?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
@@ -161,9 +161,9 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
     fun build() {
         if (!isLiveChatEnabled) return
         activity?.runOnUiThread {
-            chatIconAnimation()
+            animateChatIcon()
             showChatToolTip()
-            floatingActionButtonEvent()
+            floatingButtonListener()
         }
     }
 }
