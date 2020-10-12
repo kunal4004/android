@@ -40,6 +40,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return Pair(mApplyNowState, mAccountResponse)
     }
 
+    @Throws(RuntimeException::class)
     private fun getProductCode(applyNowState: ApplyNowState): String {
         return when (applyNowState) {
             ApplyNowState.STORE_CARD -> STORE_CARD
@@ -184,6 +185,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         navDetailController?.setGraph(navDetailController.graph, bundle)
     }
 
+    @Throws(RuntimeException::class)
     override fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int> {
         val accountInfo = getMyAccountCardInfo()
         return when (accountInfo?.first) {

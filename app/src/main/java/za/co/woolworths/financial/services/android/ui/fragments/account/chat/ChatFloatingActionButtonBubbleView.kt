@@ -17,15 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
-import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
-import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
@@ -36,33 +30,23 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
-                                         private val chatBubbleAvailability: ChatBubbleAvailability? = null,
-                                         private var floatingActionButton: FloatingActionButton?,
-                                         private var applyNowState: ApplyNowState,
-                                         private var scrollableView: Any? = null) {
+class ChatFloatingActionButtonBubbleView(
+        var activity: Activity? = null,
+        var chatBubbleVisibility: ChatBubbleVisibility? = null,
+        var floatingActionButton: FloatingActionButton? = null,
+        var applyNowState: ApplyNowState,
+        var scrollableView: Any? = null) {
 
     private var isLiveChatEnabled = false
 
     init {
-        isLiveChatEnabled = isLiveChatEnabled()
-    }
-
-    private fun getSessionType(): SessionType {
-        val collectionsList = mutableListOf(AccountSignedInActivity::class.java.simpleName, BottomNavigationActivity::class.java.simpleName, PayMyAccountActivity::class.java.simpleName)
-        val customerServicesList = mutableListOf(WTransactionsActivity::class.java.simpleName, StatementActivity::class.java.simpleName)
-        val name = activity?.javaClass?.simpleName ?: ""
-
-        return when {
-            collectionsList.contains(name) -> SessionType.Collections
-            customerServicesList.contains(name) -> SessionType.CustomerService
-            else -> SessionType.Fraud
-        }
+        isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
+        floatingActionButton?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
     }
 
     @SuppressLint("InflateParams")
     private fun showChatToolTip() {
-        if (!isLiveChatEnabled || chatBubbleAvailability?.shouldPresentChatTooltip(applyNowState) == false) return
+        if (chatBubbleVisibility?.isInAppChatTooltipVisible(applyNowState) == false) return
         val tooltip = activity?.let { act -> Dialog(act) }
         tooltip?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -71,18 +55,17 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
             val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
-            val chatAccountProductLandingPage = if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) chatBubbleAvailability.getAccountInProductLandingPage() else chatBubbleAvailability?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             activity?.apply {
-                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleAvailability?.getUsername()
-                        ?: "")
+                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleVisibility?.getUsername() ?: "")
                 dismissChatTipImageView?.setOnClickListener {
-                    chatBubbleAvailability?.saveInAppChatTooltip(applyNowState)
+                    chatBubbleVisibility?.saveInAppChatTooltip(applyNowState)
                     dismiss()
                 }
 
                 chatToUsNowTextView?.setOnClickListener {
-                    chatBubbleAvailability?.saveInAppChatTooltip(applyNowState)
-                    navigateToChatActivity(chatAccountProductLandingPage)
+                    chatBubbleVisibility?.saveInAppChatTooltip(applyNowState)
+                    navigateToChatActivity(activity, chatAccountProductLandingPage)
                     dismiss()
                 }
             }
@@ -93,7 +76,10 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
                 val dm = DisplayMetrics()
                 windowManager.defaultDisplay.getMetrics(dm)
 
-                val dialogPosition = dm.heightPixels.div(if (applyNowState == ApplyNowState.ACCOUNT_LANDING) 4.2f else 7.0f)
+                val dialogPosition = dm.heightPixels.div(when (activity) {
+                    is BottomNavigationActivity -> 4.2f
+                    else -> 7.0f
+                })
 
                 val windowManagerLayoutParams: WindowManager.LayoutParams = attributes
                 windowManagerLayoutParams.y = dialogPosition.toInt()
@@ -108,36 +94,10 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
         }
     }
 
-    private fun showChatIcon() {
-        floatingActionButton?.visibility = when (activity) {
-            // PayMyAccountActivity:: Show to all Customer
-            is PayMyAccountActivity, is WTransactionsActivity -> VISIBLE
-
-            else -> {
-                when (applyNowState) {
-                    // Account Landing: show only to Customer in arrears
-                    ApplyNowState.ACCOUNT_LANDING -> if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) VISIBLE else GONE
-                    // Product Landing Page: show only to Personal Loan and Store Card and CC in arrears
-                    ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (chatBubbleAvailability?.isChatVisibleForAccountDetailProduct(applyNowState) == true) VISIBLE else GONE
-                }
-            }
-        }
-    }
-
-    fun build() {
-        if (!isLiveChatEnabled) return
-        activity?.runOnUiThread {
-            chatIconAnimation()
-            showChatIcon()
-            showChatToolTip()
-            floatingActionButtonEvent()
-        }
-    }
-
     private fun chatIconAnimation() {
-        val shouldAnimateChatIcon = when (applyNowState) {
-            ApplyNowState.ACCOUNT_LANDING -> chatBubbleAvailability?.isChatVisibleForAccountLanding() == true
-            ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> chatBubbleAvailability?.isChatVisibleForAccountDetailProduct(applyNowState) == true
+        val shouldAnimateChatIcon = when (activity) {
+            is BottomNavigationActivity -> chatBubbleVisibility?.isChatVisibleForAccountLanding() == true
+            else -> chatBubbleVisibility?.isChatVisibleForAccountProductsLanding(applyNowState) == true
         }
 
         if (!shouldAnimateChatIcon) return
@@ -146,9 +106,7 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble())
-                                ?: 0.0
-
+                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble()) ?: 0.0
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
@@ -177,64 +135,35 @@ class ChatFloatingActionButtonBubbleView(private var activity: Activity?,
 
     private fun floatingActionButtonEvent() {
         activity?.apply {
-            val chatAccountProductLandingPage = if (chatBubbleAvailability?.isChatVisibleForAccountLanding() == true) chatBubbleAvailability.getAccountInProductLandingPage() else chatBubbleAvailability?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
             floatingActionButton?.setOnClickListener {
-                navigateToChatActivity(chatAccountProductLandingPage)
+                navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
         }
     }
 
-    private fun Activity.navigateToChatActivity(chatAccountProductLandingPage: Account?) {
-        val initChatDetails = chatBubbleAvailability?.getProductOfferingIdAndAccountNumber(applyNowState)
-        val intent = Intent(this, WChatActivity::class.java)
-        intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
-        intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)
-        intent.putExtra(SESSION_TYPE, getSessionType())
-        intent.putExtra(FROM_ACTIVITY, chatBubbleAvailability?.getActivityName())
-        intent.putExtra(ACCOUNTS, Gson().toJson(chatAccountProductLandingPage))
-        intent.putExtra(CHAT_TO_COLLECTION_AGENT, true)
-        startActivity(intent)
-    }
-
-    private fun isLiveChatEnabled(): Boolean {
-        WoolworthsApplication.getPresenceInAppChat()?.liveChatEnabled?.apply {
-            floatingActionButton?.visibility = when (activity) {
-
-                is BottomNavigationActivity -> if (accountsLanding) VISIBLE else GONE
-
-                is AccountSignedInActivity -> when (applyNowState) {
-                    ApplyNowState.STORE_CARD -> if (storeCard.landing) VISIBLE else GONE
-                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.landing) VISIBLE else GONE
-                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.landing) VISIBLE else GONE
-                    else -> GONE
-                }
-
-                is PayMyAccountActivity -> when (applyNowState) {
-                    ApplyNowState.STORE_CARD -> if (storeCard.paymentOptions) VISIBLE else GONE
-                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.paymentOptions) VISIBLE else GONE
-                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.paymentOptions) VISIBLE else GONE
-                    else -> GONE
-                }
-
-                is WTransactionsActivity -> when (applyNowState) {
-                    ApplyNowState.STORE_CARD -> if (storeCard.transactions) VISIBLE else GONE
-                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.transactions) VISIBLE else GONE
-                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.transactions) VISIBLE else GONE
-                    else -> GONE
-                }
-
-                is StatementActivity -> when (applyNowState) {
-                    ApplyNowState.STORE_CARD -> if (storeCard.statements) VISIBLE else GONE
-                    ApplyNowState.PERSONAL_LOAN -> if (personalLoan.statements) VISIBLE else GONE
-                    ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> if (creditCard.statements) VISIBLE else GONE
-                    else -> GONE
-                }
-
-                else -> GONE
-            }
+    fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
+        activity?.apply {
+            val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
+            val intent = Intent(this, WChatActivity::class.java)
+            intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
+            intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)
+            intent.putExtra(SESSION_TYPE, chatBubbleVisibility?.getSessionType())
+            intent.putExtra(FROM_ACTIVITY, this::class.java.simpleName)
+            intent.putExtra(ACCOUNTS, Gson().toJson(chatAccountProductLandingPage))
+            intent.putExtra(CHAT_TO_COLLECTION_AGENT, true)
+            startActivity(intent)
         }
-
-        return floatingActionButton?.visibility == VISIBLE
     }
+
+    fun build() {
+        if (!isLiveChatEnabled) return
+        activity?.runOnUiThread {
+            chatIconAnimation()
+            showChatToolTip()
+            floatingActionButtonEvent()
+        }
+    }
+
 }

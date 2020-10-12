@@ -23,11 +23,10 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.*
@@ -248,7 +247,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
         ChatFloatingActionButtonBubbleView(
                 activity = this@AbsaStatementsActivity,
-                chatBubbleAvailability = ChatBubbleAvailability(accountList, this@AbsaStatementsActivity),
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
                 scrollableView = paymentOptionScrollView)

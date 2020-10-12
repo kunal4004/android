@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto.account
 
 import za.co.woolworths.financial.services.android.util.expand.ParentListItem
 
-enum class ApplyNowState { ACCOUNT_LANDING,STORE_CARD, GOLD_CREDIT_CARD, BLACK_CREDIT_CARD, PERSONAL_LOAN, SILVER_CREDIT_CARD }
+enum class ApplyNowState {STORE_CARD, GOLD_CREDIT_CARD, BLACK_CREDIT_CARD, PERSONAL_LOAN, SILVER_CREDIT_CARD }
 
 enum class CreditCardType { GOLD_CREDIT_CARD, BLACK_CREDIT_CARD }
 

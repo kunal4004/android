@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.account
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -73,7 +74,8 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
             }
 
             R.id.chatToUsButton -> {
-
+                val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState -> ChatFloatingActionButtonBubbleView(activity = activity, applyNowState = applyNowState) }
+                chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
                 dismiss()
             }
 

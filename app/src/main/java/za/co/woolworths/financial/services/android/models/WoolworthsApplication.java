@@ -478,7 +478,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return authenticVersionReleaseNote;
     }
 
-    public static PresenceInAppChat getPresenceInAppChat() {
+    public static PresenceInAppChat getInAppChat() {
         return presenceInAppChat;
     }
 

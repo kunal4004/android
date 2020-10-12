@@ -154,9 +154,9 @@ class ChatViewModel : ViewModel() {
 
     private fun getTradingHours(): MutableList<TradingHours>? {
         return when (getSessionType()) {
-            SessionType.Collections -> WoolworthsApplication.getPresenceInAppChat()?.collections?.tradingHours
-            SessionType.CustomerService -> WoolworthsApplication.getPresenceInAppChat()?.customerService?.tradingHours
-            else -> WoolworthsApplication.getPresenceInAppChat().tradingHours
+            SessionType.Collections -> WoolworthsApplication.getInAppChat()?.collections?.tradingHours
+            SessionType.CustomerService -> WoolworthsApplication.getInAppChat()?.customerService?.tradingHours
+            else -> WoolworthsApplication.getInAppChat().tradingHours
         }
     }
 
@@ -169,7 +169,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun offlineMessageTemplate(onClick: (Triple<String, String, String>) -> Unit): SpannableString {
-        val presenceInAppChat = WoolworthsApplication.getPresenceInAppChat()
+        val presenceInAppChat = WoolworthsApplication.getInAppChat()
         when (getSessionType()) {
             SessionType.Collections, SessionType.Fraud -> {
                 val collections = presenceInAppChat.collections

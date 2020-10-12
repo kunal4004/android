@@ -17,7 +17,6 @@ class PayMyAccountViewModel : ViewModel() {
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
 
-
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
         val selectedAccountProduct = getCardDetail()?.account
@@ -56,6 +55,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     private fun getCVVNumber() = cvvNumber.value ?: ""
+
     fun getSelectedPaymentMethodCard(): GetPaymentMethod? {
         val paymentMethodList: MutableList<GetPaymentMethod>? = getPaymentMethodList()
         if (paymentMethodList?.size ?: 0 > 0) {
@@ -83,6 +83,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getPaymentMethodType(): PAYUMethodType? = getCardDetail()?.payuMethodType
+
     fun setPMACardInfo(card: PaymentAmountCard?) {
         paymentAmountCard.value = card
     }
@@ -93,6 +94,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getCardDetail(): PaymentAmountCard? = paymentAmountCard.value
+
     fun setNavigationResult(onDismiss: OnBackNavigation) {
         onDialogDismiss.value = onDismiss
         onDialogDismiss.value = OnBackNavigation.NONE
@@ -165,6 +167,9 @@ class PayMyAccountViewModel : ViewModel() {
         return getCardDetail()?.account?.second?.productOfferingId
     }
 
+    fun getApplyNowState() = getCardDetail()?.account?.first
+
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
+
     enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
 }
