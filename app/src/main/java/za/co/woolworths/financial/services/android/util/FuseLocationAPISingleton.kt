@@ -92,7 +92,7 @@ object FuseLocationAPISingleton {
                                 // result in onActivityResult().
 
                                 val rae = e as? ResolvableApiException
-                                val activity : AppCompatActivity? = WoolworthsApplication.getInstance() as? AppCompatActivity
+                                val activity : AppCompatActivity? = WoolworthsApplication.getInstance().currentActivity as? AppCompatActivity
                                 activity?.let { activity -> rae?.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)}
                             } catch (sie: IntentSender.SendIntentException) {
                                 Log.i(TAG, "PendingIntent unable to execute request.")

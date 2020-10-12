@@ -75,6 +75,7 @@ android {
     if (isAppCenter) {
         def host = System.getenv("WigroupServer_API_URL").toString()
         def hash = System.getenv("WigroupServer_API_HASH").toString()
+        def mapsApiKey = System.getenv("MAPS_API_KEY").toString()
 
         String env = ""
 
@@ -89,21 +90,29 @@ android {
             jobNumber = 137
         }
 
-            defaultConfig {
+        defaultConfig {
             versionCode jobNumber
             buildConfigField("String", "HOST", '"' + host + '"')
             buildConfigField("String", "SHA1", '"' + hash + '"')
             buildConfigField("String", "ENV", '"' + env + '"')
+
+            resValue "string", "maps_api_key", (mapsApiKey ?: "")
         }
     }
     else {
 
         def apiKey = "ANDROID_V" + major + "." + minor
-        def wigroupServicesProperties = new Properties()
-        file("WigroupServices.properties").withInputStream { wigroupServicesProperties.load(it) }
+        def secureProps = new Properties()
+        if (file("../secure.properties").exists()) {
+            file("../secure.properties")?.withInputStream { secureProps.load(it) }
+        }
 
         def productionKeystoreProperties = new Properties()
         file("ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
+
+        defaultConfig{
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+        }
 
         signingConfigs {
             woolworths {
@@ -112,23 +121,11 @@ android {
                 storeFile file(productionKeystoreProperties['storeFile'])
                 storePassword productionKeystoreProperties['storePassword']
             }
-            woneappDev {
-                keyAlias 'woneapp_dev'
-                keyPassword 'woneapp_dev'
-                storeFile file('key/woneapp_dev-release-key.keystore')
-                storePassword 'woneapp_dev'
-            }
             woneappQa {
                 keyAlias 'woneapp_qa'
                 keyPassword 'woneapp_qa'
                 storeFile file('key/woneapp_qa-release-key.keystore')
                 storePassword 'woneapp_qa'
-            }
-            woneappStaging {
-                keyAlias 'woneapp_staging'
-                keyPassword 'woneapp_staging'
-                storeFile file('key/woneapp_staging-release-key.keystore')
-                storePassword 'woneapp_staging'
             }
         }
 
@@ -136,16 +133,16 @@ android {
             qa {
                 applicationIdSuffix ".qa"
                 manifestPlaceholders = [appLabel: "Woolworths Q"]
-                buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_QA_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_QA_' + apiKey] + '"')
+                buildConfigField("String", "HOST", '"' +  secureProps['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' +  secureProps['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
                 manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
                 signingConfig signingConfigs.woneappQa
             }
 
             production {
-                buildConfigField("String", "HOST", '"' +  wigroupServicesProperties['URL_PROD_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' +  wigroupServicesProperties['HASH_PROD_' + apiKey] + '"')
+                buildConfigField("String", "HOST", '"' +  secureProps['URL_PROD_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' +  secureProps['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
                 manifestPlaceholders = [app_links_host:"www.woolworths.co.za"]
                 signingConfig signingConfigs.woolworths
