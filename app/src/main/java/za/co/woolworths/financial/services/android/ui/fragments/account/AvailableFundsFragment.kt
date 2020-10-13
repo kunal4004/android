@@ -27,6 +27,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
+    @Throws(RuntimeException::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
@@ -85,6 +86,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
             val openStatement = Intent(this, StatementActivity::class.java)
+            openStatement.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }

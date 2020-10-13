@@ -36,6 +36,8 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.ACCOUNTS;
+
 public class StatementActivity extends AppCompatActivity implements PermissionResultCallback {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -64,7 +66,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 
         if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
-            String accounts = bundle.getString("ACCOUNTS", "");
+            String accounts = bundle.getString(ACCOUNTS, "");
             mAccountWithApplyNowState =  KotlinUtils.Companion.getAccount(accounts);
         }
 

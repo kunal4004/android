@@ -39,7 +39,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
     private var isLiveChatEnabled = false
 
     init {
-        isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
+       isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
         floatingActionButton?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
     }
 
