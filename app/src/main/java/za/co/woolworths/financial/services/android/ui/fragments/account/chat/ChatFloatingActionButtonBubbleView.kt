@@ -144,7 +144,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
         }
     }
 
-    fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
+    private fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
         activity?.apply {
             val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
             val intent = Intent(this, WChatActivity::class.java)
