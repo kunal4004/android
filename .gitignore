@@ -4,6 +4,6 @@ build/*
 .idea/*
 app.iml
 library/*
-WigroupServices.properties
+secure.properties
 app/ProductionKeystore.properties
 app/key/Woolworths.keystore.jks
