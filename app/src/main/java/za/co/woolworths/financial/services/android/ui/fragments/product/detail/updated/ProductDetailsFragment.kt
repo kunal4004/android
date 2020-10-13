@@ -62,7 +62,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener,OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -277,7 +277,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSessionTokenExpired() {
         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-        activity?.let { activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) } }
+        activity?.let {activity -> activity.runOnUiThread { ScreenManager.presentSSOSignin(activity) }}
         updateStockAvailabilityLocation()
     }
 
@@ -399,7 +399,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showColors() {
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
-        if (otherSKUsByGroupKey.size == 1 && !hasSize) {
+        if(otherSKUsByGroupKey.size == 1 && !hasSize){
             onColorSelection(this.defaultGroupKey)
         }
         productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this, spanCount, getSelectedGroupKey()).apply {
@@ -1314,8 +1314,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         this.findItemInStore()
     }
 
-    override fun clearStockAvailability() {
-        productDetails?.otherSkus?.forEach {
+    override fun clearStockAvailability(){
+        productDetails?.otherSkus?.forEach{
             it.quantity = -1
         }
         loadSizeAndColor()

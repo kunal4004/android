@@ -181,9 +181,9 @@
         android:layout_height="@dimen/eighty_dp"
         android:layout_marginTop="0dp"
         android:paddingRight="@dimen/twenty_four_dp"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/productDetailsInformation">
 
         <View
@@ -205,9 +205,9 @@
         android:layout_height="@dimen/eighty_dp"
         android:layout_marginTop="0dp"
         android:paddingRight="@dimen/twenty_four_dp"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/dietaryInformation">
 
         <View
