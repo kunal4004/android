@@ -49,7 +49,6 @@ class ChatViewModel : ViewModel() {
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
     var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
     private var activityType: ActivityType? = null
-    private var customerInfo: ChatCustomerInfo = ChatCustomerInfo()
 
     private var trackFirebaseEvent: ChatTrackFirebaseEvent = ChatTrackFirebaseEvent()
 
@@ -110,8 +109,8 @@ class ChatViewModel : ViewModel() {
                 getConversationMessageId(),
                 getSessionType(),
                 getSessionVars(),
-                customerInfo.getCustomerFamilyName(),
-                customerInfo.getCustomerEmail(),
+                getCustomerInfo().getCustomerFamilyName(),
+                getCustomerInfo().getCustomerEmail(),
                 { data -> result(data) }, { failure(failure) })
     }
 
@@ -127,7 +126,6 @@ class ChatViewModel : ViewModel() {
         super.onCleared()
     }
 
-
     fun sendMessage(content: String) {
         awsAmplify?.sendMessage(
                 getConversationMessageId(),
@@ -135,8 +133,8 @@ class ChatViewModel : ViewModel() {
                 getSessionStateType(),
                 content,
                 getSessionVars(),
-                customerInfo.getCustomerFamilyName(),
-                customerInfo.getCustomerEmail())
+                getCustomerInfo().getCustomerFamilyName(),
+                getCustomerInfo().getCustomerEmail())
     }
 
     fun signOut(result: () -> Unit) {
@@ -146,8 +144,8 @@ class ChatViewModel : ViewModel() {
                 SessionStateType.DISCONNECT,
                 "",
                 getSessionVars(),
-                customerInfo.getCustomerFamilyName(),
-                customerInfo.getCustomerEmail(),
+                getCustomerInfo().getCustomerFamilyName(),
+                getCustomerInfo().getCustomerEmail(),
                 { result() }, { result() })
     }
 
@@ -247,9 +245,9 @@ class ChatViewModel : ViewModel() {
         val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
         val isCreditCard = productGroupCode == "cc"
         val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
-        val prsC2id = customerInfo.getCustomerC2ID()
-        val prsFirstname = customerInfo.getCustomerUsername()
-        val prsSurname = customerInfo.getCustomerFamilyName()
+        val prsC2id = getCustomerInfo().getCustomerC2ID()
+        val prsFirstname = getCustomerInfo().getCustomerUsername()
+        val prsSurname = getCustomerInfo().getCustomerFamilyName()
         val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
         val prsProductOfferingDescription = when (productGroupCode) {
             "sc" -> "StoreCard"
@@ -272,7 +270,7 @@ class ChatViewModel : ViewModel() {
     fun getABSACardToken(): String? = getAccount()?.cards?.get(0)?.absaCardToken
             ?: absaCreditCard.value?.get(0)?.absaCardToken
 
-    fun getCustomerInfo() = customerInfo
+    fun getCustomerInfo() = ChatCustomerInfo
 
     fun getMessagesListByConversation(result: ((MutableList<ChatMessage>?) -> Unit)) {
 
@@ -311,7 +309,6 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-
     @SuppressLint("DefaultLocale")
     fun getApplyNowState(): ApplyNowState {
         return when (getAccount()?.productGroupCode?.toLowerCase()) {
@@ -323,7 +320,6 @@ class ChatViewModel : ViewModel() {
                 Utils.GOLD_CARD -> ApplyNowState.GOLD_CREDIT_CARD
                 else -> ApplyNowState.STORE_CARD
             }
-
             else -> ApplyNowState.STORE_CARD
         }
     }

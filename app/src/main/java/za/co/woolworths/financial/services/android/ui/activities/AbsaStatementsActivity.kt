@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Pair
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.absa_statements_activity.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.empty_state_template.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
+import kotlinx.android.synthetic.main.store_details_layout_common.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatementListRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
@@ -23,11 +25,10 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.*
@@ -37,11 +38,10 @@ import java.util.*
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
-    private var chatAccountProductLandingPage: String? = null
+    private var chatAccountProductLandingPage:  Pair<ApplyNowState, Account>? = null
     private var nonce: String? = null
     private var eSessionId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
-    private var applyNowAccountHashPair: Pair<ApplyNowState, Account>? = null
 
     companion object {
         const val NONCE = "NONCE"
@@ -56,6 +56,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         if (savedInstanceState == null)
             getBundleArgument()
         initViews()
+        showChatBubble()
     }
 
     private fun actionBar() {
@@ -72,7 +73,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         intent?.extras?.apply {
             nonce = getString(NONCE)
             eSessionId = getString(E_SESSION_ID)
-            chatAccountProductLandingPage = getString(ACCOUNTS)
+            val accounts: String? = getString(ACCOUNTS,"")
+            chatAccountProductLandingPage = KotlinUtils.getAccount(accounts)
         }
     }
 
@@ -182,7 +184,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         mErrorHandlerView?.setEmptyStateWithAction(9, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
     }
 
-    fun onActionClick() {
+    private fun onActionClick() {
         when (mErrorHandlerView?.actionType) {
             ErrorHandlerView.ACTION_TYPE.RETRY -> {
                 mErrorHandlerView?.hideEmpyState()
@@ -242,16 +244,19 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             startActivity(this)
         }
 
-
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
-        ChatFloatingActionButtonBubbleView(
+    private fun showChatBubble() {
+        val account = chatAccountProductLandingPage?.second
+        val accountList = account?.let { account -> mutableListOf(account) }
+        chatAccountProductLandingPage?.first?.let {
+            ChatFloatingActionButtonBubbleView(
                 activity = this@AbsaStatementsActivity,
-                chatBubbleAvailability = ChatBubbleAvailability(accountList, this@AbsaStatementsActivity),
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = applyNowState,
-                view = paymentOptionScrollView)
+                applyNowState = it,
+                scrollableView = paymentOptionScrollView)
                 .build()
+        }
     }
 }

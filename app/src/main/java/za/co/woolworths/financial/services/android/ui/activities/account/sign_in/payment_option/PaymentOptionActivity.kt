@@ -23,7 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.PaymentOpt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -106,11 +106,10 @@ class PaymentOptionActivity : AppCompatActivity(), View.OnClickListener, IPaymen
     override fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: ArrayList<Account>?) {
         ChatFloatingActionButtonBubbleView(
                 activity = this@PaymentOptionActivity,
-                chatBubbleAvailability = ChatBubbleAvailability(accountList,this@PaymentOptionActivity),
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@PaymentOptionActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
-                isAppScreenPaymentOptions = true,
-                view = paymentOptionScrollView)
+                scrollableView = paymentOptionScrollView)
                 .build()
     }
 

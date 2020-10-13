@@ -17,7 +17,7 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.util.Log
+import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -27,9 +27,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
@@ -406,6 +410,10 @@ class KotlinUtils {
             if (view?.isClickable != true) return
             view.isClickable = false
             view.postDelayed({ view.isClickable = true }, AppConstant.DELAY_900_MS)
+        }
+
+        fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
+            return Gson().fromJson<Pair<ApplyNowState, Account>>(accountExtras, object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type)
         }
     }
 }

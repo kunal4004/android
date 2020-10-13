@@ -10,24 +10,28 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.awfs.coordination.R;
-
 import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -41,6 +45,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
     private Menu mMenu;
     private ActionBar actionBar;
     public static final String SEND_USER_STATEMENT = "SEND_USER_STATEMENT";
+    private Pair<ApplyNowState, Account> mAccountWithApplyNowState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,14 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
         permissionUtils = new PermissionUtils(this, this);
         permissions = new ArrayList<>();
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (getIntent().getExtras() != null) {
+            Bundle bundle = getIntent().getExtras();
+            String accounts = bundle.getString("ACCOUNTS", "");
+            mAccountWithApplyNowState =  KotlinUtils.Companion.getAccount(accounts);
+        }
+
+
         disposables.add(((WoolworthsApplication) StatementActivity.this.getApplication())
                 .bus()
                 .toObservable()
@@ -80,6 +93,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
                         finishActivity();
                     }
                 }));
+
     }
 
     private void actionBar() {
@@ -197,10 +211,10 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // redirects to utils
         permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void checkPermission() {
@@ -226,4 +240,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
         menuItem.setVisible(false);
     }
 
+    public Pair<ApplyNowState, Account> getAccountWithApplyNowState() {
+        return mAccountWithApplyNowState;
+    }
 }
