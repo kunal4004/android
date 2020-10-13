@@ -97,4 +97,5 @@
     <color name="sign_in_register_button_border">#E5E5E5</color>
     <color name="block_card_color" >#424244</color>
     <color name="gray_35">#35D8D8D8</color>
+    <color name="layout_background_gray">#1A000000</color>
 </resources>

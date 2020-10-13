@@ -6,8 +6,7 @@
     android:background="@color/default_background"
     android:orientation="vertical"
     android:paddingTop="@dimen/sixteen_dp"
-    android:paddingBottom="@dimen/sixteen_dp"
-    >
+    android:paddingBottom="@dimen/sixteen_dp">
 
     <RelativeLayout
         android:id="@+id/headerProductOptions"
@@ -31,7 +30,7 @@
         android:id="@+id/checkInStoreAvailability"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/zero_dp"
         android:paddingRight="@dimen/twenty_four_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -39,8 +38,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <ImageView
             android:id="@+id/logoCheckInStore"
@@ -57,22 +56,22 @@
         <TextView
             android:id="@+id/buttonView"
             style="@style/futura_semi_bold_white_12_text_style"
-            android:layout_width="56dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/fifty_six_dp"
+            android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@drawable/black_background_with_corner_5"
             android:gravity="center"
             android:letterSpacing="0.1"
-            android:textAllCaps="true"
-            android:text="@string/view" />
+            android:text="@string/view"
+            android:textAllCaps="true" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/addToShoppingList"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/zero_dp"
         android:paddingRight="@dimen/twenty_four_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -80,8 +79,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <ImageView
             android:id="@+id/logoAddToShoppingList"
@@ -97,15 +96,15 @@
 
         <TextView
             style="@style/futura_semi_bold_white_12_text_style"
-            android:layout_width="56dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/fifty_six_dp"
+            android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@drawable/black_background_with_corner_5"
             android:gravity="center"
-            android:textAllCaps="true"
             android:letterSpacing="0.1"
-            android:text="@string/add" />
+            android:text="@string/add"
+            android:textAllCaps="true" />
 
     </RelativeLayout>
 
@@ -132,16 +131,16 @@
         android:id="@+id/productDetailsInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
-        android:paddingRight="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/zero_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerProductInformation">
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <TextView
             style="@style/card_item_regular_text_style"
@@ -155,7 +154,7 @@
         android:id="@+id/nutritionalInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/zero_dp"
         android:paddingRight="@dimen/twenty_four_dp"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -164,8 +163,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <TextView
             style="@style/card_item_regular_text_style"
@@ -179,7 +178,7 @@
         android:id="@+id/dietaryInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/zero_dp"
         android:paddingRight="@dimen/twenty_four_dp"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -188,8 +187,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <TextView
             style="@style/card_item_regular_text_style"
@@ -203,7 +202,7 @@
         android:id="@+id/allergensInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/zero_dp"
         android:paddingRight="@dimen/twenty_four_dp"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -212,8 +211,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <TextView
             style="@style/card_item_regular_text_style"
@@ -227,17 +226,17 @@
         android:id="@+id/productIngredientsInformation"
         style="@style/clickable_card_item_layout_style"
         android:layout_height="@dimen/eighty_dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/zero_dp"
         android:paddingRight="@dimen/twenty_four_dp"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/nutritionalInformation">
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1A000000" />
+            android:layout_height="@dimen/one_dp"
+            android:background="@color/layout_background_gray" />
 
         <TextView
             style="@style/card_item_regular_text_style"
