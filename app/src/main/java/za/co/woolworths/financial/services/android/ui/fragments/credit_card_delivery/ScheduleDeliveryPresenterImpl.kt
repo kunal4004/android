@@ -10,8 +10,8 @@ class ScheduleDeliveryPresenterImpl(var mainView: ScheduleDeliveryContract.Sched
         mainView = null
     }
 
-    override fun initScheduleDelivery(scheduleDeliveryRequest: ScheduleDeliveryRequest, productOfferingId: String) {
-        getInteractor.queryScheduleDelivery(scheduleDeliveryRequest, productOfferingId, this)
+    override fun initScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest) {
+        getInteractor.queryScheduleDelivery(productOfferingId, envelopeNumber, schedule, bookingReference, scheduleDeliveryRequest, this)
     }
 
     override fun onSuccess(response: Any?) {

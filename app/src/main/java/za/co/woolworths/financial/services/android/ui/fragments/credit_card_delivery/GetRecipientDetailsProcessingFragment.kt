@@ -30,10 +30,10 @@ class GetRecipientDetailsProcessingFragment : BaseProcessingFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        getRecipientDetails()
+        //getRecipientDetails()
     }
 
-    private fun getRecipientDetails() {
+    /*private fun getRecipientDetails() {
         startProgress()
         envelopeNumber?.let {
             OneAppService.getRecipientDetails(it).enqueue(CompletionHandler(object : IResponseListener<RecipientDetailsResponse> {
@@ -48,11 +48,11 @@ class GetRecipientDetailsProcessingFragment : BaseProcessingFragment() {
 
             }, RecipientDetailsResponse::class.java))
         }
-    }
+    }*/
 
-    fun navigateToRecipientDetailsFragment(response: RecipientDetailsResponse? = null) {
+    /*fun navigateToRecipientDetailsFragment(response: RecipientDetailsResponse? = null) {
         response?.let { bundle?.putString("RecipientDetailsResponse", Utils.toJson(it)) }
         navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
         getProgressState()?.let { activity?.supportFragmentManager?.beginTransaction()?.remove(it)?.commitAllowingStateLoss() }
-    }
+    }*/
 }

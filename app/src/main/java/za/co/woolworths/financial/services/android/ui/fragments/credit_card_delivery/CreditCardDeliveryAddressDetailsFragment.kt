@@ -14,32 +14,20 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     var navController: NavController? = null
-    var bundle: Bundle? = null
-    private var bookingAddress: BookingAddress? = null
     private lateinit var listOfInputFields: List<EditText>
     var recipientDetailsResponse: RecipientDetailsResponse? = null
     var isBusinessAddress: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_address_layout, container, false)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            if (containsKey("BookingAddress"))
-                bookingAddress = Utils.jsonStringToObject(getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
-            if (containsKey("RecipientDetailsResponse"))
-                recipientDetailsResponse = Utils.jsonStringToObject(getString("RecipientDetailsResponse"), RecipientDetailsResponse::class.java) as RecipientDetailsResponse?
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,7 +69,7 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
 
     private fun onSubmit() {
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
-            bookingAddress?.let {
+            scheduleDeliveryRequest?.bookingAddress?.let {
                 it.businessName = businessName?.text.toString().trim()
                 it.complexName = complexOrBuildingName?.text.toString().trim()
                 it.buildingName = complexOrBuildingName?.text.toString().trim()
@@ -91,7 +79,7 @@ class CreditCardDeliveryAddressDetailsFragment : Fragment(), View.OnClickListene
                 it.city = cityOrTown?.text.toString().trim()
                 it.postalCode = postalCode?.text.toString().trim()
             }
-            bundle?.putString("BookingAddress", Utils.toJson(bookingAddress))
+            bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 
         } else {

@@ -17,9 +17,8 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.util.picker.WheelView
 
 
-class CreditCardDeliveryPreferedTimeslotFragment : Fragment(), WheelView.OnItemSelectedListener<Any> {
+class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragment(), WheelView.OnItemSelectedListener<Any> {
 
-    var bundle: Bundle? = null
     var timeslots: List<TimeSlot>? = null
     var selectedDate: TimeSlot? = null
     var selectedTime: String? = null

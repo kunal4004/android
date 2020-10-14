@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
 
 class ScheduleDeliveryInteractorImpl : ScheduleDeliveryContract.ScheduleDeliveryInteractor {
-    override fun queryScheduleDelivery(scheduleDeliveryRequest: ScheduleDeliveryRequest, productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>? {
-        return request(OneAppService.postScheduleDelivery(productOfferingId, scheduleDeliveryRequest), requestListener)
+    override fun queryScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>? {
+        return request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, schedule, bookingReference, scheduleDeliveryRequest), requestListener)
     }
 }

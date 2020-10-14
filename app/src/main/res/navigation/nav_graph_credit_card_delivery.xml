@@ -10,14 +10,17 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryBoardingFragment"
         android:label="CreditCardDeliveryBoardingFragment"
         tools:layout="@layout/credit_card_delivery_boarding_layout">
-        <action
+        <!--<action
             android:id="@+id/action_to_getRecipientDetailsProcessingFragment"
             app:destination="@id/getRecipientDetailsProcessingFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right"
-            />
+            />-->
+        <action
+            android:id="@+id/action_to_creditCardDeliveryRecipientDetailsFragment"
+            app:destination="@id/creditCardDeliveryRecipientDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/creditCardDeliveryManageDeliveryFragment"
@@ -69,7 +72,7 @@
     </fragment>
     <fragment
         android:id="@+id/creditCardDeliveryPreferedTimeslotFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryPreferedTimeslotFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryPreferedTimeSlotFragment"
         android:label="CreditCardDeliveryPreferedTimeslotFragment"
         tools:layout="@layout/credit_card_delivery_prefered_time_slots_layout">
         <action
@@ -89,7 +92,7 @@
             app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment
+   <!-- <fragment
         android:id="@+id/getRecipientDetailsProcessingFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.GetRecipientDetailsProcessingFragment"
         android:label="GetRecipientDetailsProcessingFragment" >
@@ -103,7 +106,7 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"
             />
-    </fragment>
+    </fragment>-->
     <fragment
         android:id="@+id/updateRecipientDetailsProcessingFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.UpdateRecipientDetailsProcessingFragment"

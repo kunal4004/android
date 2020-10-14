@@ -25,10 +25,10 @@ class GetAddressDetailsProcessingFragment : BaseProcessingFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        getRecipientDetails()
+        //getRecipientDetails()
     }
 
-    private fun getRecipientDetails() {
+    /*private fun getRecipientDetails() {
         startProgress()
         envelopeNumber?.let {
             OneAppService.getAddressDetails(it).enqueue(CompletionHandler(object : IResponseListener<AddressDetailsResponse> {
@@ -43,10 +43,10 @@ class GetAddressDetailsProcessingFragment : BaseProcessingFragment() {
 
             }, AddressDetailsResponse::class.java))
         }
-    }
+    }*/
 
-    fun navigateToRecipientDetailsFragment(response: AddressDetailsResponse? = null) {
+    /*fun navigateToRecipientDetailsFragment(response: AddressDetailsResponse? = null) {
         response?.let { bundle?.putString("RecipientDetailsResponse", Utils.toJson(it)) }
         navController?.navigate(R.id.action_to_getRecipientDetailsProcessingFragment, bundleOf("bundle" to bundle))
-    }
+    }*/
 }

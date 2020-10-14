@@ -19,10 +19,10 @@ interface ScheduleDeliveryContract {
 
     interface ScheduleDeliveryPresenter {
         fun onDestroy()
-        fun initScheduleDelivery(scheduleDeliveryRequest: ScheduleDeliveryRequest, productOfferingId: String)
+        fun initScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest)
     }
 
     interface ScheduleDeliveryInteractor {
-        fun queryScheduleDelivery(scheduleDeliveryRequest: ScheduleDeliveryRequest, productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>?
+        fun queryScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>?
     }
 }

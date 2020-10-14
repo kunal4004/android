@@ -4,4 +4,5 @@ class ScheduleDeliveryRequest {
     var addressListDetails: AddressListDetails? = null
     var slotDetails: SlotDetails? = null
     var bookingAddress: BookingAddress? = null
+    var addressDetails: AddressDetails? = null
 }

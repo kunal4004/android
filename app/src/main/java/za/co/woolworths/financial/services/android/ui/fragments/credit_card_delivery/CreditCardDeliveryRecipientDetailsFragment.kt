@@ -21,27 +21,15 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     var navController: NavController? = null
-    var bundle: Bundle? = null
     private var bookingAddress: BookingAddress = BookingAddress()
     private lateinit var listOfInputFields: List<EditText>
-    var statusResponse: StatusResponse? = null
     var isRecipientIsThirdPerson: Boolean = false
-    var recipientDetailsResponse: RecipientDetailsResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("delivery_status_response"), StatusResponse::class.java) as StatusResponse?
-            recipientDetailsResponse = Utils.jsonStringToObject(getString("RecipientDetailsResponse"), RecipientDetailsResponse::class.java) as RecipientDetailsResponse?
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,7 +61,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
     }
 
     fun configureUI() {
-        recipientDetailsResponse?.recipientDetails?.let {
+        statusResponse?.recipientDetails?.let {
             idNumber?.setText(it.idNumber ?: "")
             cellphoneNumber?.setText(it.telCell ?: "")
             alternativeNumber?.setText(it.telWork ?: "")
@@ -81,7 +69,7 @@ class CreditCardDeliveryRecipientDetailsFragment : Fragment(), View.OnClickListe
 
         recipientName?.apply {
             isEnabled = statusResponse?.isCardNew != true
-            setText(recipientDetailsResponse?.recipientDetails?.deliverTo
+            setText(statusResponse?.recipientDetails?.deliverTo
                     ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }
 

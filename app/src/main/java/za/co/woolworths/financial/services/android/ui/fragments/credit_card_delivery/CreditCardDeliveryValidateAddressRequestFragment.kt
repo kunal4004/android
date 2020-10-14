@@ -28,15 +28,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStat
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView, IProgressAnimationState, View.OnClickListener {
+class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseFragment(), ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView, IProgressAnimationState, View.OnClickListener {
 
     private var navController: NavController? = null
-    var bundle: Bundle? = null
     var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
     var possibleAddressResponse: PossibleAddressResponse? = null
-    var envelopeNumber: String? = null
-    var productOfferingId: String? = null
-    private var bookingAddress: BookingAddress? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_validate_address_request_layout, container, false)
@@ -45,13 +41,6 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = ValidateAddressAndTimeSlotPresenterImpl(this, ValidateAddressAndTimeSlotInteractorImpl())
-        bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            if (containsKey("BookingAddress"))
-                bookingAddress = Utils.jsonStringToObject(getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
-            envelopeNumber = getString("envelopeNumber", "")
-            productOfferingId = getString("productOfferingId", "")
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +74,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
                     restartProgress()
-                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(bookingAddress), it) }
+                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it) }
                 }
             }
             R.id.retryGetTimeSlots -> {
@@ -99,7 +88,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
 
     override fun getValidateAddress() {
         startProgress()
-        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(bookingAddress), it) }
+        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it) }
     }
 
     override fun getAvailableTimeSlots() {
@@ -238,8 +227,13 @@ class CreditCardDeliveryValidateAddressRequestFragment : Fragment(), ValidateAdd
 
     //This API should be Fire and forget
     private fun updateAddressDetails() {
-        val addressDetails: AddressDetails? = bookingAddress?.let { AddressDetails(it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode) }
-        envelopeNumber?.let { request(OneAppService.updateRecipientAddressDetails(it, UpdateAddressDetailsRequestBody(addressDetails, productOfferingId))) }
+        val addressDetails: AddressDetails? = scheduleDeliveryRequest?.bookingAddress?.let { AddressDetails(it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode) }
+        val scheduleDeliveryRequest = ScheduleDeliveryRequest()
+        scheduleDeliveryRequest.let {
+            it.bookingAddress = this.scheduleDeliveryRequest?.bookingAddress
+            it.addressDetails = addressDetails
+        }
+        envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
     private fun getSearchPhase(bookingAddress: BookingAddress?): String {

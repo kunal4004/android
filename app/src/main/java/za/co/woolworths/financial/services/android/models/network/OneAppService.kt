@@ -359,28 +359,12 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.availableTimeSlots(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeReference, productOfferingId, x, y, shipByDate)
     }
 
-    fun postScheduleDelivery(productOfferingId: String, scheduleDeliveryRequest: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse> {
-        return mApiInterface.scheduleDelivery(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, scheduleDeliveryRequest)
+    fun postScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.scheduleDelivery(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, envelopeNumber, schedule, bookingReference, scheduleDeliveryRequest)
     }
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
         return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
-    }
-
-    fun getRecipientDetails(envelopeNumber: String): Call<RecipientDetailsResponse> {
-        return mApiInterface.retrieveRecipientDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
-    }
-
-    fun updateRecipientDetails(envelopeNumber: String, requestBody: UpdateRecipientDetailsRequestBody): Call<CreditCardDeliveryStatusResponse> {
-        return mApiInterface.updateRecipientDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber, requestBody)
-    }
-
-    fun getAddressDetails(envelopeNumber: String): Call<AddressDetailsResponse> {
-        return mApiInterface.retrieveAddressDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber)
-    }
-
-    fun updateRecipientAddressDetails(envelopeNumber: String, requestBody: UpdateAddressDetailsRequestBody): Call<UpdateAddressDetailsResponse> {
-        return mApiInterface.updateRecipientAddressDetail(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeNumber, requestBody)
     }
 
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_lay
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.processingLayout
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -22,12 +23,10 @@ import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTa
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryScheduleDeliveryFragment : Fragment(), ScheduleDeliveryContract.ScheduleDeliverView, IProgressAnimationState, View.OnClickListener {
+class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragment(), ScheduleDeliveryContract.ScheduleDeliverView, IProgressAnimationState, View.OnClickListener {
 
     private var navController: NavController? = null
-    var bundle: Bundle? = null
     var presenter: ScheduleDeliveryContract.ScheduleDeliveryPresenter? = null
-    var scheduleDeliveryRequest: ScheduleDeliveryRequest? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_schedule_delivery_layout, container, false)
@@ -81,7 +80,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : Fragment(), ScheduleDeliveryC
         activity?.apply {
             scheduleDeliveryRequest?.let {
                 startProgress()
-                presenter?.initScheduleDelivery(it, "20")
+                presenter?.initScheduleDelivery("20", "", false, "", it)
             }
         }
     }
@@ -92,7 +91,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : Fragment(), ScheduleDeliveryC
             getProgressState()?.restartSpinning()
             processingLayout?.visibility = View.VISIBLE
             scheduleDeliveryRequest?.let {
-                presenter?.initScheduleDelivery(it, "20")
+                presenter?.initScheduleDelivery("20", "", false, "", it)
             }
         }
     }
