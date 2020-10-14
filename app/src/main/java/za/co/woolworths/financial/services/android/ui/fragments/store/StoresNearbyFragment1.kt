@@ -129,7 +129,6 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         sliding_layout?.setFadeOnClickListener { sliding_layout?.panelState = PanelState.COLLAPSED }
         sliding_layout?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View, slideOffset: Float) {
-                Log.i(TAG, "onPanelSlide, offset $slideOffset")
                 if (slideOffset.toDouble() == 0.0) {
                     sliding_layout?.anchorPoint = 1.0f
                     backToAllStoresPage(currentStorePosition)

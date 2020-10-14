@@ -1090,7 +1090,7 @@
     <string name="open_drawer">open</string>
     <string name="close_drawer">close</string>
     <string name="virtual_card_number">Virtual Card Number</string>
-    <string name="virtual_card_number_desc">If your virtual card number does not match your physical WRewards card number, don’t worry this will not affect your WRewards points.</string>
+    <string name="virtual_card_number_desc">Remember, this might be different from your physical card number, but you get WRewards benefits when you present either one.</string>
 
     <!-- Unique Ids for Virtual Temp Card-->
     <string name="how_to_pay_toolbar_title">How to pay</string>
