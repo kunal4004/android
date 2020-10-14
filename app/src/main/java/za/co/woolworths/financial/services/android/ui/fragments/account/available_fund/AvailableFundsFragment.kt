@@ -137,7 +137,7 @@ open class AvailableFundsFragment : Fragment(), IAvailableFundsContract.Availabl
             val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
             openABSAOnlineBanking.putExtra(ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN, isRegistered)
             openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber)
-            openABSAOnlineBanking.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), this)))
+            openABSAOnlineBanking.putExtra(ACCOUNTS, Gson().toJson(mAvailableFundPresenter?.getBundle()))
             startActivityForResult(openABSAOnlineBanking, ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
