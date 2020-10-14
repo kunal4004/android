@@ -69,8 +69,8 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     private fun populatePersonalLoanView() {
         val activity = activity ?: return
-        tvAvailableFunds?.text = currencyFormatter(getAvailableFund(), activity)
-        tvCreditLimit?.text = currencyFormatter(getCreditLimit(), activity)
+        tvAvailableFunds?.text = currencyFormatter(getAvailableFund())
+        tvCreditLimit?.text = currencyFormatter(getCreditLimit())
         nexImageView?.setOnClickListener(this)
     }
 

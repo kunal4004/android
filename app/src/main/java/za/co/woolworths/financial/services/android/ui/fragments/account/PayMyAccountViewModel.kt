@@ -17,6 +17,9 @@ class PayMyAccountViewModel : ViewModel() {
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
 
+    enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
+    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
+
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
         val selectedAccountProduct = getCardDetail()?.account
@@ -45,8 +48,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isPaymentMethodListChecked(): Boolean {
-        val cardDetail = getCardDetail()
-        val list = cardDetail?.paymentMethodList
+        val list = getPaymentMethodList()
         return list?.filter { it.isCardChecked }?.isNullOrEmpty() ?: false
     }
 
@@ -62,7 +64,7 @@ class PayMyAccountViewModel : ViewModel() {
             val cardDetail = getCardDetail()
             val selectedPosition = cardDetail?.selectedCardPosition ?: 0
 
-            cardDetail?.paymentMethodList?.forEach { it.isCardChecked = false }
+            getPaymentMethodList()?.forEach { it.isCardChecked = false }
 
             paymentMethodList?.get(selectedPosition)?.isCardChecked = true
 
@@ -154,22 +156,19 @@ class PayMyAccountViewModel : ViewModel() {
         })
     }
 
-    fun isPaymentMethodListSizeLimitedToTenItem(): Boolean {
-        return getCardDetail()?.paymentMethodList?.size ?: 0 >= 10
-    }
+    fun isPaymentMethodListSizeLimitedToTenItem(): Boolean = getPaymentMethodList()?.size ?: 0 >= 10
 
-    fun getProductGroupCode(): String {
-        val account = getCardDetail()?.account?.second
-        return account?.productGroupCode ?: ""
-    }
+    fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
 
-    fun getProductOfferingId(): Int? {
-        return getCardDetail()?.account?.second?.productOfferingId
-    }
+    fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
     fun getApplyNowState() = getCardDetail()?.account?.first
 
-    enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
+    fun getPaymentMethodListInStringFormat(): String? {
+        val paymentMethodList = getPaymentMethodList()
+        return Gson().toJson(paymentMethodList)
+    }
 
-    enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
+    fun getAccount() = getCardDetail()?.account?.second
+
 }

@@ -46,7 +46,7 @@ public class WButton extends Button {
             mSpannableText = a.getString(R.styleable.WButton_WButton_spannable_text);
         }
         if (mSpannableText != null){
-            setText(FontHyperTextParser.getSpannable(mSpannableText, mFont, getContext()), BufferType.SPANNABLE);
+            setText(FontHyperTextParser.getSpannable(mSpannableText, mFont), BufferType.SPANNABLE);
         } else {
             setTypeface(Typeface.createFromAsset(getContext().getAssets(), getContext().getResources().getStringArray(R.array.fonts)[mFont]));
         }

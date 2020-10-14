@@ -15,13 +15,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import com.facebook.shimmer.Shimmer
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
@@ -33,26 +29,16 @@ import java.util.*
 
 class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
-    private var accountArgs: Account? = null
-    private var paymentMethodArgs: String? = null
-    private var mAccounts: String? = null
+    private var previousCardNumber: String? = null
+
     private var root: View? = null
-    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    private  var previousCardNumber  : String? = null
     private var navController: NavController? = null
 
-    override fun onActivityCreated(arg0: Bundle?) {
-        super.onActivityCreated(arg0)
-        dialog?.window?.attributes?.windowAnimations = R.style.DialogWithoutAnimation
-    }
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val card = payMyAccountViewModel.getCardDetail()
-        paymentMethodArgs = Gson().toJson(card?.paymentMethodList)
-        accountArgs = card?.account?.second
-        mAccounts = Gson().toJson(accountArgs)
+        dialog?.window?.attributes?.windowAnimations = R.style.DialogWithoutAnimation
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -68,22 +54,21 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         if (activity is PayMyAccountActivity)
             navController = NavHostFragment.findNavController(this)
 
-        val overdueAmount = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(accountArgs?.amountOverdue
-                ?: 0), 1, activity))
+        val overdueAmount = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(payMyAccountViewModel.getAccount()?.amountOverdue ?: 0), 1))
         setupListener()
 
-        initShimmer(changeTextViewShimmerLayout)
-        stopProgress(changeTextViewShimmerLayout)
+        ShimmerAnimationManager.initShimmer(changeTextViewShimmerLayout)
+        ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
 
         payMyAccountViewModel.paymentAmountCard.observe(viewLifecycleOwner, { card ->
             if (!isAdded) return@observe
             // set amount amounted
             val amountEntered = card?.amountEntered
-            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == ZERO_RAND) overdueAmount else amountEntered
-            pmaConfirmPaymentButton?.isEnabled = cvvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
+            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) overdueAmount else amountEntered
+            pmaConfirmPaymentButton?.isEnabled = cvvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY)
 
             //Disable change button when amount is R0.00
-            changeTextView?.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND
+            changeTextView?.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY
 
             // set payment method
             initPaymentMethod()
@@ -100,7 +85,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
     private fun setupListener() {
         cvvEditTextInput?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != ZERO_RAND)
+                pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY)
                 if (s.length == 3) {
                     try {
                         val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -132,10 +117,10 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
                 "mastercard" -> R.drawable.card_mastercard
                 else -> R.drawable.card_visa_grey
             })
-            if (previousCardNumber != cardNumber){
+            if (previousCardNumber != cardNumber) {
                 cvvEditTextInput?.text?.clear()
             }
-                previousCardNumber = cardNumber
+            previousCardNumber = cardNumber
 
         }
 
@@ -166,22 +151,24 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
     override fun onClick(v: View?) {
         KotlinUtils.avoidDoubleClicks(v)
         val paymentCard = payMyAccountViewModel.getCardDetail()
+        val paymentMethodArgs = payMyAccountViewModel.getPaymentMethodListInStringFormat()
+        val account = Gson().toJson(paymentCard?.account)
         val cardInfo = Gson().toJson(paymentCard)
         if (activity is PayMyAccountActivity) {
             when (v?.id) {
                 R.id.editAmountImageView -> {
                     sendFirebaseEvent()
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
+                    ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
 
                 R.id.changeTextView -> {
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                    ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
                 }
 
                 R.id.pmaConfirmPaymentButton -> {
                     cvvEditTextInput?.text?.toString()?.let { cvvNumber -> payMyAccountViewModel.setCVVNumber(cvvNumber) }
-                    val (account, cardResponse) = payMyAccountViewModel.createCard()
-                    val cardVendorDirections = PaymentMethodExistDialogFragmentDirections.actionDisplayVendorCardDetailFragmentToPMAProcessRequestFragment(account?.second, cardResponse)
+                    val cardResponse = payMyAccountViewModel.createCard()
+                    val cardVendorDirections = PaymentMethodExistDialogFragmentDirections.actionDisplayVendorCardDetailFragmentToPMAProcessRequestFragment(payMyAccountViewModel.getAccount(), cardResponse.second)
                     navController?.navigate(cardVendorDirections)
                 }
             }
@@ -189,13 +176,13 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
             when (v?.id) {
                 R.id.editAmountImageView -> {
                     sendFirebaseEvent()
-                    ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
+                    ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
                 R.id.changeTextView -> {
                     if (changeTextView.text.toString().toLowerCase() == bindString(R.string.add_card_label).toLowerCase()) {
-                        ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.ADD_NEW_CARD)
+                        ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.ADD_NEW_CARD)
                     } else {
-                        ScreenManager.presentPayMyAccountActivity(activity, mAccounts, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
+                        ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.MANAGE_CARD)
                     }
                 }
                 R.id.pmaConfirmPaymentButton -> {
@@ -216,48 +203,29 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         queryGetPaymentMethod()
     }
 
-
     private fun sendFirebaseEvent() {
-        when (accountArgs?.productGroupCode?.toLowerCase(Locale.getDefault())) {
+        when (payMyAccountViewModel.getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())) {
             "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_AMTEDIT)
             "cc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_AMTEDIT)
             "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_AMTEDIT)
         }
     }
 
-    companion object {
-        const val ZERO_RAND = "R 0.00"
-    }
-
-
-    private fun initShimmer(view: ShimmerFrameLayout?) {
-        val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        view?.setShimmer(shimmer)
-        view?.isEnabled = true
-    }
-
-    private fun startProgress(view: ShimmerFrameLayout?) {
-        view?.startShimmer()
-        view?.isEnabled = false
-    }
-
-    private fun stopProgress(view: ShimmerFrameLayout?) {
-        view?.setShimmer(null)
-        view?.stopShimmer()
-        view?.isEnabled = true
-    }
-
     private fun queryGetPaymentMethod() {
         if (!isAdded) return
-        startProgress(changeTextViewShimmerLayout)
+        ShimmerAnimationManager.startProgress(changeTextViewShimmerLayout)
         payMyAccountViewModel.queryServicePayUPaymentMethod({
-            stopProgress(changeTextViewShimmerLayout)
+            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
         }, {
-            stopProgress(changeTextViewShimmerLayout)
+            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
         }, {
-            stopProgress(changeTextViewShimmerLayout)
+            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
         }, {
-            stopProgress(changeTextViewShimmerLayout)
+            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
         })
+    }
+
+    companion object {
+        const val DEFAULT_RAND_CURRENCY = "R 0.00"
     }
 }
