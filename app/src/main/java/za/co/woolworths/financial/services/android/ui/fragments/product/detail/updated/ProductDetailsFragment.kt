@@ -132,6 +132,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetailsInformation.setOnClickListener(this)
         productIngredientsInformation.setOnClickListener(this)
         nutritionalInformation.setOnClickListener(this)
+        dietaryInformation.setOnClickListener(this)
+        allergensInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         configureDefaultUI()
@@ -147,9 +149,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.addToShoppingList -> addItemToShoppingList()
             R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
             R.id.editDeliveryLocation -> updateDeliveryLocation()
-            R.id.productDetailsInformation -> showProductDetailsInformation()
-            R.id.productIngredientsInformation -> showProductIngredientsInformation()
-            R.id.nutritionalInformation -> showNutritionalInformation()
+            R.id.productDetailsInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DETAILS)
+            R.id.productIngredientsInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.INGREDIENTS)
+            R.id.nutritionalInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
+            R.id.allergensInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.ALLERGEN_INFO)
+            R.id.dietaryInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DIETARY_INFO)
             R.id.moreColor -> showMoreColors()
         }
     }
@@ -1131,31 +1135,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun showProductDetailsInformation() {
+    override fun showDetailsInformation(productInformationType: ProductInformationActivity.ProductInformationType) {
         activity?.apply {
             val intent = Intent(this, ProductInformationActivity::class.java)
             intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.DETAILS)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-    }
-
-    override fun showProductIngredientsInformation() {
-        activity?.apply {
-            val intent = Intent(this, ProductInformationActivity::class.java)
-            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.INGREDIENTS)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-    }
-
-    override fun showNutritionalInformation() {
-        activity?.apply {
-            val intent = Intent(this, ProductInformationActivity::class.java)
-            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
+            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, productInformationType)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }

@@ -1385,7 +1385,11 @@
     <string name="pdp_productCodeTitle">productCodeTitle</string>
     <string name="pdp_textProductCode">textProductCode</string>
     <string name="pdp_productIngredientsTitle">productIngredientsTitle</string>
+    <string name="pdp_productAllergensTitle">productAllergensTitle</string>
+    <string name="pdp_productDietaryTitle">productDietaryTitle</string>
     <string name="pdp_textViewIngredient">textViewIngredient</string>
+    <string name="pdp_textViewAllergens">textViewAllergens</string>
+    <string name="pdp_textViewDietary">textViewDietary</string>
     <string name="pdp_nutritionalInformationTitle">nutritionalInformationTitle</string>
     <string name="pdp_descriptionTitle">descriptionTitle</string>
     <string name="pdp_filterOptionSelector">filterOptionSelector</string>
