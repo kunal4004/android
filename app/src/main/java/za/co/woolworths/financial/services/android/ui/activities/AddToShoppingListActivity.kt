@@ -114,7 +114,4 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     fun getLatestShoppingList() = mShoppingList
 
-    override fun onDialogButtonAction() {
-    }
-
 }
