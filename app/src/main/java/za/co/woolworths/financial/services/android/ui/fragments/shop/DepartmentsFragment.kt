@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -168,8 +169,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         isFragmentVisible = isVisibleToUser
-        if (isFragmentVisible)
-            executeValidateSuburb()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -208,7 +207,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onResume() {
         super.onResume()
-        mDepartmentAdapter?.notifyDataSetChanged()
+        activity?.apply {
+            mDepartmentAdapter?.notifyDataSetChanged()
+            executeValidateSuburb()
+        }
     }
 
     private fun showDeliveryOptionDialog() {
@@ -220,20 +222,33 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
-                mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                OneAppService.validateSelectedSuburb(it.suburb.id, true).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
-                    override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                        when (response?.httpCode) {
-                            200 -> response.validatedSuburbProducts?.let { it1 -> mDepartmentAdapter?.updateDeliveryDate(it1) }
-                            else -> mDepartmentAdapter?.hideDeliveryDates()
+                if (it.suburb.id.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
+                    updateDeliveryDates()
+                } else {
+                    mDepartmentAdapter?.showDeliveryDatesProgress(true)
+                    OneAppService.validateSelectedSuburb(it.suburb.id, true).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                            when (response?.httpCode) {
+                                200 -> response.validatedSuburbProducts?.let { it1 ->
+                                    it1.suburbId = it.suburb.id
+                                    WoolworthsApplication.setValidatedSuburbProducts(it1)
+                                    updateDeliveryDates()
+                                }
+                                else -> mDepartmentAdapter?.hideDeliveryDates()
+                            }
                         }
-                    }
-                    override fun onFailure(error: Throwable?) {
-                        mDepartmentAdapter?.hideDeliveryDates()
-                    }
-                }, ValidateSelectedSuburbResponse::class.java))
+
+                        override fun onFailure(error: Throwable?) {
+                            mDepartmentAdapter?.hideDeliveryDates()
+                        }
+                    }, ValidateSelectedSuburbResponse::class.java))
+                }
             }
         }
+    }
+
+    fun updateDeliveryDates() {
+        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
     }
 
 }
