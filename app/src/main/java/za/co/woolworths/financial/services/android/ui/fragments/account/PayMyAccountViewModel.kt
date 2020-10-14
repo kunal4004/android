@@ -8,6 +8,9 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.util.FontHyperTextParser
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class PayMyAccountViewModel : ViewModel() {
 
@@ -171,4 +174,8 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAccount() = getCardDetail()?.account?.second
 
+
+    fun getOverdueAmount(): String? {
+        return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(getAccount()?.amountOverdue ?: 0), 1))
+    }
 }

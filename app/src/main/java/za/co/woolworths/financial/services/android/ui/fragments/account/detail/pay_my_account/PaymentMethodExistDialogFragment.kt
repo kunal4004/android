@@ -54,7 +54,6 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         if (activity is PayMyAccountActivity)
             navController = NavHostFragment.findNavController(this)
 
-        val overdueAmount = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(payMyAccountViewModel.getAccount()?.amountOverdue ?: 0), 1))
         setupListener()
 
         ShimmerAnimationManager.initShimmer(changeTextViewShimmerLayout)
@@ -64,7 +63,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
             if (!isAdded) return@observe
             // set amount amounted
             val amountEntered = card?.amountEntered
-            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) overdueAmount else amountEntered
+            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) payMyAccountViewModel.getOverdueAmount() else amountEntered
             pmaConfirmPaymentButton?.isEnabled = cvvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY)
 
             //Disable change button when amount is R0.00
