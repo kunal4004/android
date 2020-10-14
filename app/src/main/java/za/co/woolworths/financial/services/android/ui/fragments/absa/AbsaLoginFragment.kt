@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsA
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.E_SESSION_ID
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.NONCE
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.Utils
@@ -34,12 +35,17 @@ import java.net.HttpCookie
 
 class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDialogListener {
 
+    private var mCreditCardNumber: String? = null
     private var mPinImageViewList: MutableList<ImageView>? = null
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
         private const val technical_error_occurred = "Technical error occurred."
-        fun newInstance() = AbsaLoginFragment()
+        fun newInstance(creditAccountInfo: String?) = AbsaLoginFragment().apply {
+            arguments = Bundle(1).apply {
+                putString("creditCardToken", creditAccountInfo)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,6 +55,11 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        arguments?.apply {
+            if (containsKey("creditCardToken")) {
+                mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
+            }
+        }
         (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -137,6 +148,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
             Intent(activity, AbsaStatementsActivity::class.java).let {
                 it.putExtra(NONCE, nonce)
                 it.putExtra(E_SESSION_ID, esessionid)
+                it.putExtra(CARD, mCreditCardNumber )
                 startActivity(it)
                 overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                 finish()
@@ -280,10 +292,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     override fun onRightAuxButtonClicked() {
         if (edtEnterATMPin.text.isNotEmpty() && pbLoginProgress.visibility != VISIBLE)
             edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.substring(0, edtEnterATMPin.text.length - 1))
-    }
-
-    override fun onDialogDismissed() {
-
     }
 
     override fun onDialogButtonAction() {

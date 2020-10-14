@@ -2,11 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.chat_fragment.*
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
-import za.co.woolworths.financial.services.android.util.Utils
 
 open class ChatExtensionFragment : Fragment() {
 
@@ -27,6 +24,7 @@ open class ChatExtensionFragment : Fragment() {
         const val PRODUCT_OFFERING_ID = "productOfferingId"
         const val ACCOUNT_NUMBER = "accountNumber"
         const val ACCOUNTS : String = "accounts"
+        const val CARD : String = "CARD"
         const val SESSION_TYPE = "SESSION_TYPE"
         const val FROM_ACTIVITY = "FROM_ACTIVITY"
         const val CHAT_TO_COLLECTION_AGENT = "CHAT_TO_COLLECTION_AGENT"

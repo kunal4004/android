@@ -26,10 +26,13 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListRespons
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.*
 import java.net.HttpCookie
@@ -38,7 +41,8 @@ import java.util.*
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
-    private var chatAccountProductLandingPage:  Pair<ApplyNowState, Account>? = null
+    private var mCreditCardToken: String? = null
+    private var chatAccountProductLandingPage: Pair<ApplyNowState, Account>? = null
     private var nonce: String? = null
     private var eSessionId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -73,7 +77,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         intent?.extras?.apply {
             nonce = getString(NONCE)
             eSessionId = getString(E_SESSION_ID)
-            val accounts: String? = getString(ACCOUNTS,"")
+            val accounts: String? = getString(ACCOUNTS, "")
+            mCreditCardToken = getString(CARD, "")
             chatAccountProductLandingPage = KotlinUtils.getAccount(accounts)
         }
     }
@@ -248,15 +253,19 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     private fun showChatBubble() {
         val account = chatAccountProductLandingPage?.second
+        val card = Card()
+        card.absaCardToken = mCreditCardToken
+        card.absaAccountToken = mCreditCardToken
+        account?.cards = mutableListOf(card)
         val accountList = account?.let { account -> mutableListOf(account) }
         chatAccountProductLandingPage?.first?.let {
             ChatFloatingActionButtonBubbleView(
-                activity = this@AbsaStatementsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = it,
-                scrollableView = paymentOptionScrollView)
-                .build()
+                    activity = this@AbsaStatementsActivity,
+                    chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
+                    floatingActionButton = chatBubbleFloatingButton,
+                    applyNowState = it,
+                    scrollableView = paymentOptionScrollView)
+                    .build()
         }
     }
 }
