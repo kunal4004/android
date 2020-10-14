@@ -81,7 +81,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
         totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
         amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
-        paymentAmountInputEditText?.setText(if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.totalAmountDue?.toString() else cardInfo?.amountEntered)
+        paymentAmountInputEditText?.setText(if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.amountOverdue?.toString() else cardInfo?.amountEntered)
 
     }
 
