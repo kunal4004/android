@@ -961,17 +961,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     //ensure counter is refresh when user cart activity is closed
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
-                case 0:
-                    switch (getCurrentSection()) {
-                        case R.id.navigate_to_cart:
-                            Intent openCartActivity = new Intent(this, CartActivity.class);
-                            startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-                            overridePendingTransition(0, 0);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
                 default:
                     break;
             }

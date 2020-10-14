@@ -10,9 +10,6 @@ public class CartItemGroup {
 
 	public String type;
 
-	public String suburbName;
-	public String provinceName;
-
 	public ArrayList<CommerceItem> commerceItems;
 
 	public String getType() {
@@ -31,4 +28,15 @@ public class CartItemGroup {
 		this.commerceItems = commerceItems;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		CartItemGroup cartItemGroup = (CartItemGroup) o;
+		return this.type.equals(cartItemGroup.type);
+	}
 }

@@ -423,6 +423,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onClick(view: View) {
+        KotlinUtils.avoidDoubleClicks(view)
         activity?.let { activity ->
             when (view.id) {
                 R.id.btnRetry -> {
@@ -561,7 +562,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onWalkthroughActionButtonClick() {
+    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
         if (refineProducts?.isClickable == true)
             refineProducts?.let { refineProducts -> onClick(refineProducts) }
     }

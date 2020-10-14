@@ -154,13 +154,13 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
         myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
-        manageCardGroup?.visibility  = GONE
+        manageCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.startShimmer()
         myCardTextViewShimmerFrameLayout?.startShimmer()
         tempFreezeTextViewShimmerFrameLayout?.startShimmer()
         storeCardLoaderView?.visibility = VISIBLE
-        includeManageMyCard?.isEnabled  = false
+        includeManageMyCard?.isEnabled = false
         cardImageRootView?.isEnabled = false
     }
 
@@ -168,7 +168,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
     override fun hideStoreCardProgress() {
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
-        manageCardGroup?.visibility  = VISIBLE
+        manageCardGroup?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.stopShimmer()
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
         myCardTextViewShimmerFrameLayout?.stopShimmer()
@@ -181,7 +181,7 @@ open class AccountCardDetailFragment : Fragment(), View.OnClickListener, IAccoun
         tempFreezeTextViewShimmerFrameLayout?.invalidate()
 
         // Boolean check will enable clickable event only when text is "view card"
-        includeManageMyCard?.isEnabled  = true
+        includeManageMyCard?.isEnabled = true
         cardImageRootView?.isEnabled = myCardDetailTextView?.text?.toString()?.toLowerCase()?.contains("view") == true
     }
 

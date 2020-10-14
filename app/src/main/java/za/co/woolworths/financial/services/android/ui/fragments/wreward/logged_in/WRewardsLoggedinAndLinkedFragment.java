@@ -385,7 +385,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

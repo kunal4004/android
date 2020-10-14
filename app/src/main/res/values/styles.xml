@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -1211,14 +1211,13 @@
     </style>
 
 
-    <style name="DialogAnimation"  parent="@style/Widget.Design.BottomSheet.Modal">
+    <style name="DialogAnimation" parent="@style/Widget.Design.BottomSheet.Modal">
         <item name="android:windowEnterAnimation">@anim/slide_up_anim</item>
         <item name="android:windowExitAnimation">@anim/slide_down_anim</item>
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_rounded_corner_bg</item>
     </style>
 
@@ -1283,8 +1282,8 @@
     </style>
 
     <style name="numberkeyboard_keyContainer">
-    <item name="android:layout_width">0dp</item>
-    <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
     </style>
 
     <style name="ChatActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
@@ -1508,6 +1507,7 @@
         <item name="android:paddingEnd">@dimen/ten_dp</item>
         <item name="android:paddingBottom">@dimen/twelve_dp</item>
     </style>
+
     <style name="card_item_layout_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/seventy_dp</item>
@@ -1603,6 +1603,7 @@
         <item name="android:padding">@dimen/five_dp</item>
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
+
     <style name="upSellMessageStyle" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1717,7 +1718,8 @@
     </style>
 
     <style name="enter_otp_edit_text_style">
-        <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
+        <item name="android:digits">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+        </item>
         <item name="android:textColor">#222222</item>
         <item name="android:layout_width">@dimen/store_card_text_field_width_47_dp</item>
         <item name="android:layout_height">@dimen/store_card_text_field_height_50_dp</item>
@@ -2056,6 +2058,82 @@
         <item name="android:letterSpacing">0.15</item>
         <item name="android:textColor">@color/offer_title</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+    </style>
+
+    <style name="chatTimeDisplayStyle">
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="chatEndSessionMenuStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:paddingBottom">@dimen/eight_dp</item>
+        <item name="android:paddingTop">@dimen/eight_dp</item>
+        <item name="android:paddingStart">@dimen/eight_dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+    </style>
+
+    <style name="chatWithUsTipStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:lineSpacingExtra">1.2dp</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:textSize">15sp</item>
+        <item name="fontFamily">@font/myriad_pro_regular_otf</item>
+    </style>
+
+    <style name="chatToUsNowButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">28dp</item>
+        <item name="android:background">@drawable/black_background_with_corner_5</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingStart">7.5dp</item>
+        <item name="android:letterSpacing">0.15</item>
+    </style>
+
+    <style name="gift_item_textView_style">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginEnd">3dp</item>
+    <item name="android:paddingStart">4dp</item>
+    <item name="android:paddingEnd">4dp</item>
+    <item name="android:paddingTop">2dp</item>
+    <item name="android:paddingBottom">2dp</item>
+    <item name="android:background">@color/black</item>
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:textSize">8sp</item>
+    <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+    <item name="android:layout_marginBottom">32dp</item>
+    </style>
+
+    <style name="chatNumberAutosizingStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
+        <item name="android:gravity">start|center</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">17sp</item>
+        <item name="autoSizeMaxTextSize">17sp</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="autoSizeTextType">uniform</item>
     </style>
 
 </resources>

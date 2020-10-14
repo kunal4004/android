@@ -128,12 +128,10 @@ public class NotificationUtils {
         // 2
 
         if (status != ConnectionResult.SUCCESS) {
-            Log.e(TAG, "Error");
             // ask user to update google play services and manage the error.
             return false;
         } else {
             // 3
-            Log.i(TAG, "Google play services updated");
             return true;
         }
     }

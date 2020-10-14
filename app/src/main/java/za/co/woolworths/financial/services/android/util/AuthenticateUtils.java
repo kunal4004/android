@@ -78,7 +78,6 @@ public class AuthenticateUtils {
 		try {
 			Utils.sessionDaoSave(SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION, value ? "1" : "0");
 		} catch (Exception e) {
-			Log.i(TAG, e.getMessage());
 		}
 	}
 
