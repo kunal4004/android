@@ -85,6 +85,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         void updateBasketTotal();
 
         void onGiftItemClicked(CommerceItem commerceItem);
+
+        void onEnterPromoCode();
+
+        void onRemovePromoCode();
     }
 
     private OnItemClick onItemClick;
@@ -309,7 +313,18 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
                     priceHolder.viewVouchers.setEnabled(false);
                 }
+                priceHolder.promoCodeAction.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.remove : R.string.enter));
+                priceHolder.promoCodeLabel.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.promo_code_applied : R.string.do_you_have_a_promo_code));
 
+                priceHolder.promoCodeAction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0)
+                            onItemClick.onRemovePromoCode();
+                        else
+                            onItemClick.onEnterPromoCode();
+                    }
+                });
 
                 break;
 
@@ -521,7 +536,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private WTextView txtYourCartPrice, txtDiscount, txtCompanyDiscount, txtWrewardsDiscount, txtTotalDiscount ;
         private LinearLayout orderSummeryLayout;
         private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount;
-        private TextView availableVouchersCount,viewVouchers;
+        private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel;
 
 
         public CartPricesViewHolder(View view) {
@@ -539,6 +554,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
             rlWrewardsDiscount = view.findViewById(R.id.rlWrewardsDiscount);
             rlTotalDiscount = view.findViewById(R.id.rlTotalDiscount);
+            promoCodeAction = view.findViewById(R.id.promoCodeAction);
+            promoCodeLabel = view.findViewById(R.id.promoCodeLabel);
         }
     }
 

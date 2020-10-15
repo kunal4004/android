@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.available_vouchers_to_redeem_list_item.vie
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
 import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherContract
 
-class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var listener:AvailableVoucherContract.AvailableVoucherView) : RecyclerView.Adapter<AvailableVouchersToRedeemListAdapter.VoucherViewHolder>() {
+class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var listener: AvailableVoucherContract.AvailableVoucherView) : RecyclerView.Adapter<AvailableVouchersToRedeemListAdapter.VoucherViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VoucherViewHolder {
         return VoucherViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.available_vouchers_to_redeem_list_item, parent, false))
@@ -30,9 +30,12 @@ class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var
                 voucher.let {
                     voucherDetails.text = it.description
                     voucherSelector.isChecked = it.isSelected
+                    errorMessage.text = it.errorMessage
+                    errorMessage.visibility = if (it.errorMessage.isEmpty()) View.GONE else View.VISIBLE
                 }
                 setOnClickListener {
                     voucher.isSelected = !voucher.isSelected
+                    voucher.errorMessage = ""
                     notifyDataSetChanged()
                     listener.onVoucherSelected()
                 }

@@ -26,10 +26,26 @@
         android:layout_marginEnd="@dimen/ten_dp"
         android:lineSpacingMultiplier="1.33"
         android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintEnd_toStartOf="@id/voucherSelector"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Voucher not selected as it has expireVoucher not selected as it has expired. d. Voucher not selected as it has expired. "
+        app:layout_constraintTop_toTopOf="@id/top_guideline"
+        app:layout_constraintBottom_toTopOf="@id/errorMessage"
+        />
+
+    <TextView
+        android:id="@+id/errorMessage"
+        style="@style/myriad_pro_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp"
+        android:textSize="@dimen/twelve_sp"
+        android:textColor="@color/input_error_color_code"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
         app:layout_constraintEnd_toStartOf="@id/voucherSelector"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/top_guideline" />
+        app:layout_constraintTop_toBottomOf="@id/voucherDetails" />
 
 
     <View

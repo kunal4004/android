@@ -1614,5 +1614,9 @@
     <string name="end_session_button_caption">yes, end session</string>
     <string name="pma_retry_error_title">Oops!</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="do_you_have_a_promo_code">do you have a promo code?</string>
+    <string name="enter">enter</string>
+    <string name="remove">remove</string>
+    <string name="promo_code_applied">Promo code: APPLIED</string>
 </resources>
 

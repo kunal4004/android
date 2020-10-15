@@ -6,10 +6,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.SelectedVoucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherErrorMessage
 
 class AvailableVoucherPresenterImpl(var mainView: AvailableVoucherContract.AvailableVoucherView?, var getInteractor: AvailableVoucherContract.AvailableVoucherInteractor?) : AvailableVoucherContract.AvailableVoucherPresenter, IGenericAPILoaderView<Any> {
 
-    private var vouchers:ArrayList<Voucher>? = null
+    private var vouchers: ArrayList<Voucher>? = null
 
     override fun onDestroy() {
         mainView = null
@@ -28,10 +29,11 @@ class AvailableVoucherPresenterImpl(var mainView: AvailableVoucherContract.Avail
                             if (data[0]?.messages.isNullOrEmpty()) {
                                 mainView?.onVoucherRedeemSuccess(this)
                             } else {
-                                mainView?.onVoucherRedeemFailure(data[0].messages[0])
+                                updateVouchersWithErrorMessages(data[0].messages)
+                                mainView?.onVoucherRedeemFailure()
                             }
                         }
-                        else -> mainView?.onVoucherRedeemFailure(WoolworthsApplication.getAppContext().getString(R.string.redeem_voucher_generic_error_message))
+                        else -> mainView?.onVoucherRedeemGeneralFailure(WoolworthsApplication.getAppContext().getString(R.string.redeem_voucher_generic_error_message))
                     }
                 }
                 else -> throw RuntimeException("onSuccess:: unknown response $response")
@@ -41,7 +43,7 @@ class AvailableVoucherPresenterImpl(var mainView: AvailableVoucherContract.Avail
 
     override fun onFailure(error: Throwable?) {
         super.onFailure(error)
-        mainView?.onVoucherRedeemFailure(WoolworthsApplication.getAppContext().getString(R.string.redeem_voucher_generic_error_message))
+        mainView?.onVoucherRedeemGeneralFailure(WoolworthsApplication.getAppContext().getString(R.string.redeem_voucher_generic_error_message))
     }
 
     override fun getSelectedVouchersToApply(): List<SelectedVoucher> {
@@ -68,5 +70,13 @@ class AvailableVoucherPresenterImpl(var mainView: AvailableVoucherContract.Avail
         return vouchers
     }
 
-
+    override fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>): ArrayList<Voucher>? {
+        message.forEach { message ->
+            vouchers?.find { it.barcode == message.barCode }?.apply {
+                errorMessage = message.message
+                isSelected = false
+            }
+        }
+        return vouchers
+    }
 }

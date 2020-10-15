@@ -1452,4 +1452,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			basketTotal.setText(WFormatter.formatAmount(orderSummary.basketTotal));
 		}
 	}
+
+	@Override
+	public void onEnterPromoCode() {
+
+	}
+
+	@Override
+	public void onRemovePromoCode() {
+
+	}
+
+	void navigateToAvailableApplyPromoCodePage() {
+		Intent intent = new Intent(getContext(), AvailableVouchersToRedeemInCart.class);
+		intent.putExtra("VoucherDetails", Utils
+				.toJson(voucherDetails));
+		startActivityForResult(intent
+				, REDEEM_VOUCHERS_REQUEST_CODE);
+	}
 }

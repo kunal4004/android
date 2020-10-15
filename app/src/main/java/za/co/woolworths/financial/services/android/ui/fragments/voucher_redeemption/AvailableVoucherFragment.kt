@@ -15,8 +15,10 @@ import kotlinx.android.synthetic.main.available_vouchers_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails
+import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherErrorMessage
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchersToRedeemListAdapter
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.ArrayList
 
 class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVoucherContract.AvailableVoucherView {
 
@@ -65,16 +67,10 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVouc
         }
     }
 
-    override fun onVoucherRedeemFailure(message: String) {
+    override fun onVoucherRedeemFailure() {
         activity?.apply {
             hideRedeemVoucherProgress()
-            errorMessage?.let {
-                it.text = message
-                it.visibility = View.VISIBLE
-                Handler().postDelayed({
-                    it.visibility = View.GONE
-                }, 3000)
-            }
+            rcvVoucherList?.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -105,6 +101,19 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVouc
     override fun onVoucherSelected() {
         voucherDetails?.vouchers?.let {
             redeemVoucher?.isEnabled = presenter?.isVouchersSelectedToRedeem() ?: true
+        }
+    }
+
+    override fun onVoucherRedeemGeneralFailure(message: String) {
+        activity?.apply {
+            hideRedeemVoucherProgress()
+            errorMessage?.let {
+                it.text = message
+                it.visibility = View.VISIBLE
+                Handler().postDelayed({
+                    it.visibility = View.GONE
+                }, 3000)
+            }
         }
     }
 
