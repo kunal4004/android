@@ -30,6 +30,7 @@ public class Account {
     public DebitOrder debitOrder;
     public boolean insuranceCovered;
     public List<InsuranceType> insuranceTypes;
+    public List<Card> cards = null;
     @SerializedName("accountNumber")
     @Expose
     public String accountNumber;

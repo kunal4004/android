@@ -108,7 +108,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
-        tools:replace="label">
+        tools:replace="label,android:name">
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true" />
@@ -164,10 +164,13 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity"
             android:icon="@drawable/ic_action_bar_logo"
             android:theme="@style/SSOActivity" />
+
         <!-- Goolge Maps API Key -->
+        <!-- Note: Android Studio will not resolve @string/maps_api_key until build time.
+        Do not use quick fix to generate a string value resource for this property.-->
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBscGwCrt-mloCl8JXkqX95r3_gwtRLnk4" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/maps_api_key" />
 
         <!-- Google Analytics -->
         <receiver

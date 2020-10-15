@@ -16,6 +16,7 @@ interface IPaymentOptionContract {
         fun hideABSAInfo()
         fun setPaymentOption(paymentMethods: MutableList<PaymentMethod>?)
         fun setWhatsAppChatWithUsVisibility(isVisible: Boolean)
+        fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: ArrayList<Account>? = null)
     }
 
     interface PaymentOptionPresenter {
@@ -30,6 +31,7 @@ interface IPaymentOptionContract {
         fun setWhatsAppChatWithUsVisibility(applyNowState: ApplyNowState)
         fun getAppScreenName():String
         fun initView()
+        fun chatWithCollectionAgent()
     }
 
     interface PaymentOptionModel {

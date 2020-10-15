@@ -36,7 +36,7 @@
                 app:WTextView_font="medium_bold" />
 
         </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout >
+    </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -53,11 +53,13 @@
             android:id="@+id/pbCircular"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:visibility="gone"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/black" />
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
 
         <include layout="@layout/empty_state_template" />
+
+        <include layout="@layout/chat_collect_agent_floating_button_layout" />
 
     </FrameLayout>
 

@@ -1,0 +1,18 @@
+subscription OnMessageByConversationId($conversationMessagesId: ID!) {
+    onMessageByConversationId(conversationMessagesId: $conversationMessagesId) {
+        caption
+        content
+        contentType
+        conversationMessagesId
+        createdAt
+        id
+        messageID
+        relatedMessageID
+        sender
+        sessionId
+        sessionState
+        timestamp
+        updatedAt
+    }
+}
+

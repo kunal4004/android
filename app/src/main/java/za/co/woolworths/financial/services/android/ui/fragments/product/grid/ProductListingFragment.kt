@@ -423,6 +423,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onClick(view: View) {
+        KotlinUtils.avoidDoubleClicks(view)
         activity?.let { activity ->
             when (view.id) {
                 R.id.btnRetry -> {
@@ -829,7 +830,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onResetFilter() {
-        (activity as? BottomNavigationActivity)?.popFragment()
+        val pushedFragmentCount = (activity as? BottomNavigationActivity)?.supportFragmentManager?.fragments?.filter { it.tag.toString().contains("ProductListingFragment", true) }?.size
+                ?: 1
+        if (pushedFragmentCount > 1)
+            (activity as? BottomNavigationActivity)?.popFragment()
+        else {
+            updateProductRequestBodyForRefinement("")
+            reloadProductsWithSortAndFilter()
+        }
     }
 
     companion object {

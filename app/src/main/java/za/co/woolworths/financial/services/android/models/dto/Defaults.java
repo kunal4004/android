@@ -16,6 +16,7 @@ public class Defaults {
     private String howtosaveLink;
     private String wrewardsTCLink;
     private String cartCheckoutLink;
+    private String transUnionLink;
 
 
     public String getAnalitics() {
@@ -112,5 +113,13 @@ public class Defaults {
 
     public String getCartCheckoutLink() {
         return cartCheckoutLink;
+    }
+
+    public String getTransUnionLink() {
+        return transUnionLink;
+    }
+
+    public void setTransUnionLink(String transUnionLink) {
+        this.transUnionLink = transUnionLink;
     }
 }

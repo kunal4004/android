@@ -19,14 +19,14 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
         const val ACCOUNT_INFO = "ACCOUNT_INFO"
     }
 
-    var mAccountDetails: Pair<ApplyNowState, Account>? = null
+    private lateinit var mAccountCardDetails: Pair<ApplyNowState, Account>
 
     override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        mAccountCardDetails = Gson().fromJson(intent?.getStringExtra(ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
     }
 
-    override fun getAccount(): Account? {
-        return mAccountDetails?.second
+    override fun getAccount(): Account {
+        return mAccountCardDetails.second
     }
 
     override fun getPaymentDetail(): Map<String, String> {
@@ -45,22 +45,23 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
         return model.getDrawableHeader()
     }
 
+    @Throws(RuntimeException::class)
     override fun setHowToPayLogo() {
         val drawableHeader = getDrawableHeader()
-        mainView?.setHowToPayLogo(when (mAccountDetails?.first) {
+        mainView?.setHowToPayLogo(when (mAccountCardDetails?.first) {
             ApplyNowState.STORE_CARD -> drawableHeader[0]
             ApplyNowState.SILVER_CREDIT_CARD -> drawableHeader[3]
             ApplyNowState.GOLD_CREDIT_CARD -> drawableHeader[2]
             ApplyNowState.BLACK_CREDIT_CARD -> drawableHeader[1]
             ApplyNowState.PERSONAL_LOAN -> drawableHeader[4]
-            else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
+            else -> throw RuntimeException("Invalid ApplyNowState ${mAccountCardDetails?.first}")
         })
 
-        (mAccountDetails?.first)?.let { applyNowState -> setWhatsAppChatWithUsVisibility(applyNowState) }
+        (mAccountCardDetails?.first)?.let { applyNowState -> setWhatsAppChatWithUsVisibility(applyNowState) }
     }
 
     override fun loadABSACreditCardInfoIfNeeded() {
-        when (mAccountDetails?.first) {
+        when (mAccountCardDetails.first) {
             ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> mainView?.showABSAInfo()
             else -> mainView?.hideABSAInfo()
         }
@@ -81,12 +82,13 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
                 ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> mainView?.setWhatsAppChatWithUsVisibility(isCCPaymentOptionsEnabled)
                 ApplyNowState.STORE_CARD -> mainView?.setWhatsAppChatWithUsVisibility(isSCPaymentOptionsEnabled)
                 ApplyNowState.PERSONAL_LOAN -> mainView?.setWhatsAppChatWithUsVisibility(isPLPaymentOptionsEnabled)
+                else ->  ""
             }
         }
     }
 
     override fun getAppScreenName(): String {
-        return when (mAccountDetails?.first) {
+        return when (mAccountCardDetails.first) {
             ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> bindString(R.string.credit_card_payment_option_label)
             ApplyNowState.STORE_CARD -> bindString(R.string.store_card_payment_option_label)
             ApplyNowState.PERSONAL_LOAN -> bindString(R.string.personal_loan_payment_option_label)
@@ -99,5 +101,9 @@ class PaymentOptionPresenterImpl(private var mainView: IPaymentOptionContract.Pa
         displayPaymentDetail()
         displayPaymentMethod()
         loadABSACreditCardInfoIfNeeded()
+    }
+
+    override fun chatWithCollectionAgent() {
+        mainView?.chatToCollectionAgent( mAccountCardDetails.first, arrayListOf(getAccount()))
     }
 }

@@ -661,7 +661,7 @@ interface ApiInterface {
             @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("cart/item")
+    @DELETE("cartV2/item")
     fun removeItemFromCart(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -701,7 +701,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PUT("cart/item/{commerceId}")
+    @PUT("cartV2/item/{commerceId}")
     fun changeQuantityRequest(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,

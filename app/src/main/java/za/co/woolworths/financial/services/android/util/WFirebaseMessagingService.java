@@ -48,8 +48,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(token);
 
         NotificationUtils.getInstance().sendRegistrationToServer(token);
-
-        Log.i(TAG, token);
     }
 
     @Override
@@ -59,7 +57,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             NotificationUtils.createNotificationChannelIfNeeded(this);
         }
 
-        Log.i(TAG, "--------------onMessageReceived");
 //        Log.i(TAG, remoteMessage.getData().toString());
 //        if (!WoolworthsApplication.isApplicationInForeground()){
 //            sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
@@ -78,11 +75,9 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             }
             return;
         }
-        Log.i(TAG, "onMessageReceived--------------");
     }
 
     private void sendNotification(RemoteMessage.Notification notification, @NonNull Map<String, String> payload){
-        Log.i(TAG, "-----------sendNotification");
 
         final String channelId = getResources().getString(R.string.default_notification_channel_id);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), channelId);
@@ -123,7 +118,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-        Log.i(TAG, "sendNotification-----------");
     }
 
 //    #region FCM Methods
