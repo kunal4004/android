@@ -17,7 +17,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
@@ -156,7 +155,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         if (activity is PayMyAccountActivity) {
             when (v?.id) {
                 R.id.editAmountImageView -> {
-                    sendFirebaseEvent()
+                    payMyAccountViewModel.triggerFirebaseEventForEditAmount()
                     ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
 
@@ -174,7 +173,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         } else {
             when (v?.id) {
                 R.id.editAmountImageView -> {
-                    sendFirebaseEvent()
+                    payMyAccountViewModel.triggerFirebaseEventForEditAmount()
                     ScreenManager.presentPayMyAccountActivity(activity, account, paymentMethodArgs, null, cardInfo, true, PayMyAccountStartDestinationType.PAYMENT_AMOUNT)
                 }
                 R.id.changeTextView -> {
@@ -202,13 +201,7 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         queryGetPaymentMethod()
     }
 
-    private fun sendFirebaseEvent() {
-        when (payMyAccountViewModel.getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())) {
-            "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_AMTEDIT)
-            "cc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_AMTEDIT)
-            "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_AMTEDIT)
-        }
-    }
+
 
     private fun queryGetPaymentMethod() {
         if (!isAdded) return

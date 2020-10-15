@@ -8,9 +8,11 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import java.util.*
 
 class PayMyAccountViewModel : ViewModel() {
 
@@ -19,6 +21,7 @@ class PayMyAccountViewModel : ViewModel() {
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
+    private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
     enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
@@ -174,8 +177,19 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAccount() = getCardDetail()?.account?.second
 
-
     fun getOverdueAmount(): String? {
-        return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(getAccount()?.amountOverdue ?: 0), 1))
+        return getAccount()?.amountOverdue?.let { formatAndRemoveNegativeSymbol(it) }
+    }
+
+    private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
+        return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
+    }
+
+    fun triggerFirebaseEventForEditAmount() {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode) }
+    }
+
+    fun triggerFirebaseEventForPaymentComplete() {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
     }
 }

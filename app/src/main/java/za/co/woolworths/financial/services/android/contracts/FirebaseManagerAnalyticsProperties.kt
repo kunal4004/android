@@ -107,6 +107,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_PMA_CC = "myaccounts_pma_cc"
         const val MYACCOUNTS_PMA_SC = "myaccounts_pma_sc"
         const val MYACCOUNTS_PMA_PL = "myaccounts_pma_pl"
+
         const val PMA_CC_PAY = "pma_cc_pay"
         const val PMA_SC_PAY = "pma_sc_pay"
         const val PMA_PL_PAY = "pma_pl_pay"

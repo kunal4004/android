@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.process_payment_success_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_fragment.processingLayoutTitle
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -30,7 +29,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAcc
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
-import java.util.*
 
 class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickListener {
 
@@ -201,15 +199,6 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         includePMAProcessingFailure?.visibility = GONE
     }
 
-    private fun sendFirebaseEvent() {
-        val productGroupCode = payMyAccountViewModel.getCardDetail()?.account?.second?.productGroupCode
-        when (productGroupCode?.toLowerCase(Locale.getDefault())) {
-            "sc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY_CMPLT)
-            "pl" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_PAY_CMPLT)
-            "cc" -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_PAY_CMPLT)
-        }
-    }
-
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.btnRetryProcessPayment -> {
@@ -225,7 +214,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
             }
 
             R.id.backToMyAccountButton -> {
-                sendFirebaseEvent()
+                payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
                 activity?.apply {
                     setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
                     finish()
@@ -245,7 +234,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                sendFirebaseEvent()
+                payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
                 activity?.apply {
                     setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
                     finish()
