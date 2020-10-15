@@ -84,15 +84,6 @@
         android:label="EnterPaymentAmountDetailFragment"
         tools:layout="@layout/pma_update_payment_fragment">
         <argument
-            android:name="accounts"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="paymentMethod"
-            app:argType="string"
-            app:nullable="true" />
-
-        <argument
             android:name="isAccountStartDestination"
             android:defaultValue="false"
             app:argType="boolean" />

@@ -22,8 +22,8 @@ class PayMyAccountViewModel : ViewModel() {
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
+    private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
 
-    var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -206,7 +206,7 @@ class PayMyAccountViewModel : ViewModel() {
         return size == 3
     }
 
-    fun isSelectedCardExpire(): Boolean {
+    fun isSelectedCardExpired(): Boolean {
         return getSelectedPaymentMethodCard()?.cardExpired == true
     }
 

@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
@@ -57,9 +55,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 }
 
                 navigateToPayMyAccount {
-                    val paymentMethods = Gson().toJson(payMyAccountViewModel.getPaymentMethodList())
-                    val accountDetail: Account? = mAvailableFundPresenter?.getAccount()
-                    navController?.navigate(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction(Gson().toJson(accountDetail), paymentMethods))
+                    navController?.navigate(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
                 }
             }
         }
