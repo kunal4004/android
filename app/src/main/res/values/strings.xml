@@ -1692,6 +1692,7 @@
     <string name="no_continue_session">No, continue session</string>
     <string name="end_session_button_caption">yes, end session</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="pma_delete_card_failure_textview">"We are unable to delete your card at the moment - please try again later.  "</string>
 
 </resources>
 

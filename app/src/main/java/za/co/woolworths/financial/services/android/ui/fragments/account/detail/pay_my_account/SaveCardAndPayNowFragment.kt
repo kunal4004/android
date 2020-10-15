@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.save_card_and_pay_now_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
@@ -24,10 +23,9 @@ import java.util.*
 class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
 
     private var navController: NavController? = null
-    val args: SaveCardAndPayNowFragmentArgs by navArgs()
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    var mAddCardResponse : AddCardResponse? = null
 
-    private var tokenFromAddCard: AddCardResponse? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -41,12 +39,14 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mAddCardResponse = payMyAccountViewModel.getAddCardResponse()
+
         navController = Navigation.findNavController(view)
-        tokenFromAddCard = args.tokenReceivedFromAddCard
 
         setToolbarItem()
-        populateField(tokenFromAddCard)
+        populateField(payMyAccountViewModel.getAddCardResponse())
         onSaveCheckChangeListener()
+
         saveCardPayNowButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@SaveCardAndPayNowFragment)
@@ -82,9 +82,9 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.saveCardPayNowButton -> {
-                tokenFromAddCard?.saveChecked = pmaSaveCardCheckbox.isChecked
+                mAddCardResponse?.saveChecked = pmaSaveCardCheckbox.isChecked
                 val account = payMyAccountViewModel.getCardDetail()?.account?.second
-                val navigateToProcessPayment = SaveCardAndPayNowFragmentDirections.actionSaveCardAndPayNowFragmentToPMAProcessRequestFragment(account, tokenFromAddCard)
+                val navigateToProcessPayment = SaveCardAndPayNowFragmentDirections.actionSaveCardAndPayNowFragmentToPMAProcessRequestFragment(account, mAddCardResponse)
                 val options = NavOptions.Builder().setPopUpTo(R.id.saveCardAndPayNowFragment, true).build()
                 navController?.navigate(navigateToProcessPayment, options)
             }

@@ -105,9 +105,6 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.SaveCardAndPayNowFragment"
         android:label="SaveCardAndPayNowFragment"
         tools:layout="@layout/save_card_and_pay_now_fragment">
-        <argument
-            android:name="tokenReceivedFromAddCard"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.AddCardResponse" />
         <action
             android:id="@+id/action_saveCardAndPayNowFragment_to_PMAProcessRequestFragment"
             app:destination="@id/pmaProcessRequestFragment" />

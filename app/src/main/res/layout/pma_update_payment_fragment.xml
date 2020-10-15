@@ -30,7 +30,7 @@
         android:text="@string/enter_payment_amount_label"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
-        app:layout_constraintBottom_toTopOf="@+id/pmaAmountOutstandingTextView"
+        app:layout_constraintBottom_toTopOf="@+id/pmaAmountEnteredTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/enter_payment_amount_label" />
@@ -59,7 +59,7 @@
         tools:ignore="UnusedAttribute" />
 
     <TextView
-        android:id="@+id/pmaAmountOutstandingTextView"
+        android:id="@+id/pmaAmountEnteredTextView"
         style="@style/amountDescriptionStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,9 +81,9 @@
         android:layout_height="0dp"
         android:layout_marginEnd="26dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/pmaAmountOutstandingTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/pmaAmountEnteredTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pmaAmountOutstandingTextView"
+        app:layout_constraintTop_toTopOf="@+id/pmaAmountEnteredTextView"
         app:srcCompat="@drawable/edit_amount" />
 
 

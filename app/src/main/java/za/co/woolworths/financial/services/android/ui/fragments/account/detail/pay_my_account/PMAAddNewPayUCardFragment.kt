@@ -15,16 +15,15 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
 import kotlinx.coroutines.GlobalScope
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 class PMAAddNewPayUCardFragment : Fragment() {
 
-    private var navController: NavController? = null
-
-    val payMyAccountViewModel : PayMyAccountViewModel by activityViewModels()
+    val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +38,12 @@ class PMAAddNewPayUCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = Navigation.findNavController(view)
-
         configureToolbar()
-        configureWebView()
+        configureWebView(Navigation.findNavController(view))
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun configureWebView() {
+    private fun configureWebView(navController: NavController?) {
         with(addNewUserPayUWebView) {
 
             with(settings) {
@@ -56,33 +53,43 @@ class PMAAddNewPayUCardFragment : Fragment() {
 
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
-                GlobalScope.doAfterDelay(100) {
-                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                    addNewUserPayUWebView?.visibility = GONE
-                    processCardNavHostLinearLayout?.visibility = VISIBLE
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    displayToolbarBackIcon(false)
+                    showWebView(false)
                 }
             }, { addCardResponse ->
                 // onSuccess
-                GlobalScope.doAfterDelay(100) {
-                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    addNewUserPayUWebView?.visibility = GONE
-                    processCardNavHostLinearLayout?.visibility = VISIBLE
-                    val navigateToSaveCardAndPayNow = PMAAddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment(addCardResponse)
-                    navController?.navigate(navigateToSaveCardAndPayNow)
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    displayToolbarBackIcon(true)
+                    showWebView(false)
+                    navigateToSavePayNowFragment(addCardResponse, navController)
                 }
             }, {
                 // on failure
-                GlobalScope.doAfterDelay(100) {
-                    (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    addNewUserPayUWebView?.visibility = VISIBLE
-                    processCardNavHostLinearLayout?.visibility = GONE
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    displayToolbarBackIcon(true)
+                    showWebView(true)
                 }
 
             }), "JSBridge")
 
-            val productGroupCode = payMyAccountViewModel.getProductGroupCode()
-            WoolworthsApplication.getPayMyAccountOption()?.addCardUrl(productGroupCode)?.let { cardUrl -> loadUrl(cardUrl) }
+            loadUrl(payMyAccountViewModel.getAddNewCardUrl())
         }
+    }
+
+    private fun navigateToSavePayNowFragment(addCardResponse: AddCardResponse, navController: NavController?) {
+        payMyAccountViewModel.setAddCardResponse(addCardResponse)
+        navController?.navigate(PMAAddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment())
+    }
+
+
+    private fun showWebView(isVisible: Boolean) {
+        addNewUserPayUWebView?.visibility = if (isVisible) VISIBLE else GONE
+        processCardNavHostLinearLayout?.visibility = if (isVisible) GONE else VISIBLE
+    }
+
+    private fun displayToolbarBackIcon(isVisible: Boolean) {
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(isVisible)
     }
 
     override fun onResume() {

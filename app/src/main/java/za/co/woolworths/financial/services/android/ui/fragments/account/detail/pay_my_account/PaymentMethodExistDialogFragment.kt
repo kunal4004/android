@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.crashlytics.android.Crashlytics
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
@@ -24,7 +25,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
-import java.util.*
 
 class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
@@ -46,36 +46,41 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         return root
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // The dialog is being used by ProductLanding and PayMyAccount Activity
         if (activity is PayMyAccountActivity)
             navController = NavHostFragment.findNavController(this)
 
         setupListener()
 
+        // Required to stop playing shimmering by default when fragment is visible
         ShimmerAnimationManager.initShimmer(changeTextViewShimmerLayout)
         ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
 
-        payMyAccountViewModel.paymentAmountCard.observe(viewLifecycleOwner, { card ->
-            if (!isAdded) return@observe
-            // set amount amounted
-            val amountEntered = card?.amountEntered
-            pmaAmountOutstandingTextView?.text = if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) payMyAccountViewModel.getOverdueAmount() else amountEntered
-            pmaConfirmPaymentButton?.isEnabled = cvvEditTextInput?.length() ?: 0 > 2 && (pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY)
+        with(payMyAccountViewModel) {
+            paymentAmountCard.observe(viewLifecycleOwner, { card ->
+                if (!isAdded) return@observe
 
-            //Disable change button when amount is R0.00
-            changeTextView?.isEnabled = pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY
+                // Update amount entered
+                pmaAmountEnteredTextView?.text = updateAmountEntered(card?.amountEntered)
 
-            // set payment method
-            initPaymentMethod()
+                // Enable/Disable confirm payment button
+                pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
 
-            // Dismiss popup if payment method list is empty
-            if (card?.paymentMethodList?.isEmpty() == true) {
-                dismiss()
-            }
-        })
+                //Disable change button when amount is R0.00
+                changeTextView?.isEnabled = isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())
+
+                // set payment method
+                initPaymentMethod()
+
+                // Dismiss popup when payment method list is empty
+                if (isPaymentListEmpty(card?.paymentMethodList)) {
+                    dismiss()
+                }
+            })
+        }
 
         initPaymentMethod()
     }
@@ -83,12 +88,10 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
     private fun setupListener() {
         cvvEditTextInput?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                pmaConfirmPaymentButton?.isEnabled = s.length > 2 && (pmaAmountOutstandingTextView?.text?.toString() != DEFAULT_RAND_CURRENCY)
-                if (s.length == 3) {
-                    try {
-                        val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm?.hideSoftInputFromWindow(cvvEditTextInput.windowToken, 0)
-                    } catch (ex: Exception) {
+                with(payMyAccountViewModel) {
+                    pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(s.length, pmaAmountEnteredTextView?.text?.toString())
+                    if (isMaxCVVLength(s.length)) {
+                        hideKeyboard()
                     }
                 }
             }
@@ -98,11 +101,20 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         })
     }
 
+    private fun hideKeyboard() {
+        try {
+            val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm?.hideSoftInputFromWindow(cvvEditTextInput.windowToken, 0)
+        } catch (ex: Exception) {
+            Crashlytics.log(ex.message)
+        }
+    }
+
     private fun initPaymentMethod() {
-        val paymentMethod = payMyAccountViewModel.getSelectedPaymentMethodCard()
-        paymentMethod?.apply {
-            cardNumberItemTextView?.text = cardNumber
-            changeTextView.text = if (cardExpired) {
+
+        with(payMyAccountViewModel) {
+
+            if (isSelectedCardExpire()) {
                 cardExpiredTagTextView?.visibility = VISIBLE
                 bindString(R.string.add_card_label)
             } else {
@@ -110,16 +122,16 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
                 bindString(R.string.change_label)
             }
 
-            cardItemImageView?.setImageResource(when (vendor.toLowerCase(Locale.getDefault())) {
-                "visa" -> R.drawable.card_visa
-                "mastercard" -> R.drawable.card_mastercard
-                else -> R.drawable.card_visa_grey
-            })
-            if (previousCardNumber != cardNumber) {
-                cvvEditTextInput?.text?.clear()
-            }
-            previousCardNumber = cardNumber
+            with(getSelectedPaymentMethodCard()) {
+                cardNumberItemTextView?.text = this?.cardNumber
+                cardItemImageView?.setImageResource(getVendorCardDrawableId(this?.vendor))
 
+                if (previousCardNumber != this?.cardNumber) {
+                    cvvEditTextInput?.text?.clear()
+                }
+                previousCardNumber = this?.cardNumber
+
+            }
         }
 
         with(pmaConfirmPaymentButton) {
@@ -141,8 +153,6 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@PaymentMethodExistDialogFragment)
         }
-
-
     }
 
     @SuppressLint("DefaultLocale")
@@ -201,8 +211,6 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         queryGetPaymentMethod()
     }
 
-
-
     private fun queryGetPaymentMethod() {
         if (!isAdded) return
         ShimmerAnimationManager.startProgress(changeTextViewShimmerLayout)
@@ -215,9 +223,5 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
         }, {
             ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
         })
-    }
-
-    companion object {
-        const val DEFAULT_RAND_CURRENCY = "R 0.00"
     }
 }

@@ -10,7 +10,10 @@ class AppConstant {
 
     companion object {
 
+
         //Delays
         const val DELAY_900_MS: Long = 900
+        const val DELAY_100_MS: Long = 100
+
     }
 }

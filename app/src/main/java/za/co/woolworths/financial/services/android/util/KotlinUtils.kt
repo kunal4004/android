@@ -443,6 +443,7 @@ class KotlinUtils {
         fun avoidDoubleClicks(view: View?) {
             view?.apply {
                 if (!isClickable) return
+                isClickable = false
                 GlobalScope.doAfterDelay(AppConstant.DELAY_900_MS) {
                     isClickable = true
                 }

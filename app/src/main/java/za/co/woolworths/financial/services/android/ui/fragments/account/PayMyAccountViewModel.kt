@@ -2,8 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -18,13 +20,19 @@ class PayMyAccountViewModel : ViewModel() {
 
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
-    var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
-    var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
 
+    var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
+    var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
+    var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
+
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
     enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
+
+    companion object {
+        const val DEFAULT_RAND_CURRENCY = "R 0.00"
+    }
 
     fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
         val paymentMethod = getSelectedPaymentMethodCard()
@@ -164,7 +172,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun isPaymentMethodListSizeLimitedToTenItem(): Boolean = getPaymentMethodList()?.size ?: 0 >= 10
 
-    fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
+    private fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
 
     fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
@@ -177,12 +185,46 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAccount() = getCardDetail()?.account?.second
 
-    fun getOverdueAmount(): String? {
+    private fun getOverdueAmount(): String? {
         return getAccount()?.amountOverdue?.let { formatAndRemoveNegativeSymbol(it) }
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
         return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
+    }
+
+    //Disable change button when amount is R0.00
+    fun isChangeIconEnabled(amountEntered: String?): Boolean {
+        return amountEntered != DEFAULT_RAND_CURRENCY
+    }
+
+    fun isConfirmPaymentButtonEnabled(cvvLength: Int, amountEntered: String?): Boolean {
+        return cvvLength > 2 && isChangeIconEnabled(amountEntered)
+    }
+
+    fun isMaxCVVLength(size: Int): Boolean {
+        return size == 3
+    }
+
+    fun isSelectedCardExpire(): Boolean {
+        return getSelectedPaymentMethodCard()?.cardExpired == true
+    }
+
+    fun getVendorCardDrawableId(vendor: String?): Int {
+        return when (vendor?.toLowerCase(Locale.getDefault())) {
+            "visa" -> R.drawable.card_visa
+            "mastercard" -> R.drawable.card_mastercard
+            else -> R.drawable.card_visa_grey
+        }
+    }
+
+    fun updateAmountEntered(amountEntered: String?): String {
+        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) getOverdueAmount()
+                ?: "" else amountEntered
+    }
+
+    fun isPaymentListEmpty(paymentMethodList: MutableList<GetPaymentMethod>?): Boolean {
+        return paymentMethodList?.isEmpty() == true
     }
 
     fun triggerFirebaseEventForEditAmount() {
@@ -192,4 +234,15 @@ class PayMyAccountViewModel : ViewModel() {
     fun triggerFirebaseEventForPaymentComplete() {
         getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
     }
+
+    fun getAddNewCardUrl(): String? {
+        return WoolworthsApplication.getPayMyAccountOption()?.addCardUrl(getProductGroupCode())
+    }
+
+    fun setAddCardResponse(addCardResponse: AddCardResponse) {
+        this.addCardResponse.value = addCardResponse
+    }
+
+    fun getAddCardResponse() = addCardResponse.value
+
 }
