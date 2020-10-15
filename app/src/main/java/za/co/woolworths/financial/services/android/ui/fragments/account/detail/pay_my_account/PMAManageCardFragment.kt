@@ -267,4 +267,5 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

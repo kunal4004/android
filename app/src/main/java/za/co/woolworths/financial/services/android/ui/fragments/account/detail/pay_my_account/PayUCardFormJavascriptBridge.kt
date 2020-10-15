@@ -4,14 +4,13 @@ import android.webkit.JavascriptInterface
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 
-class PayUCardFormJavascriptBridge(val onShowInProgress : () -> Unit,
-                                   val onShowMessageInNative : (addToCardResponse: AddCardResponse) -> Unit,
-                                   val onFailure : () -> Unit) {
+class PayUCardFormJavascriptBridge(val onShowInProgress: () -> Unit,
+                                   val onShowMessageInNative: (addToCardResponse: AddCardResponse) -> Unit,
+                                   val onFailure: () -> Unit) {
 
     @JavascriptInterface
     fun showMessageInNative(token: String) {
-        val addToCardResponse = Gson().fromJson<AddCardResponse>(token, AddCardResponse::class.java)
-        onShowMessageInNative(addToCardResponse)
+        onShowMessageInNative(Gson().fromJson(token, AddCardResponse::class.java))
     }
 
     @JavascriptInterface
