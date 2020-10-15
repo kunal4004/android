@@ -38,6 +38,7 @@ class GetCartSummary {
     private fun getProvince(cart: CartSummary): Province {
         val province = Province()
         province.name = cart.provinceName
+        province.id = cart.provinceId
         return province
     }
 }
