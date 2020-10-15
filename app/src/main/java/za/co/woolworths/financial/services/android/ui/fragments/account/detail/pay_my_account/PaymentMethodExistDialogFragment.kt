@@ -114,12 +114,12 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
 
         with(payMyAccountViewModel) {
 
-            if (isSelectedCardExpire()) {
+            if (isSelectedCardExpired()) {
                 cardExpiredTagTextView?.visibility = VISIBLE
-                bindString(R.string.add_card_label)
+                cardExpiredTagTextView?.text = bindString(R.string.add_card_label)
             } else {
                 cardExpiredTagTextView?.visibility = GONE
-                bindString(R.string.change_label)
+                cardExpiredTagTextView?.text = bindString(R.string.change_label)
             }
 
             with(getSelectedPaymentMethodCard()) {
