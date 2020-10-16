@@ -1,0 +1,10 @@
+mutation createNewConversation{
+    createConversation(input: {}){
+        createdAt
+        id
+        messages {
+            nextToken
+        }
+        updatedAt
+    }
+}

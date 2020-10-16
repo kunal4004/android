@@ -76,6 +76,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -84,6 +85,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.ProductType;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -101,7 +103,9 @@ import static za.co.woolworths.financial.services.android.ui.views.actionsheet.A
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
-	private int mQuantity;
+	private String mSuburbName, mProvinceName;
+		private int mQuantity;
+
 	private RelativeLayout rlLocationSelectedLayout;
 	private boolean onRemoveItemFailed = false;
 	private boolean mRemoveAllItemFailed = false;
@@ -122,7 +126,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private ToggleRemoveItem mToggleItemRemoved;
-
+ private final String GIFT_ITEM = "GIFT";
+ private final String GENERAL_ITEM ="GENERAL";
 	private RecyclerView rvCartList;
 	private WButton btnCheckOut;
 	private CartProductAdapter cartProductAdapter;
@@ -224,7 +229,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									//setDeliveryLocation(cartState.getState());
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									mQuantity = cartState.getQuantity();
-									postChangeQuantity();
+									queryServiceChangeQuantity();
 								}
 							} else if (object instanceof ProductState) {
 								ProductState productState = (ProductState) object;
@@ -263,10 +268,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	 * Remove top changeQuantity object from list
 	 */
 
-	private void postChangeQuantity() {
+	private void queryServiceChangeQuantity() {
+		mChangeQuantity.setQuantity(mQuantity);
 		mChangeQuantityList.add(mChangeQuantity);
-		ChangeQuantity changeQuantity = mChangeQuantityList.get(0);
-		changeQuantityAPI(new ChangeQuantity(mQuantity, changeQuantity.getCommerceId()));
+		changeQuantityAPI(mChangeQuantityList.get(0));
 		mChangeQuantityList.remove(0);
 	}
 
@@ -367,6 +372,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartActivity.openProductDetailFragment("", productList);
 	}
 
+	@Override
+	public void onGiftItemClicked(CommerceItem commerceItem) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		GiftWithPurchaseDialogDetailFragment giftWithPurchaseDialogDetailFragment = new GiftWithPurchaseDialogDetailFragment();
+		giftWithPurchaseDialogDetailFragment.show(((AppCompatActivity) activity).getSupportFragmentManager(), GiftWithPurchaseDialogDetailFragment.class.getSimpleName());
+	}
+
 	public boolean toggleEditMode() {
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
 		if (isAllInventoryAPICallSucceed)
@@ -407,6 +420,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 
 			cartItems = cartResponse.cartItems;
+
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
             queryServiceInventoryCall(cartResponse.cartItems);
@@ -441,6 +455,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						break;
 					}
 				}
+
+				if (cartItemGroup.type.equalsIgnoreCase("GIFT")) {
+					boolean isGiftsThere = false;
+					for (CartItemGroup UpdatedCartItemGroup : cartResponse.cartItems) {
+						if (UpdatedCartItemGroup.type.equalsIgnoreCase("GIFT")) {
+							cartItemGroup.commerceItems = UpdatedCartItemGroup.commerceItems;
+							isGiftsThere = true;
+						}
+					}
+					if (!isGiftsThere)
+						cartItemGroup.commerceItems.clear();
+				}
+
 				/***
 				 * Remove header when commerceItems is empty
 				 */
@@ -623,7 +650,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					}
 					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 			}
 
@@ -667,7 +694,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						onChangeQuantityComplete();
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 			}
 
@@ -724,7 +751,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							resetItemDelete(true);
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Crashlytics.logException(ex);
 				}
 			}
 
@@ -776,14 +803,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			public void onFailure(Throwable error) {
 				Activity activity = getActivity();
 				if (activity != null) {
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mRemoveAllItemFailed = true;
-							mToggleItemRemoved.onRemoveItem(false);
-							mErrorHandlerView.hideErrorHandler();
-							mErrorHandlerView.showToast();
-						}
+					activity.runOnUiThread(() -> {
+						mRemoveAllItemFailed = true;
+						mToggleItemRemoved.onRemoveItem(false);
+						mErrorHandlerView.hideErrorHandler();
+						mErrorHandlerView.showToast();
 					});
 				}
 			}
@@ -832,31 +856,35 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			while ((keys.hasNext())) {
 				CartItemGroup cartItemGroup = new CartItemGroup();
 				String key = keys.next();
-
 				//GENERAL - "default",HOME - "homeCommerceItem",FOOD
 				// - "foodCommerceItem",CLOTHING
 				// - "clothingCommerceItem",PREMIUM BRANDS
 				// - "premiumBrandCommerceItem",
 				// Anything else: OTHER
 
-				if (key.contains("default"))
-					cartItemGroup.setType("GENERAL");
-				else if (key.contains("homeCommerceItem"))
-					cartItemGroup.setType("HOME");
-				else if (key.contains("foodCommerceItem"))
-					cartItemGroup.setType("FOOD");
-				else if (key.contains("clothingCommerceItem"))
-					cartItemGroup.setType("CLOTHING");
-				else if (key.contains("premiumBrandCommerceItem"))
-					cartItemGroup.setType("PREMIUM BRAND");
+				Log.e("giftWithPurchase",key);
+
+				if (key.contains(ProductType.DEFAULT.getValue()))
+					cartItemGroup.setType(ProductType.DEFAULT.getShortHeader());
+				else if (key.contains(ProductType.GIFT_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.GIFT_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.HOME_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.HOME_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.FOOD_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.FOOD_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.CLOTHING_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.CLOTHING_COMMERCE_ITEM.getShortHeader());
+				else if (key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.getValue()))
+					cartItemGroup.setType(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.getShortHeader());
 				else
-					cartItemGroup.setType("OTHER");
+					cartItemGroup.setType(ProductType.OTHER_ITEMS.getShortHeader());
 
 				JSONArray productsArray = itemsObject.getJSONArray(key);
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						CommerceItem commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						JSONObject commerceItemObject = productsArray.getJSONObject(i);
+						CommerceItem commerceItem = new Gson().fromJson(String.valueOf(commerceItemObject), CommerceItem.class);
 						String fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType);
 						commerceItem.fulfillmentStoreId = fulfillmentStoreId.replaceAll("\"", "");
 						productList.add(commerceItem);
@@ -866,13 +894,31 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartItemGroups.add(cartItemGroup);
 			}
 
+			CartItemGroup giftCartItemGroup = new CartItemGroup();
+			giftCartItemGroup.type = GIFT_ITEM;
+
+			CartItemGroup generalCartItemGroup = new CartItemGroup();
+			generalCartItemGroup.type = GENERAL_ITEM;
+			int generalIndex = -1;
+			if (cartItemGroups.contains(giftCartItemGroup) && cartItemGroups.contains(generalCartItemGroup)) {
+				for (int cartGroupIndex = 0; cartGroupIndex < cartItemGroups.size(); cartGroupIndex++) {
+					CartItemGroup cartItemGroup = cartItemGroups.get(cartGroupIndex);
+					if (cartItemGroup.type.equalsIgnoreCase(GENERAL_ITEM)) {
+						generalIndex = cartGroupIndex;
+					}
+					if (cartItemGroup.type.equalsIgnoreCase(GIFT_ITEM)) {
+						giftCartItemGroup = cartItemGroup;
+						cartItemGroups.remove(cartGroupIndex);
+					}
+				}
+				cartItemGroups.add(generalIndex + 1, giftCartItemGroup);
+			}
+
 			cartResponse.cartItems = cartItemGroups;
 
-
 		} catch (JSONException e) {
-			e.printStackTrace();
-			cartResponse = null;
-			return cartResponse;
+			Crashlytics.logException(e);
+			return null;
 		}
 
 		return cartResponse;
@@ -941,12 +987,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								Activity activity = getActivity();
 								if (activity == null || error.getMessage() == null)return;
 
-								activity.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										loadShoppingCartAndSetDeliveryLocation();
-									}
-								});
+								activity.runOnUiThread(() -> loadShoppingCartAndSetDeliveryLocation());
 
 							}
 						},SetDeliveryLocationSuburbResponse.class));
@@ -1002,7 +1043,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			if (cartProductAdapter != null) {
 				cartProductAdapter.onChangeQuantityLoad(mCommerceItem);
 			}
-			postChangeQuantity();
+			queryServiceChangeQuantity();
 			changeQuantityWasClicked = false;
 		}
 	}
@@ -1027,7 +1068,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			String fulfilmentStoreId = commerceItemCollectionMap.getKey().replaceAll("[^0-9]", "");
 			List<String> skuIds = new ArrayList<>();
 			for (CommerceItem commerceItem : commerceItemCollectionValue) {
-				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
+				CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
+				if (!commerceItemInfo.isGWP)
+					skuIds.add(commerceItemInfo.catalogRefId);
 			}
 			String groupBySkuIds = TextUtils.join("-", skuIds);
 
@@ -1056,8 +1099,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public Call<SkusInventoryForStoreResponse> initInventoryRequest(String storeId, String multiSku) {
-		Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
-		skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
+		Call<SkusInventoryForStoreResponse> skuInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+		skuInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<SkusInventoryForStoreResponse>() {
 			@Override
 			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 				if (skusInventoryForStoreResponse.httpCode == 200) {
@@ -1084,7 +1127,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				disableQuantitySelector(error, activity);
 			}
 		},SkusInventoryForStoreResponse.class));
-		return skusInventoryForStoreResponseCall;
+		return skuInventoryForStoreResponseCall;
 	}
 
 	private void disableQuantitySelector(Throwable error, Activity activity) {
@@ -1126,6 +1169,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private void updateCartListWithAvailableStock(HashMap<String, List<SkuInventory>> mSkuInventories) {
 		isAllInventoryAPICallSucceed = true;
 		for (CartItemGroup cartItemGroup : this.cartItems) {
+
+			if (cartItemGroup.type.equalsIgnoreCase(GIFT_ITEM)){
+				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+					commerceItem.commerceItemInfo.quantity = 1;
+					commerceItem.quantityInStock = 2;
+					commerceItem.isStockChecked = true;
+				}
+			}
+
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 				String fulfilmentStoreId = commerceItem.fulfillmentStoreId;
 				String skuId = commerceItem.commerceItemInfo.getCatalogRefId();
@@ -1161,9 +1213,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					isAnyItemNeedsQuantityUpdate = true;
 					mCommerceItem = commerceItem;
 					mChangeQuantity.setCommerceId(commerceItem.commerceItemInfo.getCommerceId());
-					mQuantity = commerceItem.quantityInStock;
+					mChangeQuantity.setQuantity(commerceItem.quantityInStock);
 					mCommerceItem.setQuantityUploading(true);
-					postChangeQuantity();
+					queryServiceChangeQuantity();
 				}
 			}
 		}
@@ -1188,13 +1240,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private void fadeCheckoutButton(boolean value) {
 		enableEditCart(value);
 		Utils.fadeInFadeOutAnimation(btnCheckOut, value);
-	}
-
-	private String getLastValueInMap() {
-		for (Map.Entry<String, String> entry : mMapStoreId.entrySet()) {
-			return entry.getValue();
-		}
-		return null;
 	}
 
 	public void deliveryLocationEnabled(boolean isEditMode) {
@@ -1259,8 +1304,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onWalkthroughActionButtonClick() {
-		this.onClick(rlLocationSelectedLayout);
+	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
+		if (feature == WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+			this.onClick(rlLocationSelectedLayout);
 	}
 
 	@Override

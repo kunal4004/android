@@ -27,10 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.MultiMap
-import za.co.woolworths.financial.services.android.util.PostItemToCart
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 
 
 class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
@@ -132,31 +129,35 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         val dataList = arrayListOf<OrderDetailsItem>()
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
+
         while ((keys.hasNext())) {
             val key = keys.next()
-            if (key.contains("default"))
-                dataList.add(OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("homeCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("foodCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("clothingCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("premiumBrandCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else
-                dataList.add(OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER))
-
             val productsArray = itemsObject.getJSONArray(key)
-            if (productsArray.length() > 0) {
-                for (i in 0 until productsArray.length()) {
-                    var commerceItem = OrderHistoryCommerceItem()
-                    commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), OrderHistoryCommerceItem::class.java)
+            val orderItemLength = productsArray.length()
+
+            val orderDetailsHeaderItem = when {
+                key.contains(ProductType.DEFAULT.value) -> OrderDetailsItem(ProductType.DEFAULT.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.HOME_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.HOME_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.FOOD_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.FOOD_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.CLOTHING_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                else -> OrderDetailsItem(ProductType.OTHER_ITEMS.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+            }
+
+            val orderDetailCommerceItem = arrayListOf<OrderDetailsItem>()
+            if (orderItemLength > 0) {
+                for (i in 0 until orderItemLength) {
+                    val commerceItem: OrderHistoryCommerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), OrderHistoryCommerceItem::class.java)
                     val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                     commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                    dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                    if (!commerceItem.isGWP)
+                        orderDetailCommerceItem.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM, orderItemLength))
                 }
             }
+
+            orderDetailsHeaderItem.orderItemLength = orderDetailCommerceItem.size
+            dataList.add(orderDetailsHeaderItem)
+            orderDetailCommerceItem.forEach { orderDetailsItem -> dataList.add(orderDetailsItem)}
         }
         return dataList
     }

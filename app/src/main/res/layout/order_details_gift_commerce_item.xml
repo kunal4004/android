@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:contentDescription="@string/layout_gift_items"
+    android:layout_height="90dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_light_overlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/freeGiftImageView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="24dp"
+        android:contentDescription="@string/placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        fresco:fadeDuration="10"
+        fresco:failureImage="@drawable/woolworth_logo_icon" />
+
+    <TextView
+        android:id="@+id/freeGiftTextView"
+        style="@style/gift_item_textView_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/free_gift"
+        android:contentDescription="@string/gwp_img_gift"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/giftItemTextView"
+        style="@style/my_orders_textview_style_2"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_toStartOf="@+id/price"
+        android:layout_toEndOf="@+id/imProductImage"
+        android:contentDescription="@string/gwp_product_name"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="@string/placeholder"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/freeGiftTextView"
+        app:layout_constraintStart_toEndOf="@+id/freeGiftImageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

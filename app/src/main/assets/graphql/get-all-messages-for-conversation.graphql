@@ -1,0 +1,19 @@
+query getAllMessagesForConversation($conversationMessagesId: ID!){
+    getMessagesByConversationMessagesId(conversationMessagesId: $conversationMessagesId){
+        items{
+            caption
+            content
+            contentType
+            conversationMessagesId
+            createdAt
+            id
+            messageID
+            relatedMessageID
+            sender
+            sessionId
+            sessionState
+            timestamp
+            updatedAt
+        }
+    }
+}

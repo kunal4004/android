@@ -104,8 +104,7 @@
                                 android:adjustViewBounds="true"
                                 android:contentDescription="@string/placeholder"
                                 android:minHeight="@dimen/sixty_dp"
-                                fresco:failureImage="@drawable/woolworth_logo_icon"
-                                fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
+                                />
                         </RelativeLayout>
 
                         <LinearLayout
