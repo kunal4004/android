@@ -51,7 +51,7 @@
         <TextView
             android:id="@+id/promoCodeAction"
             style="@style/futura_semi_bold_white_12_text_style"
-            android:layout_width="56dp"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -59,6 +59,8 @@
             android:gravity="center"
             android:letterSpacing="0.1"
             android:text="@string/enter"
+            android:paddingLeft="@dimen/five_dp"
+            android:paddingRight="@dimen/five_dp"
             android:textAllCaps="true" />
 
         <TextView
@@ -70,6 +72,7 @@
             android:layout_toStartOf="@+id/promoCodeAction"
             android:text="@string/do_you_have_a_promo_code"
             android:textAllCaps="true"
+            android:letterSpacing=".15"
             android:textColor="@color/account_amount_color" />
 
         <View

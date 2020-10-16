@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_vouchers_to_redeem_list_item.view.*
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
-import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherContract
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
+import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.VoucherAndPromoCodeContract
 
-class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var listener: AvailableVoucherContract.AvailableVoucherView) : RecyclerView.Adapter<AvailableVouchersToRedeemListAdapter.VoucherViewHolder>() {
+class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var listener: VoucherAndPromoCodeContract.AvailableVoucherView) : RecyclerView.Adapter<AvailableVouchersToRedeemListAdapter.VoucherViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VoucherViewHolder {
         return VoucherViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.available_vouchers_to_redeem_list_item, parent, false))

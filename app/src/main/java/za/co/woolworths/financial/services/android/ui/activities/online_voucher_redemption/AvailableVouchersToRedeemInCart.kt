@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
@@ -50,8 +51,11 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
 
 
     private fun loadNavHostFragment() {
-        findNavController(R.id.nav_host_fragment)
-                .setGraph(
-                        R.navigation.voucher_redmeeption_nav_graph)
+        val navHostFragment = nav_host_fragment as NavHostFragment
+        val graph = navHostFragment.navController.navInflater.inflate(R.navigation.voucher_redmeeption_nav_graph)
+        graph.startDestination = if (intent.hasExtra("VoucherDetails")) R.id.availableVoucherFragment else R.id.applyPromoCodeFragment
+        findNavController(R.id.nav_host_fragment).graph = graph
     }
+
+
 }

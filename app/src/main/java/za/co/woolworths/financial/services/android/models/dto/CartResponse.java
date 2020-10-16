@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 
 /**
  * Created by W7099877 on 2018/02/08.

@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherErrorMessage;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage;
 
 /**
  * Created by w7099877 on 2018/02/28.

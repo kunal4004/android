@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -14,16 +15,15 @@ import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.available_vouchers_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherErrorMessage
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchersToRedeemListAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.ArrayList
 
-class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVoucherContract.AvailableVoucherView {
+class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPromoCodeContract.AvailableVoucherView {
 
     private var voucherDetails: VoucherDetails? = null
-    var presenter: AvailableVoucherContract.AvailableVoucherPresenter? = null
+    var presenter: VoucherAndPromoCodeContract.AvailableVoucherPresenter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.available_vouchers_fragment, container, false)
@@ -31,6 +31,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVouc
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.available_vouchers)
         redeemVoucher?.setOnClickListener(this)
         showAvailableVouchers()
     }
@@ -77,11 +78,9 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, AvailableVouc
     override fun redeemVouchers() {
         voucherDetails?.vouchers?.let {
             presenter?.getSelectedVouchersToApply()?.let { selectedVouchers ->
-                if (selectedVouchers.isNotEmpty()) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_voucher_redeem)
-                    showRedeemVoucherProgress()
-                    presenter?.initRedeemVouchers(selectedVouchers)
-                }
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_voucher_redeem)
+                showRedeemVoucherProgress()
+                presenter?.initRedeemVouchers(selectedVouchers)
             }
         }
     }

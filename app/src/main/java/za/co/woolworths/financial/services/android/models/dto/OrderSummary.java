@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.JsonElement;
 
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.DiscountDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
 
 /**
  * Created by W7099877 on 2018/02/08.

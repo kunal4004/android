@@ -11,4 +11,10 @@
         android:label="AvailableVoucherFragment"
         tools:layout="@layout/available_vouchers_fragment"
         />
+    <fragment
+        android:id="@+id/applyPromoCodeFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.ApplyPromoCodeFragment"
+        android:label="ApplyPromoCodeFragment"
+        tools:layout="@layout/apply_promo_code_fragment"
+        />
 </navigation>

@@ -37,12 +37,11 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.DiscountDetails;
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher;
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -88,7 +87,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
         void onEnterPromoCode();
 
-        void onRemovePromoCode();
+        void onRemovePromoCode(String promoCode);
     }
 
     private OnItemClick onItemClick;
@@ -320,7 +319,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     @Override
                     public void onClick(View v) {
                         if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0)
-                            onItemClick.onRemovePromoCode();
+                            onItemClick.onRemovePromoCode(voucherDetails.getPromoCodes().get(0).getPromoCode());
                         else
                             onItemClick.onEnterPromoCode();
                     }

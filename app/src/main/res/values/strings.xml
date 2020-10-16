@@ -1618,5 +1618,6 @@
     <string name="enter">enter</string>
     <string name="remove">remove</string>
     <string name="promo_code_applied">Promo code: APPLIED</string>
+    <string name="applying_your_promocode">Applying Your PromoCode</string>
 </resources>
 

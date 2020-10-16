@@ -19,8 +19,8 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.SelectedVoucher
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 
 object OneAppService : RetrofitConfig() {
@@ -358,5 +358,13 @@ object OneAppService : RetrofitConfig() {
 
     fun applyVouchers(vouchers: List<SelectedVoucher>): Call<ShoppingCartResponse> {
         return mApiInterface.applyVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), vouchers)
+    }
+
+    fun applyPromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.applyPromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
+    }
+
+    fun removeCoupon(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.removeCoupon(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
     }
 }

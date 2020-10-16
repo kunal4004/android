@@ -4,11 +4,11 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.SelectedVoucher
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherErrorMessage
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
 
-class AvailableVoucherPresenterImpl(var mainView: AvailableVoucherContract.AvailableVoucherView?, var getInteractor: AvailableVoucherContract.AvailableVoucherInteractor?) : AvailableVoucherContract.AvailableVoucherPresenter, IGenericAPILoaderView<Any> {
+class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.AvailableVoucherView?, var getInteractor: VoucherAndPromoCodeContract.AvailableVoucherInteractor?) : VoucherAndPromoCodeContract.AvailableVoucherPresenter, IGenericAPILoaderView<Any> {
 
     private var vouchers: ArrayList<Voucher>? = null
 

@@ -2,11 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemp
 
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.SelectedVoucher
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.Voucher
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherErrorMessage
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
 
-interface AvailableVoucherContract {
+interface VoucherAndPromoCodeContract {
 
     interface AvailableVoucherView {
         fun onVoucherRedeemSuccess(shoppingCartResponse: ShoppingCartResponse)
@@ -31,6 +31,24 @@ interface AvailableVoucherContract {
 
     interface AvailableVoucherInteractor {
         fun executeRedeemVouchers(vouchers: List<SelectedVoucher>, requestListener: IGenericAPILoaderView<Any>)
+    }
+
+    interface ApplyPromoCodeView {
+        fun onApplyPromoCodeSuccess(shoppingCartResponse: ShoppingCartResponse)
+        fun applyPromoCode()
+        fun showApplyPromoCodeProgress()
+        fun hideApplyPromoCodeProgress()
+        fun onApplyPromoCodeFailure(message: String)
+        fun onPromoCodeTextChanged(promoCode: String)
+    }
+
+    interface ApplyPromoCoderPresenter {
+        fun onDestroy()
+        fun initApplyPromoCode(promoCode: String)
+    }
+
+    interface ApplyPromoCodeInteractor {
+        fun executeApplyPromoCode(promoCode: String, requestListener: IGenericAPILoaderView<Any>)
     }
 
 }

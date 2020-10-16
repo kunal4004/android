@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -68,7 +69,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.voucher_redemption.VoucherDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -165,6 +167,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private TextView basketTotal;
 	private RelativeLayout orderTotalLayout;
 	private NestedScrollView nestedScrollView;
+	public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -1035,9 +1038,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     loadShoppingCartAndSetDeliveryLocation();
 					break;
 				case REDEEM_VOUCHERS_REQUEST_CODE:
+				case APPLY_PROMO_CODE_REQUEST_CODE:
 					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
 					updateCart(convertResponseToCartResponseObject(shoppingCartResponse));
-					showVouchersAppliedToast();
+					if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE)
+						showVouchersAppliedToast();
 					break;
 				default:
 					break;
@@ -1455,19 +1460,63 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onEnterPromoCode() {
-
+		navigateToApplyPromoCodePage();
 	}
 
 	@Override
-	public void onRemovePromoCode() {
+	public void onRemovePromoCode(String promoCode) {
+		showProgressBar();
+		OneAppService.INSTANCE.removeCoupon(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
+			@Override
+			public void onSuccess(ShoppingCartResponse response) {
+				hideProgressBar();
+				switch (response.httpCode) {
+					case 200:
+						updateCart(convertResponseToCartResponseObject(response));
+						break;
+					case 502:
+						if (response.response != null)
+							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.response.desc, true);
+						break;
+					case 440:
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+						SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity(), CartFragment.this);
+						break;
+					default:
+						if (response.response != null)
+							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.general_error_desc), true);
+						break;
 
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable error) {
+				hideProgressBar();
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.general_error_desc), true);
+			}
+
+		}, ShoppingCartResponse.class));
 	}
 
-	void navigateToAvailableApplyPromoCodePage() {
+	void navigateToApplyPromoCodePage() {
 		Intent intent = new Intent(getContext(), AvailableVouchersToRedeemInCart.class);
-		intent.putExtra("VoucherDetails", Utils
-				.toJson(voucherDetails));
 		startActivityForResult(intent
-				, REDEEM_VOUCHERS_REQUEST_CODE);
+				, APPLY_PROMO_CODE_REQUEST_CODE);
+	}
+
+	private void hideProgressBar() {
+		if (getActivity() != null) {
+			pBar.setVisibility(View.GONE);
+			getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+		}
+	}
+
+	private void showProgressBar() {
+		if (getActivity() != null) {
+			pBar.setVisibility(View.VISIBLE);
+			getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+					WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+		}
 	}
 }

@@ -23,8 +23,7 @@
 
             <TextView
                 android:id="@+id/toolbarText"
-                style="@style/appToolbarStyle"
-                android:text="@string/available_vouchers" />
+                style="@style/appToolbarStyle" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
