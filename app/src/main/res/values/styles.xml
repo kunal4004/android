@@ -1835,6 +1835,8 @@
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
         <item name="android:textSize">@dimen/account_thirteen_sp</item>
+        <item name="android:paddingTop">@dimen/one_dp</item>
+        <item name="android:paddingBottom">@dimen/one_dp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:letterSpacing" tools:targetApi="lollipop">0.03</item>
@@ -1843,7 +1845,8 @@
     <style name="accountSalesTextViewAmountStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/available_fund_16dp_margin</item>
+        <item name="android:layout_marginBottom">@dimen/store_card_enter_otp_title_top_margin_32dp
+        </item>
         <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
         <item name="android:textSize">@dimen/available_fund_16sp_amount</item>
         <item name="android:textColor">@color/white</item>
@@ -1853,7 +1856,8 @@
     <style name="accountSalesTextViewStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/available_fund_16dp_margin</item>
+        <item name="android:layout_marginBottom">@dimen/store_card_enter_otp_title_top_margin_32dp
+        </item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
