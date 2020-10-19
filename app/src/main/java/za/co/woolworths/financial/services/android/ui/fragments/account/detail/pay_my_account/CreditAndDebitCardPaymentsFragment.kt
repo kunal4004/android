@@ -322,4 +322,5 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         view?.setShimmer(null)
         view?.stopShimmer()
     }
+
 }

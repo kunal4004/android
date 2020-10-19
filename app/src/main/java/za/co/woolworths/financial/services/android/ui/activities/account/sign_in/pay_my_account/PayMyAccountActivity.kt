@@ -124,18 +124,23 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     }
 
     override fun onBackPressed() {
+        // disable back button until delete card call is completed
+        if (!payMyAccountViewModel.isDeleteCardListEmpty()) return
+
         when (currentFragment) {
             is PMAManageCardFragment, is CreditAndDebitCardPaymentsFragment -> {
                 setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
+
             is PMA3DSecureProcessRequestFragment -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
                 setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardDetail)))
                 finish()
                 overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
+
             else -> {
                 when (navigationHost?.graph?.startDestination) {
                     R.id.addNewPayUCardFragment, R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {

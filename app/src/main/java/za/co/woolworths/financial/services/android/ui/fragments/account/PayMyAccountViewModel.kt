@@ -4,20 +4,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
+import java.net.ConnectException
 import java.util.*
 
 class PayMyAccountViewModel : ViewModel() {
 
+    private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
+    private var mQueryServiceGetPaymentMethods: Call<PaymentMethodsResponse>? = null
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
     private var cvvNumber: MutableLiveData<String> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
@@ -26,6 +33,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
+    var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
     enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
@@ -89,7 +97,10 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun setPaymentMethodsResponse(paymentMethodResponse: PaymentMethodsResponse?) {
         val cardDetail = getCardDetail()
+        val selectedPosition = getCardDetail()?.selectedCardPosition
         val cardLists = paymentMethodResponse?.paymentMethods
+        if (cardLists?.size ?: 0 > 0)
+            cardLists?.get(selectedPosition ?: 0)?.isCardChecked = true
         cardDetail?.paymentMethodList = cardLists
 
         cardDetail?.payuMethodType = if (cardLists?.isNullOrEmpty() == true) PAYUMethodType.CREATE_USER else PAYUMethodType.CARD_UPDATE
@@ -122,7 +133,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun queryServicePayUPaymentMethod(onSuccessResult: (MutableList<GetPaymentMethod>?) -> Unit, onSessionExpired: (String?) -> Unit, onGeneralError: (String) -> Unit, onFailureHandler: (Throwable?) -> Unit) {
         var payUMethodType: PAYUMethodType
-        request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
+        mQueryServiceGetPaymentMethods = request(OneAppService.queryServicePayUMethod(), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? PaymentMethodsResponse)?.apply {
                     setPaymentMethodsResponse(this)
@@ -245,4 +256,37 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAddCardResponse() = addCardResponse.value
 
+    fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit) {
+        deleteCardList?.add(Pair(card, position))
+        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
+            override fun onSuccess(response: Any?) {
+                showResultOnEmptyList(result)
+            }
+
+            override fun onFailure(error: Throwable?) {
+                when (error) {
+                    is ConnectException -> {
+                        deleteCardList?.clear()
+                        result()
+                    }
+                    else -> {
+                        showResultOnEmptyList(result)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showResultOnEmptyList(result: () -> Unit) {
+        deleteCardList?.removeLast()
+        if (isDeleteCardListEmpty()) result()
+    }
+
+    fun isDeleteCardListEmpty() = deleteCardList?.isEmpty() == true
+
+    override fun onCleared() {
+        cancelRetrofitRequest(mQueryServiceGetPaymentMethods)
+        cancelRetrofitRequest(mQueryServiceDeletePaymentMethod)
+        super.onCleared()
+    }
 }

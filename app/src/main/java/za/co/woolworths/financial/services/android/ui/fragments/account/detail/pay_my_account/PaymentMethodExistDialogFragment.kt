@@ -205,23 +205,4 @@ class PaymentMethodExistDialogFragment : WBottomSheetDialogFragment(), View.OnCl
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        queryGetPaymentMethod()
-    }
-
-    private fun queryGetPaymentMethod() {
-        if (!isAdded) return
-        ShimmerAnimationManager.startProgress(changeTextViewShimmerLayout)
-        payMyAccountViewModel.queryServicePayUPaymentMethod({
-            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
-        }, {
-            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
-        }, {
-            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
-        }, {
-            ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
-        })
-    }
 }

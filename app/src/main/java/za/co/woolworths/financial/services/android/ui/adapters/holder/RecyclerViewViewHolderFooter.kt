@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.awfs.coordination.R
 
-class ProductListingViewHolderFooter(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.bottom_progress_bar, parent, false)) {
+class RecyclerViewViewHolderFooter(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.bottom_progress_bar, parent, false)) {
 
     fun loadMoreProductProgressBarVisibility() {}
 }

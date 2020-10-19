@@ -10,6 +10,8 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,11 +26,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
 import kotlinx.coroutines.GlobalScope
-import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
@@ -36,13 +36,15 @@ import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.LifecycleType
 
 class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
-    private var selectedProductPosition: Int = 0
+    private var temporarySelectedPosition: Int = 0
     private var accountInfo: String? = null
     private var paymentMethod: String? = null
     private var mAccountDetails: Pair<ApplyNowState, Account>? = null
@@ -52,7 +54,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     private var deletedPaymentMethod: GetPaymentMethod? = null
     private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
+    private var mLifecycleType: LifecycleType = LifecycleType.INIT
     val args: PMAProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,12 +79,11 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
 
         configureToolbar()
-        configureRecyclerview()
         useThisCardButton?.apply {
             setOnClickListener(this@PMAManageCardFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-
+        swipeToRefreshList()
         addCardTextView?.apply {
             setOnClickListener(this@PMAManageCardFragment)
             AnimationUtilExtension.animateViewPushDown(this)
@@ -92,12 +93,12 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             when (result) {
                 PayMyAccountViewModel.OnBackNavigation.REMOVE -> {
                     // deleteRow(position)
-                    GlobalScope.doAfterDelay(300) {
-                        removeCardProduct(selectedProductPosition)
+                    GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
+                        removeCardProduct(temporarySelectedPosition)
                     }
                 }
                 PayMyAccountViewModel.OnBackNavigation.ADD -> {
-                    GlobalScope.doAfterDelay(300) {
+                    GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
                         val accounts = mAccountDetails?.second
                         val addCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
                         navController?.navigate(addCard)
@@ -105,7 +106,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                 }
 
                 PayMyAccountViewModel.OnBackNavigation.MAX_CARD_LIMIT -> {
-                    GlobalScope.doAfterDelay(350) {
+                    GlobalScope.doAfterDelay(AppConstant.DELAY_350_MS) {
                         navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
                     }
                 }
@@ -115,21 +116,22 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun swipeToRefreshList() {
+        swipeToRefreshList?.setOnRefreshListener {
+            queryGetPaymentMethod(mLifecycleType)
+        }
+    }
+
     private fun configureRecyclerview() {
         // ensure first item is checked
-        val isPaymentChecked: List<GetPaymentMethod>? = mPaymentMethodList?.filter { s -> s.isCardChecked }
-        if (isPaymentChecked?.isEmpty() == true) {
-            if (mPaymentMethodList?.size ?: 0 > 0)
-                mPaymentMethodList?.get(0)?.isCardChecked = true
-        } else {
-            mPaymentMethodList = payMyAccountViewModel.getPaymentMethodList()
-        }
+
+        mPaymentMethodList = payMyAccountViewModel.getPaymentMethodList()
 
         pmaManageCardRecyclerView?.apply {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
             manageCardAdapter = PMACardsAdapter(mPaymentMethodList) { paymentMethod, position ->
-                selectedProductPosition = position
+                temporarySelectedPosition = position
 
                 val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
 
@@ -145,12 +147,9 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
             adapter = manageCardAdapter
 
-            val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
-            itemTouchHelper.attachToRecyclerView(this)
 
         }
     }
-
 
     private fun configureToolbar() {
         (activity as? PayMyAccountActivity)?.apply {
@@ -164,7 +163,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.useThisCardButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
-                cardDetail?.selectedCardPosition = selectedProductPosition
+                cardDetail?.selectedCardPosition = temporarySelectedPosition
 
                 cardDetail?.paymentMethodList = manageCardAdapter?.getList()
                 payMyAccountViewModel.setPMACardInfo(cardDetail)
@@ -184,6 +183,105 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                 navController?.navigate(manageCard)
             }
         }
+    }
+
+    private fun removeCardProduct(position: Int) {
+        deletedPaymentMethod = mPaymentMethodList?.get(position)
+        mPaymentMethodList?.removeAt(position)
+        manageCardAdapter?.notifyItemRemoved(position)
+        manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount ?: 0)
+
+        val cardPosition = payMyAccountViewModel.getCardDetail()?.selectedCardPosition
+        if (cardPosition != null && cardPosition >= 1)
+            payMyAccountViewModel.getCardDetail()?.selectedCardPosition = if (deletedPaymentMethod?.isCardChecked == true) 0 else cardPosition.minus(1)
+
+        if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
+            deleteProgressVisibility(true)
+            payMyAccountViewModel.queryServiceDeletePaymentMethod(deletedPaymentMethod, position) {
+                    deleteProgressVisibility(false)
+
+            }
+
+            // Disable use this card button when no item is selected
+            useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
+
+            // set and display add new card as start destination in graph
+            if (mPaymentMethodList?.isEmpty() == true) {
+
+                val card = payMyAccountViewModel.getCardDetail()
+                card?.payuMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
+                card?.paymentMethodList = mutableListOf()
+                val graph = navController?.graph
+                graph?.startDestination = R.id.addNewPayUCardFragment
+                graph?.let { navController?.setGraph(it) }
+            }
+        } else {
+            ErrorHandlerView(context).showToast()
+        }
+    }
+
+    private fun deleteProgressVisibility(isVisible: Boolean) {
+        GlobalScope.doAfterDelay(100) {
+            deleteProgressBar?.visibility = if (isVisible) VISIBLE else GONE
+            useThisCardButton?.isEnabled = !isVisible
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        queryGetPaymentMethod(mLifecycleType)
+    }
+
+    private fun queryGetPaymentMethod(type: LifecycleType) {
+        onGetPaymentMethodProgress(type, true)
+        payMyAccountViewModel.queryServicePayUPaymentMethod({ paymentMethodsList ->
+            if (!isAdded) return@queryServicePayUPaymentMethod
+            when (mLifecycleType) {
+                LifecycleType.INIT -> configureRecyclerview()
+                LifecycleType.RESUME -> {
+                    manageCardAdapter?.updateListInAdapter(paymentMethodsList, temporarySelectedPosition)
+                    mPaymentMethodList = manageCardAdapter?.getList()
+                }
+            }
+
+            mPaymentMethodList = manageCardAdapter?.getList()
+
+            val itemTouchHelper = ItemTouchHelper(paymentMethodItemSwipeLeft)
+            itemTouchHelper.attachToRecyclerView(pmaManageCardRecyclerView)
+
+            onGetPaymentMethodProgress(type, false)
+
+            mLifecycleType = LifecycleType.RESUME
+        }, {
+            onGetPaymentMethodProgress(type, false)
+        }, {
+            onGetPaymentMethodProgress(type, false)
+        }, {
+            onGetPaymentMethodProgress(type, false)
+        })
+    }
+
+    private fun onGetPaymentMethodProgress(type: LifecycleType, isRefreshing: Boolean) {
+        if (!isAdded) return
+        when (type) {
+            LifecycleType.INIT -> {
+                paymentMethodsListProgressBar?.visibility = if (isRefreshing) VISIBLE else GONE
+                pmaManageCardRecyclerView?.visibility = if (isRefreshing) GONE else VISIBLE
+            }
+            LifecycleType.RESUME -> {
+                swipeToRefreshList?.isRefreshing = isRefreshing
+            }
+        }
+        useThisCardButton?.isEnabled = !isRefreshing
     }
 
     private val paymentMethodItemSwipeLeft: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -226,46 +324,4 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
-
-    private fun removeCardProduct(position: Int) {
-        deletedPaymentMethod = mPaymentMethodList?.get(position)
-        mPaymentMethodList?.removeAt(position)
-        manageCardAdapter?.notifyItemRemoved(position)
-        manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount ?: 0)
-
-        val cardPosition = payMyAccountViewModel.getCardDetail()?.selectedCardPosition
-        if (cardPosition != null && cardPosition >= 1)
-            payMyAccountViewModel.getCardDetail()?.selectedCardPosition = if (deletedPaymentMethod?.isCardChecked == true) 0 else cardPosition.minus(1)
-
-        if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
-            request(deletedPaymentMethod?.token?.let { OneAppService.queryServicePayURemovePaymentMethod(it) }, object : IGenericAPILoaderView<Any> {
-                override fun onSuccess(response: Any?) {}
-            })
-            // Disable use this card button when no item is selected
-            useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
-
-            // set and display add new card as start destination in graph
-            if (mPaymentMethodList?.isEmpty() == true) {
-
-                val card = payMyAccountViewModel.getCardDetail()
-                card?.payuMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
-                card?.paymentMethodList = mutableListOf()
-                val graph = navController?.graph
-                graph?.startDestination = R.id.addNewPayUCardFragment
-                graph?.let { navController?.setGraph(it) }
-            }
-        } else {
-            ErrorHandlerView(context).showToast()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                activity?.onBackPressed()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
 }

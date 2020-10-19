@@ -56,6 +56,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         mAvailableFundPresenter?.setBundle(arguments)
     }
 
+    @Throws(RuntimeException::class)
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is IBottomSheetBehaviourPeekHeightListener) {
@@ -345,9 +346,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> openCardOptionsDialog()
-
             else -> navigateToPayMyAccountActivity()
         }
     }
-
 }
