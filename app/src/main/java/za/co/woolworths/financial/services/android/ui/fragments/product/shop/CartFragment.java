@@ -1042,7 +1042,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
 					updateCart(convertResponseToCartResponseObject(shoppingCartResponse));
 					if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE)
-						showVouchersAppliedToast();
+						showVouchersOrPromoCodeAppliedToast(getString(R.string.vouchers_applied_toast_message));
+					if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
+						showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
 					break;
 				default:
 					break;
@@ -1420,13 +1422,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mToastUtils.build();
 	}
 
-	public void showVouchersAppliedToast() {
+	public void showVouchersOrPromoCodeAppliedToast(String message) {
 		mToastUtils.setActivity(getActivity());
 		mToastUtils.setCurrentState(TAG);
 		mToastUtils.setCartText("");
 		mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
 		mToastUtils.setView(btnCheckOut);
-		mToastUtils.setMessage(getString(R.string.vouchers_applied_toast_message));
+		mToastUtils.setMessage(message);
 		mToastUtils.setAllCapsUpperCase(true);
 		mToastUtils.setViewState(false);
 		mToastUtils.build();
@@ -1519,4 +1521,5 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 		}
 	}
+
 }
