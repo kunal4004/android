@@ -100,7 +100,6 @@
             android:id="@+id/applyPromoCode"
             style="@style/call_to_action_text_style"
             android:layout_height="@dimen/fifty_dp"
-            android:layout_marginBottom="@dimen/twenty_four_dp"
             android:background="@drawable/order_add_to_cart_button_bg"
             android:text="@string/apply"
             android:visibility="gone"
