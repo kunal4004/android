@@ -37,7 +37,7 @@ class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var
                     voucher.isSelected = !voucher.isSelected
                     voucher.errorMessage = ""
                     notifyDataSetChanged()
-                    listener.onVoucherSelected()
+                    listener.enableRedeemButton()
                 }
             }
 

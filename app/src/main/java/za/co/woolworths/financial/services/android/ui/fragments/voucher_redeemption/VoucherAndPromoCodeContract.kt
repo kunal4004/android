@@ -15,7 +15,7 @@ interface VoucherAndPromoCodeContract {
         fun showRedeemVoucherProgress()
         fun showAvailableVouchers()
         fun hideRedeemVoucherProgress()
-        fun onVoucherSelected()
+        fun enableRedeemButton()
         fun onVoucherRedeemGeneralFailure(message: String)
     }
 

@@ -71,6 +71,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
     override fun onVoucherRedeemFailure() {
         activity?.apply {
             hideRedeemVoucherProgress()
+            enableRedeemButton()
             rcvVoucherList?.adapter?.notifyDataSetChanged()
         }
     }
@@ -97,7 +98,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
         dataLayout?.visibility = View.VISIBLE
     }
 
-    override fun onVoucherSelected() {
+    override fun enableRedeemButton() {
         voucherDetails?.vouchers?.let {
             redeemVoucher?.isEnabled = presenter?.isVouchersSelectedToRedeem() ?: true
         }
