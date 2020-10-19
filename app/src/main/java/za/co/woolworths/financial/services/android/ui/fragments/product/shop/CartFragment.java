@@ -451,6 +451,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
 			updateBasketTotal();
+			showRedeemVoucherFeatureWalkthrough();
 		} else {
 			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
@@ -463,7 +464,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.resetToolBarIcons();
 			}
-			showFeatureWalkthrough();
+			showEditDeliveryLocationFeatureWalkthrough();
 		}
 	}
 
@@ -1338,7 +1339,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartActivity.enableEditCart(enable);
 	}
 
-	public void showFeatureWalkthrough(){
+	public void showEditDeliveryLocationFeatureWalkthrough(){
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
 			return;
 		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getSimpleName());
