@@ -9,9 +9,8 @@ apply plugin: "androidx.navigation.safeargs"
 android {
 
     def major = "7"
-    def minor = "3"
-    def fix = "1"
-
+    def minor = "4"
+    def fix = "0"
     def jobNumber = 7724
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
@@ -93,7 +92,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 137
+            jobNumber = 138
         }
 
         defaultConfig {
@@ -240,8 +239,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-auth-api-phone:17.4.0"
     implementation 'androidx.core:core-ktx:1.3.2'
 
-    implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
-    implementation "androidx.navigation:navigation-ui-ktx:2.3.0"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.1"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
