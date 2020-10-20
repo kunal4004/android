@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
-        android:letterSpacing="0.1dp"
+        android:letterSpacing="0.1"
         android:text="03 / 07 / 2016"
         android:textColor="@color/transaction_date_color"
         android:textSize="@dimen/fourteen_dp"
