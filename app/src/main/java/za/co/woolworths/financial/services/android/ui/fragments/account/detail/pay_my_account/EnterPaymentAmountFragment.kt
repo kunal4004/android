@@ -16,16 +16,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
@@ -33,26 +29,19 @@ import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import java.lang.Exception
 
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
-    private var mPaymentMethod: MutableList<GetPaymentMethod>? = null
-    private var paymentMethod: String? = null
-    private var accountInfo: String? = null
     private var account: Account? = null
     private var navController: NavController? = null
     private var isDoneButtonEnabled: Boolean = false
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    val args: EnterPaymentAmountFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
-            paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
             isDoneButtonEnabled = getBoolean(IS_DONE_BUTTON_ENABLED, false)
         }
     }
@@ -65,23 +54,14 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         navController = Navigation.findNavController(view)
-        val cardInfo = payMyAccountViewModel.getCardDetail()
-
-        // TODO:: R&D and implement, pass data from activity to fragment with safeArgs directions
-        try {
-            account = args.account
-        } catch (e: Exception) {
-            account = cardInfo?.account?.second
-            mPaymentMethod = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-        }
 
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.totalAmountDue ?: 0))
-        amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account?.amountOverdue ?: 0))
-        paymentAmountInputEditText?.setText(if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.amountOverdue?.toString() else cardInfo?.amountEntered)
+        totalAmountDueValueTextView?.text = payMyAccountViewModel.getOverdueAmount()
+        amountOutstandingValueTextView?.text = payMyAccountViewModel.getTotalAmountDue()
+        paymentAmountInputEditText?.setText(payMyAccountViewModel.getAmountEntered())
 
     }
 

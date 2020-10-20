@@ -196,8 +196,12 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAccount() = getCardDetail()?.account?.second
 
-    private fun getOverdueAmount(): String? {
+    fun getOverdueAmount(): String? {
         return getAccount()?.amountOverdue?.let { formatAndRemoveNegativeSymbol(it) }
+    }
+
+    fun getTotalAmountDue(): String? {
+        return getAccount()?.totalAmountDue?.let { formatAndRemoveNegativeSymbol(it) }
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
@@ -258,7 +262,8 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit) {
         deleteCardList?.add(Pair(card, position))
-        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
+        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token
+                ?: ""), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 showResultOnEmptyList(result)
             }
@@ -288,5 +293,12 @@ class PayMyAccountViewModel : ViewModel() {
         cancelRetrofitRequest(mQueryServiceGetPaymentMethods)
         cancelRetrofitRequest(mQueryServiceDeletePaymentMethod)
         super.onCleared()
+    }
+
+    fun getAmountEntered(): String {
+        val cardInfo = getCardDetail()
+        val account = cardInfo?.account
+        return if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.second?.amountOverdue?.toString()
+                ?: "" else cardInfo?.amountEntered ?: ""
     }
 }
