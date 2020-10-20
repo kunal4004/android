@@ -1598,5 +1598,7 @@
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
+    <string name="account_holder_lable">Account Holder:</string>
+    <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
 </resources>
 
