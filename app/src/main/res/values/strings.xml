@@ -1581,7 +1581,7 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
-    <string name="get_your_free_credit_report">Get Your Free Credit Report</string>
+    <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
     <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
     <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
@@ -1597,5 +1597,7 @@
     <string name="end_session_button_caption">yes, end session</string>
     <string name="pma_retry_error_title">Oops!</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="get_a_free_credit_score">get a free credit score</string>
+    <string name="get_started_now">Get started now</string>
 </resources>
 
