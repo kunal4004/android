@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.save_card_and_pay_now_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.util.*

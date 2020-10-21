@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account
+package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
@@ -297,8 +298,38 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAmountEntered(): String {
         val cardInfo = getCardDetail()
-        val account = cardInfo?.account
-        return if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.second?.amountOverdue?.toString()
+        val account = getAccount()
+        return if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.amountOverdue?.toString()
                 ?: "" else cardInfo?.amountEntered ?: ""
+    }
+
+    fun convertRandFormatToDouble(item: String?): Double {
+        return item?.replace("[R ]".toRegex(), "")?.toDouble() ?: 0.0
+    }
+
+    private fun convertRandFormatToInt(item: String?): Int {
+        return item?.replace("[,.R$ ]".toRegex(), "")?.toInt() ?: 0
+    }
+
+    fun getAmountEnteredAfterTextChanged(item: String?): String? {
+        val account = getAccount()
+        val inputAmount = convertRandFormatToInt(item)
+        val enteredAmount = account?.amountOverdue?.minus(inputAmount) ?: 0
+        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(if (enteredAmount < 0) 0 else enteredAmount))
+    }
+
+    fun validateAmountEntered(amount: Double, minAmount: () -> Unit, maxAmount: () -> Unit, validAmount: () -> Unit) {
+        when {
+            amount < 1.toDouble() -> minAmount()
+            amount > 50000.toDouble() -> maxAmount()
+            else -> validAmount()
+        }
+    }
+
+    fun switchToConfirmPaymentOrDoneButton(buttonLabel: String?, done: () -> Unit, confirmPayment: () -> Unit) {
+        when (buttonLabel) {
+            bindString(R.string.done) -> done()
+            else -> confirmPayment()
+        }
     }
 }

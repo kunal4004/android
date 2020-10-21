@@ -1,39 +1,29 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.*
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
-    private var account: Account? = null
-    private var navController: NavController? = null
     private var isDoneButtonEnabled: Boolean = false
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -53,15 +43,16 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = Navigation.findNavController(view)
 
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
 
-        totalAmountDueValueTextView?.text = payMyAccountViewModel.getOverdueAmount()
-        amountOutstandingValueTextView?.text = payMyAccountViewModel.getTotalAmountDue()
-        paymentAmountInputEditText?.setText(payMyAccountViewModel.getAmountEntered())
+        with(payMyAccountViewModel) {
+            totalAmountDueValueTextView?.text = getOverdueAmount()
+            amountOutstandingValueTextView?.text = getTotalAmountDue()
+            paymentAmountInputEditText?.setText(getAmountEntered())
+        }
 
     }
 
@@ -94,16 +85,11 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             addTextChangedListener(object : TextWatcher {
 
                 override fun afterTextChanged(s: Editable) {
-                    continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                    var paymentAmount = paymentAmountInputEditText?.text?.toString()?.replace("[,.R$ ]".toRegex(), "")
-                    if (TextUtils.isEmpty(paymentAmount)) {
-                        paymentAmount = "0"
+                    with(payMyAccountViewModel) {
+                        continueToPaymentButton?.isEnabled = s.isNotEmpty()
+                        val paymentAmount = getAmountEnteredAfterTextChanged(s.toString())
+                        amountOutstandingValueTextView?.text = paymentAmount
                     }
-                    var enteredAmount = paymentAmount?.toInt()?.let { inputAmount -> account?.amountOverdue?.minus(inputAmount) }
-                            ?: 0
-                    enteredAmount = if (enteredAmount < 0) 0 else enteredAmount
-                    amountOutstandingValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(enteredAmount))
-
                 }
 
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -114,6 +100,55 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             })
 
         }
+    }
+
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.continueToPaymentButton -> {
+                with(payMyAccountViewModel) {
+                    val inputValue = paymentAmountInputEditText?.text?.toString()
+
+                    validateAmountEntered(convertRandFormatToDouble(inputValue), {
+                        // Minimum amount excess error
+                        enteredAmountValidationError(bindString(R.string.enter_payment_amount_min_input_error))
+                    }, {
+                        // Maximum amount excess error
+                        enteredAmountValidationError(bindString(R.string.enter_payment_amount_max_input_error))
+                    }, {
+                        // Amount is valid
+                        val cardInfo = getCardDetail()
+                        cardInfo?.amountEntered = inputValue
+                        setPMACardInfo(cardInfo)
+
+                        switchToConfirmPaymentOrDoneButton(continueToPaymentButton?.text?.toString(), {
+                            //Done button
+                            activity?.apply {
+                                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardInfo)))
+                                finish()
+                            }
+                        }, {
+                            //Confirm Payment button
+                            view?.apply {
+                                Navigation.findNavController(this)
+                                        .navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
+                            }
+                        })
+                    })
+                }
+            }
+        }
+    }
+
+    private fun enteredAmountValidationError(amount: String) {
+        continueToPaymentButton?.isEnabled = false
+        reducePaymentAmountTextView?.visibility = VISIBLE
+        reducePaymentAmountTextView?.text = amount
+    }
+
+    override fun onResume() {
+        super.onResume()
+        KeyboardUtils.showKeyboard(paymentAmountInputEditText, activity)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -137,70 +172,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         }
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.continueToPaymentButton -> {
-                val amountEntered = paymentAmountInputEditText?.text?.toString()
-                val enteredAmount = amountEntered?.replace("[R ]".toRegex(), "")?.toDouble() ?: 0.0
-
-                when {
-                    enteredAmount < 1.toDouble() -> {
-                        continueToPaymentButton?.isEnabled = false
-                        reducePaymentAmountTextView?.visibility = VISIBLE
-                        reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_min_input_error)
-                        return
-                    }
-                    enteredAmount > 50000.toDouble() -> {
-                        continueToPaymentButton?.isEnabled = false
-                        reducePaymentAmountTextView?.visibility = VISIBLE
-                        reducePaymentAmountTextView?.text = bindString(R.string.enter_payment_amount_max_input_error)
-                        return
-                    }
-                }
-
-                val selectedCard = payMyAccountViewModel.getCardDetail()
-                selectedCard?.amountEntered = amountEntered
-                payMyAccountViewModel.setPMACardInfo(selectedCard)
-
-                if (continueToPaymentButton?.text?.toString() == bindString(R.string.done)) {
-
-                    activity?.apply {
-                        if (isDoneButtonEnabled) {
-                            setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(selectedCard)))
-                            finish()
-                        } else {
-                            activity?.onBackPressed()
-                        }
-                    }
-                    return
-                }
-
-                navController?.navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        showKeyboard()
-    }
-
-    private fun showKeyboard() {
-        paymentAmountInputEditText?.requestFocus()
-        val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        hideKeyboard()
-    }
-
-    private fun hideKeyboard() {
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-        val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+        KeyboardUtils.hideKeyboard(activity)
     }
 }

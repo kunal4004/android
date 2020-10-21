@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pay_my_account_retry_on_error_dialog_fragment.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 

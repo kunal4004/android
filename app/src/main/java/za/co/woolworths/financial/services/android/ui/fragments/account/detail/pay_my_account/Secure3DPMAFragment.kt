@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.PayUPayResultRequest
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
 
 
 class Secure3DPMAFragment : Fragment() {

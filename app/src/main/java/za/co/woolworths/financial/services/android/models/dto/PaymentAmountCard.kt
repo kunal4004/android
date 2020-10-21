@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto
 
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.fragments.account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 
 class PaymentAmountCard(var amountEntered: String?="",
                         var paymentMethodList: MutableList<GetPaymentMethod>? = null,
