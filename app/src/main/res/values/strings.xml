@@ -1597,5 +1597,7 @@
     <string name="end_session_button_caption">yes, end session</string>
     <string name="pma_retry_error_title">Oops!</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="select_your_store">Select Your Store</string>
+    <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
 </resources>
 

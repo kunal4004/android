@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.graphics.Color
 import android.os.Bundle
@@ -28,9 +30,9 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
-import za.co.woolworths.financial.services.android.ui.adapters.ProvinceDropdownAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.SuburbDropdownAdapter
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.ProvinceAndSuburbSelectionActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.putEnumExtra
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
@@ -48,6 +50,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
     var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
     var rootView :View ? = null
+    var SUBURB_SELECTOR_REQUEST_CODE = 1717
+    var PROVINCE_SELECTOR_REQUEST_CODE = 1818
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootView == null)
@@ -123,12 +127,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         hideGetProvincesProgress()
         activity?.let { activity ->
             this.regions?.let {
-                ProvinceDropdownAdapter(activity, 0, it, ::onProvinceSelected).let {
-                    tvSelectedProvince?.apply {
-                        setAdapter(it)
-                        showDropDown()
-                    }
-                }
+                navigateToProvinceSelection(it)
             }
         }
     }
@@ -143,14 +142,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         if (suburbs.isNullOrEmpty()) {
             showNoStoresError()
         } else {
-            activity?.let { it ->
-                SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected).let {
-                    tvSelectedSuburb?.apply {
-                        setAdapter(it)
-                        showDropDown()
-                    }
-                }
-            }
+            navigateToSuburbSelection(suburbs)
         }
     }
 
@@ -434,6 +426,43 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     private fun isStoreClosed(validatedSuburbProducts: ValidatedSuburbProducts?): Boolean {
         val deliveryStatus: HashMap<String, Boolean?>? = validatedSuburbProducts?.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
         return (validatedSuburbProducts?.storeClosed == true && deliveryStatus?.get("01") == false)
+    }
+
+    override fun navigateToSuburbSelection(suburbs: List<Suburb>) {
+        activity?.let {
+            val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
+            intent.putExtra("SuburbList", Utils.toJson(suburbs))
+            intent.putEnumExtra(deliveryType)
+            startActivityForResult(intent, SUBURB_SELECTOR_REQUEST_CODE)
+        }
+    }
+
+    override fun navigateToProvinceSelection(regions: List<Province>) {
+        activity?.let {
+            val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
+            intent.putExtra("ProvinceList", Utils.toJson(regions))
+            startActivityForResult(intent, PROVINCE_SELECTOR_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                SUBURB_SELECTOR_REQUEST_CODE -> {
+                    val suburb: Suburb? = Utils.strToJson(data?.getStringExtra("Suburb"), Suburb::class.java) as Suburb
+                    suburb?.let {
+                        onSuburbSelected(it)
+                    }
+                }
+                PROVINCE_SELECTOR_REQUEST_CODE -> {
+                    val province: Province? = Utils.strToJson(data?.getStringExtra("Province"), Province::class.java) as Province
+                    province?.let {
+                        onProvinceSelected(it)
+                    }
+                }
+            }
+        }
     }
 
 }
