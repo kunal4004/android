@@ -217,7 +217,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
                     // on back to my account pressed (R.string.back_to_my_account_button)
                     PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
-                        payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.ADD)
+                        payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.RETRY)
                         mAvailableFundsNavHost?.navController?.navigateUp()
                     }
                 }
