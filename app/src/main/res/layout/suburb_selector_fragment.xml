@@ -21,7 +21,6 @@
         android:textColor="@color/black"
         android:textColorHint="@color/black_50"
         android:textSize="@dimen/fifteen_sp"
-        android:visibility="gone"
         android:textCursorDrawable="@drawable/cursor_custom_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

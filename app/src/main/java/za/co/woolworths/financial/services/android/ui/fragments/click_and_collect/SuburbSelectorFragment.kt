@@ -48,12 +48,9 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_your_suburb else R.string.select_your_store)
-        if (deliveryType == DeliveryType.DELIVERY) {
-            suburbInputValue?.apply {
-                visibility = View.VISIBLE
-                addTextChangedListener {
-                    suburbListAdapter?.filter?.filter(it.toString())
-                }
+        suburbInputValue?.apply {
+            addTextChangedListener {
+                suburbListAdapter?.filter?.filter(it.toString())
             }
         }
         loadSuburbsList()
