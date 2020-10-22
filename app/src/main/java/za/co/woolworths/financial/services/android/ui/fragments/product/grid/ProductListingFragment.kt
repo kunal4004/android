@@ -743,7 +743,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
 
                         417 -> resources?.let {
-                            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,SET_DELIVERY_LOCATION_REQUEST_CODE) }
+                            confirmDeliveryLocation()
                         }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)

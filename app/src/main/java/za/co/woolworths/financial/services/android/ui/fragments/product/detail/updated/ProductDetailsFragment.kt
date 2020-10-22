@@ -725,6 +725,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun responseFailureHandler(response: Response) {
+        if (response.code.equals("417")) {
+            confirmDeliveryLocation()
+            return
+        }
         activity?.apply {
             Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc)
         }

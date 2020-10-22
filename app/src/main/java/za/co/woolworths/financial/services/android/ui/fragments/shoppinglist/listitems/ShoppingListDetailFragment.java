@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kotlin.jvm.internal.Intrinsics;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
@@ -57,6 +59,8 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -79,7 +83,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 
-public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface {
+public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
     private final int DELIVERY_LOCATION_REQUEST = 2;
     public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
@@ -457,6 +461,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                     getResources().getString(R.string.set_delivery_location_button),
                     SET_DELIVERY_LOCATION_REQUEST_CODE);
         }
+    }
+
+    private final void confirmDeliveryLocation() {
+        FragmentManager fragmentManager = this.getChildFragmentManager();
+        ShoppingListDetailFragment.this.getActivity().runOnUiThread(() -> {
+            ConfirmDeliveryLocationFragment confirmDeliveryLocationFragment = ConfirmDeliveryLocationFragment.Companion.newInstance();
+            if (confirmDeliveryLocationFragment != null) {
+                confirmDeliveryLocationFragment.setCancelable(false);
+                confirmDeliveryLocationFragment.show(fragmentManager, ConfirmDeliveryLocationFragment.class.getSimpleName());
+            }
+        });
     }
 
     private void enableAddToCartButton(int visible) {
@@ -933,7 +948,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                         // Preferred Delivery Location has been reset on server
                         // As such, we give the user the ability to set their location again
                         if (addItemToCartResponse.response != null)
-                            requestDeliveryLocation(addItemToCartResponse.response.desc);
+                            confirmDeliveryLocation();
                         break;
 
                     case 440:
@@ -1082,4 +1097,13 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
 
+    @Override
+    public void onConfirmLocation() {
+        addItemsToCart();
+    }
+
+    @Override
+    public void onSetNewLocation() {
+        KotlinUtils.Companion.presentEditDeliveryLocationActivity(this.getActivity(), REQUEST_SUBURB_CHANGE, null);
+    }
 }
