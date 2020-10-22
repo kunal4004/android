@@ -9,8 +9,11 @@ import java.io.File
 import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.OneAppEvents
 import java.io.FileOutputStream
@@ -23,6 +26,7 @@ class WPdfViewerActivity : AppCompatActivity() {
     var fileData: ByteArray? = null
     var cacheFile: File? = null
     var gtmTag: String? = null
+    var navigatedFrom: String? = null
 
     companion object {
         const val FILE_NAME = "FILE_NAME"
@@ -35,9 +39,22 @@ class WPdfViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_oreder_tax_invoice)
-        Utils.updateStatusBarBackground(this, R.color.black)
         getBundleArgument()
+        //https://wigroup2.atlassian.net/browse/WOP-6922
+        // As of now changing color only for PL statements
+        if(StatementFragment.TAG == navigatedFrom){
+            Utils.updateStatusBarBackground(this)
+            setupToolbar()
+        } else {
+            Utils.updateStatusBarBackground(this, R.color.black)
+        }
         initView()
+    }
+
+    private fun setupToolbar() {
+        mToolbar.background = ContextCompat.getDrawable(this, R.color.white)
+        toolbarText.setTextColor(ContextCompat.getColor(this, R.color.black))
+        share.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_share_black))
     }
 
     private fun getBundleArgument() {
@@ -46,6 +63,7 @@ class WPdfViewerActivity : AppCompatActivity() {
             fileName = getString(FILE_NAME)
             fileData = getByteArray(FILE_VALUE)
             gtmTag = getString(GTM_TAG)
+            navigatedFrom = getString(AppConstant.NAVIGATED_FROM)
         }
     }
 
