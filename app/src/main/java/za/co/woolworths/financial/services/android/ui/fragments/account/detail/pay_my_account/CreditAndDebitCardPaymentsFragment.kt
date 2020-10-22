@@ -235,6 +235,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 val paymentMethod = Gson().toJson(cardInfo?.paymentMethodList)
                 payMyAccountPresenter?.setFirebaseEventForPayByCardNow()
 
+                payMyAccountViewModel.resetAmountEnteredToDefault()
                 when {
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.ERROR) -> {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
@@ -322,4 +323,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         view?.stopShimmer()
     }
 
+    override fun onResume() {
+        super.onResume()
+        queryServicePaymentMethod()
+    }
 }

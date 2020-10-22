@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -10,6 +11,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard;
 
 public class Account implements Serializable {
+
     @SerializedName("productOfferingId")
     @Expose
     public int productOfferingId;

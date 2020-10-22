@@ -2,10 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -15,7 +15,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.availabl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
@@ -40,8 +39,8 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
-            R.id.incPayMyAccountButton -> {
 
+            R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
@@ -51,19 +50,13 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                     return
                 }
 
-                val personalLoanAccount = mAvailableFundPresenter?.getAccount()
+                payMyAccountViewModel.resetAmountEnteredToDefault()
 
-                if (personalLoanAccount?.productOfferingGoodStanding != true) {
-                    val cardDetail = payMyAccountViewModel.getCardDetail()
-                    val accountApplyNow = mAvailableFundPresenter?.getBundle()
-                    ScreenManager.presentPayMyAccountActivity(activity, accountApplyNow, Gson().toJson(cardDetail))
-
-                } else {
-                    navigateToPayMyAccount {
-                        navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
-                    }
+                navigateToPayMyAccount {
+                    navController?.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
                 }
             }
+
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
                 navigateToRecentTransactionActivity("PL")
@@ -82,5 +75,9 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 }

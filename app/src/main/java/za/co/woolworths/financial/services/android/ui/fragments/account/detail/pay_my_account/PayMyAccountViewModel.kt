@@ -117,11 +117,12 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun setPMACardInfo(card: String) {
-        val cardInfo = Gson().fromJson(card, PaymentAmountCard::class.java)
-        paymentAmountCard.value = cardInfo
+        paymentAmountCard.value = Gson().fromJson(card, PaymentAmountCard::class.java)
     }
 
     fun getCardDetail(): PaymentAmountCard? = paymentAmountCard.value
+
+    fun getCardDetailInStringFormat(): String? = Gson().toJson(getCardDetail())
 
     fun setNavigationResult(onDismiss: OnBackNavigation) {
         onDialogDismiss.value = onDismiss
@@ -204,6 +205,8 @@ class PayMyAccountViewModel : ViewModel() {
     fun getTotalAmountDue(): String? {
         return getAccount()?.totalAmountDue?.let { formatAndRemoveNegativeSymbol(it) }
     }
+
+    fun getApplyNowAccountInStringFormat(): String? = Gson().toJson(getCardDetail()?.account)
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
         return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
@@ -331,5 +334,11 @@ class PayMyAccountViewModel : ViewModel() {
             bindString(R.string.done) -> done()
             else -> confirmPayment()
         }
+    }
+
+    fun resetAmountEnteredToDefault() {
+        val card = getCardDetail()
+        card?.amountEntered = getOverdueAmount()
+        setPMACardInfo(card)
     }
 }

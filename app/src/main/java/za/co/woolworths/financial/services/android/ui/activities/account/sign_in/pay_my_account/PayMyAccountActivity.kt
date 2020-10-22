@@ -45,6 +45,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.pay_my_account_activity)
 
+
         val payMyAccountFragmentContainer = supportFragmentManager.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
         navigationHost = payMyAccountFragmentContainer?.navController
 
@@ -63,8 +64,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
             val card = getString(PAYMENT_DETAIL_CARD_UPDATE, "")
 
-            val paymentAmountCard = Gson().fromJson(card, PaymentAmountCard::class.java)
-            payMyAccountViewModel.setPMACardInfo(paymentAmountCard)
+            payMyAccountViewModel.setPMACardInfo(Gson().fromJson(card, PaymentAmountCard::class.java))
 
             val graph = navigationHost?.graph
             graph?.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
@@ -128,25 +128,17 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         if (!payMyAccountViewModel.isDeleteCardListEmpty()) return
 
         when (currentFragment) {
-            is PMAManageCardFragment, is CreditAndDebitCardPaymentsFragment -> {
-                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
-                finish()
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-            }
-
+            is PMAManageCardFragment,
+            is CreditAndDebitCardPaymentsFragment,
             is PMA3DSecureProcessRequestFragment -> {
-                val cardDetail = payMyAccountViewModel.getCardDetail()
-                setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardDetail)))
-                finish()
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                closeActivity()
             }
-
             else -> {
                 when (navigationHost?.graph?.startDestination) {
-                    R.id.addNewPayUCardFragment, R.id.enterPaymentAmountFragment, R.id.pmaProcessRequestFragment -> {
-                        setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(payMyAccountViewModel.getCardDetail())))
-                        finish()
-                        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                    R.id.addNewPayUCardFragment,
+                    R.id.enterPaymentAmountFragment,
+                    R.id.pmaProcessRequestFragment -> {
+                        closeActivity()
                     }
                     else -> navigationHost?.popBackStack()
                 }
@@ -154,8 +146,15 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         }
     }
 
+    private fun closeActivity() {
+        setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
     val currentFragment: Fragment?
-        get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView)
+        get() = (supportFragmentManager.fragments.first()
+                as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

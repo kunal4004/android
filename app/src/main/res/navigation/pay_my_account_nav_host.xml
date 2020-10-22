@@ -175,7 +175,7 @@
     </fragment>
     <dialog
         android:id="@+id/displayVendorCardDetailFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PaymentMethodExistDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ShowAmountPopupFragment"
         android:label="DisplayVendorCardDetailFragment"
         tools:layout="@layout/pma_update_payment_fragment">
         <argument
