@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -75,9 +74,5 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 }

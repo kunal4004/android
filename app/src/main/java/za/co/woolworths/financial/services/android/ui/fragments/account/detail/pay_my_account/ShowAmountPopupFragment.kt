@@ -37,7 +37,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogWithoutAnimation
-        //payMyAccountViewModel.set
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

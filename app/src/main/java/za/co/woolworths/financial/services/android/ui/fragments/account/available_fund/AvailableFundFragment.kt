@@ -116,8 +116,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         payMyAccountViewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
                 PayMyAccountViewModel.OnBackNavigation.RETRY -> {
-                    isQueryPayUPaymentMethodComplete = false
-                    queryPaymentMethod()
+                    activity?.runOnUiThread {
+                        isQueryPayUPaymentMethodComplete = false
+                        queryPaymentMethod()
+                    }
                 }
                 else -> return@observe
             }
@@ -125,7 +127,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun queryPaymentMethod() {
-        when ((mAvailableFundPresenter?.isPersonalLoanAndStoreCardVisible() == true && !isQueryPayUPaymentMethodComplete)) {
+        when (!isQueryPayUPaymentMethodComplete) {
             true -> {
                 initShimmer()
                 startProgress()

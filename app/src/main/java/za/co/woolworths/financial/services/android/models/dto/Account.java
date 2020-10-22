@@ -10,7 +10,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard;
 
-public class Account implements Serializable {
+public class Account implements Serializable{
 
     @SerializedName("productOfferingId")
     @Expose

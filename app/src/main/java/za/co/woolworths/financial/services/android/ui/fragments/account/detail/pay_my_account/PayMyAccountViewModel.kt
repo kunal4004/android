@@ -307,11 +307,13 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun convertRandFormatToDouble(item: String?): Double {
-        return item?.replace("[R ]".toRegex(), "")?.toDouble() ?: 0.0
+        val number: String? = item?.replace("[R ]".toRegex(), "")
+        return if (number.isNullOrEmpty()) 0.0 else number.toDouble()
     }
 
     private fun convertRandFormatToInt(item: String?): Int {
-        return item?.replace("[,.R$ ]".toRegex(), "")?.toInt() ?: 0
+        val number: String? = item?.replace("[,.R$ ]".toRegex(), "")
+        return if (number.isNullOrEmpty()) 0 else number.toInt()
     }
 
     fun getAmountEnteredAfterTextChanged(item: String?): String? {
