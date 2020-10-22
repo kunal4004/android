@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -17,7 +18,6 @@ import android.text.*
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+import com.crashlytics.android.Crashlytics
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -406,6 +407,31 @@ class KotlinUtils {
             if (view?.isClickable != true) return
             view.isClickable = false
             view.postDelayed({ view.isClickable = true }, AppConstant.DELAY_900_MS)
+        }
+
+        /**
+         * Calling the convertToTranslucent method on platforms after Android 5.0
+         */
+        @SuppressLint("DiscouragedPrivateApi")
+        fun convertActivityToTranslucent(activity: Activity) {
+            try {
+                val getActivityOptions = Activity::class.java.getDeclaredMethod("getActivityOptions")
+                getActivityOptions.isAccessible = true
+                val options = getActivityOptions.invoke(activity)
+                val classes = Activity::class.java.declaredClasses
+                var translucentConversionListenerClazz: Class<*>? = null
+                for (clazz in classes) {
+                    if (clazz.simpleName.contains("TranslucentConversionListener")) {
+                        translucentConversionListenerClazz = clazz
+                    }
+                }
+                val convertToTranslucent = Activity::class.java.getDeclaredMethod("convertToTranslucent",
+                        translucentConversionListenerClazz, ActivityOptions::class.java)
+                convertToTranslucent.isAccessible = true
+                convertToTranslucent.invoke(activity, null, options)
+            } catch (t: Throwable) {
+                Crashlytics.log(t.message)
+            }
         }
     }
 }

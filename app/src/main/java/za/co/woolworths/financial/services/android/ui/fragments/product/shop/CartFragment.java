@@ -873,6 +873,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Province province = new Province();
 				province.name = data.provinceName;
+				province.id = data.provinceId;
 				if (cartResponse.orderSummary.suburb != null) {
 					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb));
 					setDeliveryLocation(Utils.getPreferredDeliveryLocation());
@@ -1376,7 +1377,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (data == null || data.globalMessages == null || mRemoveAllItemFromCartTapped) return;
 		GlobalMessages globalMessages = data.globalMessages;
 
-		if (globalMessages.getQualifierMessages() == null) return;
+		if (globalMessages.getQualifierMessages() == null || globalMessages.getQualifierMessages().isEmpty())
+			return;
 
 		String qualifierMessage = globalMessages.getQualifierMessages().get(0);
 

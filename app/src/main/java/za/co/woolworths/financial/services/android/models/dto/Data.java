@@ -29,4 +29,7 @@ public class Data {
 	public VoucherDetails voucherDetails;
 
 	public ArrayList<VoucherErrorMessage> messages;
+
+	public String provinceId;
+
 }

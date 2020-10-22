@@ -459,6 +459,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private void disableRefresh() {
         if (mUpdateMyAccount != null)
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+        imRefreshAccount.setVisibility(View.GONE);
         imRefreshAccount.setEnabled(false);
     }
 
@@ -1091,9 +1092,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 					return;
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
 						.setTarget(creditReportIcon)
-						.setTitle(R.string.get_your_free_credit_report)
+						.setTitle(R.string.get_a_free_credit_score)
 						.setDescription(R.string.get_your_free_credit_report_desc)
-						.setActionText(R.string.get_started)
+						.setActionText(R.string.get_started_now)
 						.setImage(R.drawable.ic_statements)
 						.setAction(listener)
 						.setShapePadding(48)
