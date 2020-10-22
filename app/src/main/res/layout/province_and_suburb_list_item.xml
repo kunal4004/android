@@ -5,16 +5,16 @@
     android:layout_height="@dimen/fifty_dp"
     android:background="@color/white"
     android:paddingStart="@dimen/twenty_four_dp"
-    android:paddingEnd="@dimen/twenty_four_dp"
-    >
+    android:paddingEnd="@dimen/twenty_four_dp">
 
     <CheckBox
         android:id="@+id/selector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:button="@drawable/shopping_list_item_selector"
+        android:clickable="false"
         app:layout_constraintBottom_toBottomOf="@id/name"
         app:layout_constraintEnd_toEndOf="parent"
-        android:button="@drawable/shopping_list_item_selector"
         app:layout_constraintTop_toTopOf="@id/name" />
 
     <TextView
@@ -23,7 +23,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/sixteen_dp"
-        android:clickable="false"
         android:textColor="@color/black_50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/selector"
