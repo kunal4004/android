@@ -20,4 +20,6 @@ public class Data {
 	public GlobalMessages globalMessages;
 
 	public String jSessionId;
+
+	public String provinceId;
 }
