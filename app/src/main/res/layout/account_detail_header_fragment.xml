@@ -22,7 +22,7 @@
             android:letterSpacing="0.1"
             android:text="@string/my_card_title"
             android:textAllCaps="true"
-            android:textColor="@color/drawer_color"
+            android:textColor="@color/black"
             android:textSize="12sp"
             tools:ignore="UnusedAttribute" />
     </com.facebook.shimmer.ShimmerFrameLayout>

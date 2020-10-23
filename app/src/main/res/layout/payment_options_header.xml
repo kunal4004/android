@@ -72,7 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mToolbar"
-        app:srcCompat="@drawable/w_gold_credit_card" />
+        app:srcCompat="@drawable/w_store_card" />
 
     <TextView
         android:id="@+id/creditCardPaymentOptionTextView"

@@ -41,7 +41,7 @@
             android:focusable="true"
             android:orientation="vertical"
             android:paddingStart="16dp"
-            android:paddingTop="@dimen/twenty_four_dp"
+            android:paddingTop="@dimen/thirty_two_dp"
             android:paddingEnd="@dimen/ten_dp">
 
             <RelativeLayout
@@ -100,11 +100,13 @@
                 android:id="@+id/tvIncreaseLimitDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/twenty_dp"
                 android:layout_marginEnd="@dimen/thirty_one_dp"
                 android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:fontFamily="@font/myriad_pro_regular_otf"
                 android:text="@string/increase_limit_desc"
                 android:textColor="@color/offer_active_desc"
+                android:textSize="@dimen/fifteen_dp"
                 android:visibility="gone" />
 
             <LinearLayout

@@ -90,7 +90,7 @@
     <color name="light_gray_background">#60D8D8D8</color>
     <color name="semi_transparent">#20ffffff</color>
     <color name="searchBarHintColor">#20000000</color>
-    <color name="transaction_date_color">#66030303</color>
+    <color name="transaction_date_color">#4c4c4c</color>
     <color name="status_dark_green">#A5B52B</color>
     <color name="lighter_gray_background">#30D8D8D8</color>
     <color name="arrears_red_color_code">#F43F37</color>

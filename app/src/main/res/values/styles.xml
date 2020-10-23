@@ -978,6 +978,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginRight">@dimen/sixteen_dp</item>
         <item name="WTextView_font">medium_bold</item>
     </style>
@@ -993,7 +994,7 @@
 
     <style name="layout_without_top_border">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/fifty_dp</item>
         <item name="android:minHeight">@dimen/fifty_dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
@@ -1587,7 +1588,7 @@
     </style>
 
     <style name="dialog_description_text_style" parent="dialog_title_text_style">
-        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textSize">@dimen/fifteen_dp</item>
         <item name="android:textColor">@color/gray</item>
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:lineSpacingMultiplier">1.13</item>
@@ -1835,6 +1836,8 @@
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
         <item name="android:textSize">@dimen/account_thirteen_sp</item>
+        <item name="android:paddingTop">@dimen/one_dp</item>
+        <item name="android:paddingBottom">@dimen/one_dp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:letterSpacing" tools:targetApi="lollipop">0.03</item>
@@ -1843,7 +1846,8 @@
     <style name="accountSalesTextViewAmountStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/available_fund_16dp_margin</item>
+        <item name="android:layout_marginBottom">@dimen/store_card_enter_otp_title_top_margin_32dp
+        </item>
         <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
         <item name="android:textSize">@dimen/available_fund_16sp_amount</item>
         <item name="android:textColor">@color/white</item>
@@ -1853,7 +1857,8 @@
     <style name="accountSalesTextViewStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/available_fund_16dp_margin</item>
+        <item name="android:layout_marginBottom">@dimen/store_card_enter_otp_title_top_margin_32dp
+        </item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
@@ -1919,9 +1924,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">0.12</item>
-        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingStart">@dimen/eight_dp</item>
         <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingEnd">@dimen/eight_dp</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/white</item>
