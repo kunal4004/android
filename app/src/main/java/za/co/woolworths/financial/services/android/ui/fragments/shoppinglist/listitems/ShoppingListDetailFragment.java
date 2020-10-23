@@ -82,6 +82,9 @@ import static android.view.View.VISIBLE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_LOGIN_TIMEOUT_440;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
@@ -324,10 +327,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     public void onShoppingListItemsResponse(ShoppingListItemsResponse shoppingListItemsResponse) {
         switch (shoppingListItemsResponse.httpCode) {
-            case 200:
+            case HTTP_OK:
                 loadShoppingListItems(shoppingListItemsResponse);
                 break;
-            case 440:
+            case HTTP_LOGIN_TIMEOUT_440:
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingListItemsResponse.response.stsParams, getActivity());
                 break;
             default:
@@ -722,7 +725,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
-        if (skusInventoryForStoreResponse.httpCode == 200) {
+        if (skusInventoryForStoreResponse.httpCode == HTTP_OK) {
             String fulFillmentType = null;
             for (FulfillmentStoreMap mapId : fulfillmentStoreMapArrayList) {
                 if (mapId.getStoreID().equalsIgnoreCase(skusInventoryForStoreResponse.storeId) && !mapId.getInventoryCompletedForStore()) {
@@ -940,18 +943,18 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 switch (addItemToCartResponse.httpCode) {
-                    case 200:
+                    case HTTP_OK:
                         onAddToCartSuccess(addItemToCartResponse);
                         break;
 
-                    case 417:
+                    case HTTP_EXPECTATION_FAILED_417:
                         // Preferred Delivery Location has been reset on server
                         // As such, we give the user the ability to set their location again
                         if (addItemToCartResponse.response != null)
                             confirmDeliveryLocation();
                         break;
 
-                    case 440:
+                    case HTTP_LOGIN_TIMEOUT_440:
                         if (addItemToCartResponse.response != null)
                             onSessionTokenExpired(addItemToCartResponse.response);
                         break;

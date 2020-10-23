@@ -92,6 +92,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var defaultGroupKey: String? = null
     private var mFreeGiftPromotionalImage: String? = null
     private var EDIT_LOCATION_LOGIN_REQUEST = 2020
+    private var HTTP_EXPECTATION_FAILED_417: String = "417"
 
 
     companion object {
@@ -725,7 +726,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun responseFailureHandler(response: Response) {
-        if (response.code.equals("417")) {
+        if (response.code.equals(HTTP_EXPECTATION_FAILED_417)) {
             confirmDeliveryLocation()
             return
         }
