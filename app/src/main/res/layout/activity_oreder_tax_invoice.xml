@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/default_background"
     android:orientation="vertical"
     tools:context="za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity">
 
@@ -71,6 +71,7 @@
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/three_dp"/>
 
 </LinearLayout>

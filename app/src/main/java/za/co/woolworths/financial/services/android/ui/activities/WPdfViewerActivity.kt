@@ -54,6 +54,7 @@ class WPdfViewerActivity : AppCompatActivity() {
     private fun setupToolbar() {
         mToolbar.background = ContextCompat.getDrawable(this, R.color.white)
         toolbarText.setTextColor(ContextCompat.getColor(this, R.color.black))
+        done.setTextColor(ContextCompat.getColor(this, R.color.black))
         share.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_share_black))
     }
 
