@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.os.Build
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +9,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -370,14 +369,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 foodDeliveryDateMessage?.apply {
                     val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name + ", " + selectedProvince?.name, it.firstAvailableFoodDeliveryDate
                             ?: "")
-                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
+                    text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
 
                 otherDeliveryDateMessage?.apply {
                     val message = getString(R.string.first_available_other_delivery_date, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name+ ", " + selectedProvince?.name, it.firstAvailableOtherDeliveryDate
                             ?: "")
-                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
+                    text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
             }
