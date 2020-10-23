@@ -10,6 +10,8 @@ class AppConstant {
 
     companion object {
 
+        const val NAVIGATED_FROM: String = "NAVIGATED_FROM"
+
         //Delays
         const val DELAY_900_MS: Long = 900
     }
