@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
@@ -1117,11 +1118,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             viewToScrollUp = imgStoreCardApplyNow;
             actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
         } else {
-            if (!unavailableAccounts.contains("SC")) {
+            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
                 viewToScrollUp = imgStoreCardContainer;
-            } else if (!unavailableAccounts.contains("CC")) {
+            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
                 viewToScrollUp = imgCreditCard;
-            } else if (!unavailableAccounts.contains("PL")) {
+            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
                 viewToScrollUp = imgPersonalLoanCardContainer;
             }
         }
