@@ -1600,5 +1600,6 @@
     <string name="get_started_now">Get started now</string>
     <string name="account_holder_lable">Account Holder:</string>
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
+    <string name="transaction_date_value">03 / 07 / 2016</string>
 </resources>
 

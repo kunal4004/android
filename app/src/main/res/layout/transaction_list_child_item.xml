@@ -12,7 +12,7 @@
         android:layout_marginEnd="@dimen/eight_dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:letterSpacing="0.1"
-        android:text="03 / 07 / 2016"
+        android:text="@string/transaction_date_value"
         android:textColor="@color/transaction_date_color"
         android:textSize="@dimen/fourteen_dp"
         app:layout_constraintEnd_toStartOf="@+id/transactionAmount"
