@@ -1622,5 +1622,13 @@
     <string name="promo_code_applied_toast_message">Promo Code has been applied</string>
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
+    <string name="discounts">Discounts</string>
+    <string name="company_discount">Company Discount</string>
+    <string name="your_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="total_discount">Total Discount</string>
+    <string name="delivery_fee">Delivery Fee</string>
+    <string name="your_cart">Your Cart</string>
+    <string name="promo_code_discount">Promo Code Applied</string>
+    <string name="order_total">ORDER TOTAL*</string>
 </resources>
 

@@ -164,7 +164,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private final String TAG_ADDED_TO_LIST_TOAST ="ADDED_TO_LIST";
 	private VoucherDetails voucherDetails;
 	public static final int REDEEM_VOUCHERS_REQUEST_CODE = 1979;
-	private TextView basketTotal;
+	private TextView orderTotal;
 	private RelativeLayout orderTotalLayout;
 	private NestedScrollView nestedScrollView;
 	public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
@@ -215,7 +215,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		deliverLocationIcon = view.findViewById(R.id.deliverLocationIcon);
 		editLocation = view.findViewById(R.id.editLocation);
 		deliverLocationRightArrow = view.findViewById(R.id.iconCaretRight);
-		basketTotal = view.findViewById(R.id.basketTotal);
+		orderTotal = view.findViewById(R.id.orderTotal);
 		orderTotalLayout = view.findViewById(R.id.orderTotalLayout);
 		orderTotalLayout.setOnClickListener(this);
 		nestedScrollView = view.findViewById(R.id.nestedScrollView);
@@ -450,7 +450,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
-			updateBasketTotal();
+			updateOrderTotal();
 			showRedeemVoucherFeatureWalkthrough();
 		} else {
 			updateCartSummary(0);
@@ -1457,9 +1457,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void updateBasketTotal() {
+	public void updateOrderTotal() {
 		if (orderSummary != null) {
-			basketTotal.setText(WFormatter.formatAmount(orderSummary.basketTotal));
+			orderTotal.setText(WFormatter.formatAmount(orderSummary.total));
 		}
 	}
 
