@@ -601,8 +601,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailView(productList: ProductList) {
-        mSubCategoryName = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(mSubCategoryName, productList)
+        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList)
 
     }
 
