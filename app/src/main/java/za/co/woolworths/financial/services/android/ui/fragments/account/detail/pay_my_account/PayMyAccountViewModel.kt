@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import retrofit2.Call
+import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
+import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -16,14 +18,13 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
 import java.util.*
 
 class PayMyAccountViewModel : ViewModel() {
 
+    private var mQueryServicePostPayU: Call<PayUResponse>? = null
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
     private var mQueryServiceGetPaymentMethods: Call<PaymentMethodsResponse>? = null
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
@@ -31,10 +32,13 @@ class PayMyAccountViewModel : ViewModel() {
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
+    private var isQueryServiceGetRedirectionCompleted: Boolean = false
 
     var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
+
+    var pma3dSecureRedirection: PMARedirection? = null
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }
     enum class OnBackNavigation { RETRY, REMOVE, ADD, NONE, MAX_CARD_LIMIT } // TODO: Navigation graph: Communicate result from dialog to fragment destination
@@ -189,6 +193,8 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
+    private fun getProductOfferingIdInStringFormat(): String? = getAccount()?.productOfferingId?.toString()
+
     fun getApplyNowState() = getCardDetail()?.account?.first
 
     fun getPaymentMethodListInStringFormat(): String? {
@@ -264,12 +270,18 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAddCardResponse() = addCardResponse.value
 
-    fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit) {
+    fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit, failure: () -> Unit) {
         deleteCardList?.add(Pair(card, position))
-        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token
-                ?: ""), object : IGenericAPILoaderView<Any> {
+        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
-                showResultOnEmptyList(result)
+                (response as? DeleteResponse)?.apply {
+                    when (httpCode) {
+                        200 -> showResultOnEmptyList(result)
+                        else -> {
+                            showResultOnEmptyList(result)
+                            failure()}
+                    }
+                }
             }
 
             override fun onFailure(error: Throwable?) {
@@ -278,9 +290,7 @@ class PayMyAccountViewModel : ViewModel() {
                         deleteCardList?.clear()
                         result()
                     }
-                    else -> {
-                        showResultOnEmptyList(result)
-                    }
+                    else -> showResultOnEmptyList(result)
                 }
             }
         })
@@ -296,6 +306,7 @@ class PayMyAccountViewModel : ViewModel() {
     override fun onCleared() {
         cancelRetrofitRequest(mQueryServiceGetPaymentMethods)
         cancelRetrofitRequest(mQueryServiceDeletePaymentMethod)
+        cancelRetrofitRequest(mQueryServicePostPayU)
         super.onCleared()
     }
 
@@ -342,5 +353,82 @@ class PayMyAccountViewModel : ViewModel() {
         val card = getCardDetail()
         card?.amountEntered = getOverdueAmount()
         setPMACardInfo(card)
+    }
+
+
+    private fun payURequestBody(cardDetailArgs: AddCardResponse?): PayUPay {
+
+        val cardInfo = getCardDetail()
+        val amountEntered = cardInfo?.amountEnteredInInt() ?: 0
+
+        val creditCardCVV = cardDetailArgs?.card?.cvv ?: ""
+        val token = cardDetailArgs?.token ?: "0"
+        val type = cardDetailArgs?.card?.type ?: ""
+        val isSaveCardChecked = cardDetailArgs?.saveChecked ?: false
+        val currency = "ZAR"
+
+        val account = cardInfo?.account?.second
+        val accountNumber = account?.accountNumber ?: "0"
+        val productOfferingId = account?.productOfferingId ?: 0
+        val paymentMethod = PayUPaymentMethod(token, creditCardCVV, type)
+
+        return PayUPay(amountEntered, currency, productOfferingId, isSaveCardChecked, paymentMethod, accountNumber)
+    }
+
+    // Retrieve 3d secure merchant url
+    fun queryServicePostPayU(cardDetailArgs: AddCardResponse?, result: (PayUResponse?) -> Unit, stsParams: (String?) -> Unit, generalHttpCodeFailure: (String?) -> Unit, failure: (Throwable?) -> Unit) {
+        val payURequestBody = payURequestBody(cardDetailArgs)
+        mQueryServicePostPayU = request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
+
+            override fun onSuccess(response: Any?) {
+                (response as? PayUResponse)?.apply {
+                    isQueryServiceGetRedirectionCompleted = true
+                    when (httpCode) {
+                        200 -> {
+                            pma3dSecureRedirection = this.redirection
+                            result(this)
+                        }
+                        440 -> this.response.stsParams?.let { params -> stsParams(params) }
+                        else -> this.response.desc?.let { desc -> generalHttpCodeFailure(desc) }
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                isQueryServiceGetRedirectionCompleted = false
+                failure(error)
+            }
+        })
+    }
+
+    fun isRedirectionAPICompleted() = isQueryServiceGetRedirectionCompleted
+
+    fun getMerchantSiteAndMerchantUrl(): Pair<String?, String?> {
+        val merchantSiteUrl = pma3dSecureRedirection?.merchantSiteUrl?.replace("[\\u003d]".toRegex(), "=")
+                ?: ""
+        val merchantUrl = pma3dSecureRedirection?.url?.replace("[\\u003d]".toRegex(), "=") ?: ""
+        return Pair(merchantSiteUrl, merchantUrl)
+    }
+
+    fun constructPayUPayResultCallback(url: String?, stopLoading: () -> Unit, result: (PayUPayResultRequest) -> Unit) {
+        val merchantSiteUrl = getMerchantSiteAndMerchantUrl().first
+
+        if (merchantSiteUrl?.let { url?.contains(it) } == true) {
+            stopLoading()
+            val siteUrl = url?.substring(url.indexOf("?"), url.length)
+
+            val splitSiteUrlList = siteUrl?.split("&")
+            val customer = splitSiteUrlList?.get(0)
+            val paymentId = splitSiteUrlList?.get(1)
+            val chargeId = splitSiteUrlList?.get(2)
+            val status = splitSiteUrlList?.get(3)
+
+            result(PayUPayResultRequest(
+                    customer?.substring(customer.indexOf("=").plus(1), customer.length) ?: "",
+                    paymentId?.substring(paymentId.indexOf("=").plus(1), paymentId.length) ?: "",
+                    chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length) ?: "",
+                    status?.substring(status.indexOf("=").plus(1), status.length) ?: "",
+                    getProductOfferingIdInStringFormat() ?: ""))
+        }
     }
 }

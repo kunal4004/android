@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.util.wenum.LifecycleType
 
 class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
+    private var mDeletedPaymentMethodPosition: Int = 0
     private var temporarySelectedPosition: Int = 0
     private var accountInfo: String? = null
     private var paymentMethod: String? = null
@@ -186,6 +187,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private fun removeCardProduct(position: Int) {
         deletedPaymentMethod = mPaymentMethodList?.get(position)
+        mDeletedPaymentMethodPosition = position
         mPaymentMethodList?.removeAt(position)
         manageCardAdapter?.notifyItemRemoved(position)
         manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount ?: 0)
@@ -196,15 +198,21 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
         if (NetworkManager.getInstance().isConnectedToNetwork(context)) {
             deleteProgressVisibility(true)
-            payMyAccountViewModel.queryServiceDeletePaymentMethod(deletedPaymentMethod, position) {
-                    deleteProgressVisibility(false)
-
-            }
+            payMyAccountViewModel.queryServiceDeletePaymentMethod(deletedPaymentMethod, position, {
+                deleteProgressVisibility(false)
+            }, {
+                // Add deleted card to list
+                deletedPaymentMethod?.let { item -> mPaymentMethodList?.add(mDeletedPaymentMethodPosition, item) }
+                manageCardAdapter?.notifyItemInserted(position)
+                
+                // Display delete card popup
+                navController?.navigate(R.id.action_manageCardFragment_to_PMADeleteCardAPIErrorFragment)
+            })
 
             // Disable use this card button when no item is selected
             useThisCardButton?.isEnabled = !payMyAccountViewModel.isPaymentMethodListChecked()
 
-            // set and display add new card as start destination in graph
+            // Set and display add new card as start destination in graph
             if (mPaymentMethodList?.isEmpty() == true) {
 
                 val card = payMyAccountViewModel.getCardDetail()
@@ -290,10 +298,10 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
         }
 
         override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-            //Disable swipe if card is expired
+            //Disable swipe if card is expired or deleteCardIsRunning
             val position = viewHolder.adapterPosition
             val swipedProduct = mPaymentMethodList?.get(position)
-            if (swipedProduct?.cardExpired == true) return 0
+            if (swipedProduct?.cardExpired == true || !payMyAccountViewModel.isDeleteCardListEmpty()) return 0
             return super.getSwipeDirs(recyclerView, viewHolder)
         }
 

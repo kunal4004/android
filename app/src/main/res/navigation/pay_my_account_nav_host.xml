@@ -138,6 +138,9 @@
         <action
             android:id="@+id/action_manageCardFragment_to_PMATenCardLimitDialogFragment"
             app:destination="@id/PMATenCardLimitDialogFragment" />
+        <action
+            android:id="@+id/action_manageCardFragment_to_PMADeleteCardAPIErrorFragment"
+            app:destination="@id/PMADeleteCardAPIErrorFragment" />
     </fragment>
     <fragment
         android:id="@+id/pmaProcessRequestFragment"
@@ -248,4 +251,9 @@
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PMATenCardLimitDialogFragment"
         android:label="PMATenCardLimitDialogFragment"
         tools:layout="@layout/pma_ten_card_limit_exceed_fragment" />
+    <dialog
+        android:id="@+id/PMADeleteCardAPIErrorFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PMADeleteCardAPIErrorFragment"
+        android:label="PMADeleteCardAPIErrorFragment"
+        tools:layout="@layout/error_dialog_fragment" />
 </navigation>

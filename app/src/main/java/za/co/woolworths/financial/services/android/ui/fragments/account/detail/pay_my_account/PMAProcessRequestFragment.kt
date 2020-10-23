@@ -18,15 +18,11 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
-import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.lang.Exception
@@ -43,7 +39,6 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
     private var cardDetailArgs: AddCardResponse? = null
     private var accountArgs: Account? = null
     private var navController: NavController? = null
-    private var hasPMAPostPayUPayCompleted: Boolean = false
     private var callUsNumber: String? = "0861 50 20 20"
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -115,8 +110,8 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         activity?.let { activity ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
-                    when (hasConnection && !hasPMAPostPayUPayCompleted) {
-                        true -> postPayUMethod()
+                    when (hasConnection && !payMyAccountViewModel.isRedirectionAPICompleted()) {
+                        true -> queryServicePostPayU()
                         else -> return
                     }
                 }
@@ -144,67 +139,34 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         }
     }
 
-    private fun postPayUMethod() {
-        val cardInfo = payMyAccountViewModel.getCardDetail()
-        val account = cardInfo?.account?.second
-        val payURequestBody = payURequestBody(cardDetailArgs, account)
+    private fun queryServicePostPayU() {
         startSpinning()
-        request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
+        payMyAccountViewModel.queryServicePostPayU(cardDetailArgs, { result ->
+            fragmentIsVisible()
+            stopSpinning(true)
+            val options = NavOptions.Builder().setPopUpTo(R.id.pmaProcessRequestFragment, true).build()
+            navController?.navigate(PMAProcessRequestFragmentDirections.actionPMAProcessRequestFragmentToSecure3DPMAFragment(accountArgs, result?.redirection), options)
+        }, { stsParams ->
+            fragmentIsVisible()
+            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, activity)
 
-            override fun onSuccess(response: Any?) {
-                if (!isAdded) return
-                isAPICallSuccessFul = true
-                hasPMAPostPayUPayCompleted = true
-                (response as? PayUResponse)?.apply {
-                    when (httpCode) {
-                        200 -> {
-                            stopSpinning(true)
-                            val options = NavOptions.Builder().setPopUpTo(R.id.pmaProcessRequestFragment, true).build()
-                            navController?.navigate(PMAProcessRequestFragmentDirections.actionPMAProcessRequestFragmentToSecure3DPMAFragment(accountArgs, redirection), options)
-                        }
-                        440 -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, activity)
-                        502 -> {
-                            if (response.response.code.startsWith("P0"))
-                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
-                            else
-                                response.response.desc?.let { desc -> updateUIOnFailure(desc) }
-                        }
-                        else -> {
-                            response.response.desc?.let { desc -> updateUIOnFailure(desc) }
-                        }
-                    }
-                }
-            }
+        }, { errorDesc ->
+            fragmentIsVisible()
+            updateUIOnFailure(errorDesc)
 
-            override fun onFailure(error: Throwable?) {
-                hasPMAPostPayUPayCompleted = false
-                activity?.apply {
-                    if (!isAdded) return
-                    stopSpinning(false)
-                    if (error is ConnectException) {
-                        ErrorHandlerView(this).showToast()
-                    }
+        }, { error ->
+            fragmentIsVisible()
+            activity?.apply {
+                stopSpinning(false)
+                if (error is ConnectException) {
+                    ErrorHandlerView(this).showToast()
                 }
             }
         })
     }
 
-    private fun payURequestBody(cardDetailArgs: AddCardResponse?, accountArgs: Account?): PayUPay {
-
-        val amountEntered = payMyAccountViewModel.getCardDetail()?.amountEnteredInInt() ?: 0
-
-        val creditCardCVV = cardDetailArgs?.card?.cvv ?: ""
-        val token = cardDetailArgs?.token ?: "0"
-        val type = cardDetailArgs?.card?.type ?: ""
-        val isSaveCardChecked = cardDetailArgs?.saveChecked ?: false
-        val currency = "ZAR"
-
-        val account = payMyAccountViewModel.getCardDetail()?.account?.second
-        val accountNumber = account?.accountNumber ?: "0"
-        val productOfferingId = account?.productOfferingId ?: 0
-        val paymentMethod = PayUPaymentMethod(token, creditCardCVV, type)
-
-        return PayUPay(amountEntered, currency, productOfferingId, isSaveCardChecked, paymentMethod, accountNumber)
+    private fun fragmentIsVisible() {
+        if (!isAdded) return
     }
 
     override fun onClick(view: View?) {
@@ -212,7 +174,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
             R.id.btnRetryProcessPayment -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     showPMAProcess()
-                    postPayUMethod()
+                    queryServicePostPayU()
                 } else {
                     ErrorHandlerView(activity).showToast()
                 }
