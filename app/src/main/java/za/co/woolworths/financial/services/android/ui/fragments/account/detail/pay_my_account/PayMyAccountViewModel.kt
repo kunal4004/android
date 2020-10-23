@@ -10,7 +10,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -47,9 +46,8 @@ class PayMyAccountViewModel : ViewModel() {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
     }
 
-    fun createCard(): Pair<Pair<ApplyNowState, Account>?, AddCardResponse> {
+    fun createCard(): AddCardResponse {
         val paymentMethod = getSelectedPaymentMethodCard()
-        val selectedAccountProduct = getCardDetail()?.account
         val cvvNumber = getCVVNumber()
         val expiryDate = paymentMethod?.expirationDate?.split("/")
         val expDate = expiryDate?.get(0) ?: ""
@@ -58,8 +56,7 @@ class PayMyAccountViewModel : ViewModel() {
         val pmaCard = PMACard(paymentMethod?.cardNumber
                 ?: "", "", expDate, expYear, cvvNumber, 1, paymentMethod?.vendor
                 ?: "", paymentMethod?.type ?: "")
-        return Pair(selectedAccountProduct, AddCardResponse(paymentMethod?.token
-                ?: "", pmaCard, false))
+        return AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
     }
 
     fun getPaymentMethodList(): MutableList<GetPaymentMethod>? {
@@ -125,8 +122,6 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getCardDetail(): PaymentAmountCard? = paymentAmountCard.value
-
-    fun getCardDetailInStringFormat(): String? = Gson().toJson(getCardDetail())
 
     fun setNavigationResult(onDismiss: OnBackNavigation) {
         onDialogDismiss.value = onDismiss
@@ -197,10 +192,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getApplyNowState() = getCardDetail()?.account?.first
 
-    fun getPaymentMethodListInStringFormat(): String? {
-        val paymentMethodList = getPaymentMethodList()
-        return Gson().toJson(paymentMethodList)
-    }
+    fun getAccountWithApplyNowState() = getCardDetail()?.account
 
     fun getAccount() = getCardDetail()?.account?.second
 
@@ -211,8 +203,6 @@ class PayMyAccountViewModel : ViewModel() {
     fun getTotalAmountDue(): String? {
         return getAccount()?.totalAmountDue?.let { formatAndRemoveNegativeSymbol(it) }
     }
-
-    fun getApplyNowAccountInStringFormat(): String? = Gson().toJson(getCardDetail()?.account)
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
         return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
@@ -272,14 +262,16 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit, failure: () -> Unit) {
         deleteCardList?.add(Pair(card, position))
-        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
+        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token
+                ?: ""), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? DeleteResponse)?.apply {
                     when (httpCode) {
                         200 -> showResultOnEmptyList(result)
                         else -> {
                             showResultOnEmptyList(result)
-                            failure()}
+                            failure()
+                        }
                     }
                 }
             }
@@ -376,8 +368,8 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     // Retrieve 3d secure merchant url
-    fun queryServicePostPayU(cardDetailArgs: AddCardResponse?, result: (PayUResponse?) -> Unit, stsParams: (String?) -> Unit, generalHttpCodeFailure: (String?) -> Unit, failure: (Throwable?) -> Unit) {
-        val payURequestBody = payURequestBody(cardDetailArgs)
+    fun queryServicePostPayU(result: (PayUResponse?) -> Unit, stsParams: (String?) -> Unit, generalHttpCodeFailure: (String?) -> Unit, failure: (Throwable?) -> Unit) {
+        val payURequestBody = payURequestBody(getAddCardResponse())
         mQueryServicePostPayU = request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
 
             override fun onSuccess(response: Any?) {

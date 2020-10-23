@@ -21,9 +21,10 @@ import java.util.*
 
 class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
 
-    private var navController: NavController? = null
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    var mAddCardResponse : AddCardResponse? = null
+
+    private var navController: NavController? = null
+    private var mAddCardResponse: AddCardResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,8 +83,8 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.saveCardPayNowButton -> {
                 mAddCardResponse?.saveChecked = pmaSaveCardCheckbox.isChecked
-                val account = payMyAccountViewModel.getCardDetail()?.account?.second
-                val navigateToProcessPayment = SaveCardAndPayNowFragmentDirections.actionSaveCardAndPayNowFragmentToPMAProcessRequestFragment(account, mAddCardResponse)
+                mAddCardResponse?.let { item -> payMyAccountViewModel.setAddCardResponse(item) }
+                val navigateToProcessPayment = SaveCardAndPayNowFragmentDirections.actionSaveCardAndPayNowFragmentToPMAProcessRequestFragment()
                 val options = NavOptions.Builder().setPopUpTo(R.id.saveCardAndPayNowFragment, true).build()
                 navController?.navigate(navigateToProcessPayment, options)
             }

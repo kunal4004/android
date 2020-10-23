@@ -359,13 +359,11 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     override fun navigateToPaymentOptionActivity() {
-        val cardDetail = Gson().toJson(payMyAccountViewModel.getCardDetail())
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair, cardDetail) }
+        activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
     override fun navigateToPayMyAccountActivity() {
-        val cardDetail = Gson().toJson(payMyAccountViewModel.getCardDetail())
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mCardPresenterImpl?.mApplyNowAccountKeyPair, cardDetail) }
+        activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
     private fun hideCLIView() {

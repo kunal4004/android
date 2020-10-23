@@ -224,12 +224,12 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     override fun navigateToPaymentOptionsActivity() {
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
+        activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
     override fun navigateToPayMyAccountActivity() {
         if (fragmentAlreadyAdded()) return
-        activity?.let { activity -> ScreenManager.presentPayMyAccountActivity(activity, mAvailableFundPresenter?.getBundle(), Gson().toJson(payMyAccountViewModel.getCardDetail())) }
+        activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
     override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {

@@ -16,16 +16,15 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
 import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_ACCOUNT_INFO
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_PAYMENT_METHOD
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAManageCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType
 
@@ -38,13 +37,13 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     companion object {
         const val PAY_MY_ACCOUNT_REQUEST_CODE = 8003
         const val PAYMENT_DETAIL_CARD_UPDATE = "PAYMENT_DETAIL_CARD_UPDATE"
+        const val PAY_MY_ACCOUNT_BUNDLE_EXTRAS = "PAY_MY_ACCOUNT_BUNDLE_EXTRAS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.pay_my_account_activity)
-
 
         val payMyAccountFragmentContainer = supportFragmentManager.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
         navigationHost = payMyAccountFragmentContainer?.navController
@@ -58,9 +57,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     private fun setNavHostStartDestination() {
         intent?.extras?.apply {
             val args = Bundle()
-            args.putString(GET_ACCOUNT_INFO, getString(GET_ACCOUNT_INFO, ""))
             args.putString(GET_PAYMENT_METHOD, getString(GET_PAYMENT_METHOD, ""))
-            args.putString(GET_CARD_RESPONSE, getString(GET_CARD_RESPONSE, ""))
+            args.putSerializable(GET_CARD_RESPONSE, getSerializable(GET_CARD_RESPONSE))
             args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
             val card = getString(PAYMENT_DETAIL_CARD_UPDATE, "")
 
@@ -147,7 +145,9 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
     }
 
     private fun closeActivity() {
-        setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
+        val bundle = Bundle()
+        bundle.putSerializable(PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetail())
+        setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, bundle))
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }

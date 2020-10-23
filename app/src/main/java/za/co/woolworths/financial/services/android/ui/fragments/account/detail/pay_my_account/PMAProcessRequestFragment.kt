@@ -12,53 +12,34 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import java.lang.Exception
 import java.net.ConnectException
 
 class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickListener {
 
-    private lateinit var cardResponse: String
-    private lateinit var accountInfo: String
-    private lateinit var paymentMethod: String
-
     private var menuItem: MenuItem? = null
-    private var paymentMethodArgs: MutableList<GetPaymentMethod>? = null
-    private var cardDetailArgs: AddCardResponse? = null
-    private var accountArgs: Account? = null
     private var navController: NavController? = null
     private var callUsNumber: String? = "0861 50 20 20"
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    val args: PMAProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
-            paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
-            cardResponse = getString(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, "")
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
-        setArguments()
 
         navController = Navigation.findNavController(view)
 
@@ -119,17 +100,6 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         }
     }
 
-    private fun setArguments() {
-        try {
-            accountArgs = args.account
-            cardDetailArgs = args.tokenReceivedFromAddCard
-        } catch (e: Exception) {
-            accountArgs = Gson().fromJson(accountInfo, Account::class.java)
-            paymentMethodArgs = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-            cardDetailArgs = Gson().fromJson(cardResponse, AddCardResponse::class.java)
-        }
-    }
-
     private fun setupToolbar() {
         (activity as? PayMyAccountActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -141,16 +111,19 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
 
     private fun queryServicePostPayU() {
         startSpinning()
-        payMyAccountViewModel.queryServicePostPayU(cardDetailArgs, { result ->
+        payMyAccountViewModel.queryServicePostPayU({
+            //Success
             fragmentIsVisible()
             stopSpinning(true)
             val options = NavOptions.Builder().setPopUpTo(R.id.pmaProcessRequestFragment, true).build()
-            navController?.navigate(PMAProcessRequestFragmentDirections.actionPMAProcessRequestFragmentToSecure3DPMAFragment(accountArgs, result?.redirection), options)
+            navController?.navigate(R.id.action_PMAProcessRequestFragment_to_secure3DPMAFragment, null, options)
         }, { stsParams ->
+            //Session expired
             fragmentIsVisible()
             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, activity)
 
         }, { errorDesc ->
+            //Display popup message
             fragmentIsVisible()
             updateUIOnFailure(errorDesc)
 

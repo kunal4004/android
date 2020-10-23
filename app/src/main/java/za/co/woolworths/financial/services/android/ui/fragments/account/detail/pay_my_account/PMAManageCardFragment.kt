@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,7 +44,6 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
     private var mDeletedPaymentMethodPosition: Int = 0
     private var temporarySelectedPosition: Int = 0
-    private var accountInfo: String? = null
     private var paymentMethod: String? = null
     private var mAccountDetails: Pair<ApplyNowState, Account>? = null
     private var manageCardAdapter: PMACardsAdapter? = null
@@ -55,14 +53,12 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
     private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var mLifecycleType: LifecycleType = LifecycleType.INIT
-    val args: PMAProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            accountInfo = getString(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, "")
             paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
-            mAccountDetails = Gson().fromJson<Pair<ApplyNowState, Account>>(accountInfo, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+            mAccountDetails = payMyAccountViewModel.getAccountWithApplyNowState()
             mPaymentMethodList = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
         }
     }
@@ -204,7 +200,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
                 // Add deleted card to list
                 deletedPaymentMethod?.let { item -> mPaymentMethodList?.add(mDeletedPaymentMethodPosition, item) }
                 manageCardAdapter?.notifyItemInserted(position)
-                
+
                 // Display delete card popup
                 navController?.navigate(R.id.action_manageCardFragment_to_PMADeleteCardAPIErrorFragment)
             })
