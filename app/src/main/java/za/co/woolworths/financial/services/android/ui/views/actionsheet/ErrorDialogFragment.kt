@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.root_device_info_fragment.*
+import kotlinx.android.synthetic.main.error_dialog_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class ErrorDialogFragment : WBottomSheetDialogFragment() {
@@ -34,6 +34,6 @@ class ErrorDialogFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         tvDescription?.text = mDescription
 
-        gotITButton?.setOnClickListener { dismissAllowingStateLoss() }
+        okButtonTapped?.setOnClickListener { dismissAllowingStateLoss() }
     }
 }

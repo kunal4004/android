@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActiv
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -63,6 +64,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.WPdfView
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
+    public static final String TAG = "StatementFragment";
     private WButton mBtnEmailStatement;
     private StatementAdapter mStatementAdapter;
     private RelativeLayout relNextButton;
@@ -323,6 +325,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                 if (response.body() != null) {
                                     String fileName = "statement_" + mSelectedStatement.docDesc;
                                     Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
+                                    openPdfIntent.putExtra(AppConstant.NAVIGATED_FROM, TAG);
                                     openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
                                     openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
                                     openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);

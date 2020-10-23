@@ -28,3 +28,7 @@ data class AccountSales(var cardHeader: CardHeader, var cardBenefit: MutableList
 enum class CreditCardActivationState(val value: String) {
     FAILED("FAILED"), AVAILABLE("ACTIVATE"), ACTIVATED("ACTIVATED"), UNAVAILABLE("ACTIVATE")
 }
+
+enum class AccountsProductGroupCode(val groupCode: String) {
+    STORE_CARD("SC"), CREDIT_CARD("CC"), PERSONAL_LOAN("PL")
+}
