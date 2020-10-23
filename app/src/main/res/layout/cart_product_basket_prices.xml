@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="Your Cart"/>
+                android:text="@string/your_cart"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/txtYourCartPrice"
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Discount"/>
+                android:text="@string/discounts"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/txtDiscount"
@@ -83,8 +83,7 @@
                 style="@style/style_cart_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="TBC"/>
+                android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
 
@@ -106,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Company Discount"/>
+                android:text="@string/company_discount"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/txtCompanyDiscount"
@@ -114,8 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="TBC"/>
+                android:layout_centerVertical="true"/>
 
         </RelativeLayout>
 
@@ -138,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Your WRewards Vouchers"/>
+                android:text="@string/your_wrewards_vouchers"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/txtWrewardsDiscount"
@@ -151,6 +149,36 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/rlPromoCodeDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_nine_dp"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/style_cart_basket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/promo_code_discount"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/txtPromoCodeDiscount"
+                style="@style/style_cart_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="TBC"/>
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/rlTotalDiscount"
@@ -170,7 +198,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Total Discount"/>
+                android:text="@string/total_discount"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/txtTotalDiscount"
@@ -201,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Delivery Fee"/>
+                android:text="@string/delivery_fee"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/txtPriceEstimatedDelivery"

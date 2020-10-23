@@ -81,7 +81,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
         void onViewVouchers();
 
-        void updateBasketTotal();
+        void updateOrderTotal();
 
         void onGiftItemClicked(CommerceItem commerceItem);
 
@@ -252,7 +252,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 CartPricesViewHolder priceHolder = ((CartPricesViewHolder) holder);
                 if (orderSummary != null) {
                     priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
-                    setPriceValue(priceHolder.txtYourCartPrice, orderSummary.getTotal());
+                    setPriceValue(priceHolder.txtYourCartPrice, orderSummary.getBasketTotal());
 
                     if(orderSummary.discountDetails!=null){
                         DiscountDetails discountDetails = orderSummary.discountDetails;
@@ -270,18 +270,25 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             priceHolder.rlTotalDiscount.setVisibility(View.GONE);
                         }
 
-                        if (discountDetails.getTotalOrderDiscount() > 0) {
-                            setPriceValue(priceHolder.txtDiscount, discountDetails.getTotalOrderDiscount());
+                        if (discountDetails.getOtherDiscount() > 0) {
+                            setPriceValue(priceHolder.txtDiscount, discountDetails.getOtherDiscount());
                             priceHolder.rlDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlDiscount.setVisibility(View.GONE);
                         }
 
-                        if (discountDetails.getWrewardsDiscount() > 0) {
-                            setPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getWrewardsDiscount());
+                        if (discountDetails.getVoucherDiscount() > 0) {
+                            setPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getVoucherDiscount());
                             priceHolder.rlWrewardsDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlWrewardsDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getPromoCodeDiscount() > 0) {
+                            setPriceValue(priceHolder.txtPromoCodeDiscount, discountDetails.getPromoCodeDiscount());
+                            priceHolder.rlPromoCodeDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlPromoCodeDiscount.setVisibility(View.GONE);
                         }
 
                     }
@@ -532,9 +539,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     private class CartPricesViewHolder extends RecyclerView.ViewHolder {
-        private WTextView txtYourCartPrice, txtDiscount, txtCompanyDiscount, txtWrewardsDiscount, txtTotalDiscount ;
+        private WTextView txtYourCartPrice, txtDiscount, txtCompanyDiscount, txtWrewardsDiscount, txtTotalDiscount, txtPromoCodeDiscount ;
         private LinearLayout orderSummeryLayout;
-        private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount;
+        private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount, rlPromoCodeDiscount;
         private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel;
 
 
@@ -555,6 +562,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             rlTotalDiscount = view.findViewById(R.id.rlTotalDiscount);
             promoCodeAction = view.findViewById(R.id.promoCodeAction);
             promoCodeLabel = view.findViewById(R.id.promoCodeLabel);
+            txtPromoCodeDiscount = view.findViewById(R.id.txtPromoCodeDiscount);
+            rlPromoCodeDiscount = view.findViewById(R.id.rlPromoCodeDiscount);
         }
     }
 
@@ -605,7 +614,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         this.voucherDetails = voucherDetails;
         resetQuantityState(false);
         notifyDataSetChanged();
-        onItemClick.updateBasketTotal();
+        onItemClick.updateOrderTotal();
     }
 
     public void onChangeQuantityComplete() {
