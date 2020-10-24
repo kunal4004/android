@@ -1580,6 +1580,9 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+    <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="food_items">Food Items</string>
+    <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
     <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
