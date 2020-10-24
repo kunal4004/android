@@ -136,6 +136,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 refreshViewPagerFragment(false)
             }
         }
+
+        when (viewpager_main?.currentItem) {
+            0 -> {
+                val departmentFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                departmentFragment?.onHiddenChanged(hidden)
+            }
+        }
     }
 
     override fun PermissionGranted(request_code: Int) {

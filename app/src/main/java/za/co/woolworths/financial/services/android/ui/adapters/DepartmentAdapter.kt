@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
 import za.co.woolworths.financial.services.android.util.ImageManager
@@ -17,8 +18,9 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit)
+internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
     : RecyclerView.Adapter<DepartmentsBaseViewHolder>() {
+    var isValidateSuburbRequestInProgress = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DepartmentsBaseViewHolder {
         return when (viewType) {
@@ -87,6 +89,20 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                 itemView.editLocation.visibility = View.VISIBLE
                 KotlinUtils.setDeliveryAddressView(itemView.context as Activity,Utils.getPreferredDeliveryLocation(),itemView.tvDeliveringTo,itemView.tvDeliveryLocation,itemView.deliverLocationIcon)
             }
+            itemView.deliveryDatesProgressPlaceHolder.visibility = if (isValidateSuburbRequestInProgress) View.VISIBLE else View.GONE
+            if (validatedSuburbProducts == null) {
+                itemView.deliveryDateLayout.visibility = View.GONE
+            } else {
+                validatedSuburbProducts?.let { it ->
+                    itemView.apply {
+                        foodItemsDeliveryDate.text = it.firstAvailableFoodDeliveryDate ?: ""
+                        otherItemsDeliveryDate.text = it.firstAvailableOtherDeliveryDate ?: ""
+                        foodItemsDeliveryDateLayout.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        otherItemsDeliveryDateLayout.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        deliveryDateLayout.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
+                    }
+                }
+            }
         }
     }
 
@@ -94,4 +110,22 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         return mlRootCategories?.get(position)?.viewType!!.value
     }
 
+    fun updateDeliveryDate(validatedSuburbProducts: ValidatedSuburbProducts) {
+        this.validatedSuburbProducts = validatedSuburbProducts
+        showDeliveryDatesProgress(false)
+        notifyDataSetChanged()
+    }
+
+    fun hideDeliveryDates() {
+        this.validatedSuburbProducts = null
+        showDeliveryDatesProgress(false)
+        notifyDataSetChanged()
+    }
+
+    fun showDeliveryDatesProgress(isInProgress: Boolean) {
+        isValidateSuburbRequestInProgress = isInProgress
+        if (isInProgress)
+            this.validatedSuburbProducts = null
+        notifyDataSetChanged()
+    }
 }
