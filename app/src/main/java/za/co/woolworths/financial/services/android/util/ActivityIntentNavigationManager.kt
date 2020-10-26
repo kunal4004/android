@@ -12,18 +12,18 @@ import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartD
 
 object ActivityIntentNavigationManager {
 
-    fun presentPayMyAccountActivity(activity: Activity?, PMACardPopupModel: PMACardPopupModel?) {
+    fun presentPayMyAccountActivity(activity: Activity?, pmaCardPopupModel: PMACardPopupModel?) {
         val howToPayIntent = Intent(activity, PayMyAccountActivity::class.java)
-        howToPayIntent.putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, PMACardPopupModel)
+        howToPayIntent.putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE,pmaCardPopupModel)
         activity?.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE)
         activity?.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
     }
 
-    fun presentPayMyAccountActivity(activity: Activity?, cardResponse: AddCardResponse?, PMACardPopupModel: PMACardPopupModel?, payMyAccountStartDestinationType: PayMyAccountStartDestinationType?, isDoneButtonEnabled: Boolean = false) {
+    fun presentPayMyAccountActivity(activity: Activity?, cardResponse: AddCardResponse?, pmaCardPopupModel: PMACardPopupModel?, payMyAccountStartDestinationType: PayMyAccountStartDestinationType?, isDoneButtonEnabled: Boolean = false) {
         val payMyAccountIntent = Intent(activity, PayMyAccountActivity::class.java)
         val bundle = Bundle().apply {
             putSerializable(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, cardResponse)
-            putSerializable(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, PMACardPopupModel)
+            putSerializable(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, pmaCardPopupModel)
             putSerializable(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType)
             putBoolean(PayMyAccountPresenterImpl.IS_DONE_BUTTON_ENABLED, isDoneButtonEnabled)
         }
