@@ -37,6 +37,8 @@ interface EditDeliveryLocationContract {
         fun navigateToUnsellableItemsFragment()
         fun navigateToSuburbConfirmationFragment()
         fun executeSetSuburb()
+        fun navigateToProvinceSelection(regions: List<Province>)
+        fun navigateToSuburbSelection(suburbs: List<Suburb>)
     }
 
     interface EditDeliveryLocationPresenter {
@@ -44,7 +46,6 @@ interface EditDeliveryLocationContract {
         fun initGetProvinces()
         fun initGetSuburbs(locationId: String, deliveryType: DeliveryType)
         fun initSetSuburb(suburbId: String)
-        fun getDeliverableSuburbs(suburbs: List<Suburb>): List<Suburb>
         fun validateSelectedSetSuburb(suburbId: String, isStore: Boolean)
     }
 

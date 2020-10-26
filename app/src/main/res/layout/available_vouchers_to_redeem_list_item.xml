@@ -28,7 +28,6 @@
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toStartOf="@id/voucherSelector"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Voucher not selected as it has expireVoucher not selected as it has expired. d. Voucher not selected as it has expired. "
         app:layout_constraintTop_toTopOf="@id/top_guideline"
         app:layout_constraintBottom_toTopOf="@id/errorMessage"
         />
