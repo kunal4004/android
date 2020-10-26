@@ -70,7 +70,7 @@ public class Account implements Serializable {
 	@SerializedName("insuranceTypes")
 	@Expose
 	public List<InsuranceType> insuranceTypes;
-	public List cards = new ArrayList<Card>();
+	public List<Card> cards = new ArrayList<>();
 	@SerializedName("accountNumber")
 	@Expose
 	public String accountNumber;
