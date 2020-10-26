@@ -55,7 +55,7 @@ class ChatViewModel : ViewModel() {
     private var chatTrackPostEvent: ChatTrackPostEvent = ChatTrackPostEvent()
 
     init {
-        absaCreditCard.value = getAccount()?.cards
+        absaCreditCard.value = getAccount()?.cards ?: mutableListOf()
         isChatToCollectionAgent.value = false
         isCustomerSignOut.value = false
         setSessionStateType(SessionStateType.DISCONNECT)

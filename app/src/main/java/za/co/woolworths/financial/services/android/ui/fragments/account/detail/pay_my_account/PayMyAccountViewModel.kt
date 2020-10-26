@@ -33,7 +33,7 @@ class PayMyAccountViewModel : ViewModel() {
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
 
-    var paymentAmountCard: MutableLiveData<PaymentAmountCard?> = MutableLiveData()
+    var pmaCardPopupModel: MutableLiveData<PMACardPopupModel?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
 
@@ -113,15 +113,15 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getPaymentMethodType(): PAYUMethodType? = getCardDetail()?.payuMethodType
 
-    fun setPMACardInfo(card: PaymentAmountCard?) {
-        paymentAmountCard.value = card
+    fun setPMACardInfo(cardPopupModel: PMACardPopupModel?) {
+        pmaCardPopupModel.value = cardPopupModel
     }
 
     fun setPMACardInfo(card: String) {
-        paymentAmountCard.value = Gson().fromJson(card, PaymentAmountCard::class.java)
+        pmaCardPopupModel.value = Gson().fromJson(card, PMACardPopupModel::class.java)
     }
 
-    fun getCardDetail(): PaymentAmountCard? = paymentAmountCard.value
+    fun getCardDetail(): PMACardPopupModel? = pmaCardPopupModel.value
 
     fun setNavigationResult(onDismiss: OnBackNavigation) {
         onDialogDismiss.value = onDismiss
@@ -169,7 +169,7 @@ class PayMyAccountViewModel : ViewModel() {
                         }
                     }
                     val cardInfo = getCardDetail()
-                    val updatedCard = PaymentAmountCard(cardInfo?.amountEntered, paymentMethods, cardInfo?.account, payUMethodType, cardInfo?.selectedCardPosition
+                    val updatedCard = PMACardPopupModel(cardInfo?.amountEntered, paymentMethods, cardInfo?.account, payUMethodType, cardInfo?.selectedCardPosition
                             ?: 0)
                     setPMACardInfo(updatedCard)
                 }
@@ -258,7 +258,13 @@ class PayMyAccountViewModel : ViewModel() {
         this.addCardResponse.value = addCardResponse
     }
 
-    fun getAddCardResponse() = addCardResponse.value
+    fun getAddCardResponse() = addCardResponse.value ?: AddCardResponse()
+
+    fun setSaveAndPayCardNow(isChecked: Boolean?) {
+        val addCardResponse = getAddCardResponse()
+        addCardResponse.saveChecked = isChecked ?: false
+        setAddCardResponse(addCardResponse)
+    }
 
     fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit, failure: () -> Unit) {
         deleteCardList?.add(Pair(card, position))
@@ -421,6 +427,16 @@ class PayMyAccountViewModel : ViewModel() {
                     chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length) ?: "",
                     status?.substring(status.indexOf("=").plus(1), status.length) ?: "",
                     getProductOfferingIdInStringFormat() ?: ""))
+        }
+    }
+
+    fun getPayOrSaveNowCardDetails(): Triple<CharSequence?, String, String>? {
+        val addCardResponse = getAddCardResponse()
+        addCardResponse.card.apply {
+            val cardHolderName = KotlinUtils.capitaliseFirstLetter(name_card.toLowerCase(Locale.getDefault()))
+            val expiredMonthYear = "$exp_month / $exp_year"
+            val maskedCardNumber = "**** **** **** $number"
+            return Triple(cardHolderName, expiredMonthYear, maskedCardNumber)
         }
     }
 }

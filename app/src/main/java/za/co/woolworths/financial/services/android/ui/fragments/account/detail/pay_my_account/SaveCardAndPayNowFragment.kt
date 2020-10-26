@@ -7,24 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.save_card_and_pay_now_fragment.*
-import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-import java.util.*
 
 class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
-    private var navController: NavController? = null
-    private var mAddCardResponse: AddCardResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +32,8 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAddCardResponse = payMyAccountViewModel.getAddCardResponse()
-
-        navController = Navigation.findNavController(view)
-
         setToolbarItem()
-        populateField(payMyAccountViewModel.getAddCardResponse())
+        populateField()
         onSaveCheckChangeListener()
 
         saveCardPayNowButton?.apply {
@@ -71,22 +60,21 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun populateField(cardDetail: AddCardResponse?) {
-        cardDetail?.card?.apply {
-            nameOnCardValueTextView?.text = KotlinUtils.capitaliseFirstLetter(name_card.toLowerCase(Locale.getDefault()))
-            expiryDateValueTextView?.text = "$exp_month / $exp_year"
-            cardNumberValueTextView?.text = "**** **** **** $number"
+    private fun populateField() {
+        payMyAccountViewModel.getPayOrSaveNowCardDetails()?.apply {
+            nameOnCardValueTextView?.text = first
+            expiryDateValueTextView?.text = second
+            cardNumberValueTextView?.text = third
         }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.saveCardPayNowButton -> {
-                mAddCardResponse?.saveChecked = pmaSaveCardCheckbox.isChecked
-                mAddCardResponse?.let { item -> payMyAccountViewModel.setAddCardResponse(item) }
+                payMyAccountViewModel.setSaveAndPayCardNow(pmaSaveCardCheckbox.isChecked)
                 val navigateToProcessPayment = SaveCardAndPayNowFragmentDirections.actionSaveCardAndPayNowFragmentToPMAProcessRequestFragment()
                 val options = NavOptions.Builder().setPopUpTo(R.id.saveCardAndPayNowFragment, true).build()
-                navController?.navigate(navigateToProcessPayment, options)
+                view?.let { view -> Navigation.findNavController(view).navigate(navigateToProcessPayment, options) }
             }
         }
     }

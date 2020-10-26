@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehavio
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
-import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
+import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -138,7 +138,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList
 
-                val card = PaymentAmountCard(amountEntered, paymentMethodList, account, payUMethodType)
+                val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType)
                 payMyAccountViewModel.setPMACardInfo(card)
 
                 payMyAccountViewModel.queryServicePayUPaymentMethod(

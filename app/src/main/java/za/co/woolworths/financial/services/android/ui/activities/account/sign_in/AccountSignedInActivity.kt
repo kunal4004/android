@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.contracts.IAccountSignedInCon
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
+import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
@@ -180,7 +180,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private fun showAccountInArrearsDialog(account: Pair<ApplyNowState, Account>) {
         val accountApplyNowState = payMyAccountViewModel.getCardDetail()?.account
         if (accountApplyNowState == null)
-            payMyAccountViewModel.setPMACardInfo(PaymentAmountCard(account = mAccountSignedInPresenter?.getMyAccountCardInfo()))
+            payMyAccountViewModel.setPMACardInfo(PMACardPopupModel(account = mAccountSignedInPresenter?.getMyAccountCardInfo()))
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
         mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)

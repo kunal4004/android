@@ -80,7 +80,7 @@
 
     <dialog
         android:id="@+id/toCardDetailFragmentDialog"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ShowAmountPopupFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.ShowAmountPopupFragment"
         android:label="EnterPaymentAmountDetailFragment"
         tools:layout="@layout/pma_update_payment_fragment">
         <argument

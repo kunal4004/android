@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
+package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,6 +19,7 @@ import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -58,7 +59,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
 
         with(payMyAccountViewModel) {
-            paymentAmountCard.observe(viewLifecycleOwner, { card ->
+            pmaCardPopupModel.observe(viewLifecycleOwner, { card ->
                 if (!isAdded) return@observe
 
                 // Update amount entered
@@ -74,9 +75,8 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 initPaymentMethod()
 
                 // Dismiss popup when payment method list is empty
-                if (isPaymentListEmpty(card?.paymentMethodList)) {
+                if (isPaymentListEmpty(card?.paymentMethodList))
                     dismiss()
-                }
             })
         }
 
@@ -160,7 +160,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             val cardInfo = getCardDetail()
             if (activity is PayMyAccountActivity) {
                 when (v?.id) {
-                  
+
                     R.id.editAmountImageView -> {
                         triggerFirebaseEventForEditAmount()
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
@@ -182,7 +182,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 when (v?.id) {
                     R.id.editAmountImageView -> {
                         triggerFirebaseEventForEditAmount()
-                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, null, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
                     R.id.changeTextView -> {
                         if (changeTextView.text.toString().toLowerCase() == bindString(R.string.add_card_label).toLowerCase()) {

@@ -281,7 +281,7 @@ import kotlin.properties.Delegates
     private fun getAvailableAccounts(): ArrayList<String> {
         availableAccounts.clear()
         accountsResponse?.accountList?.forEach {
-            availableAccounts.add(it.productGroupCode.toUpperCase())
+            it.productGroupCode?.toUpperCase()?.let { it1 -> availableAccounts.add(it1) }
         }
         return availableAccounts
     }

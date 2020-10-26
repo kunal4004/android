@@ -13,7 +13,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -28,7 +27,6 @@ import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
@@ -40,7 +38,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.wenum.LifecycleType
 
-class PMAManageCardFragment : Fragment(), View.OnClickListener {
+class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
     private var mDeletedPaymentMethodPosition: Int = 0
     private var temporarySelectedPosition: Int = 0
@@ -74,7 +72,7 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
 
         navController = Navigation.findNavController(view)
 
-        configureToolbar()
+        configureToolbar(true, R.string.credit_debit_cards_label)
         useThisCardButton?.apply {
             setOnClickListener(this@PMAManageCardFragment)
             AnimationUtilExtension.animateViewPushDown(this)
@@ -144,14 +142,6 @@ class PMAManageCardFragment : Fragment(), View.OnClickListener {
             adapter = manageCardAdapter
 
 
-        }
-    }
-
-    private fun configureToolbar() {
-        (activity as? PayMyAccountActivity)?.apply {
-            configureToolbar(bindString(R.string.credit_debit_cards_label))
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            displayToolbarDivider(true)
         }
     }
 

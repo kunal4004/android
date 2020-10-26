@@ -114,9 +114,9 @@ class StoreCardOTPRequest(private val activity: AppCompatActivity?, private val 
         class.java))
     }
 
-    fun getStoreCards(requestListener: IOTPLinkStoreCard<StoreCardsResponse>?, account: Account): Call<StoreCardsResponse> {
-        val getStoreCardsRequest = OneAppService.getStoreCards(StoreCardsRequestBody(account.accountNumber, account.productOfferingId))
-        getStoreCardsRequest.enqueue(CompletionHandler(object : IResponseListener<StoreCardsResponse> {
+    fun getStoreCards(requestListener: IOTPLinkStoreCard<StoreCardsResponse>?, account: Account): Call<StoreCardsResponse>? {
+        val getStoreCardsRequest = account.accountNumber?.let { StoreCardsRequestBody(it, account.productOfferingId) }?.let { OneAppService.getStoreCards(it) }
+        getStoreCardsRequest?.enqueue(CompletionHandler(object : IResponseListener<StoreCardsResponse> {
             override fun onSuccess(response: StoreCardsResponse?) {
                 getCardCallHasFailed = false
                 when (response?.httpCode) {

@@ -37,7 +37,8 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getElectronicFundTransferBankingDetail(): Map<String, String> {
-        return Gson().fromJson(getAccount()?.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
+       // return Gson().fromJson(getAccount()?.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
+        return mapOf()
     }
 
     override fun displayPaymentDetail() {
@@ -79,7 +80,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getPaymentMethod(): MutableList<PaymentMethod>? {
-        return getAccount()?.paymentMethods
+        return getAccount()?.paymentMethods ?: mutableListOf<PaymentMethod>()
     }
 
     override fun displayPaymentMethod() {

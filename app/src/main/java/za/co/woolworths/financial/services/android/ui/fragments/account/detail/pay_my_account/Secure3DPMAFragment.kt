@@ -6,17 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
 
 import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 
-class Secure3DPMAFragment : Fragment() {
+class Secure3DPMAFragment : PMAFragment() {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
@@ -32,7 +29,7 @@ class Secure3DPMAFragment : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        configureToolbar()
+        configureToolbar(true, R.string.secure_3d_title)
         setupWebView()
     }
 
@@ -65,14 +62,6 @@ class Secure3DPMAFragment : Fragment() {
                 }
             }
             loadUrl(merchantUrl)
-        }
-    }
-
-    private fun configureToolbar() {
-        (activity as? PayMyAccountActivity)?.apply {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            displayToolbarDivider(true)
-            configureToolbar(bindString(R.string.secure_3d_title))
         }
     }
 }

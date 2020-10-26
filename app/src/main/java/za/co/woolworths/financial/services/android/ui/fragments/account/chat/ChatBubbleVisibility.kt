@@ -62,7 +62,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
         var productGroupCodeAccount: Account? = null
         accountList?.forEach { account ->
-            if (account.productGroupCode.toLowerCase(Locale.getDefault()) == productGroupCode) {
+            if (account.productGroupCode?.toLowerCase(Locale.getDefault()) == productGroupCode) {
                 productGroupCodeAccount = account
                 return@forEach
             }
@@ -83,7 +83,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
         var productGroupCodeAccount: Account? = null
         accountList?.forEach { account ->
-            if (account.productGroupCode.toLowerCase(Locale.getDefault()) == productGroupCode) {
+            if (account.productGroupCode?.toLowerCase(Locale.getDefault()) == productGroupCode) {
                 productGroupCodeAccount = account
                 return@forEach
             }
@@ -207,7 +207,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
                 var productGroupCodeAccount: Account? = null
                 accountList?.forEach { account ->
-                    if (account.productGroupCode.toLowerCase(Locale.getDefault()) == productGroupCode) {
+                    if (account.productGroupCode?.toLowerCase(Locale.getDefault()) == productGroupCode) {
                         productGroupCodeAccount = account
                         return@forEach
                     }

@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
-import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
+import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
@@ -151,7 +151,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
         val paymentMethodList = cardInfo?.paymentMethodList
 
-        val card = PaymentAmountCard(amountEntered, paymentMethodList, account, payUMethodType)
+        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType)
         payMyAccountViewModel.setPMACardInfo(card)
 
         payMyAccountViewModel.queryServicePayUPaymentMethod(

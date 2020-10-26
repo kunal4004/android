@@ -13,9 +13,4 @@ class ProcessRequestFragment : Fragment() {
            return inflater.inflate(R.layout.processing_request_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
-
 }

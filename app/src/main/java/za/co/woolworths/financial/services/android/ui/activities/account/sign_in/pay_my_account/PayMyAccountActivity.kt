@@ -15,10 +15,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.pay_my_account_activity.*
 import za.co.woolworths.financial.services.android.contracts.IPaymentOptionContract
-import za.co.woolworths.financial.services.android.models.dto.PaymentAmountCard
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_CARD_RESPONSE
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.GET_PAYMENT_METHOD
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
+import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CreditAndDebitCardPaymentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment
@@ -48,21 +45,21 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         val payMyAccountFragmentContainer = supportFragmentManager.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
         navigationHost = payMyAccountFragmentContainer?.navController
 
-        configureToolbar()
-        preventStatusBarToBlink()
-        setupPresenter()
-        setNavHostStartDestination()
+//        configureToolbar()
+//        preventStatusBarToBlink()
+//        setupPresenter()
+        //setNavHostStartDestination()
     }
 
     private fun setNavHostStartDestination() {
         intent?.extras?.apply {
             val args = Bundle()
-            args.putString(GET_PAYMENT_METHOD, getString(GET_PAYMENT_METHOD, ""))
-            args.putSerializable(GET_CARD_RESPONSE, getSerializable(GET_CARD_RESPONSE))
-            args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
+//            args.putString(GET_PAYMENT_METHOD, getString(GET_PAYMENT_METHOD, ""))
+//            args.putSerializable(GET_CARD_RESPONSE, getSerializable(GET_CARD_RESPONSE))
+//            args.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
             val card = getString(PAYMENT_DETAIL_CARD_UPDATE, "")
 
-            payMyAccountViewModel.setPMACardInfo(Gson().fromJson(card, PaymentAmountCard::class.java))
+            payMyAccountViewModel.setPMACardInfo(Gson().fromJson(card, PMACardPopupModel::class.java))
 
             val graph = navigationHost?.graph
             graph?.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
