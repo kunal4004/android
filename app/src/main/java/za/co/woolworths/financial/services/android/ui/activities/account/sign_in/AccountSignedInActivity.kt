@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
@@ -211,13 +212,14 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {
                         extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
+                            queryGetPaymentMethod()
                             payMyAccountViewModel.setPMACardInfo(this)
                         }
                     }
 
                     // on back to my account pressed (R.string.back_to_my_account_button)
                     PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
-                        payMyAccountViewModel.setNavigationResult(PayMyAccountViewModel.OnBackNavigation.RETRY)
+                        queryGetPaymentMethod()
                         mAvailableFundsNavHost?.navController?.navigateUp()
                     }
                 }
@@ -234,6 +236,14 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                     }
                 }
             }
+        }
+    }
+
+    private fun queryGetPaymentMethod() {
+        val fragment = mAvailableFundsNavHost?.childFragmentManager?.primaryNavigationFragment
+        if (fragment is AvailableFundFragment) {
+            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
+            fragment.queryPaymentMethod()
         }
     }
 

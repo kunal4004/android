@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -18,11 +17,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.util.AppConstant
 
-class PMAAddNewPayUCardFragment : Fragment() {
+class PMAAddNewPayUCardFragment : PMAFragment() {
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
@@ -39,7 +37,7 @@ class PMAAddNewPayUCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        configureToolbar()
+        noTitleBarToolbar()
         configureWebView(Navigation.findNavController(view))
     }
 
@@ -101,14 +99,7 @@ class PMAAddNewPayUCardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        configureToolbar()
+        noTitleBarToolbar()
     }
 
-    private fun configureToolbar() {
-        (activity as? PayMyAccountActivity)?.apply {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            displayToolbarDivider(false)
-            configureToolbar("")
-        }
-    }
 }

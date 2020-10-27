@@ -13,4 +13,12 @@ open class PMAFragment : Fragment() {
             configureToolbar(bindString(toolbarTitle))
         }
     }
+
+    fun noTitleBarToolbar() {
+        (activity as? PayMyAccountActivity)?.apply {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            displayToolbarDivider(false)
+            configureToolbar("")
+        }
+    }
 }

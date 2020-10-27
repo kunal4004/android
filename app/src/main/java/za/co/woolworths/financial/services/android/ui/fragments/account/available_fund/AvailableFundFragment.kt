@@ -117,7 +117,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             when (result) {
                 PayMyAccountViewModel.OnBackNavigation.RETRY -> {
                     activity?.runOnUiThread {
-                        isQueryPayUPaymentMethodComplete = false
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
                         queryPaymentMethod()
                     }
                 }
@@ -127,7 +127,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun queryPaymentMethod() {
-        when (!isQueryPayUPaymentMethodComplete) {
+        when (!payMyAccountViewModel.isQueryPayUPaymentMethodComplete) {
             true -> {
                 initShimmer()
                 startProgress()
@@ -145,29 +145,29 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                         { // onSuccessResult
                             if (!isAdded) return@queryServicePayUPaymentMethod
                             stopProgress()
-                            isQueryPayUPaymentMethodComplete = true
+                            payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
 
                         }, { onSessionExpired ->
                     if (!isAdded) return@queryServicePayUPaymentMethod
                     activity?.let {
                         stopProgress()
-                        isQueryPayUPaymentMethodComplete = true
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
 
                     }
                 }, { // on unknown http error / general error
                     if (!isAdded) return@queryServicePayUPaymentMethod
                     stopProgress()
-                    isQueryPayUPaymentMethodComplete = true
+                    payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
 
                 }, { throwable ->
                     if (!isAdded) return@queryServicePayUPaymentMethod
                     activity?.runOnUiThread {
                         stopProgress()
                     }
-                    isQueryPayUPaymentMethodComplete = true
+                    payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
                     if (throwable is ConnectException) {
-                        isQueryPayUPaymentMethodComplete = false
+                        payMyAccountViewModel.isQueryPayUPaymentMethodComplete = false
                     }
                 })
             }
