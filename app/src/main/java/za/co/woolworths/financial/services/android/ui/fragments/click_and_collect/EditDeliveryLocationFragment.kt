@@ -11,7 +11,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -358,19 +357,12 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             if (isStoreClosed(it)) {
                 showStoreClosedMessage()
             } else {
-                foodDeliveryDateMessage?.apply {
-                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name + ", " + selectedProvince?.name, it.firstAvailableFoodDeliveryDate
-                            ?: "")
-                    text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                }
-
-                otherDeliveryDateMessage?.apply {
-                    val message = getString(R.string.first_available_other_delivery_date, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name+ ", " + selectedProvince?.name, it.firstAvailableOtherDeliveryDate
-                            ?: "")
-                    text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                }
+                foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate ?: ""
+                otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate ?: ""
+                foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                earliestDateTitle?.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.earliest_delivery_date else R.string.earliest_collection_date)
+                deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
             }
             validateConfirmLocationButtonAvailability()
         }
@@ -378,8 +370,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun hideAvailableDeliveryDateMessagee() {
-        foodDeliveryDateMessage?.visibility = View.GONE
-        otherDeliveryDateMessage?.visibility = View.GONE
+        deliveryDateLayout?.visibility = View.GONE
     }
 
     override fun showStoreClosedMessage() {
