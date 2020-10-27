@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.contracts
 
-import android.content.Intent
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -22,7 +21,7 @@ interface IPaymentOptionContract {
     }
 
     interface PayMyAccountPresenter {
-        fun retrieveAccountBundle(intent: Intent?){}
+        fun retrieveAccountBundle(intent: Pair<ApplyNowState, Account>?){}
         fun getAccount(): Account?
         fun getElectronicFundTransferBankingDetail(): Map<String, String>
         fun displayPaymentDetail()

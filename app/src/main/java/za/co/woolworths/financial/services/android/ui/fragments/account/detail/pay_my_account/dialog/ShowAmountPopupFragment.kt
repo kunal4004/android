@@ -163,17 +163,15 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
                     R.id.editAmountImageView -> {
                         triggerFirebaseEventForEditAmount()
-                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
 
                     R.id.changeTextView -> {
-                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
                     }
 
                     R.id.pmaConfirmPaymentButton -> {
-                        cvvEditTextInput?.text?.toString()?.let { cvvNumber -> setCVVNumber(cvvNumber) }
-                        val cardResponse = createCard()
-                        setAddCardResponse(cardResponse)
+                        setCVVNumber(cvvEditTextInput?.text?.toString())
                         navController?.navigate(R.id.action_displayVendorCardDetailFragment_to_manageCardFragment)
                     }
                     else -> return@with
@@ -182,20 +180,18 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 when (v?.id) {
                     R.id.editAmountImageView -> {
                         triggerFirebaseEventForEditAmount()
-                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
                     R.id.changeTextView -> {
                         if (changeTextView.text.toString().toLowerCase() == bindString(R.string.add_card_label).toLowerCase()) {
-                            ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.ADD_NEW_CARD, true)
+                            ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.ADD_NEW_CARD, true)
                         } else {
-                            ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getAddCardResponse(), cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
+                            ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
                         }
                     }
                     R.id.pmaConfirmPaymentButton -> {
-                        val cvv = cvvEditTextInput?.text?.toString() ?: "0"
-                        setCVVNumber(cvv)
-                        val cardResponse = createCard()
-                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardResponse, cardInfo, PayMyAccountStartDestinationType.SECURE_3D, true)
+                        setCVVNumber(cvvEditTextInput?.text?.toString())
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.SECURE_3D, true)
                         dismiss()
                     }
                     else -> return@with

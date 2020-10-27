@@ -8,7 +8,8 @@ data class PMACardPopupModel(var  amountEntered: String?= "",
                              var paymentMethodList: MutableList<GetPaymentMethod>? = mutableListOf(),
                              var account: Pair<ApplyNowState, Account>? =  Pair(ApplyNowState.STORE_CARD, Account()),
                              var payuMethodType: PayMyAccountViewModel.PAYUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER,
-                             var selectedCardPosition: Int = 0) : Serializable {
+                             var selectedCardPosition: Int = 0,
+                             var cvvNumber: String?="") : Serializable {
 
     fun amountEnteredInInt() = amountEntered?.replace("[,.R ]".toRegex(), "")?.toInt()
 

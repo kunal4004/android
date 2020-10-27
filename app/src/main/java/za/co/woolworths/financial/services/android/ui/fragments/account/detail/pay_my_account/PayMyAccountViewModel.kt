@@ -27,7 +27,6 @@ class PayMyAccountViewModel : ViewModel() {
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
     private var mQueryServiceGetPaymentMethods: Call<PaymentMethodsResponse>? = null
     private var paymentMethodsResponse: MutableLiveData<PaymentMethodsResponse?> = MutableLiveData()
-    private var cvvNumber: MutableLiveData<String> = MutableLiveData()
     private var onDialogDismiss: MutableLiveData<OnBackNavigation> = MutableLiveData()
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
@@ -46,7 +45,7 @@ class PayMyAccountViewModel : ViewModel() {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
     }
 
-    fun createCard(): AddCardResponse {
+    private fun createCard(): AddCardResponse {
         val paymentMethod = getSelectedPaymentMethodCard()
         val cvvNumber = getCVVNumber()
         val expiryDate = paymentMethod?.expirationDate?.split("/")
@@ -54,7 +53,7 @@ class PayMyAccountViewModel : ViewModel() {
         val expYear = expiryDate?.get(1) ?: ""
 
         val pmaCard = PMACard(paymentMethod?.cardNumber
-                ?: "", "", expDate, expYear, cvvNumber, 1, paymentMethod?.vendor
+                ?: "", "", expDate, expYear, cvvNumber ?: "0", 1, paymentMethod?.vendor
                 ?: "", paymentMethod?.type ?: "")
         return AddCardResponse(paymentMethod?.token ?: "", pmaCard, false)
     }
@@ -76,11 +75,13 @@ class PayMyAccountViewModel : ViewModel() {
         return list?.filter { it.isCardChecked }?.isNullOrEmpty() ?: false
     }
 
-    fun setCVVNumber(number: String) {
-        cvvNumber.value = number
+    fun setCVVNumber(number: String?) {
+        val cardDetail = getCardDetail()
+        cardDetail?.cvvNumber = number
+        setPMACardInfo(cardDetail)
     }
 
-    private fun getCVVNumber() = cvvNumber.value ?: ""
+    private fun getCVVNumber() = getCardDetail()?.cvvNumber
 
     fun getSelectedPaymentMethodCard(): GetPaymentMethod? {
         val paymentMethodList: MutableList<GetPaymentMethod>? = getPaymentMethodList()
@@ -122,6 +123,9 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getCardDetail(): PMACardPopupModel? = pmaCardPopupModel.value
+
+
+    fun getCardDetailInStringFormat(): String? = Gson().toJson(getCardDetail())
 
     fun setNavigationResult(onDismiss: OnBackNavigation) {
         onDialogDismiss.value = onDismiss
@@ -234,8 +238,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun updateAmountEntered(amountEntered: String?): String {
-        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) getOverdueAmount()
-                ?: "" else amountEntered
+        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) getOverdueAmount() ?: "" else amountEntered
     }
 
     fun isPaymentListEmpty(paymentMethodList: MutableList<GetPaymentMethod>?): Boolean {
@@ -258,7 +261,7 @@ class PayMyAccountViewModel : ViewModel() {
         this.addCardResponse.value = addCardResponse
     }
 
-    fun getAddCardResponse() = addCardResponse.value ?: AddCardResponse()
+    private fun getAddCardResponse() = addCardResponse.value ?: createCard()
 
     fun setSaveAndPayCardNow(isChecked: Boolean?) {
         val addCardResponse = getAddCardResponse()
@@ -353,29 +356,29 @@ class PayMyAccountViewModel : ViewModel() {
         setPMACardInfo(card)
     }
 
-
-    private fun payURequestBody(cardDetailArgs: AddCardResponse?): PayUPay {
+    private fun payURequestBody(): PayUPay {
 
         val cardInfo = getCardDetail()
         val amountEntered = cardInfo?.amountEnteredInInt() ?: 0
+        val cardDetailArgs: AddCardResponse? = getAddCardResponse()
 
-        val creditCardCVV = cardDetailArgs?.card?.cvv ?: ""
-        val token = cardDetailArgs?.token ?: "0"
-        val type = cardDetailArgs?.card?.type ?: ""
-        val isSaveCardChecked = cardDetailArgs?.saveChecked ?: false
+        val creditCardCVV = cardDetailArgs?.card?.cvv ?: getCVVNumber()
+        val token = cardDetailArgs?.token
+        val type = cardDetailArgs?.card?.type
+        val isSaveCardChecked = cardDetailArgs?.saveChecked
         val currency = "ZAR"
 
         val account = cardInfo?.account?.second
         val accountNumber = account?.accountNumber ?: "0"
         val productOfferingId = account?.productOfferingId ?: 0
-        val paymentMethod = PayUPaymentMethod(token, creditCardCVV, type)
+        val paymentMethod = PayUPaymentMethod(token ?: "", creditCardCVV ?: "", type ?: "")
 
-        return PayUPay(amountEntered, currency, productOfferingId, isSaveCardChecked, paymentMethod, accountNumber)
+        return PayUPay(amountEntered, currency, productOfferingId, isSaveCardChecked ?: false, paymentMethod, accountNumber)
     }
 
     // Retrieve 3d secure merchant url
     fun queryServicePostPayU(result: (PayUResponse?) -> Unit, stsParams: (String?) -> Unit, generalHttpCodeFailure: (String?) -> Unit, failure: (Throwable?) -> Unit) {
-        val payURequestBody = payURequestBody(getAddCardResponse())
+        val payURequestBody = payURequestBody()
         mQueryServicePostPayU = request(OneAppService.queryServicePostPayU(payURequestBody), object : IGenericAPILoaderView<Any> {
 
             override fun onSuccess(response: Any?) {

@@ -147,7 +147,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
         val cardInfo = payMyAccountViewModel.getCardDetail()
         val account = cardInfo?.account
-        val amountEntered = account?.second?.totalAmountDue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+        val amountEntered = cardInfo?.amountEntered
         val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
         val paymentMethodList = cardInfo?.paymentMethodList
 

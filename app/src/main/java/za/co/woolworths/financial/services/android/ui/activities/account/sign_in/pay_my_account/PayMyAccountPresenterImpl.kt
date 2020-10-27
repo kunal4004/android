@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account
 
-import android.content.Intent
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -20,7 +19,6 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
 
     companion object {
         const val GET_PAYMENT_METHOD: String = "PAYMENT_METHOD"
-        const val GET_ACCOUNT_INFO = "ACCOUNT_INFO"
         const val GET_CARD_RESPONSE = "ADD_CARD_RESPONSE"
         const val SCREEN_TYPE: String = "SCREEN_TYPE"
         const val IS_DONE_BUTTON_ENABLED: String = "IS_DONE_BUTTON_ENABLED"
@@ -28,8 +26,8 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
 
     var mAccountDetails: Pair<ApplyNowState, Account>? = null
 
-    override fun retrieveAccountBundle(intent: Intent?) {
-        mAccountDetails = Gson().fromJson(intent?.getStringExtra(GET_ACCOUNT_INFO), object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+    override fun retrieveAccountBundle(item: Pair<ApplyNowState, Account>?) {
+        mAccountDetails = item
     }
 
     override fun getAccount(): Account? {
@@ -37,8 +35,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getElectronicFundTransferBankingDetail(): Map<String, String> {
-       // return Gson().fromJson(getAccount()?.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
-        return mapOf()
+        return Gson().fromJson(getAccount()?.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
     }
 
     override fun displayPaymentDetail() {
@@ -80,7 +77,7 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getPaymentMethod(): MutableList<PaymentMethod>? {
-        return getAccount()?.paymentMethods ?: mutableListOf<PaymentMethod>()
+        return getAccount()?.paymentMethods
     }
 
     override fun displayPaymentMethod() {

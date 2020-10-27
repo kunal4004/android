@@ -177,38 +177,6 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public static void presentPayMyAccountActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair, String card) {
-		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, Utils.objectToJson(mAccountPair));
-		howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
-		activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-	}
-
-	public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String card, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
-		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, account);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, paymentMethod);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, cardResponse);
-		howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
-		activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-	}
-
-	public static void presentPayMyAccountActivity(Activity activity, String account, String paymentMethod, String cardResponse, String card, Boolean isDoneButtonEnabled, PayMyAccountStartDestinationType payMyAccountStartDestinationType) {
-		Intent howToPayIntent = new Intent(activity, PayMyAccountActivity.class);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_ACCOUNT_INFO, account);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, paymentMethod);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.GET_CARD_RESPONSE, cardResponse);
-		howToPayIntent.putExtra(PAYMENT_DETAIL_CARD_UPDATE, card);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.SCREEN_TYPE, payMyAccountStartDestinationType);
-		howToPayIntent.putExtra(PayMyAccountPresenterImpl.IS_DONE_BUTTON_ENABLED, isDoneButtonEnabled);
-
-		activity.startActivityForResult(howToPayIntent, PayMyAccountActivity.PAY_MY_ACCOUNT_REQUEST_CODE);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-	}
-
 	public static void presentShoppingCart(Activity activity) {
 		Intent openCartActivity = new Intent(activity, CartActivity.class);
 		activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);

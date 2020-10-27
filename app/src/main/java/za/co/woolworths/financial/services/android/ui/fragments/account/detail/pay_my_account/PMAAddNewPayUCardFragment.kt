@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -22,7 +21,6 @@ import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.util.AppConstant
-
 
 class PMAAddNewPayUCardFragment : Fragment() {
 
@@ -81,8 +79,6 @@ class PMAAddNewPayUCardFragment : Fragment() {
                 }
 
             }), "JSBridge")
-
-            Log.e("urlurlpay",payMyAccountViewModel.getAddNewCardUrl())
 
             loadUrl(payMyAccountViewModel.getAddNewCardUrl())
         }

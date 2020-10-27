@@ -104,7 +104,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { act ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
-                    when (hasConnection) {
+                    when (hasConnection || !isQueryPayUPaymentMethodComplete) {
                         true -> queryPaymentMethod()
                         else -> ErrorHandlerView(act).showToast()
                     }
