@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -24,9 +25,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     var isAccountInArrearsState : Boolean = false
 
     companion object {
-        private const val STORE_CARD: String = "SC"
-        private const val CREDIT_CARD: String = "CC"
-        private const val PERSONAL_LOAN: String = "PL"
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
     }
@@ -41,9 +39,9 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     private fun getProductCode(applyNowState: ApplyNowState): String {
         return when (applyNowState) {
-            ApplyNowState.STORE_CARD -> STORE_CARD
-            ApplyNowState.SILVER_CREDIT_CARD -> CREDIT_CARD
-            ApplyNowState.PERSONAL_LOAN -> PERSONAL_LOAN
+            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
+            ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode
             else -> throw RuntimeException("ApplyNowState value not supported $applyNowState")
         }
     }
@@ -76,15 +74,16 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     override fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>? {
         val account: Account? = getAccount()
         account?.productOfferingId?.let { WoolworthsApplication.getInstance().setProductOfferingId(it) }
-        val productGroupInfo = when (account?.productGroupCode) {
-            STORE_CARD -> Pair(ApplyNowState.STORE_CARD, account)
-            CREDIT_CARD -> when (account.accountNumberBin) {
+
+        val productGroupInfo = when (account?.productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
+            AccountsProductGroupCode.STORE_CARD -> Pair(ApplyNowState.STORE_CARD, account)
+            AccountsProductGroupCode.CREDIT_CARD -> when (account.accountNumberBin) {
                 Utils.SILVER_CARD -> Pair(ApplyNowState.SILVER_CREDIT_CARD, account)
                 Utils.BLACK_CARD -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
                 Utils.GOLD_CARD -> Pair(ApplyNowState.GOLD_CREDIT_CARD, account)
                 else -> throw RuntimeException("Invalid  accountNumberBin ${account.accountNumberBin}")
             }
-            PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
+            AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
             else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")
         }
 

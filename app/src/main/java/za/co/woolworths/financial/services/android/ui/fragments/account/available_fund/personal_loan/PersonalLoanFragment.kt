@@ -6,6 +6,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_payment_option_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundsFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -26,7 +27,7 @@ class PersonalLoanFragment : AvailableFundsFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
-                navigateToRecentTransactionActivity("PL")
+                navigateToRecentTransactionActivity(AccountsProductGroupCode.PERSONAL_LOAN.groupCode)
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incViewPaymentOptionButton -> {

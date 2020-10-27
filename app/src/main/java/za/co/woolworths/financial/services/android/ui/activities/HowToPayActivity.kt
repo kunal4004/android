@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.accounts_how_to_pay.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 
@@ -84,17 +85,17 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun setHowToPayLogo() {
-        when (accountDetails.productGroupCode) {
-            "SC" -> {
+    private fun setHowToPayLogo() {
+        when (AccountsProductGroupCode.getEnum(accountDetails.productGroupCode)) {
+            AccountsProductGroupCode.STORE_CARD -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_cc_sc)
             }
-            "CC" -> {
+            AccountsProductGroupCode.CREDIT_CARD -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_credit_card)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_cc_sc)
             }
-            "PL" -> {
+            AccountsProductGroupCode.PERSONAL_LOAN -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_pl)
             }
@@ -102,8 +103,8 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadAbsaCreditCardInfoIfNeeded() {
-        when (accountDetails.productGroupCode) {
-            "CC" -> {
+        when (AccountsProductGroupCode.getEnum(accountDetails.productGroupCode)) {
+            AccountsProductGroupCode.CREDIT_CARD -> {
                 llAbsaAccount.visibility = VISIBLE
                 llCreditCardDetail.visibility = VISIBLE
                 tvHowToPayTitle.text = getString(R.string.how_to_pay_credit_card_title)

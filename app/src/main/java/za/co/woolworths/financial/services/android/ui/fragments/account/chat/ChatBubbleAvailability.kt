@@ -4,17 +4,12 @@ import android.app.Activity
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 class ChatBubbleAvailability(private var accountList: List<Account>? = null, private val activity: Activity) {
-
-    companion object {
-        const val STORE_CARD_PRODUCT_GROUP_CODE = "sc"
-        const val PERSONAL_LOAN_PRODUCT_GROUP_CODE = "pl"
-        const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
-    }
 
     // config.presenceInAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
     private val isInAppChatEnabled: Boolean
@@ -47,9 +42,9 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
         if (!isInAppChatEnabled) return false
 
         val productGroupCode = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> STORE_CARD_PRODUCT_GROUP_CODE
-            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> CREDIT_CARD_PRODUCT_GROUP_CODE
-            ApplyNowState.PERSONAL_LOAN -> PERSONAL_LOAN_PRODUCT_GROUP_CODE
+            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
+            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()
             else -> ""
         }
 
@@ -69,9 +64,9 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
         if (!isInAppChatEnabled) return null
 
         val productGroupCode = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> STORE_CARD_PRODUCT_GROUP_CODE
-            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> CREDIT_CARD_PRODUCT_GROUP_CODE
-            ApplyNowState.PERSONAL_LOAN -> PERSONAL_LOAN_PRODUCT_GROUP_CODE
+            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
+            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()
             else -> ""
         }
 
@@ -136,7 +131,9 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
             }
             val productGroupCode = productGroupCodeAccount?.productGroupCode?.toLowerCase(Locale.getDefault())
                     ?: ""
-            return if (productGroupCode == STORE_CARD_PRODUCT_GROUP_CODE || productGroupCode == PERSONAL_LOAN_PRODUCT_GROUP_CODE) Pair(productGroupCodeAccount?.productOfferingId?.toString()
+            return if (productGroupCode == AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
+                    || productGroupCode == AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase())
+                Pair(productGroupCodeAccount?.productOfferingId?.toString()
                     ?: "0", productGroupCodeAccount?.accountNumber
                     ?: "") else Pair(productGroupCodeAccount?.productOfferingId?.toString()
                     ?: "0", productGroupCodeAccount?.primaryCard?.cards?.get(0)?.cardNumber ?: "")
@@ -144,9 +141,9 @@ class ChatBubbleAvailability(private var accountList: List<Account>? = null, pri
 
         //  Retrieve productOfferingId and cardNumber for other sections
         val productGroupCode = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> STORE_CARD_PRODUCT_GROUP_CODE
-            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> CREDIT_CARD_PRODUCT_GROUP_CODE
-            ApplyNowState.PERSONAL_LOAN -> PERSONAL_LOAN_PRODUCT_GROUP_CODE
+            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
+            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()
             else -> ""
         }
 
