@@ -65,6 +65,7 @@
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_marginStart="@dimen/sixteen_dp"
             android:background="@drawable/icon_close_circle"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/etPromoCode"
             app:layout_constraintLeft_toRightOf="@id/etPromoCode"
             app:layout_constraintTop_toTopOf="@id/etPromoCode" />

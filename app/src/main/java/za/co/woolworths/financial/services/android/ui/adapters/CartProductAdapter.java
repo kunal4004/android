@@ -257,7 +257,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     if(orderSummary.discountDetails!=null){
                         DiscountDetails discountDetails = orderSummary.discountDetails;
                         if (discountDetails.getCompanyDiscount() > 0) {
-                            setPriceValue(priceHolder.txtCompanyDiscount, discountDetails.getCompanyDiscount());
+                            setDiscountPriceValue(priceHolder.txtCompanyDiscount, discountDetails.getCompanyDiscount());
                             priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
@@ -271,21 +271,21 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                         }
 
                         if (discountDetails.getOtherDiscount() > 0) {
-                            setPriceValue(priceHolder.txtDiscount, discountDetails.getOtherDiscount());
+                            setDiscountPriceValue(priceHolder.txtDiscount, discountDetails.getOtherDiscount());
                             priceHolder.rlDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlDiscount.setVisibility(View.GONE);
                         }
 
                         if (discountDetails.getVoucherDiscount() > 0) {
-                            setPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getVoucherDiscount());
+                            setDiscountPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getVoucherDiscount());
                             priceHolder.rlWrewardsDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlWrewardsDiscount.setVisibility(View.GONE);
                         }
 
                         if (discountDetails.getPromoCodeDiscount() > 0) {
-                            setPriceValue(priceHolder.txtPromoCodeDiscount, discountDetails.getPromoCodeDiscount());
+                            setDiscountPriceValue(priceHolder.txtPromoCodeDiscount, discountDetails.getPromoCodeDiscount());
                             priceHolder.rlPromoCodeDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlPromoCodeDiscount.setVisibility(View.GONE);
@@ -384,6 +384,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
     private void setPriceValue(WTextView textView, double value) {
         textView.setText(WFormatter.formatAmount(value));
+    }
+
+    private void setDiscountPriceValue(WTextView textView, double value) {
+        textView.setText("- " + WFormatter.formatAmount(value));
     }
 
     @Override

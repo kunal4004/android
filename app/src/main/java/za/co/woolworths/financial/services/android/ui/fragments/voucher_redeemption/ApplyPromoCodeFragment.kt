@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.apply_promo_code_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
+import za.co.woolworths.financial.services.android.ui.extension.showKeyboard
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyPromoCodeView, View.OnClickListener {
@@ -71,13 +72,20 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
             text = message
             visibility = View.VISIBLE
         }
-        etPromoCode?.requestFocus()
+        activity?.apply {
+            etPromoCode?.let {
+                it.requestFocus()
+                it.showKeyboard(this as AppCompatActivity)
+            }
+        }
     }
 
     override fun onPromoCodeTextChanged(promoCode: String) {
-        if (errorMessage?.visibility == View.VISIBLE) errorMessage?.visibility = View.GONE
+        if (errorMessage?.visibility == View.VISIBLE)
+            errorMessage?.visibility = View.GONE
         applyPromoCode?.visibility = if (promoCode.isNotEmpty()) View.VISIBLE else View.GONE
         cancelLayout?.visibility = if (promoCode.isNotEmpty()) View.GONE else View.VISIBLE
+        clear?.visibility = if (promoCode.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onClick(v: View?) {
