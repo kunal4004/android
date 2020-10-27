@@ -1428,13 +1428,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void showVouchersOrPromoCodeAppliedToast(String message) {
 		mToastUtils.setActivity(getActivity());
 		mToastUtils.setCurrentState(TAG);
-		mToastUtils.setCartText("");
 		mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
 		mToastUtils.setView(btnCheckOut);
 		mToastUtils.setMessage(message);
-		mToastUtils.setAllCapsUpperCase(true);
 		mToastUtils.setViewState(false);
-		mToastUtils.build();
+		mToastUtils.buildCustomToast();
 	}
 
 	@Override
@@ -1478,6 +1476,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				switch (response.httpCode) {
 					case 200:
 						updateCart(convertResponseToCartResponseObject(response));
+						if (voucherDetails.getPromoCodes() == null || voucherDetails.getPromoCodes().size() == 0)
+							showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_removed_toast_message));
 						break;
 					case 502:
 						if (response.response != null)

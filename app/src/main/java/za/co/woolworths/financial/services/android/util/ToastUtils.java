@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import androidx.core.text.HtmlCompat;
 
 import com.awfs.coordination.R;
 
@@ -161,5 +164,36 @@ public class ToastUtils {
 
 	public void setAllCapsUpperCase(boolean upperCase){
 		this.allCapsUpperCase = upperCase;
+	}
+
+	public PopupWindow buildCustomToast(){
+		if (getActivity() != null) {
+
+			LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.single_line_toast_layout, null);
+
+			TextView toastMessage = layout.findViewById(R.id.toastMessage);
+			toastMessage.setText(HtmlCompat.fromHtml(getMessage(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+
+			// initialize your popupWindow and use your custom layout as the view
+			final PopupWindow pw = new PopupWindow(layout,
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT, true);
+
+			// dismiss the popup window after 3sec
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					if (pw != null)
+						pw.dismiss();
+				}
+			}, POPUP_DELAY_MILLIS);
+
+			if (getActivity() != null) {
+				pw.showAtLocation(view, gravity, 0, getPixel());
+			}
+			return pw;
+		}
+
+		return null;
 	}
 }
