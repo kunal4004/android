@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kotlin.jvm.internal.Intrinsics;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
@@ -83,7 +82,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_LOGIN_TIMEOUT_440;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
@@ -330,7 +329,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             case HTTP_OK:
                 loadShoppingListItems(shoppingListItemsResponse);
                 break;
-            case HTTP_LOGIN_TIMEOUT_440:
+            case HTTP_SESSION_TIMEOUT_440:
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingListItemsResponse.response.stsParams, getActivity());
                 break;
             default:
@@ -954,7 +953,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                             confirmDeliveryLocation();
                         break;
 
-                    case HTTP_LOGIN_TIMEOUT_440:
+                    case HTTP_SESSION_TIMEOUT_440:
                         if (addItemToCartResponse.response != null)
                             onSessionTokenExpired(addItemToCartResponse.response);
                         break;

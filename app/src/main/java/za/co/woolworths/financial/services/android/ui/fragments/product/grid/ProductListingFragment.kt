@@ -61,7 +61,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYo
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_LOGIN_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import java.lang.IllegalStateException
 import java.net.ConnectException
@@ -748,7 +748,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         HTTP_EXPECTATION_FAILED_417 -> resources?.let {
                             confirmDeliveryLocation()
                         }
-                        HTTP_LOGIN_TIMEOUT_440 -> {
+                        HTTP_SESSION_TIMEOUT_440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             ScreenManager.presentSSOSignin(this)
                         }
@@ -807,7 +807,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                         activity?.let { activity -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "") }
                                     }
                                 }
-                                HTTP_LOGIN_TIMEOUT_440 -> {
+                                HTTP_SESSION_TIMEOUT_440 -> {
                                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                     activity.let{ScreenManager.presentSSOSignin(it, QUERY_LOCATION_ITEM_REQUEST_CODE)}
                                 }
