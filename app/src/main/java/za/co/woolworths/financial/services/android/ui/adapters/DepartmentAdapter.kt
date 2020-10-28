@@ -8,14 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
+import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
-import za.co.woolworths.financial.services.android.util.ImageManager
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.*
 
 
 internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
@@ -95,11 +94,12 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             } else {
                 validatedSuburbProducts?.let { it ->
                     itemView.apply {
-                        foodItemsDeliveryDate.text = it.firstAvailableFoodDeliveryDate ?: ""
-                        otherItemsDeliveryDate.text = it.firstAvailableOtherDeliveryDate ?: ""
-                        foodItemsDeliveryDateLayout.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                        otherItemsDeliveryDateLayout.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                        deliveryDateLayout.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
+                        earliestDateTitle?.text = bindString(if (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == false) R.string.earliest_delivery_date else R.string.earliest_collection_date)
+                        foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate ?: ""
+                        otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate ?: ""
+                        foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
                     }
                 }
             }

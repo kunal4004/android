@@ -891,7 +891,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun findItemInStore() {
 
         if (getSelectedSku() == null) {
-            requestSelectSize()
+            if (getSelectedGroupKey().isNullOrEmpty())
+                requestSelectColor()
+            else
+                requestSelectSize()
             return
         }
 
