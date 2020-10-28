@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.AccountSalesView?, private var model: IAccountSalesContract.AccountSalesModel) : IAccountSalesContract.AccountSalesPresenter, IAccountSalesContract.AccountSalesModel {
 
@@ -35,14 +34,14 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
     override fun getPersonalLoan(): AccountSales = model.getPersonalLoan()
 
     @Throws(RuntimeException::class)
-    fun onApplyNowButtonTapped() {
+    fun onApplyNowButtonTapped(): String? {
         val applyNowLinks = WoolworthsApplication.getApplyNowLink()
-        Utils.openBrowserWithUrl(when (getApplyNowState()) {
-            ApplyNowState.STORE_CARD -> applyNowLinks.storeCard
-            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> applyNowLinks.creditCard
-            ApplyNowState.PERSONAL_LOAN -> applyNowLinks.personalLoan
+       return when (getApplyNowState()) {
+            ApplyNowState.STORE_CARD -> applyNowLinks?.storeCard
+            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> applyNowLinks?.creditCard
+            ApplyNowState.PERSONAL_LOAN -> applyNowLinks?.personalLoan
             else -> throw RuntimeException("OnApplyNowButtonTapped:: Invalid ApplyNowState ## : ${getApplyNowState()}")
-        })
+        }
     }
 
     fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
