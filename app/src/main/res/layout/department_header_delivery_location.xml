@@ -26,6 +26,7 @@
             android:background="#1A000000" />
 
         <TextView
+            android:id="@+id/earliestDateTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/myriad_pro_regular_black"
