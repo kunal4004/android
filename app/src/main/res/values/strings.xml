@@ -1599,6 +1599,7 @@
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
     <string name="select_your_store">Select Your Store</string>
     <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
+    <string name="hint_search_for_your_store">Search For Your Store</string>
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
