@@ -165,11 +165,27 @@ object OneAppService : RetrofitConfig() {
 
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val loc = getMyLocation()
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), "", "", getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
+            mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), "", "", getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId, storeId = storeId)
         } else {
-            mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
+            mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId, storeId = storeId)
         }
+    }
+
+    private fun getSuburbOrStoreId(): Pair<String?, String?> {
+        val suburb: Suburb? = Utils.getPreferredDeliveryLocation()?.suburb
+        if (suburb?.id.isNullOrEmpty()) return Pair(null, null)
+
+        var suburbId: String? = null
+        var storeId: String? = null
+        if (suburb?.storePickup == true) {
+            storeId = suburb.id
+        } else {
+            suburbId = suburb?.id
+        }
+        return Pair(suburbId, storeId)
     }
 
     fun getFAQ(): Call<FAQ> {
