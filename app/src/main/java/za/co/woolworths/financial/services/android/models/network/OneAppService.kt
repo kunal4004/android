@@ -175,15 +175,15 @@ object OneAppService : RetrofitConfig() {
     }
 
     private fun getSuburbOrStoreId(): Pair<String?, String?> {
-        val suburb: Suburb? = Utils.getPreferredDeliveryLocation()?.suburb
-        if (suburb?.id.isNullOrEmpty()) return Pair(null, null)
-
         var suburbId: String? = null
         var storeId: String? = null
-        if (suburb?.storePickup == true) {
-            storeId = suburb.id
-        } else {
-            suburbId = suburb?.id
+        Utils.getPreferredDeliveryLocation()?.apply {
+            if (province?.id.isNullOrEmpty()) return Pair(null, null)
+            if (suburb?.storePickup == true) {
+                storeId = suburb.id
+            } else {
+                suburbId = suburb?.id
+            }
         }
         return Pair(suburbId, storeId)
     }
