@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 
 import com.google.firebase.analytics.FirebaseAnalytics
 
@@ -74,9 +75,12 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
         val appLinkData = intent?.data
 
+        if (appLinkData != null){
+            Log.d("StartupViewModelImpl", appLinkData.toString());
+        }
+
         if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
             handleAppLink(appLinkData)
-
         } else {
             val activity = mContext as Activity
             if (isFirstTime == null || Utils.isAppUpdated(mContext))
