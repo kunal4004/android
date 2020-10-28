@@ -47,7 +47,13 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_your_suburb else R.string.select_your_store)
+        if (deliveryType == DeliveryType.DELIVERY) {
+            activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_suburb)
+            suburbInputValue.setHint(R.string.hint_search_for_your_suburb)
+        } else {
+            activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_store)
+            suburbInputValue.setHint(R.string.hint_search_for_your_store)
+        }
         suburbInputValue?.apply {
             addTextChangedListener {
                 suburbListAdapter?.filter?.filter(it.toString())
