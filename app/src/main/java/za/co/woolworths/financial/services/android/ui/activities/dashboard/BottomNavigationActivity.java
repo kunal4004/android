@@ -7,24 +7,23 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -70,8 +69,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragmen
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedInAndNotLinkedFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -83,7 +82,6 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
-import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
@@ -99,8 +97,8 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
@@ -181,17 +179,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
         appLinkData = getIntent().getData();
+
         mNavController = FragNavController.newBuilder(savedInstanceState,
                 getSupportFragmentManager(),
                 R.id.frag_container)
                 .fragmentHideStrategy(FragNavController.HIDE)
                 .transactionListener(this)
-                .switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
-                    @Override
-                    public void switchTab(int index, @Nullable FragNavTransactionOptions transactionOptions) {
-                        getBottomNavigationById().setCurrentItem(index);
-                    }
-                })
+                .switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
                 .eager(true)
                 .rootFragmentListener(this, 5)
                 .build();
@@ -202,32 +196,29 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
          */
         initBadgeCounter();
 
-        observableOn(new Consumer<Object>() {
-            @Override
-            public void accept(Object object) {
-                if (object instanceof LoadState) {
-                    String searchProduct = ((LoadState) object).getSearchProduct();
-                    if (!TextUtils.isEmpty((searchProduct))) {
-                        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
-                    }
-                } else if (object instanceof CartSummaryResponse) {
-                    // product item successfully added to cart
-                    cartSummaryAPI();
-                    closeSlideUpPanel();
-                    setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart));
-                } else if (object instanceof BadgeState) {
-                    // call observer to update independent count
-                    BadgeState badgeState = (BadgeState) object;
-                    switch (badgeState.getPosition()) {
-                        case CART_COUNT_TEMP:
-                            addBadge(INDEX_CART, badgeState.getCount());
-                            break;
-                        case CART_COUNT:
-                            cartSummaryAPI();
-                            break;
-                        default:
-                            break;
-                    }
+        observableOn((Consumer<Object>) object -> {
+            if (object instanceof LoadState) {
+                String searchProduct = ((LoadState) object).getSearchProduct();
+                if (!TextUtils.isEmpty((searchProduct))) {
+                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
+                }
+            } else if (object instanceof CartSummaryResponse) {
+                // product item successfully added to cart
+                cartSummaryAPI();
+                closeSlideUpPanel();
+                setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart));
+            } else if (object instanceof BadgeState) {
+                // call observer to update independent count
+                BadgeState badgeState = (BadgeState) object;
+                switch (badgeState.getPosition()) {
+                    case CART_COUNT_TEMP:
+                        addBadge(INDEX_CART, badgeState.getCount());
+                        break;
+                    case CART_COUNT:
+                        cartSummaryAPI();
+                        break;
+                    default:
+                        break;
                 }
             }
         });
