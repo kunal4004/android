@@ -4,14 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
-
+import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-
-import java.util.ArrayList
-
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
@@ -20,8 +18,10 @@ import za.co.woolworths.financial.services.android.models.dto.chat.CustomerServi
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.fromJson
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override var intent: Intent? = null
@@ -73,10 +73,20 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override fun presentNextScreen() {
 
         val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
-        val appLinkData = intent?.data
+        var appLinkData = intent?.data
 
-        if (appLinkData != null){
-            Log.d("StartupViewModelImpl", appLinkData.toString());
+        if (appLinkData == null && intent?.extras != null){
+            val data: Bundle = intent!!.extras!!;
+            when {
+                ("Product Listing").equals(data.get("feature")) -> {
+                    val temp = data.get("parameters");
+                    var json = data.getString("parameters")!!.replace("\\", "");
+
+                    var jsonObject = Gson().fromJson<JsonObject>(json);
+                    appLinkData = Uri.parse(jsonObject.get("url").asString);
+                    intent?.action = Intent.ACTION_VIEW;
+                }
+            }
         }
 
         if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
