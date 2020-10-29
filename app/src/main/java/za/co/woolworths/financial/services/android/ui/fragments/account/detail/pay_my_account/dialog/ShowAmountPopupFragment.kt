@@ -172,7 +172,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
                     R.id.pmaConfirmPaymentButton -> {
                         setCVVNumber(cvvEditTextInput?.text?.toString())
-                        navController?.navigate(R.id.action_displayVendorCardDetailFragment_to_manageCardFragment)
+                        navController?.navigate(R.id.action_displayVendorCardDetailFragment_to_PMAProcessRequestFragment)
                     }
                     else -> return@with
                 }
