@@ -277,13 +277,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             priceHolder.rlDiscount.setVisibility(View.GONE);
                         }
 
-                        if (discountDetails.getVoucherDiscount() > 0) {
-                            setDiscountPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getVoucherDiscount());
-                            priceHolder.rlWrewardsDiscount.setVisibility(View.VISIBLE);
-                        } else {
-                            priceHolder.rlWrewardsDiscount.setVisibility(View.GONE);
-                        }
-
                         if (discountDetails.getPromoCodeDiscount() > 0) {
                             setDiscountPriceValue(priceHolder.txtPromoCodeDiscount, discountDetails.getPromoCodeDiscount());
                             priceHolder.rlPromoCodeDiscount.setVisibility(View.VISIBLE);

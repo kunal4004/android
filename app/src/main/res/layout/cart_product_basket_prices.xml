@@ -122,6 +122,7 @@
             android:id="@+id/rlWrewardsDiscount"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fourty_nine_dp"
+            android:visibility="gone"
             >
 
             <View
