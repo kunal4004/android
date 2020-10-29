@@ -18,6 +18,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
+import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
@@ -357,10 +358,23 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             if (isStoreClosed(it)) {
                 showStoreClosedMessage()
             } else {
-                foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate ?: ""
-                otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate ?: ""
-                foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                when (deliveryType == DeliveryType.STORE_PICKUP) {
+                    true -> {
+                        earliestDateValue?.text = it.firstAvailableFoodDeliveryDate ?: ""
+                        earliestDateValue?.visibility = View.VISIBLE
+                        foodItemsDeliveryDateLayout?.visibility = View.GONE
+                        otherItemsDeliveryDateLayout?.visibility = View.GONE
+                    }
+                    false -> {
+                        foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate
+                                ?: ""
+                        otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate
+                                ?: ""
+                        earliestDateValue?.visibility = View.GONE
+                        foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                    }
+                }
                 earliestDateTitle?.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.earliest_delivery_date else R.string.earliest_collection_date)
                 deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
             }
