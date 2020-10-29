@@ -31,7 +31,12 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        etPromoCode?.afterTextChanged { onPromoCodeTextChanged(it) }
+        activity?.apply {
+            etPromoCode?.let {
+                it.showKeyboard(this as AppCompatActivity)
+                it.afterTextChanged { onPromoCodeTextChanged(it) }
+            }
+        }
         cancel?.setOnClickListener(this)
         clear?.setOnClickListener(this)
         applyPromoCode?.setOnClickListener(this)

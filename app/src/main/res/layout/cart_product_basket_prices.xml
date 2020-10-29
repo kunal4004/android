@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/button_style_height"
+        android:paddingBottom="@dimen/twenty_four_dp"
         android:paddingLeft="23dp"
         android:paddingRight="24dp">
 
@@ -255,21 +255,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/eighteen_dp"
             android:text="@string/cart_item_not_preserved_until_checkout_info"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/twelve_sp"
+            android:lineSpacingMultiplier="1.2"
             app:WTextView_font="myriadpro_regular"/>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            style="@style/style_cart_basket_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/twelve_dp"
-            android:text="@string/delivery_confirmation_desc"
-            android:textSize="@dimen/fifteen_sp"
-            app:WTextView_font="myriadpro_regular"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/sixteen_dp"/>
 
     </LinearLayout>
 </LinearLayout>

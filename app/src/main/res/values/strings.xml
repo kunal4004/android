@@ -510,7 +510,6 @@
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Search products to add to your list</string>
-    <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
@@ -921,7 +920,7 @@
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
     <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
-    <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout</string>
+    <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout \n* Delivery cost to be confirmed before payment</string>
     <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
     <string name="store_card_status_temporay">\u0020temp\u0020</string>
     <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
