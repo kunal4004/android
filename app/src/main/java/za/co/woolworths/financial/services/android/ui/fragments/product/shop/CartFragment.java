@@ -125,6 +125,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private List<ChangeQuantity> mChangeQuantityList;
 	private boolean mRemoveAllItemFromCartTapped = false;
 	private HashMap<String, List<SkuInventory>> mSkuInventories;
+	private static boolean isMaterialPopUpClosed = true;
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
 
@@ -451,6 +452,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
 			updateOrderTotal();
+			isMaterialPopUpClosed = false;
 			showRedeemVoucherFeatureWalkthrough();
 		} else {
 			updateCartSummary(0);
@@ -464,6 +466,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.resetToolBarIcons();
 			}
+			isMaterialPopUpClosed = true;
 			showEditDeliveryLocationFeatureWalkthrough();
 		}
 	}
@@ -1365,7 +1368,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onPromptDismiss() {
-
+		isMaterialPopUpClosed = true;
+		if (voucherDetails != null)
+			showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
 	}
 
 	public ArrayList<CartItemGroup> getCartItems() {
@@ -1396,8 +1401,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void showRedeemVoucherFeatureWalkthrough(){
-		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.cartRedeemVoucher)
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.cartRedeemVoucher) {
+			isMaterialPopUpClosed = true;
 			return;
+		}
 		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
 				.setTarget(new View(getActivity()))
 				.setTitle(R.string.redeem_voucher_walkthrough_title)
@@ -1412,7 +1419,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void showAvailableVouchersToast(int availableVouchersCount) {
-		if (availableVouchersCount < 1)
+		if (availableVouchersCount < 1 || !isMaterialPopUpClosed)
 			return;
 		mToastUtils.setActivity(getActivity());
 		mToastUtils.setCurrentState(TAG_AVAILABLE_VOUCHERS_TOAST);
