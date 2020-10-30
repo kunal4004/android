@@ -22,4 +22,7 @@ public class CartSummary {
 	@SerializedName("suburb")
 	@Expose
 	public Suburb suburb;
+	@SerializedName("provinceId")
+	@Expose
+	public String provinceId;
 }
