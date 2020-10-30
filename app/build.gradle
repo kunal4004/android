@@ -8,7 +8,7 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "7"
-    def minor = "4"
+    def minor = "5"
     def fix = "0"
     def jobNumber = 458
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
@@ -87,7 +87,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 138
+            jobNumber = 139
         }
 
         defaultConfig {
