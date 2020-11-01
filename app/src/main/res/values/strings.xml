@@ -1495,7 +1495,7 @@
     <string name="select_a_suburb">Select a Suburb</string>
     <string name="select_a_store">Select a Store</string>
     <string name="delivery_or_collection">Delivery or Collection?</string>
-    <string name="collecting_from">Collecting From</string>
+    <string name="collecting_from">Collecting from</string>
     <string name="select_your_collection_store">Select your collection store:</string>
     <string name="select_your_delivery_location">Select your delivery location:</string>
     <string name="remove_these_items_continue">remove these items &amp; continue</string>
@@ -1529,7 +1529,6 @@
     <string name="temp_card_how_to_use8">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
     <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
     <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
-    <string name="collecting_from_confirm_suburb">Collecting from</string>
     <string name="select_an_option">Please Select an Option</string>
     <string name="collection_location">Collection Location:</string>
     <string name="collection_date">Collection Date:</string>
@@ -1554,8 +1553,6 @@
     <string name="default_notification_channel_description">Woolworths Notification Channel</string>
 
     <string name="store_closed_message">Sorry, we aren’t accepting food orders in your chosen area as the store is temporarily closed</string>
-    <string name="first_available_food_delivery_date">The earliest available delivery slot for &lt;b>food&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
-    <string name="first_available_other_delivery_date">The earliest available delivery for &lt;b>fashion, beauty &amp; home&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="change_store">Change Store</string>
     <string name="these_items_will_be_removed_from_your_cart">These items will be removed from your cart</string>
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
@@ -1581,7 +1578,10 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
-    <string name="get_your_free_credit_report">Get Your Free Credit Report</string>
+    <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="food_items">Food Items</string>
+    <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
+    <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
     <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
     <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
@@ -1597,5 +1597,11 @@
     <string name="end_session_button_caption">yes, end session</string>
     <string name="pma_retry_error_title">Oops!</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="select_your_store">Select Your Store</string>
+    <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
+    <string name="hint_search_for_your_store">Search For Your Store</string>
+    <string name="get_a_free_credit_score">get a free credit score</string>
+    <string name="get_started_now">Get started now</string>
+    <string name="earliest_collection_date">Earliest Collection date:</string>
 </resources>
 

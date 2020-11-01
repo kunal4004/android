@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
@@ -459,6 +460,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private void disableRefresh() {
         if (mUpdateMyAccount != null)
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+        imRefreshAccount.setVisibility(View.GONE);
         imRefreshAccount.setEnabled(false);
     }
 
@@ -1091,9 +1093,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 					return;
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
 						.setTarget(creditReportIcon)
-						.setTitle(R.string.get_your_free_credit_report)
+						.setTitle(R.string.get_a_free_credit_score)
 						.setDescription(R.string.get_your_free_credit_report_desc)
-						.setActionText(R.string.get_started)
+						.setActionText(R.string.get_started_now)
 						.setImage(R.drawable.ic_statements)
 						.setAction(listener)
 						.setShapePadding(48)
@@ -1116,11 +1118,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             viewToScrollUp = imgStoreCardApplyNow;
             actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
         } else {
-            if (!unavailableAccounts.contains("SC")) {
+            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
                 viewToScrollUp = imgStoreCardContainer;
-            } else if (!unavailableAccounts.contains("CC")) {
+            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
                 viewToScrollUp = imgCreditCard;
-            } else if (!unavailableAccounts.contains("PL")) {
+            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
                 viewToScrollUp = imgPersonalLoanCardContainer;
             }
         }

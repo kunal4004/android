@@ -43,7 +43,7 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
                 }
                 is SuburbsResponse -> {
                     when (httpCode) {
-                        200 -> mainView?.onGetSuburbsSuccess(if (deliveryType == DeliveryType.DELIVERY) getDeliverableSuburbs(suburbs) else stores)
+                        200 -> mainView?.onGetSuburbsSuccess(if (deliveryType == DeliveryType.DELIVERY) suburbs else stores)
                         else -> mainView?.onGetSuburbsFailure()
                     }
                 }
@@ -66,10 +66,6 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
 
     override fun onFailure(error: Throwable?) {
         mainView?.onGenericFailure()
-    }
-
-    override fun getDeliverableSuburbs(suburbs: List<Suburb>): List<Suburb> {
-        return suburbs.filter { suburb -> suburb.suburbDeliverable }
     }
 
 }

@@ -72,7 +72,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
         tvSearchProduct?.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner?.setOnClickListener { checkCameraPermission() }
-        fragmentManager?.let {  shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)}
+        activity?.supportFragmentManager?.let {  shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)}
         viewpager_main?.offscreenPageLimit = 2
         viewpager_main?.adapter = shopPagerAdapter
         viewpager_main?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -134,6 +134,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
                 refreshViewPagerFragment(false)
+            }
+        }
+
+        when (viewpager_main?.currentItem) {
+            0 -> {
+                val departmentFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                departmentFragment?.onHiddenChanged(hidden)
             }
         }
     }
