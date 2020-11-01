@@ -79,7 +79,6 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             val data: Bundle = intent!!.extras!!;
             when {
                 ("Product Listing").equals(data.get("feature")) -> {
-                    val temp = data.get("parameters");
                     var json = data.getString("parameters")!!.replace("\\", "");
 
                     var jsonObject = Gson().fromJson<JsonObject>(json);
