@@ -277,6 +277,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             priceHolder.rlDiscount.setVisibility(View.GONE);
                         }
 
+                        if (discountDetails.getVoucherDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getVoucherDiscount());
+                            priceHolder.rlWrewardsDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlWrewardsDiscount.setVisibility(View.GONE);
+                        }
+
                         if (discountDetails.getPromoCodeDiscount() > 0) {
                             setDiscountPriceValue(priceHolder.txtPromoCodeDiscount, discountDetails.getPromoCodeDiscount());
                             priceHolder.rlPromoCodeDiscount.setVisibility(View.VISIBLE);
@@ -313,7 +320,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     priceHolder.viewVouchers.setEnabled(false);
                 }
                 priceHolder.promoCodeAction.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.remove : R.string.enter));
-                priceHolder.promoCodeLabel.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.promo_code_applied : R.string.do_you_have_a_promo_code));
+
+                if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) {
+                    String appliedPromoCodeText = mContext.getString(R.string.promo_code_applied) + voucherDetails.getPromoCodes().get(0).getPromoCode();
+                    priceHolder.promoCodeLabel.setText(appliedPromoCodeText);
+                } else {
+                    priceHolder.promoCodeLabel.setText(mContext.getString(R.string.do_you_have_a_promo_code));
+                }
 
                 priceHolder.promoCodeAction.setOnClickListener(new View.OnClickListener() {
                     @Override
