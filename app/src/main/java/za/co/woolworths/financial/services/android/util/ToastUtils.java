@@ -189,7 +189,7 @@ public class ToastUtils {
 			}, POPUP_DELAY_MILLIS);
 
 			if (getActivity() != null) {
-				pw.showAtLocation(view, gravity, 0, getPixel());
+				pw.showAsDropDown(view, 0, (int) -(view.getHeight() * 2.1));
 			}
 			return pw;
 		}
