@@ -64,7 +64,7 @@
         style="@style/futura_semi_bold_black"
         android:layout_marginTop="@dimen/thirty_dp"
         android:gravity="center"
-        android:text="@string/redeeming_your_vouchers"
+        android:text="@string/applying_your_vouchers"
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintLeft_toLeftOf="parent"
