@@ -169,8 +169,7 @@ public class ToastUtils {
 	public PopupWindow buildCustomToast(){
 		if (getActivity() != null) {
 
-			LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View layout = inflater.inflate(R.layout.single_line_toast_layout, null);
+			View layout = LayoutInflater.from(getActivity()).inflate(R.layout.single_line_toast_layout, null);
 
 			TextView toastMessage = layout.findViewById(R.id.toastMessage);
 			toastMessage.setText(HtmlCompat.fromHtml(getMessage(), HtmlCompat.FROM_HTML_MODE_LEGACY));

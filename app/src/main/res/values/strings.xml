@@ -1635,5 +1635,6 @@
     <string name="promo_code_discount">Promo Code Applied</string>
     <string name="order_total">ORDER TOTAL*</string>
     <string name="promo_code_removed_toast_message">&lt;b>Promo Code&lt;/b> has been removed</string>
+    <string name="tbc">TBC</string>
 </resources>
 

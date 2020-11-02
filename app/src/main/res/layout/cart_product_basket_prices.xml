@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="TBC"/>
+                android:text="@string/tbc"/>
 
         </RelativeLayout>
 
@@ -177,7 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="TBC"/>
+                android:text="@string/tbc"/>
 
         </RelativeLayout>
 
@@ -208,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
-                android:text="TBC"/>
+                android:text="@string/tbc"/>
 
         </RelativeLayout>
 
@@ -239,7 +239,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="TBC"/>
+                android:text="@string/tbc"/>
 
         </RelativeLayout>
 

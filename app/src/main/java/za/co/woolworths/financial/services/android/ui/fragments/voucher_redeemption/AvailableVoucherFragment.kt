@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingCartRespon
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableVouchersToRedeemListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_3000_MS
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPromoCodeContract.AvailableVoucherView {
@@ -112,7 +113,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
                 it.visibility = View.VISIBLE
                 Handler().postDelayed({
                     it.visibility = View.GONE
-                }, 3000)
+                }, DELAY_3000_MS)
             }
         }
     }

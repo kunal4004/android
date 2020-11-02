@@ -10,7 +10,6 @@
         android:id="@+id/parentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
         >
 
         <androidx.core.widget.NestedScrollView
@@ -39,10 +38,9 @@
                     android:id="@+id/cartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="134dp"
+                    android:layout_marginBottom="@dimen/one_thirty_four"
                     android:nestedScrollingEnabled="false"
-                    android:scrollbars="none"
-                    android:visibility="visible"/>
+                    android:scrollbars="none" />
 
                 <include
                     layout="@layout/empty_state_template"/>
@@ -110,7 +108,6 @@
                     android:background="@drawable/black_button_drawable_state"
                     android:letterSpacing="0.2"
                     android:text="@string/checkout"
-                    android:visibility="visible"
                     app:WButton_font="medium_bold" />
 
             </RelativeLayout>

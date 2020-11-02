@@ -14,5 +14,6 @@ class AppConstant {
 
         //Delays
         const val DELAY_900_MS: Long = 900
+        const val DELAY_3000_MS: Long = 3000
     }
 }
