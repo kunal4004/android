@@ -1619,7 +1619,7 @@
     <string name="enter">enter</string>
     <string name="remove">remove</string>
     <string name="promo_code_applied">Promo code: APPLIED</string>
-    <string name="applying_your_promocode">Applying Your PromoCode</string>
+    <string name="applying_your_promocode">Applying Promo Code</string>
     <string name="promo_code_generic_error_message">There was a problem applying your promo code, Please try again</string>
     <string name="promo_code_applied_toast_message">&lt;b>Promo Code&lt;/b> has been applied</string>
     <string name="select_your_store">Select Your Store</string>
