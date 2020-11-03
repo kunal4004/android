@@ -145,6 +145,7 @@ public class ToastUtils {
 				}
 			});
 
+			pw.setFocusable(false);
 			// dismiss the popup window after 3sec
 			new Handler().postDelayed(new Runnable() {
 				public void run() {
@@ -178,6 +179,7 @@ public class ToastUtils {
 			final PopupWindow pw = new PopupWindow(layout,
 					LinearLayout.LayoutParams.MATCH_PARENT,
 					LinearLayout.LayoutParams.WRAP_CONTENT, true);
+			pw.setFocusable(false);
 
 			// dismiss the popup window after 3sec
 			new Handler().postDelayed(new Runnable() {
