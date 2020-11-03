@@ -86,6 +86,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPur
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CartUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiMap;
@@ -474,13 +475,23 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.orderSummary = cartResponse.orderSummary;
 		this.voucherDetails = cartResponse.voucherDetails;
-		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
 			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
+
+				if(commerceItemToRemove !=null) {
+					for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+						if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)) {
+							cartItemGroup.commerceItems.remove(commerceItem);
+							break;
+						}
+					}
+				}
+
 				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)) {
-						cartItemGroup.commerceItems.remove(commerceItem);
-						break;
+					CommerceItem updatedCommerceItem = CartUtils.Companion.filterCommerceItemFromCartResponse(cartResponse, commerceItem.commerceItemInfo.commerceId);
+					if (updatedCommerceItem != null) {
+						commerceItem.priceInfo = updatedCommerceItem.priceInfo;
 					}
 				}
 
@@ -1045,7 +1056,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				case REDEEM_VOUCHERS_REQUEST_CODE:
 				case APPLY_PROMO_CODE_REQUEST_CODE:
 					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
-					updateCart(convertResponseToCartResponseObject(shoppingCartResponse));
+					updateCart(convertResponseToCartResponseObject(shoppingCartResponse), null);
 					if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE)
 						showVouchersOrPromoCodeAppliedToast(getString(R.string.vouchers_applied_toast_message));
 					if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
@@ -1454,13 +1465,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		startActivityForResult(intent
 				, REDEEM_VOUCHERS_REQUEST_CODE);
 	}
-
-	void updateCart(CartResponse cartResponse) {
-		this.orderSummary = cartResponse.orderSummary;
-		this.voucherDetails = cartResponse.voucherDetails;
-		cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
-	}
-
+	
 	@Override
 	public void updateOrderTotal() {
 		if (orderSummary != null) {
@@ -1482,7 +1487,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				hideProgressBar();
 				switch (response.httpCode) {
 					case 200:
-						updateCart(convertResponseToCartResponseObject(response));
+						updateCart(convertResponseToCartResponseObject(response), null);
 						if (voucherDetails.getPromoCodes() == null || voucherDetails.getPromoCodes().size() == 0)
 							showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_removed_toast_message));
 						break;
