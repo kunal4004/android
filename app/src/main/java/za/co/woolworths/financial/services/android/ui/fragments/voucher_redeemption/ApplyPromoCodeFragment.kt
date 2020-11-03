@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingCartRespon
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
 import za.co.woolworths.financial.services.android.ui.extension.showKeyboard
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyPromoCodeView, View.OnClickListener {
@@ -54,8 +56,11 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
             etPromoCode?.text.toString().trim().let {
                 if (it.isNotEmpty()) {
                     etPromoCode.hideKeyboard(activity as AppCompatActivity)
-                    showApplyPromoCodeProgress()
-                    presenter?.initApplyPromoCode(it)
+                    Handler().postDelayed({
+                        showApplyPromoCodeProgress()
+                        presenter?.initApplyPromoCode(it)
+                    }, AppConstant.DELAY_300_MS)
+
                 }
             }
         }
