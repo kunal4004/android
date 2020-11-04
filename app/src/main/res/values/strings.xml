@@ -986,8 +986,8 @@
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
-    <string name="set_to_default">Set to default - \u0020</string>
-    <string name="delivering_to_pdp">Delivering to - \u0020</string>
+    <string name="set_to_default">Set to default \u0020</string>
+    <string name="delivering_to_pdp">Delivering to \u0020</string>
     <string name="select_colour">Select Colour</string>
     <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
