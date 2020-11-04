@@ -302,34 +302,6 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.blockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getOsVersion(), "", getSessionToken(), productOfferingId, blockCardRequestBody)
     }
 
-    fun pollAgentsAvailable(): Observable<AgentsAvailableResponse> {
-        return mApiInterface.pollAgentsAvailable(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
-    }
-
-    fun createChatSession(requestBody: CreateChatSession): Call<CreateChatSessionResponse> {
-        return mApiInterface.createChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), requestBody)
-    }
-
-    fun pollChatSessionState(chatId: String): Observable<PollChatSessionStateResponse> {
-        return mApiInterface.pollChatSessionState(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
-    }
-
-    fun sendChatMessage(chatId: String, requestBody: SendMessageRequestBody): Call<SendChatMessageResponse> {
-        return mApiInterface.sendChatMessage(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, requestBody)
-    }
-
-    fun endChatSession(chatId: String): Call<EndChatSessionResponse> {
-        return mApiInterface.endChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
-    }
-
-    fun userTyping(chatId: String): Call<UserTypingResponse> {
-        return mApiInterface.userTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
-    }
-
-    fun userStoppedTyping(chatId: String): Call<UserTypingResponse> {
-        return mApiInterface.userStoppedTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
-    }
-
     fun getStoreCards(storeCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse> {
         return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), storeCardsRequestBody)
     }
