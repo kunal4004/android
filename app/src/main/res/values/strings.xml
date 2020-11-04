@@ -1636,5 +1636,7 @@
     <string name="order_total">ORDER TOTAL*</string>
     <string name="promo_code_removed_toast_message">&lt;b>Promo Code&lt;/b> has been removed</string>
     <string name="tbc">TBC</string>
+    <string name="promo_discount_dialog_title">Promo Code Applied</string>
+    <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
 </resources>
 

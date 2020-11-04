@@ -88,6 +88,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         void onEnterPromoCode();
 
         void onRemovePromoCode(String promoCode);
+
+        void onPromoDiscountInfo();
     }
 
     private OnItemClick onItemClick;
@@ -338,6 +340,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     }
                 });
 
+                priceHolder.promoDiscountInfo.setOnClickListener(v -> {
+                        onItemClick.onPromoDiscountInfo();
+                });
                 break;
 
             default:
@@ -553,6 +558,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private LinearLayout orderSummeryLayout;
         private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount, rlPromoCodeDiscount;
         private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel;
+        private ImageView promoDiscountInfo;
 
 
         public CartPricesViewHolder(View view) {
@@ -574,6 +580,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             promoCodeLabel = view.findViewById(R.id.promoCodeLabel);
             txtPromoCodeDiscount = view.findViewById(R.id.txtPromoCodeDiscount);
             rlPromoCodeDiscount = view.findViewById(R.id.rlPromoCodeDiscount);
+            promoDiscountInfo = view.findViewById(R.id.promoDiscountInfo);
         }
     }
 

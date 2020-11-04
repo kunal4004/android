@@ -25,6 +25,7 @@ import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
@@ -42,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
 import java.text.SimpleDateFormat
@@ -432,6 +434,11 @@ class KotlinUtils {
             } catch (t: Throwable) {
                 Crashlytics.log(t.message)
             }
+        }
+
+        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "") {
+            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText)
+            fragmentManager.let { fragmentTransaction -> dialog.show(fragmentTransaction, GeneralInfoDialogFragment::class.java.simpleName) }
         }
     }
 }

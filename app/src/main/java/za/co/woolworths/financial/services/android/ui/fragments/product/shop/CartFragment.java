@@ -1537,4 +1537,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 	}
 
+	@Override
+	public void onPromoDiscountInfo() {
+		KotlinUtils.Companion.showGeneralInfoDialog(requireActivity().getSupportFragmentManager(), getString(R.string.promo_discount_dialog_desc), getString(R.string.promo_discount_dialog_title), getString(R.string.got_it));
+	}
 }

@@ -175,9 +175,19 @@
                 style="@style/style_cart_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/promoDiscountInfo"
+                android:layout_marginEnd="@dimen/four_dp"
+                android:text="@string/tbc"/>
+
+            <ImageView
+                android:id="@+id/promoDiscountInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_info"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="@string/tbc"/>
+                />
 
         </RelativeLayout>
 
