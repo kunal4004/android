@@ -11,7 +11,7 @@ class CartUtils {
             cartResponse.cartItems?.forEach { group ->
                 commerceItem = group.commerceItems?.find { it.commerceItemInfo.commerceId.equals(commerceId, true) }
                 if (commerceItem != null)
-                    return@forEach
+                    return commerceItem
             }
             return commerceItem
         }
