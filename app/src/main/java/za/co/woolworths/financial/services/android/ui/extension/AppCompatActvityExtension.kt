@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.extension
 
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
 
 import android.os.CountDownTimer
 import android.text.Editable
@@ -12,13 +13,17 @@ import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.AnimRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -279,3 +284,26 @@ fun <T> Fragment.getNavigationResult(@IdRes id: Int, key: String, onResult: (res
         }
     })
 }
+
+fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
+    val divider = DividerItemDecoration(
+            this.context,
+            DividerItemDecoration.VERTICAL
+    )
+    val drawable = ContextCompat.getDrawable(
+            this.context,
+            drawableRes
+    )
+    drawable?.let {
+        divider.setDrawable(it)
+        addItemDecoration(divider)
+    }
+}
+
+inline fun <reified T : Enum<T>> Intent.putEnumExtra(victim: T): Intent =
+        putExtra(T::class.java.name, victim.ordinal)
+
+inline fun <reified T: Enum<T>> Intent.getEnumExtra(): T? =
+        getIntExtra(T::class.java.name, -1)
+                .takeUnless { it == -1 }
+                ?.let { T::class.java.enumConstants[it] }

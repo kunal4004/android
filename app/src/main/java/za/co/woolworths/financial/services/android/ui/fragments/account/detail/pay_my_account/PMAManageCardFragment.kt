@@ -21,14 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pma_manage_card_fragment.*
 import kotlinx.coroutines.GlobalScope
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.adapters.PMACardsAdapter
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.views.card_swipe.RecyclerViewSwipeDecorator
@@ -42,8 +38,6 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
     private var mDeletedPaymentMethodPosition: Int = 0
     private var temporarySelectedPosition: Int = 0
-    private var paymentMethod: String? = null
-    private var mAccountDetails: Pair<ApplyNowState, Account>? = null
     private var manageCardAdapter: PMACardsAdapter? = null
     private var mPaymentMethodList: MutableList<GetPaymentMethod>? = null
     private var navController: NavController? = null
@@ -51,15 +45,6 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
     private var root: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var mLifecycleType: LifecycleType = LifecycleType.INIT
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.apply {
-            paymentMethod = getString(PayMyAccountPresenterImpl.GET_PAYMENT_METHOD, "")
-            mAccountDetails = payMyAccountViewModel.getAccountWithApplyNowState()
-            mPaymentMethodList = Gson().fromJson<MutableList<GetPaymentMethod>>(paymentMethod, object : TypeToken<MutableList<GetPaymentMethod>>() {}.type)
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (root == null)
@@ -93,7 +78,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                 }
                 PayMyAccountViewModel.OnBackNavigation.ADD -> {
                     GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
-                        val accounts = mAccountDetails?.second
+                        val accounts = payMyAccountViewModel.getAccount()
                         val addCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
                         navController?.navigate(addCard)
                     }
@@ -140,8 +125,6 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             }
 
             adapter = manageCardAdapter
-
-
         }
     }
 
@@ -164,7 +147,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                     navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
                     return
                 }
-                val accounts = mAccountDetails?.second
+                val accounts = payMyAccountViewModel.getAccount()
                 val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
                 navController?.navigate(manageCard)
             }
@@ -176,7 +159,6 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         mDeletedPaymentMethodPosition = position
         mPaymentMethodList?.removeAt(position)
         manageCardAdapter?.notifyItemRemoved(position)
-        manageCardAdapter?.notifyItemRangeChanged(position, manageCardAdapter?.itemCount ?: 0)
 
         val cardPosition = payMyAccountViewModel.getCardDetail()?.selectedCardPosition
         if (cardPosition != null && cardPosition >= 1)
@@ -188,11 +170,14 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                 deleteProgressVisibility(false)
             }, {
                 // Add deleted card to list
-                deletedPaymentMethod?.let { item -> mPaymentMethodList?.add(mDeletedPaymentMethodPosition, item) }
-                manageCardAdapter?.notifyItemInserted(position)
+                deleteProgressVisibility(false)
+                deletedPaymentMethod?.let { manageCardAdapter?.notifyInsert(it, position) }
+                mPaymentMethodList = manageCardAdapter?.getList()
 
                 // Display delete card popup
-                navController?.navigate(R.id.action_manageCardFragment_to_PMADeleteCardAPIErrorFragment)
+                // To prevent IllegalArgumentException cannot be found from the current destination Destination
+                if (navController?.currentDestination?.id == R.id.manageCardFragment)
+                    navController?.navigate(R.id.action_manageCardFragment_to_PMADeleteCardAPIErrorFragment)
             })
 
             // Disable use this card button when no item is selected
@@ -241,7 +226,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             when (mLifecycleType) {
                 LifecycleType.INIT -> configureRecyclerview()
                 LifecycleType.RESUME -> {
-                    manageCardAdapter?.updateListInAdapter(paymentMethodsList, temporarySelectedPosition)
+                    manageCardAdapter?.notifyUpdate(paymentMethodsList, temporarySelectedPosition)
                     mPaymentMethodList = manageCardAdapter?.getList()
                 }
             }
@@ -306,13 +291,13 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
 
             RecyclerViewSwipeDecorator.Builder(canvas, pmaManageCardRecyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                    .addSwipeLeftLabel(bindString(R.string.delete))
-                    .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
-                    .addBackgroundColor(bindColor(R.color.delete_red_bg))
-                    .setSwipeLeftLabelTypeface(getMyriadProSemiBoldFont() ?: Typeface.DEFAULT)
-                    .setSwipeLeftTextColor(Color.WHITE)
-                    .create()
-                    .decorate()
+                .addSwipeLeftLabel(bindString(R.string.delete))
+                .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
+                .addBackgroundColor(bindColor(R.color.delete_red_bg))
+                .setSwipeLeftLabelTypeface(getMyriadProSemiBoldFont() ?: Typeface.DEFAULT)
+                .setSwipeLeftTextColor(Color.WHITE)
+                .create()
+                .decorate()
 
             super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }

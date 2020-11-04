@@ -2,14 +2,14 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 
-class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var listener: OnChildFragmentEvents) : FragmentPagerAdapter(fm) {
+class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var listener: OnChildFragmentEvents) : FragmentStatePagerAdapter(fm) {
     private val mTabTitle: MutableList<String>? = tabTitle
     override fun getItem(position: Int): Fragment {
         return when (position) {

@@ -12,8 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.facebook.shimmer.Shimmer
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
@@ -93,8 +91,6 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
         setWhatsAppChatWithUsVisibility(payMyAccountPresenter?.getWhatsAppVisibility() ?: false)
 
-        initShimmer()
-        stopProgress()
     }
 
     private fun onRetry() {
@@ -142,9 +138,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun queryServicePaymentMethod() {
-        initShimmer()
-        startProgress()
-
+        debitOrCreditButtonIsEnabled(false)
         val cardInfo = payMyAccountViewModel.getCardDetail()
         val account = cardInfo?.account
         val amountEntered = cardInfo?.amountEntered
@@ -155,28 +149,25 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         payMyAccountViewModel.setPMACardInfo(card)
 
         payMyAccountViewModel.queryServicePayUPaymentMethod(
-                { // onSuccessResult
-                    if (!isAdded) return@queryServicePayUPaymentMethod
-                    stopProgress()
-                    isQueryPayUPaymentMethodComplete = true
-
-                }, { onSessionExpired ->
+            { // onSuccessResult
+                if (!isAdded) return@queryServicePayUPaymentMethod
+                isQueryPayUPaymentMethodComplete = true
+                debitOrCreditButtonIsEnabled(true)
+            }, { onSessionExpired ->
             if (!isAdded) return@queryServicePayUPaymentMethod
             activity?.let {
-                stopProgress()
                 isQueryPayUPaymentMethodComplete = true
+                debitOrCreditButtonIsEnabled(true)
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, onSessionExpired, it)
-
             }
         }, { // on unknown http error / general error
             if (!isAdded) return@queryServicePayUPaymentMethod
-            stopProgress()
             isQueryPayUPaymentMethodComplete = true
 
         }, { throwable ->
             if (!isAdded) return@queryServicePayUPaymentMethod
             activity?.runOnUiThread {
-                stopProgress()
+                debitOrCreditButtonIsEnabled(true)
             }
             isQueryPayUPaymentMethodComplete = true
             if (throwable is ConnectException) {
@@ -185,19 +176,9 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun initShimmer() {
-        initShimmer(payByDebitCardNowButtonShimmerLayout)
-        initShimmer(payByCreditCardNowButtonShimmerLayout)
-    }
-
-    private fun startProgress() {
-        startProgress(payByDebitCardNowButtonShimmerLayout)
-        startProgress(payByCreditCardNowButtonShimmerLayout)
-    }
-
-    private fun stopProgress() {
-        stopProgress(payByDebitCardNowButtonShimmerLayout)
-        stopProgress(payByCreditCardNowButtonShimmerLayout)
+    private fun debitOrCreditButtonIsEnabled(isEnabled: Boolean) {
+        payByDebitCardNowButton?.isEnabled = isEnabled
+        payByCreditCardNowButton?.isEnabled = isEnabled
     }
 
     private fun configureClickEvent() {
@@ -228,8 +209,6 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             R.id.payByCreditCardNowButton,
             R.id.incDebitCardButton,
             R.id.payByDebitCardNowButton -> {
-                if (payByDebitCardNowButtonShimmerLayout?.isShimmerStarted == true) return
-
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val payUMethodType = cardInfo?.payuMethodType
                 val paymentMethod = Gson().toJson(cardInfo?.paymentMethodList)
@@ -247,7 +226,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
                         val account = Gson().toJson(payMyAccountPresenter?.getAccount()
-                                ?: Account())
+                            ?: Account())
                         val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
                         navController?.navigate(toDisplayCard)
                     }
@@ -265,7 +244,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             R.id.incPayAtAnyATMButton, R.id.payAtAnyATMButton -> navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment)
 
             R.id.incSetupMyDebitOrder, R.id.setUpDebitOrderButton -> {
-                GlobalScope.doAfterDelay(200) {
+                GlobalScope.doAfterDelay(AppConstant.DELAY_200_MS) {
                     navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_PMAPayByDebitOrderFragment)
                 }
             }
@@ -307,20 +286,6 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             setOnClickListener(this@CreditAndDebitCardPaymentsFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-    }
-
-    private fun initShimmer(view: ShimmerFrameLayout?) {
-        val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        view?.setShimmer(shimmer)
-    }
-
-    private fun startProgress(view: ShimmerFrameLayout?) {
-        view?.startShimmer()
-    }
-
-    private fun stopProgress(view: ShimmerFrameLayout?) {
-        view?.setShimmer(null)
-        view?.stopShimmer()
     }
 
     override fun onResume() {

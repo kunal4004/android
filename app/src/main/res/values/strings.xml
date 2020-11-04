@@ -1597,8 +1597,6 @@
     <string name="default_notification_channel_description">Woolworths Notification Channel</string>
 
     <string name="store_closed_message">Sorry, we aren’t accepting food orders in your chosen area as the store is temporarily closed</string>
-    <string name="first_available_food_delivery_date">The earliest available delivery slot for &lt;b>food&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
-    <string name="first_available_other_delivery_date">The earliest available delivery for &lt;b>fashion, beauty &amp; home&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="change_store">Change Store</string>
     <string name="these_items_will_be_removed_from_your_cart">These items will be removed from your cart</string>
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
@@ -1646,6 +1644,7 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+
     <string name="pma_retry_error_title">Oops!</string>
     <string name="pma_retry_error_desc">Unfortunately, we’re having trouble retrieving your information, please try again.</string>
     <string name="pma_pay_by_debit_order">"Pay By Debit Order  "</string>
@@ -1676,6 +1675,9 @@
     <string name="payment_overdue_error_desc">To keep your account in good standing please pay overdue amount of %1$s today. Please pay now or contact us.</string>
     <string name="chat_to_us_label">CHAT TO US</string>
 
+    <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="food_items">Food Items</string>
+    <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
 
     <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
@@ -1693,7 +1695,11 @@
     <string name="end_session_button_caption">yes, end session</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
     <string name="pma_delete_card_failure_textview">"We are unable to delete your card at the moment - please try again later.  "</string>
+    <string name="select_your_store">Select Your Store</string>
+    <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
+    <string name="hint_search_for_your_store">Search For Your Store</string>
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
+    <string name="earliest_collection_date">Earliest Collection date:</string>
 </resources>
 

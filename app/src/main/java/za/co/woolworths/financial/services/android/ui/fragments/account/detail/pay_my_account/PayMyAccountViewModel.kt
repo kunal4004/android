@@ -72,8 +72,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isPaymentMethodListChecked(): Boolean {
-        val list = getPaymentMethodList()
-        return list?.filter { it.isCardChecked }?.isNullOrEmpty() ?: false
+        return getPaymentMethodList()?.filter { it.isCardChecked }?.isNullOrEmpty() ?: false
     }
 
     fun setCVVNumber(number: String?) {
@@ -144,7 +143,7 @@ class PayMyAccountViewModel : ViewModel() {
                 (response as? PaymentMethodsResponse)?.apply {
                     setPaymentMethodsResponse(this)
                     when (httpCode) {
-                        200 -> {
+                        AppConstant.HTTP_OK -> {
                             payUMethodType = when (paymentMethods?.size ?: 0 > 0 || paymentMethods?.isNullOrEmpty() == false) {
                                 true -> PAYUMethodType.CARD_UPDATE
                                 else -> PAYUMethodType.CREATE_USER
@@ -153,7 +152,7 @@ class PayMyAccountViewModel : ViewModel() {
                             onSuccessResult(paymentMethods)
                         }
 
-                        400 -> {
+                        AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
                             val code = this.response.code
                             payUMethodType = when (code.startsWith("P0453")) {
                                 true -> PAYUMethodType.CREATE_USER
@@ -163,7 +162,7 @@ class PayMyAccountViewModel : ViewModel() {
                             onSuccessResult(paymentMethods)
                         }
 
-                        440 -> {
+                        AppConstant.HTTP_SESSION_TIMEOUT_440  -> {
                             payUMethodType = PAYUMethodType.ERROR
                             onSessionExpired(this.response.stsParams)
                         }
@@ -272,16 +271,14 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun queryServiceDeletePaymentMethod(card: GetPaymentMethod?, position: Int, result: () -> Unit, failure: () -> Unit) {
         deleteCardList?.add(Pair(card, position))
-        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token
-                ?: ""), object : IGenericAPILoaderView<Any> {
+        mQueryServiceDeletePaymentMethod = request(OneAppService.queryServicePayURemovePaymentMethod(card?.token ?: ""), object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? DeleteResponse)?.apply {
                     when (httpCode) {
-                        200 -> showResultOnEmptyList(result)
+                        AppConstant.HTTP_OK -> showResultOnEmptyList(result)
                         else -> {
                             showResultOnEmptyList(result)
-                            failure()
-                        }
+                            failure()}
                     }
                 }
             }
@@ -386,11 +383,11 @@ class PayMyAccountViewModel : ViewModel() {
                 (response as? PayUResponse)?.apply {
                     isQueryServiceGetRedirectionCompleted = true
                     when (httpCode) {
-                        200 -> {
+                        AppConstant.HTTP_OK -> {
                             pma3dSecureRedirection = this.redirection
                             result(this)
                         }
-                        440 -> this.response.stsParams?.let { params -> stsParams(params) }
+                        AppConstant.HTTP_SESSION_TIMEOUT_440 -> this.response.stsParams?.let { params -> stsParams(params) }
                         else -> this.response.desc?.let { desc -> generalHttpCodeFailure(desc) }
                     }
                 }

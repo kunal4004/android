@@ -71,28 +71,22 @@
         app:layout_constraintTop_toTopOf="@+id/absaImageView"
         app:srcCompat="@drawable/card_mastercard_colour" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/payByCreditCardNowButtonShimmerLayout"
+
+    <Button
+        android:id="@+id/payByCreditCardNowButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.15"
+        android:text="@string/pay_by_credit_card_button_label"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/endMargin"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startMargin"
-        app:layout_constraintTop_toBottomOf="@+id/absaImageView">
-
-        <Button
-            android:id="@+id/payByCreditCardNowButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black"
-            android:fontFamily="@font/futura_semi_bold"
-            android:letterSpacing="0.15"
-            android:text="@string/pay_by_credit_card_button_label"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/absaImageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

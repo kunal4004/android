@@ -79,7 +79,7 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
 
     fun getList() = paymentMethodList
 
-    fun updateListInAdapter(items: MutableList<GetPaymentMethod>?, selectedPosition: Int) {
+    fun notifyUpdate(items: MutableList<GetPaymentMethod>?, selectedPosition: Int) {
         if (items?.size ?: 0 > 0) {
             items?.forEach { it.isCardChecked = false }
             items?.get(selectedPosition)?.isCardChecked = true
@@ -88,5 +88,12 @@ class PMACardsAdapter(private var paymentMethodList: MutableList<GetPaymentMetho
         notifyDataSetChanged()
     }
 
+    fun notifyInsert(paymentMethod: GetPaymentMethod, position: Int) {
+        if (paymentMethod.isCardChecked)
+            paymentMethodList?.forEach { it.isCardChecked = false }
+        paymentMethodList?.add(position, paymentMethod)
+        notifyItemInserted(position)
+        notifyDataSetChanged()
+    }
 
 }

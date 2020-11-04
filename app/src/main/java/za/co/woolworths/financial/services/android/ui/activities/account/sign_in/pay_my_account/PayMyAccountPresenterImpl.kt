@@ -18,7 +18,6 @@ import java.lang.RuntimeException
 class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.PayMyAccountView?, private var model: IPaymentOptionContract.PayMyAccountModel) : IPaymentOptionContract.PayMyAccountPresenter, IPaymentOptionContract.PayMyAccountModel {
 
     companion object {
-        const val GET_PAYMENT_METHOD: String = "PAYMENT_METHOD"
         const val GET_CARD_RESPONSE = "ADD_CARD_RESPONSE"
         const val SCREEN_TYPE: String = "SCREEN_TYPE"
         const val IS_DONE_BUTTON_ENABLED: String = "IS_DONE_BUTTON_ENABLED"

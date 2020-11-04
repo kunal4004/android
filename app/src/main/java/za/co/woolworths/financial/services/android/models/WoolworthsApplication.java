@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.models.dto.InstantCardReplace
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -116,6 +117,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String transUnionLink;
 
     private Activity mCurrentActivity = null;
+
+    private static ValidatedSuburbProducts validatedSuburbProducts;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -576,5 +579,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static InAppChat getInAppChat() {
         return inAppChat;
+    }
+
+    public static ValidatedSuburbProducts getValidatedSuburbProducts() {
+        return validatedSuburbProducts;
+    }
+
+    public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
+        WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
     }
 }
