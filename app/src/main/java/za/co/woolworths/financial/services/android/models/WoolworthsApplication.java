@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
@@ -117,6 +118,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private Activity mCurrentActivity = null;
 
     private static ValidatedSuburbProducts validatedSuburbProducts;
+
+    private static ProductDetailsPage productDetailsPage;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -577,5 +580,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
         WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
+    }
+
+    public static ProductDetailsPage getProductDetailsPage() {
+        return productDetailsPage;
+    }
+
+    public static void setProductDetailsPage(ProductDetailsPage productDetailsPage) {
+        WoolworthsApplication.productDetailsPage = productDetailsPage;
     }
 }

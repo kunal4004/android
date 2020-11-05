@@ -134,6 +134,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         nutritionalInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
+        share?.setOnClickListener(this)
         configureDefaultUI()
     }
 
@@ -151,6 +152,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.productIngredientsInformation -> showProductIngredientsInformation()
             R.id.nutritionalInformation -> showNutritionalInformation()
             R.id.moreColor -> showMoreColors()
+            R.id.share -> shareProduct()
         }
     }
 
@@ -1313,5 +1315,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             it.quantity = -1
         }
         loadSizeAndColor()
+    }
+
+    override fun shareProduct() {
+        activity?.apply {
+            val message = WoolworthsApplication.getProductDetailsPage().shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage().shareItemURITemplate.replace("{product_id}", it, true) }
+            val shareIntent = Intent()
+            shareIntent.apply {
+                action = Intent.ACTION_SEND
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, message)
+            }
+            startActivity(shareIntent)
+        }
     }
 }
