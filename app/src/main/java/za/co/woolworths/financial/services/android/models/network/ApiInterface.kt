@@ -881,7 +881,9 @@ interface ApiInterface {
             @Query("pageOffset") pageOffset: Int,
             @Query("pageSize") pageSize: Int,
             @Query("sortOption") sortOption: String,
-            @Query("refinement") refinement: String): Call<ProductView>
+            @Query("refinement") refinement: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("searchSortAndFilterV2")
@@ -904,7 +906,9 @@ interface ApiInterface {
             @Query("sortOption") sortOption: String,
             @Query("refinement") refinement: String,
             @Header("longitude") longitude: String = "",
-            @Header("latitude") latitude: String = ""): Call<ProductView>
+            @Header("latitude") latitude: String = "",
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/checkoutComplete")
@@ -1249,7 +1253,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
-    
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("event/{appScreen}/{featureName}")
     fun postEvent(

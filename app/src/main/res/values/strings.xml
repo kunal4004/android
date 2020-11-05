@@ -1552,8 +1552,6 @@
     <string name="default_notification_channel_description">Woolworths Notification Channel</string>
 
     <string name="store_closed_message">Sorry, we aren’t accepting food orders in your chosen area as the store is temporarily closed</string>
-    <string name="first_available_food_delivery_date">The earliest available delivery slot for &lt;b>food&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
-    <string name="first_available_other_delivery_date">The earliest available delivery for &lt;b>fashion, beauty &amp; home&lt;/b> items to %1$s is &lt;b>%2$s&lt;/b></string>
     <string name="change_store">Change Store</string>
     <string name="these_items_will_be_removed_from_your_cart">These items will be removed from your cart</string>
     <string name="first_available_food_delivery_date_store">The earliest collection slot we have available for %1$s is &lt;b>%2$s&lt;/b></string>
@@ -1624,6 +1622,7 @@
     <string name="promo_code_applied_toast_message">&lt;b>Promo Code&lt;/b> has been applied</string>
     <string name="select_your_store">Select Your Store</string>
     <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
+    <string name="hint_search_for_your_store">Search For Your Store</string>
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
     <string name="discounts">Discounts</string>
@@ -1638,5 +1637,6 @@
     <string name="tbc">TBC</string>
     <string name="promo_discount_dialog_title">Promo Code Applied</string>
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
+    <string name="earliest_collection_date">Earliest Collection date:</string>
 </resources>
 
