@@ -6,7 +6,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard;
@@ -59,7 +58,7 @@ public class Account implements Serializable {
 	@Expose
 	public List<PaymentMethod> paymentMethods;
 	@SerializedName("bankingDetails")
-	@Expose
+	@Expose(serialize = false)
 	public JsonElement bankingDetails;
 	@SerializedName("debitOrder")
 	@Expose
@@ -70,7 +69,7 @@ public class Account implements Serializable {
 	@SerializedName("insuranceTypes")
 	@Expose
 	public List<InsuranceType> insuranceTypes;
-	public List<Card> cards = new ArrayList<>();
+	public List<Card> cards;
 	@SerializedName("accountNumber")
 	@Expose
 	public String accountNumber;
