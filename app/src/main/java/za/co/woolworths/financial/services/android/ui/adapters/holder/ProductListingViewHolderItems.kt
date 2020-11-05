@@ -76,7 +76,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
             override fun onGlobalLayout() {
                 itemView.imProductImage?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
                 val width: Int = itemView.imProductImage.measuredWidth / 2
-                itemView.imProductImage?.layoutParams?.width = width
+                itemView.imReducedImage?.layoutParams?.width = width
                 ImageManager.setPictureOverrideWidthHeight(itemView.imReducedImage, imPromo?.reduced
                     ?: "")
             }
