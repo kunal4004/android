@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
             etPromoCode?.let {
                 it.showKeyboard(this as AppCompatActivity)
                 it.afterTextChanged { onPromoCodeTextChanged(it) }
+                it.filters = it.filters + InputFilter.AllCaps()
             }
         }
         cancel?.setOnClickListener(this)
