@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingCartRespon
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 
 class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.AvailableVoucherView?, var getInteractor: VoucherAndPromoCodeContract.AvailableVoucherInteractor?) : VoucherAndPromoCodeContract.AvailableVoucherPresenter, IGenericAPILoaderView<Any> {
 
@@ -25,7 +26,7 @@ class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.Av
             when (this) {
                 is ShoppingCartResponse -> {
                     when (httpCode) {
-                        200 -> {
+                        HTTP_OK -> {
                             if (data[0]?.messages.isNullOrEmpty()) {
                                 mainView?.onVoucherRedeemSuccess(this)
                             } else {

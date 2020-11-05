@@ -380,7 +380,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.applyPromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
     }
 
-    fun removeCoupon(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
-        return mApiInterface.removeCoupon(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
+    fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.removePromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
     }
 }

@@ -1481,7 +1481,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onRemovePromoCode(String promoCode) {
 		showProgressBar();
-		OneAppService.INSTANCE.removeCoupon(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
+		OneAppService.INSTANCE.removePromoCode(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
 			public void onSuccess(ShoppingCartResponse response) {
 				hideProgressBar();

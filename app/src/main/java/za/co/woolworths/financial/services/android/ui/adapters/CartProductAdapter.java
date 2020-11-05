@@ -265,8 +265,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
                         }
 
-                        if (discountDetails.getTotalDiscount() > 0) {
-                            setDiscountPriceValue(priceHolder.txtTotalDiscount, discountDetails.getTotalDiscount());
+                        if (discountDetails.getTotalOrderDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtTotalDiscount, discountDetails.getTotalOrderDiscount());
                             priceHolder.rlTotalDiscount.setVisibility(View.VISIBLE);
                         } else {
                             priceHolder.rlTotalDiscount.setVisibility(View.GONE);

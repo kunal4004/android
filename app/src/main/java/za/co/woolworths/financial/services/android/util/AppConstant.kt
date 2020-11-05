@@ -21,6 +21,7 @@ class AppConstant {
         const val HTTP_OK: Int = 200
         const val HTTP_EXPECTATION_FAILED_417: Int = 417
         const val HTTP_SESSION_TIMEOUT_440: Int = 440
+        const val HTTP_EXPECTATION_FAILED_502: Int = 502
 
     }
 }
