@@ -13,7 +13,7 @@ data class PayMyAccount(var minimumSupportedAppBuildNumber: String? = "0", priva
                 ?.replace("{{api_id}}", URLEncoder.encode(WoolworthsApplication.getApiId()?.toLowerCase(Locale.getDefault()), "UTF-8").toString())
                 ?.replace("{{sha1}}", URLEncoder.encode(BuildConfig.SHA1, "UTF-8"))
                 ?.replace("{{agent}}", "android")
-                ?.replace("{{productgroupcode}}", productGroupCode.toLowerCase(Locale.getDefault())) ?: ""
+                ?.replace("{{productGroupCode}}", productGroupCode.toLowerCase(Locale.getDefault())) ?: ""
     }
 
     fun isFeatureEnabled(): Boolean? = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)  ?: false
