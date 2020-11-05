@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
@@ -15,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
@@ -72,11 +75,22 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
+        itemView.imProductImage.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                //remove this listener
+                itemView.imProductImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val height: Int = itemView.imProductImage.height / 2
+                val width: Int = itemView.imProductImage.measuredWidth / 2
+                ImageManager.setPictureOverrideWidthHeight(itemView.imReducedImage, imPromo?.reduced ?: "", width, height)
+            }
+        })
+
         ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imNewImage, imPromo?.newImage ?: "")
+
     }
 
     private fun setProductImage(productList: ProductList) {
@@ -113,9 +127,5 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
 
             return defaultStoreId
         }
-    }
-
-    interface OnDataUpdate{
-        fun onDataUpdate()
     }
 }
