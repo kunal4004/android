@@ -42,6 +42,7 @@ interface ProductDetailsContract {
         fun clearSelectedOnLocationChange()
         fun showProductNotAvailableForCollection()
         fun clearStockAvailability()
+        fun shareProduct()
     }
 
     interface ProductDetailsPresenter {
