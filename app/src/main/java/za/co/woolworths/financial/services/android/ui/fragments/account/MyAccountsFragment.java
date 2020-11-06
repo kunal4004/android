@@ -1206,9 +1206,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onPromptDismiss() {
-		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-			showCreditScoreFeatureWalkthrough();
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             showInAppChat(getActivity());
+            showCreditScoreFeatureWalkthrough();
         }
     }
 
@@ -1284,10 +1284,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void showInAppChat(Activity activity) {
-        if (!AppInstanceObject.get().featureWalkThrough.showTutorials
-                && AppInstanceObject.get().featureWalkThrough.creditScore
-                && AppInstanceObject.get().featureWalkThrough.account){
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement =  new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD,mScrollView);
+        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || (AppInstanceObject.get().featureWalkThrough.creditScore && AppInstanceObject.get().featureWalkThrough.account)) {
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
         }
     }
