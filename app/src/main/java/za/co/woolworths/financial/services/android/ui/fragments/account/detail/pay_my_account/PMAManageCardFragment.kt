@@ -78,8 +78,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                 }
                 PayMyAccountViewModel.OnBackNavigation.ADD -> {
                     GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
-                        val accounts = payMyAccountViewModel.getAccount()
-                        val addCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
+                        val addCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment()
                         navController?.navigate(addCard)
                     }
                 }
@@ -147,8 +146,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                     navController?.navigate(R.id.action_manageCardFragment_to_PMATenCardLimitDialogFragment)
                     return
                 }
-                val accounts = payMyAccountViewModel.getAccount()
-                val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment(accounts)
+                val manageCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment()
                 navController?.navigate(manageCard)
             }
         }

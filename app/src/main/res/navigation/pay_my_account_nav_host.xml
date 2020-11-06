@@ -91,10 +91,6 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAAddNewPayUCardFragment"
         android:label="AddNewPayUCardFragment"
         tools:layout="@layout/add_new_payu_card_fragment">
-        <argument
-            android:name="ACCOUNT"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.Account"
-            app:nullable="true" />
         <action
             android:id="@+id/action_addNewPayUCardFragment_to_saveCardAndPayNowFragment"
             app:destination="@id/saveCardAndPayNowFragment" />
