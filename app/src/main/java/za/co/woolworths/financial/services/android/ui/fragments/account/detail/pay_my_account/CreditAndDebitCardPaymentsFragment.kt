@@ -14,6 +14,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
 import kotlinx.android.synthetic.main.payment_options_activity.whatsAppIconImageView
@@ -40,6 +41,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -90,6 +93,9 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         }
 
         setWhatsAppChatWithUsVisibility(payMyAccountPresenter?.getWhatsAppVisibility() ?: false)
+
+        val account = payMyAccountViewModel.getAccountWithApplyNowState()
+        account?.apply { chatToCollectionAgent(first, mutableListOf(second)) }
 
     }
 
@@ -291,5 +297,17 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         queryServicePaymentMethod()
+    }
+
+    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+        activity?.apply {
+            ChatFloatingActionButtonBubbleView(
+                activity = this,
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = applyNowState,
+                scrollableView = creditDebitCardPaymentsScrollView)
+                .build()
+        }
     }
 }
