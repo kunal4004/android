@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/accountPaymentOptionsRootStyle">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/viewPaymentOptionImageShimmerLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/viewPaymentOptionImageView"
+            style="@style/accountPaymentOptionIconImageViewStyle"
+            android:contentDescription="@string/label_payment_options"
+            app:layout_constraintBottom_toTopOf="@+id/paymentOptionTextView"
+            app:srcCompat="@drawable/card_white" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/viewPaymentOptionTextShimmerLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPaymentOptionImageShimmerLayout">
+
+        <TextView
+            android:id="@+id/paymentOptionTextView"
+            style="@style/accountPaymentOptionIconTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/label_payment_options" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService.
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -176,10 +176,10 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
         ChatFloatingActionButtonBubbleView(
                 activity = this@WTransactionsActivity,
-                chatBubbleAvailability = ChatBubbleAvailability(accountList, this@WTransactionsActivity),
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
-                view = paymentOptionScrollView)
+                scrollableView = paymentOptionScrollView)
                 .build()
     }
 }

@@ -20,15 +20,17 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionPresenterImpl;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity;
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
+import za.co.woolworths.financial.services.android.util.wenum.PayMyAccountStartDestinationType;
 
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
@@ -43,23 +45,6 @@ public class ScreenManager {
 	public static final int CART_LAUNCH_VALUE = 1442;
 	public static final int BIOMETRICS_LAUNCH_VALUE = 1983;
 	public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
-
-	public static void presentMain(Activity activity) {
-
-		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		activity.startActivityForResult(intent, 0);
-		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-		activity.finish();
-	}
-
-	public static void presentMain(Activity activity, Uri data) {
-
-		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.setData(data);
-		activity.startActivityForResult(intent, 0);
-		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-		activity.finish();
-	}
 
 	public static void presentSSOSignin(Activity activity) {
 		Intent intent = new Intent(activity, SSOActivity.class);
@@ -142,6 +127,7 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PROFILE.rawValue());
+		Log.e("updateDetail_PROFILE", SSOActivity.Path.UPDATE_PROFILE.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
@@ -155,7 +141,7 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
 
-	public static void presentBiometricWalkthrough(final Activity activity){
+	public static void presentBiometricWalkthrough(final Activity activity) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -175,7 +161,7 @@ public class ScreenManager {
 
 	}
 
-	public static void presentSSOSignin(Activity activity,int requestCode) {
+	public static void presentSSOSignin(Activity activity, int requestCode) {
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
@@ -184,22 +170,14 @@ public class ScreenManager {
 		activity.overridePendingTransition(0, 0);
 	}
 
-	public static void presentProductDetails(Activity activity, Bundle bundle)
-	{
+	public static void presentProductDetails(Activity activity, Bundle bundle) {
 		Intent intent = new Intent(activity, ProductDetailsActivity.class);
 		intent.putExtras(bundle);
-		activity.startActivityForResult(intent,PDP_REQUEST_CODE);
+		activity.startActivityForResult(intent, PDP_REQUEST_CODE);
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public static void presentHowToPayActivity(Activity activity, Pair<? extends ApplyNowState, ? extends Account> mAccountPair) {
-		Intent howToPayIntent = new Intent(activity, PaymentOptionActivity.class);
-		howToPayIntent.putExtra(PaymentOptionPresenterImpl.ACCOUNT_INFO,Utils.objectToJson(mAccountPair));
-		activity.startActivity(howToPayIntent);
-		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-	}
-
-	public static void presentShoppingCart(Activity activity){
+	public static void presentShoppingCart(Activity activity) {
 		Intent openCartActivity = new Intent(activity, CartActivity.class);
 		activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
@@ -218,7 +196,7 @@ public class ScreenManager {
 		Intent openShoppingListDetailActivity = new Intent(activity, ShoppingListDetailActivity.class);
 		openShoppingListDetailActivity.putExtra("listId", listId);
 		openShoppingListDetailActivity.putExtra("listName", listName);
-		openShoppingListDetailActivity.putExtra("openFromMyList",openFromMyList);
+		openShoppingListDetailActivity.putExtra("openFromMyList", openFromMyList);
 		activity.startActivityForResult(openShoppingListDetailActivity, SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE);
 		activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 
@@ -233,7 +211,7 @@ public class ScreenManager {
 
 	}
 
-	public static void presentProductDetails(Activity activity,String productName, ProductList productList ){
+	public static void presentProductDetails(Activity activity, String productName, ProductList productList) {
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
@@ -248,5 +226,22 @@ public class ScreenManager {
 		openChatToUsWhatsAppActivity.putExtra(APP_SCREEN, appScreen);
 		activity.startActivity(openChatToUsWhatsAppActivity);
 		activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+	}
+
+
+	public static void presentMain(Activity activity, Uri data) {
+
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
+		intent.setData(data);
+		activity.startActivityForResult(intent, 0);
+		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		activity.finish();
+	}
+
+	public static void presentMain(Activity activity) {
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
+		activity.startActivityForResult(intent, 0);
+		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		activity.finish();
 	}
 }

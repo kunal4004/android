@@ -17,9 +17,10 @@ internal class BlockCardReasonAdapter(private val blockReason: MutableList<Block
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         blockReason?.get(position)?.apply {
             holder.bindItems(this)
-            holder.itemView?.setOnClickListener {
+            holder.itemView.setOnClickListener {
                 for (reason in blockReason) {
                     reason.rowIsSelected = false
                 }
@@ -37,10 +38,6 @@ internal class BlockCardReasonAdapter(private val blockReason: MutableList<Block
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(blockReason: BlockReason?) {
             blockReason?.value?.let { itemView.tvBlockReasonTitle.text = it }
-        }
-
-        fun clickEvent() {
-
         }
     }
 }

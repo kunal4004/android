@@ -18,6 +18,9 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -28,11 +31,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 
 /**
@@ -234,6 +235,7 @@ fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
 
+
 fun navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
         .setExitAnim(R.anim.slide_out_to_left)
         .setPopEnterAnim(R.anim.slide_from_left)
@@ -245,6 +247,42 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
         delay(time)
         launch(Dispatchers.Main) { code() }
     }
+}
+
+fun Fragment.getNavigationResult(key: String = "result") =
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(key)
+
+fun Fragment.setNavigationResult(key: String = "result", result: String) {
+    findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
+}
+
+
+fun <T> Fragment.setNavigationResult(key: String, value: T) {
+    findNavController().previousBackStackEntry?.savedStateHandle?.set(
+            key,
+            value
+    )
+}
+
+fun <T> Fragment.getNavigationResult(@IdRes id: Int, key: String, onResult: (result: T) -> Unit) {
+    val navBackStackEntry = findNavController().getBackStackEntry(id)
+
+    val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME
+                && navBackStackEntry.savedStateHandle.contains(key)
+        ) {
+            val result = navBackStackEntry.savedStateHandle.get<T>(key)
+            result?.let(onResult)
+            navBackStackEntry.savedStateHandle.remove<T>(key)
+        }
+    }
+    navBackStackEntry.lifecycle.addObserver(observer)
+
+    viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_DESTROY) {
+            navBackStackEntry.lifecycle.removeObserver(observer)
+        }
+    })
 }
 
 fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {

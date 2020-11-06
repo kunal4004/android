@@ -300,7 +300,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onPromptDismiss();
                 break;
             case R.id.actionButton:
                 if (actionListener == null)
@@ -312,7 +311,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onPromptDismiss();
                 Utils.enableFeatureWalkThroughTutorials(false);
                 break;
             default:
