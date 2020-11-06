@@ -6,6 +6,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -24,7 +25,7 @@ class StoreCardFragment : AvailableFundsFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
-                navigateToRecentTransactionActivity("SC")
+                navigateToRecentTransactionActivity(AccountsProductGroupCode.STORE_CARD.groupCode)
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incViewPaymentOptionButton -> navigateToPaymentOptionActivity()

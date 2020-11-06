@@ -330,7 +330,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         this.hideAllLayers();
         this.accounts.clear();
         this.unavailableAccounts.clear();
-        this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+        this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),
+                AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
         this.mScrollView.scrollTo(0, 0);
         this.mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.NONE);
         this.mUpdateMyAccount.swipeToRefreshAccount(false);
@@ -383,15 +384,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         //show content for all available products
         for (Map.Entry<String, Account> item : accounts.entrySet()) {
             Account account = item.getValue();
-            switch (account.productGroupCode) {
-                case "SC":
+            switch (AccountsProductGroupCode.Companion.getEnum(account.productGroupCode)) {
+                case STORE_CARD:
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
                     imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                     sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                     sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
                     break;
-                case "CC":
+                case CREDIT_CARD:
                     linkedCreditCardView.setVisibility(View.VISIBLE);
                     applyCreditCardView.setVisibility(View.GONE);
                     //Check with AccountNumber and change the image accordingly
@@ -407,7 +408,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                     cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
                     cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                     break;
-                case "PL":
+                case PERSONAL_LOAN:
                     linkedPersonalCardView.setVisibility(View.VISIBLE);
                     applyPersonalCardView.setVisibility(View.GONE);
                     imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
@@ -421,18 +422,18 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         //hide content for unavailable products
         boolean sc = true, cc = true, pl = true;
         for (String s : unavailableAccounts) {
-            switch (s) {
-                case "SC":
+            switch (AccountsProductGroupCode.Companion.getEnum(s)) {
+                case STORE_CARD:
                     applyStoreCardView.setVisibility(View.VISIBLE);
                     linkedStoreCardView.setVisibility(View.GONE);
                     cc = false;
                     break;
-                case "CC":
+                case CREDIT_CARD:
                     applyCreditCardView.setVisibility(View.VISIBLE);
                     linkedCreditCardView.setVisibility(View.GONE);
                     sc = false;
                     break;
-                case "PL":
+                case PERSONAL_LOAN:
                     applyPersonalCardView.setVisibility(View.VISIBLE);
                     linkedPersonalCardView.setVisibility(View.GONE);
                     pl = false;
@@ -470,13 +471,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         //show content for all available products
         for (Map.Entry<String, Account> item : accounts.entrySet()) {
             Account account = item.getValue();
-            switch (account.productGroupCode) {
-                case "SC":
+            switch (AccountsProductGroupCode.Companion.getEnum(account.productGroupCode)) {
+                case STORE_CARD:
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
                     sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                     break;
-                case "CC":
+                case CREDIT_CARD:
                     linkedCreditCardView.setVisibility(View.VISIBLE);
                     applyCreditCardView.setVisibility(View.GONE);
                     //Check with AccountNumber and change the image accordingly
@@ -490,7 +491,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
                     cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                     break;
-                case "PL":
+                case PERSONAL_LOAN:
                     showView(linkedPersonalCardView);
                     hideView(applyPersonalCardView);
 
@@ -502,16 +503,16 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         //hide content for unavailable products
         for (String s : unavailableAccounts) {
-            switch (s) {
-                case "SC":
+            switch (AccountsProductGroupCode.Companion.getEnum(s)) {
+                case STORE_CARD:
                     showView(applyStoreCardView);
                     hideView(linkedStoreCardView);
                     break;
-                case "CC":
+                case CREDIT_CARD:
                     showView(applyCreditCardView);
                     hideView(linkedCreditCardView);
                     break;
-                case "PL":
+                case PERSONAL_LOAN:
                     showView(applyPersonalCardView);
                     hideView(linkedPersonalCardView);
                     break;
@@ -540,17 +541,17 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 mAccountResponse.accountList.size() > 0 && isAdded()) {
             List<Account> accountsList = mAccountResponse.accountList;
             for (Account account : accountsList) {
-                switch (account.productGroupCode.toLowerCase()) {
-                    case "pl":
+                switch (AccountsProductGroupCode.Companion.getEnum(account.productGroupCode)) {
+                    case PERSONAL_LOAN:
                         linkedAccountsLayout.removeView(linkedPersonalCardView);
                         linkedAccountsLayout.addView(linkedPersonalCardView);
                         break;
 
-                    case "sc":
+                    case STORE_CARD:
                         linkedAccountsLayout.removeView(linkedStoreCardView);
                         linkedAccountsLayout.addView(linkedStoreCardView);
                         break;
-                    case "cc":
+                    case CREDIT_CARD:
                         linkedAccountsLayout.removeView(linkedCreditCardView);
                         linkedAccountsLayout.addView(linkedCreditCardView);
                         break;
@@ -1186,11 +1187,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 						if (unavailableAccounts.size() == 3) {
 							onClick(applyStoreCardView);
 						} else {
-							if (!unavailableAccounts.contains("SC")) {
+							if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
 								onClick(linkedStoreCardView);
-							} else if (!unavailableAccounts.contains("CC")) {
+							} else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
 								onClick(linkedCreditCardView);
-							} else if (!unavailableAccounts.contains("PL")) {
+							} else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
 								onClick(linkedPersonalCardView);
 							}
 						}
@@ -1217,11 +1218,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         if (unavailableAccounts.size() == 3) {
             return imgStoreCardApplyNow;
         } else {
-            if (!unavailableAccounts.contains("SC")) {
+            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
                 return imgStoreCardContainer;
-            } else if (!unavailableAccounts.contains("CC")) {
+            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
                 return imgCreditCardLayout;
-            } else if (!unavailableAccounts.contains("PL")) {
+            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
                 return imgPersonalLoanCardContainer;
             }
         }

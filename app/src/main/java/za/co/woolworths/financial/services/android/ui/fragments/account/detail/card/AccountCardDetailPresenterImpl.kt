@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -29,12 +30,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
-
-    companion object {
-        private const val STORE_CARD_PRODUCT_GROUP_CODE = "sc"
-        private const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
-        private const val PERSONAL_LOAN_PRODUCT_GROUP_CORE = "pl"
-    }
 
     var mOfferActiveCall: Call<OfferActive>? = null
     var mStoreCardCall: Call<StoreCardsResponse>? = null
@@ -86,7 +81,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
-        if (productGroupCode == CREDIT_CARD_PRODUCT_GROUP_CODE || productGroupCode == PERSONAL_LOAN_PRODUCT_GROUP_CORE) return
+        if (productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase() || productGroupCode == AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()) return
         val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
         mainView?.showStoreCardProgress()
         mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object : IGenericAPILoaderView<Any> {
@@ -134,7 +129,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun getCreditCardToken() {
-        if (!getAccount()?.productGroupCode.equals("CC", true)) return
+        if (!getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, true)) return
         model?.queryServiceGetCreditCartToken(this)
     }
 
@@ -269,6 +264,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun isProductCodeStoreCard(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == STORE_CARD_PRODUCT_GROUP_CODE
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
     }
 }
