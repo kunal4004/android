@@ -1143,7 +1143,7 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("event/{appScreen}/{featureName}")
+    @POST("event/{featureName}/{appScreen}")
     fun postEvent(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
