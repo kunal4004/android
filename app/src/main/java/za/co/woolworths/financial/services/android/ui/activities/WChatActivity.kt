@@ -42,11 +42,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     private var accountNumber: String? = null
     private var productOfferingId: String? = null
     private var chatScreenType: ChatType = ChatType.DEFAULT
+    private var appScreen: String? = null
+    val bundle = Bundle()
     var shouldDismissChatNavigationModel = false
     var shouldAnimateChatMessage = true
-    var appScreen: String? = null
-    val bundle = Bundle()
-
     enum class ChatType { AGENT_COLLECT, WHATSAPP_ONBOARDING, DEFAULT }
 
     private val chatViewModel: ChatViewModel by viewModels()
@@ -55,33 +54,11 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         const val DELAY: Long = 300
     }
 
-    override fun onStart() {
-
-        chatViewModel.initAmplify()
-
-        intent?.extras?.apply {
-            productOfferingId = getString(PRODUCT_OFFERING_ID)
-            accountNumber = getString(ACCOUNT_NUMBER)
-            appScreen = getString(APP_SCREEN)
-            fromActivity = getString(FROM_ACTIVITY)
-            sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
-            chatAccountProductLandingPage = getString(ACCOUNTS)
-            chatViewModel.isChatToCollectionAgent.value = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
-            chatViewModel.setSessionType(sessionType ?: SessionType.Collections)
-            chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
-        }
-
-        chatViewModel.setScreenType(fromActivity)
-        chatViewModel.setAccount(Gson().fromJson(chatAccountProductLandingPage, Account::class.java))
-        chatViewModel.triggerFirebaseOnlineOfflineChatEvent()
-        chatViewModel.postChatEventInitiateSession()
-        super.onStart()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
         Utils.updateStatusBarBackground(this)
+        getArguments()
         actionBar()
         initUI()
 
@@ -101,6 +78,26 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                 }
             })
         }
+    }
+
+    private fun getArguments() {
+        chatViewModel.initAmplify()
+        intent?.extras?.apply {
+            productOfferingId = getString(PRODUCT_OFFERING_ID)
+            accountNumber = getString(ACCOUNT_NUMBER)
+            appScreen = getString(APP_SCREEN)
+            fromActivity = getString(FROM_ACTIVITY)
+            sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
+            chatAccountProductLandingPage = getString(ACCOUNTS)
+            chatViewModel.isChatToCollectionAgent.value = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
+            chatViewModel.setSessionType(sessionType ?: SessionType.Collections)
+            chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
+        }
+
+        chatViewModel.setScreenType(fromActivity)
+        chatViewModel.setAccount(Gson().fromJson(chatAccountProductLandingPage, Account::class.java))
+        chatViewModel.triggerFirebaseOnlineOfflineChatEvent()
+        chatViewModel.postChatEventInitiateSession()
     }
 
     private fun initUI() {

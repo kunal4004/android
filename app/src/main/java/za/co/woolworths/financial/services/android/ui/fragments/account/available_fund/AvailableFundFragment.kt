@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -302,7 +303,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             mAvailableFundPresenter?.getAccount()?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
                 intent.putExtra("productOfferingId", productOfferingId.toString())
-                if (cardType == "CC" && accountNumber?.isNotEmpty() == true) {
+                if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }
                 intent.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), this)))

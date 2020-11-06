@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto.account
 
 import za.co.woolworths.financial.services.android.util.expand.ParentListItem
+import java.util.*
 
 enum class ApplyNowState {STORE_CARD, GOLD_CREDIT_CARD, BLACK_CREDIT_CARD, PERSONAL_LOAN, SILVER_CREDIT_CARD }
 
@@ -30,5 +31,13 @@ enum class CreditCardActivationState(val value: String) {
 }
 
 enum class AccountsProductGroupCode(val groupCode: String) {
-    STORE_CARD("SC"), CREDIT_CARD("CC"), PERSONAL_LOAN("PL")
+    STORE_CARD("SC"), CREDIT_CARD("CC"), PERSONAL_LOAN("PL");
+
+    fun equals(code: String): Boolean{
+        return groupCode.equals(code, ignoreCase = true)
+    }
+
+    companion object{
+        fun getEnum(code: String?): AccountsProductGroupCode? = code?.let { valueOf(it.toUpperCase()) }
+    }
 }

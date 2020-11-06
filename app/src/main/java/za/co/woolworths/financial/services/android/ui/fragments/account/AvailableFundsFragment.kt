@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -75,7 +76,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             intent.putExtra("productOfferingId", mAccount?.productOfferingId?.toString())
             intent.putExtra("accountNumber", mAccount?.accountNumber?.toString())
             intent.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
-            intent.putExtra("cardType", "SC")
+            intent.putExtra("cardType", AccountsProductGroupCode.STORE_CARD.groupCode)
             activity.startActivityForResult(intent, 0)
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }

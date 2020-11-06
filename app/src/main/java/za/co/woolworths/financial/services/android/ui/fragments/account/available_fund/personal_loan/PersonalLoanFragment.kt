@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.availabl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.util.Utils
 
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
@@ -58,7 +59,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
-                navigateToRecentTransactionActivity("PL")
+                navigateToRecentTransactionActivity(AccountsProductGroupCode.PERSONAL_LOAN.groupCode)
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
         }

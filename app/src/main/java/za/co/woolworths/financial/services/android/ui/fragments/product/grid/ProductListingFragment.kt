@@ -70,6 +70,7 @@ import java.util.*
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, IOnConfirmDeliveryLocationActionListener {
 
+    private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -90,7 +91,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
-    private var mProductSearchMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -408,8 +408,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
-        this.mProductSearchMenu = menu
         inflater.inflate(R.menu.drill_down_category_menu, menu)
+        menuActionSearch = menu.findItem(R.id.action_drill_search)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -465,17 +465,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> {
-                    hideSearchIcon()
-                    lockDrawerFragment()
+                        hideSearchIcon()
+                        lockDrawerFragment()
                 }
                 else -> {
-                    showToolbar()
-                    showSearchIcon()
-                    showBackNavigationIcon(true)
-                    setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    setTitle()
-                    if (!productView?.navigation.isNullOrEmpty())
-                        unLockDrawerFragment()
+                        showToolbar()
+                        showSearchIcon()
+                        showBackNavigationIcon(true)
+                        setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                        setTitle()
+                        if (productView?.navigation?.isNullOrEmpty() != true)
+                            unLockDrawerFragment()
                 }
             }
 
@@ -941,13 +941,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun hideSearchIcon() {
-        val menuItem: MenuItem? = mProductSearchMenu?.findItem(R.id.action_drill_search)
-        menuItem?.isVisible = false
+        menuActionSearch?.isVisible = false
     }
 
-
     private fun showSearchIcon() {
-        val menuItem: MenuItem? = mProductSearchMenu?.findItem(R.id.action_drill_search)
-        menuItem?.isVisible = true
+        menuActionSearch?.isVisible = true
     }
 }

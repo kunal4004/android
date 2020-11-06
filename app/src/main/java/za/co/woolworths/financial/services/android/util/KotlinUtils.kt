@@ -475,5 +475,13 @@ class KotlinUtils {
                 Crashlytics.log(t.message)
             }
         }
+
+        fun openBrowserWithUrl(urlString: String?, activity: Activity?) {
+            urlString?.apply {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                activity?.startActivity(intent)
+            }
+        }
     }
 }

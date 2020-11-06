@@ -25,4 +25,5 @@ public class Configs {
     public ArrayList<ContactUs> contactUs;
     public ClickAndCollect clickAndCollect;
     public InAppChat inAppChat;
+    public ProductDetailsPage productDetailsPage;
 }

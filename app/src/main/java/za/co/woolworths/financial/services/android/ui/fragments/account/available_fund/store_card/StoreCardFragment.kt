@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.availabl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.util.Utils
 
 class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
@@ -41,7 +42,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
-                navigateToRecentTransactionActivity("SC")
+                navigateToRecentTransactionActivity(AccountsProductGroupCode.STORE_CARD.groupCode)
             }
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incPayMyAccountButton -> {
