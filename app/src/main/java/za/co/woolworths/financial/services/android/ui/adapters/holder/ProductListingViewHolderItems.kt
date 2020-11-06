@@ -72,28 +72,24 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
+        with(itemView) {
+            imProductImage.viewTreeObserver?.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    imProductImage.viewTreeObserver?.removeOnPreDrawListener(this)
+                    val width: Int = imProductImage?.measuredWidth ?: 0
+                    val reducedPlaceHolderWidth: Int = width / 2
+                    imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
+                    return true
+                }
+            })
 
-        itemView.imProductImage.viewTreeObserver?.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                itemView.imProductImage.viewTreeObserver?.removeOnPreDrawListener(this)
-                val width: Int = itemView.imProductImage?.measuredWidth ?: 0
-                val reducedPlaceHolderWidth: Int = width / 2
-                val savedPlaceHolderWidth: Int = width / 4
-
-                itemView.imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
-                itemView.imSave?.layoutParams?.width = savedPlaceHolderWidth
-                return true
-            }
-        })
-
-        ImageManager.setPictureOverrideWidthHeight(itemView.imReducedImage, imPromo?.reduced
-            ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift
-            ?: "")
-        ImageManager.setPictureOverrideWidthHeight(itemView.imSave, imPromo?.save ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imSave, imPromo?.save ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+        }
     }
 
     private fun setProductImage(productList: ProductList) {
