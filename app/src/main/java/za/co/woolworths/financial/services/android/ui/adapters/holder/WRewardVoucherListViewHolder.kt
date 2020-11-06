@@ -26,7 +26,10 @@ class WRewardVoucherListViewHolder constructor(itemView: View) : RecyclerView.Vi
 
                 context?.apply {
                     voucherExpireDate?.text = try {
-                        getString(R.string.expires) + WFormatter.formatDate(validToDate).toString()
+                        if (WFormatter.isDateExpired(validToDate))
+                            getString(R.string.expired) + WFormatter.formatDate(validToDate).toString()
+                        else
+                            getString(R.string.expires) + WFormatter.formatDate(validToDate).toString()
                     } catch (e: ParseException) {
                         getString(R.string.expires) + validToDate?.toString()
                     }

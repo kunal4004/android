@@ -18,7 +18,7 @@ class TransactionItemViewHolder(parent: ViewGroup) : WParentItemViewHolder(Layou
             transactionItem?.apply {
                 transactionDate?.text = date
                 transactionDescription?.text = description
-                transactionAmount?.text = addNegativeSymbolInFront(FontHyperTextParser.getSpannable(amount?.let { amt -> formatTransactionAmount(amt) }, 1, context))
+                transactionAmount?.text = addNegativeSymbolInFront(FontHyperTextParser.getSpannable(amount?.let { amt -> formatTransactionAmount(amt) }, 1))
             }
         }
     }

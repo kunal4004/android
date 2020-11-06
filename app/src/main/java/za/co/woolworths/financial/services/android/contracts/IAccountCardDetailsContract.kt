@@ -30,6 +30,7 @@ interface IAccountCardDetailsContract {
         fun onOfferActiveSuccessResult()
         fun navigateToLoanWithdrawalActivity()
         fun navigateToPaymentOptionActivity()
+        fun navigateToPayMyAccountActivity()
         fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse)
         fun onGetCreditCardTokenFailure()
         fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
@@ -63,13 +64,15 @@ interface IAccountCardDetailsContract {
         fun getProductOfferingId(): Int?
         fun onDestroy()
         fun navigateToTemporaryStoreCard()
-        fun navigateToDebitOrderActivityOnButtonTapped()
-        fun navigateToBalanceProtectionInsuranceOnButtonTapped()
+        fun navigateToDebitOrderActivity()
+        fun navigateToBalanceProtectionInsurance()
         fun cliProductOfferingGoodStanding(): Boolean
         fun creditLimitIncrease(): CreditLimitIncreaseStatus?
         fun navigateToPaymentOptionActivity()
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
+        fun isCreditCardSection():Boolean
+        fun navigateToPayMyAccountActivity()
         fun getStoreCardBlockType(): Boolean
         fun isProductCodeStoreCard():Boolean
     }

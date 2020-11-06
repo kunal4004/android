@@ -172,7 +172,8 @@
     <string name="value">VALUE</string>
     <string name="minimum_spend">Minimum Spend</string>
     <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
-    <string name="expires">"Expires: "</string>
+    <string name="expires">"Expires:\u0020"</string>
+    <string name="expired">"Expired:\u0020"</string>
     <string name="register">REGISTER</string>
     <string name="featured_promotions">featured promotions</string>
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
@@ -233,6 +234,8 @@
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
     <string name="ingredients">Ingredients</string>
+    <string name="dietary">Dietary</string>
+    <string name="allergens">Allergen</string>
     <string name="savings_since">Savings Since</string>
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
 
@@ -504,7 +507,7 @@
     <string name="added_to">added to </string>
     <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
     <string name="start_shopping">start shopping</string>
-    <string name="delete">delete</string>
+    <string name="delete">DELETE</string>
 
     <!-- new list item-->
     <string name="create_list">create list</string>
@@ -986,8 +989,8 @@
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
-    <string name="set_to_default">Set to default - \u0020</string>
-    <string name="delivering_to_pdp">Delivering to - \u0020</string>
+    <string name="set_to_default">Set to default \u0020</string>
+    <string name="delivering_to_pdp">Delivering to \u0020</string>
     <string name="select_colour">Select Colour</string>
     <string name="icr_otp_phone_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
     <string name="icr_otp_email_desc">Your One Time Pin (OTP) has been sent to  %1$s. Once you have received it, please enter the OTP below.</string>
@@ -1301,8 +1304,7 @@
 
     <string name="label_recent_transactions">Recent\nTransactions</string>
     <string name="label_view_statements">View\nStatements</string>
-    <string name="label_payment_options">Payment\nOptions</string>
-    <string name="label_payment_options_button">Payment Options</string>
+    <string name="label_payment_options">Pay My\nAccount</string>
     <string name="payment_options_desc">A payment of %1$s is required to bring your account up to date.</string>
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
@@ -1383,7 +1385,11 @@
     <string name="pdp_productCodeTitle">productCodeTitle</string>
     <string name="pdp_textProductCode">textProductCode</string>
     <string name="pdp_productIngredientsTitle">productIngredientsTitle</string>
+    <string name="pdp_productAllergensTitle">productAllergensTitle</string>
+    <string name="pdp_productDietaryTitle">productDietaryTitle</string>
     <string name="pdp_textViewIngredient">textViewIngredient</string>
+    <string name="pdp_textViewAllergens">textViewAllergens</string>
+    <string name="pdp_textViewDietary">textViewDietary</string>
     <string name="pdp_nutritionalInformationTitle">nutritionalInformationTitle</string>
     <string name="pdp_descriptionTitle">descriptionTitle</string>
     <string name="pdp_filterOptionSelector">filterOptionSelector</string>
@@ -1457,14 +1463,14 @@
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="recent_transactions_title">Recent Transactions</string>
 
+    <string name="payment_option_title">Payment Options</string>
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
-    <string name="store_card_payment_options_desc">You can pay your woolworths store card account in any of the following ways</string>
 
     <string name="personal_loan_payment_options_title">Personal Loan Payment Options</string>
-    <string name="personal_loan_payment_options_desc">You can pay your woolworths personal loan account in any of the following ways</string>
+    <string name="personal_loan_payment_options_desc">You can easily pay your Woolies Personal Loan using any of the following payment options:</string>
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
-    <string name="credit_card_payment_options_desc">You can pay your woolworths credit card account in any of the following ways</string>
+    <string name="credit_card_payment_options_desc">You can pay your Woolies Credit Card using any of the following payment options:</string>
     <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
     <string name="account_in_arrears_layout">Account In Arrears Layout</string>
     <string name="account_six_month_arrear_toolbar">Account Six Month In Arrear Toolbar</string>
@@ -1548,6 +1554,51 @@
     <string name="gwp_popup_btn_got_it">btnGotIt</string>
     <string name="gwp_popup_layout_divider_view">layoutDividerView</string>
 
+    <!-- Pay My Account -->
+    <string name="store_card_payment_option_desc">You can easily pay your Woolies Store Card using\nany of the following payment options:</string>
+    <string name="debit_card_title">Debit Card</string>
+    <string name="debit_or_credit_card_desc">Pay your account now using a different debit card or credit card.</string>
+    <string name="pay_by_card_button_label">Pay By Debit Card Now</string>
+    <string name="by_electronic_fund_transfer_title">By Electronic Fund\nTransfer (EFT)</string>
+    <string name="by_electronic_fund_transfer_store_card_desc">Pay your account by EFT or a direct payment into your Store Card account.</string>
+    <string name="view_banking_details_button_label">View Banking Details</string>
+    <string name="at_any_absa_branch_title">At any Absa Branch</string>
+    <string name="at_any_absa_branch_desc">Pay your account at any branch of Absa Bank. Use your 16-digit Woolworths Card number as the bill account number.</string>
+    <string name="at_your_nearest_woolworths_store_title">Your Nearest Woolworths Store</string>
+    <string name="at_your_nearest_woolworths_store_desc">Pay your account at any Woolworths store.</string>
+    <string name="find_a_woolies_store_label">Find a Woolies Store</string>
+    <string name="pay_at_any_atm_title">Pay at any ATM</string>
+    <string name="pay_at_any_atm_desc">Pay your account at any South African bank ATM.</string>
+    <string name="pay_at_any_atm_button_label">Learn More</string>
+    <string name="whatsapp_any_questions_title">Any Questions?</string>
+    <string name="whatsapp_any_questions_desc">Chat to us on WhatsApp</string>
+    <string name="pay_my_account_button_label">Pay My Account</string>
+    <string name="enter_payment_amount_label">Enter Payment Amount</string>
+    <string name="amount_outstanding">Amount Outstanding</string>
+    <string name="continue_to_payment">Continue To Payment</string>
+    <string name="save_this_card_for_future_payments">Save this card for future payments</string>
+    <string name="save_card_and_pay_now_button_label">Save Card &amp; Pay Now</string>
+    <string name="name_on_card_label">Name on Card:</string>
+    <string name="expiration_date_label">Expiration Date:</string>
+    <string name="card_number_label">Card Number:</string>
+    <string name="payment_successful_title">Payment Successful</string>
+    <string name="ccv_number_label">Enter your CVV Number:</string>
+    <string name="confirm_payment">CONFIRM PAYMENT</string>
+    <string name="change_label">Change</string>
+    <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
+    <string name="atm_payment_steps_title">ATM PAYMENT</string>
+    <string name="pay_your_account_desc_label">Pay your account now using a debit card. This is the preferred method.</string>
+    <string name="atmPaymentInfo1">Go to your bank’s ATM</string>
+    <string name="atmPaymentInfo2">After inserting your card and PIN</string>
+    <string name="atmPaymentInfo3">Select make a payment</string>
+    <string name="atmPaymentInfo4">Select 3rd party beneficiery or public recipient</string>
+    <string name="atmPaymentInfo5">Search for Woolworths</string>
+    <string name="atmPaymentInfo6">Select Credit Card, Store Card or Personal Loan account</string>
+    <string name="atmPaymentInfo7">Complete details with your reference: Your 16 digit Woolworths account number (no spaces)</string>
+    <string name="atmPaymentInfo8">Complete the transaction</string>
+    <string name="atm_payment_note">Note: Steps in this process might vary from bank to bank.</string>
+    <string name="atm_banking_details">Banking Details</string>
+    <!-- End Pay My Account -->
     <string name="default_notification_channel_id">woolworths_notification_channel_01</string>
     <string name="default_notification_channel_name">All Notifications</string>
     <string name="default_notification_channel_description">Woolworths Notification Channel</string>
@@ -1570,6 +1621,28 @@
     <string name="card_temporarily_unfrozen_label">your card has been unfrozen</string>
     <string name="freeze_temp_label">Temp Freeze</string>
     <string name="food_only">food only</string>
+
+    <string name="unable_to_process_your_request_title">Unable to process payment</string>
+    <string name="unable_to_process_your_request_desc">We are unable to process your payment. For queries, call us on 0861 50 20 20.</string>
+    <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 72 hours to reflect on your account.</string>
+    <string name="back_to_my_account_button">back to my account</string>
+    <string name="pma_save_card_pay_now_title">Would you like to save this card for future payments?</string>
+    <string name="pay_now_button_label">Pay Now</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="add_card_label">add card</string>
+    <string name="card_expired">Expired</string>
+    <string name="use_this_card_button_label">Use this card</string>
+    <string name="credit_debit_cards_label">Credit &amp; Debit Cards</string>
+    <string name="enter_cvv_number_label">Enter your CVV Number:</string>
+    <string name="undo">Undo</string>
+    <string name="add_a_new_card_button_label">Add A New Card</string>
+    <string name="remove_this_card_button_label">Remove this card</string>
+    <string name="card_expired_title">Your Card Has Expired</string>
+    <string name="card_expired_description">Please update your card details; or add\na new card.</string>
+    <string name="secure_3d_title">3D Secure</string>
+    <string name="enter_payment_amount_max_input_error">Please reduce your payment amount. The maximum amount you can pay is R50 000.00</string>
+    <string name="enter_payment_amount_min_input_error">Please increase your payment amount. The minimum amount you can pay is R 1.00</string>
+
     <string name="collection_date_title">labelCollectionDate</string>
     <string name="collection_date_value">txtCollectionDateValue</string>
     <string name="collection_details_date_title">labelCollectionDetailsDate</string>
@@ -1578,10 +1651,42 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+
+    <string name="pma_retry_error_title">Oops!</string>
+    <string name="pma_retry_error_desc">Unfortunately, we’re having trouble retrieving your information, please try again.</string>
+    <string name="pma_pay_by_debit_order">"Pay By Debit Order  "</string>
+    <string name="pay_by_debit_order_desc">Make your life easier and have your account debited when it best suits you. It\'s quick and safe.</string>
+    <string name="set_up_by_debit_order_button_label">"Setup my debit order "</string>
+    <string name="easily_pay_your_woolies_account_in_the_app">Easily Pay Your Woolies\nAccount In The App:</string>
+    <string name="you_can_also_pay_your_woolies_account_at_desc"> You Can Also Pay Your\nWoolies Account At:</string>
+    <string name="credit_card_title">Credit Card</string>
+    <string name="pay_by_credit_card_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account.</string>
+    <string name="pay_by_credit_card_button_label">Pay By Credit Card Now</string>
+    <string name="debit_order_desc">Debit order is the most convenient way to pay your Woolies account.</string>
+    <string name="pay_by_debit_order_desc1">To set up a debit order, call us on 0861 50 20 20 or e-mail queries@wfs.co.za with the subject line: Debit order</string>
+    <string name="send_us_the_following_title">"Please also send us the following: "</string>
+    <string name="bank_name_label">Bank name:</string>
+    <string name="brand_name_and_code_label">"Branch name and code:  "</string>
+    <string name="bank_account_number_label">Bank account number:</string>
+    <string name="account_type_textView">Account type:</string>
+    <string name="debit_order_amount_label">Debit order amount: (this can be either full payment, minimum payment, fixed amount or fixed percentage)</string>
+    <string name="debit_order_deduction_date_label">"Debit order deduction date: "</string>
+    <string name="debit_order_deduction_desc">"Note: If you are setting up a debit order for a Woolies Personal Loan, remember to also attach a clear copy of your valid SA Identity Document (if its an ID card include both sides).  "</string>
+    <string name="amount_payable_now">"Overdue Amount, Payable Now"</string>
+    <string name="pma_ten_card_limit_error_desc">You have reached the maximum number of  cards allowed. Please delete a card before  adding a new one.</string>
+
+    <string name="by_electronic_fund_trasfer_personal_loan_desc">Pay your account by EFT or a direct payment into your loan account.</string>
+    <string name="processing_your_payment_label">Processing Your Payment</string>
+    <string name="processing_your_card_label">Processing Your Card</string>
+    <string name="payment_overdue_label">Payment Overdue</string>
+    <string name="payment_overdue_error_desc">To keep your account in good standing please pay overdue amount of %1$s today. Please pay now or contact us.</string>
+    <string name="chat_to_us_label">CHAT TO US</string>
+
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
+
     <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
     <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
@@ -1595,8 +1700,8 @@
     <string name="end_session_desc">"Leaving the Chat window will end your conversation. Are you sure you want to end your session?  "</string>
     <string name="no_continue_session">No, continue session</string>
     <string name="end_session_button_caption">yes, end session</string>
-    <string name="pma_retry_error_title">Oops!</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="pma_delete_card_failure_textview">"We are unable to delete your card at the moment - please try again later.  "</string>
     <string name="select_your_store">Select Your Store</string>
     <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
     <string name="hint_search_for_your_store">Search For Your Store</string>

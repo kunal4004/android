@@ -4,7 +4,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-class ChatCustomerInfo {
+object ChatCustomerInfo {
 
     private var jWTDecodedModel: JWTDecodedModel? = null
 
@@ -31,5 +31,4 @@ class ChatCustomerInfo {
         val name = jWTDecodedModel?.name?.get(0) ?: ""
         return KotlinUtils.firstLetterCapitalization(name)
     }
-
 }

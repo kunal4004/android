@@ -15,7 +15,6 @@ class ChatTrackPostEvent {
         }
 
         postEvent(appScreenFeatureName.first, appScreenFeatureName.second)
-
     }
 
     fun onChatCollectionsLandingInitiateSession(applyNowState: ApplyNowState) {
@@ -84,7 +83,5 @@ class ChatTrackPostEvent {
     }
 
     private fun postEvent(appScreen: String, featureName: String) = KotlinUtils.postOneAppEvent(appScreen, featureName)
-
-
 
 }

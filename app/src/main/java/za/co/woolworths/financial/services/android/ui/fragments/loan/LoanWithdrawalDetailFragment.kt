@@ -58,10 +58,10 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
             mErrorHandlerView = ErrorHandlerView(it)
             (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.back_white)
             mIssueLoan?.apply {
-                tvDrawnDownSelectedAmount?.text = currencyFormatter(drawDownAmount, it)
+                tvDrawnDownSelectedAmount?.text = currencyFormatter(drawDownAmount)
                 val repaymentPeriod = "$repaymentPeriod month".plus(if (repaymentPeriod == 1) "" else "s")
                 tvRepaymentPeriod?.text = repaymentPeriod
-                tvAdditionalMonthlyRepayment?.text = currencyFormatter((mInstallmentAmount), it)
+                tvAdditionalMonthlyRepayment?.text = currencyFormatter((mInstallmentAmount))
             }
         }
 
