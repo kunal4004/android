@@ -172,7 +172,8 @@
     <string name="value">VALUE</string>
     <string name="minimum_spend">Minimum Spend</string>
     <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
-    <string name="expires">"Expires: "</string>
+    <string name="expires">"Expires:\u0020"</string>
+    <string name="expired">"Expired:\u0020"</string>
     <string name="register">REGISTER</string>
     <string name="featured_promotions">featured promotions</string>
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
