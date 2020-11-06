@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.core.widget.NestedScrollView
+    android:id="@+id/creditDebitCardPaymentsScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/black_white_gradient_bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <include
+            android:id="@+id/incStoreCardHeaderItem"
+            layout="@layout/card_payment_option_header_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp" />
+
+        <include
+            android:id="@+id/incPersonalLoanElectronicFundTransfer"
+            layout="@layout/pma_personal_loan_electronic_fund_transfer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/incSetupMyDebitOrder"
+            layout="@layout/pma_pay_by_debit_order_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <include
+            android:id="@+id/incByElectronicFundTransferEFTButton"
+            layout="@layout/pma_by_electronic_fund_transfer_eft_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/easilyPayYourWooliesAccountTextView"
+            style="@style/pma_title_textview_style"
+            android:text="@string/easily_pay_your_woolies_account_in_the_app" />
+
+        <include
+            android:id="@+id/incDebitCardButton"
+            layout="@layout/pma_debit_card_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <include
+            android:id="@+id/incCreditCardButton"
+            layout="@layout/pma_credit_card_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/payYourWooliesAccountTextView"
+            style="@style/pma_title_textview_style"
+            android:text="@string/you_can_also_pay_your_woolies_account_at_desc" />
+
+        <include
+            android:id="@+id/incAtAnyAbsaBranchButton"
+            layout="@layout/pma_at_any_absa_branch_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+
+        <include
+            android:id="@+id/incPayAtAnyATMButton"
+            layout="@layout/pma_pay_at_any_atm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <include
+            android:id="@+id/incAtYourNearestWoolworthsStoreButton"
+            layout="@layout/pma_at_your_nearest_woolies_store_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+
+        <include
+            android:id="@+id/incWhatsAppAnyQuestions"
+            layout="@layout/pma_whatsapp_chat_with_us"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/pmaBottomView"
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+
+    <include
+        layout="@layout/chat_collect_agent_floating_button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:visibility="visible" />
+
+</FrameLayout>

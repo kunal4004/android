@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.T
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
 
@@ -82,7 +81,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
         if (productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase() || productGroupCode == AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()) return
-        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
+        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> acc?.accountNumber?.let { StoreCardsRequestBody(it, acc.productOfferingId) } }
         mainView?.showStoreCardProgress()
         mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
@@ -133,8 +132,8 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         model?.queryServiceGetCreditCartToken(this)
     }
 
-    override fun onSuccess(apiResponse: Any?) {
-        with(apiResponse) {
+    override fun onSuccess(response: Any?) {
+        with(response) {
             when (this) {
 
                 is OfferActive -> {
@@ -144,10 +143,10 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                             mainView?.hideUserOfferActiveProgress()
                             handleUserOfferActiveSuccessResult(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440, 502 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.hideUserOfferActiveProgress()
-                            handleUnknownHttpResponse(response?.desc)
+                            handleUnknownHttpResponse(this.response?.desc)
                         }
                     }
                 }
@@ -157,14 +156,14 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                         200 -> {
                             mainView?.onGetCreditCArdTokenSuccess(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.onGetCreditCardTokenFailure()
                         }
                     }
                 }
 
-                else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
+                else -> throw RuntimeException("onSuccess:: unknown response $response")
             }
         }
     }
@@ -197,14 +196,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToTemporaryStoreCard() {
-        when (getStoreCardBlockType()) {
-            true -> mainView?.showUnBlockStoreCardCardDialog()
-            else -> {
-                when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
-                    true -> navigateToGetTemporaryStoreCardPopupActivity()
-                    false -> navigateToMyCardDetailActivity()
-                }
-            }
+        when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
+            true -> navigateToGetTemporaryStoreCardPopupActivity()
+            false -> navigateToMyCardDetailActivity()
         }
     }
 
@@ -220,11 +214,11 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
-    override fun navigateToDebitOrderActivityOnButtonTapped() {
+    override fun navigateToDebitOrderActivity() {
         getDebitOrder()?.let { debitOrder -> mainView?.navigateToDebitOrderActivity(debitOrder) }
     }
 
-    override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
+    override fun navigateToBalanceProtectionInsurance() {
         mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
     }
 
@@ -253,6 +247,15 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
         return cardWithPLCState
     }
+
+    override fun isCreditCardSection(): Boolean {
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) ==  AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+    }
+
+    override fun navigateToPayMyAccountActivity() {
+        mainView?.navigateToPayMyAccountActivity()
+    }
+
 
     override fun getStoreCardBlockType(): Boolean {
         val storeCardsData = getStoreCardResponse()?.storeCardsData

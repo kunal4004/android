@@ -5,6 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
+import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
@@ -13,6 +14,8 @@ import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
@@ -1159,6 +1162,56 @@ interface ApiInterface {
             @Path("appScreen") appScreen: String): Call<Response>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("payments/payu/methods")
+    fun getPaymentPAYUMethod(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<PaymentMethodsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("payments/payu/pay")
+    fun postPayUpPay(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body payUPay: PayUPay): Call<PayUResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("payments/payu/result")
+    fun getPaymentPayUResult(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("customer") customer: String,
+            @Query("payment_id") payment_id: String,
+            @Query("charge_id") charge_id: String,
+            @Query("status") status: String,
+            @Query("productOfferingId") productOfferingID: String): Call<PayUPayResultResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/validateSelectedSuburb/{suburbId}")
     fun validateSelectedSuburb(
             @Header("apiId") apiId: String,
@@ -1174,4 +1227,21 @@ interface ApiInterface {
             @Path("suburbId") suburbId: String,
             @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
 
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("payments/payu/methods/{paymenToken}")
+    fun payURemovePaymentMethod(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("paymenToken") paymenToken: String
+    ): Call<DeleteResponse>
+
 }
+

@@ -67,7 +67,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.apply_n
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
@@ -98,7 +98,6 @@ import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 public class MyAccountsFragment extends Fragment implements View.OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
 
     private final String TAG = this.getClass().getSimpleName();
-
 
     private RelativeLayout openMessageActivity;
     private RelativeLayout applyCreditCardView;
@@ -389,7 +388,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
                     imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
                     sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
                     break;
                 case CREDIT_CARD:
@@ -406,14 +405,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                     }
                     imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                     cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
                     break;
                 case PERSONAL_LOAN:
                     linkedPersonalCardView.setVisibility(View.VISIBLE);
                     applyPersonalCardView.setVisibility(View.GONE);
                     imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                     pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
                     break;
             }
 
@@ -475,7 +474,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 case STORE_CARD:
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
-                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
                     break;
                 case CREDIT_CARD:
                     linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -489,13 +488,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                         imgCreditCard.setBackgroundResource(R.drawable.small_3);
                     }
 
-                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
                     break;
                 case PERSONAL_LOAN:
                     showView(linkedPersonalCardView);
                     hideView(applyPersonalCardView);
 
-                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
                     break;
             }
 
@@ -1208,9 +1207,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onPromptDismiss() {
-		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-			showCreditScoreFeatureWalkthrough();
-		}
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+            showInAppChat(getActivity());
+            showCreditScoreFeatureWalkthrough();
+        }
     }
 
     public View getTargetView(List<String> unavailableAccounts) {
@@ -1285,9 +1285,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void showInAppChat(Activity activity) {
-        if ((AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account) ||
-                (!AppInstanceObject.get().featureWalkThrough.showTutorials && AppInstanceObject.get().featureWalkThrough.account)) {
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleAvailability(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.ACCOUNT_LANDING, false, mScrollView);
+        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || (AppInstanceObject.get().featureWalkThrough.creditScore && AppInstanceObject.get().featureWalkThrough.account)) {
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
         }
     }

@@ -103,6 +103,21 @@ class FirebaseManagerAnalyticsProperties {
         const val SC_UNFREEZE_CARD = "sc_unfreeze_card"
         const val SC_FREEZE_CARD = "sc_freeze_card"
 
+
+        const val MYACCOUNTS_PMA_CC = "myaccounts_pma_cc"
+        const val MYACCOUNTS_PMA_SC = "myaccounts_pma_sc"
+        const val MYACCOUNTS_PMA_PL = "myaccounts_pma_pl"
+
+        const val PMA_CC_PAY = "pma_cc_pay"
+        const val PMA_SC_PAY = "pma_sc_pay"
+        const val PMA_PL_PAY = "pma_pl_pay"
+
+        const val PMA_CC_AMTEDIT = "pma_cc_amtedit"
+        const val PMA_SC_AMTEDIT = "pma_sc_amtedit"
+        const val PMA_PL_AMTEDIT = "pma_pl_amtedit"
+        const val PMA_CC_PAY_CMPLT = "pma_cc_pay_cmplt"
+        const val PMA_SC_PAY_CMPLT = "pma_sc_pay_cmplt"
+        const val PMA_PL_PAY_CMPLT = "pma_pl_pay_cmplt"
         const val Myaccounts_creditview = "myaccounts_creditview"
 
         const val CC_MYACCOUNTS_CHAT_ONLINE = "cc_myaccounts_chat_online"

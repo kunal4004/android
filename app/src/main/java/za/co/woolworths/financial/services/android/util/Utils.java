@@ -1488,7 +1488,7 @@ public class Utils {
 	}
 
 	public static void showGeneralErrorDialog(Activity activity,String message){
-		if (activity != null && TextUtils.isEmpty(message)) {
+		if (activity != null && !TextUtils.isEmpty(message)) {
 			ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
 			minAmountDialog.show(((AppCompatActivity) activity).getSupportFragmentManager(), ErrorDialogFragment.class.getSimpleName());
 		}

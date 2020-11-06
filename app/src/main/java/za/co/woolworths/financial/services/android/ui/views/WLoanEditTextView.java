@@ -58,7 +58,7 @@ public class WLoanEditTextView extends WEditTextView {
             mSpannableText = a.getString(R.styleable.WEditTextView_WEditTextView_spannable_text);
         }
         if (mSpannableText != null) {
-            setText(FontHyperTextParser.getSpannable(mSpannableText, mFont, getContext()), BufferType.SPANNABLE);
+            setText(FontHyperTextParser.getSpannable(mSpannableText, mFont), BufferType.SPANNABLE);
         } else {
             setTypeface(Typeface.createFromAsset(getContext().getAssets(), getContext().getResources().getStringArray(R.array.fonts)[mFont]));
         }
@@ -69,7 +69,7 @@ public class WLoanEditTextView extends WEditTextView {
         if (error == null){
             super.setError(error);
         } else {
-            super.setError(FontHyperTextParser.getSpannable(error.toString(), mFont, getContext()));
+            super.setError(FontHyperTextParser.getSpannable(error.toString(), mFont));
         }
     }
 

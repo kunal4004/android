@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
@@ -612,7 +612,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
         this.mFulfilmentTypeId = fulfilmentTypeId
         if (incCenteredProgress?.visibility == VISIBLE) return // ensure one api runs at a time
-        this.mStoreId = fulfilmentTypeId.let { it1 -> ProductListingViewHolderItems.getFulFillmentStoreId(it1) }
+        this.mStoreId = fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                 ?: ""
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList

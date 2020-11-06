@@ -59,12 +59,12 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         val accountDetailValues: HashMap<String, String> = hashMapOf("accountHolder" to getString(R.string.account_details_account_holder), "accountNumber" to getString(R.string.account_details_account_number), "bank" to getString(R.string.account_details_bank), "branchCode" to getString(R.string.account_details_branch_code), "referenceNumber" to getString(R.string.account_details_reference_number), "swiftCode" to getString(R.string.account_details_swift_code))
         howToPayAccountDetails.removeAllViews()
         val inflater: LayoutInflater = LayoutInflater.from(this)
-        var paymentDetails: Map<String, String> = Gson().fromJson(accountDetails.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
+        val paymentDetails: Map<String, String> = Gson().fromJson(accountDetails.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
 
         for (i in paymentDetails) {
-            val v: View = inflater.inflate(R.layout.how_to_pay_account_details_list_item, howToPayAccountDetails, false)
-            var paymentName: WTextView = v.findViewById(R.id.paymentName)
-            var paymentValue: WTextView = v.findViewById(R.id.paymentvalue)
+            val v: View = inflater.inflate(R.layout.atm_banking_detail_item, howToPayAccountDetails, false)
+            val paymentName: WTextView = v.findViewById(R.id.paymentName)
+            val paymentValue: WTextView = v.findViewById(R.id.paymentvalue)
             paymentName.text = accountDetailValues[i.key]
             paymentValue.text = i.value
             howToPayAccountDetails.addView(v)
@@ -72,7 +72,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadPaymentOptions() {
-        var paymentMethods: List<PaymentMethod> = accountDetails.paymentMethods
+        val paymentMethods: List<PaymentMethod> = accountDetails?.paymentMethods ?: mutableListOf()
         howToPayOptionsList.removeAllViews()
         val inflater: LayoutInflater = LayoutInflater.from(this)
         paymentMethods.forEachIndexed { index, paymentMethod ->

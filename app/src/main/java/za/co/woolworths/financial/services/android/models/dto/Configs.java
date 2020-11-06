@@ -13,6 +13,7 @@ public class Configs {
     public Expiry expiry;
     public Defaults defaults;
     public AbsaBankingOpenApiServices absaBankingOpenApiServices;
+    public PayMyAccount payMyAccount;
     public QuickShopDefaultValues quickShopDefaultValues;
     public InstantCardReplacement instantCardReplacement;
     public VirtualTempCard virtualTempCard;

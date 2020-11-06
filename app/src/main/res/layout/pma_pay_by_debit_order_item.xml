@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setupMyDebitOrderContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/method_card_background"
+    android:paddingBottom="32dp">
+
+    <ImageView
+        android:id="@+id/standardBankImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/NedbankImageView"
+        app:layout_constraintStart_toEndOf="@+id/fnbImageView"
+        app:layout_constraintTop_toTopOf="@+id/NedbankImageView"
+        app:srcCompat="@drawable/bank_standard_white" />
+
+    <ImageView
+        android:id="@+id/fnbImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/NedbankImageView"
+        app:layout_constraintStart_toEndOf="@+id/bankCapitalOneImageView"
+        app:layout_constraintTop_toTopOf="@+id/NedbankImageView"
+        app:srcCompat="@drawable/bank_fnb_white" />
+
+    <ImageView
+        android:id="@+id/bankCapitalOneImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/NedbankImageView"
+        app:layout_constraintStart_toEndOf="@+id/NedbankImageView"
+        app:layout_constraintTop_toTopOf="@+id/NedbankImageView"
+        app:srcCompat="@drawable/bank_capitec_white" />
+
+    <ImageView
+        android:id="@+id/methodCardWhiteImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/white_circle_icon" />
+
+    <TextView
+        android:id="@+id/debitOrCreditCardTextView"
+        style="@style/payMyAccountCardTitleStyle"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/pma_pay_by_debit_order"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/methodCardWhiteImageView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="33dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="32dp" />
+
+    <TextView
+        android:id="@+id/debitOrCreditCardDescTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:lineSpacingExtra="8sp"
+        android:text="@string/pay_by_debit_order_desc"
+        android:textColor="@color/white_desc"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardTextView" />
+
+    <ImageView
+        android:id="@+id/absaImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/debitOrCreditCardDescTextView"
+        app:srcCompat="@drawable/bank_absa_white" />
+
+    <ImageView
+        android:id="@+id/NedbankImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/absaImageView"
+        app:layout_constraintTop_toTopOf="@+id/absaImageView"
+        app:srcCompat="@drawable/bank_nedbank_white" />
+
+
+    <Button
+        android:id="@+id/setUpDebitOrderButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/white"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.15"
+        android:text="@string/set_up_by_debit_order_button_label"
+        android:textAllCaps="true"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/absaImageView" />
+
+    <ImageView
+        android:id="@+id/recommendedImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/band_recommended" />
+
+    <ImageView
+        android:id="@+id/calendarWhiteImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/methodCardWhiteImageView"
+        app:layout_constraintEnd_toEndOf="@+id/methodCardWhiteImageView"
+        app:layout_constraintStart_toStartOf="@+id/methodCardWhiteImageView"
+        app:layout_constraintTop_toTopOf="@+id/methodCardWhiteImageView"
+        app:srcCompat="@drawable/calendar_white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

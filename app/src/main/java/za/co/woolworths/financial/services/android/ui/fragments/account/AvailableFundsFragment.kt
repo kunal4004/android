@@ -20,7 +20,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -28,6 +27,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
+    @Throws(RuntimeException::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
@@ -49,9 +49,9 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
 
     private fun setUpView() {
         mAccount?.apply {
-            val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1, activity))
+            val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1,))
             val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-            val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, activity))
+            val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1))
             val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
             val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
             availableFundAmountTextView?.text = availableFund
@@ -89,9 +89,5 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
-    }
-
-    fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mAccountPair) }
     }
 }
