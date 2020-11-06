@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.ViewTreeObserver
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
+class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)), ViewTreeObserver.OnPreDrawListener {
 
     fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
         with(productList) {
@@ -72,17 +72,25 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
-        itemView.imProductImage?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                itemView.imProductImage?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                val width: Int = itemView.imProductImage.measuredWidth / 2
-                itemView.imReducedImage?.layoutParams?.width = width
-                ImageManager.setPictureOverrideWidthHeight(itemView.imReducedImage, imPromo?.reduced
-                    ?: "")
+
+        itemView.imProductImage.viewTreeObserver?.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                itemView.imProductImage.viewTreeObserver?.removeOnPreDrawListener(this)
+                val width: Int = itemView.imProductImage?.measuredWidth ?: 0
+                val reducedPlaceHolderWidth: Int = width / 2
+                val savedPlaceHolderWidth: Int = width / 4
+
+                itemView.imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
+                itemView.imSave?.layoutParams?.width = savedPlaceHolderWidth
+                return true
             }
         })
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
+
+        ImageManager.setPictureOverrideWidthHeight(itemView.imReducedImage, imPromo?.reduced
+            ?: "")
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift
+            ?: "")
+        ImageManager.setPictureOverrideWidthHeight(itemView.imSave, imPromo?.save ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")
         ImageManager.setPictureWithoutPlaceHolder(itemView.imNewImage, imPromo?.newImage ?: "")
@@ -122,5 +130,9 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
 
             return defaultStoreId
         }
+    }
+
+    override fun onPreDraw(): Boolean {
+        return true
     }
 }
