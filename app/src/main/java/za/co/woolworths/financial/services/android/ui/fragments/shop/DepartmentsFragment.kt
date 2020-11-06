@@ -226,7 +226,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     updateDeliveryDates()
                 } else {
                     mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                    OneAppService.validateSelectedSuburb(it.suburb.id, true).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                    OneAppService.validateSelectedSuburb(it.suburb.id, it.suburb.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
                         override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
                             when (response?.httpCode) {
                                 200 -> response.validatedSuburbProducts?.let { it1 ->

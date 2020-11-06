@@ -746,7 +746,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         }
 
                         HTTP_EXPECTATION_FAILED_417 -> resources?.let {
-                            confirmDeliveryLocation()
+                            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,SET_DELIVERY_LOCATION_REQUEST_CODE) }
                         }
                         HTTP_SESSION_TIMEOUT_440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
