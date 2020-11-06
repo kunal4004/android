@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.content.Context
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 
 interface ProductDetailsContract {
@@ -34,10 +35,8 @@ interface ProductDetailsContract {
         fun hideProductDetailsLoading()
         fun updateStockAvailabilityLocation()
         fun updateDeliveryLocation()
-        fun showProductDetailsInformation()
-        fun showProductIngredientsInformation()
+        fun showDetailsInformation(productInformationType: ProductInformationActivity.ProductInformationType)
         fun loadPromotionalImages()
-        fun showNutritionalInformation()
         fun setUniqueIds()
         fun clearSelectedOnLocationChange()
         fun showProductNotAvailableForCollection()
