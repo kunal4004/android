@@ -103,6 +103,15 @@ class FirebaseManagerAnalyticsProperties {
         const val SC_UNFREEZE_CARD = "sc_unfreeze_card"
         const val SC_FREEZE_CARD = "sc_freeze_card"
 
+        const val Cart_ovr_popup_view = "cart_ovr_popup_view"
+        const val Cart_ovr_voucher_redeem = "cart_ovr_voucher_redeem"
+        const val Cart_ovr_view = "cart_ovr_view"
+        const val Cart_ovr_edit = "cart_ovr_edit"
+
+        const val Cart_promo_enter = "cart_promo_enter"
+        const val Cart_promo_clear = "cart_promo_clear"
+        const val Cart_promo_apply = "cart_promo_apply"
+        const val Cart_promo_remove = "cart_promo_remove"
 
         const val MYACCOUNTS_PMA_CC = "myaccounts_pma_cc"
         const val MYACCOUNTS_PMA_SC = "myaccounts_pma_sc"
