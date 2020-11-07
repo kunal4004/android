@@ -527,6 +527,12 @@
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

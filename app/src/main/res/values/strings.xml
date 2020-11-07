@@ -513,7 +513,6 @@
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
     <string name="shopping_search_hint">Search products to add to your list</string>
-    <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
@@ -924,7 +923,7 @@
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
     <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
-    <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout</string>
+    <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout \n* Delivery cost to be confirmed before payment</string>
     <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
     <string name="store_card_status_temporay">\u0020temp\u0020</string>
     <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
@@ -1651,6 +1650,23 @@
     <string name="collection_location_value">txtCollectionDetailsDateValue</string>
     <string name="delivery_location_title1">labelDeliveryLocationTitle</string>
     <string name="delivery_location_value">txtDeliveryLocationValue</string>
+    <string name="redeem_voucher_walkthrough_title">Redeem your vouchers online</string>
+    <string name="redeem_voucher_walkthrough_desc">Save more than ever – use your WRewards vouchers for instant savings when you checkout in the Woolies app or on our website.</string>
+    <string name="apply_promo_code_title">Promo Code</string>
+    <string name="apply">apply</string>
+    <string name="enter_promo_code_hint">Enter promo code</string>
+    <string name="available_voucher_toast_message">\u0020voucher</string>
+    <string name="available_vouchers_toast_message">\u0020vouchers</string>
+    <string name="available">\u0020available</string>
+    <string name="available_vouchers">vouchers available</string>
+    <string name="applying_your_vouchers">Applying Your Vouchers</string>
+    <string name="redeem">Redeem</string>
+    <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>
+    <string name="no_vouchers_available">NO VOUCHERS AVAILABLE</string>
+    <string name="applied">\u0020Applied</string>
+    <string name="available_vouchers_title">Select the vouchers that you\'d like to redeem.</string>
+    <string name="available_vouchers_sub_title"><b>Note:</b> Vouchers can\'t be used in conjunction with other offers or promotions.</string>
+    <string name="vouchers_applied_toast_message">Your &lt;b>Vouchers&lt;/b> have been applied</string>
 
     <string name="pma_retry_error_title">Oops!</string>
     <string name="pma_retry_error_desc">Unfortunately, we’re having trouble retrieving your information, please try again.</string>
@@ -1701,12 +1717,31 @@
     <string name="no_continue_session">No, continue session</string>
     <string name="end_session_button_caption">yes, end session</string>
     <string name="chat_retrieve_absa_card_token_error_desc">We are having issues retrieving your account information.</string>
+    <string name="do_you_have_a_promo_code">do you have a promo code?</string>
+    <string name="enter">enter</string>
+    <string name="remove">remove</string>
+    <string name="promo_code_applied">Promo code:\u0020</string>
+    <string name="applying_your_promocode">Applying Promo Code</string>
+    <string name="promo_code_generic_error_message">There was a problem applying your promo code, Please try again</string>
+    <string name="promo_code_applied_toast_message">&lt;b>Promo Code&lt;/b> has been applied</string>
     <string name="pma_delete_card_failure_textview">"We are unable to delete your card at the moment - please try again later.  "</string>
     <string name="select_your_store">Select Your Store</string>
     <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
     <string name="hint_search_for_your_store">Search For Your Store</string>
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
+    <string name="discounts">Discounts</string>
+    <string name="company_discount">Company Discount</string>
+    <string name="your_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="total_discount">Total Discount</string>
+    <string name="delivery_fee">Delivery Fee</string>
+    <string name="your_cart">Your Cart</string>
+    <string name="promo_code_discount">Promo Code Applied</string>
+    <string name="order_total">ORDER TOTAL*</string>
+    <string name="promo_code_removed_toast_message">&lt;b>Promo Code&lt;/b> has been removed</string>
+    <string name="tbc">TBC</string>
+    <string name="promo_discount_dialog_title">Promo Code Applied</string>
+    <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
 </resources>
 

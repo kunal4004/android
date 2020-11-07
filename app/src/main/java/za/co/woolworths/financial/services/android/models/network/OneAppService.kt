@@ -22,6 +22,8 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 
 object OneAppService : RetrofitConfig() {
@@ -358,6 +360,17 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.validateSelectedSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), suburbId, isStore)
     }
 
+    fun applyVouchers(vouchers: List<SelectedVoucher>): Call<ShoppingCartResponse> {
+        return mApiInterface.applyVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), vouchers)
+    }
+
+    fun applyPromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.applyPromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
+    }
+
+    fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.removePromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
+    }
     fun queryServicePayURemovePaymentMethod(paymenToken: String): Call<DeleteResponse> {
         return mApiInterface.payURemovePaymentMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), paymenToken)
     }

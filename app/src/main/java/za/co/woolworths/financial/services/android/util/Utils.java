@@ -1218,6 +1218,8 @@ public class Utils {
 			case STATEMENTS:
 				appInstanceObject.featureWalkThrough.statements = true;
 				break;
+			case CART_REDEEM_VOUCHERS:
+				appInstanceObject.featureWalkThrough.cartRedeemVoucher = true;
 			case CREDIT_SCORE:
 				appInstanceObject.featureWalkThrough.creditScore = true;
 				break;
