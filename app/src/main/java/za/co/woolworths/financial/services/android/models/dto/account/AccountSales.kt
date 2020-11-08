@@ -38,6 +38,6 @@ enum class AccountsProductGroupCode(val groupCode: String) {
     }
 
     companion object{
-        fun getEnum(code: String?): AccountsProductGroupCode? = code?.let { valueOf(it.toUpperCase()) }
+        fun getEnum(code: String?): AccountsProductGroupCode? = values().find { it.groupCode == code?.toUpperCase(Locale.getDefault()) }
     }
 }
