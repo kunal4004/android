@@ -39,7 +39,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
-    private var version:String = ""
+    private var version:String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
 
     companion object{
@@ -81,7 +81,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 override fun onSuccess(response: RootCategories?) {
                     when (response?.httpCode) {
                         200 -> {
-                            version = response.response.version
+                            version = response.response?.version
                             parentFragment?.setCategoryResponseData(response)
                             bindDepartment()
                         }
