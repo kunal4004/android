@@ -47,7 +47,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
 
             settings.javaScriptEnabled = true
             isVerticalScrollBarEnabled = true
-            
+
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
