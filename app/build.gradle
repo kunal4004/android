@@ -9,9 +9,9 @@ apply plugin: "androidx.navigation.safeargs"
 android {
 
     def major = "7"
-    def minor = "5"
+    def minor = "4"
     def fix = "1"
-    def jobNumber = 7752
+    def jobNumber = 7753
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
