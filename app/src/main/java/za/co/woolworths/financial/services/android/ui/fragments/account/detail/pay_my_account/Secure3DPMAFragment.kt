@@ -36,21 +36,17 @@ class Secure3DPMAFragment : PMAFragment() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
 
-        val urls = payMyAccountViewModel.getMerchantSiteAndMerchantUrl()
-        val merchantUrl = urls.second
-
         secureWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
-                domStorageEnabled = true
                 webViewClient = object : WebViewClient() {
 
                     override fun onPageFinished(view: WebView?, url: String?) {
                         if (!isAdded) return
                         activity?.runOnUiThread {
                             try {
-                                payMyAccountViewModel.constructPayUPayResultCallback(url, { stopLoading() }, { result ->
-                                    view?.let { v -> Navigation.findNavController(v).navigate(Secure3DPMAFragmentDirections.actionSecure3DPMAFragmentToPMA3DSecureProcessRequestFragment(result)) }
+                                payMyAccountViewModel.constructPayUPayResultCallback(url, { stopLoading() }, {
+                                    view?.let { v -> Navigation.findNavController(v).navigate(R.id.action_secure3DPMAFragment_to_PMA3DSecureProcessRequestFragment) }
                                 })
                             } catch (iex: IllegalArgumentException) {
                                 Crashlytics.log(iex.toString())
@@ -58,10 +54,9 @@ class Secure3DPMAFragment : PMAFragment() {
                         }
                         super.onPageFinished(view, url)
                     }
-
                 }
             }
-            loadUrl(merchantUrl)
+            payMyAccountViewModel.getMerchantSiteAndMerchantUrl().second?.let { merchantUrl -> loadUrl(merchantUrl) }
         }
     }
 }

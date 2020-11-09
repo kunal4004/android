@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.pma_card_has_expired_dialog.*
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
@@ -31,11 +32,15 @@ class PayMyAccountViewModel : ViewModel() {
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
+    var mSelectExpiredPaymentMethod : GetPaymentMethod? = null
     var isQueryPayUPaymentMethodComplete :Boolean = false
 
     var pmaCardPopupModel: MutableLiveData<PMACardPopupModel?> = MutableLiveData()
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
+    private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
+
+
 
     var pma3dSecureRedirection: PMARedirection? = null
 
@@ -233,7 +238,15 @@ class PayMyAccountViewModel : ViewModel() {
         return when (vendor?.toLowerCase(Locale.getDefault())) {
             "visa" -> R.drawable.card_visa
             "mastercard" -> R.drawable.card_mastercard
-            else -> R.drawable.card_visa_grey
+            else -> 0
+        }
+    }
+
+    fun getVendorCardLargeDrawableId() : Int {
+        return when (mSelectExpiredPaymentMethod?.vendor?.toLowerCase(Locale.getDefault())) {
+            "mastercard" -> R.drawable.card_mastercard_large
+            "visa" -> R.drawable.card_visa_large
+            else -> 0
         }
     }
 
@@ -409,7 +422,7 @@ class PayMyAccountViewModel : ViewModel() {
         return Pair(merchantSiteUrl, merchantUrl)
     }
 
-    fun constructPayUPayResultCallback(url: String?, stopLoading: () -> Unit, result: (PayUPayResultRequest) -> Unit) {
+    fun constructPayUPayResultCallback(url: String?, stopLoading: () -> Unit, result: () -> Unit) {
         val merchantSiteUrl = getMerchantSiteAndMerchantUrl().first
 
         if (merchantSiteUrl?.let { url?.contains(it) } == true) {
@@ -422,14 +435,17 @@ class PayMyAccountViewModel : ViewModel() {
             val chargeId = splitSiteUrlList?.get(2)
             val status = splitSiteUrlList?.get(3)
 
-            result(PayUPayResultRequest(
+            payUPayResultRequest.value =  PayUPayResultRequest(
                     customer?.substring(customer.indexOf("=").plus(1), customer.length) ?: "",
                     paymentId?.substring(paymentId.indexOf("=").plus(1), paymentId.length) ?: "",
                     chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length) ?: "",
                     status?.substring(status.indexOf("=").plus(1), status.length) ?: "",
-                    getProductOfferingIdInStringFormat() ?: ""))
+                    getProductOfferingIdInStringFormat() ?: "")
+            result()
         }
     }
+
+    fun getPayUPayResultRequest(): PayUPayResultRequest?  = payUPayResultRequest.value
 
     fun getPayOrSaveNowCardDetails(): Triple<CharSequence?, String, String>? {
         val addCardResponse = getAddCardResponse()

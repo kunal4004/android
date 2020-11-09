@@ -45,7 +45,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         navigationHost = payMyAccountFragmentContainer?.navController
 
         configureToolbar()
-        preventStatusBarToBlink()
         setupPresenter()
         setNavHostStartDestination()
     }
@@ -74,15 +73,6 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
         paymentCardDetailUpdate?.let { payMyAccountViewModel.setPMACardInfo(it) }
         mPayMyAccountPresenterImpl = PayMyAccountPresenterImpl(this, PayMyAccountModelImpl())
         mPayMyAccountPresenterImpl?.retrieveAccountBundle(payMyAccountViewModel.getAccountWithApplyNowState())
-    }
-
-    private fun preventStatusBarToBlink() {
-        val fade = Fade()
-        fade.excludeTarget(R.id.payMyAccountToolbar, true)
-        fade.excludeTarget(android.R.id.statusBarBackground, true)
-        fade.excludeTarget(android.R.id.navigationBarBackground, true)
-        window?.enterTransition = fade
-        window?.exitTransition = fade
     }
 
     private fun configureToolbar() {
