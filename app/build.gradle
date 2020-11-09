@@ -9,7 +9,7 @@ apply plugin: "androidx.navigation.safeargs"
 android {
 
     def major = "7"
-    def minor = "5"
+    def minor = "4"
     def fix = "1"
     def jobNumber = 459
 
