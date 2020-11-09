@@ -1218,6 +1218,8 @@ public class Utils {
 			case STATEMENTS:
 				appInstanceObject.featureWalkThrough.statements = true;
 				break;
+			case CART_REDEEM_VOUCHERS:
+				appInstanceObject.featureWalkThrough.cartRedeemVoucher = true;
 			case CREDIT_SCORE:
 				appInstanceObject.featureWalkThrough.creditScore = true;
 				break;
@@ -1488,7 +1490,7 @@ public class Utils {
 	}
 
 	public static void showGeneralErrorDialog(Activity activity,String message){
-		if (activity != null && TextUtils.isEmpty(message)) {
+		if (activity != null && !TextUtils.isEmpty(message)) {
 			ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
 			minAmountDialog.show(((AppCompatActivity) activity).getSupportFragmentManager(), ErrorDialogFragment.class.getSimpleName());
 		}

@@ -13,7 +13,7 @@
             android:id="@+id/singleSelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_margin="1dp"
             android:button="@drawable/shopping_list_item_selector"
@@ -24,7 +24,7 @@
             style="@style/refinements_textview_style_with_margin_left"
             android:layout_toRightOf="@+id/singleSelector"
             android:layout_toLeftOf="@+id/countSingleSelector"
-            android:layout_marginRight="@dimen/five_dp"
+            android:layout_marginEnd="@dimen/five_dp"
             />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView

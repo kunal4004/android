@@ -25,7 +25,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             app:contentInsetEnd="0dp"
             app:contentInsetLeft="0dp"
@@ -51,7 +51,7 @@
     <include
         android:id="@+id/incBottomSheetLayout"
         layout="@layout/account_details_bottom_sheet_overlay"
-        app:elevation="5dp" />
+        android:elevation="5dp" />
 
     <RelativeLayout
         android:id="@+id/bottomApplyNowButtonRelativeLayout"

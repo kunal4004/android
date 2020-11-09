@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.contracts
 import android.os.Bundle
 import android.view.View
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
-import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 
 interface IAvailableFundsContract {
@@ -19,8 +17,9 @@ interface IAvailableFundsContract {
         fun hideABSAServiceGetUserCreditCardTokenProgressBar()
         fun navigateToRecentTransactionActivity(cardType: String)
         fun navigateToLoanWithdrawalActivity()
-        fun navigateToPaymentOptionActivity()
+        fun navigateToPayMyAccountActivity()
         fun navigateToStatementActivity()
+        fun navigateToPaymentOptionsActivity()
         fun setPushViewDownAnimation(view: View)
         fun onABSACreditCardFailureHandler(error: Throwable?)
         fun navigateToABSAStatementActivity()
@@ -35,6 +34,10 @@ interface IAvailableFundsContract {
         fun getAccount(): Account?
         fun getApplyNowState(): ApplyNowState?
         fun onDestroy()
+        fun isPersonalLoanAndStoreCardVisible(): Boolean?
+        fun getAccountDetail(): Pair<ApplyNowState, Account>?
+        fun productHasAmountOverdue(): Boolean
+
     }
 
     interface AvailableFundsModel {

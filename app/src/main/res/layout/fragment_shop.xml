@@ -68,6 +68,7 @@
         app:tabMode="fixed"
         app:tabPaddingEnd="2dp"
         app:tabPaddingStart="2dp"
+        app:tabRippleColor="@null"
         app:tabSelectedTextColor="@color/black"
         app:tabTextColor="#40000000" />
 

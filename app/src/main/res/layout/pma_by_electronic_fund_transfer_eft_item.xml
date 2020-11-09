@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_corner_white_bg"
+    android:paddingBottom="32dp">
+
+    <ImageView
+        android:id="@+id/electronicFundTransferIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/method_eft" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="33dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="32dp" />
+
+    <TextView
+        android:id="@+id/byElectronicFundTransferTextView"
+        style="@style/payMyAccountCardTitleStyle"
+        android:fontFamily="@font/futura_semi_bold"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/by_electronic_fund_transfer_title"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/electronicFundTransferIconImageView" />
+
+    <TextView
+        android:id="@+id/byElectronicFundTransferDescTextView"
+        style="@style/pmaWhiteCardDescriptionStyle"
+        android:lineSpacingExtra="8sp"
+        android:text="@string/pay_your_account_desc_label"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/byElectronicFundTransferTextView" />
+
+    <Button
+        android:id="@+id/viewBankingDetailButton"
+        android:text="@string/view_banking_details_button_label"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/byElectronicFundTransferDescTextView"
+        style="@style/pmaViewBankingButton" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/quickAndEasyBandImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/band_quick_easy"
+        tools:srcCompat="@drawable/band_quick_easy" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,7 @@ interface IAccountSalesContract {
         fun getAnchoredHeight(slideOffset: Float, toolbar: Toolbar?): Int?
         fun setAccountSalesIntent(intent: Intent?)
         fun getApplyNowState(): ApplyNowState?
-        fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int
+        fun bottomSheetBehaviourHeight(): Int
         fun bottomSheetPeekHeight() : Int
     }
 

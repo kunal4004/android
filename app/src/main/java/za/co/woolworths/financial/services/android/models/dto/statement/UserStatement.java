@@ -43,20 +43,6 @@ public class UserStatement {
 		this.endDate = endDate;
 	}
 
-	public UserStatement(String productOfferingId, String accountNumber, String startDate, String endDate) {
-		this.productOfferingId = productOfferingId;
-		this.accountNumber = accountNumber;
-		this.startDate = startDate;
-		this.endDate = endDate;
-	}
-
-	public UserStatement(String docType, String docId, String size, String docDesc, boolean viewIsLoading) {
-		this.docType = docType;
-		this.docId = docId;
-		this.size = size;
-		this.docDesc = docDesc;
-		this.viewIsLoading = viewIsLoading;
-	}
 
 	public String getProductOfferingId() {
 		return productOfferingId;
