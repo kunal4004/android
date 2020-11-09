@@ -113,7 +113,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                 else -> {
                     when (applyNowState) {
                         ApplyNowState.PERSONAL_LOAN -> isChatVisibleForAccountProductsLanding(applyNowState) && when (getActivityName()) {
-                            AccountSignedInActivity::class.java.simpleName -> !personalLoan.landing
+                            AccountSignedInActivity::class.java.simpleName -> false // AccountSignedInActivity; the chat pop-up should not display in this instance - only the overlay.
                             PayMyAccountActivity::class.java.simpleName -> !personalLoan.paymentOptions
                             WTransactionsActivity::class.java.simpleName -> !personalLoan.transactions
                             AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !personalLoan.statements
@@ -122,7 +122,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
                         ApplyNowState.STORE_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
                                 when (getActivityName()) {
-                                    AccountSignedInActivity::class.java.simpleName -> !storeCard.landing
+                                    AccountSignedInActivity::class.java.simpleName -> false
                                     PayMyAccountActivity::class.java.simpleName -> !storeCard.paymentOptions
                                     WTransactionsActivity::class.java.simpleName -> !storeCard.transactions
                                     AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !storeCard.statements
@@ -130,7 +130,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                                 }
                         ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
                                 when (getActivityName()) {
-                                    AccountSignedInActivity::class.java.simpleName -> !creditCard.landing
+                                    AccountSignedInActivity::class.java.simpleName -> false
                                     PayMyAccountActivity::class.java.simpleName -> !creditCard.paymentOptions
                                     WTransactionsActivity::class.java.simpleName -> !creditCard.transactions
                                     AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !creditCard.statements
