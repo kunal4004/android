@@ -107,22 +107,19 @@
         android:imeOptions="actionDone|actionGo"
         android:maxLength="12"
         android:maxLines="1"
-        android:inputType="phone|number"
+        android:inputType="number|phone"
         android:digits="1234567890"
         android:minWidth="@dimen/twenty_four_dp"
         android:singleLine="true"
         android:textColor="@color/black"
+        android:ems="10"
         android:textColorHint="@color/black"
         android:textCursorDrawable="@drawable/cursor_custom_color"
         android:textSize="55sp"
         app:currencySymbol="R"
         app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline">
-
-        <requestFocus />
-
-    </za.co.woolworths.financial.services.android.util.CurrencyEditText>
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"/>
 
 
     <androidx.constraintlayout.widget.Guideline

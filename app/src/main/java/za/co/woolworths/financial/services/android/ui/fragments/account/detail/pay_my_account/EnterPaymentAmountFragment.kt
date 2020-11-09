@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -45,7 +46,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
@@ -55,7 +55,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             amountOutstandingValueTextView?.text = getTotalAmountDue()
             paymentAmountInputEditText?.setText(getAmountEntered())
         }
-
     }
 
     private fun configureToolbar() {
@@ -77,6 +76,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private fun configureCurrencyEditText() {
         paymentAmountInputEditText?.apply {
+
+            setRawInputType(Configuration.KEYBOARD_12KEY)
 
             setCurrency(CurrencySymbols.NONE)
             setDelimiter(false)

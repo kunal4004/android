@@ -7,18 +7,21 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.webkit.ConsoleMessage
-import android.webkit.WebChromeClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 
 class PMAAddNewPayUCardFragment : PMAFragment() {
 
@@ -43,27 +46,22 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun configureWebView(navController: NavController?) {
+
         with(addNewUserPayUWebView) {
 
-            with(settings) {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-            }
-
-            webChromeClient = object : WebChromeClient() {
-                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                    return true
-                }
-            }
+            settings.javaScriptEnabled = true
 
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
+                payMyAccountViewModel.showCardProgress = true
+                setNavHostStartDestination()
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     displayToolbarBackIcon(false)
                     showWebView(false)
                 }
             }, { addCardResponse ->
                 // onSuccess
+                payMyAccountViewModel.isAddNewCardFormLoaded = false
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     displayToolbarBackIcon(true)
                     showWebView(false)
@@ -71,22 +69,57 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
                 }
             }, {
                 // on failure
+                payMyAccountViewModel.isAddNewCardFormLoaded = false
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     displayToolbarBackIcon(true)
                     showWebView(true)
                 }
 
+            }, {
+                // onPayUFormLoaded
+                payMyAccountViewModel.showCardProgress = false
+                setNavHostStartDestination()
+                payMyAccountViewModel.isAddNewCardFormLoaded = NetworkManager.getInstance().isConnectedToNetwork(activity)
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    displayToolbarBackIcon(true)
+                    showWebView(true)
+                }
             }), "JSBridge")
 
-            loadUrl(payMyAccountViewModel.getAddNewCardUrl())
+            autoConnectionListener()
         }
+    }
+
+    private fun autoConnectionListener() {
+        activity?.let { act ->
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    when (hasConnection && !payMyAccountViewModel.isAddNewCardFormLoaded) {
+                        true -> {
+                            payMyAccountViewModel.showCardProgress = true
+                            loadAddPayUForm()
+                            addNewUserPayUWebView?.loadUrl(payMyAccountViewModel.getAddNewCardUrl())
+                        }
+                        else -> {
+                            if (!hasConnection)
+                                ErrorHandlerView(act).showToast()
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun loadAddPayUForm() {
+        setNavHostStartDestination()
+        showWebView(false)
+        displayToolbarBackIcon(true)
     }
 
     private fun navigateToSavePayNowFragment(addCardResponse: AddCardResponse, navController: NavController?) {
         payMyAccountViewModel.setAddCardResponse(addCardResponse)
         navController?.navigate(PMAAddNewPayUCardFragmentDirections.actionAddNewPayUCardFragmentToSaveCardAndPayNowFragment())
     }
-
 
     private fun showWebView(isVisible: Boolean) {
         addNewUserPayUWebView?.visibility = if (isVisible) VISIBLE else GONE
@@ -102,4 +135,17 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
         noTitleBarToolbar()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        payMyAccountViewModel.isAddNewCardFormLoaded = false
+    }
+
+    private fun setNavHostStartDestination() {
+        val  navHostFragment = view?.findViewById<FragmentContainerView>(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
+        val graph = navHostFragment?.navController?.graph
+        graph?.apply {
+            startDestination = R.id.processYourRequestFragment
+            navHostFragment.navController.graph = graph
+        }
+    }
 }
