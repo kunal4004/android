@@ -45,15 +45,9 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     private fun configureWebView(navController: NavController?) {
         with(addNewUserPayUWebView) {
 
-               settings.javaScriptEnabled = true
+            settings.javaScriptEnabled = true
             isVerticalScrollBarEnabled = true
-
-            webChromeClient = object : WebChromeClient() {
-                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                    return true
-                }
-            }
-
+            
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
