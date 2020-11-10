@@ -38,8 +38,9 @@
             android:paddingStart="@dimen/fifty_dp"
             android:paddingEnd="@dimen/default_margin"
             android:textColor="@color/searchBarHintColor"
-            android:textSize="16sp"
-            app:WTextView_font="myriadpro_regular"/>
+            android:textColorHint="@color/product_search_hint"
+            android:textSize="@dimen/fifteen_dp"
+            app:WTextView_font="myriadpro_regular" />
 
     </RelativeLayout>
 </LinearLayout>

@@ -48,6 +48,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
         with(addNewUserPayUWebView) {
 
             settings.javaScriptEnabled = true
+            isVerticalScrollBarEnabled = true
 
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
