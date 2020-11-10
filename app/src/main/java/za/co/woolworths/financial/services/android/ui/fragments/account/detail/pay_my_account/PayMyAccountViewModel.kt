@@ -32,6 +32,7 @@ class PayMyAccountViewModel : ViewModel() {
     private val pmaFirebaseEvent: PMATrackFirebaseEvent = PMATrackFirebaseEvent()
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
+    var isAddNewCardFormLoaded = false
     var mSelectExpiredPaymentMethod : GetPaymentMethod? = null
     var isQueryPayUPaymentMethodComplete :Boolean = false
 

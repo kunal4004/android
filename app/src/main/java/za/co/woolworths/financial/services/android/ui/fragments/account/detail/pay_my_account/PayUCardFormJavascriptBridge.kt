@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddCardResponse
 
 class PayUCardFormJavascriptBridge(val onShowInProgress: () -> Unit,
                                    val onShowMessageInNative: (addToCardResponse: AddCardResponse) -> Unit,
-                                   val onFailure: () -> Unit) {
+                                   val onFailure: () -> Unit,val onPayUFormLoaded : () -> Unit) {
 
     @JavascriptInterface
     fun showMessageInNative(token: String) {
@@ -21,6 +21,11 @@ class PayUCardFormJavascriptBridge(val onShowInProgress: () -> Unit,
     @JavascriptInterface
     fun onFailureHandler() {
         onFailure()
+    }
+
+    @JavascriptInterface
+    fun payuFormHasLoaded(){
+        onPayUFormLoaded()
     }
 
 }

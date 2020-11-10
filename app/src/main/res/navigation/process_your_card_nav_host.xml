@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/process_request_nav_host"
-    app:startDestination="@id/loadWebviewFragment">
+    app:startDestination="@id/processYourCardFragment">
 
     <fragment
-        android:id="@+id/loadWebviewFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.CardProcessYourRequestFragment"
+        android:id="@+id/processYourCardFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMAProcessYourCardFragment"
         android:label="fragment_p_m_a_add_new_card_progress_indicator"
         tools:layout="@layout/process_your_request_fragment" />
 

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.*
@@ -23,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+
 
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
@@ -45,7 +47,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
@@ -55,7 +56,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             amountOutstandingValueTextView?.text = getTotalAmountDue()
             paymentAmountInputEditText?.setText(getAmountEntered())
         }
-
     }
 
     private fun configureToolbar() {
@@ -125,12 +125,14 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                         switchToConfirmPaymentOrDoneButton(continueToPaymentButton?.text?.toString(), {
                             //Done button
+                            hideKeyboard()
                             activity?.apply {
                                 setResult(RESULT_OK, Intent().putExtra(PAYMENT_DETAIL_CARD_UPDATE, Gson().toJson(cardInfo)))
                                 finish()
                             }
                         }, {
                             //Confirm Payment button
+                            hideKeyboard()
                             view?.apply {
                                 Navigation.findNavController(this)
                                         .navigate(R.id.action_enterPaymentAmountFragment_to_addNewPayUCardFragment)
@@ -161,6 +163,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
+                hideKeyboard()
                 activity?.onBackPressed()
                 true
             }
@@ -174,12 +177,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         }
-        hideKeyboard()
-    }
-
-    override fun onDestroyView() {
-        hideKeyboard()
-        super.onDestroyView()
     }
 
     fun showKeyboard() {
