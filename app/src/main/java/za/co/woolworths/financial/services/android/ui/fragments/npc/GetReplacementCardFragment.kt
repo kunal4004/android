@@ -8,11 +8,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.location.Location
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -38,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -132,7 +130,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                     activity?.apply {
                         progressVisibility(false)
                         when (locationResponse?.httpCode) {
-                            200 -> {
+                            AppConstant.HTTP_OK -> {
                                 val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
                                         ?: mutableListOf()
                                 if (npcStores?.size ?: 0 > 0) {
@@ -192,7 +190,6 @@ class GetReplacementCardFragment : MyCardExtension() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.e("onActivityResult", "result code $requestCode")
         if (requestCode == ACCESS_MY_LOCATION_REQUEST_CODE) {
             activity?.runOnUiThread {
                 checkForLocationPermission()
