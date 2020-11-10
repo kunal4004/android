@@ -13,7 +13,6 @@ public class PrimaryCard implements Serializable {
     public Boolean cardBlocked;
     @SerializedName("cards")
     @Expose
-    public List<Card> cards = null;
-
+    public List<Card> cards;
 }
 

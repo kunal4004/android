@@ -11,7 +11,6 @@ import android.view.View.VISIBLE
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
@@ -42,8 +41,6 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
         const val PMA_TRANSACTION_COMPLETED_RESULT_CODE = 4470
         const val PMA_UPDATE_CARD_RESULT_CODE = 4471
     }
-
-    val args: PMA3DSecureProcessRequestFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,7 +140,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     private fun postUPayResult() {
         processingLayoutTitle?.text = bindString(R.string.processing_your_payment_label)
         startSpinning()
-        val payUPayResultRequest = args.payUPayResult
+        val payUPayResultRequest = payMyAccountViewModel.getPayUPayResultRequest()
         request(payUPayResultRequest?.let { pay -> OneAppService.queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {
 
             override fun onSuccess(response: Any?) {
