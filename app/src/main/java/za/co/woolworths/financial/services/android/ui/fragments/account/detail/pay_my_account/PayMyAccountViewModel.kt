@@ -32,7 +32,6 @@ class PayMyAccountViewModel : ViewModel() {
     private var addCardResponse: MutableLiveData<AddCardResponse> = MutableLiveData()
     private var isQueryServiceGetRedirectionCompleted: Boolean = false
     var isAddNewCardFormLoaded = false
-    var showCardProgress: Boolean = false
     var isQueryPayUPaymentMethodComplete :Boolean = false
 
     var pmaCardPopupModel: MutableLiveData<PMACardPopupModel?> = MutableLiveData()

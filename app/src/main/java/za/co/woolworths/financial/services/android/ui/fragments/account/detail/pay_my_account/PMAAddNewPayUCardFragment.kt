@@ -8,11 +8,9 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_new_payu_card_fragment.*
 import kotlinx.coroutines.GlobalScope
@@ -53,8 +51,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
 
             addJavascriptInterface(PayUCardFormJavascriptBridge({
                 // showProgress
-                payMyAccountViewModel.showCardProgress = true
-                setNavHostStartDestination()
+                processYourCard()
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     displayToolbarBackIcon(false)
                     showWebView(false)
@@ -77,8 +74,6 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
 
             }, {
                 // onPayUFormLoaded
-                payMyAccountViewModel.showCardProgress = false
-                setNavHostStartDestination()
                 payMyAccountViewModel.isAddNewCardFormLoaded = NetworkManager.getInstance().isConnectedToNetwork(activity)
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     displayToolbarBackIcon(true)
@@ -90,13 +85,17 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
         }
     }
 
+    private fun processYourCard() {
+        processingYourCardFragment?.visibility = VISIBLE
+        processYourRequestFragment?.visibility = GONE
+    }
+
     private fun autoConnectionListener() {
         activity?.let { act ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection && !payMyAccountViewModel.isAddNewCardFormLoaded) {
                         true -> {
-                            payMyAccountViewModel.showCardProgress = true
                             loadAddPayUForm()
                             addNewUserPayUWebView?.loadUrl(payMyAccountViewModel.getAddNewCardUrl())
                         }
@@ -111,7 +110,8 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     }
 
     private fun loadAddPayUForm() {
-        setNavHostStartDestination()
+        processingYourCardFragment?.visibility = GONE
+        processYourRequestFragment?.visibility = VISIBLE
         showWebView(false)
         displayToolbarBackIcon(true)
     }
@@ -138,14 +138,5 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
     override fun onDestroy() {
         super.onDestroy()
         payMyAccountViewModel.isAddNewCardFormLoaded = false
-    }
-
-    private fun setNavHostStartDestination() {
-        val  navHostFragment = view?.findViewById<FragmentContainerView>(R.id.payMyAccountNavHostFragmentContainerView) as? NavHostFragment
-        val graph = navHostFragment?.navController?.graph
-        graph?.apply {
-            startDestination = R.id.processYourRequestFragment
-            navHostFragment.navController.graph = graph
-        }
     }
 }

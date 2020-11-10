@@ -7,16 +7,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.processing_request_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 
-class PMAAddNewCardProgressIndicatorFragment : ProcessYourRequestFragment() {
-
-    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+class CardProcessYourRequestFragment : ProcessYourRequestFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        processingLayoutTitle?.text = when (payMyAccountViewModel.showCardProgress) {
-            true -> bindString(R.string.processing_your_card_label)
-            false -> bindString(R.string.processing_your_request)
-        }
+        processingLayoutTitle?.text = bindString(R.string.processing_your_request)
     }
-
 }
