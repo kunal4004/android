@@ -26,7 +26,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
     // config.inAppChat.minimumSupportedAppBuildNumber >= currentAppBuildNumber
     private val isInAppChatFeatureEnabled: Boolean
-        get() = WoolworthsApplication.getInAppChat().isEnabled ?: false
+        get() = WoolworthsApplication.getInAppChat()?.isEnabled ?: false
 
     /**
      * In Accounts Landing: Loop through all the Products returned with the Accounts Response.
