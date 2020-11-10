@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.card_payment_option_header_item.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.credit_and_debit_card_payments_fragment.*
@@ -217,7 +216,6 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             R.id.payByDebitCardNowButton -> {
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val payUMethodType = cardInfo?.payuMethodType
-                val paymentMethod = Gson().toJson(cardInfo?.paymentMethodList)
                 payMyAccountPresenter?.setFirebaseEventForPayByCardNow()
 
                 payMyAccountViewModel.resetAmountEnteredToDefault()
@@ -226,15 +224,10 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
-                        val account = payMyAccountPresenter?.getAccount() ?: Account()
-                        val toEnterPaymentAmountDirection = CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(account, true)
-                        navController?.navigate(toEnterPaymentAmountDirection)
+                        navController?.navigate( CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction( true))
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
-                        val account = Gson().toJson(payMyAccountPresenter?.getAccount()
-                            ?: Account())
-                        val toDisplayCard = CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment(paymentMethod, account)
-                        navController?.navigate(toDisplayCard)
+                        navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
                     }
                 }
             }
