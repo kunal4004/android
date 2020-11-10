@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.pma_card_has_expired_dialog.*
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
@@ -19,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRe
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import java.net.ConnectException
 import java.util.*
 
@@ -235,17 +235,17 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun getVendorCardDrawableId(vendor: String?): Int {
-        return when (vendor?.toLowerCase(Locale.getDefault())) {
-            "visa" -> R.drawable.card_visa
-            "mastercard" -> R.drawable.card_mastercard
+        return when (PMAVendorCardEnum.getCard(vendor)) {
+            PMAVendorCardEnum.VISA -> R.drawable.card_visa
+            PMAVendorCardEnum.MASTERCARD -> R.drawable.card_mastercard
             else -> 0
         }
     }
 
     fun getVendorCardLargeDrawableId() : Int {
-        return when (mSelectExpiredPaymentMethod?.vendor?.toLowerCase(Locale.getDefault())) {
-            "mastercard" -> R.drawable.card_mastercard_large
-            "visa" -> R.drawable.card_visa_large
+        return when (PMAVendorCardEnum.getCard(mSelectExpiredPaymentMethod?.vendor)) {
+            PMAVendorCardEnum.VISA -> R.drawable.card_visa_large
+            PMAVendorCardEnum.MASTERCARD -> R.drawable.card_mastercard_large
             else -> 0
         }
     }
