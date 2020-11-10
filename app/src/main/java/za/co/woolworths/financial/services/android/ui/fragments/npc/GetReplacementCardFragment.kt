@@ -8,8 +8,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -26,14 +29,17 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.CONTACT_INFO
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.MAP_LOCATION
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -61,7 +67,7 @@ class GetReplacementCardFragment : MyCardExtension() {
         val storeCardResponse = (activity as? MyCardDetailActivity)?.getStoreCardDetail()
         tvAlreadyHaveCard?.setOnClickListener {
             (activity as? MyCardDetailActivity)?.apply {
-               navigateToLinkNewCardActivity(this,storeCardResponse)
+                navigateToLinkNewCardActivity(this, storeCardResponse)
             }
         }
         btnParticipatingStores?.setOnClickListener { checkForLocationPermission() }
@@ -70,13 +76,11 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun uniqueIdsForReplacementCard() {
-        activity?.resources?.apply {
-            imReplacementCard?.contentDescription = getString(R.string.image_card)
-            tvReplacementCardTitle?.contentDescription = getString(R.string.label_getICR)
-            tvPermanentBlockDescPart1?.contentDescription = getString(R.string.label_getICRCardDescription)
-            btnParticipatingStores?.contentDescription = getString(R.string.button_getParticipantsStores)
-            tvAlreadyHaveCard?.contentDescription = getString(R.string.link_alreadyHaveCard)
-        }
+        imReplacementCard?.contentDescription = bindString(R.string.image_card)
+        tvReplacementCardTitle?.contentDescription = bindString(R.string.label_getICR)
+        tvPermanentBlockDescPart1?.contentDescription = bindString(R.string.label_getICRCardDescription)
+        btnParticipatingStores?.contentDescription = bindString(R.string.button_getParticipantsStores)
+        tvAlreadyHaveCard?.contentDescription = bindString(R.string.link_alreadyHaveCard)
     }
 
     private fun requestGPSLocation() {
@@ -105,7 +109,8 @@ class GetReplacementCardFragment : MyCardExtension() {
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
             if (!Utils.isLocationEnabled(this)) {
-                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
+                val enableLocationSettingsFragment: EnableLocationSettingsFragment? = EnableLocationSettingsFragment()
+                enableLocationSettingsFragment?.show(supportFragmentManager, EnableLocationSettingsFragment::class.java.simpleName)
                 return@apply
             }
 
@@ -127,19 +132,19 @@ class GetReplacementCardFragment : MyCardExtension() {
                     activity?.apply {
                         progressVisibility(false)
                         when (locationResponse?.httpCode) {
-                                200 -> {
+                            200 -> {
                                 val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
                                         ?: mutableListOf()
                                 if (npcStores?.size ?: 0 > 0) {
                                     val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
-                                    intentInStoreFinder.putExtra(PRODUCT_NAME, getString(R.string.participating_stores))
-                                    intentInStoreFinder.putExtra(CONTACT_INFO, getString(R.string.participating_store_desc))
+                                    intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
+                                    intentInStoreFinder.putExtra(CONTACT_INFO, bindString(R.string.participating_store_desc))
                                     intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
                                     startActivity(intentInStoreFinder)
                                     overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
                                 }
 
-                                }
+                            }
                             else -> return
                         }
                         enableAlreadyHaveALink(true)
@@ -170,6 +175,8 @@ class GetReplacementCardFragment : MyCardExtension() {
         when (requestCode) {
             ProductListingFindInStoreNoQuantityFragment.REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startLocationUpdate()
+            } else {
+               KotlinUtils.openApplicationSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)
             }
             else -> return
         }
@@ -181,5 +188,15 @@ class GetReplacementCardFragment : MyCardExtension() {
         pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
         btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
         btnParticipatingStores?.isClickable = !state
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.e("onActivityResult", "result code $requestCode")
+        if (requestCode == ACCESS_MY_LOCATION_REQUEST_CODE) {
+            activity?.runOnUiThread {
+                checkForLocationPermission()
+            }
+        }
     }
 }

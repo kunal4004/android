@@ -14,6 +14,7 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.*
 
 import android.text.style.*
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
@@ -489,6 +491,20 @@ class KotlinUtils {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 activity?.startActivity(intent)
             }
+        }
+
+        fun openApplicationSettings(requestCode: Int, activity: Activity?){
+            val intent = Intent()
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            val uri: Uri = Uri.fromParts("package", activity?.packageName, null)
+            intent.data = uri
+            activity?.startActivityForResult(intent, requestCode)
+        }
+
+        fun openAccessMyLocationDeviceSettings(requestCode: Int, activity: Activity?) {
+            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            activity?.startActivityForResult(locIntent, requestCode)
+            activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 }
