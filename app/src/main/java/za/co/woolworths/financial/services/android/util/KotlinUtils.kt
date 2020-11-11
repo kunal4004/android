@@ -25,6 +25,8 @@ import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.crashlytics.android.Crashlytics
@@ -37,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
@@ -431,6 +434,17 @@ class KotlinUtils {
                 convertToTranslucent.invoke(activity, null, options)
             } catch (t: Throwable) {
                 Crashlytics.log(t.message)
+            }
+        }
+
+        fun presentDashDetailsActivity(activity: Activity, link: String?) {
+            activity.apply {
+                val mIntent = Intent(this, DashDetailsActivity::class.java)
+                mIntent.putExtra("bundle", bundleOf(
+                        AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK to link
+                ))
+                startActivity(mIntent)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
         }
     }

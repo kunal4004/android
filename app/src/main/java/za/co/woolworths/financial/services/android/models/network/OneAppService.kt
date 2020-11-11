@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import android.location.Location
 import com.google.gson.JsonObject
 import io.reactivex.Observable
 import okhttp3.ResponseBody
@@ -138,8 +139,16 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getRootCategory(): Call<RootCategories> {
-        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken())
+    fun getRootCategory(suburbId: String?, locationEnabled: Boolean): Call<RootCategories> {
+        var location: Location? = null
+        if(locationEnabled){
+           location = getMyLocation()
+            location = Location("myLocation")
+            location.longitude = 18.408380
+            location.latitude = -33.907630
+        }
+
+        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), location?.latitude, location?.longitude, suburbId)
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {

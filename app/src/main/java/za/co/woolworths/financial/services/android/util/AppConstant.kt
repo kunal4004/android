@@ -20,5 +20,9 @@ class AppConstant {
         const val HTTP_EXPECTATION_FAILED_417: Int = 417
         const val HTTP_SESSION_TIMEOUT_440: Int = 440
 
+        const val KEY_DASH_WOOLIES_DOWNLOAD_LINK: String = "download_link"
+
     }
+
+    enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
 }

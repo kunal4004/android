@@ -1448,7 +1448,7 @@
 
     <string name="retry_label">Retry</string>
     <string name="error_occured">Error Occured</string>
-    <string name="gift_with_purchase_dialog_layout" >Gift with purchase dialog</string>
+    <string name="gift_with_purchase_dialog_layout">Gift with purchase dialog</string>
     <string name="gift_item_title">This item is a Free Gift</string>
     <string name="gift_item_description">To remove this item from your cart, you need to remove the qualifying product.</string>
     <string name="free_gift">free gift</string>
@@ -1603,5 +1603,23 @@
     <string name="get_a_free_credit_score">get a free credit score</string>
     <string name="get_started_now">Get started now</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
+
+    <!-- Dash Details -->
+    <string name="dash_details_food_items_only">FOOD ITEMS ONLY</string>
+    <string name="dash_details_woolies_app_available">Woolies Dash Trial App is\nAvailable in Your Area.</string>
+    <string name="dash_details_woolies_app_available_desc">We are trialing Same Day delivery in your area.\nGet your food store items delivered to you today.</string>
+    <string name="dash_details_please_note">Please Note</string>
+
+    <string name="app_feature_shop_full_food_range">Shop our full food range</string>
+    <string name="app_feature_get_delivered_in_60_min">Get it delivered in 60 minutes</string>
+    <string name="app_feature_preferred_delivery_timeslot">At your preferred delivery timeslot</string>
+    <string name="app_feature_track_order">Track your order to your doorstep</string>
+
+    <string name="terms_and_condition_bullet_point">\u2022</string>
+    <string name="terms_and_condition_wreward_vouchers">WRewards vouchers cannot be redeemed.</string>
+    <string name="terms_and_condition_financial_services">You cannot pay using your Financial Services Products, including your Credit Card or your Store Card.</string>
+    <string name="terms_and_condition_not_qualify_for_free_delivery">Black Credit Card holders do not qualify for free delivery when shopping on Woolies Dash.</string>
+    <string name="dash_details_download_woolies_dash_app">DOWNLOAD WOOLIES DASH APP</string>
+
 </resources>
 

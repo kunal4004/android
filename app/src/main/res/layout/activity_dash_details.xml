@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/default_background"
+            tools:context="za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/WTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/fourty_seven_dp"
+                android:background="@color/black"
+                android:elevation="@dimen/five_dp"
+                android:gravity="center"
+                android:padding="@dimen/fifteen_dp"
+                android:paddingHorizontal="@dimen/fifteen_dp"
+                android:text="@string/dash_details_food_items_only"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_12sp"
+                app:WTextView_font="medium_bold"
+                app:layout_constraintBottom_toBottomOf="@+id/appBarLayout2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/three_fifty_five_dp"
+                android:background="@color/bg_e6e6e6"
+                android:elevation="0dp"
+                app:elevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbarDash"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/bg_info_banner" />
+                    </RelativeLayout>
+                </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_toolbar_margin_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="@dimen/three_fifty_five_dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_dash_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_F8F8F8"
+                android:nestedScrollingEnabled="false"
+                android:paddingBottom="@dimen/eighty_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guide_toolbar_margin_horizontal" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/dash_details_download_woolies_app_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/twenty_five_dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:minHeight="@dimen/fifty_dp"
+        android:paddingHorizontal="@dimen/fourty_seven_dp"
+        android:paddingVertical="@dimen/twenty_two_dp"
+        android:text="@string/dash_details_download_woolies_dash_app"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

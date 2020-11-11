@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -16,8 +18,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -33,14 +37,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.util.*
 
-class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
+class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ILocationProvider {
 
+    private var isRootCatCallInProgress: Boolean = false
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
     private var version:String = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
+    private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
 
     companion object{
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -73,12 +79,32 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         }
     }
 
+    private fun startLocationUpdates() {
+        activity?.apply {
+            mFuseLocationAPISingleton?.apply {
+                addLocationChangeListener(this@DepartmentsFragment)
+                startLocationUpdate()
+            }
+        }
+    }
+
+    fun stopLocationUpdate() {
+        // stop location updates
+        mFuseLocationAPISingleton?.apply {
+            stopLocationUpdate()
+        }
+    }
+
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-            rootCategoryCall = OneAppService.getRootCategory()
+            isRootCatCallInProgress = true
+            val suburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+
+            rootCategoryCall = OneAppService.getRootCategory(suburbId, Utils.isLocationEnabled(context))
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
+                    isRootCatCallInProgress = false
                     when (response?.httpCode) {
                         200 -> {
                             version = response.response.version
@@ -90,6 +116,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 }
 
                 override fun onFailure(error: Throwable?) {
+                    isRootCatCallInProgress = false
                     if (isAdded) {
                         activity?.runOnUiThread {
                             if (networkConnectionStatus())
@@ -103,15 +130,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         }
     }
 
-
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
+        // Add dash banner if only present
+        mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
         executeValidateSuburb()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
-        mDepartmentAdapter = DepartmentAdapter(categories, ::departmentItemClicked, ::onEditDeliveryLocation) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
+        mDepartmentAdapter = DepartmentAdapter(categories, ::departmentItemClicked, ::onEditDeliveryLocation, ::onDashBannerClicked) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
@@ -132,6 +160,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE) }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+        }
+    }
+
+    private fun onDashBannerClicked(){
+        activity?.apply {
+            KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
         }
     }
 
@@ -176,10 +210,20 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if(!hidden){
             activity?.apply {
                 executeValidateSuburb()
+                //When moved from My Cart to department
+                refreshLocationUpdates()
             }
         }
     }
 
+    private fun refreshLocationUpdates() {
+        if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            mFuseLocationAPISingleton = FuseLocationAPISingleton
+            startLocationUpdates()
+        } else {
+            mDepartmentAdapter?.removeDashBanner()
+        }
+    }
 
     fun scrollToTop() {
         rclDepartment?.scrollToPosition(0)
@@ -208,6 +252,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onResume() {
         super.onResume()
         activity?.apply {
+            //When moved from other bottom nav tabs except My Cart
+            refreshLocationUpdates()
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
         }
@@ -249,6 +295,28 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     fun updateDeliveryDates() {
         mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
+    }
+
+    override fun onLocationChange(location: Location?) {
+        activity?.apply {
+            Utils.saveLastLocation(location, this)
+            stopLocationUpdate()
+
+            //If already contains Dash banner or call is already in progress then refresh not needed
+            mDepartmentAdapter?.apply {
+                if (containsDashBanner()) {
+                    return
+                }
+            }
+
+            if(!isRootCatCallInProgress) {
+                executeDepartmentRequest()
+            }
+        }
+    }
+
+    override fun onPopUpLocationDialogMethod() {
+
     }
 
 }
