@@ -25,7 +25,6 @@
             style="@style/myriad_pro_regular_black_15_text_style"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:lineSpacingMultiplier="1.4"
-            android:textColor="@color/gray"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/dietaryTitle" />

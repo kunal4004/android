@@ -1475,11 +1475,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onEnterPromoCode() {
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter);
 		navigateToApplyPromoCodePage();
 	}
 
 	@Override
 	public void onRemovePromoCode(String promoCode) {
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove);
 		showProgressBar();
 		OneAppService.INSTANCE.removePromoCode(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
 			@Override
