@@ -63,7 +63,7 @@ android {
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
         targetSdkVersion 29
-        compileSdkVersion 29
+        compileSdkVersion 28
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
