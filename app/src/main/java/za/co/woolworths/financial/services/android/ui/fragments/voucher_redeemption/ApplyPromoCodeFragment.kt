@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.apply_promo_code_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
@@ -57,6 +58,7 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
         activity?.apply {
             etPromoCode?.text.toString().trim().let {
                 if (it.isNotEmpty()) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_apply)
                     etPromoCode.hideKeyboard(activity as AppCompatActivity)
                     Handler().postDelayed({
                         showApplyPromoCodeProgress()
@@ -104,7 +106,10 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
         when (v?.id) {
             R.id.cancel -> activity?.finish()
             R.id.applyPromoCode -> applyPromoCode()
-            R.id.clear -> etPromoCode?.text?.clear()
+            R.id.clear -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_clear)
+                etPromoCode?.text?.clear()
+            }
         }
     }
 

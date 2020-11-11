@@ -22,7 +22,7 @@
         android:paddingStart="@dimen/sixteen_dp"
         android:textColor="@color/black"
         android:textColorHint="@color/product_search_hint"
-        android:textSize="16sp"
+        android:textSize="@dimen/fifteen_dp"
         app:WTextView_font="myriadpro_regular"
         app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
         app:layout_constraintEnd_toStartOf="@+id/imBarcodeScanner"

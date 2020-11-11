@@ -1,6 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,14 +37,24 @@ class ProductDietaryInformationFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dietaryText.text = dietary
+        dietaryText.text = getStyledText(dietary)
         setUniqueIds()
     }
 
     private fun setUniqueIds() {
-        resources?.apply {
+        resources.apply {
             dietaryTitle?.contentDescription = getString(R.string.pdp_productDietaryTitle)
             dietaryText?.contentDescription = getString(R.string.pdp_textViewDietary)
         }
+    }
+
+    private fun getStyledText (dietary: String?): SpannableString {
+        val spannable = SpannableString(dietary)
+        val index = dietary?.indexOf(':')
+        if (index != null) {
+            spannable.setSpan(StyleSpan(R.style.futura_semi_bold_black), 0, index + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(StyleSpan(Color.GRAY), index + 2 , dietary.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        return spannable
     }
 }

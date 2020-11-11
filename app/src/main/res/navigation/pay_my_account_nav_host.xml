@@ -73,10 +73,6 @@
         android:label="EnterPaymentAmountFragment"
         tools:layout="@layout/enter_payment_amount_fragment">
         <argument
-            android:name="ACCOUNT"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.Account"
-            app:nullable="true" />
-        <argument
             android:name="shouldEnterPaymentAmount"
             app:argType="boolean" />
         <action
@@ -152,14 +148,6 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.Secure3DPMAFragment"
         android:label="Secure3DPMAFragment"
         tools:layout="@layout/secure_3d_webview_fragment">
-        <argument
-            android:name="ACCOUNT"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.Account"
-            app:nullable="true" />
-        <argument
-            android:name="PMARedirection"
-            app:argType="za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection"
-            app:nullable="true" />
         <action
             android:id="@+id/action_secure3DPMAFragment_to_PMA3DSecureProcessRequestFragment"
             app:destination="@id/PMA3DSecureProcessRequestFragment" />
@@ -169,14 +157,6 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.ShowAmountPopupFragment"
         android:label="DisplayVendorCardDetailFragment"
         tools:layout="@layout/pma_update_payment_fragment">
-        <argument
-            android:name="paymentMethod"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="accounts"
-            app:argType="string"
-            app:nullable="true" />
 
         <argument
             android:name="isAccountStartDestination"
@@ -207,9 +187,7 @@
         <action
             android:id="@+id/action_PMACardExpiredFragment_to_manageCardFragment"
             app:destination="@id/manageCardFragment" />
-        <argument
-            android:name="paymentMethod"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.GetPaymentMethod" />
+
         <action
             android:id="@+id/action_PMACardExpiredFragment_to_PMATenCardLimitDialogFragment"
             app:destination="@id/PMATenCardLimitDialogFragment" />
@@ -218,12 +196,7 @@
         android:id="@+id/PMA3DSecureProcessRequestFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment"
         android:label="PMA3DSecureProcessRequestFragment"
-        tools:layout="@layout/process_your_request_fragment">
-        <argument
-            android:name="payUPayResult"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.PayUPayResultRequest"
-            app:nullable="true" />
-    </fragment>
+        tools:layout="@layout/process_your_request_fragment"/>
     <dialog
         android:id="@+id/payMyAccountRetryErrorFragment"
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"

@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.util.wenum.LifecycleType
 class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
     private var mDeletedPaymentMethodPosition: Int = 0
-    private var temporarySelectedPosition: Int = 0
+    private var mTemporarySelectedPosition: Int = 0
     private var manageCardAdapter: PMACardsAdapter? = null
     private var mPaymentMethodList: MutableList<GetPaymentMethod>? = null
     private var navController: NavController? = null
@@ -73,13 +73,12 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
                 PayMyAccountViewModel.OnBackNavigation.REMOVE -> {
                     // deleteRow(position)
                     GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
-                        removeCardProduct(temporarySelectedPosition)
+                        removeCardProduct(mTemporarySelectedPosition)
                     }
                 }
                 PayMyAccountViewModel.OnBackNavigation.ADD -> {
                     GlobalScope.doAfterDelay(AppConstant.DELAY_300_MS) {
-                        val addCard = PMAManageCardFragmentDirections.actionManageCardFragmentToAddNewPayUCardFragment()
-                        navController?.navigate(addCard)
+                        navController?.navigate(R.id.action_manageCardFragment_to_addNewPayUCardFragment)
                     }
                 }
 
@@ -109,7 +108,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             layoutManager = activity?.let { LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false) }
 
             manageCardAdapter = PMACardsAdapter(mPaymentMethodList) { paymentMethod, position ->
-                temporarySelectedPosition = position
+                mTemporarySelectedPosition = position
 
                 val isCardSelected = manageCardAdapter?.getList()?.any { it.isCardChecked }
 
@@ -117,8 +116,8 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
 
                 when (paymentMethod.cardExpired) {
                     true -> {
-                        val cardExpiredFragmentDirections = PMAManageCardFragmentDirections.actionManageCardFragmentToPMACardExpiredFragment(paymentMethod)
-                        navController?.navigate(cardExpiredFragmentDirections)
+                        payMyAccountViewModel.mSelectExpiredPaymentMethod = paymentMethod
+                        navController?.navigate(R.id.action_manageCardFragment_to_PMACardExpiredFragment)
                     }
                 }
             }
@@ -131,7 +130,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         when (v?.id) {
             R.id.useThisCardButton -> {
                 val cardDetail = payMyAccountViewModel.getCardDetail()
-                cardDetail?.selectedCardPosition = temporarySelectedPosition
+                cardDetail?.selectedCardPosition = mTemporarySelectedPosition
 
                 cardDetail?.paymentMethodList = manageCardAdapter?.getList()
                 payMyAccountViewModel.setPMACardInfo(cardDetail)
@@ -224,7 +223,7 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
             when (mLifecycleType) {
                 LifecycleType.INIT -> configureRecyclerview()
                 LifecycleType.RESUME -> {
-                    manageCardAdapter?.notifyUpdate(paymentMethodsList, temporarySelectedPosition)
+                    manageCardAdapter?.notifyUpdate(paymentMethodsList, mTemporarySelectedPosition)
                     mPaymentMethodList = manageCardAdapter?.getList()
                 }
             }
@@ -289,13 +288,13 @@ class PMAManageCardFragment : PMAFragment(), View.OnClickListener {
         override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
 
             RecyclerViewSwipeDecorator.Builder(canvas, pmaManageCardRecyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                .addSwipeLeftLabel(bindString(R.string.delete))
-                .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
-                .addBackgroundColor(bindColor(R.color.delete_red_bg))
-                .setSwipeLeftLabelTypeface(getMyriadProSemiBoldFont() ?: Typeface.DEFAULT)
-                .setSwipeLeftTextColor(Color.WHITE)
-                .create()
-                .decorate()
+                    .addSwipeLeftLabel(bindString(R.string.delete))
+                    .setSwipeLeftLabelTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f)
+                    .addBackgroundColor(bindColor(R.color.delete_red_bg))
+                    .setSwipeLeftLabelTypeface(getMyriadProSemiBoldFont() ?: Typeface.DEFAULT)
+                    .setSwipeLeftTextColor(Color.WHITE)
+                    .create()
+                    .decorate()
 
             super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }

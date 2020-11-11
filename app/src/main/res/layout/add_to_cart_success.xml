@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginEnd="@dimen/two_dp"
+            android:layout_marginEnd="@dimen/five_dp"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:duplicateParentState="true"
