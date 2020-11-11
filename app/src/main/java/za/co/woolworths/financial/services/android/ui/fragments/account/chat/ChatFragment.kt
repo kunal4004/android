@@ -122,7 +122,6 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                 })
             }, {
                 chatLoaderProgressBar?.visibility = GONE
-                showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
             })
         }
     }
@@ -165,25 +164,14 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     }
 
     private fun setAgentAvailableState(isOnline: Boolean) {
-        when (chatViewModel.isChatToCollectionAgent.value) {
-            true -> {
-                activity?.apply {
-                    when (isOnline) {
-                        true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
-                        else -> {
-                            val bundle = Bundle()
-                            bundle.putString(WhatsAppChatToUsVisibility.FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
-                            bundle.putString(APP_SCREEN, appScreen)
-                            chatNavController?.navigate(R.id.chatToCollectionAgentOfflineFragment, bundle)
-                        }
-                    }
-                }
-            }
-            false -> {
-                isOnline.apply {
-                    activity?.offlineBanner?.visibility = if (this) GONE else VISIBLE
-                    if (!this) edittext_chatbox?.text?.clear()
-                    showAgentsMessage(if (this) "Hi " + chatViewModel.getCustomerInfo().getCustomerUsername() + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + chatViewModel.getInAppTradingHoursForToday()?.opens + " and " + chatViewModel.getInAppTradingHoursForToday()?.closes + ".")
+        activity?.apply {
+            when (isOnline) {
+                true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
+                else -> {
+                    val bundle = Bundle()
+                    bundle.putString(WhatsAppChatToUsVisibility.FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
+                    bundle.putString(APP_SCREEN, appScreen)
+                    chatNavController?.navigate(R.id.chatToCollectionAgentOfflineFragment, bundle)
                 }
             }
         }

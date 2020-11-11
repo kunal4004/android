@@ -300,7 +300,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onPromptDismiss();
                 break;
             case R.id.actionButton:
                 if (actionListener == null)
@@ -312,7 +311,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onPromptDismiss();
                 Utils.enableFeatureWalkThroughTutorials(false);
                 break;
             default:
@@ -1104,6 +1102,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         ACCOUNTS(6),
         SHOPPING_LIST(7),
         STATEMENTS(8),
+        CART_REDEEM_VOUCHERS(9),
         CREDIT_SCORE(9);
 
         private int value;

@@ -26,9 +26,10 @@
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>
     <color name="default_background">#ececec</color>
-    <color name="product_search_hint">#40000000</color>
+    <color name="product_search_hint">#7b7b7b</color>
     <color name="product_divider">#22000000</color>
     <color name="barcode_button">#40ffffff</color>
+    <color name="semi_transparent_white">#50ffffff</color>
     <color name="barcode_button_light">#25ffffff</color>
     <color name="red">#ff0000</color>
     <color name="dark_divider">#dadada</color>
@@ -97,4 +98,17 @@
     <color name="sign_in_register_button_border">#E5E5E5</color>
     <color name="block_card_color" >#424244</color>
     <color name="gray_35">#35D8D8D8</color>
+    <color name="layout_background_gray">#1A000000</color>
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/white</color>
+    <color name="colorAccent">@color/black</color>
+    <color name="color_separator_light_grey">#1A000000</color>
+    <color name="payment_method_grey_color">#333333</color>
+    <color name="add_card_color">#313131</color>
+    <color name="text_description_color">#7F7F7F</color>
+    <color name="success_tick_color">#0085AD</color>
+    <color name="currency_color">#222222</color>
+    <color name="red_color">#D0021B</color>
+    <color name="white_desc">#C4C5C7</color>
+    <color name="error_color_code">#D0021B</color>
 </resources>
