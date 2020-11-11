@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/enterPaymentAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="22dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:text="@string/enter_payment_amount_label"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/paymentAmountInputEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/continueToPaymentButton"
+        style="@style/blackButtonCustomStyle"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_selected_deselected_bg"
+        android:text="@string/continue_to_payment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/amountOutstandingTextView"
+        style="@style/amountDescriptionStyle"
+        android:text="@string/amount_outstanding"
+        app:layout_constraintBottom_toTopOf="@+id/amountOutstandingValueTextView"
+        app:layout_constraintEnd_toEndOf="@+id/continueToPaymentButton"
+        app:layout_constraintStart_toEndOf="@+id/amountOutstandingDividerView" />
+
+    <TextView
+        android:id="@+id/amountOutstandingValueTextView"
+        style="@style/pmaOutstandingValueStyle"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="R 0.00"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
+        app:layout_constraintEnd_toEndOf="@+id/continueToPaymentButton"
+        app:layout_constraintStart_toEndOf="@+id/amountOutstandingDividerView" />
+
+    <View
+        android:id="@+id/amountOutstandingDividerView"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintBottom_toBottomOf="@+id/amountOutstandingValueTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amountOutstandingTextView" />
+
+    <TextView
+        android:id="@+id/totalAmountDueTextView"
+        style="@style/amountDescriptionStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/total_amount_due"
+        android:textColor="@color/description_color"
+        app:layout_constraintBottom_toTopOf="@+id/totalAmountDueValueTextView"
+        app:layout_constraintEnd_toStartOf="@+id/amountOutstandingDividerView"
+        app:layout_constraintStart_toStartOf="@+id/continueToPaymentButton" />
+
+    <TextView
+        android:id="@+id/totalAmountDueValueTextView"
+        style="@style/pmaOutstandingValueStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="R 500.00"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/continueToPaymentButton"
+        app:layout_constraintEnd_toStartOf="@+id/amountOutstandingValueTextView"
+        app:layout_constraintStart_toStartOf="@+id/continueToPaymentButton" />
+
+    <View
+        android:id="@+id/horizontalDividerView"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintBottom_toTopOf="@+id/amountOutstandingDividerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <za.co.woolworths.financial.services.android.util.CurrencyEditText
+        android:id="@+id/paymentAmountInputEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:cursorVisible="true"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:imeOptions="actionDone|actionGo"
+        android:maxLength="12"
+        android:maxLines="1"
+        android:inputType="number|phone"
+        android:digits="1234567890"
+        android:minWidth="@dimen/twenty_four_dp"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:ems="10"
+        android:textColorHint="@color/black"
+        android:textCursorDrawable="@drawable/cursor_custom_color"
+        android:textSize="55sp"
+        app:currencySymbol="R"
+        app:layout_constraintBottom_toTopOf="@+id/centerGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"/>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="startGuideline"
+        tools:layout_editor_absoluteX="24dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="endGuideline" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/centerGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.345" />
+
+    <TextView
+        android:id="@+id/reducePaymentAmountTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center|top"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/enter_payment_amount_max_input_error"
+        android:textColor="@color/red_color"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalDividerView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/paymentAmountInputEditText" />
+</androidx.constraintlayout.widget.ConstraintLayout>

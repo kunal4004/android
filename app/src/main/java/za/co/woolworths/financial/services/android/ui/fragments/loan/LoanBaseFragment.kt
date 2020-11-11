@@ -53,7 +53,7 @@ open class LoanBaseFragment : Fragment() {
         }
     }
 
-    fun currencyFormatter(amount: Int, activity: Activity): String = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1, activity))
+    fun currencyFormatter(amount: Int): String = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
 
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
 

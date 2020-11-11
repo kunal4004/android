@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.accounts_how_to_pay.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 
@@ -58,12 +59,12 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         val accountDetailValues: HashMap<String, String> = hashMapOf("accountHolder" to getString(R.string.account_details_account_holder), "accountNumber" to getString(R.string.account_details_account_number), "bank" to getString(R.string.account_details_bank), "branchCode" to getString(R.string.account_details_branch_code), "referenceNumber" to getString(R.string.account_details_reference_number), "swiftCode" to getString(R.string.account_details_swift_code))
         howToPayAccountDetails.removeAllViews()
         val inflater: LayoutInflater = LayoutInflater.from(this)
-        var paymentDetails: Map<String, String> = Gson().fromJson(accountDetails.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
+        val paymentDetails: Map<String, String> = Gson().fromJson(accountDetails.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
 
         for (i in paymentDetails) {
-            val v: View = inflater.inflate(R.layout.how_to_pay_account_details_list_item, howToPayAccountDetails, false)
-            var paymentName: WTextView = v.findViewById(R.id.paymentName)
-            var paymentValue: WTextView = v.findViewById(R.id.paymentvalue)
+            val v: View = inflater.inflate(R.layout.atm_banking_detail_item, howToPayAccountDetails, false)
+            val paymentName: WTextView = v.findViewById(R.id.paymentName)
+            val paymentValue: WTextView = v.findViewById(R.id.paymentvalue)
             paymentName.text = accountDetailValues[i.key]
             paymentValue.text = i.value
             howToPayAccountDetails.addView(v)
@@ -71,7 +72,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadPaymentOptions() {
-        var paymentMethods: List<PaymentMethod> = accountDetails.paymentMethods
+        val paymentMethods: List<PaymentMethod> = accountDetails?.paymentMethods ?: mutableListOf()
         howToPayOptionsList.removeAllViews()
         val inflater: LayoutInflater = LayoutInflater.from(this)
         paymentMethods.forEachIndexed { index, paymentMethod ->
@@ -84,17 +85,17 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun setHowToPayLogo() {
-        when (accountDetails.productGroupCode) {
-            "SC" -> {
+    private fun setHowToPayLogo() {
+        when (AccountsProductGroupCode.getEnum(accountDetails.productGroupCode)) {
+            AccountsProductGroupCode.STORE_CARD -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_cc_sc)
             }
-            "CC" -> {
+            AccountsProductGroupCode.CREDIT_CARD -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_credit_card)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_cc_sc)
             }
-            "PL" -> {
+            AccountsProductGroupCode.PERSONAL_LOAN -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_pl)
             }
@@ -102,8 +103,8 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadAbsaCreditCardInfoIfNeeded() {
-        when (accountDetails.productGroupCode) {
-            "CC" -> {
+        when (AccountsProductGroupCode.getEnum(accountDetails.productGroupCode)) {
+            AccountsProductGroupCode.CREDIT_CARD -> {
                 llAbsaAccount.visibility = VISIBLE
                 llCreditCardDetail.visibility = VISIBLE
                 tvHowToPayTitle.text = getString(R.string.how_to_pay_credit_card_title)

@@ -111,11 +111,24 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             } else {
                 validatedSuburbProducts?.let { it ->
                     itemView.apply {
+                        when (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup) {
+                            true -> {
+                                earliestDateValue?.text = it.firstAvailableFoodDeliveryDate ?: ""
+                                earliestDateValue?.visibility = View.VISIBLE
+                                foodItemsDeliveryDateLayout?.visibility = View.GONE
+                                otherItemsDeliveryDateLayout?.visibility = View.GONE
+                            }
+                            false -> {
+                                foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate
+                                        ?: ""
+                                otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate
+                                        ?: ""
+                                earliestDateValue?.visibility = View.GONE
+                                foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                                otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                            }
+                        }
                         earliestDateTitle?.text = bindString(if (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == false) R.string.earliest_delivery_date else R.string.earliest_collection_date)
-                        foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate ?: ""
-                        otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate ?: ""
-                        foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                        otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                         deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
                     }
                 }

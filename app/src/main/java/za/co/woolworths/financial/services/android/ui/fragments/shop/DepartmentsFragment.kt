@@ -44,7 +44,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
-    private var version:String = ""
+    private var version:String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
 
@@ -107,7 +107,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     isRootCatCallInProgress = false
                     when (response?.httpCode) {
                         200 -> {
-                            version = response.response.version
+                            version = response.response?.version
                             parentFragment?.setCategoryResponseData(response)
                             bindDepartment()
                         }
@@ -272,7 +272,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     updateDeliveryDates()
                 } else {
                     mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                    OneAppService.validateSelectedSuburb(it.suburb.id, true).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                    OneAppService.validateSelectedSuburb(it.suburb.id, it.suburb.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
                         override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
                             when (response?.httpCode) {
                                 200 -> response.validatedSuburbProducts?.let { it1 ->

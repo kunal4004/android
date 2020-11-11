@@ -60,6 +60,12 @@ public class ProductDetails {
 	@SerializedName("ingredients")
 	@Expose
 	public String ingredients;
+	@Expose
+	@SerializedName("dietary")
+	public List<String> dietary;
+	@Expose
+	@SerializedName("allergens")
+	public List<String> allergens;
 	@SerializedName("saveText")
 	@Expose
 	public String saveText;
