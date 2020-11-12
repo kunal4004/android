@@ -62,7 +62,7 @@ android {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
-        targetSdkVersion 28
+        targetSdkVersion 29
         compileSdkVersion 28
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
@@ -92,7 +92,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 139
+            jobNumber = 141
         }
 
         defaultConfig {
