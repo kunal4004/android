@@ -92,7 +92,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 142
+            jobNumber = 143
         }
 
         defaultConfig {
