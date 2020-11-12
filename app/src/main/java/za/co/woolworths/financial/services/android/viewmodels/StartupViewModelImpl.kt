@@ -4,21 +4,24 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-
+import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-
-import java.util.ArrayList
-
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat
+import za.co.woolworths.financial.services.android.models.dto.chat.Collections
+import za.co.woolworths.financial.services.android.models.dto.chat.CustomerService
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.fromJson
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override var intent: Intent? = null
@@ -70,11 +73,23 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override fun presentNextScreen() {
 
         val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
-        val appLinkData = intent?.data
+        var appLinkData = intent?.data
+
+        if (appLinkData == null && intent?.extras != null){
+            val data: Bundle = intent!!.extras!!;
+            when {
+                ("Product Listing").equals(data.get("feature")) -> {
+                    var json = data.getString("parameters")!!.replace("\\", "");
+
+                    var jsonObject = Gson().fromJson<JsonObject>(json);
+                    appLinkData = Uri.parse(jsonObject.get("url").asString);
+                    intent?.action = Intent.ACTION_VIEW;
+                }
+            }
+        }
 
         if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
             handleAppLink(appLinkData)
-
         } else {
             val activity = mContext as Activity
             if (isFirstTime == null || Utils.isAppUpdated(mContext))
@@ -124,12 +139,15 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setHowToSaveLink(howtosaveLink)
                 WoolworthsApplication.setWrewardsTCLink(wrewardsTCLink)
                 WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
+                WoolworthsApplication.setTransUnionLink(transUnionLink)
             }
 
             whatsApp?.apply {
                 showWhatsAppButton = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setWhatsAppConfig(this)
             }
+
+            WoolworthsApplication.setPayMyAccountOption(payMyAccount)
 
             WoolworthsApplication.setQuickShopDefaultValues(quickShopDefaultValues)
             WoolworthsApplication.setWhitelistedDomainsForQRScanner(whitelistedDomainsForQRScanner)
@@ -140,17 +158,15 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             if (absaBankingOpenApiServices == null) {
                 absaBankingOpenApiServices = AbsaBankingOpenApiServices(false, "", "", "", "")
             } else {
-                absaBankingOpenApiServices.isEnabled =
-                        Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
+                absaBankingOpenApiServices.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
             }
 
 
-            var presenceInAppChat: PresenceInAppChat? = presenceInAppChat
-            if (presenceInAppChat == null) {
-                presenceInAppChat = PresenceInAppChat(ArrayList(), "", false)
+            var inAppChat: InAppChat? = inAppChat
+            if (inAppChat == null) {
+                inAppChat = InAppChat("","","","", Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()),null, mutableListOf())
             } else {
-                presenceInAppChat.isEnabled =
-                        Utils.isFeatureEnabled(presenceInAppChat.minimumSupportedAppBuildNumber)
+                inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
             }
 
             val virtualTempCard = virtualTempCard
@@ -160,10 +176,12 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             WoolworthsApplication.setContactUsDetails(contactUs)
 
-            WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
-            WoolworthsApplication.setPresenceInAppChat(presenceInAppChat)
+            WoolworthsApplication.setInAppChat(inAppChat)
 
-            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) } ?: false
+            WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices)
+
+            instantCardReplacement?.isEnabled = instantCardReplacement?.minimumSupportedAppBuildNumber?.let { Utils.isFeatureEnabled(it) }
+                    ?: false
             WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
             WoolworthsApplication.setVirtualTempCard(virtualTempCard)
 
@@ -173,6 +191,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             WoolworthsApplication.setCreditCardActivation(creditCardActivation)
             WoolworthsApplication.setCreditCardDelivery(creditCardDelivery)
             WoolworthsApplication.setClickAndCollect(clickAndCollect)
+            WoolworthsApplication.setProductDetailsPage(productDetailsPage)
         }
     }
 

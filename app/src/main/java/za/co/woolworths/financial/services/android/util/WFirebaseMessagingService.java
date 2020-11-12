@@ -1,37 +1,30 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-
 import android.graphics.Color;
-import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.awfs.coordination.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
@@ -48,8 +41,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(token);
 
         NotificationUtils.getInstance().sendRegistrationToServer(token);
-
-        Log.i(TAG, token);
     }
 
     @Override
@@ -59,14 +50,13 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             NotificationUtils.createNotificationChannelIfNeeded(this);
         }
 
-        Log.i(TAG, "--------------onMessageReceived");
-//        Log.i(TAG, remoteMessage.getData().toString());
-//        if (!WoolworthsApplication.isApplicationInForeground()){
-//            sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
-//            //TODO: build notification to show in App
-//            //use LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent); possibly
-//        }
-//
+        if (!WoolworthsApplication.isApplicationInForeground()){
+            Log.i(TAG, remoteMessage.getData().toString());
+            sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
+
+            //maybe have a look at this LocalBroadcastManager
+        }
+
         Map<String,String> data = remoteMessage.getData();
         if(data != null && data.containsKey("type")){
             String type = data.get("type");
@@ -78,20 +68,22 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             }
             return;
         }
-        Log.i(TAG, "onMessageReceived--------------");
     }
 
     private void sendNotification(RemoteMessage.Notification notification, @NonNull Map<String, String> payload){
-        Log.i(TAG, "-----------sendNotification");
 
         final String channelId = getResources().getString(R.string.default_notification_channel_id);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), channelId);
 
         Intent intent = null;
         if (payload.get("feature").equals("Product Listing")){
-            intent = new Intent(this, CartActivity.class);
-        } else{
+            String json = payload.get("parameters").replaceAll("\\\\", "");
+            Log.d(TAG, String.format("About to parse JSON: %s", json));
+            JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+
             intent = new Intent(this, StartupActivity.class);
+            intent.setData(Uri.parse(parameters.get("url").getAsString()));
+            intent.setAction(Intent.ACTION_VIEW);
         }
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -123,7 +115,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-        Log.i(TAG, "sendNotification-----------");
     }
 
 //    #region FCM Methods

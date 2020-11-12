@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
@@ -34,10 +37,14 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ImageManager;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -47,13 +54,14 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
     private final float DISABLE_VIEW_VALUE = 0.5f;
+    private final String GIFT_ITEM = "GIFT";
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipe;
     }
 
     private enum CartRowType {
-        HEADER(0), PRODUCT(1), PRICES(2);
+        HEADER(0), PRODUCT(1), PRICES(2), GIFT(3);
 
         public final int value;
 
@@ -70,6 +78,18 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         void totalItemInBasket(int total);
 
         void onOpenProductDetail(CommerceItem commerceItem);
+
+        void onViewVouchers();
+
+        void updateOrderTotal();
+
+        void onGiftItemClicked(CommerceItem commerceItem);
+
+        void onEnterPromoCode();
+
+        void onRemovePromoCode(String promoCode);
+
+        void onPromoDiscountInfo();
     }
 
     private OnItemClick onItemClick;
@@ -79,12 +99,14 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     private ArrayList<CartItemGroup> cartItems;
     private OrderSummary orderSummary;
     private Activity mContext;
+    private VoucherDetails voucherDetails;
 
-    public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context) {
+    public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context, VoucherDetails voucherDetails) {
         this.cartItems = cartItems;
         this.onItemClick = onItemClick;
         this.orderSummary = orderSummary;
         this.mContext = context;
+        this.voucherDetails = voucherDetails;
     }
 
     @Override
@@ -95,6 +117,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         } else if (viewType == CartRowType.PRODUCT.value) {
             return new ProductHolder(LayoutInflater.from(mContext)
                     .inflate(R.layout.cart_product_item, parent, false));
+        } else if (viewType == CartRowType.GIFT.value) {
+            return new GiftProductHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.cart_gift_item, parent, false));
         } else {
             return new CartPricesViewHolder(LayoutInflater.from(mContext)
                     .inflate(R.layout.cart_product_basket_prices, parent, false));
@@ -110,7 +135,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 ArrayList<CommerceItem> commerceItems = itemRow.commerceItems;
                 headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
                 headerHolder.addToListListener(commerceItems);
-                headerHolder.tvAddToList.setVisibility(this.editMode ? View.INVISIBLE : View.VISIBLE);
+                if (itemRow.category.toUpperCase().equalsIgnoreCase(GIFT_ITEM)){
+                    headerHolder.tvAddToList.setVisibility(View.GONE);
+                }else {
+                    headerHolder.tvAddToList.setVisibility(View.VISIBLE);
+                    headerHolder.tvAddToList.setVisibility(this.editMode ? View.INVISIBLE : View.VISIBLE);
+                }
                 break;
             case PRODUCT:
                 final ProductHolder productHolder = ((ProductHolder) holder);
@@ -124,7 +154,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 Utils.truncateMaxLine(productHolder.tvTitle);
                 productHolder.quantity.setText((commerceItemInfo == null) ? "" : String.valueOf(commerceItemInfo.getQuantity()));
                 productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-                productImage(productHolder.productImage, (commerceItemInfo == null) ? "" : commerceItemInfo.externalImageURL);
+                String productImageUrl = (productImageUrl((commerceItemInfo == null) ? "" : commerceItemInfo.externalImageURL));
+                ImageManager.Companion.setPicture(productHolder.productImage, productImageUrl);
                 productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
                 productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
                 onRemoveSingleItem(productHolder, commerceItem);
@@ -154,15 +185,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 if (itemRow.category.equalsIgnoreCase("FOOD")) {
                     productHolder.tvColorSize.setVisibility(View.INVISIBLE);
                 } else {
-                    String sizeColor = (commerceItemInfo == null) ? "" : commerceItemInfo.getColor();
-                    if (sizeColor == null)
-                        sizeColor = "";
-                    if (commerceItemInfo != null) {
-                        if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-                            sizeColor = commerceItemInfo.getSize();
-                        else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-                            sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
-                    }
+                    String sizeColor = getSizeColor(commerceItemInfo);
                     productHolder.tvColorSize.setText(sizeColor);
                     productHolder.tvColorSize.setVisibility(View.VISIBLE);
                 }
@@ -191,66 +214,153 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     productHolder.tvProductAvailability.setVisibility(View.GONE);
                 }
 
-                productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        setFirstLoadCompleted(false);
-                        commerceItem.commerceItemDeletedId(commerceItem);
-                        commerceItem.setDeleteIconWasPressed(true);
-                        notifyItemRangeChanged(productHolder.getAdapterPosition(), cartItems.size());
-                    }
+                productHolder.btnDeleteRow.setOnClickListener(v -> {
+                    setFirstLoadCompleted(false);
+                    commerceItem.commerceItemDeletedId(commerceItem);
+                    commerceItem.setDeleteIconWasPressed(true);
+                    notifyItemRangeChanged(productHolder.getAdapterPosition(), cartItems.size());
                 });
 
-                productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (commerceItem.quantityInStock == 0) return;
-                        if (!NetworkManager.getInstance().isConnectedToNetwork(mContext)) {
-                            new ErrorHandlerView(mContext).showToast();
-                            return;
-                        }
-                        commerceItem.setQuantityUploading(true);
-                        setFirstLoadCompleted(false);
-                        onItemClick.onChangeQuantity(commerceItem);
+                productHolder.llQuantity.setOnClickListener(view -> {
+                    if (commerceItem.quantityInStock == 0) return;
+                    if (!NetworkManager.getInstance().isConnectedToNetwork(mContext)) {
+                        new ErrorHandlerView(mContext).showToast();
+                        return;
                     }
+                    commerceItem.setQuantityUploading(true);
+                    setFirstLoadCompleted(false);
+                    onItemClick.onChangeQuantity(commerceItem);
                 });
 
-                productHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onItemClick.onOpenProductDetail(commerceItem);
-                    }
-                });
+                productHolder.swipeLayout.setOnClickListener(view -> onItemClick.onOpenProductDetail(commerceItem));
                 mItemManger.bindView(productHolder.itemView, position);
+                break;
+
+            case GIFT:
+                final GiftProductHolder giftProductHolder = ((GiftProductHolder) holder);
+                final CommerceItem giftCommerceItem = itemRow.commerceItem;
+                if (giftCommerceItem == null) return;
+                CommerceItemInfo giftCommerceItemInfo = giftCommerceItem.commerceItemInfo;
+                String imageUrl = productImageUrl((giftCommerceItemInfo == null) ? "" : giftCommerceItemInfo.externalImageURL);
+                ImageManager.Companion.setPicture(giftProductHolder.giftItemImageView, imageUrl);
+                giftProductHolder.productNameTextView.setText(giftCommerceItemInfo.getProductDisplayName());
+                Utils.truncateMaxLine(giftProductHolder.productNameTextView);
+                String sizeColor = getSizeColor(giftCommerceItemInfo);
+                giftProductHolder.brandProductDescriptionTextView.setText(sizeColor);
+                giftProductHolder.giftRootContainerConstraintLayout.setOnClickListener(v -> onItemClick.onGiftItemClicked(giftCommerceItem));
                 break;
 
             case PRICES:
                 CartPricesViewHolder priceHolder = ((CartPricesViewHolder) holder);
                 if (orderSummary != null) {
                     priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
-                    priceHolder.txtPriceEstimatedDelivery.setText("TBC");
-                    if (orderSummary.getStaffDiscount() > 0) {
-                        setPriceValue(priceHolder.txtPriceCompanyDiscount, orderSummary.getStaffDiscount());
-                        priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
-                    } else {
-                        priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
+                    setPriceValue(priceHolder.txtYourCartPrice, orderSummary.getBasketTotal());
+
+                    if(orderSummary.discountDetails!=null){
+                        DiscountDetails discountDetails = orderSummary.discountDetails;
+                        if (discountDetails.getCompanyDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtCompanyDiscount, discountDetails.getCompanyDiscount());
+                            priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getTotalOrderDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtTotalDiscount, discountDetails.getTotalOrderDiscount());
+                            priceHolder.rlTotalDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlTotalDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getOtherDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtDiscount, discountDetails.getOtherDiscount());
+                            priceHolder.rlDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getVoucherDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtWrewardsDiscount, discountDetails.getVoucherDiscount());
+                            priceHolder.rlWrewardsDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlWrewardsDiscount.setVisibility(View.GONE);
+                        }
+
+                        if (discountDetails.getPromoCodeDiscount() > 0) {
+                            setDiscountPriceValue(priceHolder.txtPromoCodeDiscount, discountDetails.getPromoCodeDiscount());
+                            priceHolder.rlPromoCodeDiscount.setVisibility(View.VISIBLE);
+                        } else {
+                            priceHolder.rlPromoCodeDiscount.setVisibility(View.GONE);
+                        }
+
                     }
-                    if (orderSummary.getSavedAmount() > 0) {
-                        setPriceValue(priceHolder.txtPriceWRewardsSavings, orderSummary.getSavedAmount());
-                        priceHolder.rlOtherDiscount.setVisibility(View.VISIBLE);
-                    } else {
-                        priceHolder.rlOtherDiscount.setVisibility(View.GONE);
-                    }
-                    setPriceValue(priceHolder.txtPriceTotal, orderSummary.getTotal());
                 } else {
                     priceHolder.orderSummeryLayout.setVisibility(View.GONE);
                 }
 
+                priceHolder.viewVouchers.setOnClickListener(v -> {
+                            onItemClick.onViewVouchers();
+                            Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view);
+                        }
+                );
+                int activeVouchersCount = voucherDetails.getActiveVouchersCount();
+                if (activeVouchersCount > 0) {
+                    if (getAppliedVouchersCount() > 0) {
+                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
+                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                        priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
+                        priceHolder.viewVouchers.setEnabled(true);
+                    } else {
+                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
+                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                        priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                        priceHolder.viewVouchers.setEnabled(true);
+                    }
+                } else {
+                    priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
+                    priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                    priceHolder.viewVouchers.setEnabled(false);
+                }
+                priceHolder.promoCodeAction.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.remove : R.string.enter));
+
+                if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) {
+                    String appliedPromoCodeText = mContext.getString(R.string.promo_code_applied) + voucherDetails.getPromoCodes().get(0).getPromoCode();
+                    priceHolder.promoCodeLabel.setText(appliedPromoCodeText);
+                } else {
+                    priceHolder.promoCodeLabel.setText(mContext.getString(R.string.do_you_have_a_promo_code));
+                }
+
+                priceHolder.promoCodeAction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0)
+                            onItemClick.onRemovePromoCode(voucherDetails.getPromoCodes().get(0).getPromoCode());
+                        else
+                            onItemClick.onEnterPromoCode();
+                    }
+                });
+
+                priceHolder.promoDiscountInfo.setOnClickListener(v -> {
+                        onItemClick.onPromoDiscountInfo();
+                });
                 break;
 
             default:
                 break;
         }
+    }
+
+    private String getSizeColor(CommerceItemInfo commerceItemInfo) {
+        String sizeColor = (commerceItemInfo == null) ? "" : commerceItemInfo.getColor();
+        if (sizeColor == null)
+            sizeColor = "";
+        if (commerceItemInfo != null) {
+            if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+                sizeColor = commerceItemInfo.getSize();
+            else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+                sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
+        }
+        return sizeColor;
     }
 
     private void onRemoveSingleItem(final ProductHolder productHolder, final CommerceItem commerceItem) {
@@ -285,6 +395,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
     private void setPriceValue(WTextView textView, double value) {
         textView.setText(WFormatter.formatAmount(value));
+    }
+
+    private void setDiscountPriceValue(WTextView textView, double value) {
+        textView.setText("- " + WFormatter.formatAmount(value));
     }
 
     @Override
@@ -322,9 +436,11 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             if (position > currentPosition + productCollection.size() - 1) {
                 currentPosition += productCollection.size();
             } else {
-                return new CartcommerceItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition), null);
+                if (entry.type.equalsIgnoreCase(GIFT_ITEM))
+                    return new CartcommerceItemRow(CartRowType.GIFT, entry.type, productCollection.get(position - currentPosition), null);
+                else
+                    return new CartcommerceItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition), null);
             }
-
         }
         // last row is for prices
         return new CartcommerceItemRow(CartRowType.PRICES, null, null, null);
@@ -406,7 +522,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ImageView btnDeleteRow;
         private ImageView imPrice;
         private RelativeLayout llQuantity;
-        private WrapContentDraweeView productImage;
+        private ImageView productImage;
         private LinearLayout llCartItems, llPromotionalText;
         private WTextView tvDelete;
         private ProgressBar pbQuantity;
@@ -438,22 +554,49 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     private class CartPricesViewHolder extends RecyclerView.ViewHolder {
-        private WTextView
-                txtPriceEstimatedDelivery, txtPriceCompanyDiscount,
-                txtPriceWRewardsSavings, txtPriceTotal;
+        private WTextView txtYourCartPrice, txtDiscount, txtCompanyDiscount, txtWrewardsDiscount, txtTotalDiscount, txtPromoCodeDiscount ;
         private LinearLayout orderSummeryLayout;
-        private RelativeLayout rlOtherDiscount, rlCompanyDiscount;
+        private RelativeLayout rlDiscount, rlCompanyDiscount, rlWrewardsDiscount, rlTotalDiscount, rlPromoCodeDiscount;
+        private TextView availableVouchersCount, viewVouchers, promoCodeAction, promoCodeLabel;
+        private ImageView promoDiscountInfo;
 
 
         public CartPricesViewHolder(View view) {
             super(view);
-            txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery);
-            txtPriceCompanyDiscount = view.findViewById(R.id.txtPriceCompanyDiscount);
-            txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
-            txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
+            txtYourCartPrice = view.findViewById(R.id.txtYourCartPrice);
             orderSummeryLayout = view.findViewById(R.id.orderSummeryLayout);
-            rlOtherDiscount = view.findViewById(R.id.rlOtherDiscount);
             rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
+            availableVouchersCount = view.findViewById(R.id.availableVouchersCount);
+            viewVouchers = view.findViewById(R.id.viewVouchers);
+            txtDiscount = view.findViewById(R.id.txtDiscount);
+            txtCompanyDiscount = view.findViewById(R.id.txtCompanyDiscount);
+            txtWrewardsDiscount = view.findViewById(R.id.txtWrewardsDiscount);
+            txtTotalDiscount = view.findViewById(R.id.txtTotalDiscount);
+            rlDiscount = view.findViewById(R.id.rlDiscount);
+            rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
+            rlWrewardsDiscount = view.findViewById(R.id.rlWrewardsDiscount);
+            rlTotalDiscount = view.findViewById(R.id.rlTotalDiscount);
+            promoCodeAction = view.findViewById(R.id.promoCodeAction);
+            promoCodeLabel = view.findViewById(R.id.promoCodeLabel);
+            txtPromoCodeDiscount = view.findViewById(R.id.txtPromoCodeDiscount);
+            rlPromoCodeDiscount = view.findViewById(R.id.rlPromoCodeDiscount);
+            promoDiscountInfo = view.findViewById(R.id.promoDiscountInfo);
+        }
+    }
+
+    public class GiftProductHolder extends RecyclerView.ViewHolder {
+
+        private ImageView giftItemImageView;
+        private TextView productNameTextView;
+        private TextView brandProductDescriptionTextView;
+        private ConstraintLayout giftRootContainerConstraintLayout;
+
+        GiftProductHolder(View view) {
+            super(view);
+            giftItemImageView = view.findViewById(R.id.giftItemImageView);
+            productNameTextView = view.findViewById(R.id.productNameTextView);
+            brandProductDescriptionTextView = view.findViewById(R.id.brandProductDescriptionTextView);
+            giftRootContainerConstraintLayout = view.findViewById(R.id.giftRootContainerConstraintLayout);
         }
     }
 
@@ -471,21 +614,24 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         }
     }
 
-    private void productImage(final WrapContentDraweeView image, String imgUrl) {
+    private String productImageUrl(String imgUrl) {
         try {
-            String url = "https://images.woolworthsstatic.co.za/" + imgUrl;
+            String url = KotlinUtils.productImageUrlPrefix + imgUrl;
             //TODO:: get domain name dynamically
-            image.setImageURI(TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za/" : url);
-        } catch (IllegalArgumentException ignored) {
+            return TextUtils.isEmpty(imgUrl) ? KotlinUtils.productImageUrlPrefix : url;
+        } catch (IllegalArgumentException ex) {
+            return imgUrl;
         }
     }
 
     public void notifyAdapter(ArrayList<CartItemGroup> cartItems,
-                              OrderSummary orderSummary) {
+                              OrderSummary orderSummary, VoucherDetails voucherDetails) {
         this.cartItems = cartItems;
         this.orderSummary = orderSummary;
+        this.voucherDetails = voucherDetails;
         resetQuantityState(false);
         notifyDataSetChanged();
+        onItemClick.updateOrderTotal();
     }
 
     public void onChangeQuantityComplete() {
@@ -578,5 +724,14 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
     public ArrayList<CartItemGroup> getCartItems() {
         return cartItems;
+    }
+
+    public int getAppliedVouchersCount() {
+        int count = 0;
+        for (Voucher voucher : voucherDetails.getVouchers()) {
+            if (voucher.getVoucherApplied())
+                count++;
+        }
+        return count;
     }
 }

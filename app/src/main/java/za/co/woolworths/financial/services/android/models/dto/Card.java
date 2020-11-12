@@ -3,7 +3,9 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable {
     @SerializedName("productCategory")
     @Expose
     public String productCategory;

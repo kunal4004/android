@@ -64,7 +64,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     }
 
     public interface IWalkthroughActionListener {
-        void onWalkthroughActionButtonClick();
+        void onWalkthroughActionButtonClick(Feature feature);
         void onPromptDismiss();
     }
 
@@ -85,7 +85,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     private int mContentBottomMargin;
     private int mContentTopMargin;
     private boolean mDismissOnTouch = false;
-    private boolean mShouldRender = false; // flag to decide when we should actually render
+    private boolean mShouldRender = true; // flag to decide when we should actually render
     private boolean mRenderOverNav = false;
     private int mMaskColour;
     private IAnimationFactory mAnimationFactory;
@@ -180,9 +180,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // don't bother drawing if we're not ready
-        if (!mShouldRender) return;
-
         // get current dimensions
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
@@ -219,7 +216,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         }
 
         // draw (erase) shape
-        mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding);
+        if (mShouldRender)
+            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding);
+        else
+            mShape.draw(mCanvas, mEraser, 0, 0, 0);
 
         // Draw the bitmap on our views  canvas.
         canvas.drawBitmap(mBitmap, 0, 0, null);
@@ -300,19 +300,17 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onPromptDismiss();
                 break;
             case R.id.actionButton:
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onWalkthroughActionButtonClick();
+                actionListener.onWalkthroughActionButtonClick(feature);
                 break;
             case R.id.hideFeatureTutorials:
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onPromptDismiss();
                 Utils.enableFeatureWalkThroughTutorials(false);
                 break;
             default:
@@ -468,6 +466,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                     break;
                 case BOTTOM_CENTER:
                     windowContainer.setArrowDirection(ArrowDirection.BOTTOM_CENTER);
+                    break;
+                case NONE:
+                    windowContainer.setArrowHeight(0);
+                    windowContainer.setArrowWidth(0);
                     break;
                 default:
                     break;
@@ -823,6 +825,11 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
             return this;
         }
 
+        public WMaterialShowcaseView.Builder setShouldRender(boolean shouldRender) {
+            showcaseView.setShouldRender(shouldRender);
+            return this;
+        }
+
         public WMaterialShowcaseView.Builder renderOverNavigationBar() {
             // Note: This only has an effect in Lollipop or above.
             showcaseView.setRenderOverNavigationBar(true);
@@ -926,7 +933,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
         ((ViewGroup) activity.getWindow().getDecorView()).addView(this);
 
-        setShouldRender(true);
 
         mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
@@ -1059,7 +1065,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         TOP_CENTER(2),
         BOTTOM_CENTER(3),
         TOP_RIGHT(4),
-        BOTTOM_RIGHT(5);
+        BOTTOM_RIGHT(5),
+        NONE(6);
 
 
         private int value;
@@ -1094,7 +1101,9 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         REFINE(5),
         ACCOUNTS(6),
         SHOPPING_LIST(7),
-        STATEMENTS(8);
+        STATEMENTS(8),
+        CART_REDEEM_VOUCHERS(9),
+        CREDIT_SCORE(9);
 
         private int value;
 

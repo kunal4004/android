@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -50,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
@@ -106,7 +106,6 @@ public class SSOActivity extends WebViewActivity {
 		this.state = UUID.randomUUID().toString();
 		this.nonce = UUID.randomUUID().toString();
 	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -116,6 +115,9 @@ public class SSOActivity extends WebViewActivity {
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
 		isKMSIChecked = Utils.getUserKMSIState();
+		if (isKMSIChecked){
+			KotlinUtils.Companion.convertActivityToTranslucent(this);
+		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 	}
 
@@ -752,10 +754,11 @@ public class SSOActivity extends WebViewActivity {
 		loadingProgressBarKMSI.setVisibility(showKMSIView ? View.VISIBLE : View.GONE);
 	}
 
+
 	@Override
-	public Resources.Theme getTheme() {
-		Resources.Theme theme = super.getTheme();
-		theme.applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
-		return theme;
+	public void onAttachedToWindow() {
+		getTheme().applyStyle(isKMSIChecked ? R.style.SSOActivityKMSIStyle : R.style.SSOActivity, true);
+		super.onAttachedToWindow();
 	}
+
 }

@@ -1,20 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/orders_bg"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/sixteen_dp">
+
+
+    <LinearLayout
+        android:id="@+id/deliveryDateLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/locationSelectedLayout">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1A000000" />
+
+        <RelativeLayout
+            android:id="@+id/earliestDateTitleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp">
+
+            <TextView
+                android:id="@+id/earliestDateTitle"
+                style="@style/myriad_pro_regular_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/earliest_delivery_date"
+                android:textSize="@dimen/thirteen_sp" />
+
+            <TextView
+                android:id="@+id/earliestDateValue"
+                style="@style/myriad_pro_semi_bold_black_15_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textSize="@dimen/thirteen_sp" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp"
+            android:id="@+id/foodItemsDeliveryDateLayout"
+            >
+
+            <TextView
+                android:id="@+id/foodItemsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/myriad_pro_regular_black"
+                android:layout_alignParentStart="true"
+                android:text="@string/food_items"
+                android:textSize="@dimen/thirteen_sp" />
+
+            <TextView
+                android:id="@+id/foodItemsDeliveryDate"
+                style="@style/myriad_pro_semi_bold_black_15_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textSize="@dimen/thirteen_sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/five_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp"
+            android:id="@+id/otherItemsDeliveryDateLayout"
+            >
+
+            <TextView
+                android:id="@+id/otherItemsLabel"
+                style="@style/myriad_pro_regular_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/fashion_beauty_home"
+                android:textSize="@dimen/thirteen_sp" />
+
+            <TextView
+                android:id="@+id/otherItemsDeliveryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/myriad_pro_semi_bold_black_15_text_style"
+                android:layout_alignParentEnd="true"
+                android:textSize="@dimen/thirteen_sp" />
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/locationSelectedLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sixty_dp"
         android:background="@drawable/white_bg_pressed"
-        android:paddingStart="@dimen/twenty_four_dp"
-        android:paddingTop="@dimen/twenty_six_dp"
-        android:paddingEnd="@dimen/twenty_four_dp"
-        android:paddingBottom="@dimen/twenty_six_dp">
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/deliverLocationIcon"
@@ -33,27 +140,13 @@
             android:layout_marginLeft="20dp"
             android:src="@drawable/ic_caret_black" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/editLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:WTextView_font="medium"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:letterSpacing="0.1"
-            android:visibility="invisible"
-            />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_toLeftOf="@+id/editLocation"
-            android:layout_toRightOf="@+id/deliverLocationIcon"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toStartOf="@+id/editLocation"
+            android:layout_toEndOf="@+id/deliverLocationIcon"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -62,7 +155,7 @@
                 style="@style/style_cart_delivery_to_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"
                 android:gravity="center_vertical"
                 android:text="@string/delivery_or_collection" />
 
@@ -71,7 +164,6 @@
                 style="@style/style_cart_delivery_selected"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:drawablePadding="16dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
@@ -79,5 +171,57 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/editLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:letterSpacing="0.1"
+            android:text="@string/edit"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:WTextView_font="medium" />
     </RelativeLayout>
-</LinearLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/deliveryDatesProgressPlaceHolder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:shimmer_duration="800"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationSelectedLayout"
+        android:background="@color/white"
+        ><androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="@dimen/twenty_four_dp">
+
+            <View
+                android:id="@+id/view1"
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:background="@drawable/facebook_shimmer_textview_place_holder_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/view2"
+                android:layout_marginEnd="@dimen/fifty_two_dp"
+                />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:background="@drawable/facebook_shimmer_textview_place_holder_bg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/view1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

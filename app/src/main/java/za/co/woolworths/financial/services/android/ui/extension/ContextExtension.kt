@@ -1,11 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.graphics.Typeface
-import androidx.annotation.ArrayRes
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 
@@ -15,8 +14,16 @@ fun Any.bindColor(@ColorRes color: Int) = ContextCompat.getColor(WoolworthsAppli
 
 fun Any.bindString(@StringRes id: Int): String = WoolworthsApplication.getAppContext().resources.getString(id)
 
+fun Any.bindString(@StringRes id: Int, value: String = "", value1: String = "", value2: String = "", value3: String = "", value4: String = "", value5: String = "", value6: String = "", value7: String = ""): String = WoolworthsApplication.getAppContext().resources.getString(id, value, value1, value2, value3, value4, value5, value6, value7)
+
 fun Any.bindStringArray(@ArrayRes id: Int): Array<String>? = WoolworthsApplication.getAppContext()?.resources?.getStringArray(id)
 
-fun Any.getFuturaMediumFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/WFutura-Medium.ttf")
+fun Any.getFuturaMediumFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/WFutura-Medium.ttf")
 
-fun Any.getFuturaSemiBoldFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets,"fonts/WFutura-SemiBold.ttf")
+fun Any.getFuturaSemiBoldFont(): Typeface = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/WFutura-SemiBold.ttf")
+
+fun Any.getMyriadProSemiBoldFont(): Typeface? = Typeface.createFromAsset(WoolworthsApplication.getAppContext().assets, "fonts/MyriadPro-Semibold.otf")
+
+fun Any.deviceHeight() = WoolworthsApplication.getAppContext()?.resources?.displayMetrics?.heightPixels ?: 0
+
+fun Any.deviceWidth() = WoolworthsApplication.getAppContext()?.resources?.displayMetrics?.widthPixels ?: 0

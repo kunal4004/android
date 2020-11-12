@@ -17,7 +17,8 @@ interface IAccountSignedInContract {
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun showAccountChargeOffForMoreThan6Months()
-        fun bottomSheetIsExpanded():Boolean
+        fun bottomSheetIsExpanded(): Boolean
+        fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
     }
 
     interface MyAccountPresenter {
@@ -31,9 +32,11 @@ interface IAccountSignedInContract {
         fun showProductOfferOutstanding()
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
-        fun getSixMonthOutstandingTitleAndCardResource() : Pair<Int, Int>
-        fun bottomSheetBehaviourHeight(appCompatActivity: AppCompatActivity?): Int
-        fun bottomSheetBehaviourPeekHeight(appCompatActivity: AppCompatActivity?) : Int
+        fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int>
+        fun bottomSheetBehaviourHeight(): Int
+        fun bottomSheetBehaviourPeekHeight(): Int
+        fun isAccountInArrearsState(): Boolean?
+        fun chatWithCollectionAgent()
     }
 
     interface MyAccountModel {

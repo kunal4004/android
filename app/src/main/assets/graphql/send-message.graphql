@@ -1,0 +1,27 @@
+mutation SendMessage(
+    $content: String!
+    $contentType: String!
+    $email: String
+    $name: String
+    $relatedMessageId: String
+    $sessionId: String
+    $sessionState: SessionStateType!
+    $sessionType: SessionType
+    $sessionVars: String!
+) {
+    sendMessage(
+        content: $content
+        contentType: $contentType
+        email: $email
+        name: $name
+        relatedMessageId: $relatedMessageId
+        sessionId: $sessionId
+        sessionState: $sessionState
+        sessionType: $sessionType
+        sessionVars: $sessionVars
+    ) {
+        body
+        desc
+        statusCode
+    }
+}

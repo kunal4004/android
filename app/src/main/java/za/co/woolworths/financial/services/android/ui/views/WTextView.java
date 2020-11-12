@@ -47,7 +47,7 @@ public class WTextView extends TextView {
             mSpannableText = a.getString(R.styleable.WTextView_WTextView_spannable_text);
         }
         if (mSpannableText != null) {
-            setText(FontHyperTextParser.getSpannable(mSpannableText, mFont, getContext()), BufferType.SPANNABLE);
+            setText(FontHyperTextParser.getSpannable(mSpannableText, mFont), BufferType.SPANNABLE);
         } else {
             setTypeface(Typeface.createFromAsset(getContext().getAssets(), getContext().getResources().getStringArray(R.array.fonts)[mFont]));
         }
@@ -59,13 +59,13 @@ public class WTextView extends TextView {
         if (s.split("\\|![lmsb\\?]\\|").length == 1) {
             super.setText(text, type);
         } else {
-            super.setText(FontHyperTextParser.getSpannable(s, mFont, getContext()), BufferType.SPANNABLE);
+            super.setText(FontHyperTextParser.getSpannable(s, mFont), BufferType.SPANNABLE);
         }
     }
 
     public void setText(String s) {
         if (s.split("\\|![lmsb\\?]\\|").length == 1) {
-            super.setText(FontHyperTextParser.getSpannable(s, mFont, getContext()), BufferType.SPANNABLE);
+            super.setText(FontHyperTextParser.getSpannable(s, mFont), BufferType.SPANNABLE);
         } else {
             super.setText(s);
         }

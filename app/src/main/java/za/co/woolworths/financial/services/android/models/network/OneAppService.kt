@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
+import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -15,11 +16,15 @@ import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 
 object OneAppService : RetrofitConfig() {
@@ -62,7 +67,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String): Call<LocationResponse> {
-           return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
+        return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
     }
 
     fun getStoresForNPC(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, npc: Boolean): Call<LocationResponse> {
@@ -166,11 +171,27 @@ object OneAppService : RetrofitConfig() {
 
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val loc = getMyLocation()
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), "", "", getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
+            mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), "", "", getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId, storeId = storeId)
         } else {
-            mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
+            mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId, storeId = storeId)
         }
+    }
+
+    private fun getSuburbOrStoreId(): Pair<String?, String?> {
+        var suburbId: String? = null
+        var storeId: String? = null
+        Utils.getPreferredDeliveryLocation()?.apply {
+            if (province?.id.isNullOrEmpty()) return Pair(null, null)
+            if (suburb?.storePickup == true) {
+                storeId = suburb.id
+            } else {
+                suburbId = suburb?.id
+            }
+        }
+        return Pair(suburbId, storeId)
     }
 
     fun getFAQ(): Call<FAQ> {
@@ -287,34 +308,6 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.blockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getOsVersion(), "", getSessionToken(), productOfferingId, blockCardRequestBody)
     }
 
-    fun pollAgentsAvailable(): Observable<AgentsAvailableResponse> {
-        return mApiInterface.pollAgentsAvailable(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
-    }
-
-    fun createChatSession(requestBody: CreateChatSession): Call<CreateChatSessionResponse> {
-        return mApiInterface.createChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), requestBody)
-    }
-
-    fun pollChatSessionState(chatId: String): Observable<PollChatSessionStateResponse> {
-        return mApiInterface.pollChatSessionState(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
-    }
-
-    fun sendChatMessage(chatId: String, requestBody: SendMessageRequestBody): Call<SendChatMessageResponse> {
-        return mApiInterface.sendChatMessage(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, requestBody)
-    }
-
-    fun endChatSession(chatId: String): Call<EndChatSessionResponse> {
-        return mApiInterface.endChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
-    }
-
-    fun userTyping(chatId: String): Call<UserTypingResponse> {
-        return mApiInterface.userTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
-    }
-
-    fun userStoppedTyping(chatId: String): Call<UserTypingResponse> {
-        return mApiInterface.userStoppedTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
-    }
-
     fun getStoreCards(storeCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse> {
         return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), storeCardsRequestBody)
     }
@@ -364,10 +357,39 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {
-        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName ?: "", appScreen ?: "")
+        return mApiInterface.postEvent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), featureName
+                ?: "", appScreen ?: "")
+    }
+
+    fun queryServicePayUMethod(): Call<PaymentMethodsResponse> {
+        return mApiInterface.getPaymentPAYUMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+    }
+
+    fun queryServicePostPayU(payUPay: PayUPay): Call<PayUResponse> {
+        return mApiInterface.postPayUpPay(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), payUPay)
+    }
+
+    fun queryServicePaymentResult(request: PayUPayResultRequest): Call<PayUPayResultResponse> {
+        return mApiInterface.getPaymentPayUResult(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), request.customer, request.payment_id, request.charge_id, request.status, request.productOfferingID)
     }
 
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Call<ValidateSelectedSuburbResponse> {
         return mApiInterface.validateSelectedSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), suburbId, isStore)
     }
+
+    fun applyVouchers(vouchers: List<SelectedVoucher>): Call<ShoppingCartResponse> {
+        return mApiInterface.applyVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), vouchers)
+    }
+
+    fun applyPromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.applyPromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
+    }
+
+    fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
+        return mApiInterface.removePromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
+    }
+    fun queryServicePayURemovePaymentMethod(paymenToken: String): Call<DeleteResponse> {
+        return mApiInterface.payURemovePaymentMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), paymenToken)
+    }
+
 }

@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -27,15 +28,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.T
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
-
-    companion object {
-        private const val STORE_CARD_PRODUCT_GROUP_CODE = "sc"
-        private const val CREDIT_CARD_PRODUCT_GROUP_CODE = "cc"
-        private const val PERSONAL_LOAN_PRODUCT_GROUP_CORE = "pl"
-    }
 
     var mOfferActiveCall: Call<OfferActive>? = null
     var mStoreCardCall: Call<StoreCardsResponse>? = null
@@ -87,10 +81,10 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
-        if (productGroupCode == CREDIT_CARD_PRODUCT_GROUP_CODE || productGroupCode == PERSONAL_LOAN_PRODUCT_GROUP_CORE) return
-        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> StoreCardsRequestBody(acc.accountNumber, acc.productOfferingId) }
+        if (productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase() || productGroupCode == AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()) return
+        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> acc?.accountNumber?.let { StoreCardsRequestBody(it, acc.productOfferingId) } }
         mainView?.showStoreCardProgress()
-        mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object:IGenericAPILoaderView<Any>{
+        mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
                 (response as? StoreCardsResponse)?.apply {
                     mainView?.hideStoreCardProgress()
@@ -111,7 +105,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                 mainView?.showOnStoreCardFailure(error)
             }
 
-        } )
+        })
     }
 
     override fun getUserCLIOfferActive() {
@@ -135,12 +129,12 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun getCreditCardToken() {
-        if (!getAccount()?.productGroupCode.equals("CC", true)) return
+        if (!getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, true)) return
         model?.queryServiceGetCreditCartToken(this)
     }
 
-    override fun onSuccess(apiResponse: Any?) {
-        with(apiResponse) {
+    override fun onSuccess(response: Any?) {
+        with(response) {
             when (this) {
 
                 is OfferActive -> {
@@ -150,20 +144,20 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                             mainView?.hideUserOfferActiveProgress()
                             handleUserOfferActiveSuccessResult(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440, 502 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.hideUserOfferActiveProgress()
-                            handleUnknownHttpResponse(response?.desc)
+                            handleUnknownHttpResponse(this.response?.desc)
                         }
                     }
                 }
 
-                is CreditCardTokenResponse->{
+                is CreditCardTokenResponse -> {
                     when (httpCode) {
                         200 -> {
                             mainView?.onGetCreditCArdTokenSuccess(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.onGetCreditCardTokenFailure()
                         }
@@ -175,14 +169,14 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                         200 -> {
                             mainView?.onGetCreditCardDeliveryStatusSuccess(this)
                         }
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
                         else -> {
                             mainView?.onGetCreditCardDeliveryStatusFailure()
                         }
                     }
                 }
 
-                else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
+                else -> throw RuntimeException("onSuccess:: unknown response $response")
             }
         }
     }
@@ -215,14 +209,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToTemporaryStoreCard() {
-        when (getStoreCardBlockType()) {
-            true -> mainView?.showUnBlockStoreCardCardDialog()
-            else -> {
-                when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
-                    true -> navigateToGetTemporaryStoreCardPopupActivity()
-                    false -> navigateToMyCardDetailActivity()
-                }
-            }
+        when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
+            true -> navigateToGetTemporaryStoreCardPopupActivity()
+            false -> navigateToMyCardDetailActivity()
         }
     }
 
@@ -231,18 +220,18 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToMyCardDetailActivity(shouldStartWithUnblockStoreCardCall: Boolean) {
-        getStoreCardResponse()?.let { storeCardsResponse -> mainView?.navigateToMyCardDetailActivity(storeCardsResponse,shouldStartWithUnblockStoreCardCall) }
+        getStoreCardResponse()?.let { storeCardsResponse -> mainView?.navigateToMyCardDetailActivity(storeCardsResponse, shouldStartWithUnblockStoreCardCall) }
     }
 
     override fun getOfferActive(): OfferActive? = mOfferActive
 
     override fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
-    override fun navigateToDebitOrderActivityOnButtonTapped() {
+    override fun navigateToDebitOrderActivity() {
         getDebitOrder()?.let { debitOrder -> mainView?.navigateToDebitOrderActivity(debitOrder) }
     }
 
-    override fun navigateToBalanceProtectionInsuranceOnButtonTapped() {
+    override fun navigateToBalanceProtectionInsurance() {
         mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
     }
 
@@ -276,13 +265,24 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         envelopeNumber?.let { model?.queryServiceGetCreditCardDeliveryStatus(getProductOfferingId().toString(), it, this) }
     }
 
+    override fun isCreditCardSection(): Boolean {
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) ==  AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+    }
+
+    override fun navigateToPayMyAccountActivity() {
+        mainView?.navigateToPayMyAccountActivity()
+    }
+
     override fun getStoreCardBlockType(): Boolean {
         val storeCardsData = getStoreCardResponse()?.storeCardsData
+        if (storeCardsData == null || storeCardsData?.primaryCards.isNullOrEmpty()) {
+            return false
+        }
         val primaryCard = storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
         return primaryCard?.blockType?.toLowerCase(Locale.getDefault()) == TemporaryFreezeStoreCard.TEMPORARY
     }
 
     override fun isProductCodeStoreCard(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == STORE_CARD_PRODUCT_GROUP_CODE
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
     }
 }

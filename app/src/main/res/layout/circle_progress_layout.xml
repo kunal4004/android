@@ -35,7 +35,7 @@
         CircleProgressView:cpv_spin="true"
         CircleProgressView:cpv_spinBarLength="200"
         CircleProgressView:cpv_spinColor="@color/black"
-        CircleProgressView:cpv_spinSpeed="4.5"
+        CircleProgressView:cpv_spinSpeed="5"
         CircleProgressView:cpv_textColor="@android:color/transparent"
         CircleProgressView:cpv_textScale="1"
         CircleProgressView:cpv_unit="%"

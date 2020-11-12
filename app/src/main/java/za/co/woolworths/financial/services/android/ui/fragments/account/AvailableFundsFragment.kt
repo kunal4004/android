@@ -12,13 +12,14 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -26,9 +27,11 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
+    @Throws(RuntimeException::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE) ?: throw RuntimeException("Accounts object is null or not found")
+        val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
+                ?: throw RuntimeException("Accounts object is null or not found")
         mAccountPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
         mAccount = mAccountPair?.second
     }
@@ -46,10 +49,10 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
 
     private fun setUpView() {
         mAccount?.apply {
-            val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1, activity))
+            val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(availableFunds), 1,))
             val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-            val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1, activity))
-            val paymentDueDate = paymentDueDate?.let{ paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate))}
+            val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1))
+            val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
             val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
             availableFundAmountTextView?.text = availableFund
             currentBalanceAmountTextView?.text = currentBalance
@@ -72,7 +75,8 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             val intent = Intent(activity, WTransactionsActivity::class.java)
             intent.putExtra("productOfferingId", mAccount?.productOfferingId?.toString())
             intent.putExtra("accountNumber", mAccount?.accountNumber?.toString())
-            intent.putExtra("cardType", "SC")
+            intent.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
+            intent.putExtra("cardType", AccountsProductGroupCode.STORE_CARD.groupCode)
             activity.startActivityForResult(intent, 0)
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
@@ -85,9 +89,5 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
-    }
-
-    fun navigateToPaymentOptionActivity() {
-        activity?.let { activity -> ScreenManager.presentHowToPayActivity(activity, mAccountPair) }
     }
 }

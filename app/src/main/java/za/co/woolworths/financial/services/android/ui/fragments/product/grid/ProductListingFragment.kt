@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
@@ -56,11 +56,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.I
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import java.lang.IllegalStateException
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -68,6 +70,7 @@ import java.util.*
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, IOnConfirmDeliveryLocationActionListener {
 
+    private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -406,6 +409,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
         inflater.inflate(R.menu.drill_down_category_menu, menu)
+        menuActionSearch = menu.findItem(R.id.action_drill_search)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -423,6 +427,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onClick(view: View) {
+        KotlinUtils.avoidDoubleClicks(view)
         activity?.let { activity ->
             when (view.id) {
                 R.id.btnRetry -> {
@@ -460,15 +465,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> {
-                    lockDrawerFragment()
+                        hideSearchIcon()
+                        lockDrawerFragment()
                 }
                 else -> {
-                    showToolbar()
-                    showBackNavigationIcon(true)
-                    setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    setTitle()
-                    if (!productView?.navigation.isNullOrEmpty())
-                        unLockDrawerFragment()
+                        showToolbar()
+                        showSearchIcon()
+                        showBackNavigationIcon(true)
+                        setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                        setTitle()
+                        if (productView?.navigation?.isNullOrEmpty() != true)
+                            unLockDrawerFragment()
                 }
             }
 
@@ -561,7 +568,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun onWalkthroughActionButtonClick() {
+    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
         if (refineProducts?.isClickable == true)
             refineProducts?.let { refineProducts -> onClick(refineProducts) }
     }
@@ -597,15 +604,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailView(productList: ProductList) {
-        mSubCategoryName = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(mSubCategoryName, productList)
+        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList)
 
     }
 
     override fun queryInventoryForStore(fulfilmentTypeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
         this.mFulfilmentTypeId = fulfilmentTypeId
         if (incCenteredProgress?.visibility == VISIBLE) return // ensure one api runs at a time
-        this.mStoreId = fulfilmentTypeId.let { it1 -> ProductListingViewHolderItems.getFulFillmentStoreId(it1) }
+        this.mStoreId = fulfilmentTypeId.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                 ?: ""
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
@@ -630,7 +637,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 oneTimeInventoryErrorDialogDisplay = false
                 with(activity.supportFragmentManager.beginTransaction()) {
                     when (skusInventoryForStoreResponse?.httpCode) {
-                        200 -> {
+                        HTTP_OK -> {
                             val skuInventoryList = skusInventoryForStoreResponse.skuInventory
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
                                 addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
@@ -702,7 +709,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 activity?.apply {
                     dismissProgressBar()
                     when (addItemToCartResponse?.httpCode) {
-                        200 -> {
+                        HTTP_OK -> {
                             // Preferred Delivery Location has been reset on server
                             // As such, we give the user the ability to set their location again
                             val addToCartList = addItemToCartResponse.data
@@ -738,10 +745,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             }, 3000)
                         }
 
-                        417 -> resources?.let {
+                        HTTP_EXPECTATION_FAILED_417 -> resources?.let {
                             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,SET_DELIVERY_LOCATION_REQUEST_CODE) }
                         }
-                        440 -> {
+                        HTTP_SESSION_TIMEOUT_440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             ScreenManager.presentSSOSignin(this)
                         }
@@ -788,7 +795,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     dismissProgressBar()
                         locationResponse?.apply {
                             when (httpCode) {
-                                200 -> {
+                                HTTP_OK -> {
                                     if (Locations != null && Locations.size > 0) {
                                         WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList = Locations
                                         val openStoreFinder = Intent(WoolworthsApplication.getAppContext(), WStockFinderActivity::class.java)
@@ -800,7 +807,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                         activity?.let { activity -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "") }
                                     }
                                 }
-                                440 -> {
+                                HTTP_SESSION_TIMEOUT_440 -> {
                                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                     activity.let{ScreenManager.presentSSOSignin(it, QUERY_LOCATION_ITEM_REQUEST_CODE)}
                                 }
@@ -896,7 +903,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             override fun onSuccess(response: CartSummaryResponse?) {
                 dismissProgressBar()
                 when(response?.httpCode){
-                    200->{
+                    HTTP_OK->{
                         if (Utils.isCartSummarySuburbIDEmpty(response)) {
                             activity?.apply {
                                 KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
@@ -931,5 +938,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.apply {
             KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
         }
+    }
+
+    private fun hideSearchIcon() {
+        menuActionSearch?.isVisible = false
+    }
+
+    private fun showSearchIcon() {
+        menuActionSearch?.isVisible = true
     }
 }

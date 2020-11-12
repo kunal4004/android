@@ -68,10 +68,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,14 +97,11 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.account.Transaction;
-import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem;
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -429,12 +424,6 @@ public class Utils {
 		context.startActivity(openInternalWebView);
 	}
 
-	public static void openBrowserWithUrl(String urlString) {
-		Context context = WoolworthsApplication.getAppContext();
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		context.startActivity(intent);
-	}
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
@@ -1027,7 +1016,7 @@ public class Utils {
 	}
 
 	public static String getExternalImageRef() {
-		return "https://images.woolworthsstatic.co.za/";
+		return KotlinUtils.productImageUrlPrefix;
 	}
 
 
@@ -1223,6 +1212,11 @@ public class Utils {
 			case STATEMENTS:
 				appInstanceObject.featureWalkThrough.statements = true;
 				break;
+			case CART_REDEEM_VOUCHERS:
+				appInstanceObject.featureWalkThrough.cartRedeemVoucher = true;
+			case CREDIT_SCORE:
+				appInstanceObject.featureWalkThrough.creditScore = true;
+				break;
 			default:
 				break;
 		}
@@ -1392,20 +1386,6 @@ public class Utils {
 		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
 	}
 
-	public static Boolean isOperatingHoursForInAppChat() {
-
-		TradingHours tradingHours = WChatActivityExtension.Companion.getInAppTradingHoursForToday();
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
-		int minute = now.get(Calendar.MINUTE);
-
-		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
-		Date openingTime = WFormatter.parseDate(tradingHours.getOpens());
-		Date closingTime = WFormatter.parseDate(tradingHours.getCloses());
-
-		return (currentTime.after(openingTime) && currentTime.before(closingTime));
-	}
-
 	public static String getCurrentDay() {
 		return new SimpleDateFormat("EEEE").format(new Date());
 	}
@@ -1504,7 +1484,7 @@ public class Utils {
 	}
 
 	public static void showGeneralErrorDialog(Activity activity,String message){
-		if (activity != null && TextUtils.isEmpty(message)) {
+		if (activity != null && !TextUtils.isEmpty(message)) {
 			ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
 			minAmountDialog.show(((AppCompatActivity) activity).getSupportFragmentManager(), ErrorDialogFragment.class.getSimpleName());
 		}

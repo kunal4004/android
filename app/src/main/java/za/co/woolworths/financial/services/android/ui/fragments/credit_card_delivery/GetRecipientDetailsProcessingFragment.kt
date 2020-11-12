@@ -29,7 +29,7 @@ class GetRecipientDetailsProcessingFragment : BaseProcessingFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = Navigation.findNavController(view)
+        //navController = Navigation.findNavController(view)
         //getRecipientDetails()
     }
 

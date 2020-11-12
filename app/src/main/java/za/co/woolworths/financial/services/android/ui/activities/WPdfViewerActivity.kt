@@ -9,8 +9,11 @@ import java.io.File
 import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.BuildConfig
 import com.crashlytics.android.Crashlytics
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.OneAppEvents
 import java.io.FileOutputStream
@@ -35,8 +38,10 @@ class WPdfViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_oreder_tax_invoice)
-        Utils.updateStatusBarBackground(this, R.color.black)
         getBundleArgument()
+        //https://wigroup2.atlassian.net/browse/WOP-6922
+        Utils.updateStatusBarBackground(this)
+
         initView()
     }
 

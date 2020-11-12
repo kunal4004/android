@@ -18,7 +18,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
     private var mAccount: Account? = null
 
-
+    @Throws(RuntimeException::class)
     override fun setBundle(bundle: Bundle?) {
         val account = bundle?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
                 ?: throw RuntimeException("Accounts object is null or not found")
@@ -33,18 +33,19 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
         model?.queryABSAServiceGetUserCreditCardToken(this)
     }
 
-    override fun onSuccess(apiResponse: Any?) {
-        with(apiResponse) {
+    @Throws(RuntimeException::class)
+    override fun onSuccess(response: Any?) {
+        with(response) {
             when (this) {
                 is CreditCardTokenResponse -> {
                     when (httpCode) {
                         200 -> handleUserCreditCardToken(this)
-                        440 -> response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
-                        else -> mainView?.handleUnknownHttpResponse(response?.desc)
+                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        else -> mainView?.handleUnknownHttpResponse(this.response?.desc)
                     }
                     mainView?.hideABSAServiceGetUserCreditCardTokenProgressBar()
                 }
-                else -> throw RuntimeException("onSuccess:: unknown response $apiResponse")
+                else -> throw RuntimeException("onSuccess:: unknown response $response")
             }
         }
     }
@@ -76,12 +77,27 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     override fun getCreditCardNumber(cards: ArrayList<Card>?): String? {
         return cards?.filter { card -> card.cardStatus?.trim { it <= ' ' } == "AAA" }
                 ?.takeIf { it.isNotEmpty() }
-                ?.let {  it[0].absaCardToken}
+                ?.let { it[0].absaCardToken }
     }
 
     override fun getAccount(): Account? = mAccount
+    override fun getApplyNowState(): ApplyNowState? = mAccountPair?.first
+
+
+    override fun productHasAmountOverdue(): Boolean = getAccount()?.amountOverdue ?: 0 > 0
 
     override fun onDestroy() {
         mainView = null
+    }
+
+    override fun isPersonalLoanAndStoreCardVisible(): Boolean? {
+        return when (mAccountPair?.first) {
+            ApplyNowState.PERSONAL_LOAN, ApplyNowState.STORE_CARD -> true
+            else -> false
+        }
+    }
+
+    override fun getAccountDetail(): Pair<ApplyNowState, Account>? {
+        return mAccountPair
     }
 }

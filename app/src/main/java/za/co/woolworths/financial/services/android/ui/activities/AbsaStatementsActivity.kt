@@ -11,7 +11,9 @@ import com.android.volley.NetworkResponse
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_statements_activity.*
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.empty_state_template.*
+import kotlinx.android.synthetic.main.payment_options_activity.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatementListRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
@@ -21,7 +23,12 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.*
 import java.net.HttpCookie
 import java.util.*
@@ -29,9 +36,11 @@ import java.util.*
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
+    private var chatAccountProductLandingPage: String? = null
     private var nonce: String? = null
     private var eSessionId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
+    private var applyNowAccountHashPair: Pair<ApplyNowState, Account>? = null
 
     companion object {
         const val NONCE = "NONCE"
@@ -62,6 +71,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         intent?.extras?.apply {
             nonce = getString(NONCE)
             eSessionId = getString(E_SESSION_ID)
+            chatAccountProductLandingPage = getString(ACCOUNTS)
         }
     }
 
@@ -155,8 +165,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun hideProgress() {
-       if (this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
-        pbCircular.visibility = View.GONE
+        if (this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
+            pbCircular.visibility = View.GONE
     }
 
     fun showErrorView() {
@@ -230,5 +240,17 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             putExtra(WPdfViewerActivity.GTM_TAG, FirebaseManagerAnalyticsProperties.ABSA_CC_SHARE_STATEMENT)
             startActivity(this)
         }
+
+
+    }
+
+    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+        ChatFloatingActionButtonBubbleView(
+                activity = this@AbsaStatementsActivity,
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = applyNowState,
+                scrollableView = paymentOptionScrollView)
+                .build()
     }
 }
