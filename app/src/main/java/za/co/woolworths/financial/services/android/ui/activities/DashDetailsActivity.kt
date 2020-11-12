@@ -79,7 +79,8 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
         KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_DOWNLOAD_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
 
         try {
-            var intent: Intent? = this.packageManager.getLaunchIntentForPackage(WOOLIES_APP_PACKAGE_NAME)
+            // This need to be confirmed and might be in future development. If so happens just uncomment the line
+            var intent: Intent? = null//this.packageManager.getLaunchIntentForPackage(WOOLIES_APP_PACKAGE_NAME)
             if (intent == null) {
                 intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(wooliesAppLink)
