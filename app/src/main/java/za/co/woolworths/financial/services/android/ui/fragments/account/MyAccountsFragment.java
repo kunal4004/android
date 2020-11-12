@@ -581,7 +581,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
             showView(loginUserOptionsLayout);
-			showView(creditReportView);
+            if (WoolworthsApplication.getCreditView().isEnabled())
+                showView(creditReportView);
             mUpdateMyAccount.swipeToRefreshAccount(true);
             if (SessionUtilities.getInstance().isC2User())
                 showView(linkedAccountsLayout);
@@ -755,7 +756,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
 			case R.id.creditReport:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
-				KotlinUtils.Companion.openBrowserWithUrl(WoolworthsApplication.getTransUnionLink(), activity);
+                KotlinUtils.Companion.openBrowserWithUrl(WoolworthsApplication.getCreditView().getTransUnionLink(), activity);
 				break;
             default:
                 break;
