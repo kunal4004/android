@@ -13,32 +13,32 @@
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment"
             app:destination="@id/payMyAccountLearnMoreFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
 
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment"
             app:destination="@id/byElectronicFundTransferFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1"
             app:destination="@id/storesNearbyFragment1"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
         <action
             android:id="@+id/goToEnterPaymentAmountFragmentAction"
             app:destination="@id/enterPaymentAmountFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_displayVendorCardDetailFragment"
             app:destination="@id/displayVendorCardDetailFragment"
@@ -47,10 +47,10 @@
         <action
             android:id="@+id/action_creditAndDebitCardPaymentsFragment_to_PMAPayByDebitOrderFragment"
             app:destination="@id/PMAPayByDebitOrderFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
     </fragment>
     <fragment
         android:id="@+id/payMyAccountLearnMoreFragment"
