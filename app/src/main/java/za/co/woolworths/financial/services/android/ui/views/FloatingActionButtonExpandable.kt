@@ -238,9 +238,9 @@ class FloatingActionButtonExpandable @JvmOverloads constructor(
         })
     }
 
-    override fun onSaveInstanceState(): Parcelable {
-        val savedState = SavedState(super.onSaveInstanceState())
-        savedState.expanded = expanded
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = super.onSaveInstanceState()?.let { SavedState(it) }
+        savedState?.expanded = expanded
         return savedState
     }
 

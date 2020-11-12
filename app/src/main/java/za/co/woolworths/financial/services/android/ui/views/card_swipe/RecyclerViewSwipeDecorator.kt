@@ -160,7 +160,7 @@ class RecyclerViewSwipeDecorator private constructor() {
                     textPaint.color = mSwipeRightTextColor
                     textPaint.typeface = mSwipeRightTypeface
                     val textTop = (viewHolder.itemView.top + (viewHolder.itemView.bottom - viewHolder.itemView.top) / 2.0 + textPaint.textSize / 2).toInt()
-                    canvas.drawText(mSwipeRightText, viewHolder.itemView.left + iconHorizontalMargin + iconSize + (if (iconSize > 0) iconHorizontalMargin / 2 else 0).toFloat(), textTop.toFloat(), textPaint)
+                    canvas.drawText(mSwipeRightText!!, viewHolder.itemView.left + iconHorizontalMargin + iconSize + (if (iconSize > 0) iconHorizontalMargin / 2 else 0).toFloat(), textTop.toFloat(), textPaint)
                 }
             } else if (dX < 0) {
                 // Swiping Left
@@ -193,7 +193,7 @@ class RecyclerViewSwipeDecorator private constructor() {
                     textPaint.typeface = mSwipeLeftTypeface
                     val width = textPaint.measureText(mSwipeLeftText)
                     val textTop = (viewHolder.itemView.top + (viewHolder.itemView.bottom - viewHolder.itemView.top) / 2.0 + textPaint.textSize / 2).toInt()
-                    canvas.drawText(mSwipeLeftText, imgLeft - width - if (imgLeft == viewHolder.itemView.right) iconHorizontalMargin else iconHorizontalMargin / 2, textTop.toFloat(), textPaint)
+                    canvas.drawText(mSwipeLeftText!!, imgLeft - width - if (imgLeft == viewHolder.itemView.right) iconHorizontalMargin else iconHorizontalMargin / 2, textTop.toFloat(), textPaint)
                 }
             }
         } catch (e: Exception) {

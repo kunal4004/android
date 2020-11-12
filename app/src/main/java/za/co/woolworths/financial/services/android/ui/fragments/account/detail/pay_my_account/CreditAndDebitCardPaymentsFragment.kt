@@ -75,7 +75,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             onRetry()
         }
 
-        creditCardDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.pay_by_credit_card_desc), "Note:")
+        creditCardDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.credit_and_combination_desc), "Note:")
 
         creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
         pmaBottomView?.visibility = VISIBLE

@@ -8,6 +8,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_debit_order.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import kotlin.math.absoluteValue
@@ -28,20 +29,20 @@ class DebitOrderActivity : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.back24)
         }
 
-        var debitOrder: DebitOrder = intent.extras.getSerializable("DebitOrder") as DebitOrder
+        val debitOrder: DebitOrder? = intent.extras?.getSerializable("DebitOrder") as? DebitOrder
 
-        var title = getResources().getString(R.string.debit_order_title)
-                .replace("debit_order_status", if (debitOrder.debitOrderActive) "ACTIVE" else "EXPIRED")
-        var description = getResources().getString(R.string.debit_order_description)
-                .replace("debit_order_status", if (debitOrder.debitOrderActive) "active" else "expired")
-        var amountToBeDebited = WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toInt())
+        val title = bindString(R.string.debit_order_title)
+                .replace("debit_order_status", if (debitOrder?.debitOrderActive == true) "ACTIVE" else "EXPIRED")
+        val description = bindString(R.string.debit_order_description)
+                .replace("debit_order_status", if (debitOrder?.debitOrderActive == true) "active" else "expired")
+        var amountToBeDebited = WFormatter.formatAmount(debitOrder?.debitOrderProjectedAmount?.toInt() ?: 0)
         if (amountToBeDebited.contains("-")) {
             amountToBeDebited = "- " + amountToBeDebited.replace("-", "")
         }
 
         tvDebitOrderTitle.setText(title)
         tvDebitOrderDescription.setText(description)
-        tvDeductionDay.setText(debitOrder.debitOrderDeductionDay)
+        tvDeductionDay.setText(debitOrder?.debitOrderDeductionDay)
         tvAmountToBeDebited.setText(amountToBeDebited)
     }
 
