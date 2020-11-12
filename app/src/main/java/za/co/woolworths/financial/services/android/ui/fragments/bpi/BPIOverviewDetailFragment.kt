@@ -42,7 +42,7 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
         arguments?.let {
 
             if (it.containsKey("bpiOverview")) {
-                val strOverview: String = it.getString("bpiOverview")
+                val strOverview: String? = it.getString("bpiOverview")
                 val bpiOverview = Gson().fromJson(strOverview, BPIOverview::class.java)
                 setBenefitDetail(bpiOverview)
                 val insuranceType: InsuranceType = bpiOverview.insuranceType!!
