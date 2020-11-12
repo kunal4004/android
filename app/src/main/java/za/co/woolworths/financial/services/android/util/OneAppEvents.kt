@@ -9,6 +9,7 @@ class OneAppEvents {
             const val WHATSAPP = "WhatsApp"
             const val CHAT_COLLECTIONS = "chatCollections"
             const val CHAT_CUSTOMER_SERVICES = "chatCustomerServices"
+            const val DASH_FEATURE_NAME = "dash"
         }
     }
 
@@ -46,6 +47,9 @@ class OneAppEvents {
             const val CHAT_CUSTOMER_SERVICE_CC_STATEMENT_INITIATE_SESSION = "CC Statements InitiateSession"
             const val CHAT_CUSTOMER_SERVICE_PL_STATEMENT_INITIATE_SESSION = "PL Statements InitiateSession"
             const val CHAT_CUSTOMER_SERVICE_SC_STATEMENT_INITIATE_SESSION = "SC Statements InitiateSession"
+
+            const val DASH_BANNER_SCREEN_NAME = "view"
+            const val DASH_DOWNLOAD_SCREEN_NAME = "breakout"
         }
     }
 }

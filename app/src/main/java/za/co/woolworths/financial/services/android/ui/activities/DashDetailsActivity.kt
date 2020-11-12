@@ -15,6 +15,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_dash_details.*
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.OneAppEvents
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -75,6 +76,8 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(p0: View?) {
+        KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_DOWNLOAD_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
+
         try {
             var intent: Intent? = this.packageManager.getLaunchIntentForPackage(WOOLIES_APP_PACKAGE_NAME)
             if (intent == null) {
