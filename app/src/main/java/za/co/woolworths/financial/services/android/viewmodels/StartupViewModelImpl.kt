@@ -191,6 +191,11 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             WoolworthsApplication.setCreditCardActivation(creditCardActivation)
             WoolworthsApplication.setClickAndCollect(clickAndCollect)
             WoolworthsApplication.setProductDetailsPage(productDetailsPage)
+
+            creditView?.apply {
+                isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+            }
+            WoolworthsApplication.setCreditView(creditView)
         }
     }
 
