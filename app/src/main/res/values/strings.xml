@@ -1586,7 +1586,7 @@
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
     <string name="atm_payment_steps_title">ATM PAYMENT</string>
-    <string name="pay_your_account_desc_label">Pay your account now using a debit card. This is the preferred method.</string>
+    <string name="pay_your_account_desc_label">Pay your account now using a debit card. This is the preferred method. Please see below for combination cards.</string>
     <string name="atmPaymentInfo1">Go to your bank’s ATM</string>
     <string name="atmPaymentInfo2">After inserting your card and PIN</string>
     <string name="atmPaymentInfo3">Select make a payment</string>
@@ -1743,5 +1743,7 @@
     <string name="promo_discount_dialog_title">Promo Code Applied</string>
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
+    <string name="credit_and_combination_title"><![CDATA["Credit & Combination Cards "]]></string>
+    <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
 </resources>
 
