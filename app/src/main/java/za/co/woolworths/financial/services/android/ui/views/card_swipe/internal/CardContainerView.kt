@@ -18,7 +18,7 @@ import za.co.woolworths.financial.services.android.ui.views.card_swipe.internal.
 
 import kotlin.math.abs
 
-class CardContainerView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
+class CardContainerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
     private var option: CardStackOption? = null
     var viewOriginX = 0f
         private set
