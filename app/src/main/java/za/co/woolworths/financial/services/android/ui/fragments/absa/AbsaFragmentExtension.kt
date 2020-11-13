@@ -24,9 +24,9 @@ open class AbsaFragmentExtension : Fragment() {
 
     fun hideKeyboard() {
         activity?.let {
-            if (it.currentFocus != null && it.currentFocus.windowToken != null) {
+            if (it.currentFocus != null && it.currentFocus?.windowToken != null) {
                 (it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                        .hideSoftInputFromWindow(it.currentFocus.windowToken, 0)
+                        .hideSoftInputFromWindow(it.currentFocus?.windowToken, 0)
             }
         }
     }
