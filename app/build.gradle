@@ -11,6 +11,7 @@ android {
     def major = "7"
     def minor = "4"
     def fix = "1"
+
     def jobNumber = 7753
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
@@ -62,8 +63,8 @@ android {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
-        targetSdkVersion 28
-        compileSdkVersion 28
+        targetSdkVersion 29
+        compileSdkVersion 29
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
@@ -92,7 +93,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 139
+            jobNumber = 143
         }
 
         defaultConfig {

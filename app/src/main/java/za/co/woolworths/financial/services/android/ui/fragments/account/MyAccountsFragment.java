@@ -581,7 +581,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
             showView(loginUserOptionsLayout);
-			showView(creditReportView);
+            if (WoolworthsApplication.getCreditView().isEnabled())
+                showView(creditReportView);
             mUpdateMyAccount.swipeToRefreshAccount(true);
             if (SessionUtilities.getInstance().isC2User())
                 showView(linkedAccountsLayout);
@@ -755,7 +756,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
 			case R.id.creditReport:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
-				KotlinUtils.Companion.openBrowserWithUrl(WoolworthsApplication.getTransUnionLink(), activity);
+                KotlinUtils.Companion.openBrowserWithUrl(WoolworthsApplication.getCreditView().getTransUnionLink(), activity);
 				break;
             default:
                 break;
@@ -1285,6 +1286,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void showInAppChat(Activity activity) {
+        if (!isAdded() || activity == null || mAccountResponse == null || mAccountResponse.accountList == null) return;
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || (AppInstanceObject.get().featureWalkThrough.creditScore && AppInstanceObject.get().featureWalkThrough.account)) {
             ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
