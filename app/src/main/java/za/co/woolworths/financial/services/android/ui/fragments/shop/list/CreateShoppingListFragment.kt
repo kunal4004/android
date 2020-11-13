@@ -1,16 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.KeyListener
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
+import android.util.TypedValue
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
@@ -30,11 +29,16 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils.setBackgroundColor
 import java.util.*
 
 class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
@@ -182,7 +186,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 val isEditTextNotEmpty = etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()
                 if (!mShouldDisplayCreateListOnly) {
                     btnCancel.isEnabled = isEditTextNotEmpty
-                    btnCancel?.text = if (isEditTextNotEmpty) getString(R.string.ok) else getString(R.string.cancel)
+                    btnCancel?.text = if (isEditTextNotEmpty) getString(R.string.create_list) else getString(R.string.cancel)
                     btnCancel?.setTextColor(Color.BLACK)
                 } else {
                     enableCancelButton(isEditTextNotEmpty)
@@ -216,8 +220,6 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         if (mShouldDisplayCreateListOnly) {
             imBack.visibility = VISIBLE
             imCloseIcon.visibility = GONE
-        } else {
-            btnCancel.setTextColor(Color.BLACK)
         }
 
         //triggered when add to list is empty
@@ -285,7 +287,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 etNewList?.keyListener = mKeyListener
                 response?.apply {
                     when (httpCode) {
-                        200 -> {
+                        HTTP_OK -> {
                             // Add to List from MyListFragment
                             if (mShouldDisplayCreateListOnly) {
                                 response.lists[0]?.apply {
@@ -317,7 +319,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                                 }
                             }
                         }
-                        440 -> {
+                        HTTP_SESSION_TIMEOUT_440 -> {
                             shoppingListPostProgress(false)
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             activity?.let { ScreenManager.presentSSOSignin(it) }
@@ -360,8 +362,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             override fun onSuccess(shoppingListsResponse: ShoppingListItemsResponse?) {
                 shoppingListsResponse?.apply {
                     when (httpCode) {
-                        200 -> addToListWasSendSuccessfully(listId)
-                        440 -> sessionExpiredHandler()
+                        HTTP_OK -> addToListWasSendSuccessfully(listId)
+                        HTTP_SESSION_TIMEOUT_440 -> sessionExpiredHandler()
                         else -> response?.let { otherHttpCodeHandler(it) }
                     }
                 }
@@ -445,7 +447,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                         response.apply {
                             when (httpCode) {
                                 0 -> addToListWasSendSuccessfully(orderRequestList.shoppingListId)
-                                440 -> sessionExpiredHandler()
+                                HTTP_SESSION_TIMEOUT_440 -> sessionExpiredHandler()
                                 else -> response?.let { otherHttpCodeHandler(it) }
                             }
                         }
