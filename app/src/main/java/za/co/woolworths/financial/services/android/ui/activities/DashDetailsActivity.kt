@@ -71,6 +71,7 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onBackPressed() {
+        KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_CLOSED_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }

@@ -50,6 +50,7 @@ class OneAppEvents {
 
             const val DASH_BANNER_SCREEN_NAME = "view"
             const val DASH_DOWNLOAD_SCREEN_NAME = "breakout"
+            const val DASH_CLOSED_SCREEN_NAME: String = "abandon"
         }
     }
 }
