@@ -1586,7 +1586,7 @@
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
     <string name="atm_payment_steps_title">ATM PAYMENT</string>
-    <string name="pay_your_account_desc_label">Pay your account now using a debit card. This is the preferred method.</string>
+    <string name="pay_your_account_desc_label">Pay your account now using a debit card. This is the preferred method. Please see below for combination cards.</string>
     <string name="atmPaymentInfo1">Go to your bank’s ATM</string>
     <string name="atmPaymentInfo2">After inserting your card and PIN</string>
     <string name="atmPaymentInfo3">Select make a payment</string>
@@ -1761,5 +1761,7 @@
     <string name="terms_and_condition_not_qualify_for_free_delivery">Black Credit Card holders do not qualify for free delivery when shopping on Woolies Dash.</string>
     <string name="dash_details_download_woolies_dash_app">DOWNLOAD WOOLIES DASH APP</string>
 
+    <string name="credit_and_combination_title">Credit &amp; Combination Card</string>
+    <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
 </resources>
 
