@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
@@ -16,6 +15,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaSemiBoldFont
+import za.co.woolworths.financial.services.android.ui.extension.measuredWidth
+import za.co.woolworths.financial.services.android.ui.extension.width
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -81,15 +82,16 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
         with(itemView) {
-            imProductImage.viewTreeObserver?.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    imProductImage.viewTreeObserver?.removeOnPreDrawListener(this)
-                    val width: Int = imProductImage?.measuredWidth ?: 0
-                    val reducedPlaceHolderWidth: Int = width / 2
-                    imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
-                    return true
-                }
-            })
+            imProductImage.width { width ->
+                val reducedPlaceHolderWidth: Int = width / 2
+                imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
+
+            }
+
+            imProductImage.measuredWidth { measuredWidth ->
+                val reducedPlaceHolderWidth: Int = measuredWidth / 2
+                imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
+            }
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")

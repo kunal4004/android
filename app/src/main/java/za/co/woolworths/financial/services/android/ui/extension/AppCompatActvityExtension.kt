@@ -10,6 +10,8 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.View
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.AnimRes
@@ -307,3 +309,27 @@ inline fun <reified T: Enum<T>> Intent.getEnumExtra(): T? =
         getIntExtra(T::class.java.name, -1)
                 .takeUnless { it == -1 }
                 ?.let { T::class.java.enumConstants?.get(it) }
+
+fun <T : View> T.width(function: (Int) -> Unit) {
+    if (width == 0)
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                function(width)
+            }
+        })
+    else function(width)
+}
+
+
+fun <T : View> T.measuredWidth(function: (Int) -> Unit) {
+    if (width == 0)
+        viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw() : Boolean{
+                viewTreeObserver.removeOnPreDrawListener(this)
+                function(measuredWidth)
+                return true
+            }
+        })
+    else function(measuredWidth)
+}
