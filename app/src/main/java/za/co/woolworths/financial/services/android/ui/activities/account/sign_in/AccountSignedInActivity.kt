@@ -219,7 +219,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
                     // on back to my account pressed (R.string.back_to_my_account_button)
                     PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
-                        queryGetPaymentMethod()
+                        extras?.getString(PAYMENT_DETAIL_CARD_UPDATE)?.apply {
+                            queryGetPaymentMethod()
+                            payMyAccountViewModel.setPMACardInfo(this)
+                        }
                         mAvailableFundsNavHost?.navController?.navigateUp()
                     }
                 }
