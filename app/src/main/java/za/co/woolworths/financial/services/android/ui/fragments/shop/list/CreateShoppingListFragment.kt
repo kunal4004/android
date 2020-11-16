@@ -185,7 +185,6 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 val isEditTextNotEmpty = etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()
                 if (!mShouldDisplayCreateListOnly) {
-                    btnCancel.isEnabled = isEditTextNotEmpty
                     btnCancel?.text = if (isEditTextNotEmpty) getString(R.string.create_list) else getString(R.string.cancel)
                     btnCancel?.setTextColor(Color.BLACK)
                 } else {
