@@ -69,7 +69,16 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
 
                 //Disable change button when amount is R0.00
-                changeTextView?.isEnabled = isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())
+                when (isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())) {
+                    true -> {
+                        changeTextView?.alpha= 1.0f
+                        changeTextView?.isEnabled = true
+                    }
+                    false -> {
+                        changeTextView?.alpha= 0.3f
+                        changeTextView?.isEnabled = false
+                    }
+                }
 
                 // set payment method
                 initPaymentMethod()

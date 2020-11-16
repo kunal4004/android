@@ -176,6 +176,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
+            android:textColor="@color/black"
             android:letterSpacing="0.12"
             android:text="@string/change_label"
             android:textAllCaps="true"
