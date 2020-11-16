@@ -1,12 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.KeyListener
-import android.util.TypedValue
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -29,7 +27,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -38,7 +35,6 @@ import za.co.woolworths.financial.services.android.util.ConnectionBroadcastRecei
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils.setBackgroundColor
 import java.util.*
 
 class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
@@ -185,8 +181,18 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 val isEditTextNotEmpty = etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()
                 if (!mShouldDisplayCreateListOnly) {
-                    btnCancel?.text = if (isEditTextNotEmpty) getString(R.string.create_list) else getString(R.string.cancel)
-                    btnCancel?.setTextColor(Color.BLACK)
+                    clBottomView?.isEnabled = true;
+                    btnCancel.isEnabled = true;
+                    if (isEditTextNotEmpty) {
+                        clBottomView.background = bindDrawable(R.drawable.black_button_drawable_state)
+                        btnCancel?.text = getString(R.string.create_list)
+                        btnCancel.setTextColor(Color.WHITE)
+                    } else {
+                        clBottomView.setBackgroundColor(Color.TRANSPARENT)
+                        btnCancel.setTextColor(Color.BLACK)
+                        btnCancel?.text = getString(R.string.cancel)
+                    }
+
                 } else {
                     enableCancelButton(isEditTextNotEmpty)
                 }
@@ -281,7 +287,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         val createListRequest = buildFirstRequest(listName)
         etNewList?.keyListener = null
         mCreateShoppingList = OneAppService.createList(createListRequest)
-        mCreateShoppingList?.enqueue(CompletionHandler(object: IResponseListener<ShoppingListsResponse> {
+        mCreateShoppingList?.enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse?) {
                 etNewList?.keyListener = mKeyListener
                 response?.apply {
@@ -345,7 +351,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     }
                 }
             }
-        },ShoppingListsResponse::class.java))
+        }, ShoppingListsResponse::class.java))
     }
 
     private fun addProductToShoppingList(listId: String?) {
@@ -355,9 +361,9 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             item.listId = null // remove list id from request body
         }
 
-        mPostShoppingList = listId?.let {listID -> mAddToListRequest?.let { listItem -> OneAppService.addToList(listItem, listID) } }
+        mPostShoppingList = listId?.let { listID -> mAddToListRequest?.let { listItem -> OneAppService.addToList(listItem, listID) } }
 
-        mPostShoppingList?.enqueue(CompletionHandler(object: IResponseListener<ShoppingListItemsResponse> {
+        mPostShoppingList?.enqueue(CompletionHandler(object : IResponseListener<ShoppingListItemsResponse> {
             override fun onSuccess(shoppingListsResponse: ShoppingListItemsResponse?) {
                 shoppingListsResponse?.apply {
                     when (httpCode) {
@@ -378,7 +384,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
             }
 
-        },ShoppingListItemsResponse::class.java))
+        }, ShoppingListItemsResponse::class.java))
     }
 
     private fun addToListWasSendSuccessfully(listId: String?) {
@@ -437,10 +443,9 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
 
-        orderId?.let {
-             orderID ->
-           val addOrderToListRequest =  OneAppService.addOrderToList(orderID, orderRequestList)
-            addOrderToListRequest.enqueue(CompletionHandler(object: IResponseListener<OrderToListReponse> {
+        orderId?.let { orderID ->
+            val addOrderToListRequest = OneAppService.addOrderToList(orderID, orderRequestList)
+            addOrderToListRequest.enqueue(CompletionHandler(object : IResponseListener<OrderToListReponse> {
                 override fun onSuccess(orderToListReponse: OrderToListReponse?) {
                     orderToListReponse?.apply {
                         response.apply {
@@ -465,7 +470,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     }
                 }
 
-            },OrderToListReponse::class.java))
+            }, OrderToListReponse::class.java))
         }
     }
 
