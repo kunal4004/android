@@ -149,8 +149,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         val amountEntered = cardInfo?.amountEntered
         val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
         val paymentMethodList = cardInfo?.paymentMethodList
-
-        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType)
+        val selectedCardPosition = cardInfo?.selectedCardPosition ?: 0
+        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType,selectedCardPosition = selectedCardPosition)
         payMyAccountViewModel.setPMACardInfo(card)
 
         payMyAccountViewModel.queryServicePayUPaymentMethod(

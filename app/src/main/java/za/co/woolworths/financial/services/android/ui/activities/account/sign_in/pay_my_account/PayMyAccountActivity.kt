@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 
 import android.content.Intent
 import android.os.Bundle
-import android.transition.Fade
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -161,7 +160,12 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                         }
                     }
 
-                    PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> payMyAccountViewModel.queryPaymentMethod.value = true
+                    PMA3DSecureProcessRequestFragment.PMA_TRANSACTION_COMPLETED_RESULT_CODE -> {
+                        extras?.getString(PAYMENT_DETAIL_CARD_UPDATE,"")?.apply {
+                            payMyAccountViewModel.setPMACardInfo(this)
+                        }
+                        payMyAccountViewModel.queryPaymentMethod.value = true
+                    }
 
                     else -> {
                         val navHostFragment: NavHostFragment
