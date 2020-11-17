@@ -1,8 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_OK
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -28,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -44,11 +48,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
-    private var version:String? = ""
+    private var version: String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
 
-    companion object{
+    companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
     }
 
@@ -124,7 +128,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                         }
                     }
                 }
-            },RootCategories::class.java))
+            }, RootCategories::class.java))
         } else {
             noConnectionLayout(true)
         }
@@ -163,10 +167,17 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         }
     }
 
-    private fun onDashBannerClicked(){
+    private fun onDashBannerClicked() {
         activity?.apply {
-            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
-            KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
+            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(DashDetailsActivity.WOOLIES_APP_PACKAGE_NAME)
+            if (intent == null) {
+                KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
+                KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
+            } else {
+                // Launch the woolies dash if already downloaded/installed
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                this.startActivity(intent)
+            }
         }
     }
 
@@ -208,7 +219,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if(!hidden){
+        if (!hidden) {
             activity?.apply {
                 executeValidateSuburb()
                 //When moved from My Cart to department
@@ -310,7 +321,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 }
             }
 
-            if(!isRootCatCallInProgress) {
+            if (!isRootCatCallInProgress) {
                 executeDepartmentRequest()
             }
         }
