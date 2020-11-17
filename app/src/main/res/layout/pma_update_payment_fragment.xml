@@ -58,35 +58,39 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="UnusedAttribute" />
 
+
     <TextView
         android:id="@+id/pmaAmountEnteredTextView"
         style="@style/amountDescriptionStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="41dp"
-        android:gravity="center"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="40dp"
         android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
         android:text="R -"
         android:textColor="#222222"
         android:textSize="55sp"
         app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
         app:layout_constraintEnd_toStartOf="@+id/editAmountImageView"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@+id/amountBeginGuideline"
         tools:text="R -" />
 
     <ImageView
         android:id="@+id/editAmountImageView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginEnd="26dp"
+        android:layout_marginStart="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/pmaAmountEnteredTextView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/amountEndGuideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pmaAmountEnteredTextView"
         app:layout_constraintTop_toTopOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/edit_amount" />
-
 
     <EditText
         android:id="@+id/cvvEditTextInput"
@@ -95,9 +99,9 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/rectangle_bg"
         android:digits="0123456789"
+        android:fontFamily="@font/futura_medium_ttf"
         android:gravity="center"
         android:hint="CVV"
-        android:fontFamily="@font/futura_medium_ttf"
         android:inputType="numberPassword"
         android:maxLength="3"
         android:textCursorDrawable="@drawable/cursor_custom_color"
@@ -109,7 +113,7 @@
         android:id="@+id/ccvIconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="7dp"
         app:layout_constraintBottom_toBottomOf="@+id/cvvEditTextInput"
         app:layout_constraintEnd_toStartOf="@+id/cvvEditTextInput"
         app:layout_constraintTop_toTopOf="@+id/cvvEditTextInput"
@@ -117,14 +121,18 @@
 
     <TextView
         android:id="@+id/enterCVVLabelTextView"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="29dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_nine_dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:text="@string/enter_cvv_number_label"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="@dimen/fifteen_sp"
+        app:autoSizeMinTextSize="@dimen/fifteen_sp"
+        app:autoSizeMaxTextSize="@dimen/sixteen_sp"
+        app:autoSizeStepGranularity="@dimen/one_dp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@+id/ccvIconImageView"
         app:layout_constraintEnd_toStartOf="@+id/ccvIconImageView"
         app:layout_constraintStart_toStartOf="parent"
@@ -178,10 +186,10 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
-            android:textColor="@color/black"
             android:letterSpacing="0.12"
             android:text="@string/change_label"
             android:textAllCaps="true"
+            android:textColor="@color/black"
             android:textSize="12sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -193,6 +201,7 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:text="@string/placeholder"
+        android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/cardItemImageView"
         app:layout_constraintEnd_toStartOf="@+id/cardExpiredTagTextView"
@@ -229,12 +238,32 @@
         app:layout_constraintEnd_toStartOf="@+id/changeTextViewShimmerLayout"
         app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView" />
 
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/amountEndGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="start"
-        app:constraint_referenced_ids="editAmountImageView" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/amountBeginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/amountBarrierEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="amountEndGuideline" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/amountBarrierBegin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="amountBeginGuideline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
