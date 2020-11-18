@@ -15,7 +15,6 @@
         android:text="@string/please_note_title"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
-        app:WTextView_font="medium_bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

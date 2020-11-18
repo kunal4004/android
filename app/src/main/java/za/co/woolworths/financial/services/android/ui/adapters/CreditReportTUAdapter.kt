@@ -67,6 +67,8 @@ class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<Recycle
                 val listItem = LayoutInflater.from(context).inflate(R.layout.layout_credit_report_app_feature_list_item, null, false)
                 listItem.app_feature_list_title_text.text = context.getString(feature)
                 listItem.app_feature_list_title_text.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, featureDrawableList[i]), null, null, null)
+                if (i == (featureList.size - 1))
+                    listItem.layoutDivider.visibility = View.GONE
                 itemView.app_feature_list_container.addView(listItem)
             }
         }

@@ -6,10 +6,10 @@
     android:layout_height="wrap_content">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/terms_list_item_bullet"
+        android:id="@+id/policy_list_item_bullet"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/twenty_five_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
         android:gravity="top"
         android:text="@string/privacy_policy_bullet_point"
         android:textColor="@color/permanent_card_block_desc_color"
@@ -23,19 +23,19 @@
         android:id="@+id/privacy_policy_list_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/ten_dp"
-        android:layout_marginStart="@dimen/fifteen_dp"
-        android:layout_marginEnd="@dimen/twenty_five_dp"
-        android:drawablePadding="@dimen/fifteen_dp"
+        android:layout_marginVertical="@dimen/sixteen_dp"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:drawablePadding="@dimen/twenty_dp"
         android:gravity="center|start"
-        android:lineSpacingExtra="@dimen/three_dp"
+        android:lineSpacingExtra="@dimen/five_dp"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="@dimen/sixteen_sp"
+        android:textSize="@dimen/fifteen_sp"
         app:WTextView_font="myriadpro_regular"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/terms_list_item_bullet"
+        app:layout_constraintStart_toEndOf="@+id/policy_list_item_bullet"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
