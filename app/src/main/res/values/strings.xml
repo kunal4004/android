@@ -1744,5 +1744,6 @@
     <string name="earliest_collection_date">Earliest Collection date:</string>
     <string name="credit_and_combination_title">Credit &amp; Combination Card</string>
     <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
+    <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
 </resources>
 
