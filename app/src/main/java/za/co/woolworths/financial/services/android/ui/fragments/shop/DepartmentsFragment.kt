@@ -137,7 +137,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories)
+        if(Utils.isLocationEnabled(activity) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories)
+        }
         mDepartmentAdapter?.notifyDataSetChanged()
         executeValidateSuburb()
     }
@@ -169,9 +171,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun onDashBannerClicked() {
         activity?.apply {
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(DashDetailsActivity.WOOLIES_APP_PACKAGE_NAME)
+            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
+
+            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance().dash?.packageName ?: "")
             if (intent == null) {
-                KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
                 KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
             } else {
                 // Launch the woolies dash if already downloaded/installed

@@ -146,8 +146,10 @@ object OneAppService : RetrofitConfig() {
 
     fun getRootCategory(suburbId: String?, locationEnabled: Boolean): Call<RootCategories> {
         var location: Location? = null
-        if(locationEnabled){
-           location = getMyLocation()
+        if (locationEnabled) {
+            location = getMyLocation()
+//            location.latitude = -33.907630
+//            location.longitude = 18.408380
         }
 
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), location?.latitude, location?.longitude, suburbId)
@@ -377,6 +379,7 @@ object OneAppService : RetrofitConfig() {
     fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
         return mApiInterface.removePromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
     }
+
     fun queryServicePayURemovePaymentMethod(paymenToken: String): Call<DeleteResponse> {
         return mApiInterface.payURemovePaymentMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), paymenToken)
     }

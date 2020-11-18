@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
+import za.co.woolworths.financial.services.android.models.dto.Dash;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
@@ -125,6 +126,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ProductDetailsPage productDetailsPage;
 
     private static CreditView creditView;
+    private Dash dash;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -609,5 +611,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setCreditView(CreditView creditView) {
         WoolworthsApplication.creditView = creditView;
+    }
+
+    public void setDash(Dash dash) {
+        this.dash = dash;
+    }
+
+    public Dash getDash() {
+        return dash;
     }
 }

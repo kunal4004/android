@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_dash_details.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.OneAppEvents
@@ -23,11 +24,6 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var dashAdapter: DashDetailsAdapter
     private var wooliesAppLink: String? = null
-
-    companion object {
-        const val WOOLIES_APP_PACKAGE_NAME = "com.awfs.coordination"
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,9 +82,9 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
             this.startActivity(intent)
 
         } catch (e: ActivityNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$WOOLIES_APP_PACKAGE_NAME")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dash?.packageName}")))
         } catch (e: PackageManager.NameNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$WOOLIES_APP_PACKAGE_NAME")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dash?.packageName}")))
         }
     }
 }
