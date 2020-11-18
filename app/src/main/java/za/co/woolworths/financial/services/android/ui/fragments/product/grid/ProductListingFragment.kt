@@ -144,8 +144,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
-
+    private fun setTitle() {
+        if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment){
+           return
+        }
+        (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
+    }
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
             val productLists = response.products
             if (mProductList?.isNullOrEmpty() == true)
@@ -465,7 +469,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         setHasOptionsMenu(true)
-        menuActionSearch?.isVisible = !hidden
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
                 true -> lockDrawerFragment()
@@ -479,6 +482,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
             }
 
+            invalidateOptionsMenu()
         }
     }
 
