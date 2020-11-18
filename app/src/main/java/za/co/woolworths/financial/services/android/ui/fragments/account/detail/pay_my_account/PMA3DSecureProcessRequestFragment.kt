@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
@@ -209,13 +210,17 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
             }
 
             R.id.backToMyAccountButton -> {
-                payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
-                activity?.apply {
-                    setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
-                    finish()
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                }
+                finishActivity()
             }
+        }
+    }
+
+    private fun finishActivity() {
+        payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
+        activity?.apply {
+            setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE, Intent().putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
     }
 
@@ -229,12 +234,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
-                activity?.apply {
-                    setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
-                    finish()
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                }
+                finishActivity()
                 true
             }
             else -> super.onOptionsItemSelected(item)
