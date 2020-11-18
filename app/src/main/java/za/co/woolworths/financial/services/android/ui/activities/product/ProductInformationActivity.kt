@@ -53,12 +53,18 @@ class ProductInformationActivity : AppCompatActivity() {
         productDetails?.apply {
             when (productInformationType) {
                 ProductInformationType.DETAILS -> {
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_DETAILS_INFORMATION_PRODUCT_ID] = productId
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAILS_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductDetailsInformationFragment.newInstance(longDescription, productId),
                             tag = ProductDetailsInformationFragment::class.java.simpleName,
                             containerViewId = R.id.fragmentContainer)
                 }
                 ProductInformationType.INGREDIENTS -> {
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INGREDIENTS_INFORMATION_PRODUCT_ID] = productId
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_INGREDIENTS_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductIngredientsInformationFragment.newInstance(this.ingredients),
                             tag = ProductIngredientsInformationFragment::class.java.simpleName,
@@ -74,12 +80,18 @@ class ProductInformationActivity : AppCompatActivity() {
                             containerViewId = R.id.fragmentContainer)
                 }
                 ProductInformationType.ALLERGEN_INFO -> {
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ALLERGEN_INFORMATION_PRODUCT_ID] = productId
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_ALLERGEN_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductAllergensInformationFragment.newInstance(this.allergens.get(0)),
                             tag = ProductAllergensInformationFragment::class.java.simpleName,
                             containerViewId = R.id.fragmentContainer)
                 }
                 ProductInformationType.DIETARY_INFO -> {
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DIETARY_INFORMATION_PRODUCT_ID] = productId
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_DIETARY_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductDietaryInformationFragment.newInstance(this.dietary.get(0)),
                             tag = ProductDietaryInformationFragment::class.java.simpleName,
