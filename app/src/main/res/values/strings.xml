@@ -1748,5 +1748,13 @@
     <string name="overdue_amount_label">Overdue Amount</string>
     <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
+
+    <!-- Credit Report Transunion -->
+    <string name="credit_report_title_tu">CREDIT REPORT</string>
+    <string name="register_or_login_now">REGISTER OR LOG IN NOW</string>
+    <string name="access_your_full_credit_report">Access your full credit report</string>
+    <string name="view_your_credit_overview_and_history">View your credit overview and history</string>
+    <string name="compare_your_bebt_level_to_your_income">Compare your debt level to your income</string>
+    <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
 </resources>
 
