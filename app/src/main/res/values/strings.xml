@@ -1632,7 +1632,6 @@
     <string name="card_expired">Expired</string>
     <string name="use_this_card_button_label">Use this card</string>
     <string name="credit_debit_cards_label">Credit &amp; Debit Cards</string>
-    <string name="enter_cvv_number_label">Enter your CVV Number:</string>
     <string name="undo">Undo</string>
     <string name="add_a_new_card_button_label">Add A New Card</string>
     <string name="remove_this_card_button_label">Remove this card</string>
