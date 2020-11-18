@@ -27,10 +27,12 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupRecyclerView() {
-        recycler_view_credit_report_details.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         creditReportAdapter = CreditReportTUAdapter(this)
-        recycler_view_credit_report_details.adapter = creditReportAdapter
-        recycler_view_credit_report_details.isNestedScrollingEnabled = false
+        recycler_view_credit_report_details.apply {
+            adapter = creditReportAdapter
+            layoutManager = LinearLayoutManager(this@CreditReportTUActivity, RecyclerView.VERTICAL, false)
+            isNestedScrollingEnabled = false
+        }
     }
 
     private fun setUpActionBar() {

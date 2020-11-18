@@ -1756,5 +1756,14 @@
     <string name="view_your_credit_overview_and_history">View your credit overview and history</string>
     <string name="compare_your_bebt_level_to_your_income">Compare your debt level to your income</string>
     <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
+    <string name="transunion_personal_info_note">To use this service, TransUnion will require some of your personal information.</string>
+    <string name="privacy_policy_note">You can view the Privacy Policy to find out more about how we use and protect your personal information.</string>
+    <string name="credit_report_title_details">Register with TransUnion to Check Your Credit Score and Stay Credit Healthy.</string>
+    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, please register an account using your personal information.
+
+Your credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile. </string>
+    <string name="please_note_title">Please Note</string>
+    <string name="privacy_policy_bullet_point">\u2022</string>
+
 </resources>
 
