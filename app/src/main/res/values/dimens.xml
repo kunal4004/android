@@ -55,7 +55,6 @@
     <dimen name="zero_dp">0dp</dimen>
     <dimen name="three_dp">3dp</dimen>
     <dimen name="eleven_dp">11dp</dimen>
-    <dimen name="seven_dp">7dp</dimen>
     <dimen name="twenty_four_dp">24dp</dimen>
     <dimen name="twenty_dp">20dp</dimen>
     <dimen name="twelve_dp">12dp</dimen>
