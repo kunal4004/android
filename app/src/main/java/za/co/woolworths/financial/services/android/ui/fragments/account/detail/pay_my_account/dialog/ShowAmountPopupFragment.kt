@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -160,6 +161,13 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@ShowAmountPopupFragment)
         }
+
+        with(viewOtherPaymentOptionsTextView) {
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@ShowAmountPopupFragment)
+        }
+
+        viewOtherPaymentOptionsTextView?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
     }
 
     @SuppressLint("DefaultLocale")
@@ -183,6 +191,9 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                         setCVVNumber(cvvEditTextInput?.text?.toString())
                         navController?.navigate(R.id.action_displayVendorCardDetailFragment_to_PMAProcessRequestFragment)
                     }
+
+                    R.id.viewOtherPaymentOptionsTextView -> dismiss()
+
                     else -> return@with
                 }
             } else {
@@ -198,6 +209,12 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                             ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
                         }
                     }
+
+                    R.id.viewOtherPaymentOptionsTextView -> {
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getCardDetail())
+                        dismiss()
+                    }
+
                     R.id.pmaConfirmPaymentButton -> {
                         setCVVNumber(cvvEditTextInput?.text?.toString())
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.SECURE_3D, true)

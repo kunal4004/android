@@ -116,4 +116,5 @@
     <color name="red_color">#D0021B</color>
     <color name="white_desc">#C4C5C7</color>
     <color name="error_color_code">#D0021B</color>
+    <color name="link_text_color">#7F7F7F</color>
 </resources>
