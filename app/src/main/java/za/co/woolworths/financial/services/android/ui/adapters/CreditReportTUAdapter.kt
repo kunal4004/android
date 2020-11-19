@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -10,7 +12,6 @@ import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list.view
 import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list_item.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy_list_item.view.*
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 
 class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -76,7 +78,10 @@ class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<Recycle
         val spanableNote = SpannableString(context.getString(R.string.privacy_policy_note_2))
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
-                Toast.makeText(context, context.getString(R.string.privacy_policy_note_2), Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(AppConstant.PRIVACY_POLICY_CREDIT_REPORT_LINK)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
             }
 
             override fun updateDrawState(ds: TextPaint) {
