@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.CreditReportTUAda
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
+class CreditReportTUActivity : AppCompatActivity() {
 
     private lateinit var creditReportAdapter: CreditReportTUAdapter
 
@@ -23,7 +23,6 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
         setUpActionBar()
         setupRecyclerView()
-        register_login_now_btn.setOnClickListener(this)
     }
 
     private fun setupRecyclerView() {
@@ -58,9 +57,5 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
     override fun onBackPressed() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-    }
-
-    override fun onClick(view: View?) {
-
     }
 }
