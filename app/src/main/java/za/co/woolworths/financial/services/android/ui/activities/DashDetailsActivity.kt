@@ -40,10 +40,13 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupRecyclerView() {
-        recycler_view_dash_details.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        dashAdapter = DashDetailsAdapter(this)
-        recycler_view_dash_details.adapter = dashAdapter
-        recycler_view_dash_details.isNestedScrollingEnabled = false
+        
+        recycler_view_dash_details.apply {
+            layoutManager = LinearLayoutManager(this@DashDetailsActivity, RecyclerView.VERTICAL, false)
+            dashAdapter = DashDetailsAdapter(this@DashDetailsActivity)
+            adapter = dashAdapter
+            isNestedScrollingEnabled = false
+        }
     }
 
     private fun actionBar() {
