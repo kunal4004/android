@@ -305,11 +305,16 @@ fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
 inline fun <reified T : Enum<T>> Intent.putEnumExtra(victim: T): Intent =
         putExtra(T::class.java.name, victim.ordinal)
 
-inline fun <reified T: Enum<T>> Intent.getEnumExtra(): T? =
+inline fun <reified T : Enum<T>> Intent.getEnumExtra(): T? =
         getIntExtra(T::class.java.name, -1)
                 .takeUnless { it == -1 }
                 ?.let { T::class.java.enumConstants?.get(it) }
 
+
+/**
+ * addOnGlobalLayoutListener:: This listener gets called: - when visibility state changes. In example when view has been drawn
+ * it becomes visible and this gets called. - when you addView state of view tree changes
+ */
 fun <T : View> T.width(function: (Int) -> Unit) {
     if (width == 0)
         viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -322,10 +327,15 @@ fun <T : View> T.width(function: (Int) -> Unit) {
 }
 
 
+/**
+ * addOnPreDrawListener:: Gets called just before onDraw() method gets invoked. At this point, all views in the tree have been
+ * measured and given a frame. Therefore you can properly manipulate view in this callback
+ */
+
 fun <T : View> T.measuredWidth(function: (Int) -> Unit) {
     if (width == 0)
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw() : Boolean{
+            override fun onPreDraw(): Boolean {
                 viewTreeObserver.removeOnPreDrawListener(this)
                 function(measuredWidth)
                 return true
@@ -333,3 +343,5 @@ fun <T : View> T.measuredWidth(function: (Int) -> Unit) {
         })
     else function(measuredWidth)
 }
+
+

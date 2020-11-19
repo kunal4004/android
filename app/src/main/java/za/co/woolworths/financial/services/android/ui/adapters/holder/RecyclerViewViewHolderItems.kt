@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -15,8 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaSemiBoldFont
-import za.co.woolworths.financial.services.android.ui.extension.measuredWidth
-import za.co.woolworths.financial.services.android.ui.extension.width
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -82,16 +81,13 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
         with(itemView) {
-            imProductImage.width { width ->
-                val reducedPlaceHolderWidth: Int = width / 2
-                imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
-
-            }
-
-            imProductImage.measuredWidth { measuredWidth ->
-                val reducedPlaceHolderWidth: Int = measuredWidth / 2
-                imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
-            }
+            imProductImage?.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(v: View?, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+                    imProductImage?.removeOnLayoutChangeListener(this)
+                    val reducedPlaceHolderWidth: Int = width / 2
+                    imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
+                }
+            })
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
