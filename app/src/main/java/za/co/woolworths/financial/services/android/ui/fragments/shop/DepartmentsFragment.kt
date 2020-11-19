@@ -329,9 +329,4 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             }
         }
     }
-
-    override fun onPopUpLocationDialogMethod() {
-
-    }
-
 }
