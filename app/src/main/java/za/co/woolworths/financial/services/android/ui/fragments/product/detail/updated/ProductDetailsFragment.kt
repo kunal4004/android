@@ -820,8 +820,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 item.let {
                     listOfItems.add(it)
                 }
-                val scrollView = findViewById<NestedScrollView>(R.id.scrollView)
-                scrollView.fullScroll(View.FOCUS_UP)
+                scrollView?.fullScroll(View.FOCUS_UP)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
             }
 
