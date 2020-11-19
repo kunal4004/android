@@ -55,7 +55,8 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -63,7 +64,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_centerHorizontal="true"
                             android:contentDescription="@string/credit_report_title_tu"
-                            android:scaleType="centerCrop"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/header_image" />
                     </RelativeLayout>
                 </androidx.appcompat.widget.Toolbar>
@@ -90,23 +91,30 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/register_login_now_btn"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/twenty_four_dp"
-        android:background="@color/black"
-        android:fontFamily="@font/futura_semi_bold"
-        android:gravity="center"
-        android:letterSpacing="0.2"
-        android:minHeight="@dimen/fifty_dp"
-        android:paddingHorizontal="@dimen/sixty_six_dp"
-        android:paddingVertical="@dimen/nineteen_dp"
-        android:text="@string/register_or_login_now"
-        android:textColor="@color/white"
-        android:textSize="@dimen/twelve_sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/register_login_now_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/twenty_four_dp"
+            android:background="@color/black"
+            android:fontFamily="@font/futura_semi_bold"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:minHeight="@dimen/fifty_dp"
+            android:paddingHorizontal="@dimen/sixty_six_dp"
+            android:paddingVertical="@dimen/nineteen_dp"
+            android:text="@string/register_or_login_now"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

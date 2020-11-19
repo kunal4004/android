@@ -1,16 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list_item.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy_list_item.view.*
+
 
 class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -19,7 +28,11 @@ class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<Recycle
     val featureList = arrayOf(R.string.access_your_full_credit_report, R.string.view_your_credit_overview_and_history,
             R.string.compare_your_bebt_level_to_your_income, R.string.understand_your_credit_score_changes)
     val featureDrawableList = arrayOf(R.drawable.document_icon, R.drawable.profile_icon, R.drawable.auto_icon, R.drawable.question_icon)
-    val privacyPolicy = arrayOf(R.string.transunion_personal_info_note, R.string.privacy_policy_note)
+    private val policyNote = SpannableStringBuilder()
+            .append(context.getString(R.string.privacy_policy_note_1))
+            .append(getClickablePolicyNote())
+            .append(context.getString(R.string.privacy_policy_note_3))
+    val privacyPolicy = arrayOf(context.getString(R.string.transunion_personal_info_note), policyNote)
 
     companion object {
         const val ITEMS_COUNT = 3
@@ -59,6 +72,24 @@ class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<Recycle
         }
     }
 
+    private fun getClickablePolicyNote(): SpannableString {
+        val spanableNote = SpannableString(context.getString(R.string.privacy_policy_note_2))
+        val clickableSpan: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(textView: View) {
+                Toast.makeText(context, context.getString(R.string.privacy_policy_note_2), Toast.LENGTH_SHORT).show()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.isUnderlineText = true
+                ds.color = getColor(context, (R.color.permanent_card_block_desc_color))
+            }
+        }
+        spanableNote.setSpan(clickableSpan, 0, spanableNote.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spanableNote
+    }
+
+
     inner class HeaderTitleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     inner class AppFeatureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -79,7 +110,8 @@ class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<Recycle
             val layoutInflater = LayoutInflater.from(context)
             for (policy in privacyPolicy) {
                 val listItem = layoutInflater.inflate(R.layout.layout_credit_report_privacy_policy_list_item, null, false)
-                listItem.privacy_policy_list_title_text.text = context.getString(policy)
+                listItem.privacy_policy_list_title_text.text = policy
+                listItem.privacy_policy_list_title_text.movementMethod = LinkMovementMethod.getInstance()
                 itemView.credit_report_privacy_policy_list_container.addView(listItem)
             }
         }

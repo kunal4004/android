@@ -3,7 +3,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/policy_list_item_bullet"
@@ -22,12 +22,12 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/privacy_policy_list_title_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/sixteen_dp"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/twenty_two_dp"
         android:layout_marginStart="@dimen/twenty_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:drawablePadding="@dimen/twenty_dp"
         android:gravity="center|start"
+        android:linksClickable="true"
         android:lineSpacingExtra="@dimen/five_dp"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="@dimen/fifteen_sp"
