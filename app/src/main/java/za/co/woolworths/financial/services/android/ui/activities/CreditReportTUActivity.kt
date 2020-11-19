@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_credit_report_tu.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.adapters.CreditReportTUAdapter
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.openBrowserWithUrl
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class CreditReportTUActivity : AppCompatActivity() {
+class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var creditReportAdapter: CreditReportTUAdapter
 
@@ -23,6 +26,7 @@ class CreditReportTUActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
         setUpActionBar()
         setupRecyclerView()
+        register_login_now_btn.setOnClickListener(this)
     }
 
     private fun setupRecyclerView() {
@@ -57,5 +61,10 @@ class CreditReportTUActivity : AppCompatActivity() {
     override fun onBackPressed() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    override fun onClick(view: View?) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE)
+        openBrowserWithUrl(WoolworthsApplication.getCreditView().transUnionLink, this)
     }
 }

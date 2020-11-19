@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import android.app.Activity
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -21,9 +19,10 @@ import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list_item
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy_list_item.view.*
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 
-class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CreditReportTUAdapter(val context: Activity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     enum class CreditReportViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), PRIVACY_POLICY(2) }
 
@@ -78,10 +77,7 @@ class CreditReportTUAdapter(val context: Context) : RecyclerView.Adapter<Recycle
         val spanableNote = SpannableString(context.getString(R.string.privacy_policy_note_2))
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(AppConstant.PRIVACY_POLICY_CREDIT_REPORT_LINK)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
+                KotlinUtils.openBrowserWithUrl(AppConstant.PRIVACY_POLICY_CREDIT_REPORT_LINK, context)
             }
 
             override fun updateDrawState(ds: TextPaint) {
