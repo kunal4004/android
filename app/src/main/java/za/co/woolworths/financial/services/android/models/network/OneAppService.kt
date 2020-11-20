@@ -148,8 +148,9 @@ object OneAppService : RetrofitConfig() {
         var location: Location? = null
         if (locationEnabled) {
             location = getMyLocation()
-//            location.latitude = -33.907630
-//            location.longitude = 18.408380
+            // Hardcoding only for testing purpose.
+            location.latitude = -33.907630
+            location.longitude = 18.408380
         }
 
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), location?.latitude, location?.longitude, suburbId)
