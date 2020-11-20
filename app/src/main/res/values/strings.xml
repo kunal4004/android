@@ -1657,7 +1657,7 @@
     <string name="available_voucher_toast_message">\u0020voucher</string>
     <string name="available_vouchers_toast_message">\u0020vouchers</string>
     <string name="available">\u0020available</string>
-    <string name="available_vouchers">vouchers available</string>
+    <string name="vouchers_available">available vouchers</string>
     <string name="applying_your_vouchers">Applying Your Vouchers</string>
     <string name="redeem">Redeem</string>
     <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>

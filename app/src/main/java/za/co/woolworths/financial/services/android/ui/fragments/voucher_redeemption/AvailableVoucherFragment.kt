@@ -32,7 +32,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.available_vouchers)
+        activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.vouchers_available)
         redeemVoucher?.setOnClickListener(this)
         showAvailableVouchers()
     }
