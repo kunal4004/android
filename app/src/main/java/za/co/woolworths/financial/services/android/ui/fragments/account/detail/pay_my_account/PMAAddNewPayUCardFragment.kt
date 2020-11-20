@@ -95,6 +95,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
 
     private fun autoConnectionListener() {
         activity?.let { act ->
+
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(act, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     when (hasConnection && !payMyAccountViewModel.isAddNewCardFormLoaded) {
