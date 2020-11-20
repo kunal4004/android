@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list.view
 import kotlinx.android.synthetic.main.layout_credit_report_app_feature_list_item.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy.view.*
 import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy_list_item.view.*
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 
@@ -77,7 +77,7 @@ class CreditReportTUAdapter(val context: Activity) : RecyclerView.Adapter<Recycl
         val spanableNote = SpannableString(context.getString(R.string.privacy_policy_note_2))
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
-                KotlinUtils.openBrowserWithUrl(AppConstant.PRIVACY_POLICY_CREDIT_REPORT_LINK, context)
+                KotlinUtils.openBrowserWithUrl(WoolworthsApplication.getCreditView().transUnionPrivacyPolicyUrl, context)
             }
 
             override fun updateDrawState(ds: TextPaint) {

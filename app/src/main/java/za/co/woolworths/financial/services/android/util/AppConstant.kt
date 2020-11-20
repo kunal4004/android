@@ -24,8 +24,5 @@ class AppConstant {
         const val HTTP_SESSION_TIMEOUT_440: Int = 440
         const val HTTP_EXPECTATION_FAILED_502: Int = 502
         const val HTTP_SESSION_TIMEOUT_400: Int = 400
-
-        const val PRIVACY_POLICY_CREDIT_REPORT_LINK = "https://www.transunion.co.za/legal/privacy-policy"
-
     }
 }
