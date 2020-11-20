@@ -1,10 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -21,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
@@ -41,8 +46,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.util.*
 
-class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ILocationProvider {
+class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
+    private lateinit var locationManager: LocationManager
     private var isRootCatCallInProgress: Boolean = false
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -85,18 +91,17 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun startLocationUpdates() {
         activity?.apply {
-            mFuseLocationAPISingleton?.apply {
-                addLocationChangeListener(this@DepartmentsFragment)
-                startLocationUpdate()
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return
             }
         }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this@DepartmentsFragment)
     }
 
-    fun stopLocationUpdate() {
+    private fun stopLocationUpdate() {
         // stop location updates
-        mFuseLocationAPISingleton?.apply {
-            stopLocationUpdate()
-        }
+        locationManager.removeUpdates(this@DepartmentsFragment)
     }
 
     private fun executeDepartmentRequest() {
@@ -221,6 +226,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+
         if (!hidden) {
             activity?.apply {
                 executeValidateSuburb()
@@ -311,7 +317,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
     }
 
-    override fun onLocationChange(location: Location?) {
+    override fun onLocationChanged(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)
             stopLocationUpdate()
@@ -327,5 +333,17 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 executeDepartmentRequest()
             }
         }
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        //Do nothing
+    }
+
+    override fun onProviderEnabled(provider: String?) {
+        //Do nothing
+    }
+
+    override fun onProviderDisabled(provider: String?) {
+        //Do nothing
     }
 }
