@@ -4,29 +4,30 @@ class FirebaseManagerAnalyticsProperties {
     companion object {
 
         const val WTODAYMENU = "GA_Event_ONE_WTODAYMENU"
-        const val SHOPMENU: String = "GA_Event_ONE_SHOPMENU"
+        const val SHOPMENU: String = "one_shopmenu"
         const val MYCARTMENU: String = "GA_Event_ONE_MYCARTMENU"
-        const val WREWARDSMENU: String = "GA_Event_ONE_WREWARDSMENU"
-        const val MYACCOUNTSMENU: String = "GA_Event_ONE_MYACCOUNTSMENU"
+        const val WREWARDSMENU: String = "one_wrewardsmenu"
+        const val MYACCOUNTSMENU: String = "one_myaccountsmenu"
         const val MYACCOUNTSSIGNIN: String = "GA_Event_ONE_MYACCOUNTSSIGNIN"
         const val WREWARDSSIGNIN: String = "GA_Event_ONE_WREWARDSSIGNIN"
         const val MYACCOUNTSREGISTER: String = "GA_Event_ONE_MYACCOUNTSREGISTER"
-        const val WREWARDSREGISTER: String = "GA_Event_ONE_WREWARDSREGISTER"
+        const val WREWARDSREGISTER: String = "one_wrewardsregister"
         const val SHOPSEARCHBAR: String = "GA_Event_ONE_SHOPSEARCHBAR"
         const val SHOPBARCODE: String = "GA_Event_ONE_SHOPBARCODE"
         const val MYCARTEXIT: String = "GA_Event_ONE_MYCARTEXIT"
         const val MYCARTDELIVERY: String = "GA_Event_ONE_MYCARTDELIVERY"
         const val SHOPADDTOLIST: String = "GA_Event_ONE_SHOPADDTOLIST"
         const val SHOPNEWLIST: String = "GA_Event_ONE_SHOPNEWLIST"
+
         //const val SHOPSHOPPINGLIST: String = "GA_Event_ONE_SHOPSHOPPINGLIST"
         const val MYACCOUNTSSHOPPINGLIST: String = "GA_Event_ONE_MYACCOUNTSSHOPPINGLIST"
         const val MYCARTADDTOLIST: String = "GA_Event_ONE_MYCARTADDTOLIST"
         const val MYCARTCHECKOUT: String = "GA_Event_ONE_MYCARTCHECKOUT"
         const val MYCARTREMOVEALL: String = "GA_Event_ONE_MYCARTREMOVEALL"
-        const val WREWARDSOVERVIEW: String = "GA_Event_ONE_WREWARDSOVERVIEW"
+        const val WREWARDSOVERVIEW: String = "one_wrewardsoverview"
         const val WREWARDSVOUCHERS: String = "GA_Event_ONE_WREWARDSVOUCHERS"
-        const val WREWARDSSAVINGS: String = "GA_Event_ONE_WREWARDSSAVINGS"
-        const val WREWARDSFLIP: String = "GA_Event_ONE_WREWARDSFLIP"
+        const val WREWARDSSAVINGS: String = "one_wrewardssavings"
+        const val WREWARDSFLIP: String = "one_wrewardsflip"
         const val WREWARDSDESCRIPTION_VOUCHERDESCRIPTION: String = "GA_Event_ONE_WREWARDSDESCRIPTION"
         const val MYACCOUNTSSTORECARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_SC_APPLYNOW"
         const val MYACCOUNTSCREDITCARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_CC_APPLYNOW"
@@ -36,7 +37,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSSTORECARDTRANSACTIONS: String = "GA_Event_ONE_MYACCOUNTS_SC_TRANSACTIONS"
         const val MYACCOUNTSSTORECARDSTATEMENTS: String = "GA_Event_ONE_MYACCOUNTS_SC_STATEMENTS"
         const val MYACCOUNTSPERSONALLOANTRANSACTIONS: String = "GA_Event_ONE_MYACCOUNTS_PL_TRANSACTIONS"
-        const val MYACCOUNTSPERSONALLOANSTATEMENTS: String = "GA_Event_ONE_MYACCOUNTS_PL_STATEMENTS"
+        const val MYACCOUNTSPERSONALLOANSTATEMENTS: String = "one_myaccounts_pl_statements"
         const val MYACCOUNTSCREDITCARDBPI: String = "GA_Event_ONE_MYACCOUNTS_CC_BPI"
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
@@ -63,11 +64,11 @@ class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_SET_UP_PASSOCDE: String = "GA_Event_ONE_ABSA_CC_SETUP_PASSOCDE"
         const val ABSA_CC_COMPLETE_SETUP: String = "GA_Event_ONE_ABSA_CC_COMPLETE_SETUP"
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "GA_Event_ONE_CC_LOGIN_WITH_NEW_PASSCODE"
-        const val ABSA_CC_VIEW_STATEMENTS: String = "GA_Event_ONE_ABSA_CC_VIEW_STATEMENTS"
+        const val ABSA_CC_VIEW_STATEMENTS: String = "one_absa_cc_view_statements"
         const val ABSA_CC_SHARE_STATEMENT: String = "GA_Event_ONE_ABSA_CC_SHARE_STATEMENT"
-        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "GA_Event_ONE_ABSA_CC_VIEW_IND_STATEMENT"
+        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "one_absa_cc_view_ind_statements"
 
-        const val SHOPQS_ADD_TO_CART = "GA_Event_ONE_SHOPQS_ADD_TO_CART"
+        const val SHOPQS_ADD_TO_CART = "one_shopqs_add_to_cart"
         const val SHOP_SCAN_CODE = "GA_Event_ONE_SHOPSCANCODE"
 
         const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
@@ -193,8 +194,8 @@ class FirebaseManagerAnalyticsProperties {
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
             const val C2ID: String = "C2Id"
             const val ATGId: String = "ATGId"
-            const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
-            const val DESCRIPTION : String = "DESCRIPTION"
+            const val SORT_OPTION_NAME: String = "SORTBY_OPTION_NAME"
+            const val DESCRIPTION: String = "DESCRIPTION"
             const val CANCEL_ORDER_TAP = "Cancel Order Tap"
             const val CONFIRM_CANCEL = "Confirm Cancel"
             const val CANCEL_CANCEL = "Cancel Cancel"
@@ -314,6 +315,6 @@ class FirebaseManagerAnalyticsProperties {
     }
 
     enum class EntryPoint(val value: String) {
-        DEEP_LINK("Deep_Link"),MANUAL_SEARCH("Manual_Search"),QR_CODE("QR_Codes")
+        DEEP_LINK("Deep_Link"), MANUAL_SEARCH("Manual_Search"), QR_CODE("QR_Codes")
     }
 }
