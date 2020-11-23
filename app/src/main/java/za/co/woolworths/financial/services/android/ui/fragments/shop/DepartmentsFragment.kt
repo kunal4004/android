@@ -2,44 +2,38 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_shop_department.*
-import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.RootCategories
+import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -95,8 +89,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return
             }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this@DepartmentsFragment)
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this@DepartmentsFragment)
     }
 
     private fun stopLocationUpdate() {
@@ -108,9 +102,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
             isRootCatCallInProgress = true
-            val suburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+            val data = mapOf(
+                    if (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true) {
+                        "storeId" to Utils.getPreferredDeliveryLocation()?.suburb?.id
+                    } else {
+                        "suburbId" to Utils.getPreferredDeliveryLocation()?.suburb?.id
+                    }
+            )
 
-            rootCategoryCall = OneAppService.getRootCategory(suburbId, Utils.isLocationEnabled(context))
+            rootCategoryCall = OneAppService.getRootCategory(data, Utils.isLocationEnabled(context))
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     isRootCatCallInProgress = false
@@ -211,6 +211,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             ?: false
 
     override fun onDestroy() {
+        mDepartmentAdapter?.removeDashBanner()
         super.onDestroy()
         rootCategoryCall?.apply {
             if (isCanceled)

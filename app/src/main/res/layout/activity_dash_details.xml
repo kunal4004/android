@@ -25,7 +25,7 @@
                 android:gravity="center"
                 android:padding="@dimen/fifteen_dp"
                 android:paddingHorizontal="@dimen/fifteen_dp"
-                android:text="@string/dash_details_food_items_only"
+                android:text="@string/dash_details_food_order"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_12sp"
                 app:WTextView_font="medium_bold"
@@ -59,7 +59,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
                             android:layout_centerHorizontal="true"
-                            android:scaleType="centerCrop"
+                            android:scaleType="fitCenter"
                             android:src="@drawable/bg_info_banner" />
                     </RelativeLayout>
                 </androidx.appcompat.widget.Toolbar>
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/color_F8F8F8"
                 android:nestedScrollingEnabled="false"
-                android:paddingBottom="@dimen/eighty_dp"
+                android:paddingBottom="@dimen/hundred_dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/guide_toolbar_margin_horizontal" />

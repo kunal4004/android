@@ -506,7 +506,7 @@ class KotlinUtils {
                         AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK to link
                 ))
                 startActivity(mIntent)
-                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
             }
         }
     }

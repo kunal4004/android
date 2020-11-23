@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import android.location.Location
-import com.google.gson.JsonObject
-import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
@@ -144,7 +141,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getRootCategory(suburbId: String?, locationEnabled: Boolean): Call<RootCategories> {
+    fun getRootCategory(suburbId: Map<String, String?>?, locationEnabled: Boolean): Call<RootCategories> {
         var location: Location? = null
         if (locationEnabled) {
             location = getMyLocation()

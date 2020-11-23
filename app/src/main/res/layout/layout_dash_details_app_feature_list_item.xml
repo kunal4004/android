@@ -14,6 +14,7 @@
         android:paddingVertical="@dimen/twenty_five_dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_15sp"
+        android:layout_marginStart="@dimen/ten_dp"
         app:WTextView_font="myriadpro_semibold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

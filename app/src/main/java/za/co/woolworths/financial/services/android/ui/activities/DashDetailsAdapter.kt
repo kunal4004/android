@@ -19,11 +19,10 @@ import za.co.woolworths.financial.services.android.util.AppConstant
 
 class DashDetailsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val featureList = arrayOf(R.string.app_feature_shop_full_food_range, R.string.app_feature_get_delivered_in_60_min,
-            R.string.app_feature_preferred_delivery_timeslot, R.string.app_feature_track_order)
-    val featureDrawableList = arrayOf(R.drawable.ic_cart, R.drawable.ic_scooter, R.drawable.ic_time_black, R.drawable.ic_location)
-    val termsAndConditions = arrayOf(R.string.terms_and_condition_wreward_vouchers, R.string.terms_and_condition_financial_services,
-            R.string.terms_and_condition_not_qualify_for_free_delivery)
+    val featureList = arrayOf(R.string.dash_details_what_you_ll_love, R.string.app_feature_get_delivered,
+            R.string.app_feature_world_class_freshness, R.string.app_feature_track_order)
+    val featureDrawableList = arrayOf(-1,R.drawable.ic_scooter, R.drawable.ic_cart, R.drawable.ic_location)
+    val termsAndConditions = arrayOf(R.string.terms_and_condition_wreward_vouchers, R.string.terms_and_condition_not_linked)
 
     companion object {
         const val ITEMS_COUNT = 3
@@ -70,7 +69,7 @@ class DashDetailsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerVi
             for ((i, feature) in featureList.withIndex()) {
                 val listItem = LayoutInflater.from(context).inflate(R.layout.layout_dash_details_app_feature_list_item, null, false)
                 listItem.app_feature_list_title_text.text = context.getString(feature)
-                listItem.app_feature_list_title_text.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, featureDrawableList[i]), null, null, null)
+                listItem.app_feature_list_title_text.setCompoundDrawablesWithIntrinsicBounds(if(featureDrawableList[i] != -1) ContextCompat.getDrawable(context, featureDrawableList[i]) else null, null, null, null)
                 itemView.app_feature_list_container.addView(listItem)
             }
         }
