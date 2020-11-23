@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
@@ -251,7 +250,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
             activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
         } catch (ex: IllegalStateException) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 

@@ -14,12 +14,12 @@ import com.amplifyframework.core.Amplify.Auth
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.*
 
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.util.Assets
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 
@@ -56,7 +56,7 @@ object ChatAWSAmplify {
             Amplify.configure(awsConfiguration, context)
             DeveloperMenu.singletonInstance(context).setVisible(false)
         } catch (ex: Exception) {
-            Crashlytics.log(ex.message)
+            FirebaseManager.logException(ex)
         }
     }
     

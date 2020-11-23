@@ -4,7 +4,6 @@ import android.util.Base64;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -24,6 +23,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaLoginRequest {
 
@@ -37,7 +37,7 @@ public class AbsaLoginRequest {
 		try {
 			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class AbsaLoginRequest {
 			base64EncodedEncryptedDerivedKey = Base64.encodeToString(encryptedDerivedKey, Base64.NO_WRAP);
 
 		} catch (DecryptionFailureException | UnsupportedEncodingException | KeyGenerationFailureException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 			throw new RuntimeException(e);
 		}
 
@@ -66,7 +66,7 @@ public class AbsaLoginRequest {
 		try{
 			body = new LoginRequest(encryptedAlias, deviceId, base64EncodedEncryptedDerivedKey, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getUrlEncodedFormData();
 		} catch (UnsupportedEncodingException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 
 		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>() {
@@ -79,7 +79,7 @@ public class AbsaLoginRequest {
 				try {
 					statusCode = loginResponse.getHeader().getStatusCode();
 				} catch (Exception e) {
-					Crashlytics.logException(e);
+					FirebaseManager.Companion.logException(e);
 				}
 
 				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null && statusCode.equalsIgnoreCase("0")) {

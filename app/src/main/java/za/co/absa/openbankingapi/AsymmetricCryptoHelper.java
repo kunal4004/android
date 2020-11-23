@@ -16,8 +16,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Base64;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -31,6 +29,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AsymmetricCryptoHelper {
     private static final String KEY_FACTORY_ALGORITHM = "RSA";
@@ -54,7 +54,7 @@ public class AsymmetricCryptoHelper {
             return keyFactory.generatePublic(keySpec);
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NullPointerException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             throw new AsymmetricKeyGenerationFailureException(e);
         }
     }
@@ -72,7 +72,7 @@ public class AsymmetricCryptoHelper {
             return cipherData;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             throw new AsymmetricEncryptionFailureException(e);
         }
     }

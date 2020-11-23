@@ -16,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -114,7 +113,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm?.hideSoftInputFromWindow(cvvEditTextInput.windowToken, 0)
         } catch (ex: Exception) {
-            Crashlytics.log(ex.message)
+            FirebaseManager.logException(ex)
         }
     }
 

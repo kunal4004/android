@@ -23,8 +23,6 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -41,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
@@ -261,7 +258,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-        Fabric.with(this,new Crashlytics.Builder().core(new CrashlyticsCore()).build());
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
