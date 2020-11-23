@@ -48,6 +48,8 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
             R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
+                payMyAccountViewModel.resetAmountEnteredToDefault()
+
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
 
                 if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {

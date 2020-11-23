@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
@@ -97,6 +98,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
     private fun animateChatIcon() {
         val shouldAnimateChatIcon = when (activity) {
             is BottomNavigationActivity -> chatBubbleVisibility?.isChatVisibleForAccountLanding() == true
+            is PayMyAccountActivity -> true
             else -> chatBubbleVisibility?.isChatVisibleForAccountProductsLanding(applyNowState) == true
         }
 

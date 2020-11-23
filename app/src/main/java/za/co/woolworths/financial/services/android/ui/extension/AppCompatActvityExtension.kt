@@ -328,4 +328,4 @@ inline fun <reified T : Enum<T>> Intent.putEnumExtra(victim: T): Intent =
 inline fun <reified T: Enum<T>> Intent.getEnumExtra(): T? =
         getIntExtra(T::class.java.name, -1)
                 .takeUnless { it == -1 }
-                ?.let { T::class.java.enumConstants[it] }
+                ?.let { T::class.java.enumConstants?.get(it) }

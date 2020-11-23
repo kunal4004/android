@@ -75,7 +75,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             onRetry()
         }
 
-        creditCardDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.pay_by_credit_card_desc), "Note:")
+        creditCardDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.credit_and_combination_desc), "Note:")
 
         creditDebitCardPaymentsScrollView?.background = bindDrawable(R.drawable.black_white_gradient_bg)
         pmaBottomView?.visibility = VISIBLE
@@ -149,8 +149,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         val amountEntered = cardInfo?.amountEntered
         val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
         val paymentMethodList = cardInfo?.paymentMethodList
-
-        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType)
+        val selectedCardPosition = cardInfo?.selectedCardPosition ?: 0
+        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType,selectedCardPosition = selectedCardPosition)
         payMyAccountViewModel.setPMACardInfo(card)
 
         payMyAccountViewModel.queryServicePayUPaymentMethod(
