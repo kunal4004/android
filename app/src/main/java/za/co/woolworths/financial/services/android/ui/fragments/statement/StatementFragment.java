@@ -325,7 +325,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                 if (response.body() != null) {
                                     String fileName = "statement_" + mSelectedStatement.docDesc;
                                     Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
-                                    openPdfIntent.putExtra(AppConstant.NAVIGATED_FROM, TAG);
                                     openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
                                     openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
                                     openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);

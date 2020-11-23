@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/process_request_navhost"
+    app:startDestination="@id/processRequestFragment">
+
+    <fragment
+        android:id="@+id/processRequestFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessRequestFragment"
+        android:label="ProcessRequestFragment"
+        tools:layout="@layout/processing_request_fragment">
+        <action
+            android:id="@+id/action_processRequestFragment_to_processRequestFailureFragment"
+            app:destination="@id/processRequestFailureFragment" />
+        <action
+            android:id="@+id/action_processRequestFragment_to_processRequestSuccessFragment"
+            app:destination="@id/processRequestSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/processRequestFailureFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessRequestFailureFragment"
+        android:label="ProcessRequestFailureFragment"
+        tools:layout="@layout/processing_request_failure_fragment" />
+    <fragment
+        android:id="@+id/processRequestSuccessFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessRequestSuccessFragment"
+        android:label="ProcessRequestSuccessFragment"
+        tools:layout="@layout/processing_request_success_fragment" />
+
+</navigation>

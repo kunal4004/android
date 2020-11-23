@@ -10,6 +10,7 @@
         android:id="@+id/suburbInputValue"
         android:layout_width="0dp"
         android:layout_height="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/one_dp"
         android:background="@color/white"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="@dimen/ten_dp"
@@ -20,8 +21,8 @@
         android:paddingRight="@dimen/twenty_four_dp"
         android:textColor="@color/black"
         android:textColorHint="@color/black_50"
-        android:textSize="@dimen/fifteen_sp"
         android:textCursorDrawable="@drawable/cursor_custom_color"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,9 +33,9 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/suburbInputValue" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

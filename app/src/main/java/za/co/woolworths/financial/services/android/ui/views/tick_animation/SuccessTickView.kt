@@ -10,6 +10,7 @@ import android.view.animation.Animation
 import android.view.animation.Transformation
 
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 class SuccessTickView : View {
     private var mDensity = -1f
@@ -26,6 +27,8 @@ class SuccessTickView : View {
     private var mRightRectWidth: Float = 0.toFloat()
     private var mLeftRectGrowMode: Boolean = false
 
+    var colorCode: Int = R.color.success_stroke_color
+
     constructor(context: Context) : super(context) {
         init()
     }
@@ -36,7 +39,6 @@ class SuccessTickView : View {
 
     private fun init() {
         mPaint = Paint()
-        mPaint!!.color = resources.getColor(R.color.success_stroke_color)
         mLeftRectWidth = CONST_LEFT_RECT_W
         mRightRectWidth = CONST_RIGHT_RECT_W
         mLeftRectGrowMode = false
@@ -44,8 +46,8 @@ class SuccessTickView : View {
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        var totalW:Float = width.toFloat()
-        var totalH:Float = height.toFloat()
+        var totalW: Float = width.toFloat()
+        var totalH: Float = height.toFloat()
         // rotate canvas first
         canvas.rotate(45f, (totalW / 2), (totalH / 2))
 
@@ -88,6 +90,7 @@ class SuccessTickView : View {
         mLeftRectWidth = 0f
         mRightRectWidth = 0f
         invalidate()
+        mPaint?.color = bindColor(colorCode)
         val tickAnim = object : Animation() {
             override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
                 super.applyTransformation(interpolatedTime, t)

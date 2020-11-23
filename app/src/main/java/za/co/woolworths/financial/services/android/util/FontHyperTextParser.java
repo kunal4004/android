@@ -7,10 +7,12 @@ import android.text.SpannableString;
 import com.awfs.coordination.R;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 public class FontHyperTextParser {
 
-    public static SpannableString getSpannable(String mSpannableText, int defaultFont, Context context) {
+    public static SpannableString getSpannable(String mSpannableText, int defaultFont) {
+    	Context context = WoolworthsApplication.getAppContext();
         if (context == null) return SpannableString.valueOf(mSpannableText);
         String[] split = mSpannableText.split("\\|");
         SpannableString spannableString = new SpannableString(mSpannableText.replaceAll("\\|![lmsb\\?]\\|", ""));

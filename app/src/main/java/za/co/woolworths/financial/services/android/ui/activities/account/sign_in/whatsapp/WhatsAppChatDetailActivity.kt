@@ -58,7 +58,7 @@ class WhatsAppChatDetailActivity : AppCompatActivity(), View.OnClickListener {
                 if (NetworkManager.getInstance().isConnectedToNetwork(this@WhatsAppChatDetailActivity)) {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US)
                     KotlinUtils.postOneAppEvent(appScreen ?: "",featureName ?: "")
-                    Utils.openBrowserWithUrl(WhatsAppChatToUs().whatsAppChatWithUsUrlBreakout)
+                    KotlinUtils.openBrowserWithUrl(WhatsAppChatToUs().whatsAppChatWithUsUrlBreakout, this)
                 } else {
                     ErrorHandlerView(this@WhatsAppChatDetailActivity).showToast()
                 }
