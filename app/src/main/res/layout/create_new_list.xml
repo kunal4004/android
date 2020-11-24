@@ -17,7 +17,7 @@
             android:layout_gravity="start"
             android:layout_marginStart="24dp"
             android:contentDescription="@string/shop_create_a_list"
-            app:srcCompat="@drawable/back24" />
+            app:srcCompat="@drawable/back_arrow" />
 
         <TextView
             android:id="@+id/tvToolbar"
@@ -32,7 +32,7 @@
             android:text="@string/new_list"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:textSize="@dimen/twenty_sp" />
 
         <ImageView
             android:id="@+id/imCloseIcon"
@@ -50,6 +50,7 @@
         android:id="@+id/etNewList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:background="@android:color/transparent"
         android:ems="10"
         android:gravity="center"
@@ -57,7 +58,6 @@
         android:imeOptions="actionDone"
         android:inputType="textCapWords"
         android:maxLength="50"
-        android:layout_weight="1"
         android:minHeight="200dp"
         android:singleLine="true"
         android:textColor="@color/black"
@@ -68,9 +68,10 @@
         app:layout_constraintBottom_toTopOf="@+id/tvOnErrorLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vCancelDivider" >
+        app:layout_constraintTop_toBottomOf="@+id/vCancelDivider">
+
         <requestFocus />
-        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+    </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvOnErrorLabel"
@@ -89,45 +90,54 @@
     <View
         android:id="@+id/vBtnCancelDivider"
         android:layout_width="match_parent"
-        android:layout_height="0.8dp"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
         android:background="@color/recent_search_bg"
         app:layout_constraintBottom_toTopOf="@+id/clBottomView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
-
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clBottomView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:letterSpacing="0.1"
-        android:lineSpacingMultiplier="1.67"
-        android:text="@string/cancel"
-        android:visibility="visible"
+        android:layout_height="@dimen/button_style_height"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCancel"
+            style="@style/transparentWhiteButtonStyle"
+            android:letterSpacing="0.1"
+            android:text="@string/cancel"
+            app:WButton_font="myriadpro_regular"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
 
         <ProgressBar
             android:id="@+id/pbCreateList"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
-            android:indeterminateTint="@color/black"
-            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:indeterminateTint="@color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/btnCancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

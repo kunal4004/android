@@ -68,7 +68,10 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
             }
         }
 
-        return productGroupCodeAccount?.productOfferingGoodStanding != true && (productGroupCodeAccount?.productOfferingStatus == Utils.ACCOUNT_ACTIVE)
+        return productGroupCodeAccount?.productOfferingGoodStanding != true && (productGroupCodeAccount?.productOfferingStatus == Utils.ACCOUNT_ACTIVE) || when (activity){
+            is PayMyAccountActivity, is WTransactionsActivity, is StatementActivity, is AbsaStatementsActivity -> true
+            else -> false
+        }
     }
 
     fun getAccountForProductLandingPage(applyNowState: ApplyNowState): Account? {
@@ -112,28 +115,29 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                 is MyAccountActivity, is BottomNavigationActivity -> isChatVisibleForAccountLanding() && !accountsLanding
                 else -> {
                     when (applyNowState) {
-                        ApplyNowState.PERSONAL_LOAN -> isChatVisibleForAccountProductsLanding(applyNowState) && when (getActivityName()) {
-                            AccountSignedInActivity::class.java.simpleName -> false // AccountSignedInActivity; the chat pop-up should not display in this instance - only the overlay.
-                            PayMyAccountActivity::class.java.simpleName -> !personalLoan.paymentOptions
-                            WTransactionsActivity::class.java.simpleName -> !personalLoan.transactions
-                            AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !personalLoan.statements
+                        ApplyNowState.PERSONAL_LOAN -> isChatVisibleForAccountProductsLanding(applyNowState) && when (activity) {
+                            is AccountSignedInActivity -> false // AccountSignedInActivity; the chat pop-up should not display in this instance - only the overlay.
+                            is PayMyAccountActivity -> !personalLoan.paymentOptions
+                            is WTransactionsActivity -> !personalLoan.transactions
+                            is AbsaStatementsActivity, is StatementActivity -> !personalLoan.statements
                             else -> false
                         }
 
                         ApplyNowState.STORE_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
-                                when (getActivityName()) {
-                                    AccountSignedInActivity::class.java.simpleName -> false
-                                    PayMyAccountActivity::class.java.simpleName -> !storeCard.paymentOptions
-                                    WTransactionsActivity::class.java.simpleName -> !storeCard.transactions
-                                    AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !storeCard.statements
+                        when (activity) {
+                                    is AccountSignedInActivity -> false
+                                    is PayMyAccountActivity -> !storeCard.paymentOptions
+                                    is WTransactionsActivity -> !storeCard.transactions
+                                    is AbsaStatementsActivity, is StatementActivity -> !storeCard.statements
                                     else -> false
+
                                 }
                         ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
-                                when (getActivityName()) {
-                                    AccountSignedInActivity::class.java.simpleName -> false
-                                    PayMyAccountActivity::class.java.simpleName -> !creditCard.paymentOptions
-                                    WTransactionsActivity::class.java.simpleName -> !creditCard.transactions
-                                    AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> !creditCard.statements
+                                when (activity) {
+                                    is AccountSignedInActivity -> false
+                                    is PayMyAccountActivity -> !creditCard.paymentOptions
+                                    is WTransactionsActivity -> !creditCard.transactions
+                                    is AbsaStatementsActivity, is StatementActivity -> !creditCard.statements
                                     else -> false
                                 }
                     }
@@ -149,25 +153,25 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                 is BottomNavigationActivity -> accountsLanding = true
                 else -> {
                     when (applyNowState) {
-                        ApplyNowState.PERSONAL_LOAN -> when (getActivityName()) {
-                            AccountSignedInActivity::class.java.simpleName -> personalLoan.landing = true
-                            PayMyAccountActivity::class.java.simpleName -> personalLoan.paymentOptions = true
-                            WTransactionsActivity::class.java.simpleName -> personalLoan.transactions = true
-                            AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> personalLoan.statements = true
+                        ApplyNowState.PERSONAL_LOAN -> when (activity) {
+                            is AccountSignedInActivity -> personalLoan.landing = true
+                            is PayMyAccountActivity -> personalLoan.paymentOptions = true
+                            is WTransactionsActivity -> personalLoan.transactions = true
+                            is AbsaStatementsActivity, is StatementActivity -> personalLoan.statements = true
                         }
-                        ApplyNowState.STORE_CARD -> when (getActivityName()) {
-                            AccountSignedInActivity::class.java.simpleName -> storeCard.landing = true
-                            PayMyAccountActivity::class.java.simpleName -> storeCard.paymentOptions = true
-                            WTransactionsActivity::class.java.simpleName -> storeCard.transactions = true
-                            AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> storeCard.statements = true
+                        ApplyNowState.STORE_CARD -> when (activity) {
+                            is AccountSignedInActivity -> storeCard.landing = true
+                            is PayMyAccountActivity -> storeCard.paymentOptions = true
+                            is WTransactionsActivity -> storeCard.transactions = true
+                            is AbsaStatementsActivity, is StatementActivity -> storeCard.statements = true
                         }
 
 
-                        ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> when (getActivityName()) {
-                            AccountSignedInActivity::class.java.simpleName -> creditCard.landing = true
-                            PayMyAccountActivity::class.java.simpleName -> creditCard.paymentOptions = true
-                            WTransactionsActivity::class.java.simpleName -> creditCard.transactions = true
-                            AbsaStatementsActivity::class.java.simpleName, StatementActivity::class.java.simpleName -> creditCard.statements = true
+                        ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> when (activity) {
+                            is AccountSignedInActivity -> creditCard.landing = true
+                            is PayMyAccountActivity -> creditCard.paymentOptions = true
+                            is WTransactionsActivity -> creditCard.transactions = true
+                            is AbsaStatementsActivity, is StatementActivity -> creditCard.statements = true
                         }
                     }
                 }

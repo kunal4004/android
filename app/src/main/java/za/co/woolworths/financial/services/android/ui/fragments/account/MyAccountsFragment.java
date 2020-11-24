@@ -647,6 +647,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
             case R.id.openMessageActivity:
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNT_INBOX);
                 Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
                 openMessageActivity.putExtra("fromNotification", false);
                 startActivity(openMessageActivity);
