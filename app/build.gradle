@@ -3,6 +3,7 @@ apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: "kotlin-kapt"
 apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
