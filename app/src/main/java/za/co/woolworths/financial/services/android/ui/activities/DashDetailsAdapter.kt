@@ -22,7 +22,7 @@ class DashDetailsAdapter(val context: Context) : RecyclerView.Adapter<RecyclerVi
     val featureList = arrayOf(R.string.dash_details_what_you_ll_love, R.string.app_feature_get_delivered,
             R.string.app_feature_world_class_freshness, R.string.app_feature_track_order)
     val featureDrawableList = arrayOf(-1,R.drawable.ic_scooter, R.drawable.ic_cart, R.drawable.ic_location)
-    val termsAndConditions = arrayOf(R.string.terms_and_condition_wreward_vouchers, R.string.terms_and_condition_not_linked)
+    val termsAndConditions = arrayOf(R.string.terms_and_condition_not_linked, R.string.terms_and_condition_wreward_vouchers)
 
     companion object {
         const val ITEMS_COUNT = 3
