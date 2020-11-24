@@ -104,9 +104,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             isRootCatCallInProgress = true
             val data = mapOf(
                     if (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true) {
-                        "storeId" to Utils.getPreferredDeliveryLocation()?.suburb?.id
+                        "storeId" to (Utils.getPreferredDeliveryLocation()?.suburb?.id ?: "")
                     } else {
-                        "suburbId" to Utils.getPreferredDeliveryLocation()?.suburb?.id
+                        "suburbId" to (Utils.getPreferredDeliveryLocation()?.suburb?.id ?: "")
                     }
             )
 
