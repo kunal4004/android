@@ -64,7 +64,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_centerHorizontal="true"
                             android:contentDescription="@string/credit_report_title_tu"
-                            android:scaleType="fitCenter"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/header_image" />
                     </RelativeLayout>
                 </androidx.appcompat.widget.Toolbar>
