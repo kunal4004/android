@@ -442,7 +442,9 @@ interface ApiInterface {
             //Optional params
             @Header("latitude") lat: Double?,
             @Header("longitude") long: Double?,
-            @QueryMap suburbId: Map<String, String?>?): Call<RootCategories>
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?
+    ): Call<RootCategories>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")

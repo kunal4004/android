@@ -66,6 +66,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
+        if(Utils.isLocationEnabled(context)){
+            startLocationUpdates()
+        }
         if (isFragmentVisible) {
             if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
             if (!Utils.isDeliverySelectionModalShown()) {
@@ -102,15 +105,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
             isRootCatCallInProgress = true
-            val data = mapOf(
-                    if (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true) {
-                        "storeId" to (Utils.getPreferredDeliveryLocation()?.suburb?.id ?: "")
-                    } else {
-                        "suburbId" to (Utils.getPreferredDeliveryLocation()?.suburb?.id ?: "")
-                    }
-            )
 
-            rootCategoryCall = OneAppService.getRootCategory(data, Utils.isLocationEnabled(context))
+            rootCategoryCall = OneAppService.getRootCategory(Utils.isLocationEnabled(context))
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     isRootCatCallInProgress = false
