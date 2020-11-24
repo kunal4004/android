@@ -176,7 +176,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
 
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance().dash?.packageName
+            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI
                     ?: "")
             if (intent == null) {
                 KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)

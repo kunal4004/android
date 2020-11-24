@@ -85,9 +85,9 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
             this.startActivity(intent)
 
         } catch (e: ActivityNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dash?.packageName}")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dashConfig?.appURI}")))
         } catch (e: PackageManager.NameNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dash?.packageName}")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dashConfig?.appURI}")))
         }
     }
 }

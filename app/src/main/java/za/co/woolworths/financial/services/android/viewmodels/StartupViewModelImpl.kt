@@ -142,8 +142,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setTransUnionLink(transUnionLink)
             }
 
-            dash?.apply{
-                WoolworthsApplication.getInstance().dash = this
+            dashConfig?.apply{
+                WoolworthsApplication.getInstance().dashConfig = this
             }
 
             whatsApp?.apply {
