@@ -48,21 +48,20 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbarDash"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerHorizontal="true"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/bg_info_banner" />
-                    </RelativeLayout>
-                </androidx.appcompat.widget.Toolbar>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/bg_info_banner" />
+                </RelativeLayout>
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.constraintlayout.widget.Guideline
