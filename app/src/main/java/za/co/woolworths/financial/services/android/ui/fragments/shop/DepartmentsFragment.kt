@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -16,6 +17,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -38,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
@@ -50,7 +53,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var parentFragment: ShopFragment? = null
     private var version: String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
-    private var mFuseLocationAPISingleton: FuseLocationAPISingleton? = null
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -66,7 +68,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if(Utils.isLocationEnabled(context)){
+        if(checkLocationPermission()) {
             startLocationUpdates()
         }
         if (isFragmentVisible) {
@@ -235,7 +237,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun refreshLocationUpdates() {
         if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            mFuseLocationAPISingleton = FuseLocationAPISingleton
             startLocationUpdates()
         } else {
             mDepartmentAdapter?.removeDashBanner()
@@ -319,13 +320,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             Utils.saveLastLocation(location, this)
             stopLocationUpdate()
 
-            //If already contains Dash banner or call is already in progress then refresh not needed
-            mDepartmentAdapter?.apply {
-                if (containsDashBanner()) {
-                    return
-                }
-            }
-
             if (!isRootCatCallInProgress) {
                 executeDepartmentRequest()
             }
@@ -342,5 +336,27 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onProviderDisabled(provider: String?) {
         //Do nothing
+    }
+
+    @SuppressLint("NewApi")
+    private fun checkLocationPermission(): Boolean {
+        activity?.apply {
+            val perms =
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            return if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    ActivityCompat.requestPermissions(this, perms, StoresNearbyFragment1.REQUEST_CODE_FINE_GPS)
+                } else {
+                    //we can request the permission.
+                    ActivityCompat.requestPermissions(this, perms, StoresNearbyFragment1.REQUEST_CODE_FINE_GPS)
+                }
+                false
+            } else {
+                true
+            }
+        }
+        return false
     }
 }
