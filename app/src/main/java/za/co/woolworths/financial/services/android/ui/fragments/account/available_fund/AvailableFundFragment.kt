@@ -44,7 +44,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import java.net.ConnectException
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
-    var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
+    private var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
     private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
     var isQueryPayUPaymentMethodComplete: Boolean = false
     var navController: NavController? = null
@@ -316,6 +316,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun navigateToABSAStatementActivity() {
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
             if (NetworkManager().isConnectedToNetwork(this)) {
                 mAvailableFundPresenter?.queryABSAServiceGetUserCreditCardToken()
             } else {
