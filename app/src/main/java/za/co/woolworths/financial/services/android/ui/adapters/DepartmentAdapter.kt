@@ -103,7 +103,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             } else {
                 itemView.iconCaretRight.visibility = View.GONE
                 itemView.editLocation.visibility = View.VISIBLE
-                KotlinUtils.setDeliveryAddressView(itemView.context as Activity,Utils.getPreferredDeliveryLocation(),itemView.tvDeliveringTo,itemView.tvDeliveryLocation,itemView.deliverLocationIcon)
+                KotlinUtils.setDeliveryAddressView(itemView.context as Activity, Utils.getPreferredDeliveryLocation(), itemView.tvDeliveringTo, itemView.tvDeliveryLocation, itemView.deliverLocationIcon)
             }
             itemView.deliveryDatesProgressPlaceHolder.visibility = if (isValidateSuburbRequestInProgress) View.VISIBLE else View.GONE
             if (validatedSuburbProducts == null) {
@@ -138,6 +138,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
 
     inner class DashBannerViewHolder(itemView: View) : DepartmentsBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            mDashBanner?.imgUrl?.let { ImageManager.setPictureWithoutPlaceHolder(itemView.image_dash_banner_bg, it) }
             itemView.list_item_dash_banner_title.text = mDashBanner?.categoryName
             itemView.list_item_dash_banner_subtitle.text = mDashBanner?.bannerText
             itemView.list_item_dash_banner_container.setOnClickListener { onDashBannerClick() }
