@@ -116,11 +116,11 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		tabLayout.addOnTabSelectedListener(new OnTabSelectedListener() {
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {
-				if (tab.getPosition() == 0 && tab.getCustomView() != null) {
+				if (tab.getPosition() == TabState.OVERVIEW.tabState && tab.getCustomView() != null) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW);
-				} else if (tab.getPosition() == 1) {
+				} else if (tab.getPosition() == TabState.VOUCHERS.tabState) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS);
-				} else if (tab.getPosition() == 2) {
+				} else if (tab.getPosition() == TabState.SAVINGS.tabState) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
 				}
 			}
@@ -405,6 +405,18 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_CENTER)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+	}
+
+	public enum TabState {
+		OVERVIEW(0),
+		VOUCHERS(1),
+		SAVINGS(2);
+
+		private final Integer tabState;
+
+		TabState(final Integer tabState) {
+			this.tabState = tabState;
+		}
 	}
 
 	@Override

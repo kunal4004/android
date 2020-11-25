@@ -44,10 +44,10 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import java.net.ConnectException
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
-    private var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
-    private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
+    private lateinit var mAvailableFundPresenter: AvailableFundsPresenterImpl
+    private lateinit var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener
     var isQueryPayUPaymentMethodComplete: Boolean = false
-    var navController: NavController? = null
+    lateinit var navController: NavController
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
