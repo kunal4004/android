@@ -277,12 +277,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
             preferenceRelativeLayout.setOnClickListener(this);
 
-            mSwipeToRefreshAccount.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
-                    loadAccounts(true);
-                }
+            mSwipeToRefreshAccount.setOnRefreshListener(() -> {
+                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
+                loadAccounts(true);
             });
 
             view.findViewById(R.id.btnRetry).setOnClickListener(v -> {
@@ -1066,50 +1063,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
 	@SuppressLint("StaticFieldLeak")
-	public void showCreditScoreFeatureWalkthrough() {
-		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
-			return;
-
-		Activity activity = getActivity();
-		if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
-		final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
-
-		mScrollView.post(() -> ObjectAnimator.ofInt(mScrollView, "scrollY", contactUs.getBottom()).setDuration(300).start());
-
-		new AsyncTask<Void,Void,Void>(){
-
-			@Override
-			protected Void doInBackground(Void... voids) {
-				Activity activity = getActivity();
-				if (activity != null || isAdded()){
-					activity.runOnUiThread(creditReportIcon::invalidate);
-				}
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				super.onPostExecute(aVoid);
-				if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
-					return;
-				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
-						.setTarget(creditReportIcon)
-						.setTitle(R.string.get_a_free_credit_score)
-						.setDescription(R.string.get_your_free_credit_report_desc)
-						.setActionText(R.string.get_started_now)
-						.setImage(R.drawable.ic_statements)
-						.setAction(listener)
-						.setShapePadding(48)
-						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-				getBottomNavigationActivity().walkThroughPromtView.show(activity);
-
-			}
-		}.execute();
-	}
-
-
-	@SuppressLint("StaticFieldLeak")
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
         if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
@@ -1210,7 +1163,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void onPromptDismiss() {
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             showInAppChat(getActivity());
-            showCreditScoreFeatureWalkthrough();
         }
     }
 
