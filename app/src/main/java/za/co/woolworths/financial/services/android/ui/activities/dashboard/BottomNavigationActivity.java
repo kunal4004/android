@@ -172,6 +172,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         try {
             super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         } catch (NullPointerException ex) {
+            FirebaseManager.Companion.logException(ex);
         }
     }
 
