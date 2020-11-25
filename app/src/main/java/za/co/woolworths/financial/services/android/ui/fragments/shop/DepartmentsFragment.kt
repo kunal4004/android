@@ -261,6 +261,14 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+        } else if(requestCode == REQUEST_CODE_FINE_GPS && resultCode == RESULT_OK){
+            activity?.apply {
+                if(!Utils.isLocationEnabled(context)) {
+                    val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                }
+            }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
@@ -372,7 +380,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     // permission was granted. Do the
                     // contacts-related task you need to do.
                     if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if(Utils.isLocationEnabled(context)) {
+                        if(!Utils.isLocationEnabled(context)) {
                             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                             activity.startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

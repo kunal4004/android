@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -147,6 +148,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun PermissionGranted(request_code: Int) {
         navigateToBarcode()
+
     }
 
     override fun PartialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
@@ -160,6 +162,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == DepartmentsFragment.REQUEST_CODE_FINE_GPS && viewpager_main.currentItem == 0) {
+            val fragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+            fragment?.onActivityResult(requestCode, RESULT_OK, null)
+        }
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
