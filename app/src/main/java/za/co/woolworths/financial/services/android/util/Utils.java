@@ -424,12 +424,6 @@ public class Utils {
 		context.startActivity(openInternalWebView);
 	}
 
-	public static void openBrowserWithUrl(String urlString) {
-		Context context = WoolworthsApplication.getAppContext();
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		context.startActivity(intent);
-	}
 
 	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
@@ -1218,6 +1212,8 @@ public class Utils {
 			case STATEMENTS:
 				appInstanceObject.featureWalkThrough.statements = true;
 				break;
+			case CART_REDEEM_VOUCHERS:
+				appInstanceObject.featureWalkThrough.cartRedeemVoucher = true;
 			case CREDIT_SCORE:
 				appInstanceObject.featureWalkThrough.creditScore = true;
 				break;
@@ -1488,7 +1484,7 @@ public class Utils {
 	}
 
 	public static void showGeneralErrorDialog(Activity activity,String message){
-		if (activity != null && TextUtils.isEmpty(message)) {
+		if (activity != null && !TextUtils.isEmpty(message)) {
 			ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
 			minAmountDialog.show(((AppCompatActivity) activity).getSupportFragmentManager(), ErrorDialogFragment.class.getSimpleName());
 		}

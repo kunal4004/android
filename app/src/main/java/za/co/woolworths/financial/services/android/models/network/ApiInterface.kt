@@ -1,21 +1,21 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import com.google.gson.JsonElement
-import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
+import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
+import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
@@ -23,6 +23,8 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 
 interface ApiInterface {
 
@@ -879,7 +881,9 @@ interface ApiInterface {
             @Query("pageOffset") pageOffset: Int,
             @Query("pageSize") pageSize: Int,
             @Query("sortOption") sortOption: String,
-            @Query("refinement") refinement: String): Call<ProductView>
+            @Query("refinement") refinement: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("searchSortAndFilterV2")
@@ -902,7 +906,9 @@ interface ApiInterface {
             @Query("sortOption") sortOption: String,
             @Query("refinement") refinement: String,
             @Header("longitude") longitude: String = "",
-            @Header("latitude") latitude: String = ""): Call<ProductView>
+            @Header("latitude") latitude: String = "",
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/checkoutComplete")
@@ -999,113 +1005,6 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("productOfferingId") productOfferingId: String,
             @Body blockCardRequestBody: BlockCardRequestBody): Call<BlockMyCardResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("chat/pollAgentsAvailable")
-    fun pollAgentsAvailable(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Observable<AgentsAvailableResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("chat/createChatSession")
-    fun createChatSession(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Body createChatSession: CreateChatSession): Call<CreateChatSessionResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("chat/pollChatSessionState/{chatId}")
-    fun pollChatSessionState(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Path("chatId") chatId: String): Observable<PollChatSessionStateResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("chat/sendChatMessage/{chatId}")
-    fun sendChatMessage(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Path("chatId") chatId: String,
-            @Body sendChatMessage: SendMessageRequestBody): Call<SendChatMessageResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PUT("chat/userTyping/{chatId}")
-    fun userTyping(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Path("chatId") chatId: String,
-            @Body emptyBody: JsonElement): Call<UserTypingResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @HTTP(method = "DELETE", path = "chat/userStoppedTyping/{chatId}", hasBody = true)
-    fun userStoppedTyping(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Path("chatId") chatId: String,
-            @Body emptyBody: JsonElement): Call<UserTypingResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("chat/endChatSession/{chatId}")
-    fun endChatSession(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Path("chatId") chatId: String): Call<EndChatSessionResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/storecard/otp")
@@ -1247,9 +1146,9 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
-    
+
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("event/{appScreen}/{featureName}")
+    @POST("event/{featureName}/{appScreen}")
     fun postEvent(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1263,6 +1162,56 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("featureName") featureName: String,
             @Path("appScreen") appScreen: String): Call<Response>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("payments/payu/methods")
+    fun getPaymentPAYUMethod(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<PaymentMethodsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("payments/payu/pay")
+    fun postPayUpPay(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body payUPay: PayUPay): Call<PayUResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("payments/payu/result")
+    fun getPaymentPayUResult(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("customer") customer: String,
+            @Query("payment_id") payment_id: String,
+            @Query("charge_id") charge_id: String,
+            @Query("status") status: String,
+            @Query("productOfferingId") productOfferingID: String): Call<PayUPayResultResponse>
+
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/validateSelectedSuburb/{suburbId}")
@@ -1279,5 +1228,66 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("suburbId") suburbId: String,
             @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("payments/payu/methods/{paymenToken}")
+    fun payURemovePaymentMethod(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("paymenToken") paymenToken: String
+    ): Call<DeleteResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("cartV2/applyVouchers")
+    fun applyVouchers(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body vouchersList: List<SelectedVoucher>): Call<ShoppingCartResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("cartV2/applyPromoCode")
+    fun applyPromoCode(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("cartV2/removePromoCode")
+    fun removePromoCode(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
 
 }

@@ -35,8 +35,10 @@ class WPdfViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_oreder_tax_invoice)
-        Utils.updateStatusBarBackground(this, R.color.black)
         getBundleArgument()
+        //https://wigroup2.atlassian.net/browse/WOP-6922
+        Utils.updateStatusBarBackground(this)
+
         initView()
     }
 

@@ -69,15 +69,15 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     private fun populatePersonalLoanView() {
         val activity = activity ?: return
-        tvAvailableFunds?.text = currencyFormatter(getAvailableFund(), activity)
-        tvCreditLimit?.text = currencyFormatter(getCreditLimit(), activity)
+        tvAvailableFunds?.text = currencyFormatter(getAvailableFund())
+        tvCreditLimit?.text = currencyFormatter(getCreditLimit())
         nexImageView?.setOnClickListener(this)
     }
 
     private fun configureEditText() {
+
         edtWithdrawAmount.keyListener = DigitsKeyListener.getInstance("0123456789")
         edtWithdrawAmount.addTextChangedListener(NumberTextWatcherForThousand(edtWithdrawAmount))
-        edtWithdrawAmount.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtWithdrawAmount.setRawInputType(Configuration.KEYBOARD_12KEY)
         edtWithdrawAmount.imeOptions = EditorInfo.IME_ACTION_DONE
         edtWithdrawAmount.setOnEditorActionListener { _, actionId, _ ->

@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
@@ -28,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsA
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.payment_option.PaymentOptionActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
@@ -78,7 +79,7 @@ class ChatViewModel : ViewModel() {
 
     @SuppressLint("DefaultLocale")
     fun isCreditCardAccount(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase() == "cc"
+        return getAccount()?.productGroupCode?.toLowerCase() == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
     }
 
     fun setSessionStateType(type: SessionStateType) {
@@ -245,16 +246,16 @@ class ChatViewModel : ViewModel() {
 
         val prsAccountNumber = account?.accountNumber ?: ""
         val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
-        val isCreditCard = productGroupCode == "cc"
+        val isCreditCard = productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
         val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
         val prsC2id = getCustomerInfo().getCustomerC2ID()
         val prsFirstname = getCustomerInfo().getCustomerUsername()
         val prsSurname = getCustomerInfo().getCustomerFamilyName()
         val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
-        val prsProductOfferingDescription = when (productGroupCode) {
-            "sc" -> "StoreCard"
-            "pl" -> "PersonalLoan"
-            "cc" -> "CreditCard"
+        val prsProductOfferingDescription = when (productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
+            AccountsProductGroupCode.STORE_CARD -> "StoreCard"
+            AccountsProductGroupCode.PERSONAL_LOAN -> "PersonalLoan"
+            AccountsProductGroupCode.CREDIT_CARD -> "CreditCard"
             else -> ""
         }
 
@@ -303,7 +304,7 @@ class ChatViewModel : ViewModel() {
         activityType = when (fromActivity) {
             BottomNavigationActivity::class.java.simpleName -> ActivityType.ACCOUNT_LANDING
             AccountSignedInActivity::class.java.simpleName -> ActivityType.PRODUCT_LANDING
-            PaymentOptionActivity::class.java.simpleName -> ActivityType.PAYMENT_OPTIONS
+            PayMyAccountActivity::class.java.simpleName -> ActivityType.PAYMENT_OPTIONS
             WTransactionsActivity::class.java.simpleName -> ActivityType.TRANSACTION
             StatementActivity::class.java.simpleName -> ActivityType.STATEMENT
             AbsaStatementsActivity::class.java.simpleName -> ActivityType.ABSA_STATEMENT
@@ -313,10 +314,10 @@ class ChatViewModel : ViewModel() {
 
     @SuppressLint("DefaultLocale")
     fun getApplyNowState(): ApplyNowState {
-        return when (getAccount()?.productGroupCode?.toLowerCase()) {
-            "sc" -> ApplyNowState.STORE_CARD
-            "pl" -> ApplyNowState.PERSONAL_LOAN
-            "cc" -> when (getAccount()?.accountNumberBin) {
+        return when (getAccount()?.productGroupCode?.toLowerCase()?.let { AccountsProductGroupCode.getEnum(it) }) {
+            AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
+           AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
+            AccountsProductGroupCode.CREDIT_CARD -> when (getAccount()?.accountNumberBin) {
                 Utils.SILVER_CARD -> ApplyNowState.SILVER_CREDIT_CARD
                 Utils.BLACK_CARD -> ApplyNowState.BLACK_CREDIT_CARD
                 Utils.GOLD_CARD -> ApplyNowState.GOLD_CREDIT_CARD

@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -69,6 +70,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.WPdfView
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
+    public static final String TAG = "StatementFragment";
     private WButton mBtnEmailStatement;
     private StatementAdapter mStatementAdapter;
     private RelativeLayout relNextButton;

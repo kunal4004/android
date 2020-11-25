@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
@@ -267,5 +266,15 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                     scrollableView = paymentOptionScrollView)
                     .build()
         }
+    }
+
+    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+        ChatFloatingActionButtonBubbleView(
+                activity = this@AbsaStatementsActivity,
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = applyNowState,
+                scrollableView = paymentOptionScrollView)
+                .build()
     }
 }

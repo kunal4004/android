@@ -80,9 +80,9 @@ class ToastFactory {
             }
 
             // dismiss the popup window after 3sec
+            popupWindow.isFocusable = false
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
-            popupWindow.isOutsideTouchable = true
             return popupWindow
         }
 
@@ -114,11 +114,11 @@ class ToastFactory {
                 ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }
+            popupWindow.isFocusable = false
 
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
-            popupWindow.isOutsideTouchable = true
             return popupWindow
         }
 
@@ -141,10 +141,11 @@ class ToastFactory {
             tvAddedTo?.visibility = GONE
             tvAddedTo?.setAllCaps(true)
 
+            popupWindow.isFocusable = false
+
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
-            popupWindow.isOutsideTouchable = true
             return popupWindow
         }
 
@@ -169,11 +170,11 @@ class ToastFactory {
             tvAddedTo?.setText("$count ITEM".plus(if (count > 1) "S" else "").plus(" ADDED TO"))
             tvBoldTitle?.setText(listName)
 
+            popupWindow.isFocusable = false
 
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
-            popupWindow.isOutsideTouchable = true
             return popupWindow
         }
 
@@ -207,11 +208,11 @@ class ToastFactory {
                 toastInterface.onToastButtonClicked(JsonObject())
                 popupWindow.dismiss() // dismiss the window
             }
+            popupWindow.isFocusable = false
 
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
-            popupWindow.isOutsideTouchable = true
             return popupWindow
         }
     }

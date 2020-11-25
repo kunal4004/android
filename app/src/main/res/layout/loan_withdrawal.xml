@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:contentDescription="@string/loan_withdrawal_drawn_down_amount_layout"
     android:layout_height="match_parent"
@@ -151,7 +150,7 @@
             android:hint=" "
             android:imeOptions="actionNext"
             android:singleLine="true"
-            android:inputType="numberDecimal|numberSigned"
+            android:inputType="date"
             android:maxLength="13"
             android:maxLines="1"
             android:paddingStart="8dp"
@@ -167,7 +166,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/startGuideLine"
             app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount">
-
             <requestFocus />
         </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 

@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -37,7 +39,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
-    private var version:String = ""
+    private var version:String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
 
     companion object{
@@ -79,7 +81,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 override fun onSuccess(response: RootCategories?) {
                     when (response?.httpCode) {
                         200 -> {
-                            version = response.response.version
+                            version = response.response?.version
                             parentFragment?.setCategoryResponseData(response)
                             bindDepartment()
                         }
@@ -105,6 +107,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
+        executeValidateSuburb()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
@@ -168,6 +171,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         isFragmentVisible = isVisibleToUser
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(!hidden){
+            activity?.apply {
+                executeValidateSuburb()
+            }
+        }
+    }
+
+
     fun scrollToTop() {
         rclDepartment?.scrollToPosition(0)
     }
@@ -185,17 +198,57 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
-        } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
+        } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             mDepartmentAdapter?.notifyDataSetChanged()
+            executeValidateSuburb()
+        }
     }
 
 
     override fun onResume() {
         super.onResume()
-        mDepartmentAdapter?.notifyDataSetChanged()
+        activity?.apply {
+            mDepartmentAdapter?.notifyDataSetChanged()
+            executeValidateSuburb()
+        }
     }
 
     private fun showDeliveryOptionDialog() {
         (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
     }
+
+    private fun executeValidateSuburb() {
+        Utils.getPreferredDeliveryLocation().let {
+            if (it == null) {
+                mDepartmentAdapter?.hideDeliveryDates()
+            } else {
+                if (it.suburb.id.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
+                    updateDeliveryDates()
+                } else {
+                    mDepartmentAdapter?.showDeliveryDatesProgress(true)
+                    OneAppService.validateSelectedSuburb(it.suburb.id, it.suburb.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                            when (response?.httpCode) {
+                                200 -> response.validatedSuburbProducts?.let { it1 ->
+                                    it1.suburbId = it.suburb.id
+                                    WoolworthsApplication.setValidatedSuburbProducts(it1)
+                                    updateDeliveryDates()
+                                }
+                                else -> mDepartmentAdapter?.hideDeliveryDates()
+                            }
+                        }
+
+                        override fun onFailure(error: Throwable?) {
+                            mDepartmentAdapter?.hideDeliveryDates()
+                        }
+                    }, ValidateSelectedSuburbResponse::class.java))
+                }
+            }
+        }
+    }
+
+    fun updateDeliveryDates() {
+        mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
+    }
+
 }

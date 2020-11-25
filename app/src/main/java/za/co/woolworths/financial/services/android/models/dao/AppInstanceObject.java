@@ -142,6 +142,7 @@ public class AppInstanceObject {
 		public boolean account;
 		public boolean shoppingList;
 		public boolean statements;
+		public boolean cartRedeemVoucher;
 		public boolean creditScore;
 
     }

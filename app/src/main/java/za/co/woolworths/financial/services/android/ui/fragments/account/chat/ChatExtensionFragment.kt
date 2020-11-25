@@ -11,15 +11,6 @@ open class ChatExtensionFragment : Fragment() {
     var productOfferingId: String? = null
     var accountNumber: String? = null
 
-    enum class AgentDefaultMessage(val message: String) {
-        GENERAL_ERROR("We’re currently experiencing technical issues, please try again later or call us on 0861 50 20 20."),
-        AGENT_PICKED(" will be assisting you further, enjoy the rest of your day."),
-        CONNECTING_AGENT("Please stay online for the next available consultant."),
-        CHAT_ENDED_WITH_ANY_REASON("Your chat session has ended."),
-        NO_AGENTS("There are no consultants available at the moment, please try again later" +
-                " or call us on 0861 50 20 20.")
-    }
-
     companion object {
         const val PRODUCT_OFFERING_ID = "productOfferingId"
         const val ACCOUNT_NUMBER = "accountNumber"
@@ -37,10 +28,6 @@ open class ChatExtensionFragment : Fragment() {
                 messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
             }
         }
-    }
-
-    fun showAgentsMessage(agentDefaultMessage: AgentDefaultMessage, moreMessage: String = "") {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, moreMessage + agentDefaultMessage.message))
     }
 
     fun showAgentsMessage(agentDefaultMessage: String, moreMessage: String = "") {

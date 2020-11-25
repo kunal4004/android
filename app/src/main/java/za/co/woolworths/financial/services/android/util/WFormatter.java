@@ -18,7 +18,7 @@ public class WFormatter {
         String[] split = String.valueOf((amount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 3 == 0) {
                 stringBuilder.append(" ");
             }
@@ -32,7 +32,7 @@ public class WFormatter {
         String[] split = String.valueOf((amount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 3 == 0) {
                 stringBuilder.append(" ");
             }
@@ -46,7 +46,7 @@ public class WFormatter {
         String[] split = String.valueOf((amount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 3 == 0) {
                 stringBuilder.append(" ");
             }
@@ -64,7 +64,7 @@ public class WFormatter {
         String[] split = String.valueOf(amount / 100).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 3 == 0) {
                 stringBuilder.append(" ");
             }
@@ -84,7 +84,7 @@ public class WFormatter {
         String[] split = String.valueOf((mIntAmount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 3 == 0) {
                 stringBuilder.append(" ");
             }
@@ -104,7 +104,7 @@ public class WFormatter {
         String[] split = String.valueOf((mIntAmount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 3 == 0) {
                 stringBuilder.append(" ");
             }
@@ -130,7 +130,7 @@ public class WFormatter {
         String[] split = voucherNumber.split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        for (int i = split.length - 1; i > 0; i--) {
+        for (int i = split.length - 1; i >= 0; i--) {
             if (counter != 0 && counter % 4 == 0) {
                 stringBuilder.append(" ");
             }
@@ -146,6 +146,14 @@ public class WFormatter {
         }
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         return new SimpleDateFormat("dd/MM/yyyy").format(m_ISO8601Local.parse(validFromDate));
+    }
+
+    public static boolean isDateExpired(String validToDate) throws ParseException {
+        Date parsedValidDate = new Date(formatDateTOddMMMYYYY(validToDate));
+        if (parsedValidDate.before(new Date())) {
+            return true;
+        }
+        return false;
     }
 
     public static String newDateFormat(String validFromDate) throws ParseException {

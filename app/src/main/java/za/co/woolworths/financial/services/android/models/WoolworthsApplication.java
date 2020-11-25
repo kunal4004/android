@@ -50,9 +50,13 @@ import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApi
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
+import za.co.woolworths.financial.services.android.models.dto.CreditView;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -71,6 +75,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Context mContextApplication;
     private static WhatsApp whatsApp;
     private static List<ContactUs> mContactUs;
+    private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
     private UserManager mUserManager;
     private Tracker mTracker;
@@ -114,6 +119,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String transUnionLink;
 
     private Activity mCurrentActivity = null;
+
+    private static ValidatedSuburbProducts validatedSuburbProducts;
+
+    private static ProductDetailsPage productDetailsPage;
+
+    private static CreditView creditView;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -548,6 +559,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return clickAndCollect;
     }
 
+	public static void setPayMyAccountOption(@Nullable PayMyAccount payMyAccount) {
+		mPayMyAccount = payMyAccount;
+	}
+
+	public static PayMyAccount getPayMyAccountOption() {
+		return mPayMyAccount;
+	}
+
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
     }
@@ -566,5 +585,29 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static InAppChat getInAppChat() {
         return inAppChat;
+    }
+
+    public static ValidatedSuburbProducts getValidatedSuburbProducts() {
+        return validatedSuburbProducts;
+    }
+
+    public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
+        WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
+    }
+
+    public static ProductDetailsPage getProductDetailsPage() {
+        return productDetailsPage;
+    }
+
+    public static void setProductDetailsPage(ProductDetailsPage productDetailsPage) {
+        WoolworthsApplication.productDetailsPage = productDetailsPage;
+    }
+
+    public static CreditView getCreditView() {
+        return creditView;
+    }
+
+    public static void setCreditView(CreditView creditView) {
+        WoolworthsApplication.creditView = creditView;
     }
 }

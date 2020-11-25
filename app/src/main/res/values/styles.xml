@@ -50,24 +50,6 @@
         <item name="android:windowActionBarOverlay">true</item>
     </style>
 
-    <style name="bottomNavigationStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:fitsSystemWindows">true</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowTranslucentNavigation">false</item>
-        <item name="statusBarBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:selectableItemBackground">@android:color/transparent</item>
-        <item name="android:actionBarItemBackground">@null</item>
-        <item name="actionBarItemBackground">@null</item>
-    </style>
-
     <style name="FaqStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -226,7 +208,19 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="transparentWhiteButtonStyle" parent="android:Theme">
+        <item name="android:layout_height">@dimen/button_style_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:letterSpacing">0.2</item>
         <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
@@ -960,17 +954,6 @@
         <item name="android:background">@color/default_background</item>
     </style>
 
-    <!-- Define your custom dialog theme here extending from base -->
-
-    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
     <style name="black_circle_with_number">
         <item name="android:layout_width">@dimen/twenty_four_dp</item>
         <item name="android:layout_height">@dimen/twenty_four_dp</item>
@@ -1217,10 +1200,15 @@
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
+    <style name="DialogWithoutAnimation" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:windowEnterAnimation">@anim/stay</item>
+        <item name="android:windowExitAnimation">@anim/slide_down_anim</item>
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_rounded_corner_bg</item>
     </style>
-
 
     <!-- set the rounded drawable as background to your bottom sheet -->
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
@@ -1231,8 +1219,6 @@
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/BottomSheet</item>
     </style>
-
-    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
 
     <style name="BarcodeScanActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
@@ -1468,11 +1454,6 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="CustomProgressBarTheme">
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowSoftInputMode">stateUnchanged</item>
-    </style>
 
     <style name="instantStoreCardReplacementEditTextStyle">
         <item name="android:layout_width">match_parent</item>
@@ -1730,32 +1711,6 @@
     </style>
 
 
-    <style name="salesPageMainStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="statusBarBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:selectableItemBackground">@android:color/transparent</item>
-        <item name="android:actionBarItemBackground">@null</item>
-        <item name="actionBarItemBackground">@null</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
-    <style name="account_sales_card_title_benefit_style">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
-        <item name="android:paddingStart">@dimen/twenty_four_dp</item>
-        <item name="android:paddingTop">32dp</item>
-        <item name="android:paddingEnd">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
     <style name="account_sales_card_benefit_description_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1806,17 +1761,6 @@
         <item name="android:lineSpacingMultiplier">0.05</item>
     </style>
 
-    <style name="apply_now_btn" parent="android:Theme">
-        <item name="android:layout_height">60dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">12sp</item>
-        <item name="WButton_font">medium_bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
-    </style>
-
     <style name="accountPaymentOptionsRootStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">100dp</item>
@@ -1847,7 +1791,7 @@
         <item name="android:fontFamily">@font/myriad_pro_semi_bold_otf</item>
         <item name="android:textSize">@dimen/available_fund_16sp_amount</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:text">@string/content_description_label</item>
+        <item name="android:text">R 1000</item>
     </style>
 
     <style name="accountSalesTextViewStyle">
@@ -2060,6 +2004,291 @@
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
     </style>
 
+    <style name="bottomNavigationStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="statusBarBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/black</item>
+    </style>
+
+    <style name="CustomProgressBarTheme">
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">stateUnchanged</item>
+    </style>
+
+    <style name="salesPageMainStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="statusBarBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@color/white</item>
+        <item name="actionBarItemBackground">@color/white</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
+    <style name="account_sales_card_title_benefit_style" parent="android:Widget.Material.TextView">
+        <item name="android:letterSpacing">0</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:paddingStart">@dimen/twenty_four_dp</item>
+        <item name="android:paddingTop">32dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="apply_now_btn" parent="android:Theme">
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+    </style>
+
+    <style name="selectableImageButtonRippleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:contentDescription">@string/store_card</item>
+        <item name="selectableItemBackground">?android:selectableItemBackground</item>
+        <item name="android:colorControlHighlight">@color/ripple_material_dark</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AccountBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="payMyAccountCardTitleStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">27dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/twenty_sp</item>
+    </style>
+
+    <style name="pmaWhiteCardDescriptionStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">13dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:textColor">@color/semi_transparent_black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="pmaViewBankingButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="amountDescriptionStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textColor">@color/description_color</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="pmaOutstandingValueStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:gravity">center|right</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="blackButtonCustomStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:letterSpacing">0.11</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="editTextCurrencyStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:layout_marginBottom">24dp</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:cursorVisible">true</item>
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:imeOptions">actionDone|actionGo</item>
+        <item name="android:inputType">numberDecimal|numberSigned</item>
+        <item name="android:maxLength">13</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_custom_color</item>
+        <item name="android:textSize">55sp</item>
+    </style>
+
+    <style name="pmaTitleStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:gravity">start</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="pmaCardDetailStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">32dp</item>
+        <item name="android:layout_marginTop">45dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="dividerStyle" parent="horizontal_divider_how_to_pay">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginTop">19dp</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:visibility">visible</item>
+    </style>
+
+    <style name="pmaSaveCardDetailStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="add_card_button_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginStart">32dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:layout_marginBottom">32dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:enabled">false</item>
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:letterSpacing">0.18</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="add_card_button_style.black__background">
+        <item name="android:background">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="pma_title_textview_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:layout_marginBottom">19dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="debitCreditStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">13dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:textColor">@color/npc_description</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="descriptionPMAStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:textSize">15sp</item>
+    </style>
     <style name="chatTimeDisplayStyle">
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:textColor">#000000</item>

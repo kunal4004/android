@@ -10,7 +10,7 @@
         android:id="@+id/balanceProtectionInsuranceView"
         style="@style/paymentOptionsRootRowContainerStyle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/viewPaymentOptions" />
 
     <ImageView
         android:id="@+id/logoProtectionInsurance"
@@ -154,28 +154,26 @@
         app:constraint_referenced_ids="withdrawCashView,loanWithdrawalLogoImageView,iconDrawnDownAmount,withdrawCashTextView,withdrawCashDivider"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <View
         android:id="@+id/viewPaymentOptions"
         style="@style/paymentOptionsRootRowContainerStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/debitOrderView" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/creditLimitDividerStyle"
         style="@style/creditLimitDividerStyle"
         android:layout_height="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/paymentOptionLogoImageView"
         style="@style/style_loan_logo_img"
         android:alpha="1"
-        android:src="@drawable/icon_money"
+        android:src="@drawable/payment_options_grey"
         app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
         app:layout_constraintStart_toStartOf="@+id/viewPaymentOptions"
         app:layout_constraintTop_toTopOf="@+id/viewPaymentOptions" />
@@ -185,7 +183,7 @@
         style="@style/style_loan_title"
         android:layout_width="0dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/label_payment_options_button"
+        android:text="@string/payment_option_title"
         app:layout_constraintBottom_toBottomOf="@+id/viewPaymentOptions"
         app:layout_constraintEnd_toStartOf="@+id/viewPaymentOptionNext"
         app:layout_constraintStart_toEndOf="@+id/paymentOptionLogoImageView"
@@ -207,8 +205,8 @@
         android:id="@+id/paymentOptionGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="paymentOptionLogoImageView,viewPaymentOptions,viewPaymentOptionTextView,viewPaymentOptionNext,viewPaymentOptions"
+        android:visibility="visible"
+        app:constraint_referenced_ids="creditLimitDividerStyle,paymentOptionLogoImageView,viewPaymentOptions,viewPaymentOptionTextView,viewPaymentOptionNext,viewPaymentOptions"
         app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

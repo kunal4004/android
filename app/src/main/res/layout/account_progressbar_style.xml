@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProgressBar xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/statementProgressBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:indeterminateDrawable="@drawable/progress_circle"
+    app:layout_constraintBottom_toBottomOf="@+id/statementProgressbarView"
+    app:layout_constraintEnd_toEndOf="@+id/statementProgressbarView"
+    app:layout_constraintStart_toStartOf="@+id/statementProgressbarView"
+    app:layout_constraintTop_toTopOf="@+id/viewStatementImageView"
+    tools:showIn="@layout/view_statement_button" />
