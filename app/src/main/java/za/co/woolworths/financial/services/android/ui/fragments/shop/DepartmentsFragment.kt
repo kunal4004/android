@@ -10,6 +10,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -56,6 +57,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
+        const val REQUEST_CODE_FINE_GPS = 4771
     }
 
 
@@ -174,8 +176,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
 
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI
-                    ?: "")
+            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI ?: "")
             if (intent == null) {
                 KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
             } else {
@@ -347,10 +348,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    ActivityCompat.requestPermissions(this, perms, StoresNearbyFragment1.REQUEST_CODE_FINE_GPS)
+                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                 } else {
                     //we can request the permission.
-                    ActivityCompat.requestPermissions(this, perms, StoresNearbyFragment1.REQUEST_CODE_FINE_GPS)
+                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                 }
                 false
             } else {
@@ -358,5 +359,28 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             }
         }
         return false
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_CODE_FINE_GPS -> {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    val activity = activity ?: return
+                    // permission was granted. Do the
+                    // contacts-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        if(Utils.isLocationEnabled(context)) {
+                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            activity.startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
+                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                        }
+                    }
+                }
+                return
+            }
+        }
     }
 }
