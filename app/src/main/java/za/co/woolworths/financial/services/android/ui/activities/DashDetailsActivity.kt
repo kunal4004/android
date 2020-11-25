@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var dashAdapter: DashDetailsAdapter
     private var wooliesAppLink: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,8 +42,7 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
         
         recycler_view_dash_details.apply {
             layoutManager = LinearLayoutManager(this@DashDetailsActivity, RecyclerView.VERTICAL, false)
-            dashAdapter = DashDetailsAdapter(this@DashDetailsActivity)
-            adapter = dashAdapter
+            adapter = DashDetailsAdapter(this@DashDetailsActivity)
             isNestedScrollingEnabled = false
         }
     }

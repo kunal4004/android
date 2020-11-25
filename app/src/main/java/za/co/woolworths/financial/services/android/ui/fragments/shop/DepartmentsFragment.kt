@@ -54,12 +54,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var parentFragment: ShopFragment? = null
     private var version: String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
-
+    private var isDashEnabled = false
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
         const val REQUEST_CODE_FINE_GPS = 4771
     }
 
+    init {
+        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance().dashConfig.minimumSupportedAppBuildNumber.toString())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
@@ -70,7 +73,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if(checkLocationPermission()) {
+        if(checkLocationPermission() && isDashEnabled) {
             startLocationUpdates()
         }
         if (isFragmentVisible) {
@@ -79,7 +82,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 showDeliveryOptionDialog()
             }
         }
-
     }
 
     private fun setListener() {
@@ -142,7 +144,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories)
+        if(isDashEnabled) {
+            mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories)
+        }
         mDepartmentAdapter?.notifyDataSetChanged()
         executeValidateSuburb()
     }
