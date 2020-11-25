@@ -29,6 +29,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.FirebaseApp;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
@@ -258,6 +259,9 @@ public class WoolworthsApplication extends Application implements Application.Ac
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
+
+        FirebaseApp.initializeApp(this);
+
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
