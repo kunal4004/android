@@ -49,7 +49,7 @@ class Secure3DPMAFragment : PMAFragment() {
                                     view?.let { v -> Navigation.findNavController(v).navigate(R.id.action_secure3DPMAFragment_to_PMA3DSecureProcessRequestFragment) }
                                 })
                             } catch (iex: IllegalArgumentException) {
-                                FirebaseManager.logException(iex.toString())
+                                FirebaseManager.logException(iex)
                             }
                         }
                         super.onPageFinished(view, url)

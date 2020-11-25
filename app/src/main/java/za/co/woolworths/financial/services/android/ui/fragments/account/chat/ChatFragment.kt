@@ -158,7 +158,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                     val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
                     imm?.hideSoftInputFromWindow(view?.windowToken, 0)
                 } catch (ex: Exception) {
-                    FirebaseManager.logException("InputMethodManager close Keyboard $ex")
+                    FirebaseManager.logException(ex)
                 }
             }
         }
