@@ -27,11 +27,13 @@ class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.Av
                 is ShoppingCartResponse -> {
                     when (httpCode) {
                         HTTP_OK -> {
-                            if (data[0]?.messages.isNullOrEmpty()) {
-                                mainView?.onVoucherRedeemSuccess(this)
-                            } else {
-                                updateVouchersWithErrorMessages(data[0].messages)
-                                mainView?.onVoucherRedeemFailure()
+                            this.data[0].let {
+                                setVouchers(it.voucherDetails.vouchers)
+                                updateVouchersWithErrorMessages(it.messages)
+                                val isPartiallySuccess = !it?.messages.isNullOrEmpty()
+                                it?.messages?.clear()
+                                mainView?.onVoucherRedeemSuccess(this, isPartiallySuccess)
+
                             }
                         }
                         else -> mainView?.onVoucherRedeemGeneralFailure(WoolworthsApplication.getAppContext().getString(R.string.redeem_voucher_generic_error_message))
@@ -63,7 +65,10 @@ class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.Av
     }
 
     override fun setVouchers(vouchers: ArrayList<Voucher>) {
-        vouchers.forEach { it.isSelected = it.voucherApplied }
+        vouchers.forEach {
+            it.isSelected = it.voucherApplied
+            it.errorMessage = ""
+        }
         this.vouchers = vouchers
     }
 
@@ -71,13 +76,15 @@ class AvailableVoucherPresenterImpl(var mainView: VoucherAndPromoCodeContract.Av
         return vouchers
     }
 
-    override fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>): ArrayList<Voucher>? {
+    override fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>) {
+        if (message.isNullOrEmpty()) return
         message.forEach { message ->
             vouchers?.find { it.barcode == message.barCode }?.apply {
                 errorMessage = message.message
                 isSelected = false
             }
         }
-        return vouchers
     }
+
+
 }
