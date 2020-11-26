@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
-import io.fabric.sdk.android.services.common.CommonUtils
+import com.google.firebase.crashlytics.internal.common.CommonUtils
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*

@@ -12,7 +12,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -33,6 +32,7 @@ import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
@@ -43,7 +43,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     private final AbsaBankingOpenApiResponse.Listener<T> listener;
     private List<HttpCookie> mCookies;
     private byte[] iv;
-    private boolean isBodyEncryptionRequired;
+    private final boolean isBodyEncryptionRequired;
 
     private AbsaBankingOpenApiRequest(final int method, final String url, final Class<T> clazz, final Map<String, String> headers, String body, final boolean isBodyEncryptionRequired, final AbsaBankingOpenApiResponse.Listener<T> listener, final Response.ErrorListener errorListener) {
         super(method, url, errorListener);
@@ -188,7 +188,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
             return Response.success(gson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException | JsonSyntaxException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             return Response.error(new ParseError(e));
         }
     }
@@ -199,8 +199,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
             outputStream.write(this.iv);
             outputStream.write(body.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            Crashlytics.logException(e);
-            e.printStackTrace();
+            FirebaseManager.Companion.logException(e);
         }
 
         String encryptionResult = null;
@@ -208,7 +207,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         try {
             encryptionResult = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(AbsaContentEncryptionRequest.derivedSeed, outputStream.toByteArray(), this.iv), Base64.NO_WRAP);
         } catch (DecryptionFailureException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             e.printStackTrace();
         }
 
@@ -226,7 +225,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         try {
             decryptedResponse = new String(SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt), StandardCharsets.UTF_8);
         } catch (DecryptionFailureException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             e.printStackTrace();
         }
 
@@ -244,7 +243,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         try {
             decryptedResponse = SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt);
         } catch (DecryptionFailureException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             e.printStackTrace();
         }
 

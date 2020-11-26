@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -262,7 +262,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                     AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(statementResponse.response.desc);
                                     accountsErrorHandlerFragment.show(getActivity().getSupportFragmentManager(), AccountsErrorHandlerFragment.class.getSimpleName());
                                 } catch (IllegalStateException ex) {
-                                    Crashlytics.logException(ex);
+                                    FirebaseManager.Companion.logException(ex);
                                 }
                             }
                             break;
@@ -331,7 +331,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                     activity.startActivity(openPdfIntent);
                                 }
                             } catch (Exception ex) {
-                                Crashlytics.logException(ex);
+                                FirebaseManager.Companion.logException(ex);
                             }
                         }
                     }
