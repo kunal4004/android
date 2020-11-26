@@ -519,6 +519,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity"
             android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/AccountBaseTheme" />
         <activity
