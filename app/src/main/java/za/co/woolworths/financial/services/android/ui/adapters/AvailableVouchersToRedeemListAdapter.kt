@@ -44,4 +44,9 @@ class AvailableVouchersToRedeemListAdapter(var vouchers: ArrayList<Voucher>, var
         }
     }
 
+    fun updateVouchersList(updatedList: ArrayList<Voucher>) {
+        this.vouchers = updatedList
+        notifyDataSetChanged()
+    }
+
 }

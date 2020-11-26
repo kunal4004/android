@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 interface VoucherAndPromoCodeContract {
 
     interface AvailableVoucherView {
-        fun onVoucherRedeemSuccess(shoppingCartResponse: ShoppingCartResponse)
+        fun onVoucherRedeemSuccess(shoppingCartResponse: ShoppingCartResponse, isPartialSuccess: Boolean)
         fun onVoucherRedeemFailure()
         fun redeemVouchers()
         fun showRedeemVoucherProgress()
@@ -17,6 +17,7 @@ interface VoucherAndPromoCodeContract {
         fun hideRedeemVoucherProgress()
         fun enableRedeemButton()
         fun onVoucherRedeemGeneralFailure(message: String)
+        fun updateVouchersList()
     }
 
     interface AvailableVoucherPresenter {
@@ -26,7 +27,7 @@ interface VoucherAndPromoCodeContract {
         fun isVouchersSelectedToRedeem(): Boolean
         fun setVouchers(vouchers: ArrayList<Voucher>)
         fun getVouchers(): ArrayList<Voucher>?
-        fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>): ArrayList<Voucher>?
+        fun updateVouchersWithErrorMessages(message: ArrayList<VoucherErrorMessage>)
     }
 
     interface AvailableVoucherInteractor {

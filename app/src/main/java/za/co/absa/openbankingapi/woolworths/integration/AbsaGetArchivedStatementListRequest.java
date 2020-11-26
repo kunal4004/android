@@ -1,9 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
-
 import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +11,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListRespons
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaGetArchivedStatementListRequest {
 
@@ -31,7 +28,7 @@ public class AbsaGetArchivedStatementListRequest {
         try {
             body = new StatementListRequest(header, accountNumber).getJson();
         } catch (Exception e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
         }
 
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatementList.exp", StatementListResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<StatementListResponse>() {

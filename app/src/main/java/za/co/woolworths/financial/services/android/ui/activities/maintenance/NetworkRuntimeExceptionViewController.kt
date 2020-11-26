@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
-import com.crashlytics.android.Crashlytics
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import java.lang.IllegalStateException
 
 open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeExceptionViewController::class.java.simpleName) {
@@ -39,7 +39,7 @@ open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeE
             try {
                 socketTimeoutExceptionDialog.show(appInstance.supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
             } catch (ex: IllegalStateException) {
-                Crashlytics.logException(ex)
+                FirebaseManager.logException(ex)
             }
             quit()
         }

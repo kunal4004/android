@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
-import com.crashlytics.android.Crashlytics
 
 open class FourDigitCardFormatWatcher(private var mEditText: EditText) : TextWatcher {
     private var mAvoidRecursiveCall = false
@@ -19,7 +18,7 @@ open class FourDigitCardFormatWatcher(private var mEditText: EditText) : TextWat
                     mShouldDeleteSpace = keyCode == KeyEvent.KEYCODE_DEL && mEditText.selectionEnd - mEditText.selectionStart <= 1 && mEditText.selectionStart > 0 && mEditText.text.toString()[mEditText.selectionEnd - 1] == '-'
                 } catch (e: IndexOutOfBoundsException) { // never to happen because of checks
                     mShouldDeleteSpace = false
-                    Crashlytics.logException(e)
+                    FirebaseManager.logException(e)
                 }
                 false
             }
