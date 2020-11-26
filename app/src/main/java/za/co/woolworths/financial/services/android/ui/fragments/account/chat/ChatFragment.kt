@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 
 class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -157,7 +158,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                     val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
                     imm?.hideSoftInputFromWindow(view?.windowToken, 0)
                 } catch (ex: Exception) {
-                    Crashlytics.log("InputMethodManager close Keyboard $ex")
+                    FirebaseManager.logException(ex)
                 }
             }
         }

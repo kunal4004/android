@@ -35,7 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
@@ -82,6 +81,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -713,7 +713,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 try {
                     signOutFragment.show((activity instanceof BottomNavigationActivity) ? ((BottomNavigationActivity) activity).getSupportFragmentManager() : ((MyAccountActivity) activity).getSupportFragmentManager(), SignOutFragment.class.getSimpleName());
                 } catch (IllegalStateException ex) {
-                    Crashlytics.logException(ex);
+                    FirebaseManager.Companion.logException(ex);
                 }
                 break;
             case R.id.rlProfile:
@@ -834,7 +834,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             break;
                     }
                 } catch (Exception ex) {
-                    Crashlytics.logException(ex);
+                    FirebaseManager.Companion.logException(ex);
                 }
                 hideProgressBar();
                 mUpdateMyAccount.swipeToRefreshAccount(false);
@@ -1156,7 +1156,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 super.onPostExecute(aVoid);
                 Activity activity = getActivity();
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
-                Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
+                FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
                 getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
                         .setTarget(target)
                         .setTitle(R.string.tips_tricks_view_your_accounts)
