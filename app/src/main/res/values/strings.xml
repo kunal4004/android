@@ -1764,7 +1764,7 @@
     <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, please register an account using your\npersonal information.\n\n
 Your credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile. </string>
     <string name="please_note_title">Please Note</string>
-    <string name="privacy_policy_bullet_point">\u2022</string>
+    <string name="bullet_point_unicode">\u2022</string>
 
 </resources>
 
