@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModelProviders;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,6 +24,7 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -81,9 +84,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Nullable
 	@Override
 	public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-			Animation a = new Animation() {};
-			a.setDuration(0);
-			return a;
+		Animation a = new Animation() {
+		};
+		a.setDuration(0);
+		return a;
 	}
 
 	@Override
@@ -109,8 +113,28 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		progressBar = getViewDataBinding().progressBar;
 		fragmentView = getViewDataBinding().fragmentView;
 		tabLayout = getViewDataBinding().tabs;
+		tabLayout.addOnTabSelectedListener(new OnTabSelectedListener() {
+			@Override
+			public void onTabSelected(TabLayout.Tab tab) {
+				if (tab.getPosition() == TabState.OVERVIEW.tabState && tab.getCustomView() != null) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW);
+				} else if (tab.getPosition() == TabState.VOUCHERS.tabState) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS);
+				} else if (tab.getPosition() == TabState.SAVINGS.tabState) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
+				}
+			}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab) {
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab) {
+			}
+		});
 		joinWRewardLoggedInFrameLayout = getViewDataBinding().joinWRewardLoggedInFrameLayout;
-		joinWRewardLoggedInRelativeLayout =  getViewDataBinding().joinWRewardLoggedInRelativeLayout;
+		joinWRewardLoggedInRelativeLayout = getViewDataBinding().joinWRewardLoggedInRelativeLayout;
 		viewPager.setOffscreenPageLimit(3);
 		mRlConnect = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
@@ -121,13 +145,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			loadReward();
 			loadCardDetails();
 		}
-		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-					mErrorHandlerView.hideErrorHandler();
-					loadReward();
-				}
+		view.findViewById(R.id.btnRetry).setOnClickListener(v -> {
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+				mErrorHandlerView.hideErrorHandler();
+				loadReward();
 			}
 		});
 
@@ -136,7 +157,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	private void uniqueIdsForWRewardSignedInState() {
 		Activity activity = getActivity();
-		if (activity!= null && activity.getResources()!=null) {
+		if (activity != null && activity.getResources() != null) {
 			joinWRewardLoggedInFrameLayout.setContentDescription(getString(R.string.wreward_logged_in_framelayout));
 			joinWRewardLoggedInRelativeLayout.setContentDescription(getString(R.string.wreward_logged_in_relativelayout));
 			progressBar.setContentDescription(getString(R.string.wreward_progress_bar));
@@ -147,9 +168,11 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		}
 
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			public void onPageScrollStateChanged(int state) { }
+			public void onPageScrollStateChanged(int state) {
+			}
 
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+			}
 
 			public void onPageSelected(int position) {
 				if (position == 1) {
@@ -210,7 +233,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	private Call<VoucherResponse> getWRewards() {
 
-		Call<VoucherResponse> voucherRequestCall =  OneAppService.INSTANCE.getVouchers();
+		Call<VoucherResponse> voucherRequestCall = OneAppService.INSTANCE.getVouchers();
 		voucherRequestCall.enqueue(new CompletionHandler<>(new IResponseListener<VoucherResponse>() {
 			@Override
 			public void onSuccess(VoucherResponse voucherResponse) {
@@ -219,10 +242,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 			@Override
 			public void onFailure(Throwable error) {
-				if (error==null)return;
+				if (error == null) return;
 				mErrorHandlerView.networkFailureHandler(error.getMessage());
 			}
-		},VoucherResponse.class));
+		}, VoucherResponse.class));
 
 		return voucherRequestCall;
 	}
@@ -303,7 +326,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				isCardDetailsCalled = true;
 				handleWrewardsAndCardDetailsResponse();
 			}
-		},CardDetailsResponse.class));
+		}, CardDetailsResponse.class));
 	}
 
 	public void handleWrewardsAndCardDetailsResponse() {
@@ -317,7 +340,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		if(getBottomNavigationActivity() != null && getBottomNavigationActivity().walkThroughPromtView != null){
+		if (getBottomNavigationActivity() != null && getBottomNavigationActivity().walkThroughPromtView != null) {
 			getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
 		}
 	}
@@ -330,7 +353,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			wRewardsCardDetails.cancel();
 		}
 
-		if (getVoucherAsync !=null && !getVoucherAsync.isCanceled()){
+		if (getVoucherAsync != null && !getVoucherAsync.isCanceled()) {
 			getVoucherAsync.cancel();
 		}
 	}
@@ -367,10 +390,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		}
 	}
 
-	public void showFeatureWalkthrough(View counterView){
+	public void showFeatureWalkthrough(View counterView) {
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.vouchers)
 			return;
-		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
+		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
 		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.VOUCHERS)
 				.setTarget(counterView)
 				.setTitle(R.string.tips_tricks_your_vouchers)
@@ -384,18 +407,27 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
 	}
 
+	public enum TabState {
+		OVERVIEW(0),
+		VOUCHERS(1),
+		SAVINGS(2);
+
+		private final Integer tabState;
+
+		TabState(final Integer tabState) {
+			this.tabState = tabState;
+		}
+	}
+
 	@Override
 	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				viewPager.setCurrentItem(1);
+		getActivity().runOnUiThread(() -> {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			viewPager.setCurrentItem(1);
 		});
 	}
 
