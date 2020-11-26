@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -276,12 +277,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
-        } else if(requestCode == REQUEST_CODE_FINE_GPS && resultCode == RESULT_OK){
-            activity?.apply {
-                if(!Utils.isLocationEnabled(context)) {
-                    val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        } else if(requestCode == REQUEST_CODE_FINE_GPS ){
+            when(resultCode){
+                RESULT_OK -> {
+                    activity?.apply {
+                        if(!Utils.isLocationEnabled(context)) {
+                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
+                            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                        }
+                    }
                 }
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -364,6 +369,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     @SuppressLint("NewApi")
     private fun checkLocationPermission(): Boolean {
+        if(!isFragmentVisible){
+            return false
+        }
+
         activity?.apply {
             val perms =
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -371,7 +380,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                 } else {
                     //we can request the permission.
                     ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
