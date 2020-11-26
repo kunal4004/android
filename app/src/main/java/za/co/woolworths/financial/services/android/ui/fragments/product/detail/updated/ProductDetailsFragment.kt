@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
@@ -819,6 +820,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 item.let {
                     listOfItems.add(it)
                 }
+                scrollView?.fullScroll(View.FOCUS_UP)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
             }
 
