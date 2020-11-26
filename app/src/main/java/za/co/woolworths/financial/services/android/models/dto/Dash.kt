@@ -6,6 +6,6 @@ data class Dash(
         val categoryIdval: String,
         val dashBreakoutLink: String,
         val androidDashLink: String,
-        val bannerText: String,
+        var bannerText: String,
         val packageName: String
 )

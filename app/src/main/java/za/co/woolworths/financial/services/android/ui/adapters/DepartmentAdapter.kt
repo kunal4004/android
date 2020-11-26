@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.department_dash_banner.view.*
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
-import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.Dash
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
@@ -53,10 +53,11 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         mlRootCategories = rootCategories
     }
 
-    fun setDashBanner(dash: Dash?, rootCategories: MutableList<RootCategory>?) {
+    fun setDashBanner(dash: Dash?, rootCategories: MutableList<RootCategory>?, bannerText: String) {
         dash?.let {
             val dashBanner = RootCategory()
             dashBanner.viewType = RootCategoryViewType.DASH_BANNER
+            it.bannerText = bannerText
             // Make sure the position is after header
             rootCategories?.add(1, dashBanner)
             mlRootCategories = rootCategories
@@ -168,12 +169,12 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         notifyDataSetChanged()
     }
 
-    fun containsDashBanner(): Boolean {
+    private fun containsDashBanner(): Boolean {
         return mDashBanner != null
     }
 
     fun removeDashBanner() {
-        if(!containsDashBanner()){
+        if (!containsDashBanner()) {
             return
         }
         //1 is the position of Dash banner card
@@ -184,5 +185,15 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                 notifyItemRemoved(1)
             }
         }
+    }
+
+    fun updateDashBanner(bannerText: String, isDashEnabled: Boolean) {
+        if (!isDashEnabled || !containsDashBanner()) {
+            return
+        }
+        mDashBanner?.apply {
+            this.bannerText = bannerText
+        }
+        notifyItemChanged(1, mDashBanner)
     }
 }

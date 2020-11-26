@@ -25,6 +25,7 @@ import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -508,6 +509,13 @@ class KotlinUtils {
                 startActivity(mIntent)
                 overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
             }
+        }
+
+        fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
+            activity?.apply {
+                return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
+            }
+            return false
         }
     }
 }

@@ -145,7 +145,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
         if(isDashEnabled) {
-            mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories)
+            mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories,
+            getUpdatedBannerText())
         }
         mDepartmentAdapter?.notifyDataSetChanged()
         executeValidateSuburb()
@@ -174,6 +175,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }
+    }
+
+
+    private fun getUpdatedBannerText(): String {
+        context?.apply {
+            return if(KotlinUtils.isAppInstalled(activity, WoolworthsApplication.getInstance()?.dashConfig?.appURI))
+                this.getString(R.string.dash_banner_text_open_app) else this.getString(R.string.dash_banner_text_download_app)
+        }
+        return ""
     }
 
     private fun onDashBannerClicked() {
@@ -242,6 +252,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun refreshLocationUpdates() {
         if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            mDepartmentAdapter?.updateDashBanner(getUpdatedBannerText(), isDashEnabled)
             startLocationUpdates()
         } else {
             mDepartmentAdapter?.removeDashBanner()
@@ -371,28 +382,5 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             }
         }
         return false
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_CODE_FINE_GPS -> {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    val activity = activity ?: return
-                    // permission was granted. Do the
-                    // contacts-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if(!Utils.isLocationEnabled(context)) {
-                            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            activity.startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
-                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        }
-                    }
-                }
-                return
-            }
-        }
     }
 }
