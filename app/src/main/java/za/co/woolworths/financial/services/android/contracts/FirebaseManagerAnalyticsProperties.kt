@@ -26,7 +26,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYCARTREMOVEALL: String = "GA_Event_ONE_MYCARTREMOVEALL"
         const val WREWARDSOVERVIEW: String = "one_wrewardsoverview"
         const val WREWARDSVOUCHERS: String = "GA_Event_ONE_WREWARDSVOUCHERS"
-        const val WREWARDSSAVINGS: String = "one_wrewardssavings"
+        const val WREWARDSSAVINGS: String = "wrewardssavings"
         const val WREWARDSFLIP: String = "one_wrewardsflip"
         const val WREWARDSDESCRIPTION_VOUCHERDESCRIPTION: String = "GA_Event_ONE_WREWARDSDESCRIPTION"
         const val MYACCOUNTSSTORECARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_SC_APPLYNOW"
@@ -64,7 +64,7 @@ class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_SET_UP_PASSOCDE: String = "GA_Event_ONE_ABSA_CC_SETUP_PASSOCDE"
         const val ABSA_CC_COMPLETE_SETUP: String = "GA_Event_ONE_ABSA_CC_COMPLETE_SETUP"
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "GA_Event_ONE_CC_LOGIN_WITH_NEW_PASSCODE"
-        const val ABSA_CC_VIEW_STATEMENTS: String = "one_absa_cc_view_statements"
+        const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statements"
         const val ABSA_CC_SHARE_STATEMENT: String = "GA_Event_ONE_ABSA_CC_SHARE_STATEMENT"
         const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "one_absa_cc_view_ind_statements"
 
