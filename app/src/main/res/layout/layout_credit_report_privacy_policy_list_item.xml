@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:gravity="top"
-        android:text="@string/privacy_policy_bullet_point"
+        android:text="@string/bullet_point_unicode"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="@dimen/sixteen_sp"
         app:layout_constrainedHeight="true"
