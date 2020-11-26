@@ -2366,4 +2366,102 @@
         <item name="autoSizeTextType">uniform</item>
     </style>
 
+    <style name="enterPaymentAmountStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="amountEditTextStyle">
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:cursorVisible">true</item>
+        <item name="android:digits">1234567890</item>
+        <item name="android:ems">10</item>
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:focusable">true</item>
+        <item name="android:inputType">numberPassword</item>
+        <item name="android:maxLength">11</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minWidth">@dimen/twenty_four_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_custom_color</item>
+        <item name="android:textSize">@dimen/fifty_five_sp</item>
+    </style>
+
+    <style name="textviewErrorLabelStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">center|top</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/red_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="continueDoneButtonStyle" parent="blackButtonCustomStyle">
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_marginStart">@dimen/zero_dp</item>
+        <item name="android:layout_marginEnd">@dimen/zero_dp</item>
+        <item name="android:layout_marginBottom">@dimen/twenty_four_dp</item>
+        <item name="android:background">@drawable/button_selected_deselected_bg</item>
+    </style>
+
+    <style name="enterPaymentStartGuideline">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="enterPaymentEndGuidelineStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="enterPaymentAmountDividerStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">21dp</item>
+        <item name="android:background">@color/bpi_background</item>
+    </style>
+
+    <style name="enterPaymentAmountDueLabelStyle" parent="pmaOutstandingValueStyle">
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/twenty_four_dp</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:textColor">@color/black_white_color_selector</item>
+    </style>
+
+    <style name="enterPaymentAmountDueHorizontalDivider">
+        <item name="android:layout_width">@dimen/zero_dp</item>
+        <item name="android:layout_height">@dimen/one_dp</item>
+        <item name="android:layout_marginTop">@dimen/twenty_four_dp</item>
+        <item name="android:background">@color/bpi_background</item>
+    </style>
+
+    <style name="enterPaymentAmountOverdueStyle" parent="amountDescriptionStyle">
+        <item name="android:layout_marginTop">@dimen/zero_dp</item>
+    </style>
+
+    <style name="enterPaymentAmountOverdueValueStyle" parent="pmaOutstandingValueStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/twenty_four_dp</item>
+        <item name="android:background">@drawable/amount_textview_bg</item>
+        <item name="android:textColor">@color/black_white_color_selector</item>
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    </style>
+
 </resources>

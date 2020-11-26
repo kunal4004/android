@@ -207,11 +207,11 @@ class PayMyAccountViewModel : ViewModel() {
     fun getAccount() = getCardDetail()?.account?.second
 
     fun getOverdueAmount(): String? {
-        return getAccount()?.amountOverdue?.let { formatAndRemoveNegativeSymbol(it) }
+        return getAccount()?.amountOverdue?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
     }
 
     fun getTotalAmountDue(): String? {
-        return getAccount()?.totalAmountDue?.let { formatAndRemoveNegativeSymbol(it) }
+        return getAccount()?.totalAmountDue?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
@@ -335,7 +335,7 @@ class PayMyAccountViewModel : ViewModel() {
         return if (number.isNullOrEmpty()) 0.0 else number.toDouble()
     }
 
-    private fun convertRandFormatToInt(item: String?): Int {
+    fun convertRandFormatToInt(item: String?): Int {
         val number: String? = item?.replace("[,.R$ ]".toRegex(), "")
         return if (number.isNullOrEmpty()) 0 else number.toInt()
     }
