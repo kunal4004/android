@@ -11,7 +11,7 @@ open class CreditCardDeliveryBaseFragment : Fragment() {
     var bundle: Bundle? = null
     lateinit var envelopeNumber: String
     lateinit var productOfferingId: String
-    var scheduleDeliveryRequest: ScheduleDeliveryRequest? = null
+    lateinit var scheduleDeliveryRequest: ScheduleDeliveryRequest
     var statusResponse: StatusResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

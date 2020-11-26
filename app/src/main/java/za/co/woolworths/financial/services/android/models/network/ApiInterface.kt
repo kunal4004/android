@@ -1291,6 +1291,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Query("searchPhrase") searchPhrase: String,
+            @Query("envelopeNumber") envelopeNumber: String,
             @Query("productOfferingId") productOfferingId: String): Call<PossibleAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

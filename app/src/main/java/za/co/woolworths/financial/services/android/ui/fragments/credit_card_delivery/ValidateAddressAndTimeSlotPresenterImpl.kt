@@ -10,8 +10,8 @@ class ValidateAddressAndTimeSlotPresenterImpl(var mainView: ValidateAddressAndTi
         mainView = null
     }
 
-    override fun initValidateAddress(searchPhrase: String, productOfferingId: String) {
-        getInteractor.queryServiceValidateAddress(searchPhrase, productOfferingId, this)
+    override fun initValidateAddress(searchPhrase: String, productOfferingId: String, envelopeNumber: String) {
+        getInteractor.queryServiceValidateAddress(searchPhrase, productOfferingId, this, envelopeNumber)
     }
 
     override fun initAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String) {

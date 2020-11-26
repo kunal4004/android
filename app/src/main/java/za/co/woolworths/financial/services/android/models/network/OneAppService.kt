@@ -344,8 +344,8 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.cardDeliveryStatus(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeReference, productOfferingId)
     }
 
-    fun getPossibleAddress(searchPhrase: String, productOfferingId: String): Call<PossibleAddressResponse> {
-        return mApiInterface.possibleAddress(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), searchPhrase, productOfferingId)
+    fun getPossibleAddress(searchPhrase: String, productOfferingId: String, envelopeNumber: String): Call<PossibleAddressResponse> {
+        return mApiInterface.possibleAddress(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), searchPhrase, envelopeNumber, productOfferingId)
     }
 
     fun getAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String): Call<AvailableTimeSlotsResponse> {

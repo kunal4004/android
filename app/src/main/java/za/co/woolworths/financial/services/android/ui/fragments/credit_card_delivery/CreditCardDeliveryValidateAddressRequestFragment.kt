@@ -74,7 +74,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
                     restartProgress()
-                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it) }
+                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it, envelopeNumber) }
                 }
             }
             R.id.retryGetTimeSlots -> {
@@ -88,7 +88,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     override fun getValidateAddress() {
         startProgress()
-        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it) }
+        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it, envelopeNumber) }
     }
 
     override fun getAvailableTimeSlots() {

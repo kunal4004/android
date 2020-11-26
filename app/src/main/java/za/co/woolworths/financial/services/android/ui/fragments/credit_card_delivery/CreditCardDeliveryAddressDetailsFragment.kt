@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
@@ -69,7 +69,8 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
     private fun onSubmit() {
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
-            scheduleDeliveryRequest?.bookingAddress?.let {
+            var bookingAddress = BookingAddress()
+            bookingAddress.let {
                 it.businessName = businessName?.text.toString().trim()
                 it.complexName = complexOrBuildingName?.text.toString().trim()
                 it.buildingName = complexOrBuildingName?.text.toString().trim()
@@ -79,6 +80,19 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                 it.city = cityOrTown?.text.toString().trim()
                 it.postalCode = postalCode?.text.toString().trim()
             }
+            scheduleDeliveryRequest = ScheduleDeliveryRequest()
+            scheduleDeliveryRequest.bookingAddress = bookingAddress
+            var addressDetails = AddressDetails(
+                    province?.text.toString().trim(),
+                    cityOrTown?.text.toString().trim(),
+                    suburb?.text.toString().trim(),
+                    businessName?.text.toString().trim(),
+                    complexOrBuildingName?.text.toString().trim(),
+                    streetAddress?.text.toString().trim(),
+                    complexOrBuildingName?.text.toString().trim(),
+                    postalCode?.text.toString().trim())
+
+            scheduleDeliveryRequest.addressDetails = addressDetails
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 

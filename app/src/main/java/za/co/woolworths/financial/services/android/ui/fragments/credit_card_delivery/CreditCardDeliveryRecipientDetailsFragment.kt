@@ -88,7 +88,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                             it.idNumber = idNumber?.text.toString().trim()
                     }
                     bundle?.putString("BookingAddress", Utils.toJson(bookingAddress))
-                    navController?.navigate(R.id.action_to_updateRecipientDetailsProcessingFragment, bundleOf("bundle" to bundle))
+                    navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
                 } else {
                     listOfInputFields.forEach {
                         if (it.text.toString().trim().isEmpty())
