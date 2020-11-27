@@ -4,28 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        app:elevation="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:elevation="0dp"
             app:contentScrim="#2C2C2D"
+            app:elevation="0dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="#2C2C2D"
             app:titleEnabled="false">
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:background="#2C2C2D"
                 android:layout_height="wrap_content"
+                android:background="#2C2C2D"
                 app:layout_collapseMode="pin">
 
                 <ImageView
@@ -86,19 +86,13 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nest_scrollview"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpRewardBenefit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vpRewardBenefit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="horizontal" />
-    </androidx.core.widget.NestedScrollView>
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
