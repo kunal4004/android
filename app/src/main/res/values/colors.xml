@@ -15,7 +15,7 @@
     <color name="semi_transparent_black">#50000000</color>
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
-    <color name="black_desc_opacity">#75000000</color>
+    <color name="black_desc_opacity">#7500F0000</color>
     <color name="mask_opacity">#80000000</color>
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
@@ -114,7 +114,6 @@
     <color name="bg_e6e6e6">#E6E6E6</color>
     <color name="color_F8F8F8">#F8F8F8</color>
     <color name="color_e1e1e1">#E1E1E1</color>
-    <color name="status_bar_reward_benefit_color">#252526</color>
 
     <color name="link_text_color">#7F7F7F</color>
 </resources>
