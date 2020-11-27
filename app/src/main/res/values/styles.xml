@@ -1338,15 +1338,15 @@
     <style name="RewardBenefitDetailStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="statusBarBackground">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:selectableItemBackground">@android:color/transparent</item>
         <item name="android:actionBarItemBackground">@null</item>
-        <item name="actionBarItemBackground">@null</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
     </style>
 
     <style name="StoreLocatorActivityStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
