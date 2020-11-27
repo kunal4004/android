@@ -457,12 +457,10 @@ class PayMyAccountViewModel : ViewModel() {
     fun getPayOrSaveNowCardDetails(): Triple<CharSequence?, String, String>? {
         val addCardResponse = getAddCardResponse()
         addCardResponse.card.apply {
-            val cardHolderName = name_card.capitalizeWords()
+            val cardHolderName = KotlinUtils.capitaliseFirstWordAndLetters(name_card)
             val expiredMonthYear = "$exp_month / $exp_year"
             val maskedCardNumber = "**** **** **** $number"
             return Triple(cardHolderName, expiredMonthYear, maskedCardNumber)
         }
     }
-
-     fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it.capitalize() }
 }
