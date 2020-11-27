@@ -2210,7 +2210,6 @@
     <style name="pmaCardDetailStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">32dp</item>
         <item name="android:layout_marginTop">45dp</item>
         <item name="android:fontFamily">@font/myriad_pro_regular</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
@@ -2220,8 +2219,7 @@
     <style name="dividerStyle" parent="horizontal_divider_how_to_pay">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:layout_marginStart">24dp</item>
-        <item name="android:layout_marginTop">19dp</item>
+        <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginEnd">24dp</item>
         <item name="android:visibility">visible</item>
     </style>
@@ -2229,7 +2227,6 @@
     <style name="pmaSaveCardDetailStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginEnd">24dp</item>
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:gravity">end</item>
         <item name="android:maxLines">1</item>

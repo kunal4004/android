@@ -10,6 +10,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -201,6 +202,11 @@ class PayMyAccountViewModel : ViewModel() {
     private fun getProductOfferingIdInStringFormat(): String? = getAccount()?.productOfferingId?.toString()
 
     fun getApplyNowState() = getCardDetail()?.account?.first
+
+    fun getProductLabelId() = when (getApplyNowState()) {
+        ApplyNowState.STORE_CARD -> R.string.store_card_title
+        else -> R.string.personalLoanCard_title
+    }
 
     fun getAccountWithApplyNowState() = getCardDetail()?.account
 
@@ -451,10 +457,12 @@ class PayMyAccountViewModel : ViewModel() {
     fun getPayOrSaveNowCardDetails(): Triple<CharSequence?, String, String>? {
         val addCardResponse = getAddCardResponse()
         addCardResponse.card.apply {
-            val cardHolderName = KotlinUtils.capitaliseFirstLetter(name_card.toLowerCase(Locale.getDefault()))
+            val cardHolderName = name_card.capitalizeWords()
             val expiredMonthYear = "$exp_month / $exp_year"
             val maskedCardNumber = "**** **** **** $number"
             return Triple(cardHolderName, expiredMonthYear, maskedCardNumber)
         }
     }
+
+     fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it.capitalize() }
 }
