@@ -183,5 +183,6 @@
     <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
     <item name="availableFundMaximumHeight" type="dimen" format="float">0.7</item>
     <dimen name="dimen_0_5dp">0.5dp</dimen>
+    <dimen name="four_hundred_dp">400dp</dimen>
 </resources>
 
