@@ -16,19 +16,21 @@
             android:background="@color/default_background"
             tools:context="za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/WTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/fourty_five_dp"
                 android:background="@color/black"
                 android:elevation="@dimen/five_dp"
                 android:gravity="center"
-                android:padding="@dimen/fifteen_dp"
-                android:paddingHorizontal="@dimen/fifteen_dp"
+                android:paddingVertical="@dimen/fifteen_dp"
+                android:paddingHorizontal="@dimen/twenty_dp"
+                android:minWidth="@dimen/hundred_and_sixty_four_dp"
                 android:text="@string/dash_details_food_order"
+                android:letterSpacing="0.2"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_12sp"
-                app:WTextView_font="medium_bold"
+                android:fontFamily="@font/futura_semi_bold"
                 app:layout_constraintBottom_toBottomOf="@+id/dash_details_header_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -79,6 +81,7 @@
         android:paddingVertical="@dimen/twenty_two_dp"
         android:text="@string/dash_details_download_woolies_dash_app"
         android:textColor="@color/white"
+        android:letterSpacing="0.2"
         android:textSize="@dimen/twelve_sp"
         app:WTextView_font="medium_bold"
         android:layout_alignParentBottom="true"/>

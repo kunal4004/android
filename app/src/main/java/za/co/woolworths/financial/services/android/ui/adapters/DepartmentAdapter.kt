@@ -54,6 +54,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     }
 
     fun setDashBanner(dash: Dash?, rootCategories: MutableList<RootCategory>?, bannerText: String) {
+        mDashBanner = null
         dash?.let {
             val dashBanner = RootCategory()
             dashBanner.viewType = RootCategoryViewType.DASH_BANNER
@@ -169,7 +170,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         notifyDataSetChanged()
     }
 
-    private fun containsDashBanner(): Boolean {
+    public fun containsDashBanner(): Boolean {
         return mDashBanner != null
     }
 

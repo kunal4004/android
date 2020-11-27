@@ -99,7 +99,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return
             }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this@DepartmentsFragment)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_3000_MS, 0f, this@DepartmentsFragment)
         }
     }
 
@@ -226,6 +226,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onDestroy() {
         mDepartmentAdapter?.removeDashBanner()
+        stopLocationUpdate()
+
         super.onDestroy()
         rootCategoryCall?.apply {
             if (isCanceled)
@@ -255,6 +257,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             mDepartmentAdapter?.updateDashBanner(getUpdatedBannerText(), isDashEnabled)
             startLocationUpdates()
+            executeDepartmentRequest()
         } else {
             mDepartmentAdapter?.removeDashBanner()
         }
@@ -347,11 +350,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onLocationChanged(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)
-            stopLocationUpdate()
-
-            if (!isRootCatCallInProgress) {
-                executeDepartmentRequest()
-            }
         }
     }
 
@@ -361,10 +359,17 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onProviderEnabled(provider: String?) {
         //Do nothing
+        mDepartmentAdapter?.apply {
+            if (isDashEnabled && !isRootCatCallInProgress && !containsDashBanner()) {
+                executeDepartmentRequest()
+            }
+        }
     }
 
     override fun onProviderDisabled(provider: String?) {
-        //Do nothing
+        mDepartmentAdapter?.apply {
+            removeDashBanner()
+        }
     }
 
     @SuppressLint("NewApi")
