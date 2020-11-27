@@ -29,7 +29,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -469,7 +468,7 @@ class KotlinUtils {
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
             } catch (t: Throwable) {
-                Crashlytics.log(t.message)
+                FirebaseManager.logException(t)
             }
         }
 
@@ -486,7 +485,7 @@ class KotlinUtils {
             }
         }
 
-        fun openApplicationSettings(requestCode: Int, activity: Activity?){
+        fun openApplicationSettings(requestCode: Int, activity: Activity?) {
             val intent = Intent()
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             val uri: Uri = Uri.fromParts("package", activity?.packageName, null)

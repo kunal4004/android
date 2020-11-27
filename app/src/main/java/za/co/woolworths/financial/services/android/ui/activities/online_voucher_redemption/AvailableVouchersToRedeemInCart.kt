@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +10,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_activation_activity.*
+import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.ApplyPromoCodeFragment
+import za.co.woolworths.financial.services.android.ui.fragments.voucher_redeemption.AvailableVoucherFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AvailableVouchersToRedeemInCart : AppCompatActivity() {
@@ -44,6 +47,19 @@ class AvailableVouchersToRedeemInCart : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        supportFragmentManager?.primaryNavigationFragment?.childFragmentManager?.fragments?.get(0)?.let {
+            when (it) {
+                is AvailableVoucherFragment -> {
+                    val appliedVouchersCount: Int = it.shoppingCartResponse?.data?.get(0)?.voucherDetails?.vouchers?.filter { it.voucherApplied }?.size
+                            ?: 0
+                    if (it.shoppingCartResponse != null && appliedVouchersCount > 0) {
+                        setResult(Activity.RESULT_OK, Intent().putExtra("ShoppingCartResponse", Utils.toJson(it.shoppingCartResponse)))
+                        finish()
+                        return
+                    }
+                }
+            }
+        }
         setResult(Activity.RESULT_CANCELED)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

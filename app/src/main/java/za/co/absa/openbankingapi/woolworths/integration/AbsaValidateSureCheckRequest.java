@@ -1,10 +1,7 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
@@ -17,6 +14,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckReq
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaValidateSureCheckRequest {
 
@@ -47,7 +45,7 @@ public class AbsaValidateSureCheckRequest {
                 try {
                     statusCode = response.getHeader().getStatusCode();
                 } catch (Exception e) {
-                    Crashlytics.logException(e);
+                    FirebaseManager.Companion.logException(e);
                 }
 
                 if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0"))

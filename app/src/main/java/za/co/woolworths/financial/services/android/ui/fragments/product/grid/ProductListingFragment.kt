@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.ktx.Firebase
 import com.skydoves.balloon.balloon
 import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
@@ -211,7 +212,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc)
             fragmentTransaction?.let { singleButtonDialogFragment.show(fragmentTransaction, SingleButtonDialogFragment::class.java.simpleName) }
         }catch (ex: IllegalStateException){
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -558,7 +559,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.apply {
             // Prevent dialog to display in other section when fragment is not visible
             if (currentFragment !is ProductListingFragment) return
-            Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.javaClass.canonicalName)
+            FirebaseManager.setCrashlyticsString(bindString(R.string.crashlytics_materialshowcase_key), this.javaClass.canonicalName)
             walkThroughPromtView = WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
                     .setTarget(refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
@@ -657,7 +658,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
                                     selectYourQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
                                 }catch (ex: IllegalStateException){
-                                    Crashlytics.logException(ex)
+                                    FirebaseManager.logException(ex)
                                 }
                             }
                         }
@@ -779,7 +780,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 productListingFindInStoreNoQuantityFragment.show(this, ProductListingFindInStoreNoQuantityFragment::class.java.simpleName)
             }
         }catch (ex: IllegalStateException){
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 

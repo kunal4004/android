@@ -5,7 +5,6 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 
 import com.awfs.coordination.BuildConfig;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,6 +27,7 @@ import javax.security.auth.x500.X500Principal;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaSecureCredentials {
 
@@ -55,7 +55,7 @@ public class AbsaSecureCredentials {
 				byte[] base64DecodedAlias = Base64.decode(aliasId.getBytes(), Base64.DEFAULT);
 				aliasId = new String(decrypt(context, base64DecodedAlias));
 			}catch(Exception e){
-				Crashlytics.logException(e);
+				FirebaseManager.Companion.logException(e);
 				aliasId = "";
 			}
 		}
@@ -67,7 +67,7 @@ public class AbsaSecureCredentials {
 				byte[] base64DecodedDeviceId = Base64.decode(deviceId.getBytes(), Base64.DEFAULT);
 				deviceId = new String(decrypt(context, base64DecodedDeviceId));
 			}catch(Exception e){
-				Crashlytics.logException(e);
+				FirebaseManager.Companion.logException(e);
 				deviceId = "";
 			}
 		}
@@ -96,7 +96,7 @@ public class AbsaSecureCredentials {
 			saveAliasIdToSqlite(context);
 			saveDeviceIdToSqlite(context);
 		} catch (Exception e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class AbsaSecureCredentials {
 			}
 
 		} catch (Exception e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 	}
 

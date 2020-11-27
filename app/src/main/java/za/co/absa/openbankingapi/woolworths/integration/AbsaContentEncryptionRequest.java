@@ -1,11 +1,9 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.content.Context;
 import android.util.Base64;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -23,6 +21,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class AbsaContentEncryptionRequest {
@@ -42,7 +41,7 @@ public class AbsaContentEncryptionRequest {
             this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(seed, WoolworthsApplication.getAbsaBankingOpenApiServices().getContentEncryptionPublicKey());
             derivedSeed = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
         } catch (UnsupportedEncodingException | KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
         }
     }
 
@@ -55,7 +54,7 @@ public class AbsaContentEncryptionRequest {
         try {
             body = new CEKDRequest(deviceId, Base64.encodeToString(contentEncryptionSeed, Base64.NO_WRAP)).getJson();
         } catch (Exception e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
         }
 
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
