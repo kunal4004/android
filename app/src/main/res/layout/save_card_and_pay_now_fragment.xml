@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/productTotalValueTextView"
         style="@style/pmaSaveCardDetailStyle"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:text="**** **** **** 0008"
         app:layout_constraintBottom_toBottomOf="@+id/productTotalLabelTextView"
@@ -21,7 +21,7 @@
         style="@style/pmaCardDetailStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="@dimen/twenty_one_dp"
         android:text="@string/save_card_product_payment_total_label"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/saveCardProductDividerView" />
@@ -29,8 +29,8 @@
     <View
         android:id="@+id/saveCardProductDividerView"
         style="@style/dividerStyle"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/one_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/saveCardProductLabelTextView" />
@@ -38,9 +38,9 @@
     <View
         android:id="@+id/paymentTotalDividerView"
         style="@style/dividerStyle"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/productTotalValueTextView" />
@@ -48,7 +48,7 @@
     <TextView
         android:id="@+id/saveCardProductValueTextView"
         style="@style/pmaSaveCardDetailStyle"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:text="**** **** **** 0008"
         app:layout_constraintBottom_toBottomOf="@+id/saveCardProductLabelTextView"
@@ -58,7 +58,7 @@
     <TextView
         android:id="@+id/pmaSaveCardPayNowTextView"
         style="@style/pmaTitleStyle"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="@dimen/eighteen_dp"
         android:text="@string/pma_save_card_pay_now_title"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,9 +69,9 @@
     <Button
         android:id="@+id/saveCardPayNowButton"
         style="@style/blackButtonCustomStyle"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
         android:background="@color/black"
         android:layout_marginBottom="24dp"
         android:text="@string/save_card_and_pay_now_button_label"
@@ -82,7 +82,7 @@
     <TextView
         android:id="@+id/pmaCardNumberTextView"
         style="@style/pmaCardDetailStyle"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="@dimen/twenty_one_dp"
         android:text="@string/card_number_label"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/paymentTotalDividerView" />
@@ -98,8 +98,8 @@
         android:id="@+id/nameOnCardTextView"
         style="@style/pmaCardDetailStyle"
         android:layout_width="wrap_content"
-        android:layout_height="19dp"
-        android:layout_marginTop="21dp"
+        android:layout_height="@dimen/nineteen_dp"
+        android:layout_marginTop="@dimen/twenty_one_dp"
         android:text="@string/name_on_card_label"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/cardNumberDivider" />
@@ -116,7 +116,7 @@
         style="@style/pmaCardDetailStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="@dimen/twenty_one_dp"
         android:text="@string/expiration_date_label"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/nameOnCardDivider" />
@@ -125,7 +125,7 @@
         android:id="@+id/pmaSaveCardCheckbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="@dimen/forty_four_dp"
         android:background="@android:color/transparent"
         android:button="@drawable/shopping_list_item_selector"
         android:buttonTint="@android:color/transparent"
@@ -170,7 +170,7 @@
     <TextView
         android:id="@+id/saveCardProductLabelTextView"
         style="@style/pmaCardDetailStyle"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="@dimen/fourty_five_dp"
         android:text="@string/save_card_product_label"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/pmaSaveCardPayNowTextView" />
