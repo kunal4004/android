@@ -114,6 +114,8 @@
     <color name="bg_e6e6e6">#E6E6E6</color>
     <color name="color_F8F8F8">#F8F8F8</color>
     <color name="color_e1e1e1">#E1E1E1</color>
+    <color name="reward_benefit_background">#2C2C2D</color>
+    <color name="tab_text_color">#80ffffff</color>
 
     <color name="link_text_color">#7F7F7F</color>
 </resources>
