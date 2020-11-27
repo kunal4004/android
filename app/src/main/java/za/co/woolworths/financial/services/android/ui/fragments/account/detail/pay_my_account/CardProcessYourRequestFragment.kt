@@ -8,7 +8,7 @@ class CardProcessYourRequestFragment : ProcessYourRequestFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        processingLayoutTitle?.visibility=View.GONE
-        tvProcessingYourRequestDuration?.visibility = View.GONE
+        processRequestTitleTextView?.visibility=View.GONE
+        processRequestDescriptionTextView?.visibility = View.GONE
     }
 }
