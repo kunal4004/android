@@ -11,30 +11,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:elevation="0dp">
+        app:elevation="@dimen/zero_dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="#2C2C2D"
-            app:elevation="0dp"
+            app:contentScrim="@color/reward_benefit_background"
+            app:elevation="@dimen/zero_dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:statusBarScrim="#2C2C2D"
+            app:statusBarScrim="@color/reward_benefit_background"
             app:titleEnabled="false">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#2C2C2D"
+                android:background="@color/reward_benefit_background"
                 app:layout_collapseMode="pin">
 
                 <ImageView
                     android:id="@+id/header"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="@dimen/two_hundred_and_fifty_dp"
                     android:contentDescription="@string/reward_to_get_to_vip"
                     android:scaleType="centerCrop"
-                    android:scrollbarSize="0dp"
+                    android:scrollbarSize="@dimen/zero_dp"
                     app:layout_collapseMode="parallax"
                     app:srcCompat="@drawable/benefits_header" />
 
@@ -82,7 +82,7 @@
                 app:tabRippleColor="@null"
                 app:tabSelectedTextColor="@color/white"
                 app:tabTextAppearance="@style/TabLayoutDefaultStyle"
-                app:tabTextColor="#80ffffff" />
+                app:tabTextColor="@color/tab_text_color" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
