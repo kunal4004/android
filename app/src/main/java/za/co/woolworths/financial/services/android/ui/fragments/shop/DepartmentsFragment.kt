@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
-    private lateinit var locationManager: LocationManager
+    private var locationManager: LocationManager? = null
     private var isRootCatCallInProgress: Boolean = false
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -56,6 +56,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var version: String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var isDashEnabled = false
+
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
         const val REQUEST_CODE_FINE_GPS = 4771
@@ -74,7 +75,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if(checkLocationPermission() && isDashEnabled) {
+        if (checkLocationPermission() && isDashEnabled) {
             startLocationUpdates()
         }
         if (isFragmentVisible) {
@@ -99,13 +100,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return
             }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_3000_MS, 0f, this@DepartmentsFragment)
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_3000_MS, 0f, this@DepartmentsFragment)
         }
     }
 
     private fun stopLocationUpdate() {
         // stop location updates
-        locationManager.removeUpdates(this@DepartmentsFragment)
+        locationManager?.removeUpdates(this@DepartmentsFragment)
     }
 
     private fun executeDepartmentRequest() {
@@ -117,6 +118,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     isRootCatCallInProgress = false
+                    parentFragment?.getCategoryResponseData()?.dash = null
+
                     when (response?.httpCode) {
                         200 -> {
                             version = response.response?.version
@@ -145,9 +148,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        if(isDashEnabled) {
+        if (isDashEnabled && isFragmentVisible) {
             mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories,
-            getUpdatedBannerText())
+                    getUpdatedBannerText())
         }
         mDepartmentAdapter?.notifyDataSetChanged()
         executeValidateSuburb()
@@ -181,7 +184,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun getUpdatedBannerText(): String {
         context?.apply {
-            return if(KotlinUtils.isAppInstalled(activity, WoolworthsApplication.getInstance()?.dashConfig?.appURI))
+            return if (KotlinUtils.isAppInstalled(activity, WoolworthsApplication.getInstance()?.dashConfig?.appURI))
                 this.getString(R.string.dash_banner_text_open_app) else this.getString(R.string.dash_banner_text_download_app)
         }
         return ""
@@ -191,7 +194,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
 
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI ?: "")
+            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI
+                    ?: "")
             if (intent == null) {
                 KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
             } else {
@@ -225,7 +229,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             ?: false
 
     override fun onDestroy() {
-        mDepartmentAdapter?.removeDashBanner()
+        mDepartmentAdapter?.removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
         stopLocationUpdate()
 
         super.onDestroy()
@@ -254,12 +258,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun refreshLocationUpdates() {
+
         if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            mDepartmentAdapter?.updateDashBanner(getUpdatedBannerText(), isDashEnabled)
             startLocationUpdates()
             executeDepartmentRequest()
-        } else {
-            mDepartmentAdapter?.removeDashBanner()
         }
     }
 
@@ -280,11 +282,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
-        } else if(requestCode == REQUEST_CODE_FINE_GPS ){
-            when(resultCode){
+        } else if (requestCode == REQUEST_CODE_FINE_GPS) {
+            when (resultCode) {
                 RESULT_OK -> {
                     activity?.apply {
-                        if(!Utils.isLocationEnabled(context)) {
+                        if (!Utils.isLocationEnabled(context)) {
                             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
@@ -368,13 +370,14 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onProviderDisabled(provider: String?) {
         mDepartmentAdapter?.apply {
-            removeDashBanner()
+            removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
         }
+        parentFragment?.getCategoryResponseData()?.dash = null
     }
 
     @SuppressLint("NewApi")
     private fun checkLocationPermission(): Boolean {
-        if(!isFragmentVisible){
+        if (!isFragmentVisible) {
             return false
         }
 

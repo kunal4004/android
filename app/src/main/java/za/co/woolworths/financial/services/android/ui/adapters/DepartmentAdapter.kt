@@ -54,13 +54,17 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
     }
 
     fun setDashBanner(dash: Dash?, rootCategories: MutableList<RootCategory>?, bannerText: String) {
-        mDashBanner = null
-        dash?.let {
+
+        synchronized(this) {
+            if (dash == null) {
+                removeDashBanner(rootCategories)
+                return
+            }
             val dashBanner = RootCategory()
             dashBanner.viewType = RootCategoryViewType.DASH_BANNER
-            it.bannerText = bannerText
-            // Make sure the position is after header
+            dash.bannerText = bannerText
             rootCategories?.add(1, dashBanner)
+            mlRootCategories = mutableListOf()
             mlRootCategories = rootCategories
             mDashBanner = dash
         }
@@ -174,14 +178,16 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         return mDashBanner != null
     }
 
-    fun removeDashBanner() {
+    fun removeDashBanner(rootCategories: MutableList<RootCategory>?) {
         if (!containsDashBanner()) {
             return
         }
         //1 is the position of Dash banner card
         mlRootCategories?.get(1)?.let {
             if (it.viewType == RootCategoryViewType.DASH_BANNER) {
+                // Make sure the position is after header
                 mlRootCategories?.remove(it)
+                rootCategories?.remove(it)
                 mDashBanner = null
                 notifyItemRemoved(1)
             }
