@@ -10,6 +10,6 @@ class PMAProcessYourCardFragment : ProcessYourRequestFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        processingLayoutTitle?.text = bindString(R.string.processing_your_card_label)
+        processRequestTitleTextView?.text = bindString(R.string.processing_your_card_label)
     }
 }
