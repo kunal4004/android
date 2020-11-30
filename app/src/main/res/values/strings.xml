@@ -1576,7 +1576,7 @@
     <string name="amount_outstanding">Amount Outstanding</string>
     <string name="continue_to_payment">Continue To Payment</string>
     <string name="save_this_card_for_future_payments">Save this card for future payments</string>
-    <string name="save_card_and_pay_now_button_label">Save Card &amp; Pay Now</string>
+    <string name="save_card_and_pay_now_button_label">CONFIRM</string>
     <string name="name_on_card_label">Name on Card:</string>
     <string name="expiration_date_label">Expiration Date:</string>
     <string name="card_number_label">Card Number:</string>
@@ -1625,7 +1625,7 @@
     <string name="unable_to_process_your_request_desc">We are unable to process your payment. For queries, call us on 0861 50 20 20.</string>
     <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 5 business working days to reflect on your account.</string>
     <string name="back_to_my_account_button">back to my account</string>
-    <string name="pma_save_card_pay_now_title">Would you like to save this card for future payments?</string>
+    <string name="pma_save_card_pay_now_title">Payment Summary</string>
     <string name="pay_now_button_label">Pay Now</string>
     <string name="payment_method">Payment Method</string>
     <string name="add_card_label">add card</string>
@@ -1748,5 +1748,24 @@
     <string name="overdue_amount_label">Overdue Amount</string>
     <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
+    <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details</string>
+    <!-- Credit Report Transunion -->
+    <string name="credit_report_title_tu">CREDIT REPORT</string>
+    <string name="register_or_login_now">REGISTER OR LOG IN NOW</string>
+    <string name="access_your_full_credit_report">Access your full credit report</string>
+    <string name="view_your_credit_overview_and_history">View your credit overview and history</string>
+    <string name="compare_your_bebt_level_to_your_income">Compare your debt level to your income</string>
+    <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
+    <string name="transunion_personal_info_note">To use this service, TransUnion will require some of your personal information.</string>
+    <string name="privacy_policy_note_1">You can view the Privacy Policy to find out more about how we use and protect your personal information.\u0020</string>
+    <string name="privacy_policy_note_2">Privacy Policy</string>
+    <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
+    <string name="credit_report_title_details">Register with TransUnion to\nCheck Your Credit Score and Stay Credit Healthy.</string>
+    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, please register an account using your\npersonal information.\n\n
+Your credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile. </string>
+    <string name="please_note_title">Please Note</string>
+    <string name="bullet_point_unicode">\u2022</string>
+    <string name="save_card_product_label">Product:</string>
+    <string name="save_card_product_payment_total_label">Payment Total:</string>
 </resources>
 

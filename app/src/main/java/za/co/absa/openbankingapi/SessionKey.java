@@ -14,8 +14,6 @@ package za.co.absa.openbankingapi;
 
 import android.util.Base64;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -23,6 +21,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class SessionKey {
     private static final String OUTPUT_KEY_DERIVATION_ALGORITHM = "AES";
@@ -72,7 +71,7 @@ public class SessionKey {
             keyGenerator.init(keySize, secureRandom);
             return keyGenerator.generateKey();
         } catch (NoSuchAlgorithmException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             throw new KeyGenerationFailureException(e);
         }
     }

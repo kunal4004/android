@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
@@ -44,10 +43,10 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 import java.net.ConnectException
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
-    var mAvailableFundPresenter: AvailableFundsPresenterImpl? = null
-    private var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener? = null
+    private lateinit var mAvailableFundPresenter: AvailableFundsPresenterImpl
+    private lateinit var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener
     var isQueryPayUPaymentMethodComplete: Boolean = false
-    var navController: NavController? = null
+    lateinit var navController: NavController
 
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
@@ -251,7 +250,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
             activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
         } catch (ex: IllegalStateException) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -316,6 +315,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun navigateToABSAStatementActivity() {
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
             if (NetworkManager().isConnectedToNetwork(this)) {
                 mAvailableFundPresenter?.queryABSAServiceGetUserCreditCardToken()
             } else {

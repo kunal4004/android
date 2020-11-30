@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
@@ -19,6 +18,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -94,7 +94,7 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         try {
             holder.barCode.setImageBitmap(Utils.encodeAsBitmap(vouchers.get(position).voucherNumber, BarcodeFormat.CODE_128, convertView.getWidth(), 60));
         } catch (WriterException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
         }
         return convertView;
     }

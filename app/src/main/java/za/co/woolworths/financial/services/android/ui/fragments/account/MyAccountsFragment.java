@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -34,7 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -80,6 +81,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -95,7 +97,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
+public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -283,14 +285,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 }
             });
 
-            view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-                        loadAccounts(false);
-                    }
+            view.findViewById(R.id.btnRetry).setOnClickListener(v -> {
+                if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+                    loadAccounts(false);
                 }
-
             });
         }
 
@@ -614,7 +612,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(creditReportView);
     }
 
-    private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
+    private OnClickListener btnSignin_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateMyAccount.accountUpdateActive()) return;
@@ -623,7 +621,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     };
 
-    private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
+    private OnClickListener btnRegister_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateMyAccount.accountUpdateActive())
@@ -633,7 +631,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     };
 
-    private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
+    private OnClickListener btnLinkAccounts_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateMyAccount.accountUpdateActive()) return;
@@ -715,7 +713,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 try {
                     signOutFragment.show((activity instanceof BottomNavigationActivity) ? ((BottomNavigationActivity) activity).getSupportFragmentManager() : ((MyAccountActivity) activity).getSupportFragmentManager(), SignOutFragment.class.getSimpleName());
                 } catch (IllegalStateException ex) {
-                    Crashlytics.logException(ex);
+                    FirebaseManager.Companion.logException(ex);
                 }
                 break;
             case R.id.rlProfile:
@@ -757,7 +755,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
 			case R.id.creditReport:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
-                KotlinUtils.Companion.openBrowserWithUrl(WoolworthsApplication.getCreditView().getTransUnionLink(), activity);
+                startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
             default:
                 break;
@@ -835,7 +834,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             break;
                     }
                 } catch (Exception ex) {
-                    Crashlytics.logException(ex);
+                    FirebaseManager.Companion.logException(ex);
                 }
                 hideProgressBar();
                 mUpdateMyAccount.swipeToRefreshAccount(false);
@@ -1157,7 +1156,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 super.onPostExecute(aVoid);
                 Activity activity = getActivity();
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
-                Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
+                FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
                 getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
                         .setTarget(target)
                         .setTitle(R.string.tips_tricks_view_your_accounts)

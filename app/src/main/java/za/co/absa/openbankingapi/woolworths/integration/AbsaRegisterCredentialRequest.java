@@ -2,14 +2,8 @@ package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.util.Base64;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
-
 import java.io.UnsupportedEncodingException;
-import java.net.HttpCookie;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
@@ -23,6 +17,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class AbsaRegisterCredentialRequest {
@@ -36,7 +31,7 @@ public class AbsaRegisterCredentialRequest {
 			this.sessionKey = SessionKey.generate();
 			this.deviceId = Utils.getAbsaUniqueDeviceID();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 	}
 
@@ -47,7 +42,7 @@ public class AbsaRegisterCredentialRequest {
 
 		final byte[] symmetricKey = sessionKey.getKey();
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
-		String encryptedAlias = null;
+		String encryptedAlias;
 		RegisterCredentialRequest.CredentialVO[] credentialVOs = new RegisterCredentialRequest.CredentialVO[1];
 
 		try{
@@ -59,40 +54,31 @@ public class AbsaRegisterCredentialRequest {
 
 			 credentialVOs[0] = new RegisterCredentialRequest.CredentialVO(encryptedAlias, "MOBILEAPP_5DIGIT_PIN", base64EncodedEncryptedDerivedKey);
 		} catch (DecryptionFailureException | UnsupportedEncodingException | KeyGenerationFailureException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 			throw new RuntimeException(e);
 		}
 
 
 		final String body = new RegisterCredentialRequest(encryptedAlias, deviceId, credentialVOs, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
-		new AbsaBankingOpenApiRequest<>(RegisterCredentialResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<RegisterCredentialResponse>(){
+		new AbsaBankingOpenApiRequest<>(RegisterCredentialResponse.class, headers, body, true, (response, cookies) -> {
+			Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 
-			@Override
-			public void onResponse(RegisterCredentialResponse response, List<HttpCookie> cookies) {
-				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-
-				String statusCode = "0";
-				try {
-					statusCode = response.getHeader().getStatusCode();
-				} catch (Exception e) {
-					Crashlytics.logException(e);
-				}
-
-				if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")){
-					responseDelegate.onSuccess(response, cookies);
-				}
-
-				else{
-					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
-				}
+			String statusCode = "0";
+			try {
+				statusCode = response.getHeader().getStatusCode();
+			} catch (Exception e) {
+				FirebaseManager.Companion.logException(e);
 			}
-		}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				responseDelegate.onFatalError(error);
+
+			if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")){
+				responseDelegate.onSuccess(response, cookies);
 			}
-		});
+
+			else{
+				responseDelegate.onFailure(resultMessages[0].getResponseMessage());
+			}
+		}, responseDelegate::onFatalError);
 
 		}
 }

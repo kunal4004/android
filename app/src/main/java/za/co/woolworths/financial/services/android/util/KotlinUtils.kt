@@ -27,7 +27,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -187,6 +186,19 @@ class KotlinUtils {
             val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
             var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+
+
+        fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
+            val value = str.toLowerCase()
+            val words = value.split(" ").toMutableList()
+
+            var output =  words[0].toUpperCase()+" "
+            words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
             }
@@ -467,7 +479,7 @@ class KotlinUtils {
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
             } catch (t: Throwable) {
-                Crashlytics.log(t.message)
+                FirebaseManager.logException(t)
             }
         }
 
@@ -484,7 +496,7 @@ class KotlinUtils {
             }
         }
 
-        fun openApplicationSettings(requestCode: Int, activity: Activity?){
+        fun openApplicationSettings(requestCode: Int, activity: Activity?) {
             val intent = Intent()
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             val uri: Uri = Uri.fromParts("package", activity?.packageName, null)

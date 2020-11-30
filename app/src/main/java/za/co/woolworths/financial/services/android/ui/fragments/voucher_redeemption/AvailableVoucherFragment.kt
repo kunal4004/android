@@ -25,6 +25,8 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
 
     private var voucherDetails: VoucherDetails? = null
     var presenter: VoucherAndPromoCodeContract.AvailableVoucherPresenter? = null
+    var vouchersListAdapter: AvailableVouchersToRedeemListAdapter? = null
+    var shoppingCartResponse: ShoppingCartResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.available_vouchers_fragment, container, false)
@@ -55,25 +57,34 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
 
     override fun showAvailableVouchers() {
         activity?.let {
+            vouchersListAdapter = presenter?.getVouchers()?.let { it1 -> AvailableVouchersToRedeemListAdapter(it1, this@AvailableVoucherFragment) }
             rcvVoucherList?.apply {
                 layoutManager = LinearLayoutManager(it)
-                adapter = presenter?.getVouchers()?.let { it1 -> AvailableVouchersToRedeemListAdapter(it1, this@AvailableVoucherFragment) }
+                adapter = vouchersListAdapter
             }
         }
     }
 
-    override fun onVoucherRedeemSuccess(shoppingCartResponse: ShoppingCartResponse) {
+    override fun onVoucherRedeemSuccess(shoppingCartResponse: ShoppingCartResponse, isPartialSuccess: Boolean) {
+        this.shoppingCartResponse = shoppingCartResponse
         activity?.apply {
-            setResult(Activity.RESULT_OK, Intent().putExtra("ShoppingCartResponse", Utils.toJson(shoppingCartResponse)))
-            finish()
+            when (isPartialSuccess) {
+                true -> {
+                    updateVouchersList()
+                    showGenericErrorMessage()
+                }
+                false -> {
+                    setResult(Activity.RESULT_OK, Intent().putExtra("ShoppingCartResponse", Utils.toJson(shoppingCartResponse)))
+                    finish()
+                }
+            }
         }
+
     }
 
     override fun onVoucherRedeemFailure() {
         activity?.apply {
-            hideRedeemVoucherProgress()
-            enableRedeemButton()
-            rcvVoucherList?.adapter?.notifyDataSetChanged()
+            updateVouchersList()
         }
     }
 
@@ -115,6 +126,22 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
                     it.visibility = View.GONE
                 }, DELAY_3000_MS)
             }
+        }
+    }
+
+    override fun updateVouchersList() {
+        hideRedeemVoucherProgress()
+        enableRedeemButton()
+        presenter?.getVouchers()?.let { vouchersListAdapter?.updateVouchersList(it) }
+    }
+
+    private fun showGenericErrorMessage() {
+        errorMessage?.let {
+            it.text = bindString(R.string.generic_error_message_for_redeem_voucher)
+            it.visibility = View.VISIBLE
+            Handler().postDelayed({
+                it.visibility = View.GONE
+            }, DELAY_3000_MS)
         }
     }
 

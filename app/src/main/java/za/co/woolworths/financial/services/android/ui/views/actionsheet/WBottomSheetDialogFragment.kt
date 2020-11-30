@@ -6,10 +6,10 @@ import android.view.View
 import com.awfs.coordination.R
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import java.lang.Exception
 
 open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
@@ -44,7 +44,7 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 super.show(manager, tag)
             }
         }catch(ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 }

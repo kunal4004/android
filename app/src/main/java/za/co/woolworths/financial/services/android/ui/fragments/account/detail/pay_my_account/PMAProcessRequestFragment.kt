@@ -84,7 +84,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         includePMAProcessingSuccess?.visibility = GONE
         includePMAProcessingFailure?.visibility = GONE
         includePMAProcessing?.visibility = VISIBLE
-        processingLayoutTitle?.text = bindString(R.string.processing_your_request)
+        processRequestTitleTextView?.text = bindString(R.string.processing_your_request)
     }
 
     private fun autoConnection() {
