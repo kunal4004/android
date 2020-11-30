@@ -179,6 +179,7 @@
     <dimen name="fourty_five_sp">45sp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
     <dimen name="two_hundred_and_fifty_dp">250dp</dimen>
+    <dimen name="forty_four_dp">44dp</dimen>
     <item name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</item>
     <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
     <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>

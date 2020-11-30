@@ -194,6 +194,19 @@ class KotlinUtils {
             return output.trim()
         }
 
+
+        fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
+            val value = str.toLowerCase()
+            val words = value.split(" ").toMutableList()
+
+            var output =  words[0].toUpperCase()+" "
+            words.removeAt(0)
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+
         fun isNumberPositive(i: Float): Boolean {
             return when {
                 i < 0 -> true

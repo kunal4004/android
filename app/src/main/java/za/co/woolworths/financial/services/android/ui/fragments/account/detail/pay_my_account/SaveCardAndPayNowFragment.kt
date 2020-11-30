@@ -33,8 +33,8 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         setToolbarItem()
+        setProduct()
         populateField()
-        onSaveCheckChangeListener()
 
         saveCardPayNowButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
@@ -42,20 +42,15 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun setProduct() {
+        saveCardProductValueTextView?.text = bindString(payMyAccountViewModel.getProductLabelId())
+        productTotalValueTextView?.text = payMyAccountViewModel.getAmountEntered()
+    }
+
     private fun setToolbarItem() {
         (activity as? PayMyAccountActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             displayToolbarDivider(false)
-        }
-    }
-
-    private fun onSaveCheckChangeListener() {
-        saveCardPayNowButton?.text = bindString(R.string.pay_now_button_label)
-        pmaSaveCardCheckbox?.setOnCheckedChangeListener { _, isChecked ->
-            saveCardPayNowButton?.text = when (isChecked) {
-                true -> bindString(R.string.save_card_and_pay_now_button_label)
-                else -> bindString(R.string.pay_now_button_label)
-            }
         }
     }
 
