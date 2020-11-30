@@ -16,7 +16,6 @@ class AppConstant {
         const val DELAY_300_MS: Long = 300
         const val DELAY_350_MS: Long = 350
         const val DELAY_900_MS: Long = 900
-        const val DELAY_1500_MS: Long = 1500
         const val DELAY_3000_MS: Long = 3000
 
         //API Response Code
