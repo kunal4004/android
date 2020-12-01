@@ -260,9 +260,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun refreshLocationUpdates() {
-
+        startLocationUpdates()
         if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            startLocationUpdates()
             executeDepartmentRequest()
         }
     }
@@ -370,7 +369,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onProviderEnabled(provider: String?) {
         //Do nothing
         mDepartmentAdapter?.apply {
-            if (isDashEnabled && !isRootCatCallInProgress && !containsDashBanner()) {
+            if (isDashEnabled && !containsDashBanner()) {
                 executeDepartmentRequest()
             }
         }
