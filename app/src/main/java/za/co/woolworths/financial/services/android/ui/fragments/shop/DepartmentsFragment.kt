@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
+    private var isRefreshDash: Boolean = true
     private var locationManager: LocationManager? = null
     private var isRootCatCallInProgress: Boolean = false
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -97,10 +98,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun startLocationUpdates() {
         activity?.apply {
             locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return
             }
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_350_MS, 0f, this@DepartmentsFragment)
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_200_MS, 0f, this@DepartmentsFragment)
         }
     }
 
@@ -252,6 +253,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             activity?.apply {
                 executeValidateSuburb()
                 //When moved from My Cart to department
+                isRefreshDash = true
                 refreshLocationUpdates()
             }
         }
@@ -305,6 +307,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onResume()
         activity?.apply {
             //When moved from other bottom nav tabs except My Cart
+            isRefreshDash = true
             refreshLocationUpdates()
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
@@ -352,6 +355,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onLocationChanged(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)
+            if(mDepartmentAdapter?.containsDashBanner() == true || !isRefreshDash){
+                return
+            }
+            executeDepartmentRequest()
+            isRefreshDash = false
         }
     }
 
