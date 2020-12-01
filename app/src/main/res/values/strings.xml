@@ -1702,7 +1702,6 @@
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
 
-    <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
     <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
     <string name="agent_chat_greeting_label">Have issues paying your\naccount? How can we\nassist you?</string>
@@ -1727,8 +1726,6 @@
     <string name="select_your_store">Select Your Store</string>
     <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
     <string name="hint_search_for_your_store">Search For Your Store</string>
-    <string name="get_a_free_credit_score">get a free credit score</string>
-    <string name="get_started_now">Get started now</string>
     <string name="discounts">Discounts</string>
     <string name="company_discount">Company Discount</string>
     <string name="your_wrewards_vouchers">Your WRewards Vouchers</string>
@@ -1769,7 +1766,7 @@
     <string name="overdue_amount_label">Overdue Amount</string>
     <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
-    <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details</string>
+    <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>
     <!-- Credit Report Transunion -->
     <string name="credit_report_title_tu">CREDIT REPORT</string>
     <string name="register_or_login_now">REGISTER OR LOG IN NOW</string>
@@ -1778,7 +1775,7 @@
     <string name="compare_your_bebt_level_to_your_income">Compare your debt level to your income</string>
     <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
     <string name="transunion_personal_info_note">To use this service, TransUnion will require some of your personal information.</string>
-    <string name="privacy_policy_note_1">You can view the Privacy Policy to find out more about how we use and protect your personal information.\u0020</string>
+    <string name="privacy_policy_note_1">You can view the\u0020</string>
     <string name="privacy_policy_note_2">Privacy Policy</string>
     <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
     <string name="credit_report_title_details">Register with TransUnion to\nCheck Your Credit Score and Stay Credit Healthy.</string>
