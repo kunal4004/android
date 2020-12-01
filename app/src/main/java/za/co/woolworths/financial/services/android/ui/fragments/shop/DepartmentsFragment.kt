@@ -353,10 +353,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onLocationChanged(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)
-            if(mDepartmentAdapter?.containsDashBanner() == true || !isDashEnabled){
-                return
+            if(isDashEnabled){
+                executeDepartmentRequest()
             }
-            executeDepartmentRequest()
         }
     }
 
@@ -365,11 +364,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     override fun onProviderEnabled(provider: String?) {
-        //Do nothing
-        mDepartmentAdapter?.apply {
-            if (isDashEnabled && !containsDashBanner()) {
-                executeDepartmentRequest()
-            }
+        if (isDashEnabled) {
+            executeDepartmentRequest()
         }
     }
 
