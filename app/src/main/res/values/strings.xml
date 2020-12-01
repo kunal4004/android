@@ -1754,7 +1754,7 @@
     <string name="compare_your_bebt_level_to_your_income">Compare your debt level to your income</string>
     <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
     <string name="transunion_personal_info_note">To use this service, TransUnion will require some of your personal information.</string>
-    <string name="privacy_policy_note_1">You can view the Privacy Policy to find out more about how we use and protect your personal information.\u0020</string>
+    <string name="privacy_policy_note_1">You can view the\u0020</string>
     <string name="privacy_policy_note_2">Privacy Policy</string>
     <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
     <string name="credit_report_title_details">Register with TransUnion to\nCheck Your Credit Score and Stay Credit Healthy.</string>
