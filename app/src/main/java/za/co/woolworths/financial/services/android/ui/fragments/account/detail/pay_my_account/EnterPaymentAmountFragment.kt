@@ -55,6 +55,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         configureCurrencyEditText()
         setListeners()
 
+        paymentAmountInputEditText?.requestFocus()
+
         with(payMyAccountViewModel) {
             totalAmountDueValueTextView?.text = getTotalAmountDue()
             amountOutstandingValueTextView?.text = getOverdueAmount()
@@ -64,11 +66,13 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private fun setListeners() {
         totalAmountDueValueTextView?.apply {
+            if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
             AnimationUtilExtension.animateViewPushDown(this)
-            setOnClickListener(this@EnterPaymentAmountFragment)
+                setOnClickListener(this@EnterPaymentAmountFragment)
         }
 
         amountOutstandingValueTextView?.apply {
+            if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
         }
@@ -210,7 +214,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     private fun isZeroAmount(amount: String?) = payMyAccountViewModel.convertRandFormatToInt(amount) == 0
 
     private fun clearSelection() {
-        totalAmountDueValueTextView?.isSelected  = false
+        totalAmountDueValueTextView?.isSelected = false
         amountOutstandingValueTextView?.isSelected = false
     }
 
@@ -258,6 +262,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        paymentAmountInputEditText?.requestFocus()
+        showKeyboard()
     }
 }

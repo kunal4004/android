@@ -2461,4 +2461,12 @@
         <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
     </style>
 
+    <style name="enterPaymentAmountRootLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
 </resources>
