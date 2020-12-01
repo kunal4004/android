@@ -47,7 +47,6 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
-    private var isRefreshDash: Boolean = true
     private var locationManager: LocationManager? = null
     private var isRootCatCallInProgress: Boolean = false
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -253,7 +252,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             activity?.apply {
                 executeValidateSuburb()
                 //When moved from My Cart to department
-                isRefreshDash = true
                 refreshLocationUpdates()
             }
         }
@@ -291,6 +289,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                        } else {
+                            startLocationUpdates()
                         }
                     }
                 }
@@ -306,7 +306,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onResume()
         activity?.apply {
             //When moved from other bottom nav tabs except My Cart
-            isRefreshDash = true
             refreshLocationUpdates()
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
@@ -354,11 +353,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onLocationChanged(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)
-            if(mDepartmentAdapter?.containsDashBanner() == true || !isRefreshDash){
+            if(mDepartmentAdapter?.containsDashBanner() == true || !isDashEnabled){
                 return
             }
             executeDepartmentRequest()
-            isRefreshDash = false
         }
     }
 
