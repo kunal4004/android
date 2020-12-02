@@ -1739,6 +1739,26 @@
     <string name="promo_discount_dialog_title">Promo Code Applied</string>
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
+
+    <!-- Dash Details -->
+    <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
+    <string name="dash_banner_text_download_app">Same Day Delivery. Download Our App.</string>
+
+    <string name="dash_details_food_order">FOOD ORDERS</string>
+    <string name="dash_details_woolies_app_available">Now Available in\nYour Area: Woolies Dash</string>
+    <string name="dash_details_woolies_app_available_desc">With this new trial app, get ready for fast, fresh delivery of all your favourite Woolworths food items.</string>
+    <string name="dash_details_please_note">Please note</string>
+    <string name="dash_details_what_you_ll_love">WHAT YOU’LL LOVE</string>
+
+    <string name="app_feature_title"></string>
+    <string name="app_feature_get_delivered">Same-day delivery</string>
+    <string name="app_feature_world_class_freshness">World-class freshness</string>
+    <string name="app_feature_track_order">Track your shopper live</string>
+
+    <string name="terms_and_condition_wreward_vouchers">WRewards vouchers, Woolworths gift cards and Woolworths Store Cards cannot be used for payment.</string>
+    <string name="terms_and_condition_not_linked">Woolies Dash is not linked to WRewards or Woolworths Financial Services.</string>
+    <string name="dash_details_download_woolies_dash_app">DOWNLOAD THE APP</string>
+
     <string name="credit_and_combination_title">Credit &amp; Combination Card</string>
     <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
     <string name="select_or_enter_a_payment_amount_label">"Select or Enter\nPayment Amount "</string>
