@@ -208,19 +208,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/twelve_sp</item>
-        <item name="android:letterSpacing">0.2</item>
-        <item name="WButton_font">medium_bold</item>
-        <item name="android:stateListAnimator">@null</item>
-    </style>
-
-    <style name="transparentWhiteButtonStyle" parent="android:Theme">
-        <item name="android:layout_height">@dimen/button_style_height</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.2</item>
         <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
