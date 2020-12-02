@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
 
-    private var wooliesAppLink: String? = null
+    private lateinit var wooliesAppLink: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,7 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
 
         intent.getBundleExtra("bundle")?.apply {
-            wooliesAppLink = getString(AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK)
+            wooliesAppLink = getString(AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK) ?: ""
         }
 
         actionBar()
