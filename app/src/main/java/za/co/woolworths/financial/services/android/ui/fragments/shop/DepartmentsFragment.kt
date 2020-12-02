@@ -97,7 +97,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
 
-            rootCategoryCall = OneAppService.getRootCategory(location)
+            rootCategoryCall = OneAppService.getRootCategory(Utils.isLocationEnabled(context), location)
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     parentFragment?.getCategoryResponseData()?.dash = null
