@@ -49,6 +49,7 @@ import java.net.ConnectException
 
 class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
+    private var mChatFloatingActionButtonBubbleView: ChatFloatingActionButtonBubbleView? = null
     private var payMyAccountPresenter: PayMyAccountPresenterImpl? = null
     private var navController: NavController? = null
     private var layout: View? = null
@@ -150,15 +151,15 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
         val paymentMethodList = cardInfo?.paymentMethodList
         val selectedCardPosition = cardInfo?.selectedCardPosition ?: 0
-        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType,selectedCardPosition = selectedCardPosition)
+        val card = PMACardPopupModel(amountEntered, paymentMethodList, account, payUMethodType, selectedCardPosition = selectedCardPosition)
         payMyAccountViewModel.setPMACardInfo(card)
 
         payMyAccountViewModel.queryServicePayUPaymentMethod(
-            { // onSuccessResult
-                if (!isAdded) return@queryServicePayUPaymentMethod
-                isQueryPayUPaymentMethodComplete = true
-                debitOrCreditButtonIsEnabled(true)
-            }, { onSessionExpired ->
+                { // onSuccessResult
+                    if (!isAdded) return@queryServicePayUPaymentMethod
+                    isQueryPayUPaymentMethodComplete = true
+                    debitOrCreditButtonIsEnabled(true)
+                }, { onSessionExpired ->
             if (!isAdded) return@queryServicePayUPaymentMethod
             activity?.let {
                 isQueryPayUPaymentMethodComplete = true
@@ -224,7 +225,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
-                        navController?.navigate( CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction( true))
+                        navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
                         navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
@@ -294,13 +295,14 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
         activity?.apply {
-            ChatFloatingActionButtonBubbleView(
-                activity = this,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
-                floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = applyNowState,
-                scrollableView = creditDebitCardPaymentsScrollView)
-                .build()
+            mChatFloatingActionButtonBubbleView = ChatFloatingActionButtonBubbleView(
+                    activity = this,
+                    chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
+                    floatingActionButton = chatBubbleFloatingButton,
+                    applyNowState = applyNowState,
+                    scrollableView = creditDebitCardPaymentsScrollView)
+
+            mChatFloatingActionButtonBubbleView?.build()
         }
     }
 }

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/default_background"
+            tools:context="za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity">
+
+            <TextView
+                android:id="@+id/WTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/fourty_five_dp"
+                android:background="@color/black"
+                android:elevation="@dimen/five_dp"
+                android:gravity="center"
+                android:paddingVertical="@dimen/fifteen_dp"
+                android:paddingHorizontal="@dimen/twenty_dp"
+                android:minWidth="@dimen/hundred_and_sixty_four_dp"
+                android:text="@string/dash_details_food_order"
+                android:letterSpacing="0.2"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_12sp"
+                android:fontFamily="@font/futura_semi_bold"
+                app:layout_constraintBottom_toBottomOf="@+id/dash_details_header_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dash_details_header_image" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_bottom"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.33" />
+
+            <ImageView
+                android:id="@+id/dash_details_header_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_info_banner"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_dash_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_F8F8F8"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guideline_bottom" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/dash_details_download_woolies_app_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/twenty_five_dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:minHeight="@dimen/fifty_dp"
+        android:paddingHorizontal="@dimen/fourty_seven_dp"
+        android:paddingVertical="@dimen/twenty_two_dp"
+        android:text="@string/dash_details_download_woolies_dash_app"
+        android:textColor="@color/white"
+        android:letterSpacing="0.2"
+        android:textSize="@dimen/twelve_sp"
+        app:WTextView_font="medium_bold"
+        android:layout_alignParentBottom="true"/>
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout2"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/fifty_six_dp"
+        android:background="@android:color/transparent"
+        android:elevation="@dimen/one_dp"
+        app:elevation="@dimen/zero_dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarDash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+</RelativeLayout>

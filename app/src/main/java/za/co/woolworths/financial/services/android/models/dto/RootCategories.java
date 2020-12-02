@@ -16,4 +16,6 @@ public class RootCategories {
     @SerializedName("httpCode")
     @Expose
     public Integer httpCode;
+    @SerializedName("dash")
+    public Dash dash;
 }

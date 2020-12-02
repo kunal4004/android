@@ -44,7 +44,7 @@ class SaveCardAndPayNowFragment : Fragment(), View.OnClickListener {
 
     private fun setProduct() {
         saveCardProductValueTextView?.text = bindString(payMyAccountViewModel.getProductLabelId())
-        productTotalValueTextView?.text = payMyAccountViewModel.getAmountEntered()
+        productTotalValueTextView?.text = payMyAccountViewModel.getCardDetail()?.amountEntered
     }
 
     private fun setToolbarItem() {

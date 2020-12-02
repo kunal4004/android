@@ -37,6 +37,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                                          var applyNowState: ApplyNowState,
                                          var scrollableView: Any? = null) {
 
+    private var chatBubbleToolTip: Dialog? = null
     private var isLiveChatEnabled = false
 
     init {
@@ -46,9 +47,9 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
 
     @SuppressLint("InflateParams")
     private fun showChatToolTip() {
-        if (chatBubbleVisibility?.isInAppChatTooltipVisible(applyNowState) == false) return
-        val tooltip = activity?.let { act -> Dialog(act) }
-        tooltip?.apply {
+        if (chatBubbleVisibility?.isInAppChatTooltipVisible(applyNowState) == false || (scrollableView as? NestedScrollView)?.scrollY ?: 0 > 30) return
+        chatBubbleToolTip = activity?.let { act -> Dialog(act) }
+        chatBubbleToolTip?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.inapp_chat_tip_acknowledgement_dialog, null)
             val dismissChatTipImageView = view.findViewById<ImageButton>(R.id.dismissChatTipImageView)
@@ -114,6 +115,8 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
                             floatingActionButton?.hide()
+                            if(chatBubbleToolTip?.isShowing == true)
+                                chatBubbleToolTip?.dismiss()
                         } else {
                             floatingActionButton?.show()
                         }
@@ -138,7 +141,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
 
     private fun floatingButtonListener() {
         activity?.apply {
-            val chatAccountProductLandingPage : Account? = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage: Account? = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
             floatingActionButton?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
