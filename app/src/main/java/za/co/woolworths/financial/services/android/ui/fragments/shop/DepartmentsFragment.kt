@@ -129,7 +129,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        if (isDashEnabled && isFragmentVisible) {
+        if (isDashEnabled && isFragmentVisible && Utils.isLocationEnabled(context)) {
             mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories,
                     getUpdatedBannerText())
         }
