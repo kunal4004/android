@@ -6,6 +6,7 @@
     <TextView
         android:id="@+id/enterPaymentAmountTextView"
         style="@style/enterPaymentAmountStyle"
+        android:layout_marginTop="@dimen/eight_dp"
         android:text="@string/select_or_enter_a_payment_amount_label"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
@@ -30,7 +31,7 @@
     <Button
         android:id="@+id/continueToPaymentButton"
         style="@style/continueDoneButtonStyle"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
         android:text="@string/continue_to_payment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
@@ -92,5 +93,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintTop_toBottomOf="@+id/totalAmountDueHorizontalDividerView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
