@@ -57,6 +57,7 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOP_PRODUCTDETAIL_DIETARY_INFORMATION: String = "shop_pdp_diet"
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
+        const val SHOP_CATEGORIES: String = "shopcategories"
         const val SHOPMYLISTS: String = "GA_Event_ONE_SHOP_MYLISTS"
         const val SHOPMYORDERS: String = "GA_Event_ONE_SHOP_MYORDERS"
         const val BLOCK_CARD_CONFIRM: String = "GA_Event_ONE_MYACCOUNTSBLOCKCARDCONFIRM"
