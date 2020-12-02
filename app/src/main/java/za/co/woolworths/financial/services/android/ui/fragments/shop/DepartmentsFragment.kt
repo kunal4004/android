@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.util.*
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
     private var locationManager: LocationManager? = null
-    private var isRootCatCallInProgress: Boolean = false
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
@@ -94,30 +93,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         }
     }
 
-    private fun startLocationUpdates() {
-        activity?.apply {
-            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return
-            }
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_200_MS, 0f, this@DepartmentsFragment)
-        }
-    }
-
-    private fun stopLocationUpdate() {
-        // stop location updates
-        locationManager?.removeUpdates(this@DepartmentsFragment)
-    }
-
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-            isRootCatCallInProgress = true
 
             rootCategoryCall = OneAppService.getRootCategory(Utils.isLocationEnabled(context))
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
-                    isRootCatCallInProgress = false
                     parentFragment?.getCategoryResponseData()?.dash = null
 
                     when (response?.httpCode) {
@@ -131,7 +113,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    isRootCatCallInProgress = false
                     if (isAdded) {
                         activity?.runOnUiThread {
                             if (networkConnectionStatus())
@@ -254,13 +235,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 //When moved from My Cart to department
                 refreshLocationUpdates()
             }
-        }
-    }
-
-    private fun refreshLocationUpdates() {
-        startLocationUpdates()
-        if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            executeDepartmentRequest()
         }
     }
 
@@ -399,5 +373,27 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             }
         }
         return false
+    }
+
+    private fun startLocationUpdates() {
+        activity?.apply {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_200_MS, 0f, this@DepartmentsFragment)
+        }
+    }
+
+    private fun stopLocationUpdate() {
+        // stop location updates
+        locationManager?.removeUpdates(this@DepartmentsFragment)
+    }
+
+    private fun refreshLocationUpdates() {
+        startLocationUpdates()
+        if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            executeDepartmentRequest()
+        }
     }
 }
