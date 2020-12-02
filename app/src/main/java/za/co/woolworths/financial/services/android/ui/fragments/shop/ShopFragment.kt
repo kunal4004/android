@@ -91,6 +91,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 shopPagerAdapter?.notifyDataSetChanged()
                 updateTabIconUI(position)
                 when(position){
+                    0->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES)
                     1->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS)
                     2->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS)
                 }
