@@ -96,8 +96,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-
-            rootCategoryCall = OneAppService.getRootCategory(Utils.isLocationEnabled(context), location)
+            val isLocationEnabled = if(context != null) Utils.isLocationEnabled(context) else false
+            rootCategoryCall = OneAppService.getRootCategory(isLocationEnabled, location)
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     parentFragment?.getCategoryResponseData()?.dash = null
@@ -129,7 +129,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        if (isDashEnabled && isFragmentVisible && Utils.isLocationEnabled(context)) {
+        if (isDashEnabled && isFragmentVisible && context!= null && Utils.isLocationEnabled(context)) {
             mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories,
                     getUpdatedBannerText())
         }
