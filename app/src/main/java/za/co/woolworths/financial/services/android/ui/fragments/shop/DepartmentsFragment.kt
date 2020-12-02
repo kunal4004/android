@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -47,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
+    private var location: Location? = null
     private var locationManager: LocationManager? = null
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -97,7 +97,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
 
-            rootCategoryCall = OneAppService.getRootCategory(Utils.isLocationEnabled(context))
+            rootCategoryCall = OneAppService.getRootCategory(location)
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
                     parentFragment?.getCategoryResponseData()?.dash = null
@@ -327,6 +327,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onLocationChanged(location: Location?) {
         activity?.apply {
             Utils.saveLastLocation(location, this)
+            this@DepartmentsFragment.location = location
             if(isDashEnabled){
                 executeDepartmentRequest()
             }

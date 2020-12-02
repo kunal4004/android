@@ -141,17 +141,12 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getRootCategory(locationEnabled: Boolean): Call<RootCategories> {
-        var location: Location? = null
+    fun getRootCategory(location: Location?): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
-
-        if (locationEnabled) {
-            location = getMyLocation()
             // Hardcoding only for testing purpose.
 //            location.latitude = -33.907630
 //            location.longitude = 18.408380
-        }
-
+        
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), location?.latitude, location?.longitude, suburbId, storeId)
     }
 
