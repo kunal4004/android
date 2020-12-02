@@ -345,6 +345,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     override fun onProviderDisabled(provider: String?) {
+        location = null
         mDepartmentAdapter?.apply {
             removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
         }
