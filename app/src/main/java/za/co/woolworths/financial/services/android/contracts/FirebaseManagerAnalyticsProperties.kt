@@ -187,6 +187,8 @@ class FirebaseManagerAnalyticsProperties {
         const val CC_STATEMENTS_CHAT_END = "cc_statements_chat_end"
         const val SC_STATEMENTS_CHAT_END = "sc_statements_chat_end"
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
+
+        const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
     }
 
     class PropertyNames {
@@ -225,6 +227,7 @@ class FirebaseManagerAnalyticsProperties {
             const val activationInitiated = "Initiate Credit Card Activation"
             const val activationRequested = "Request Credit Card Activation"
             const val activationConfirmed = "Confirm Credit Card Activation"
+            const val PRODUCT_ID: String = "product_id"
 
         }
     }
