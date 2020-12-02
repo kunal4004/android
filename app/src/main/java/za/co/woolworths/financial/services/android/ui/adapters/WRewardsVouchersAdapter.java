@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import androidx.core.content.ContextCompat;
 
 import com.awfs.coordination.R;

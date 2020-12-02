@@ -6,7 +6,11 @@
     <TextView
         android:id="@+id/enterPaymentAmountTextView"
         style="@style/enterPaymentAmountStyle"
+        android:layout_marginTop="1dp"
+        android:letterSpacing="0.01"
         android:text="@string/select_or_enter_a_payment_amount_label"
+        android:textColor="@color/black"
+        android:textSize="@dimen/eighteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toTopOf="parent" />
@@ -14,6 +18,8 @@
     <za.co.woolworths.financial.services.android.util.CurrencyEditText
         android:id="@+id/paymentAmountInputEditText"
         style="@style/amountEditTextStyle"
+        android:layout_marginTop="8dp"
+        android:textSize="@dimen/forty_eight_sp"
         app:currencySymbol="R"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
@@ -22,7 +28,10 @@
     <TextView
         android:id="@+id/reducePaymentAmountTextView"
         style="@style/textviewErrorLabelStyle"
+        android:layout_marginTop="4dp"
         android:text="@string/enter_payment_amount_max_input_error"
+        android:textSize="@dimen/thirteen_sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/paymentAmountInputEditText" />
@@ -30,7 +39,8 @@
     <Button
         android:id="@+id/continueToPaymentButton"
         style="@style/continueDoneButtonStyle"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="14dp"
         android:text="@string/continue_to_payment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
@@ -50,6 +60,7 @@
     <View
         android:id="@+id/amountDividerView"
         style="@style/enterPaymentAmountDividerStyle"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/reducePaymentAmountTextView" />
@@ -57,7 +68,9 @@
     <TextView
         android:id="@+id/totalAmountDueValueTextView"
         style="@style/enterPaymentAmountOverdueValueStyle"
+        android:layout_marginTop="15dp"
         android:text="@string/currency_placeholder"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintTop_toBottomOf="@+id/amountDividerView" />
 
@@ -66,6 +79,7 @@
         style="@style/amountDescriptionStyle"
         android:layout_marginTop="@dimen/zero_dp"
         android:text="@string/total_amount_due"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueValueTextView"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toTopOf="@+id/totalAmountDueValueTextView" />
@@ -73,6 +87,7 @@
     <View
         android:id="@+id/totalAmountDueHorizontalDividerView"
         style="@style/enterPaymentAmountDueHorizontalDivider"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/totalAmountDueValueTextView" />
@@ -81,6 +96,7 @@
         android:id="@+id/amountOverdueLabelTextView"
         style="@style/enterPaymentAmountOverdueStyle"
         android:text="@string/overdue_amount_label"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@+id/amountOutstandingValueTextView"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toTopOf="@+id/amountOutstandingValueTextView" />
@@ -88,9 +104,12 @@
     <TextView
         android:id="@+id/amountOutstandingValueTextView"
         style="@style/enterPaymentAmountOverdueValueStyle"
+        android:layout_marginTop="15dp"
         android:text="@string/currency_placeholder"
+        android:textSize="@dimen/fourteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintTop_toBottomOf="@+id/totalAmountDueHorizontalDividerView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

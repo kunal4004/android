@@ -215,7 +215,6 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     override fun navigateToStatementActivity() {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
             val openStatement = Intent(this, StatementActivity::class.java)
             openStatement.putExtra(ACCOUNTS, Gson().toJson(Pair(mAvailableFundPresenter?.getApplyNowState(), mAvailableFundPresenter?.getAccount())))
             startActivity(openStatement)

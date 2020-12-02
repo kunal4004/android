@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Activity;
 import android.app.Application;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -45,10 +43,11 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
-import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
+import za.co.woolworths.financial.services.android.models.dto.DashConfig;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
@@ -62,8 +61,8 @@ import za.co.woolworths.financial.services.android.models.dto.contact_us.Contact
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
@@ -123,6 +122,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ProductDetailsPage productDetailsPage;
 
     private static CreditView creditView;
+    private DashConfig dashConfig;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -609,5 +609,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setCreditView(CreditView creditView) {
         WoolworthsApplication.creditView = creditView;
+    }
+
+    public void setDashConfig(DashConfig dashConfig) {
+        this.dashConfig = dashConfig;
+    }
+
+    public DashConfig getDashConfig() {
+        return dashConfig;
     }
 }
