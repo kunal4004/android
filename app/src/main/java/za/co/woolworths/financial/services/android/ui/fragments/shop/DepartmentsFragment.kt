@@ -342,7 +342,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             Utils.saveLastLocation(location, this)
             this@DepartmentsFragment.location = location
-            if(isRefresh){
+            if(isDashEnabled && isRefresh){
                 executeDepartmentRequest()
                 isRefresh = false
             }
