@@ -75,16 +75,26 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.viewTreeObserver?.addOnWindowFocusChangeListener { hasFocus -> onWindowFocusChanged() }
+
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
         if (checkLocationPermission() && Utils.isLocationEnabled(context) && isDashEnabled) {
-            refreshLocationUpdates()
+            startLocationUpdates()
         } else if(isFragmentVisible) {
             executeDepartmentRequest()
             if (!Utils.isDeliverySelectionModalShown()) {
                 showDeliveryOptionDialog()
             }
+        }
+    }
+
+    private fun onWindowFocusChanged() {
+        if(context != null && !Utils.isLocationEnabled(context)) {
+            onProviderDisabled("myLocation")
+        } else {
+            startLocationUpdates()
         }
     }
 
@@ -247,7 +257,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             activity?.apply {
                 executeValidateSuburb()
                 //When moved from My Cart to department
-                refreshLocationUpdates()
+                startLocationUpdates()
             }
         }
     }
@@ -278,7 +288,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         } else {
-                            refreshLocationUpdates()
+                            startLocationUpdates()
                         }
                     }
                 }
@@ -294,7 +304,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         super.onResume()
         activity?.apply {
             //When moved from other bottom nav tabs except My Cart
-            refreshLocationUpdates()
+            startLocationUpdates()
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
         }
@@ -342,10 +352,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             Utils.saveLastLocation(location, this)
             this@DepartmentsFragment.location = location
-            if(isDashEnabled && isRefresh){
+            if(isDashEnabled){
                 executeDepartmentRequest()
-                isRefresh = false
             }
+            stopLocationUpdate()
         }
     }
 
@@ -407,8 +417,4 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         locationManager?.removeUpdates(this@DepartmentsFragment)
     }
 
-    private fun refreshLocationUpdates() {
-        isRefresh = true;
-        startLocationUpdates()
-    }
 }
