@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
+    private var isRefresh: Boolean = false
     private var location: Location? = null
     private var locationManager: LocationManager? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -77,10 +78,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if (checkLocationPermission() && isDashEnabled) {
-            startLocationUpdates()
-        }
-        if (isFragmentVisible) {
+        if (checkLocationPermission() && Utils.isLocationEnabled(context) && isDashEnabled) {
+            refreshLocationUpdates()
+        } else if(isFragmentVisible) {
             executeDepartmentRequest()
             if (!Utils.isDeliverySelectionModalShown()) {
                 showDeliveryOptionDialog()
@@ -278,7 +278,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         } else {
-                            startLocationUpdates()
+                            refreshLocationUpdates()
                         }
                     }
                 }
@@ -342,8 +342,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             Utils.saveLastLocation(location, this)
             this@DepartmentsFragment.location = location
-            if(isDashEnabled){
+            if(isRefresh){
                 executeDepartmentRequest()
+                isRefresh = false
             }
         }
     }
@@ -407,9 +408,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun refreshLocationUpdates() {
+        isRefresh = true;
         startLocationUpdates()
-        if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            executeDepartmentRequest()
-        }
     }
 }
