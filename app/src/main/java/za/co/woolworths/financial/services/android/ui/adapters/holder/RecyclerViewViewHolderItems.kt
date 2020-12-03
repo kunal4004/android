@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
+
 class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
     fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
@@ -81,17 +82,15 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
         with(itemView) {
-            imProductImage?.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-                override fun onLayoutChange(v: View?, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
-                    imProductImage?.removeOnLayoutChangeListener(this)
-                    val reducedPlaceHolderWidth: Int = width / 2
-                    imReducedImage?.layoutParams?.width = reducedPlaceHolderWidth
-                }
-            })
+
+            measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            val itemWidth = itemView.measuredWidth
+            imReducedImage?.layoutParams?.width = (itemWidth / 2) -  Utils.dp2px(8f)
+            imSave?.layoutParams?.width =  (itemWidth / 4) -  Utils.dp2px(16f)
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(imSave, imPromo?.save ?: "")
+            ImageManager.setPictureOverrideWidthHeight(imSave, imPromo?.save ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
