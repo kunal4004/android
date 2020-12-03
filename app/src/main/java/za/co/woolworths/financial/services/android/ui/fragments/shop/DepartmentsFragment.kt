@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -19,6 +20,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -33,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -46,6 +49,7 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
 
+    private var isRefresh: Boolean = false
     private var location: Location? = null
     private var locationManager: LocationManager? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -74,10 +78,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if (checkLocationPermission() && isDashEnabled) {
-            startLocationUpdates()
-        }
-        if (isFragmentVisible) {
+        if (checkLocationPermission() && Utils.isLocationEnabled(context) && isDashEnabled) {
+            refreshLocationUpdates()
+        } else if(isFragmentVisible) {
             executeDepartmentRequest()
             if (!Utils.isDeliverySelectionModalShown()) {
                 showDeliveryOptionDialog()
@@ -178,12 +181,23 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI
                     ?: "")
             if (intent == null) {
-                KotlinUtils.presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
+                presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
             } else {
                 // Launch the woolies dash if already downloaded/installed
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 this.startActivity(intent)
             }
+        }
+    }
+
+    fun presentDashDetailsActivity(activity: Activity, link: String?) {
+        activity.apply {
+            val mIntent = Intent(this, DashDetailsActivity::class.java)
+            mIntent.putExtra("bundle", bundleOf(
+                    AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK to link
+            ))
+            startActivity(mIntent)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
 
@@ -264,7 +278,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         } else {
-                            startLocationUpdates()
+                            refreshLocationUpdates()
                         }
                     }
                 }
@@ -328,8 +342,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             Utils.saveLastLocation(location, this)
             this@DepartmentsFragment.location = location
-            if(isDashEnabled){
+            if(isDashEnabled && isRefresh){
                 executeDepartmentRequest()
+                isRefresh = false
             }
         }
     }
@@ -393,9 +408,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun refreshLocationUpdates() {
+        isRefresh = true;
         startLocationUpdates()
-        if (context != null && Utils.isLocationEnabled(context) && PermissionUtils.hasPermissions(context, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            executeDepartmentRequest()
-        }
     }
 }

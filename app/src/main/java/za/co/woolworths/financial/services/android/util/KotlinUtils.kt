@@ -512,17 +512,6 @@ class KotlinUtils {
             activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
 
-        fun presentDashDetailsActivity(activity: Activity, link: String?) {
-            activity.apply {
-                val mIntent = Intent(this, DashDetailsActivity::class.java)
-                mIntent.putExtra("bundle", bundleOf(
-                        AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK to link
-                ))
-                startActivity(mIntent)
-                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-            }
-        }
-
         fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
             activity?.apply {
                 return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
