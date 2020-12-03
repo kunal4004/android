@@ -11,7 +11,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/processingLayoutTitle"
+        app:layout_constraintBottom_toTopOf="@+id/processRequestTitleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -29,7 +29,7 @@
 
 
     <TextView
-        android:id="@+id/processingLayoutTitle"
+        android:id="@+id/processRequestTitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="@+id/processGuideLinePercent" />
 
     <TextView
-        android:id="@+id/tvProcessingYourRequestDuration"
+        android:id="@+id/processRequestDescriptionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -95,6 +95,6 @@
         android:textSize="55sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/processingLayoutTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/processRequestTitleTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

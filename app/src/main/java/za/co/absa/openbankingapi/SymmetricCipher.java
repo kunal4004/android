@@ -14,8 +14,6 @@ package za.co.absa.openbankingapi;
 
 import android.util.Base64;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -30,6 +28,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class SymmetricCipher {
 
@@ -84,7 +84,7 @@ public class SymmetricCipher {
             return cipher.doFinal(data);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
                 | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             throw new DecryptionFailureException(e);
         }
     }
@@ -135,7 +135,7 @@ public class SymmetricCipher {
             return cipher.doFinal(data);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
                 | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             throw new DecryptionFailureException(e);
         }
     }

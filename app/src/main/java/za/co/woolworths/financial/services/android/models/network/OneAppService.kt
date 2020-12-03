@@ -1,14 +1,12 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import com.google.gson.JsonObject
-import io.reactivex.Observable
+import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
@@ -144,8 +142,17 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getRootCategory(): Call<RootCategories> {
-        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken())
+    fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        var locationCord = location
+        if (!locationEnabled) {
+            locationCord = null
+            // Hardcoding only for testing purpose.
+//            location.latitude = -33.907630
+//            location.longitude = 18.408380
+        }
+
+        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
@@ -388,6 +395,7 @@ object OneAppService : RetrofitConfig() {
     fun removePromoCode(couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse> {
         return mApiInterface.removePromoCode(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), couponClaimCode)
     }
+
     fun queryServicePayURemovePaymentMethod(paymenToken: String): Call<DeleteResponse> {
         return mApiInterface.payURemovePaymentMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), paymenToken)
     }

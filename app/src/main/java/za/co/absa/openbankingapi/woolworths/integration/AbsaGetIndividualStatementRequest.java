@@ -3,7 +3,6 @@ package za.co.absa.openbankingapi.woolworths.integration;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -16,6 +15,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.IndividualStatementR
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaGetIndividualStatementRequest {
 
@@ -29,7 +29,7 @@ public class AbsaGetIndividualStatementRequest {
         try{
             body = new IndividualStatementRequest(archivedStatement).getUrlEncodedFormData();
         } catch (UnsupportedEncodingException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
         }
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatement.exp", NetworkResponse.class
                 , headers, body, true, new AbsaBankingOpenApiResponse.Listener<NetworkResponse>() {

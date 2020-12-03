@@ -28,7 +28,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -199,7 +198,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
         } catch (ex: NullPointerException) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -282,7 +281,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             previousmarker = marker
             cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -490,7 +489,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
             }
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -604,7 +603,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         try {
             activity?.unregisterReceiver(broadcastCall)
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 

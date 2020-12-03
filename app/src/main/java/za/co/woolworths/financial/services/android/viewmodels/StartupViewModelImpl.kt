@@ -142,6 +142,10 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setTransUnionLink(transUnionLink)
             }
 
+            dashConfig?.apply{
+                WoolworthsApplication.getInstance().dashConfig = this
+            }
+
             whatsApp?.apply {
                 showWhatsAppButton = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setWhatsAppConfig(this)

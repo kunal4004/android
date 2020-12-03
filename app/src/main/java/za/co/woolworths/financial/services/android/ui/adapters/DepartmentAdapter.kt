@@ -1,14 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.app.Activity
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.department_dash_banner.view.*
 import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.department_row.view.*
-import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
+import za.co.woolworths.financial.services.android.models.dto.Dash
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.adapters.holder.DepartmentsBaseViewHolder
@@ -17,14 +19,18 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.*
 
 
-internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
+internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, private val onDashBannerClick: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
     : RecyclerView.Adapter<DepartmentsBaseViewHolder>() {
     var isValidateSuburbRequestInProgress = false
+    private var mDashBanner: Dash? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DepartmentsBaseViewHolder {
         return when (viewType) {
             RootCategoryViewType.HEADER.value -> {
                 HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.department_header_delivery_location, parent, false))
+            }
+            RootCategoryViewType.DASH_BANNER.value -> {
+                DashBannerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.department_dash_banner, parent, false))
             }
             else -> DepartmentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.department_row, parent, false))
         }
@@ -45,6 +51,23 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             rootCategories?.add(0, header)
         }
         mlRootCategories = rootCategories
+    }
+
+    fun setDashBanner(dash: Dash?, rootCategories: MutableList<RootCategory>?, bannerText: String) {
+
+        synchronized(this) {
+            if (dash == null) {
+                removeDashBanner(rootCategories)
+                return
+            }
+            val dashBanner = RootCategory()
+            dashBanner.viewType = RootCategoryViewType.DASH_BANNER
+            dash.bannerText = bannerText
+            rootCategories?.add(1, dashBanner)
+            mlRootCategories = mutableListOf()
+            mlRootCategories = rootCategories
+            mDashBanner = dash
+        }
     }
 
     private fun listContainHeader(rootCategories: MutableList<RootCategory>?): Boolean {
@@ -86,7 +109,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             } else {
                 itemView.iconCaretRight.visibility = View.GONE
                 itemView.editLocation.visibility = View.VISIBLE
-                KotlinUtils.setDeliveryAddressView(itemView.context as Activity,Utils.getPreferredDeliveryLocation(),itemView.tvDeliveringTo,itemView.tvDeliveryLocation,itemView.deliverLocationIcon)
+                KotlinUtils.setDeliveryAddressView(itemView.context as Activity, Utils.getPreferredDeliveryLocation(), itemView.tvDeliveringTo, itemView.tvDeliveryLocation, itemView.deliverLocationIcon)
             }
             itemView.deliveryDatesProgressPlaceHolder.visibility = if (isValidateSuburbRequestInProgress) View.VISIBLE else View.GONE
             if (validatedSuburbProducts == null) {
@@ -119,6 +142,15 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         }
     }
 
+    inner class DashBannerViewHolder(itemView: View) : DepartmentsBaseViewHolder(itemView) {
+        override fun bind(position: Int) {
+            mDashBanner?.imgUrl?.let { ImageManager.setPictureWithoutPlaceHolder(itemView.image_dash_banner_bg, it) }
+            itemView.list_item_dash_banner_title.text = mDashBanner?.categoryName
+            itemView.list_item_dash_banner_subtitle.text = mDashBanner?.bannerText
+            itemView.list_item_dash_banner_container.setOnClickListener { onDashBannerClick() }
+        }
+    }
+
     override fun getItemViewType(position: Int): Int {
         return mlRootCategories?.get(position)?.viewType!!.value
     }
@@ -140,5 +172,35 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         if (isInProgress)
             this.validatedSuburbProducts = null
         notifyDataSetChanged()
+    }
+
+    public fun containsDashBanner(): Boolean {
+        return mDashBanner != null
+    }
+
+    fun removeDashBanner(rootCategories: MutableList<RootCategory>?) {
+        if (!containsDashBanner()) {
+            return
+        }
+        //1 is the position of Dash banner card
+        mlRootCategories?.get(1)?.let {
+            if (it.viewType == RootCategoryViewType.DASH_BANNER) {
+                // Make sure the position is after header
+                mlRootCategories?.remove(it)
+                rootCategories?.remove(it)
+                mDashBanner = null
+                notifyItemRemoved(1)
+            }
+        }
+    }
+
+    fun updateDashBanner(bannerText: String, isDashEnabled: Boolean) {
+        if (!isDashEnabled || !containsDashBanner()) {
+            return
+        }
+        mDashBanner?.apply {
+            this.bannerText = bannerText
+        }
+        notifyItemChanged(1, mDashBanner)
     }
 }

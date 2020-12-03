@@ -6,12 +6,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 
-import androidx.appcompat.widget.AppCompatEditText;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class CurrencyEditText extends AppCompatEditText {
+public class CurrencyEditText extends TextInputEditText {
 
     private String current = "";
     private CurrencyEditText editText = CurrencyEditText.this;

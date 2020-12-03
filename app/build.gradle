@@ -3,24 +3,21 @@ apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: "kotlin-kapt"
 apply plugin: 'com.google.firebase.firebase-perf'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs"
+apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
 android {
 
     def major = "7"
-    def minor = "5"
-    def fix = "1.1"
-    def jobNumber = 461
+    def minor = "6"
+    def fix = "0"
+    def jobNumber = 464
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
         enabled = true
-    }
-
-    ext {
-        enableCrashlytics = true
     }
 
     compileOptions {
@@ -231,9 +228,11 @@ dependencies {
     implementation "com.github.skydoves:balloon:1.0.4"
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:26.1.0')
 
     implementation 'com.android.volley:volley:1.1.1'
     implementation "com.google.android.gms:play-services-auth-api-phone:17.4.0"
@@ -251,6 +250,12 @@ dependencies {
     // Only specify modules that provide functionality your app will use
     implementation 'com.amplifyframework:aws-auth-cognito:1.3.2'
     implementation 'com.amplifyframework:core:1.3.2'
+
+    // Add the Firebase Crashlytics SDK.
+    implementation 'com.google.firebase:firebase-crashlytics'
+
+    // Recommended: Add the Google Analytics SDK.
+    implementation 'com.google.firebase:firebase-analytics'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
 

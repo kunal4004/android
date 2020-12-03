@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
@@ -119,7 +118,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                                 val accountsErrorHandlerFragment = AccountsErrorHandlerFragment.newInstance(desc)
                                 accountsErrorHandlerFragment.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName)
                             } catch (ex: IllegalStateException) {
-                                Crashlytics.logException(ex)
+                                FirebaseManager.logException(ex)
                             }
                         }
                     }
