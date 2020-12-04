@@ -337,14 +337,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
-
-            /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return
-            }
-            fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                this@DepartmentsFragment.location = it
-                    executeDepartmentRequest()
-            }*/
         }
     }
 
@@ -465,18 +457,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 this@DepartmentsFragment.location = location
                 executeDepartmentRequest()
                 stopLocationUpdates()
+                break
             }
         }
     }
-
-    /*override fun onLocationChange(location: Location?) {
-        activity?.apply {
-            Utils.saveLastLocation(location, this)
-            this@DepartmentsFragment.location = location
-            if (isDashEnabled) {
-                executeDepartmentRequest()
-            }
-            stopLocationUpdate()
-        }
-    }*/
 }
