@@ -49,8 +49,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.reward_benefit_activity)
-        Utils.updateStatusBarBackground(this, android.R.color.transparent)
-        window?.decorView?.systemUiVisibility = 0
+        Utils.updateStatusBarBackground(this)
         benefitTabPosition = intent.getIntExtra("benefitTabPosition", 0)
         init()
         closeIcon.setOnClickListener { onBackPressed() }
@@ -79,7 +78,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
 
         vpRewardBenefit?.currentItem = benefitTabPosition
 
-       updateTabFont (benefitTabPosition, true)
+       updateTabFont(benefitTabPosition, true)
 
         tabs?.addOnTabSelectedListener(
                 object : TabLayout.OnTabSelectedListener {

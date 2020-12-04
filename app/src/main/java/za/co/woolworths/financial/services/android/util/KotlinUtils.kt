@@ -24,10 +24,11 @@ import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -38,11 +39,11 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
@@ -187,6 +188,19 @@ class KotlinUtils {
             val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
             var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+
+
+        fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
+            val value = str.toLowerCase()
+            val words = value.split(" ").toMutableList()
+
+            var output =  words[0].toUpperCase()+" "
+            words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
             }
@@ -467,7 +481,7 @@ class KotlinUtils {
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
             } catch (t: Throwable) {
-                Crashlytics.log(t.message)
+                FirebaseManager.logException(t)
             }
         }
 
@@ -484,7 +498,7 @@ class KotlinUtils {
             }
         }
 
-        fun openApplicationSettings(requestCode: Int, activity: Activity?){
+        fun openApplicationSettings(requestCode: Int, activity: Activity?) {
             val intent = Intent()
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             val uri: Uri = Uri.fromParts("package", activity?.packageName, null)
@@ -496,6 +510,13 @@ class KotlinUtils {
             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             activity?.startActivityForResult(locIntent, requestCode)
             activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
+
+        fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
+            activity?.apply {
+                return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
+            }
+            return false
         }
     }
 }

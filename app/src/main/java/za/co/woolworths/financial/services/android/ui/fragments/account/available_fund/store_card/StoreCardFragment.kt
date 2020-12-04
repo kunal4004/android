@@ -44,7 +44,10 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
                 navigateToRecentTransactionActivity(AccountsProductGroupCode.STORE_CARD.groupCode)
             }
-            R.id.incViewStatementButton -> navigateToStatementActivity()
+            R.id.incViewStatementButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
+                navigateToStatementActivity()
+            }
             R.id.incPayMyAccountButton -> {
                 if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 

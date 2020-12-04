@@ -22,12 +22,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.ktx.Firebase
 import com.skydoves.balloon.balloon
 import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -49,6 +50,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
@@ -142,55 +145,58 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
-
-    override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
-        val productLists = response.products
-
-        if (mProductList?.isNullOrEmpty() == true)
-            mProductList = ArrayList()
-
-        if (productLists?.isEmpty() == true) {
-            sortAndRefineLayout?.visibility = GONE
-            if (!listContainHeader()) {
-                val headerProduct = ProductList()
-                headerProduct.rowType = ProductListingViewType.HEADER
-                headerProduct.numberOfItems = numItemsInTotal
-                productLists.add(0, headerProduct)
-            }
-            bindRecyclerViewWithUI(productLists)
-        } else if (productLists.size == 1) {
-            (activity as? BottomNavigationActivity)?.apply {
-                popFragmentNoAnim()
-                openProductDetailFragment(mSubCategoryName, productLists[0])
-            }
-
-        } else {
-            this.productView = response
-            hideFooterView()
-            if (!loadMoreData) {
-                sortAndRefineLayout?.visibility = View.VISIBLE
-                (activity as? BottomNavigationActivity)?.setUpDrawerFragment(productView, productRequestBody)
-                setRefinementViewState(productView?.navigation?.let { nav -> getRefinementViewState(nav) }
-                        ?: false)
-                bindRecyclerViewWithUI(productLists)
-                showFeatureWalkThrough()
-                productView?.history?.apply {
-                    if (categoryDimensions.isNotEmpty()) {
-                        mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
-                    } else if (searchCrumbs.isNotEmpty()){
-                        mSubCategoryName =  searchCrumbs.let { it[it.size - 1].terms }
-                    }
-                    if (!mSubCategoryName.isNullOrEmpty())
-                        setTitle()
-                }
-                if (!Utils.isDeliverySelectionModalShown()) {
-                    showDeliveryOptionDialog()
-                }
-            } else {
-                loadMoreData(productLists)
-            }
+    private fun setTitle() {
+        if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment){
+           return
         }
+        (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
+    }
+    override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
+            val productLists = response.products
+            if (mProductList?.isNullOrEmpty() == true)
+                mProductList = ArrayList()
+
+            if (productLists?.isEmpty() == true) {
+                sortAndRefineLayout?.visibility = GONE
+                if (!listContainHeader()) {
+                    val headerProduct = ProductList()
+                    headerProduct.rowType = ProductListingViewType.HEADER
+                    headerProduct.numberOfItems = numItemsInTotal
+                    productLists.add(0, headerProduct)
+                }
+                bindRecyclerViewWithUI(productLists)
+            } else if (productLists.size == 1) {
+                (activity as? BottomNavigationActivity)?.apply {
+                    popFragmentNoAnim()
+                    openProductDetailFragment(mSubCategoryName, productLists[0])
+                }
+
+            } else {
+                this.productView = response
+                hideFooterView()
+                if (!loadMoreData) {
+                    sortAndRefineLayout?.visibility = View.VISIBLE
+                    (activity as? BottomNavigationActivity)?.setUpDrawerFragment(productView, productRequestBody)
+                    setRefinementViewState(productView?.navigation?.let { nav -> getRefinementViewState(nav) }
+                            ?: false)
+                    bindRecyclerViewWithUI(productLists)
+                    showFeatureWalkThrough()
+                    productView?.history?.apply {
+                        if (categoryDimensions.isNotEmpty()) {
+                            mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
+                        } else if (searchCrumbs.isNotEmpty()) {
+                            mSubCategoryName = searchCrumbs.let { it[it.size - 1].terms }
+                        }
+                        if (!mSubCategoryName.isNullOrEmpty())
+                            setTitle()
+                    }
+                    if (!Utils.isDeliverySelectionModalShown()) {
+                        showDeliveryOptionDialog()
+                    }
+                } else {
+                    loadMoreData(productLists)
+                }
+            }
     }
 
     override fun unhandledResponseCode(response: Response) {
@@ -206,7 +212,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc)
             fragmentTransaction?.let { singleButtonDialogFragment.show(fragmentTransaction, SingleButtonDialogFragment::class.java.simpleName) }
         }catch (ex: IllegalStateException){
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -406,10 +412,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
         inflater.inflate(R.menu.drill_down_category_menu, menu)
         menuActionSearch = menu.findItem(R.id.action_drill_search)
+        menuActionSearch?.isVisible = (activity as? BottomNavigationActivity)?.currentFragment is ProductListingFragment
+        super.onCreateOptionsMenu(menu,inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -462,15 +469,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        setHasOptionsMenu(true)
         (activity as? BottomNavigationActivity)?.apply {
             when (hidden) {
-                true -> {
-                        hideSearchIcon()
-                        lockDrawerFragment()
-                }
+                true -> lockDrawerFragment()
                 else -> {
-                        showToolbar()
-                        showSearchIcon()
+                    showToolbar()
                         showBackNavigationIcon(true)
                         setToolbarBackgroundDrawable(R.drawable.appbar_background)
                         setTitle()
@@ -479,6 +483,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
             }
 
+            invalidateOptionsMenu()
         }
     }
 
@@ -552,7 +557,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!isAdded || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
             return
         (activity as? BottomNavigationActivity)?.apply {
-            Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.javaClass.canonicalName)
+            // Prevent dialog to display in other section when fragment is not visible
+            if (currentFragment !is ProductListingFragment) return
+            FirebaseManager.setCrashlyticsString(bindString(R.string.crashlytics_materialshowcase_key), this.javaClass.canonicalName)
             walkThroughPromtView = WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
                     .setTarget(refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
@@ -651,7 +658,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
                                     selectYourQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
                                 }catch (ex: IllegalStateException){
-                                    Crashlytics.logException(ex)
+                                    FirebaseManager.logException(ex)
                                 }
                             }
                         }
@@ -773,7 +780,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 productListingFindInStoreNoQuantityFragment.show(this, ProductListingFindInStoreNoQuantityFragment::class.java.simpleName)
             }
         }catch (ex: IllegalStateException){
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -876,7 +883,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun setUniqueIds(){
-        resources?.apply {
+        resources.apply {
             refineProducts?.contentDescription = getString(R.string.plp_buttonRefine)
             sortProducts?.contentDescription = getString(R.string.plp_buttonSort)
             productList?.contentDescription = getString(R.string.plp_productListLayout)
@@ -922,7 +929,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     fun confirmDeliveryLocation(){
         this.childFragmentManager.apply {
-            ConfirmDeliveryLocationFragment.newInstance()?.let {
+            ConfirmDeliveryLocationFragment.newInstance().let {
                 it.isCancelable = false
                 it.show(this, ConfirmDeliveryLocationFragment::class.java.simpleName)
             }
@@ -938,13 +945,5 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.apply {
             KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
         }
-    }
-
-    private fun hideSearchIcon() {
-        menuActionSearch?.isVisible = false
-    }
-
-    private fun showSearchIcon() {
-        menuActionSearch?.isVisible = true
     }
 }

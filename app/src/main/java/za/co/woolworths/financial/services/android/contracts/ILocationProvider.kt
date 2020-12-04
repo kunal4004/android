@@ -4,5 +4,7 @@ import android.location.Location
 
 interface ILocationProvider {
     fun onLocationChange(location: Location?)
-    fun onPopUpLocationDialogMethod()
+    fun onPopUpLocationDialogMethod(){
+        //Optional
+    }
 }
