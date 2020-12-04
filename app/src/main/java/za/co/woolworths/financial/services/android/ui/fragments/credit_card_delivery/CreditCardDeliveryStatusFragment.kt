@@ -27,7 +27,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("delivery_status_response"), StatusResponse::class.java) as StatusResponse?
+            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
         }
     }
 
@@ -60,6 +60,8 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
                 deliveryDate.text = "Tomorrow"
                 deliveryStatusTitle.text = "DELIVERY CONFIRMATION"
+                manageDelivery.visibility = View.VISIBLE
+                //trackDelivery.visibility = View.VISIBLE
             }
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
