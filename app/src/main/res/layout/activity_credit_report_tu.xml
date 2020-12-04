@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/default_background"
+            tools:context="za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/WTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/thirty_two_dp"
+                android:background="@color/black"
+                android:elevation="@dimen/five_dp"
+                android:fontFamily="@font/futura_semi_bold"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:paddingStart="@dimen/twenty_six_dp"
+                android:paddingTop="@dimen/eleven_dp"
+                android:paddingEnd="@dimen/twenty_four_dp"
+                android:paddingBottom="@dimen/seven_dp"
+                android:text="@string/credit_report_title_tu"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                app:layout_constraintBottom_toBottomOf="@+id/appBarLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/three_seventy_five_dp"
+                android:background="@color/bg_e6e6e6"
+                android:elevation="@dimen/zero_dp"
+                app:elevation="@dimen/zero_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbarCreditReport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            android:contentDescription="@string/credit_report_title_tu"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/header_image" />
+                    </RelativeLayout>
+                </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guide_toolbar_margin_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="@dimen/three_seventy_five_dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_credit_report_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_F8F8F8"
+                android:nestedScrollingEnabled="false"
+                android:paddingBottom="@dimen/seventy_four_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guide_toolbar_margin_horizontal" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/register_login_now_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/twenty_four_dp"
+            android:background="@color/black"
+            android:fontFamily="@font/futura_semi_bold"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:minHeight="@dimen/fifty_dp"
+            android:paddingHorizontal="@dimen/sixty_six_dp"
+            android:paddingVertical="@dimen/nineteen_dp"
+            android:text="@string/register_or_login_now"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

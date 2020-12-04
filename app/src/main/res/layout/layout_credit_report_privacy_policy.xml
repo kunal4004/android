@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/pleaseNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_five_dp"
+        android:layout_marginTop="@dimen/thirty_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/please_note_title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/credit_report_privacy_policy_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pleaseNote" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

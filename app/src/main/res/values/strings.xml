@@ -1576,7 +1576,7 @@
     <string name="amount_outstanding">Amount Outstanding</string>
     <string name="continue_to_payment">Continue To Payment</string>
     <string name="save_this_card_for_future_payments">Save this card for future payments</string>
-    <string name="save_card_and_pay_now_button_label">Save Card &amp; Pay Now</string>
+    <string name="save_card_and_pay_now_button_label">CONFIRM</string>
     <string name="name_on_card_label">Name on Card:</string>
     <string name="expiration_date_label">Expiration Date:</string>
     <string name="card_number_label">Card Number:</string>
@@ -1625,7 +1625,7 @@
     <string name="unable_to_process_your_request_desc">We are unable to process your payment. For queries, call us on 0861 50 20 20.</string>
     <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 5 business working days to reflect on your account.</string>
     <string name="back_to_my_account_button">back to my account</string>
-    <string name="pma_save_card_pay_now_title">Would you like to save this card for future payments?</string>
+    <string name="pma_save_card_pay_now_title">Payment Summary</string>
     <string name="pay_now_button_label">Pay Now</string>
     <string name="payment_method">Payment Method</string>
     <string name="add_card_label">add card</string>
@@ -1657,14 +1657,14 @@
     <string name="available_voucher_toast_message">\u0020voucher</string>
     <string name="available_vouchers_toast_message">\u0020vouchers</string>
     <string name="available">\u0020available</string>
-    <string name="available_vouchers">vouchers available</string>
+    <string name="vouchers_available">available vouchers</string>
     <string name="applying_your_vouchers">Applying Your Vouchers</string>
     <string name="redeem">Redeem</string>
     <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>
     <string name="no_vouchers_available">NO VOUCHERS AVAILABLE</string>
     <string name="applied">\u0020Applied</string>
     <string name="available_vouchers_title">Select the vouchers that you\'d like to redeem.</string>
-    <string name="available_vouchers_sub_title"><b>Note:</b> Vouchers can\'t be used in conjunction with other offers or promotions.</string>
+    <string name="available_vouchers_sub_title"><b>Note:</b> Some vouchers can\'t be used in conjunction with other offers or promotions.</string>
     <string name="vouchers_applied_toast_message">Your &lt;b>Vouchers&lt;/b> have been applied</string>
 
     <string name="pma_retry_error_title">Oops!</string>
@@ -1702,7 +1702,6 @@
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
 
-    <string name="get_your_free_credit_report_desc">Tap the credit view icon in your account to get a free credit score.</string>
     <string name="check_back_during_working_hours">Check back during working hours.</string>
     <string name="chat_tap_here_label">Tap here to Chat to\nus on WhatsApp</string>
     <string name="agent_chat_greeting_label">Have issues paying your\naccount? How can we\nassist you?</string>
@@ -1727,8 +1726,6 @@
     <string name="select_your_store">Select Your Store</string>
     <string name="hint_search_for_your_suburb">Search For Your Suburb</string>
     <string name="hint_search_for_your_store">Search For Your Store</string>
-    <string name="get_a_free_credit_score">get a free credit score</string>
-    <string name="get_started_now">Get started now</string>
     <string name="discounts">Discounts</string>
     <string name="company_discount">Company Discount</string>
     <string name="your_wrewards_vouchers">Your WRewards Vouchers</string>
@@ -1742,8 +1739,50 @@
     <string name="promo_discount_dialog_title">Promo Code Applied</string>
     <string name="promo_discount_dialog_desc">If more than one Promo Code is applied, we select the code with the highest priority for you.</string>
     <string name="earliest_collection_date">Earliest Collection date:</string>
+
+    <!-- Dash Details -->
+    <string name="dash_banner_text_open_app">Same Day Delivery. Open Our App.</string>
+    <string name="dash_banner_text_download_app">Same Day Delivery. Download Our App.</string>
+
+    <string name="dash_details_food_order">FOOD ORDERS</string>
+    <string name="dash_details_woolies_app_available">Now Available in\nYour Area: Woolies Dash</string>
+    <string name="dash_details_woolies_app_available_desc">With this new trial app, get ready for fast, fresh delivery of all your favourite Woolworths food items.</string>
+    <string name="dash_details_please_note">Please note</string>
+    <string name="dash_details_what_you_ll_love">WHAT YOU’LL LOVE</string>
+
+    <string name="app_feature_title"></string>
+    <string name="app_feature_get_delivered">Same-day delivery</string>
+    <string name="app_feature_world_class_freshness">World-class freshness</string>
+    <string name="app_feature_track_order">Track your shopper live</string>
+
+    <string name="terms_and_condition_wreward_vouchers">WRewards vouchers, Woolworths gift cards and Woolworths Store Cards cannot be used for payment.</string>
+    <string name="terms_and_condition_not_linked">Woolies Dash is not linked to WRewards or Woolworths Financial Services.</string>
+    <string name="dash_details_download_woolies_dash_app">DOWNLOAD THE APP</string>
+
     <string name="credit_and_combination_title">Credit &amp; Combination Card</string>
     <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
+    <string name="select_or_enter_a_payment_amount_label">Select or Enter\nPayment Amount</string>
+    <string name="overdue_amount_label">Overdue Amount</string>
+    <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
+    <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>
+    <!-- Credit Report Transunion -->
+    <string name="credit_report_title_tu">CREDIT REPORT</string>
+    <string name="register_or_login_now">REGISTER OR LOG IN NOW</string>
+    <string name="access_your_full_credit_report">Access your full credit report</string>
+    <string name="view_your_credit_overview_and_history">View your credit overview and history</string>
+    <string name="compare_your_bebt_level_to_your_income">Compare your debt level to your income</string>
+    <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
+    <string name="transunion_personal_info_note">To use this service, TransUnion will require some of your personal information.</string>
+    <string name="privacy_policy_note_1">You can view the\u0020</string>
+    <string name="privacy_policy_note_2">Privacy Policy</string>
+    <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
+    <string name="credit_report_title_details">Register with TransUnion to\nCheck Your Credit Score and Stay Credit Healthy.</string>
+    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, please register an account using your\npersonal information.\n\n
+Your credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile. </string>
+    <string name="please_note_title">Please Note</string>
+    <string name="bullet_point_unicode">\u2022</string>
+    <string name="save_card_product_label">Product:</string>
+    <string name="save_card_product_payment_total_label">Payment Total:</string>
 </resources>
 

@@ -1,11 +1,7 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
@@ -22,6 +18,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaValidateCardAndPinRequest {
 
@@ -32,7 +29,7 @@ public class AbsaValidateCardAndPinRequest {
 		try {
 			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 	}
 
@@ -45,7 +42,7 @@ public class AbsaValidateCardAndPinRequest {
 		try {
 			encryptedPin = SymmetricCipher.Aes256EncryptAndBase64Encode(cardPin, sessionKey.getKey(), sessionKey.getIV());
 		} catch (DecryptionFailureException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 		}
 
 		if (encryptedPin == null)
@@ -64,7 +61,7 @@ public class AbsaValidateCardAndPinRequest {
 				try {
 					statusCode = response.getHeader().getStatusCode();
 				} catch (Exception e) {
-					Crashlytics.logException(e);
+					FirebaseManager.Companion.logException(e);
 				}
 				if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")) {
 					responseDelegate.onSuccess(response, cookies);

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.empty_state_template.*
 import kotlinx.android.synthetic.main.my_account_activity.*
 import kotlinx.android.synthetic.main.shop_fragment.*
@@ -158,7 +157,7 @@ class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
                                     ?: bindString(R.string.general_error_desc), bindString(R.string.ok))
                     activity?.supportFragmentManager?.let { supportManager -> errorMessage.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
                 } catch (ex: IllegalStateException) {
-                    Crashlytics.logException(ex)
+                    FirebaseManager.logException(ex)
                 }
             }
             else -> {
