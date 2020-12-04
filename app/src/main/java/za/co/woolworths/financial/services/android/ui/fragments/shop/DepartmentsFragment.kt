@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
+    private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -89,26 +90,24 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             isPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         }
-         var isUpdatedLocation: Boolean = false
+
         if (isDashEnabled && isFragmentVisible) {
             if (isPermissionGranted && Utils.isLocationEnabled(context)) {
                 fusedLocationClient?.lastLocation?.addOnSuccessListener {
                     this@DepartmentsFragment.location = it
-                    if(!isUpdatedLocation) {
-                        isUpdatedLocation = true
-                        executeDepartmentRequest()
-                    }
+                    executeDepartmentRequest()
                 }
             } else {
                 checkLocationPermission()
-            }
-        }
-
-        if (isFragmentVisible) {
-            if(!isUpdatedLocation) {
-                isUpdatedLocation = true
+                //When user launches second time without permissions
                 executeDepartmentRequest()
+                if (!Utils.isDeliverySelectionModalShown()) {
+                    showDeliveryOptionDialog()
+                }
             }
+        } else if (isFragmentVisible) {
+
+            executeDepartmentRequest()
             if (!Utils.isDeliverySelectionModalShown()) {
                 showDeliveryOptionDialog()
             }
@@ -139,12 +138,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
+            if(isRootCallInProgress){
+                return
+            }
+
+            isRootCallInProgress = true
             val isLocationEnabled = if (context != null) Utils.isLocationEnabled(context) else false
             rootCategoryCall = OneAppService.getRootCategory(isLocationEnabled, location)
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
-                    parentFragment?.getCategoryResponseData()?.dash = null
-
+                    isRootCallInProgress = false
                     when (response?.httpCode) {
                         200 -> {
                             version = response.response?.version
@@ -314,10 +317,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        } else {
-                            startLocationUpdates()
                         }
                     }
+                }
+                RESULT_CANCELED -> {
+                    //When user clicks deny location
+                    executeDepartmentRequest()
                 }
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
