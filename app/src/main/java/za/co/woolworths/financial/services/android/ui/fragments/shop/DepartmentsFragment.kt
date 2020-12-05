@@ -3,14 +3,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +23,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.android.gms.location.*
 import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
@@ -47,11 +47,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
 
-class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, LocationListener {
+class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
-    private var isRefresh: Boolean = false
+    private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
-    private var locationManager: LocationManager? = null
     private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
@@ -59,6 +58,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private var version: String? = ""
     private var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var isDashEnabled = false
+    private var fusedLocationClient: FusedLocationProviderClient? = null
+    private var locationRequest: LocationRequest? = createLocationRequest()
+
 
     companion object {
         var DEPARTMENT_LOGIN_REQUEST = 1717
@@ -75,16 +77,53 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.viewTreeObserver?.addOnWindowFocusChangeListener { hasFocus -> onWindowFocusChanged(hasFocus) }
+        activity?.apply {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        }
+
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if (checkLocationPermission() && Utils.isLocationEnabled(context) && isDashEnabled) {
-            refreshLocationUpdates()
-        } else if(isFragmentVisible) {
+
+        var isPermissionGranted: Boolean = false
+        activity?.apply {
+            isPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (isDashEnabled && isFragmentVisible) {
+            if (isPermissionGranted && Utils.isLocationEnabled(context)) {
+                fusedLocationClient?.lastLocation?.addOnSuccessListener {
+                    this@DepartmentsFragment.location = it
+                    executeDepartmentRequest()
+                }
+            } else {
+                checkLocationPermission()
+                //When user launches second time without permissions
+                executeDepartmentRequest()
+                if (!Utils.isDeliverySelectionModalShown()) {
+                    showDeliveryOptionDialog()
+                }
+            }
+        } else if (isFragmentVisible) {
+
             executeDepartmentRequest()
             if (!Utils.isDeliverySelectionModalShown()) {
                 showDeliveryOptionDialog()
             }
+        }
+    }
+
+    private fun onWindowFocusChanged(hasFocus: Boolean) {
+
+        if (!hasFocus) {
+            return
+        }
+
+        if (context != null && !Utils.isLocationEnabled(context)) {
+            onProviderDisabled()
+        } else {
+            startLocationUpdates()
         }
     }
 
@@ -99,12 +138,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-            val isLocationEnabled = if(context != null) Utils.isLocationEnabled(context) else false
+            if(isRootCallInProgress){
+                return
+            }
+
+            isRootCallInProgress = true
+            val isLocationEnabled = if (context != null) Utils.isLocationEnabled(context) else false
             rootCategoryCall = OneAppService.getRootCategory(isLocationEnabled, location)
             rootCategoryCall?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
                 override fun onSuccess(response: RootCategories?) {
-                    parentFragment?.getCategoryResponseData()?.dash = null
-
+                    isRootCallInProgress = false
                     when (response?.httpCode) {
                         200 -> {
                             version = response.response?.version
@@ -132,7 +175,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
-        if (isDashEnabled && isFragmentVisible && context!= null && Utils.isLocationEnabled(context)) {
+        if (isDashEnabled && isFragmentVisible && context != null && Utils.isLocationEnabled(context)) {
             mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories,
                     getUpdatedBannerText())
         }
@@ -217,16 +260,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     fun noConnectionLayout(isVisible: Boolean) {
-        incConnectionLayout.visibility = if (isVisible) VISIBLE else GONE
+        incConnectionLayout?.visibility = if (isVisible) VISIBLE else GONE
     }
 
     fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
             ?: false
 
     override fun onDestroy() {
-        mDepartmentAdapter?.removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
-        stopLocationUpdate()
-
         super.onDestroy()
         rootCategoryCall?.apply {
             if (isCanceled)
@@ -247,7 +287,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             activity?.apply {
                 executeValidateSuburb()
                 //When moved from My Cart to department
-                refreshLocationUpdates()
+                startLocationUpdates()
             }
         }
     }
@@ -277,10 +317,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                        } else {
-                            refreshLocationUpdates()
                         }
                     }
+                }
+                RESULT_CANCELED -> {
+                    //When user clicks deny location
+                    executeDepartmentRequest()
                 }
             }
         } else if (resultCode == RESULT_OK || resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -293,8 +335,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onResume() {
         super.onResume()
         activity?.apply {
-            //When moved from other bottom nav tabs except My Cart
-            refreshLocationUpdates()
             mDepartmentAdapter?.notifyDataSetChanged()
             executeValidateSuburb()
         }
@@ -338,15 +378,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         mDepartmentAdapter?.updateDeliveryDate(WoolworthsApplication.getValidatedSuburbProducts())
     }
 
+/*
     override fun onLocationChanged(location: Location?) {
-        activity?.apply {
-            Utils.saveLastLocation(location, this)
-            this@DepartmentsFragment.location = location
-            if(isDashEnabled && isRefresh){
-                executeDepartmentRequest()
-                isRefresh = false
-            }
-        }
+
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -358,8 +392,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             executeDepartmentRequest()
         }
     }
+*/
 
-    override fun onProviderDisabled(provider: String?) {
+    private fun onProviderDisabled() {
         location = null
         mDepartmentAdapter?.apply {
             removeDashBanner(parentFragment?.getCategoryResponseData()?.rootCategories)
@@ -380,6 +415,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    //Asking only once.
+//                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                 } else {
                     //we can request the permission.
                     ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
@@ -393,22 +430,35 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun startLocationUpdates() {
-        activity?.apply {
-            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        context?.apply {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return
             }
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, AppConstant.DELAY_200_MS, 0f, this@DepartmentsFragment)
+            fusedLocationClient?.requestLocationUpdates(locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper())
         }
     }
 
-    private fun stopLocationUpdate() {
-        // stop location updates
-        locationManager?.removeUpdates(this@DepartmentsFragment)
+    private fun stopLocationUpdates() {
+        fusedLocationClient?.removeLocationUpdates(locationCallback)
     }
 
-    private fun refreshLocationUpdates() {
-        isRefresh = true;
-        startLocationUpdates()
+    private fun createLocationRequest() = LocationRequest.create()?.apply {
+        interval = 100
+        fastestInterval = 1000
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    private var locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult?) {
+            locationResult ?: return
+            for (location in locationResult.locations) {
+                this@DepartmentsFragment.location = location
+                executeDepartmentRequest()
+                stopLocationUpdates()
+                break
+            }
+        }
     }
 }
