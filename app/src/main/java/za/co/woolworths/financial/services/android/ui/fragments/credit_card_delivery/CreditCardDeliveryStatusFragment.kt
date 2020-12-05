@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
@@ -34,6 +35,8 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         callTheCallCenter?.setOnClickListener { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+        manageDeliveryLayout.setOnClickListener(this)
+        trackDeliveryLayout.setOnClickListener(this)
         configureUI()
     }
 
@@ -60,8 +63,14 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
                 deliveryDate.text = "Tomorrow"
                 deliveryStatusTitle.text = "DELIVERY CONFIRMATION"
-                manageDelivery.visibility = View.VISIBLE
-                //trackDelivery.visibility = View.VISIBLE
+                manageDeliveryLayout.visibility = View.VISIBLE
+                trackDeliveryLayout.visibility = View.VISIBLE
+                val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
+                manageDeliveryDrawable?.alpha = 77
+                manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
+                val trackDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_directions)
+                trackDeliveryDrawable?.alpha = 77
+                trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
             }
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
@@ -69,8 +78,11 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.manageDelivery -> {
+            R.id.manageDeliveryLayout -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
+            }
+            R.id.trackDeliveryLayout -> {
+                //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
             }
         }
     }
