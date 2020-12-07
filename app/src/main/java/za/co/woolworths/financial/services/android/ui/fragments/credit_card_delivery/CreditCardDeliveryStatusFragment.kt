@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -41,6 +42,12 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         Utils.updateStatusBarBackground(activity, R.color.grey_bg)
         navController = Navigation.findNavController(view)
         callTheCallCenter?.setOnClickListener { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                changeToolbarBackground(R.color.grey_bg)
+                hideToolbar()
+            }
+        }
         manageDeliveryLayout.setOnClickListener(this)
         trackDeliveryLayout.setOnClickListener(this)
         configureUI()

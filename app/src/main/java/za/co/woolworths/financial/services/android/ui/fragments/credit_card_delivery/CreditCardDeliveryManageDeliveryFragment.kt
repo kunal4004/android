@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.CreditCardCancelDeliveryFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListener {
@@ -31,6 +33,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        init()
         setupToolbar()
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity?)?.supportActionBar?.show()
@@ -41,7 +44,28 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         when (v?.id) {
             R.id.cancelDelivery -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL)
+                val dialog = CreditCardCancelDeliveryFragment()
+                (activity as? CreditCardDeliveryActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction ->
+                    dialog.show(fragmentTransaction, CreditCardCancelDeliveryFragment::class.java.simpleName)
+                }
             }
+            R.id.editAddress -> {
+
+            }
+            R.id.editRecipient -> {
+
+            }
+        }
+    }
+
+    private fun init() {
+        editAddress?.setOnClickListener(this)
+        cancelDelivery?.setOnClickListener(this)
+
+        if (statusResponse?.isCardNew == true) {
+            editRecipient?.visibility = View.GONE
+        } else {
+            editRecipient?.setOnClickListener(this)
         }
     }
 
@@ -49,13 +73,8 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
                 setToolbarTitle(bindString(R.string.manage_delivery_title))
-                changeToolbarBackground()
+                changeToolbarBackground(R.color.white)
             }
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        (activity as? CreditCardDeliveryActivity)?.hideToolbar()
     }
 }

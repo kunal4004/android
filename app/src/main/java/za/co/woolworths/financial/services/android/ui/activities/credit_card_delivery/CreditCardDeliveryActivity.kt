@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_activity.toolbarText
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
-import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryActivity : AppCompatActivity() {
@@ -51,9 +51,9 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         toolbar?.visibility = View.GONE
     }
 
-    fun changeToolbarBackground() {
-        toolbar.background = bindDrawable(R.drawable.appbar_background)
-        Utils.updateStatusBarBackground(this)
+    fun changeToolbarBackground(color: Int) {
+        toolbar.setBackgroundColor(bindColor(color))
+        Utils.updateStatusBarBackground(this, color)
     }
 
     private fun loadNavHostFragment() {
