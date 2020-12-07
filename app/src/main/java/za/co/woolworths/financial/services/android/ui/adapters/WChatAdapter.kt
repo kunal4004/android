@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -74,7 +75,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     inner class SentMessageViewHolder(view: View) : MessageViewHolder(view) {
 
         override fun bind(message: ChatMessage) {
-            itemView.sent_message_text.text = message.message
+            itemView.sent_message_text?.text = message.message
         }
     }
 }

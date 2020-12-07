@@ -77,7 +77,59 @@ class ChatViewModel : ViewModel() {
 
     @SuppressLint("DefaultLocale")
     fun isCreditCardAccount(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase() == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+        return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
+    }
+
+    fun getServiceUnavailableMessage(): Triple<String, String, SpannableString> {
+        val inAppChatMessage = WoolworthsApplication.getInAppChat()
+        return when (getSessionType()) {
+
+            SessionType.Collections -> {
+                val collections = inAppChatMessage?.collections
+                val emailAddress = collections?.emailAddress ?: ""
+                val subjectLine = collections?.emailSubjectLine ?: ""
+                val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+
+                val spannableServiceUnavailable = SpannableString(serviceUnavailable)
+                spannableServiceUnavailable.setSpan(object : ClickableSpan() {
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.color = Color.WHITE
+                        ds.isUnderlineText = true
+                    }
+
+                    override fun onClick(textView: View) {
+                        KotlinUtils.sendEmail(emailAddress, subjectLine)
+                    }
+                }, spannableServiceUnavailable.indexOf(emailAddress),
+                        spannableServiceUnavailable.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                Triple(emailAddress, subjectLine, spannableServiceUnavailable)
+            }
+
+            SessionType.CustomerService -> {
+                val customerService = inAppChatMessage?.customerService
+                val emailAddress = customerService?.emailAddress ?: ""
+                val subjectLine = customerService?.emailSubjectLine ?: ""
+                val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+
+                val spannableServiceUnavailable = SpannableString(serviceUnavailable)
+                spannableServiceUnavailable.setSpan(object : ClickableSpan() {
+                    override fun updateDrawState(ds: TextPaint) {
+                        ds.color = Color.WHITE
+                        ds.isUnderlineText = true
+                    }
+
+                    override fun onClick(textView: View) {
+                        KotlinUtils.sendEmail(emailAddress, subjectLine)
+                    }
+                }, spannableServiceUnavailable.indexOf(emailAddress),
+                        spannableServiceUnavailable.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+
+                Triple(emailAddress, subjectLine, SpannableString(""))
+            }
+            SessionType.Fraud -> Triple("", "", SpannableString(""))
+        }
     }
 
     fun setSessionStateType(type: SessionStateType) {
@@ -155,12 +207,12 @@ class ChatViewModel : ViewModel() {
         val inAppChat = WoolworthsApplication.getInAppChat()
         return when (getSessionType()) {
             SessionType.Collections -> inAppChat?.collections?.tradingHours
-            SessionType.CustomerService ->  inAppChat?.customerService?.tradingHours
+            SessionType.CustomerService -> inAppChat?.customerService?.tradingHours
             else -> inAppChat.tradingHours
         }
     }
 
-    fun isOperatingHoursForInAppChat(): Boolean? {
+    fun isOperatingHoursForInAppChat(): Boolean {
         return getTradingHours()?.let { KotlinUtils.isOperatingHoursForInAppChat(it) } ?: false
     }
 
@@ -279,7 +331,7 @@ class ChatViewModel : ViewModel() {
 
             val messageList: MutableList<ChatMessage> = mutableListOf()
             message?.items?.forEach { item ->
-                val chatMessage = ChatMessage(if (item.sender == "AGENT") ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, item.content)
+                val chatMessage = ChatMessage(if (item.sender == "AGENT") ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, SpannableString(item.content))
                 messageList.add(chatMessage)
             }
 
@@ -314,7 +366,7 @@ class ChatViewModel : ViewModel() {
     fun getApplyNowState(): ApplyNowState {
         return when (getAccount()?.productGroupCode?.toLowerCase()?.let { AccountsProductGroupCode.getEnum(it) }) {
             AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
-           AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
+            AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
             AccountsProductGroupCode.CREDIT_CARD -> when (getAccount()?.accountNumberBin) {
                 Utils.SILVER_CARD -> ApplyNowState.SILVER_CREDIT_CARD
                 Utils.BLACK_CARD -> ApplyNowState.BLACK_CREDIT_CARD
@@ -328,7 +380,7 @@ class ChatViewModel : ViewModel() {
     fun postEventChatOffline() = chatTrackPostEvent.onChatOffline(applyNowState = getApplyNowState())
 
     fun postChatEventInitiateSession() {
-        if (isOperatingHoursForInAppChat() == false) return
+        if (!isOperatingHoursForInAppChat()) return
         val applyNowState = getApplyNowState()
         with(chatTrackPostEvent) {
             when (getSessionType()) {
@@ -363,7 +415,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun triggerFirebaseOnlineOfflineChatEvent() {
-        if (isOperatingHoursForInAppChat() == true)
+        if (isOperatingHoursForInAppChat())
             trackFirebaseEvent.chatOnline(getApplyNowState(), activityType)
         else
             trackFirebaseEvent.chatOffline(getApplyNowState(), activityType)

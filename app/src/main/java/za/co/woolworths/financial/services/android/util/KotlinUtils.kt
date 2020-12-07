@@ -518,5 +518,20 @@ class KotlinUtils {
             }
             return false
         }
+
+        fun sendEmail(emailAddress: String, subjectLine: String) {
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
+           val context = WoolworthsApplication.getAppContext()
+            emailIntent.data = Uri.parse("mailto:" + emailAddress +
+                    "?subject=" + Uri.encode(subjectLine) +
+                    "&body=" + Uri.encode(""))
+            val listOfEmail =
+                    context?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+            if (listOfEmail.size > 0) {
+                context?.startActivity(emailIntent)
+            } else {
+                Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.INFO, bindString(R.string.contact_us_no_email_error)?.replace("email_address", emailAddress)?.replace("subject_line", subjectLine))
+            }
+        }
     }
 }

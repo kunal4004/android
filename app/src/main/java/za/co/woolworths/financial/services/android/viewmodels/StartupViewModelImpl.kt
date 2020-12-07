@@ -168,7 +168,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             var inAppChat: InAppChat? = inAppChat
             if (inAppChat == null) {
-                inAppChat = InAppChat("","","","", Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()),null, mutableListOf())
+                inAppChat = InAppChat("","","","", Collections("","", "", "", "", mutableListOf()), CustomerService("","", "", "", "", mutableListOf()),null, mutableListOf())
             } else {
                 inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
             }
