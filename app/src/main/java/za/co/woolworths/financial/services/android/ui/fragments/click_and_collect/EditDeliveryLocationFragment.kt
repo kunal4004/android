@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.os.Build
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +18,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
+import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
@@ -28,9 +29,9 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
-import za.co.woolworths.financial.services.android.ui.adapters.ProvinceDropdownAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.SuburbDropdownAdapter
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.ProvinceAndSuburbSelectionActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.putEnumExtra
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
@@ -48,6 +49,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
     var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
     var rootView :View ? = null
+    var SUBURB_SELECTOR_REQUEST_CODE = 1717
+    var PROVINCE_SELECTOR_REQUEST_CODE = 1818
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootView == null)
@@ -123,12 +126,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         hideGetProvincesProgress()
         activity?.let { activity ->
             this.regions?.let {
-                ProvinceDropdownAdapter(activity, 0, it, ::onProvinceSelected).let {
-                    tvSelectedProvince?.apply {
-                        setAdapter(it)
-                        showDropDown()
-                    }
-                }
+                navigateToProvinceSelection(it)
             }
         }
     }
@@ -143,14 +141,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         if (suburbs.isNullOrEmpty()) {
             showNoStoresError()
         } else {
-            activity?.let { it ->
-                SuburbDropdownAdapter(it, 0, suburbs, ::onSuburbSelected).let {
-                    tvSelectedSuburb?.apply {
-                        setAdapter(it)
-                        showDropDown()
-                    }
-                }
-            }
+            navigateToSuburbSelection(suburbs)
         }
     }
 
@@ -367,19 +358,25 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             if (isStoreClosed(it)) {
                 showStoreClosedMessage()
             } else {
-                foodDeliveryDateMessage?.apply {
-                    val message = getString(if (deliveryType == DeliveryType.DELIVERY) R.string.first_available_food_delivery_date else R.string.first_available_food_delivery_date_store, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name + ", " + selectedProvince?.name, it.firstAvailableFoodDeliveryDate
-                            ?: "")
-                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
-                    visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                when (deliveryType == DeliveryType.STORE_PICKUP) {
+                    true -> {
+                        earliestDateValue?.text = it.firstAvailableFoodDeliveryDate ?: ""
+                        earliestDateValue?.visibility = View.VISIBLE
+                        foodItemsDeliveryDateLayout?.visibility = View.GONE
+                        otherItemsDeliveryDateLayout?.visibility = View.GONE
+                    }
+                    false -> {
+                        foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate
+                                ?: ""
+                        otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate
+                                ?: ""
+                        earliestDateValue?.visibility = View.GONE
+                        foodItemsDeliveryDateLayout?.visibility = if (it.firstAvailableFoodDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                        otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                    }
                 }
-
-                otherDeliveryDateMessage?.apply {
-                    val message = getString(R.string.first_available_other_delivery_date, (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.name+ ", " + selectedProvince?.name, it.firstAvailableOtherDeliveryDate
-                            ?: "")
-                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY) else message
-                    visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                }
+                earliestDateTitle?.text = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.earliest_delivery_date else R.string.earliest_collection_date)
+                deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
             }
             validateConfirmLocationButtonAvailability()
         }
@@ -387,8 +384,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun hideAvailableDeliveryDateMessagee() {
-        foodDeliveryDateMessage?.visibility = View.GONE
-        otherDeliveryDateMessage?.visibility = View.GONE
+        deliveryDateLayout?.visibility = View.GONE
     }
 
     override fun showStoreClosedMessage() {
@@ -434,6 +430,43 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     private fun isStoreClosed(validatedSuburbProducts: ValidatedSuburbProducts?): Boolean {
         val deliveryStatus: HashMap<String, Boolean?>? = validatedSuburbProducts?.deliveryStatus?.let { Gson().fromJson(it.toString(), object : TypeToken<HashMap<String, Boolean?>>() {}.type) }
         return (validatedSuburbProducts?.storeClosed == true && deliveryStatus?.get("01") == false)
+    }
+
+    override fun navigateToSuburbSelection(suburbs: List<Suburb>) {
+        activity?.let {
+            val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
+            intent.putExtra("SuburbList", Utils.toJson(suburbs))
+            intent.putEnumExtra(deliveryType)
+            startActivityForResult(intent, SUBURB_SELECTOR_REQUEST_CODE)
+        }
+    }
+
+    override fun navigateToProvinceSelection(regions: List<Province>) {
+        activity?.let {
+            val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
+            intent.putExtra("ProvinceList", Utils.toJson(regions))
+            startActivityForResult(intent, PROVINCE_SELECTOR_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                SUBURB_SELECTOR_REQUEST_CODE -> {
+                    val suburb: Suburb? = Utils.strToJson(data?.getStringExtra("Suburb"), Suburb::class.java) as Suburb
+                    suburb?.let {
+                        onSuburbSelected(it)
+                    }
+                }
+                PROVINCE_SELECTOR_REQUEST_CODE -> {
+                    val province: Province? = Utils.strToJson(data?.getStringExtra("Province"), Province::class.java) as Province
+                    province?.let {
+                        onProvinceSelected(it)
+                    }
+                }
+            }
+        }
     }
 
 }

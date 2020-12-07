@@ -6,6 +6,9 @@
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
+    <include
+        layout="@layout/cart_list_item_voucher_layout"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="16dp"
@@ -16,35 +19,9 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/button_style_height"
+        android:paddingBottom="@dimen/twenty_four_dp"
         android:paddingLeft="23dp"
         android:paddingRight="24dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/eighteen_dp"
-            android:paddingTop="@dimen/twenty_eight_dp">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/style_cart_item_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:letterSpacing="0.15"
-                android:text="@string/total_item"
-                android:textAllCaps="true"/>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/txtPriceTotal"
-                style="@style/style_cart_item_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="R 999.99"/>
-
-        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
@@ -54,6 +31,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/yourCart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/fifteen_dp"
@@ -64,10 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="Estimated Delivery"/>
+                android:text="@string/your_cart"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/txtPriceEstimatedDelivery"
+                android:id="@+id/txtYourCartPrice"
                 style="@style/style_cart_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,67 +54,202 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/outside_border"/>
+
 
 
         <RelativeLayout
-            android:id="@+id/rlCompanyDiscount"
+            android:id="@+id/rlDiscount"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/sixteen_dp"
-            android:paddingTop="@dimen/fourteen_dp">
+            android:layout_height="@dimen/fourty_nine_dp"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="Company Discount"/>
+                android:layout_centerVertical="true"
+                android:text="@string/discounts"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/txtPriceCompanyDiscount"
+                android:id="@+id/txtDiscount"
+                android:layout_centerVertical="true"
                 style="@style/style_cart_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="TBC"/>
+                android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/outside_border"/>
-
-
         <RelativeLayout
-            android:id="@+id/rlOtherDiscount"
+            android:id="@+id/rlCompanyDiscount"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/fourteen_dp"
-            android:paddingTop="@dimen/sixteen_dp">
+            android:layout_height="@dimen/fourty_nine_dp"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="8dp"
-                android:layout_toStartOf="@+id/txtPriceWRewardsSavings"
-                android:text="@string/rlOtherDiscounts"/>
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/company_discount"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/txtPriceWRewardsSavings"
+                android:id="@+id/txtCompanyDiscount"
                 style="@style/style_cart_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="TBC"/>
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rlWrewardsDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_nine_dp"
+            android:visibility="gone"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/style_cart_basket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/your_wrewards_vouchers"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/txtWrewardsDiscount"
+                style="@style/style_cart_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="@string/tbc"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlPromoCodeDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_nine_dp"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/style_cart_basket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/promo_code_discount"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/txtPromoCodeDiscount"
+                style="@style/style_cart_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/promoDiscountInfo"
+                android:layout_marginEnd="@dimen/four_dp"
+                android:text="@string/tbc"/>
+
+            <ImageView
+                android:id="@+id/promoDiscountInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_info"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlTotalDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_nine_dp"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/style_cart_basket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/total_discount"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/txtTotalDiscount"
+                style="@style/style_cart_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:text="@string/tbc"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_nine_dp"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/outside_border"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/style_cart_basket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/delivery_fee"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/txtPriceEstimatedDelivery"
+                style="@style/style_cart_item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="@string/tbc"/>
 
         </RelativeLayout>
 
@@ -152,21 +265,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/eighteen_dp"
             android:text="@string/cart_item_not_preserved_until_checkout_info"
-            android:textSize="@dimen/fifteen_sp"
+            android:textSize="@dimen/twelve_sp"
+            android:lineSpacingMultiplier="1.2"
             app:WTextView_font="myriadpro_regular"/>
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            style="@style/style_cart_basket_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/twelve_dp"
-            android:text="@string/delivery_confirmation_desc"
-            android:textSize="@dimen/fifteen_sp"
-            app:WTextView_font="myriadpro_regular"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/sixteen_dp"/>
 
     </LinearLayout>
 </LinearLayout>

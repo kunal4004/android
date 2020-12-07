@@ -3,12 +3,13 @@ package za.co.woolworths.financial.services.android.models.dto.npc;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Card {
+public class Card  implements Serializable {
 
     @SerializedName("cardNumber")
     @Expose

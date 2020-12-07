@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/thirty_seven_dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/twenty_six_dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/enter_payment_amount_label"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sixteen_sp"
+        app:layout_constraintBottom_toTopOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/enter_payment_amount_label" />
+
+
+    <Button
+        android:id="@+id/pmaConfirmPaymentButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/fourteen_dp"
+        android:background="@drawable/button_selected_deselected_bg"
+        android:enabled="false"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.18"
+        android:text="@string/confirm_payment"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/viewOtherPaymentOptionsTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+
+    <TextView
+        android:id="@+id/pmaAmountEnteredTextView"
+        style="@style/amountDescriptionStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/seven_dp"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="@dimen/zero_dp"
+        android:maxLines="1"
+        android:text="R 10 000.00"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifty_five_sp"
+        app:autoSizeMaxTextSize="@dimen/fifty_five_sp"
+        app:autoSizeMinTextSize="@dimen/fourty_five_sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
+        app:layout_constraintEnd_toStartOf="@+id/editAmountImageView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@+id/amountBeginGuideline"
+        tools:ignore="HardcodedText"
+        tools:text="R 10 000.00" />
+
+    <ImageView
+        android:id="@+id/editAmountImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintEnd_toStartOf="@+id/amountEndGuideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintTop_toTopOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/edit_amount" />
+
+    <EditText
+        android:id="@+id/cvvEditTextInput"
+        android:layout_width="@dimen/seventy_five_dp"
+        android:layout_height="@dimen/fourty_five_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/rectangle_bg"
+        android:digits="0123456789"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:hint="CVV"
+        android:inputType="numberPassword"
+        android:maxLength="3"
+        android:textCursorDrawable="@drawable/cursor_custom_color"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/pmaConfirmPaymentButton"
+        app:layout_constraintEnd_toEndOf="@+id/pmaConfirmPaymentButton" />
+
+    <ImageView
+        android:id="@+id/ccvIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/seven_dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cvvEditTextInput"
+        app:layout_constraintEnd_toStartOf="@+id/cvvEditTextInput"
+        app:layout_constraintTop_toTopOf="@+id/cvvEditTextInput"
+        app:srcCompat="@drawable/card_cvv" />
+
+    <TextView
+        android:id="@+id/enterCVVLabelTextView"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_nine_dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="@dimen/one_dp"
+        android:text="@string/ccv_number_label"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sixteen_sp"
+        app:autoSizeMaxTextSize="@dimen/sixteen_sp"
+        app:autoSizeMinTextSize="@dimen/thirteen_sp"
+        app:autoSizeStepGranularity="@dimen/one_sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/ccvIconImageView"
+        app:layout_constraintEnd_toStartOf="@+id/ccvIconImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ccvIconImageView" />
+
+    <View
+        android:id="@+id/horizontalDividerView"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintBottom_toTopOf="@+id/cvvEditTextInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/manageDebitCreditCardItem"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/eighty_five_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalDividerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/cardItemImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem"
+        app:srcCompat="@drawable/card_visa" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/changeTextViewShimmerLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem">
+
+        <TextView
+            android:id="@+id/changeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:gravity="center"
+            android:letterSpacing="0.12"
+            android:text="@string/change_label"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <TextView
+        android:id="@+id/cardNumberItemTextView"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:text="@string/placeholder"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardItemImageView"
+        app:layout_constraintEnd_toStartOf="@+id/cardExpiredTagTextView"
+        app:layout_constraintStart_toEndOf="@+id/cardItemImageView"
+        app:layout_constraintTop_toTopOf="@+id/cardItemImageView" />
+
+    <View
+        android:id="@+id/changeCardHorizontalView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintBottom_toTopOf="@+id/manageDebitCreditCardItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/cardExpiredTagTextView"
+        style="@style/accountInArrearsTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:paddingStart="@dimen/seven_dp"
+        android:paddingTop="@dimen/four_dp"
+        android:paddingEnd="@dimen/seven_dp"
+        android:paddingBottom="@dimen/four_dp"
+        android:text="@string/card_expired"
+        android:textAllCaps="true"
+        android:textSize="10sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/cardNumberItemTextView"
+        app:layout_constraintEnd_toStartOf="@+id/changeTextViewShimmerLayout"
+        app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView"
+        tools:ignore="SmallSp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/amountEndGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/amountBeginGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/amountBarrierEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="amountEndGuideline" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/amountBarrierBegin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="amountBeginGuideline" />
+
+    <TextView
+        android:id="@+id/viewOtherPaymentOptionsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourteen_dp"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.15"
+        android:padding="@dimen/ten_dp"
+        android:text="@string/view_payment_option_label"
+        android:textColor="@color/link_text_color"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/amountEndGuideline"
+        app:layout_constraintStart_toStartOf="@+id/amountBeginGuideline" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

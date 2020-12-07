@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_two_dp"
         android:layout_marginBottom="@dimen/eight_dp"
-        android:layout_marginEnd="@dimen/eight_dp"
-        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
         android:background="@color/toast_background">
 
 
@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginEnd="@dimen/two_dp"
+            android:layout_marginEnd="@dimen/five_dp"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:duplicateParentState="true"
@@ -30,7 +30,7 @@
             android:singleLine="true"
             android:text="@string/added_to"
             android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
             app:WTextView_font="myriadpro_regular"/>
 
@@ -40,17 +40,17 @@
             android:layout_height="match_parent"
             android:layout_alignTop="@+id/tvView"
             android:layout_toEndOf="@+id/tvAddToCart"
-            android:layout_weight="1"
             android:duplicateParentState="true"
             android:ellipsize="end"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:letterSpacing="0.15"
             android:singleLine="true"
             android:text="@string/bottom_title_cart"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="13sp"
+            android:textSize="@dimen/thirteen_sp"
             android:visibility="visible"
+            android:layout_toStartOf="@+id/tvView"
             app:WTextView_font="medium_bold"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView

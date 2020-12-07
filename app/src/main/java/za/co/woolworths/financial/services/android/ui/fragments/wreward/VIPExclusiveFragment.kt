@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.reward_vip_exclusive_fragment.tvTermsCondition
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -29,7 +30,7 @@ class VIPExclusiveFragment : Fragment() {
         tvTermsCondition?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvTermsCondition?.apply {
             activity?.apply {
-                text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
+                text = WRewardBenefitActivity.convertWRewardCharacter(bindString(R.string.benefits_term_and_condition_link))
                 setOnClickListener {
                     Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink())
                 }

@@ -14,10 +14,9 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.*
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
+import android.text.style.*
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -25,9 +24,12 @@ import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
+import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -37,19 +39,23 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
+import java.text.NumberFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class KotlinUtils {
     companion object {
 
+        const val DELAY: Long = 900
         const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
 
         fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
@@ -70,8 +76,7 @@ class KotlinUtils {
                 }
             }
 
-            val typeface: Typeface? =
-                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+            val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
             if (textIsClickable) spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             val dimenPix =
                     context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
@@ -108,24 +113,22 @@ class KotlinUtils {
         }
 
         fun getStatusBarHeight(actionBarHeight: Int): Int {
-            val activity = WoolworthsApplication.getInstance()?.currentActivity
-            val resId: Int =
-                    activity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
-                            ?: -1
+            val resources = WoolworthsApplication.getAppContext().resources
+            val resId: Int = resources?.getIdentifier("status_bar_height", "dimen", "android")
+                    ?: -1
             var statusBarHeight = 0
             if (resId > 0) {
-                statusBarHeight = activity?.resources?.getDimensionPixelSize(resId) ?: 0
+                statusBarHeight = resources?.getDimensionPixelSize(resId) ?: 0
             }
             return statusBarHeight + actionBarHeight
         }
 
-        fun getStatusBarHeight(appCompatActivity: AppCompatActivity?): Int {
+        fun getStatusBarHeight(): Int {
             var result = 0
-            val resourceId =
-                    appCompatActivity?.resources?.getIdentifier("status_bar_height", "dimen", "android")
-                            ?: 0
+            val resources = WoolworthsApplication.getAppContext().resources
+            val resourceId = resources?.getIdentifier("status_bar_height", "dimen", "android") ?: 0
             if (resourceId > 0) {
-                result = appCompatActivity?.resources?.getDimensionPixelSize(resourceId) ?: 0
+                result = resources?.getDimensionPixelSize(resourceId) ?: 0
             }
             return result
         }
@@ -182,8 +185,22 @@ class KotlinUtils {
         }
 
         fun capitaliseFirstLetter(str: String): CharSequence? {
-            val words = str.split(" ").toMutableList()
+            val value = str.toLowerCase()
+            val words = value.split(" ").toMutableList()
             var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+
+
+        fun capitaliseFirstWordAndLetters(str: String): CharSequence? {
+            val value = str.toLowerCase()
+            val words = value.split(" ").toMutableList()
+
+            var output =  words[0].toUpperCase()+" "
+            words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
             }
@@ -198,12 +215,12 @@ class KotlinUtils {
             }
         }
 
-        fun getToolbarHeight(appCompatActivity: AppCompatActivity?): Int {
+        fun getToolbarHeight(): Int {
             val tv = TypedValue()
             var actionBarHeight = 0
-            if (appCompatActivity?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
-                actionBarHeight =
-                        TypedValue.complexToDimensionPixelSize(tv.data, appCompatActivity.resources?.displayMetrics)
+            val appCompat = WoolworthsApplication.getAppContext()
+            if (appCompat?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
+                actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, appCompat.resources?.displayMetrics)
             }
             return actionBarHeight
         }
@@ -354,6 +371,36 @@ class KotlinUtils {
             return false
         }
 
+        fun parseMoneyValue(value: String, groupingSeparator: String, currencySymbol: String): String =
+                value.replace(groupingSeparator, "").replace(currencySymbol, "")
+
+        fun parseMoneyValueWithLocale(locale: Locale, value: String, groupingSeparator: String, currencySymbol: String): Number {
+            val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
+            return try {
+                NumberFormat.getInstance(locale).parse(valueWithoutSeparator)!!
+            } catch (exception: ParseException) {
+                0
+            }
+        }
+
+        fun getLocaleFromTag(localeTag: String): Locale {
+            return try {
+                Locale.Builder().setLanguageTag(localeTag).build()
+            } catch (e: IllformedLocaleException) {
+                Locale.getDefault()
+            }
+        }
+
+        fun highlightText(string: String, key: String): SpannableStringBuilder {
+            val noteStringBuilder = SpannableStringBuilder(string)
+            val start = string.indexOf(key)
+            val end = start.plus(key.length) + 1
+            val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+            noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            return noteStringBuilder
+        }
+
         fun getJSONFileFromRAWResFolder(context: Context?, @RawRes id: Int): JSONObject {
             val awsConfiguration: InputStream? = context?.resources?.openRawResource(id)
             val writer: Writer = StringWriter()
@@ -390,7 +437,7 @@ class KotlinUtils {
             return currentTime.after(openingTime) && currentTime.before(closingTime)
         }
 
-        fun getInAppTradingHoursForToday(tradingHours: MutableList<TradingHours>): TradingHours {
+        fun getInAppTradingHoursForToday(tradingHours: MutableList<TradingHours>?): TradingHours {
             var tradingHoursForToday: TradingHours? = null
             tradingHours?.let {
                 it.forEach { tradingHours ->
@@ -404,9 +451,13 @@ class KotlinUtils {
         }
 
         fun avoidDoubleClicks(view: View?) {
-            if (view?.isClickable != true) return
-            view.isClickable = false
-            view.postDelayed({ view.isClickable = true }, AppConstant.DELAY_900_MS)
+            view?.apply {
+                if (!isClickable) return
+                isClickable = false
+                GlobalScope.doAfterDelay(AppConstant.DELAY_900_MS) {
+                    isClickable = true
+                }
+            }
         }
 
         /**
@@ -430,8 +481,42 @@ class KotlinUtils {
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
             } catch (t: Throwable) {
-                Crashlytics.log(t.message)
+                FirebaseManager.logException(t)
             }
+        }
+
+        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "") {
+            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText)
+            fragmentManager.let { fragmentTransaction -> dialog.show(fragmentTransaction, GeneralInfoDialogFragment::class.java.simpleName) }
+        }
+
+        fun openBrowserWithUrl(urlString: String?, activity: Activity?) {
+            urlString?.apply {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                activity?.startActivity(intent)
+            }
+        }
+
+        fun openApplicationSettings(requestCode: Int, activity: Activity?) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            val uri: Uri = Uri.fromParts("package", activity?.packageName, null)
+            intent.data = uri
+            activity?.startActivityForResult(intent, requestCode)
+        }
+
+        fun openAccessMyLocationDeviceSettings(requestCode: Int, activity: Activity?) {
+            val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            activity?.startActivityForResult(locIntent, requestCode)
+            activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
+
+        fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
+            activity?.apply {
+                return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
+            }
+            return false
         }
     }
 }

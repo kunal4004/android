@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Activity;
 import android.app.Application;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -23,14 +21,13 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.FirebaseApp;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,18 +38,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
-import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
+import za.co.woolworths.financial.services.android.models.dto.CreditView;
+import za.co.woolworths.financial.services.android.models.dto.DashConfig;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -60,8 +61,8 @@ import za.co.woolworths.financial.services.android.models.dto.contact_us.Contact
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
@@ -71,6 +72,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Context mContextApplication;
     private static WhatsApp whatsApp;
     private static List<ContactUs> mContactUs;
+    private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
     private UserManager mUserManager;
     private Tracker mTracker;
@@ -114,6 +116,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String transUnionLink;
 
     private Activity mCurrentActivity = null;
+
+    private static ValidatedSuburbProducts validatedSuburbProducts;
+
+    private static ProductDetailsPage productDetailsPage;
+
+    private static CreditView creditView;
+    private DashConfig dashConfig;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -250,7 +259,9 @@ public class WoolworthsApplication extends Application implements Application.Ac
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-        Fabric.with(this,new Crashlytics.Builder().core(new CrashlyticsCore()).build());
+
+        FirebaseApp.initializeApp(this);
+
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Johannesburg"));
@@ -548,6 +559,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return clickAndCollect;
     }
 
+	public static void setPayMyAccountOption(@Nullable PayMyAccount payMyAccount) {
+		mPayMyAccount = payMyAccount;
+	}
+
+	public static PayMyAccount getPayMyAccountOption() {
+		return mPayMyAccount;
+	}
+
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
     }
@@ -566,5 +585,37 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static InAppChat getInAppChat() {
         return inAppChat;
+    }
+
+    public static ValidatedSuburbProducts getValidatedSuburbProducts() {
+        return validatedSuburbProducts;
+    }
+
+    public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
+        WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
+    }
+
+    public static ProductDetailsPage getProductDetailsPage() {
+        return productDetailsPage;
+    }
+
+    public static void setProductDetailsPage(ProductDetailsPage productDetailsPage) {
+        WoolworthsApplication.productDetailsPage = productDetailsPage;
+    }
+
+    public static CreditView getCreditView() {
+        return creditView;
+    }
+
+    public static void setCreditView(CreditView creditView) {
+        WoolworthsApplication.creditView = creditView;
+    }
+
+    public void setDashConfig(DashConfig dashConfig) {
+        this.dashConfig = dashConfig;
+    }
+
+    public DashConfig getDashConfig() {
+        return dashConfig;
     }
 }

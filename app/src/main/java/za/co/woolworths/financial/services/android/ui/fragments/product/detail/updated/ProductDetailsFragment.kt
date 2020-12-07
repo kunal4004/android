@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelec
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
-import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
@@ -92,6 +92,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var defaultGroupKey: String? = null
     private var mFreeGiftPromotionalImage: String? = null
     private var EDIT_LOCATION_LOGIN_REQUEST = 2020
+    private var HTTP_EXPECTATION_FAILED_417: String = "417"
 
 
     companion object {
@@ -131,8 +132,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetailsInformation.setOnClickListener(this)
         productIngredientsInformation.setOnClickListener(this)
         nutritionalInformation.setOnClickListener(this)
+        dietaryInformation.setOnClickListener(this)
+        allergensInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
+        share?.setOnClickListener(this)
         configureDefaultUI()
     }
 
@@ -146,10 +150,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.addToShoppingList -> addItemToShoppingList()
             R.id.checkInStoreAvailability, R.id.findInStoreAction -> findItemInStore()
             R.id.editDeliveryLocation -> updateDeliveryLocation()
-            R.id.productDetailsInformation -> showProductDetailsInformation()
-            R.id.productIngredientsInformation -> showProductIngredientsInformation()
-            R.id.nutritionalInformation -> showNutritionalInformation()
+            R.id.productDetailsInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DETAILS)
+            R.id.productIngredientsInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.INGREDIENTS)
+            R.id.nutritionalInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
+            R.id.allergensInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.ALLERGEN_INFO)
+            R.id.dietaryInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DIETARY_INFO)
             R.id.moreColor -> showMoreColors()
+            R.id.share -> shareProduct()
         }
     }
 
@@ -306,7 +313,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
-            storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+            storeIdForInventory = RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
@@ -326,7 +333,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onProductDetailedFailed(response: Response) {
         if (isAdded)
-        showErrorWhileLoadingProductDetails()
+            showErrorWhileLoadingProductDetails()
     }
 
     override fun onFailureResponse(error: String) {
@@ -463,6 +470,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productIngredientsInformation.visibility = View.VISIBLE
         if (this.productDetails?.nutritionalInformationDetails != null)
             nutritionalInformation.visibility = View.VISIBLE
+        if (!this.productDetails?.dietary.isNullOrEmpty())
+            dietaryInformation.visibility = View.VISIBLE
+        if (!this.productDetails?.allergens.isNullOrEmpty())
+            allergensInformation.visibility = View.VISIBLE
+
 
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
@@ -565,7 +577,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             when (index) {
                 -1 -> {
-                    var otherSku:OtherSkus? = null
+                    var otherSku: OtherSkus? = null
                     otherSKUsByGroupKey[getSelectedGroupKey()]?.forEach {
                         if (it.quantity > 0) {
                             otherSku = it
@@ -700,7 +712,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         var imageCode = ""
         val imageCodesList = arrayListOf<String>()
         groupKey?.split("\\s".toRegex())?.let {
-                when (it.size) {
+            when (it.size) {
                 1 -> imageCodesList.add(it[0])
                 else -> {
                     it.forEachIndexed { i, s ->
@@ -725,6 +737,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun responseFailureHandler(response: Response) {
+        if (response.code.equals(HTTP_EXPECTATION_FAILED_417)) {
+            confirmDeliveryLocation()
+            return
+        }
         activity?.apply {
             Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc)
         }
@@ -891,7 +907,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun findItemInStore() {
 
         if (getSelectedSku() == null) {
-            requestSelectSize()
+            if (getSelectedGroupKey().isNullOrEmpty())
+                requestSelectColor()
+            else
+                requestSelectSize()
             return
         }
 
@@ -1100,8 +1119,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     is ShoppingDeliveryLocation -> {
                         when (it.suburb.storePickup) {
                             true -> {
-                                currentDeliveryLocation.text = resources?.getString(R.string.store)+it.suburb?.name
-                                defaultLocationPlaceholder.text = getString(R.string.collecting_from)+ " "
+                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.suburb?.name
+                                defaultLocationPlaceholder.text = getString(R.string.collecting_from) + " "
                             }
                             else -> {
                                 currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
@@ -1118,31 +1137,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun showProductDetailsInformation() {
+    override fun showDetailsInformation(productInformationType: ProductInformationActivity.ProductInformationType) {
         activity?.apply {
             val intent = Intent(this, ProductInformationActivity::class.java)
             intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.DETAILS)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-    }
-
-    override fun showProductIngredientsInformation() {
-        activity?.apply {
-            val intent = Intent(this, ProductInformationActivity::class.java)
-            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.INGREDIENTS)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-    }
-
-    override fun showNutritionalInformation() {
-        activity?.apply {
-            val intent = Intent(this, ProductInformationActivity::class.java)
-            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, ProductInformationActivity.ProductInformationType.NUTRITIONAL_INFO)
+            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, productInformationType)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
@@ -1177,12 +1176,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             promotionalImages?.removeAllViews()
 
-            mFreeGiftPromotionalImage?.let { freeGiftImage  -> images.add(freeGiftImage) }
+            mFreeGiftPromotionalImage?.let { freeGiftImage -> images.add(freeGiftImage) }
 
-                images.forEach { image ->
-                    layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                        ImageManager.loadImage(view.promotionImage, image)
-                        promotionalImages?.addView(view)
+            images.forEach { image ->
+                layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
+                    ImageManager.loadImage(view.promotionImage, image)
+                    promotionalImages?.addView(view)
                 }
             }
         }
@@ -1213,7 +1212,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 val suburbName = when (it) {
                     is ShoppingDeliveryLocation -> it.suburb.name
                     is QuickShopDefaultValues -> it.suburb.name
-                    else -> ""}
+                    else -> ""
+                }
                 val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
                 OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
                 updateAddToCartButtonForSelectedSKU()
@@ -1305,5 +1305,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             it.quantity = -1
         }
         loadSizeAndColor()
+    }
+
+    override fun shareProduct() {
+        activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, productDetails?.productId
+                    ?: "")))
+            val message = WoolworthsApplication.getProductDetailsPage().shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage().shareItemURITemplate.replace("{product_id}", it, true) }
+            val shareIntent = Intent()
+            shareIntent.apply {
+                action = Intent.ACTION_SEND
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, message)
+            }
+            startActivity(shareIntent)
+        }
     }
 }

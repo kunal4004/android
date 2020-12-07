@@ -32,7 +32,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
 
-
     <include
         android:id="@+id/activationSuccessView"
         layout="@layout/credit_card_activation_success_layout"

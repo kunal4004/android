@@ -28,7 +28,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -47,13 +46,16 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.queryServiceGetStore
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
+import za.co.woolworths.financial.services.android.ui.views.WButton
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
@@ -107,7 +109,6 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
         super.onViewCreated(v, savedInstanceState)
 
-        val activity = activity ?: return
         mPopWindowValidationMessage = PopWindowValidationMessage(activity)
         storesProgressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         val relNoConnectionLayout =
@@ -172,20 +173,21 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             updateMap = true
             if (checkLocationPermission()) {
                 val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activity.startActivity(locIntent)
-                activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                activity?.startActivity(locIntent)
+                activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             } else {
                 isLocationServiceButtonClicked = true
                 checkLocationPermission()
             }
         }
-        v.findViewById<View>(R.id.btnRetry).setOnClickListener {
+        v.findViewById<WButton>(R.id.btnRetry)?.setOnClickListener {
             if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                 mErrorHandlerView?.hideErrorHandlerLayout()
                 initLocationCheck()
             }
         }
-        activity.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+        activity?.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+
         if (activity is MyAccountActivity) {
             (activity as? MyAccountActivity?)?.supportActionBar?.show()
         }
@@ -196,7 +198,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)
         } catch (ex: NullPointerException) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -279,7 +281,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
             previousmarker = marker
             cardPager?.currentItem = id ?: 0
         } catch (ex: NullPointerException) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -487,7 +489,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
             }
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -601,7 +603,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         try {
             activity?.unregisterReceiver(broadcastCall)
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -677,7 +679,7 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     }
 
     private fun setupToolbar() {
-        val toolbarTitle = activity?.resources?.getString(R.string.stores_nearby) ?: ""
+        val toolbarTitle = bindString(R.string.stores_nearby)
         mBottomNavigator?.apply {
             setTitle(toolbarTitle)
             showBackNavigationIcon(true)
@@ -685,6 +687,13 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
         }
         if (activity is MyAccountActivity) {
             (activity as? MyAccountActivity?)?.setToolbarTitle(toolbarTitle)
+        }
+
+        if (activity is PayMyAccountActivity){
+            (activity as? PayMyAccountActivity)?.apply {
+                configureToolbar(toolbarTitle)
+                displayToolbarDivider(true)
+            }
         }
     }
 

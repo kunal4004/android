@@ -3,12 +3,12 @@ package za.co.woolworths.financial.services.android.models;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 
 public class UserManager {
 
@@ -71,12 +71,21 @@ public class UserManager {
 		getSharedPreferences().edit().putLong(ACCOUNT_CACHE_TIME, System.currentTimeMillis()).apply();
 		getSharedPreferences().edit().putString(ACCOUNT, new Gson().toJson(s)).apply();
 		for (Account a : s.accountList) {
-			if ("SC".equals(a.productGroupCode)) {
-				setAccount(STORE_CARD, a);
-			} else if ("CC".equals(a.productGroupCode)) {
-				setAccount(CREDIT_CARD, a);
-			} else if ("PL".equals(a.productGroupCode)) {
-				setAccount(PERSONAL_LOAN, a);
+			AccountsProductGroupCode groupCode = AccountsProductGroupCode.Companion.getEnum(a.productGroupCode);
+			if (groupCode != null) {
+				switch (groupCode){
+					case STORE_CARD:
+						setAccount(STORE_CARD, a);
+						break;
+					case CREDIT_CARD:
+						setAccount(CREDIT_CARD, a);
+						break;
+					case PERSONAL_LOAN:
+						setAccount(PERSONAL_LOAN, a);
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}

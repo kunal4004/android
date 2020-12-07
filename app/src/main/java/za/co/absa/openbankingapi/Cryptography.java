@@ -1,7 +1,5 @@
 package za.co.absa.openbankingapi;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -10,6 +8,8 @@ import java.security.spec.KeySpec;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class Cryptography {
 
@@ -25,7 +25,7 @@ public class Cryptography {
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             return secretKeyFactory.generateSecret(keySpec).getEncoded();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
             throw new KeyGenerationFailureException(e);
         }
     }

@@ -32,4 +32,6 @@ public class Suburb {
 	public boolean storePickup;
 
 	public StoreAddress storeAddress;
+
+	public boolean storeDeliverable;
 }

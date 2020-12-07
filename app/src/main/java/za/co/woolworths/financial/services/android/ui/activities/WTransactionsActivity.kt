@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
@@ -25,7 +24,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService.
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleAvailability
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -119,7 +118,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                                 val accountsErrorHandlerFragment = AccountsErrorHandlerFragment.newInstance(desc)
                                 accountsErrorHandlerFragment.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName)
                             } catch (ex: IllegalStateException) {
-                                Crashlytics.logException(ex)
+                                FirebaseManager.logException(ex)
                             }
                         }
                     }
@@ -176,10 +175,10 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
         ChatFloatingActionButtonBubbleView(
                 activity = this@WTransactionsActivity,
-                chatBubbleAvailability = ChatBubbleAvailability(accountList, this@WTransactionsActivity),
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
                 floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
-                view = paymentOptionScrollView)
+                scrollableView = paymentOptionScrollView)
                 .build()
     }
 }

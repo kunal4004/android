@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/productTotalValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:text="**** **** **** 0008"
+        app:layout_constraintBottom_toBottomOf="@+id/productTotalLabelTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toEndOf="@+id/productTotalLabelTextView" />
+
+    <TextView
+        android:id="@+id/productTotalLabelTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:text="@string/save_card_product_payment_total_label"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/saveCardProductDividerView" />
+
+    <View
+        android:id="@+id/saveCardProductDividerView"
+        style="@style/dividerStyle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/one_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/saveCardProductLabelTextView" />
+
+    <View
+        android:id="@+id/paymentTotalDividerView"
+        style="@style/dividerStyle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/productTotalValueTextView" />
+
+    <TextView
+        android:id="@+id/saveCardProductValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="wrap_content"
+        android:text="**** **** **** 0008"
+        app:layout_constraintBottom_toBottomOf="@+id/saveCardProductLabelTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toEndOf="@+id/saveCardProductLabelTextView" />
+
+    <TextView
+        android:id="@+id/pmaSaveCardPayNowTextView"
+        style="@style/pmaTitleStyle"
+        android:layout_marginTop="@dimen/eighteen_dp"
+        android:text="@string/pma_save_card_pay_now_title"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/saveCardPayNowButton"
+        style="@style/blackButtonCustomStyle"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:background="@color/black"
+        android:layout_marginBottom="24dp"
+        android:text="@string/save_card_and_pay_now_button_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/pmaCardNumberTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:text="@string/card_number_label"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/paymentTotalDividerView" />
+
+    <View
+        android:id="@+id/cardNumberDivider"
+        style="@style/dividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/pmaCardNumberTextView" />
+
+    <TextView
+        android:id="@+id/nameOnCardTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/nineteen_dp"
+        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:text="@string/name_on_card_label"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/cardNumberDivider" />
+
+    <View
+        android:id="@+id/nameOnCardDivider"
+        style="@style/dividerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/nameOnCardValueTextView" />
+
+    <TextView
+        android:id="@+id/expiryDateTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:text="@string/expiration_date_label"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/nameOnCardDivider" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/pmaSaveCardCheckbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/forty_four_dp"
+        android:background="@android:color/transparent"
+        android:button="@drawable/shopping_list_item_selector"
+        android:buttonTint="@android:color/transparent"
+        android:buttonTintMode="src_over"
+        android:checked="false"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="24dp"
+        android:saveEnabled="false"
+        android:text="@string/save_this_card_for_future_payments"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/expiryDateTextView" />
+
+    <TextView
+        android:id="@+id/expiryDateValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:text="07 / 2021"
+        app:layout_constraintBottom_toBottomOf="@+id/expiryDateTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toEndOf="@+id/expiryDateTextView" />
+
+    <TextView
+        android:id="@+id/nameOnCardValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:text="MT Thompson"
+        app:layout_constraintBottom_toBottomOf="@+id/nameOnCardTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toEndOf="@+id/nameOnCardTextView" />
+
+    <TextView
+        android:id="@+id/cardNumberValueTextView"
+        style="@style/pmaSaveCardDetailStyle"
+        android:text="**** **** **** 0008"
+        app:layout_constraintBottom_toBottomOf="@+id/pmaCardNumberTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toEndOf="@+id/pmaCardNumberTextView" />
+
+    <TextView
+        android:id="@+id/saveCardProductLabelTextView"
+        style="@style/pmaCardDetailStyle"
+        android:layout_marginTop="@dimen/fourty_five_dp"
+        android:text="@string/save_card_product_label"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/pmaSaveCardPayNowTextView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

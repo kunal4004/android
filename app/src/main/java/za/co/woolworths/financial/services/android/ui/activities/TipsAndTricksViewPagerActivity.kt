@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
@@ -185,7 +186,8 @@ import kotlin.properties.Delegates
             }
             7 -> {
                 featureTitle?.text = if (SessionUtilities.getInstance().isUserAuthenticated) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
-                featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
+                featureActionButton?.visibility = if (SessionUtilities.getInstance().isUserAuthenticated && accountsResponse != null && ((getAvailableAccounts().contains(AccountsProductGroupCode.STORE_CARD.groupCode))
+                                || getAvailableAccounts().contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode))) View.VISIBLE else View.INVISIBLE
             }
         }
     }
@@ -252,18 +254,18 @@ import kotlin.properties.Delegates
             redirectToMyAccountLandingPage(0)
         } else {
             when {
-                availableAccounts.contains("SC") -> redirectToMyAccountLandingPage(0)
-                availableAccounts.contains("CC") -> redirectToMyAccountLandingPage(1)
-                availableAccounts.contains("PL") -> redirectToMyAccountLandingPage(2)
+                availableAccounts.contains(AccountsProductGroupCode.STORE_CARD.groupCode) -> redirectToMyAccountLandingPage(0)
+                availableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.groupCode) -> redirectToMyAccountLandingPage(1)
+                availableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.groupCode) -> redirectToMyAccountLandingPage(2)
             }
         }
     }
 
      private fun presentAccountStatements() {
          availableAccounts = getAvailableAccounts()
-         redirectToAccountSignInActivity( when(availableAccounts[0]){
-             "SC" -> ApplyNowState.STORE_CARD
-             "PL" -> ApplyNowState.PERSONAL_LOAN
+         redirectToAccountSignInActivity( when(AccountsProductGroupCode.getEnum(availableAccounts[0])){
+             AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
+             AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
              else -> ApplyNowState.STORE_CARD
          })
      }
@@ -281,7 +283,7 @@ import kotlin.properties.Delegates
     private fun getAvailableAccounts(): ArrayList<String> {
         availableAccounts.clear()
         accountsResponse?.accountList?.forEach {
-            availableAccounts.add(it.productGroupCode.toUpperCase())
+            it.productGroupCode?.toUpperCase()?.let { it1 -> availableAccounts.add(it1) }
         }
         return availableAccounts
     }

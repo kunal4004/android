@@ -8,6 +8,21 @@
     android:paddingTop="?attr/actionBarSize">
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="19dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/availableFundsValueGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,6 +36,12 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.05" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
 
     <TextView
         android:id="@+id/availableFundTextView"
@@ -49,51 +70,6 @@
         app:layout_constraintStart_toStartOf="@+id/startGuide"
         app:layout_constraintTop_toBottomOf="@+id/availableFundTextView" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/bottomGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="@dimen/availableFundMaximumHeight" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/startGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="24dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/endGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="19dp" />
-
-
-    <include
-        android:id="@+id/incViewStatementButton"
-        layout="@layout/view_statement_button"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/available_fund_transaction_button_height"
-        android:layout_marginEnd="8dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
-        app:layout_constraintEnd_toStartOf="@+id/incViewPaymentOptionButton"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
-
-    <include
-        android:id="@+id/incViewPaymentOptionButton"
-        layout="@layout/view_payment_option_button"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/available_fund_transaction_button_height"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/endGuide"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/incViewStatementButton" />
 
     <include
         android:id="@+id/incRecentTransactionButton"
@@ -106,14 +82,67 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
 
+    <include
+        android:id="@+id/incViewStatementButton"
+        layout="@layout/view_statement_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:layout_marginEnd="8dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toStartOf="@+id/incPayMyAccountButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
+
+    <include
+        android:id="@+id/incPayMyAccountButton"
+        layout="@layout/view_pay_my_account_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/incViewStatementButton" />
+
+    <TextView
+        android:id="@+id/amountPayableNowTextView"
+        style="@style/accountSalesTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="40dp"
+        android:text="@string/amount_payable_now"
+        app:layout_constraintBottom_toTopOf="@+id/incPayMyAccountButton"
+        app:layout_constraintEnd_toStartOf="@+id/arrearsCircleImageView"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <TextView
+        android:id="@+id/amountPayableNowAmountTextView"
+        style="@style/accountSalesTextViewAmountStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintTop_toTopOf="@+id/amountPayableNowTextView" />
+
+    <View
+        android:id="@+id/payableNowView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="23dp"
+        android:background="@color/bpi_background"
+        app:layout_constraintBottom_toTopOf="@+id/amountPayableNowTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
     <TextView
         android:id="@+id/paymentDueDateTextView"
         style="@style/accountSalesTextViewStyle"
-        android:layout_marginBottom="@dimen/available_fund_40dp_margin"
+        android:layout_marginBottom="20dp"
         android:text="@string/info_next_payment_due_title"
-        app:layout_constraintBottom_toTopOf="@+id/incRecentTransactionButton"
+        app:layout_constraintBottom_toTopOf="@+id/payableNowView"
         app:layout_constraintEnd_toStartOf="@+id/nextPaymentDueDateTextView"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
 
     <TextView
@@ -121,9 +150,7 @@
         style="@style/accountSalesTextViewAmountStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="@string/credit_card_gold_title"
-        app:layout_constraintBottom_toTopOf="@+id/incViewPaymentOptionButton"
+        app:layout_constraintBottom_toTopOf="@+id/payableNowView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintTop_toTopOf="@+id/paymentDueDateTextView" />
 
@@ -139,7 +166,6 @@
     <TextView
         android:id="@+id/totalAmountDueAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBaseline_toBaselineOf="@+id/totalAmountDueTextView"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
@@ -154,11 +180,9 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
 
-
     <TextView
         android:id="@+id/creditLimitAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBottom_toTopOf="@+id/totalAmountDueAmountTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide" />
 
@@ -171,26 +195,31 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
 
-
     <TextView
         android:id="@+id/currentBalanceAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:text="@string/credit_card_gold_title"
         app:layout_constraintBottom_toTopOf="@+id/creditLimitAmountTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/currentBalanceTextView" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/availableFundTextView"
-        app:layout_constraintEnd_toStartOf="@+id/endGuide"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+    <ImageView
+        android:id="@+id/arrearsCircleImageView"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/amountPayableNowAmountTextView"
+        app:layout_constraintEnd_toStartOf="@+id/amountPayableNowAmountTextView"
+        app:layout_constraintTop_toTopOf="@+id/amountPayableNowAmountTextView"
+        app:srcCompat="@drawable/circle_shape" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/paymentOverdueGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="amountPayableNowTextView,arrearsCircleImageView,amountPayableNowAmountTextView,payableNowView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
