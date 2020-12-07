@@ -2,15 +2,18 @@ package za.co.woolworths.financial.services.android.ui.activities.credit_card_de
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_activity.*
+import kotlinx.android.synthetic.main.credit_card_delivery_activity.toolbarText
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryActivity : AppCompatActivity() {
@@ -40,6 +43,18 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         }
     }
 
+    fun setToolbarTitle(title: String?) {
+        toolbarText?.text = title
+    }
+
+    fun hideToolbar() {
+        toolbar?.visibility = View.GONE
+    }
+
+    fun changeToolbarBackground() {
+        toolbar.background = bindDrawable(R.drawable.appbar_background)
+        Utils.updateStatusBarBackground(this)
+    }
 
     private fun loadNavHostFragment() {
         val navHostFragment = nav_host_fragment as NavHostFragment

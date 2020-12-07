@@ -120,7 +120,7 @@
         style="@style/futura_semi_bold_black"
         android:layout_marginTop="@dimen/twenty_dp"
         android:letterSpacing="0.1"
-        android:text="@string/recipient"
+        android:text="@string/booking_reference"
         android:textAllCaps="true"
         android:textColor="@color/offer_title"
         android:textSize="@dimen/twelve_sp"

@@ -1470,6 +1470,7 @@
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
     <string name="manage_delivery">Manage Delivery</string>
+    <string name="manage_delivery_title">MANAGE DELIVERY</string>
     <string name="track_my_delivery">Track My Delivery</string>
     <string name="too_late_to_edit_tiitle">Too Late To Edit</string>
     <string name="too_late_to_edit_desc">Unfortunately it\'s too late to edit your delivery details now. Please call us on 0861 50 50 20 for assistance.</string>
@@ -1483,6 +1484,7 @@
     <string name="contact_courier">Contact Courier</string>
     <string name="address_date_time">Address, Date &amp; Time</string>
     <string name="recipient">Recipient</string>
+    <string name="booking_reference">BOOKING REFRENCE</string>
     <string name="created">created</string>
     <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew Black Credit Card.</string>
     <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know \nwhen and where to send your card.</string>

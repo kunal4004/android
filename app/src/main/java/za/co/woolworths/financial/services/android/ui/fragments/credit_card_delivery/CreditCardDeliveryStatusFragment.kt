@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -18,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
 
     var bundle: Bundle? = null
+    var navController: NavController? = null
     var statusResponse: StatusResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -34,6 +38,8 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Utils.updateStatusBarBackground(activity, R.color.grey_bg)
+        navController = Navigation.findNavController(view)
         callTheCallCenter?.setOnClickListener { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
         manageDeliveryLayout.setOnClickListener(this)
         trackDeliveryLayout.setOnClickListener(this)
@@ -80,6 +86,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.manageDeliveryLayout -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
+                navController?.navigate(R.id.action_to_creditCardDeliveryManageDeliveryFragment, bundleOf("bundle" to bundle))
             }
             R.id.trackDeliveryLayout -> {
                 //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
