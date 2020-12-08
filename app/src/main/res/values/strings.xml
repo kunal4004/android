@@ -1502,7 +1502,6 @@
     <string name="residential">Residential</string>
     <string name="business">Business</string>
     <string name="complex_building">Complex/Building</string>
-    <string name="business_name">Business Name</string>
     <string name="street_address">Street Address</string>
     <string name="suburb">Suburb</string>
     <string name="city_town">City/Town</string>

@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener{
 
     var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
@@ -42,7 +42,6 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         cityOrTown?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         province?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        addressOption?.setOnCheckedChangeListener(this)
         configureUI()
     }
 
@@ -137,15 +136,6 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
             R.id.cityOrTown -> {
                 cityOrTownErrorMsg.visibility = visible
             }
-        }
-    }
-
-    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
-        businessNamePlaceHolder?.text = bindString(if (checkedId == R.id.business) R.string.business_name else R.string.business_name_optional)
-        isBusinessAddress = checkedId == R.id.business
-        if (checkedId == R.id.residential && businessNameErrorMsg.visibility == View.VISIBLE) {
-            businessName.setBackgroundResource(R.drawable.recipient_details_input_edittext_bg)
-            businessNameErrorMsg.visibility = View.GONE
         }
     }
 
