@@ -62,7 +62,7 @@ object ChatAWSAmplify {
     
     fun signIn(result: (Conversation?) -> Unit, error: (Any) -> Unit) {
         val networkConfig = NetworkConfig()
-        val username = networkConfig.getApiId()+"20021"
+        val username = networkConfig.getApiId()
         val password = networkConfig.getSha1Password()
 
         Auth.signIn(username, password, { createConversation({ result -> result(result) }, { failure -> error(failure) }) }, { error(it) })
