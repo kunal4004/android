@@ -232,6 +232,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         scheduleDeliveryRequest.let {
             it.bookingAddress = this.scheduleDeliveryRequest?.bookingAddress
             it.addressDetails = addressDetails
+            it.slotDetails = this.scheduleDeliveryRequest.slotDetails
         }
         envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
