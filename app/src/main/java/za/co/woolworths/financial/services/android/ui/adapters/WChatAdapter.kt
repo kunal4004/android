@@ -74,7 +74,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     inner class ReceivedMessageViewHolder(view: View) : MessageViewHolder(view) {
 
         override fun bind(message: ChatMessage) {
-            val sendEmail = message.sendEmail
+            val sendEmail = message.sendEmailIntentInfo
             val emailAddress = sendEmail?.emailAddress ?: ""
             when (emailAddress.isNotEmpty()) {
                 true -> {

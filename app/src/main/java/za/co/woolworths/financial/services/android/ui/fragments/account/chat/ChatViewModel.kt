@@ -77,7 +77,7 @@ class ChatViewModel : ViewModel() {
         return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
     }
 
-    fun getServiceUnavailableMessage(): Pair<SendEmail, String> {
+    fun getServiceUnavailableMessage(): Pair<SendEmailIntentInfo, String> {
         val inAppChatMessage = WoolworthsApplication.getInAppChat()
         return when (getSessionType()) {
             SessionType.Collections -> {
@@ -86,7 +86,7 @@ class ChatViewModel : ViewModel() {
                 val subjectLine = collections?.emailSubjectLine ?: ""
                 val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress) ?: ""
 
-                Pair(SendEmail(emailAddress, subjectLine), serviceUnavailable)
+                Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
             }
             SessionType.CustomerService -> {
                 val customerService = inAppChatMessage?.customerService
@@ -94,9 +94,9 @@ class ChatViewModel : ViewModel() {
                 val subjectLine = customerService?.emailSubjectLine ?: ""
                 val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress) ?: ""
 
-                Pair(SendEmail(emailAddress, subjectLine),serviceUnavailable)
+                Pair(SendEmailIntentInfo(emailAddress, subjectLine),serviceUnavailable)
             }
-            SessionType.Fraud -> Pair(SendEmail(), "")
+            SessionType.Fraud -> Pair(SendEmailIntentInfo(), "")
         }
     }
 
