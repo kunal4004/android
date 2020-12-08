@@ -13,10 +13,7 @@ import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
-import za.co.woolworths.financial.services.android.models.dto.ChatMessage
-import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
@@ -80,55 +77,26 @@ class ChatViewModel : ViewModel() {
         return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
     }
 
-    fun getServiceUnavailableMessage(): Triple<String, String, SpannableString> {
+    fun getServiceUnavailableMessage(): Pair<SendEmail, String> {
         val inAppChatMessage = WoolworthsApplication.getInAppChat()
         return when (getSessionType()) {
-
             SessionType.Collections -> {
                 val collections = inAppChatMessage?.collections
                 val emailAddress = collections?.emailAddress ?: ""
                 val subjectLine = collections?.emailSubjectLine ?: ""
-                val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+                val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress) ?: ""
 
-                val spannableServiceUnavailable = SpannableString(serviceUnavailable)
-                spannableServiceUnavailable.setSpan(object : ClickableSpan() {
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.color = Color.WHITE
-                        ds.isUnderlineText = true
-                    }
-
-                    override fun onClick(textView: View) {
-                        KotlinUtils.sendEmail(emailAddress, subjectLine)
-                    }
-                }, spannableServiceUnavailable.indexOf(emailAddress),
-                        spannableServiceUnavailable.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-                Triple(emailAddress, subjectLine, spannableServiceUnavailable)
+                Pair(SendEmail(emailAddress, subjectLine), serviceUnavailable)
             }
-
             SessionType.CustomerService -> {
                 val customerService = inAppChatMessage?.customerService
                 val emailAddress = customerService?.emailAddress ?: ""
                 val subjectLine = customerService?.emailSubjectLine ?: ""
-                val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+                val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress) ?: ""
 
-                val spannableServiceUnavailable = SpannableString(serviceUnavailable)
-                spannableServiceUnavailable.setSpan(object : ClickableSpan() {
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.color = Color.WHITE
-                        ds.isUnderlineText = true
-                    }
-
-                    override fun onClick(textView: View) {
-                        KotlinUtils.sendEmail(emailAddress, subjectLine)
-                    }
-                }, spannableServiceUnavailable.indexOf(emailAddress),
-                        spannableServiceUnavailable.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-
-                Triple(emailAddress, subjectLine, SpannableString(""))
+                Pair(SendEmail(emailAddress, subjectLine),serviceUnavailable)
             }
-            SessionType.Fraud -> Triple("", "", SpannableString(""))
+            SessionType.Fraud -> Pair(SendEmail(), "")
         }
     }
 
@@ -331,7 +299,7 @@ class ChatViewModel : ViewModel() {
 
             val messageList: MutableList<ChatMessage> = mutableListOf()
             message?.items?.forEach { item ->
-                val chatMessage = ChatMessage(if (item.sender == "AGENT") ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, SpannableString(item.content))
+                val chatMessage = ChatMessage(if (item.sender == "AGENT") ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, item.content)
                 messageList.add(chatMessage)
             }
 

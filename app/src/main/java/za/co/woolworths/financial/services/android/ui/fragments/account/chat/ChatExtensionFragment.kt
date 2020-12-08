@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
-import android.text.SpannableString
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.dto.SendEmail
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 
 open class ChatExtensionFragment : Fragment() {
@@ -31,10 +31,10 @@ open class ChatExtensionFragment : Fragment() {
     }
 
     fun showAgentsMessage(agentDefaultMessage: String) {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, SpannableString(agentDefaultMessage)))
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, message = agentDefaultMessage))
     }
 
-    fun showAgentsMessage(agentDefaultMessage: SpannableString) {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, agentDefaultMessage))
+    fun showAgentsMessage(agentDefaultMessage: String, email: SendEmail) {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, message = agentDefaultMessage, sendEmail = email))
     }
 }

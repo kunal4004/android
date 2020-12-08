@@ -26,7 +26,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.FirebaseManager
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -61,7 +60,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         isChatButtonEnabled(false)
         onClickListener()
         autoConnectToNetwork()
-        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
+        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
     }
 
     private fun onClickListener() {
@@ -128,7 +127,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
             }, {
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
-                    showAgentsMessage(serviceUnavailable.third)
+                    showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
                     chatLoaderProgressBar?.visibility = GONE
                 }
             })
@@ -157,7 +156,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
             R.id.button_send -> {
                 val message = edittext_chatbox?.text?.toString() ?: ""
                 if (TextUtils.isEmpty(message)) return
-                val chatMessage = ChatMessage(ChatMessage.Type.SENT, SpannableString(message))
+                val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
                 updateMessageList(chatMessage)
                 chatViewModel.setSessionStateType(SessionStateType.ONLINE)
                 chatViewModel.sendMessage(message)
