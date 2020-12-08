@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
-    private var mCreditCardNumber: String? = ""
+    private var mCreditCardToken: String? = ""
 
     companion object {
         const val MAXIMUM_PIN_ALLOWED: Int = 3
@@ -47,7 +47,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         super.onCreate(savedInstanceState)
         arguments?.apply {
             if (containsKey("creditCardToken")) {
-                mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
+                mCreditCardToken = arguments?.getString("creditCardToken") ?: ""
             }
         }
     }
@@ -94,7 +94,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
-                mCreditCardNumber?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
+                mCreditCardToken?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
            }
         }
     }
@@ -173,7 +173,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
 
     override fun onSuccessHandler(aliasID: String) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasID),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasID,mCreditCardToken),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
@@ -253,12 +253,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         }
     }
 
-    override fun onDialogButtonAction() {
-    }
-
     override fun onSuccessOFOTPSureCheck(userCellNumber: String?) {
         replaceFragment(
-                fragment = AbsaOTPConfirmationFragment.newInstance(userCellNumber),
+                fragment = AbsaOTPConfirmationFragment.newInstance(userCellNumber,mCreditCardToken),
                 tag = AbsaOTPConfirmationFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

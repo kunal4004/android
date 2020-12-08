@@ -14,12 +14,15 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +37,8 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
@@ -47,6 +52,8 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.AppConstant;
@@ -83,6 +90,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private Call<ResponseBody> mGetPdfFile;
     private UserStatement mSelectedStatement;
     private View topMarginView;
+    private FloatingActionButton chatWithAgentFloatingButton;
 
     public StatementFragment() {
     }
@@ -109,6 +117,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             loadSuccess();
             mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
             viewWasCreated = true;
+            showChatBubble();
         }
     }
 
@@ -129,6 +138,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private void init(View view) {
         ctNoResultFound = view.findViewById(R.id.ctNoResultFound);
         ccProgressLayout = view.findViewById(R.id.ccProgressLayout);
+        chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
         topMarginView = view.findViewById(R.id.topMarginView);
         rclEStatement = view.findViewById(R.id.rclEStatement);
         relNextButton = view.findViewById(R.id.relNextButton);
@@ -435,6 +445,16 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         sendUserStatementRequest.documents = usDocuments;
         sendUserStatementRequest.productOfferingId = String.valueOf(WoolworthsApplication.getProductOfferingId());
         return sendUserStatementRequest;
+    }
+
+    private void showChatBubble() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        Pair<ApplyNowState, Account> account = ((StatementActivity) activity).getAccountWithApplyNowState();
+        ArrayList<Account> accountList = new ArrayList<>();
+        accountList.add(account.second);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement);
+        inAppChatTipAcknowledgement.build();
     }
 }
 

@@ -44,19 +44,21 @@ class ChatViewModel : ViewModel() {
     private var awsAmplify: ChatAWSAmplify? = null
     private var conversation: Conversation? = null
     private var mAccount: MutableLiveData<Account?> = MutableLiveData()
+
     private var sessionStateType: MutableLiveData<SessionStateType?> = MutableLiveData()
     private var sessionType: MutableLiveData<SessionType?> = MutableLiveData()
-    var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
+
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
-    var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
+    var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
+
+    var mAbsaCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
     private var activityType: ActivityType? = null
 
     private var trackFirebaseEvent: ChatTrackFirebaseEvent = ChatTrackFirebaseEvent()
-
     private var chatTrackPostEvent: ChatTrackPostEvent = ChatTrackPostEvent()
 
     init {
-        absaCreditCard.value = getAccount()?.cards ?: mutableListOf()
+        mAbsaCard.value = getAccount()?.cards
         isChatToCollectionAgent.value = false
         isCustomerSignOut.value = false
         setSessionStateType(SessionStateType.DISCONNECT)
@@ -269,7 +271,7 @@ class ChatViewModel : ViewModel() {
     }
 
     fun getABSACardToken(): String? = getAccount()?.cards?.get(0)?.absaCardToken
-            ?: absaCreditCard.value?.get(0)?.absaCardToken
+            ?: mAbsaCard.value?.get(0)?.absaCardToken
 
     fun getCustomerInfo() = ChatCustomerInfo
 
