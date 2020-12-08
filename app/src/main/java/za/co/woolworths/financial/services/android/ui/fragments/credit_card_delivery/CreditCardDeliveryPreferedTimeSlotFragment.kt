@@ -1,27 +1,28 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.credit_card_delivery_prefered_time_slots_layout.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.SlotDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.TimeSlot
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.picker.WheelView
 
 
 class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragment(), WheelView.OnItemSelectedListener<Any> {
 
-    var timeslots: List<TimeSlot>? = null
-    var selectedDate: TimeSlot? = null
-    var selectedTime: String? = null
+    private var timeslots: List<TimeSlot>? = null
+    private var selectedDate: TimeSlot? = null
+    private var selectedTime: String? = null
     var navController: NavController? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_prefered_time_slots_layout, container, false)
@@ -35,13 +36,20 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = Navigation.findNavController(view)
+        this.navController = Navigation.findNavController(view)
         datePicker?.onItemSelectedListener = this
         timePicker?.onItemSelectedListener = this
         confirm?.setOnClickListener {
             bundle?.putString("selected_date", selectedDate?.date)
             bundle?.putString("selected_time", selectedTime)
-            navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
+
+            val slotDetails = SlotDetails()
+            slotDetails.slot = selectedTime
+            slotDetails.appointmentDate = selectedDate?.date
+            val request: ScheduleDeliveryRequest = scheduleDeliveryRequest
+            request.slotDetails = slotDetails
+            bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(request))
+            this.navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
         }
         configureUI()
     }

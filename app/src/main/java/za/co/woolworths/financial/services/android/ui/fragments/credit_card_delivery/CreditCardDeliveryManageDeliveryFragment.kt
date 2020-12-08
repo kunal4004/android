@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListener {
 
     var bundle: Bundle? = null
-    var statusResponse: StatusResponse? = null
+    private var statusResponse: StatusResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 }
             }
             R.id.editAddress -> {
-
+                //CreditCardDeliveryValidateAddressRequestFragment
             }
             R.id.editRecipient -> {
 

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_failure_layout.*
@@ -15,9 +14,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_lay
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.processingLayout
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
@@ -26,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragment(), ScheduleDeliveryContract.ScheduleDeliverView, IProgressAnimationState, View.OnClickListener {
 
     private var navController: NavController? = null
-    var presenter: ScheduleDeliveryContract.ScheduleDeliveryPresenter? = null
+    private var presenter: ScheduleDeliveryContract.ScheduleDeliveryPresenter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_schedule_delivery_layout, container, false)
@@ -57,6 +54,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         activity?.apply {
             getProgressState()?.animateSuccessEnd(true)
             scheduleDeliverySuccessView.visibility = View.VISIBLE
+            processingLayout?.visibility = View.GONE
             Handler().postDelayed({
                 navController?.navigate(R.id.action_to_creditCardDeliveryStatusFragment, bundleOf("bundle" to bundle))
             }, 2000)
@@ -66,6 +64,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
     override fun onScheduleDeliveryFailure() {
         activity?.apply {
             getProgressState()?.animateSuccessEnd(false)
+            processingLayout?.visibility = View.GONE
             scheduleDeliveryFailureView.visibility = View.VISIBLE
         }
     }
@@ -78,7 +77,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
 
     override fun postScheduleDelivery() {
         activity?.apply {
-            scheduleDeliveryRequest?.let {
+            scheduleDeliveryRequest.let {
                 startProgress()
                 presenter?.initScheduleDelivery("20", envelopeNumber, false, "", it)
             }
@@ -90,7 +89,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
             scheduleDeliveryFailureView.visibility = View.GONE
             getProgressState()?.restartSpinning()
             processingLayout?.visibility = View.VISIBLE
-            scheduleDeliveryRequest?.let {
+            scheduleDeliveryRequest.let {
                 presenter?.initScheduleDelivery("20", envelopeNumber, false, "", it)
             }
         }

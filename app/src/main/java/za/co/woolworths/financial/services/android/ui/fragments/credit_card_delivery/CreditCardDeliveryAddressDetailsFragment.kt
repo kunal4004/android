@@ -23,8 +23,8 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
     var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
-    var recipientDetailsResponse: RecipientDetailsResponse? = null
-    var isBusinessAddress: Boolean = false
+    private var recipientDetailsResponse: RecipientDetailsResponse? = null
+    private var isBusinessAddress: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_address_layout, container, false)
@@ -69,7 +69,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
     private fun onSubmit() {
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
-            var bookingAddress = BookingAddress()
+            val bookingAddress = BookingAddress()
             bookingAddress.let {
                 it.businessName = businessName?.text.toString().trim()
                 it.complexName = complexOrBuildingName?.text.toString().trim()
@@ -79,10 +79,16 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                 it.province = province?.text.toString().trim()
                 it.city = cityOrTown?.text.toString().trim()
                 it.postalCode = postalCode?.text.toString().trim()
+                val address: BookingAddress = Utils.jsonStringToObject(bundle?.getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
+                it.telCell = address.telCell
+                it.telWork = address.telWork
+                it.nameSurname = address.nameSurname
+                it.isThirdPartyRecipient = address.isThirdPartyRecipient
+                it.deliverTo = address.deliverTo
             }
             scheduleDeliveryRequest = ScheduleDeliveryRequest()
             scheduleDeliveryRequest.bookingAddress = bookingAddress
-            var addressDetails = AddressDetails(
+            val addressDetails = AddressDetails(
                     province?.text.toString().trim(),
                     cityOrTown?.text.toString().trim(),
                     suburb?.text.toString().trim(),

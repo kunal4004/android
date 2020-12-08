@@ -6,17 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -26,7 +21,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     var navController: NavController? = null
     private var bookingAddress: BookingAddress = BookingAddress()
     private lateinit var listOfInputFields: List<EditText>
-    var isRecipientIsThirdPerson: Boolean = false
+    private var isRecipientIsThirdPerson: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
