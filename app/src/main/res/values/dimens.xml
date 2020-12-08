@@ -188,7 +188,5 @@
     <dimen name="dimen_0_5dp">0.5dp</dimen>
     <dimen name="four_hundred_dp">400dp</dimen>
     <dimen name="hundred_and_sixty_four_dp">164dp</dimen>
-    <dimen name="nine_dp">9dp</dimen>
-    <dimen name="two_hundred_and_twenty_dp">220dp</dimen>
 </resources>
 
