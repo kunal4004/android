@@ -74,7 +74,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
             }
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
-                deliveryDate.text = "Tomorrow"
+                deliveryDate.text = statusResponse?.slotDetails?.formattedDate
                 deliveryStatusTitle.text = "DELIVERY CONFIRMATION"
                 manageDeliveryLayout.visibility = View.VISIBLE
                 trackDeliveryLayout.visibility = View.VISIBLE

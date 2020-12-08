@@ -63,7 +63,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
 
         recipientName?.apply {
-            isEnabled = statusResponse?.isCardNew != true
+            isEnabled = statusResponse?.deliveryStatus?.isCardNew != true
             setText(statusResponse?.recipientDetails?.deliverTo
                     ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }
@@ -134,7 +134,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun isThirdPartyRecipientEligible(): Boolean {
-        return statusResponse?.isThirdPartyRecipient == true
+        return statusResponse?.recipientDetails?.isThirdPartyRecipient == true
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -95,7 +94,17 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         activity?.apply {
             possibleAddressResponse?.address?.let {
                 restartProgress()
-                envelopeNumber?.let { it1 -> productOfferingId?.let { it2 -> presenter?.initAvailableTimeSlots(it1, it2, it.x, it.y, KotlinUtils.toShipByDateFormat(KotlinUtils.getDateDaysAfter(2))) } }
+                envelopeNumber?.let { it1 ->
+                    productOfferingId?.let { it2 ->
+                        presenter?.initAvailableTimeSlots(it1, it2, it.x, it.y, KotlinUtils.toShipByDateFormat(KotlinUtils.getDateDaysAfter(2)))
+                        statusResponse?.addressDetails?.x = it.x
+                        statusResponse?.addressDetails?.y = it.y
+                        scheduleDeliveryRequest.addressDetails?.x = it.x
+                        scheduleDeliveryRequest.addressDetails?.y = it.y
+                        bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
+                        bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+                    }
+                }
             }
         }
     }
@@ -227,7 +236,10 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     //This API should be Fire and forget
     private fun updateAddressDetails() {
-        val addressDetails: AddressDetails? = scheduleDeliveryRequest?.bookingAddress?.let { AddressDetails(it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode) }
+        val addressDetails: AddressDetails? = scheduleDeliveryRequest?.bookingAddress?.let {
+            AddressDetails(statusResponse?.addressDetails?.deliveryAddress, statusResponse?.addressDetails?.name, statusResponse?.addressDetails?.x,
+                    statusResponse?.addressDetails?.y, it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode)
+        }
         val scheduleDeliveryRequest = ScheduleDeliveryRequest()
         scheduleDeliveryRequest.let {
             it.bookingAddress = this.scheduleDeliveryRequest?.bookingAddress
@@ -238,7 +250,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
     }
 
     private fun getSearchPhase(bookingAddress: BookingAddress?): String {
-        var searchPhase: String = ""
+        var searchPhase = ""
         bookingAddress?.let {
             searchPhase = "${it.street} ${it.suburb} ${it.city} ${it.postalCode}"
         }

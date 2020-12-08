@@ -5,21 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.RadioGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetailsResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener{
+class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
 
     var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
@@ -81,13 +76,18 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                 val address: BookingAddress = Utils.jsonStringToObject(bundle?.getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
                 it.telCell = address.telCell
                 it.telWork = address.telWork
-                it.nameSurname = address.nameSurname
+                it.nameSurname = address.deliverTo
                 it.isThirdPartyRecipient = address.isThirdPartyRecipient
                 it.deliverTo = address.deliverTo
+                it.idNumber = address.idNumber
             }
             scheduleDeliveryRequest = ScheduleDeliveryRequest()
             scheduleDeliveryRequest.bookingAddress = bookingAddress
             val addressDetails = AddressDetails(
+                    getDeliveryAddress(bookingAddress),
+                    bookingAddress.deliverTo,
+                    "",
+                    "",
                     province?.text.toString().trim(),
                     cityOrTown?.text.toString().trim(),
                     suburb?.text.toString().trim(),
@@ -98,7 +98,12 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                     postalCode?.text.toString().trim())
 
             scheduleDeliveryRequest.addressDetails = addressDetails
+            statusResponse?.addressDetails = addressDetails
+            val recipientDetails = RecipientDetails(bookingAddress.telWork, bookingAddress.telCell, bookingAddress.deliverTo, bookingAddress.idNumber)
+            statusResponse?.recipientDetails = recipientDetails
+
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
+            bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 
         } else {
@@ -139,4 +144,11 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         }
     }
 
+    private fun getDeliveryAddress(bookingAddress: BookingAddress?): String {
+        var searchPhase = ""
+        bookingAddress?.let {
+            searchPhase = "${it.street} ${it.suburb} ${it.city} ${it.postalCode}"
+        }
+        return searchPhase
+    }
 }

@@ -46,6 +46,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             val slotDetails = SlotDetails()
             slotDetails.slot = selectedTime
             slotDetails.appointmentDate = selectedDate?.date
+            slotDetails.formattedDate = selectedDate?.date
             val request: ScheduleDeliveryRequest = scheduleDeliveryRequest
             request.slotDetails = slotDetails
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(request))

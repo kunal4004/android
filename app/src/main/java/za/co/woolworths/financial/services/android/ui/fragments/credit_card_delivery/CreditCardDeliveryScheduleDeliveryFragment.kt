@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_layout.*
@@ -36,6 +37,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
         retryScheduleDeliveryBtn.setOnClickListener(this)
         callCourierPartner.setOnClickListener(this)
         postScheduleDelivery()
@@ -79,7 +81,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         activity?.apply {
             scheduleDeliveryRequest.let {
                 startProgress()
-                presenter?.initScheduleDelivery("20", envelopeNumber, false, "", it)
+                presenter?.initScheduleDelivery("20", envelopeNumber, true, "", it)
             }
         }
     }

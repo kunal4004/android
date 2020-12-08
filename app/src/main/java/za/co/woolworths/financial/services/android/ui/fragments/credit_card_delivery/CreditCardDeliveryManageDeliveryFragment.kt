@@ -62,7 +62,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         editAddress?.setOnClickListener(this)
         cancelDelivery?.setOnClickListener(this)
 
-        if (statusResponse?.isCardNew == true) {
+        if (statusResponse?.deliveryStatus?.isCardNew == true) {
             editRecipient?.visibility = View.GONE
         } else {
             editRecipient?.setOnClickListener(this)
