@@ -518,6 +518,5 @@ class KotlinUtils {
             }
             return false
         }
-
     }
 }
