@@ -9,8 +9,10 @@
     <LinearLayout
         style="@style/layout_without_top_border"
         android:orientation="horizontal"
-        android:paddingTop="16dp"
-        android:paddingBottom="19dp">
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/sixteen_dp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        android:paddingBottom="@dimen/nineteen_dp">
 
         <TextView
             android:id="@+id/paymentName"
@@ -19,7 +21,7 @@
             android:layout_marginEnd="@dimen/five_dp"
             android:layout_weight="1"
             android:fontFamily="@font/myriad_pro_regular_otf"
-            android:text="Account Holder:"
+            android:text="@string/account_holder_lable"
             android:textColor="@color/black_50" />
 
         <TextView
@@ -31,7 +33,7 @@
             android:gravity="end"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:singleLine="false"
-            android:text="Woolworths Credit Card" />
+            android:text="@string/woolworths_credit_card_lable" />
     </LinearLayout>
 
     <View
