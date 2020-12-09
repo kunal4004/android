@@ -1,5 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.app.Activity
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -10,6 +17,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.received_message_item.view.*
 import kotlinx.android.synthetic.main.sent_message_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+
 
 private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 private const val VIEW_TYPE_SENT_MESSAGE = 2
@@ -59,22 +68,56 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     fun clear() {
-       messages.clear()
+        messages.clear()
     }
 
     inner class ReceivedMessageViewHolder(view: View) : MessageViewHolder(view) {
 
         override fun bind(message: ChatMessage) {
+            val sendEmail = message.sendEmailIntentInfo
+            val emailAddress = sendEmail?.emailAddress ?: ""
+            when (emailAddress.isNotEmpty()) {
+                true -> {
+                    val spannableMessage = SpannableString(message.message)
+                    val clickableSpan: ClickableSpan = object : ClickableSpan() {
+                        override fun onClick(textView: View) {
+                            (itemView.context as? Activity)?.let { activity -> KotlinUtils.sendEmail(activity, emailAddress, sendEmail?.subjectLine, "") }
+                        }
 
-            itemView.received_message_text?.text = message.message
-            itemView.image_message_profile?.visibility = if (message.isWoolworthIconVisible) VISIBLE else INVISIBLE
+                        override fun updateDrawState(ds: TextPaint) {
+                            super.updateDrawState(ds)
+                            ds.color = Color.WHITE
+                            ds.isUnderlineText = true
+                        }
+                    }
+                    spannableMessage.setSpan(clickableSpan, spannableMessage.indexOf(emailAddress), spannableMessage.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    itemView.received_message_text?.apply {
+                        text = spannableMessage
+                        movementMethod = LinkMovementMethod.getInstance()
+                        highlightColor = Color.GRAY
+                    }
+
+
+                    itemView.image_message_profile?.visibility = if (message.isWoolworthIconVisible) VISIBLE else INVISIBLE
+                }
+                false -> {
+                    itemView.received_message_text?.apply {
+                        text = message.message
+                        movementMethod = null
+                        highlightColor = Color.WHITE
+                    }
+                    itemView.image_message_profile?.visibility = if (message.isWoolworthIconVisible) VISIBLE else INVISIBLE
+
+                }
+            }
+
         }
     }
 
     inner class SentMessageViewHolder(view: View) : MessageViewHolder(view) {
 
         override fun bind(message: ChatMessage) {
-            itemView.sent_message_text.text = message.message
+            itemView.sent_message_text?.text = message.message
         }
     }
 }

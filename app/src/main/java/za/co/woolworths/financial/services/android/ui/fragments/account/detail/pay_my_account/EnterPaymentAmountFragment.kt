@@ -68,7 +68,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         totalAmountDueValueTextView?.apply {
             if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
             AnimationUtilExtension.animateViewPushDown(this)
-                setOnClickListener(this@EnterPaymentAmountFragment)
+            setOnClickListener(this@EnterPaymentAmountFragment)
         }
 
         amountOutstandingValueTextView?.apply {
@@ -113,9 +113,13 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
-
                     when (this@apply.text?.toString()) {
-                        payMyAccountViewModel.getOverdueAmount() -> selectOutstandingAmount()
+                        payMyAccountViewModel.getOverdueAmount() -> {
+                            when (enterPaymentAmountTextView?.tag) {
+                                R.id.totalAmountDueValueTextView -> selectTotalAmountDue()
+                                else -> selectOutstandingAmount()
+                            }
+                        }
                         payMyAccountViewModel.getTotalAmountDue() -> selectTotalAmountDue()
                         else -> clearSelection()
                     }
@@ -176,6 +180,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
             R.id.totalAmountDueValueTextView -> {
                 if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
+                enterPaymentAmountTextView?.tag = R.id.totalAmountDueValueTextView
                 isAmountSelected = true
                 selectTotalAmountDue()
                 paymentAmountInputEditText?.setText(payMyAccountViewModel.getTotalAmountDue())
@@ -183,6 +188,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
             R.id.amountOutstandingValueTextView -> {
                 if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+                enterPaymentAmountTextView?.tag = R.id.amountOutstandingValueTextView
                 isAmountSelected = true
                 selectOutstandingAmount()
                 paymentAmountInputEditText?.setText(payMyAccountViewModel.getOverdueAmount())

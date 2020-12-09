@@ -1172,6 +1172,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if (!it.wRewards.isNullOrEmpty()) images.add(it.wRewards)
                 if (!it.vitality.isNullOrEmpty()) images.add(it.vitality)
                 if (!it.newImage.isNullOrEmpty()) images.add(it.newImage)
+                if (!it.reduced.isNullOrEmpty()) images.add(it.reduced)
+
             }
 
             promotionalImages?.removeAllViews()
