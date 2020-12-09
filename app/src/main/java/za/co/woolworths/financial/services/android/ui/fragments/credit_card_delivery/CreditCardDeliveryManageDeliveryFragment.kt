@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
+import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliveryDate
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.CreditCardCancelDeliveryFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListener {
 
@@ -67,6 +69,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         } else {
             editRecipient?.setOnClickListener(this)
         }
+        splitAndApplyFormatedDate()
     }
 
     private fun setupToolbar() {
@@ -76,5 +79,14 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 changeToolbarBackground(R.color.white)
             }
         }
+    }
+
+    private fun splitAndApplyFormatedDate() {
+        statusResponse?.slotDetails?.slot.also { deliveryTime.text = it }
+        WFormatter.getDayAndFullDate(statusResponse?.slotDetails?.appointmentDate).also { deliveryDate.text = it }
+        statusResponse?.addressDetails?.deliveryAddress.also { deliveryAddress.text = it }
+        statusResponse?.recipientDetails?.deliverTo.also { name.text = it }
+        statusResponse?.bookingreference.also { bookingReference.text = it }
+        statusResponse?.deliveryStatus?.receivedDate.also { createdDate.text = it }
     }
 }

@@ -1300,6 +1300,10 @@
     <string name="black_credit_card_available_fund_arrears_information_desc">Funds available for you to use.</string>
     <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="silver_credit_card">silver credit card</string>
+    <string name="delivery_confirmation">DELIVERY CONFIRMATION</string>
+    <string name="card_delivery_failed">Failed</string>
+    <string name="card_delivery_cancelled">Cancelled</string>
+    <string name="card_delivery_delivered">Delivered</string>
 
     <string name="label_recent_transactions">Recent\nTransactions</string>
     <string name="label_view_statements">View\nStatements</string>

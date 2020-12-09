@@ -17,7 +17,9 @@ import za.co.woolworths.financial.services.android.models.dto.account.CreditCard
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
 
@@ -45,7 +47,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
                 changeToolbarBackground(R.color.grey_bg)
-                hideToolbar()
+                setToolbarTitle(bindString(R.string.my_card_title))
             }
         }
         manageDeliveryLayout.setOnClickListener(this)
@@ -57,36 +59,41 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         when (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT)) {
             CreditCardDeliveryStatus.CARD_DELIVERED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
-                deliveryDate.text = "Delivered"
+                deliveryDate.text = bindString(R.string.card_delivery_delivered)
                 deliveryStatusTitle.text = "Your card has been"
             }
             CreditCardDeliveryStatus.CANCELLED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
-                deliveryDate.text = "Cancelled"
+                deliveryDate.text = bindString(R.string.card_delivery_cancelled)
                 deliveryStatusTitle.text = "Your card has been"
                 callTheCallCenter.visibility = View.VISIBLE
             }
             CreditCardDeliveryStatus.CARD_SHREDDED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
-                deliveryDate.text = "Failed"
+                deliveryDate.text = bindString(R.string.card_delivery_failed)
                 deliveryStatusTitle.text = "Your Card Delivery Hasn"
                 callTheCallCenter.visibility = View.VISIBLE
             }
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
-                deliveryDate.text = statusResponse?.slotDetails?.formattedDate
-                deliveryStatusTitle.text = "DELIVERY CONFIRMATION"
                 manageDeliveryLayout.visibility = View.VISIBLE
                 trackDeliveryLayout.visibility = View.VISIBLE
+                statusResponse?.slotDetails?.formattedDate?.let { splitAndApplyFormatedDate(it) }
                 val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
                 manageDeliveryDrawable?.alpha = 77
                 manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
                 val trackDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_directions)
-                trackDeliveryDrawable?.alpha = 77
                 trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
             }
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
+    }
+
+    private fun splitAndApplyFormatedDate(date: String) {
+        deliveryStatusTitle.text = bindString(R.string.delivery_confirmation)
+        val parts: List<String> = date.split(" ")
+        deliveryDate.text = parts[1].plus(" ").plus(parts[2])
+        deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
     }
 
     override fun onClick(v: View?) {

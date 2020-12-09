@@ -251,5 +251,14 @@ public class WFormatter {
         }
     }
 
+    public static String convertDayShortToLong(String day) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
+        return simpleDateFormat.format(simpleDateFormat.parse(day));
+    }
 
+    public static String getDayAndFullDate(String date) throws ParseException {
+        return new SimpleDateFormat("EEEE dd MMMM, yyyy")
+                .format((new SimpleDateFormat("yyyy-MM-dd"))
+                        .parse(date));
+    }
 }
