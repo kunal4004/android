@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -434,8 +435,16 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun navigateToSuburbSelection(suburbs: List<Suburb>) {
         activity?.let {
+
+            // TODO:: WOP-9342 - Handle Transaction too large exception android nougat
+            //  and remove share preference temp fix
+            val sharedPreferences = it.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+            val editor = sharedPreferences?.edit()
+            editor?.putString(SUBURB_LIST, Utils.toJson(suburbs))
+            editor?.apply()
+
             val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
-            intent.putExtra("SuburbList", Utils.toJson(suburbs))
+            intent.putExtra(SUBURB_LIST, SUBURB_LIST)
             intent.putEnumExtra(deliveryType)
             startActivityForResult(intent, SUBURB_SELECTOR_REQUEST_CODE)
         }
@@ -467,6 +476,11 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 }
             }
         }
+    }
+
+    companion object {
+        const val SUBURB_LIST = "SuburbList"
+        const val SHARED_PREFS = "sharedPrefs"
     }
 
 }
