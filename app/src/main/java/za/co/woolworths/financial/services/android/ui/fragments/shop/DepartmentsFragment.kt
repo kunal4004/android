@@ -49,6 +49,8 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
+    private var isFirstCallToLocationModal: Boolean = false
+    private var isLocationModalShown: Boolean = false
     private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -68,7 +70,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     init {
-        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance().dashConfig.minimumSupportedAppBuildNumber.toString())
+        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber?.toString())
+                ?: false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -97,10 +100,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     this@DepartmentsFragment.location = it
                     executeDepartmentRequest()
                 }
-            } else {
-                checkLocationPermission()
-                //When user launches second time without permissions
-                executeDepartmentRequest()
+            } else  {
+                if(!checkLocationPermission() && !isLocationModalShown) {
+                    executeDepartmentRequest()
+                }
                 if (!Utils.isDeliverySelectionModalShown()) {
                     showDeliveryOptionDialog()
                 }
@@ -122,6 +125,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
+            if(isFirstCallToLocationModal) {
+                executeDepartmentRequest()
+            }
         } else {
             startLocationUpdates()
         }
@@ -138,7 +144,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-            if(isRootCallInProgress){
+            if (isRootCallInProgress) {
                 return
             }
 
@@ -318,6 +324,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         }
+                        isFirstCallToLocationModal = true
                     }
                 }
                 RESULT_CANCELED -> {
@@ -420,6 +427,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 } else {
                     //we can request the permission.
                     ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
+                    isLocationModalShown = true
                 }
                 false
             } else {
