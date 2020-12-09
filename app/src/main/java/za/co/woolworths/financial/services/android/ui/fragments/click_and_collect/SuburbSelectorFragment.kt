@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getEnumExtra
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment.Companion.SHARED_PREFS
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment.Companion.SUBURB_LIST
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -37,8 +40,10 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
         super.onCreate(savedInstanceState)
         activity?.apply {
             intent?.let {
-                if (it.hasExtra("SuburbList")) {
-                    suburbList = Gson().fromJson(it.getStringExtra("SuburbList"), object : TypeToken<List<Suburb>>() {}.type)
+                if (it.hasExtra(SUBURB_LIST)) {
+                    val sharedPreferences = activity?.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+                    val suburbLists = sharedPreferences?.getString(SUBURB_LIST, "")
+                    suburbList = Gson().fromJson(suburbLists, object : TypeToken<List<Suburb>>() {}.type)
                 }
                 deliveryType = it.getEnumExtra<DeliveryType>()
             }
