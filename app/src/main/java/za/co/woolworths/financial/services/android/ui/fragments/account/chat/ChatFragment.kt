@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.app.Activity
 import android.os.Bundle
+import android.text.SpannableString
 import android.text.TextUtils
 import android.view.*
 import android.view.View.GONE
@@ -13,14 +14,16 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.chat_fragment.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 
@@ -57,7 +60,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         isChatButtonEnabled(false)
         onClickListener()
         autoConnectToNetwork()
-        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat() ?: false)
+        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
     }
 
     private fun onClickListener() {
@@ -122,7 +125,11 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                     chatLoaderProgressBar?.visibility = GONE
                 })
             }, {
-                chatLoaderProgressBar?.visibility = GONE
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
+                    showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
+                    chatLoaderProgressBar?.visibility = GONE
+                }
             })
         }
     }
