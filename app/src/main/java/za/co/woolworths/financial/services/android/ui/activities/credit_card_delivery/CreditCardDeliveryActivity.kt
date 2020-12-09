@@ -33,6 +33,8 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         loadNavHostFragment()
     }
 
+    enum class DeliveryStatus(val value: Int) { CANCEL_DELIVERY(0), EDIT_ADDRESS(1) }
+
     private fun actionBar() {
         setSupportActionBar(toolbar)
         supportActionBar?.apply {

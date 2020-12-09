@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
@@ -173,6 +172,17 @@ public class WFormatter {
     }
 
     public static String formatMessagingDate(Date validDate) throws ParseException {
+        long diff = getDateDiff(validDate);
+        String days = "Today";
+        if (diff == 1) {
+            days = "Yesterday";
+        } else if (diff > 1) {
+            days = new SimpleDateFormat("dd MMM").format(validDate);
+        }
+        return days;
+    }
+
+    private static long getDateDiff(Date validDate) {
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy/MM/dd");
         Date today = new Date();
         long diff = 0;
@@ -183,18 +193,7 @@ public class WFormatter {
         } catch (Exception e) {
         }
 
-        diff = Math.abs(diff);
-        String days = "Today";
-        if (diff == 1) {
-            days = "Yesterday";
-        } else if (diff > 1) {
-            days = new SimpleDateFormat("dd MMM").format(validDate);
-        }
-
-        return days;
-        //final DateFormat formatter = new SimpleDateFormat("dd MM yyyy");
-
-
+        return Math.abs(diff);
     }
 
     public static String formatMeter(double meter) {
@@ -249,6 +248,17 @@ public class WFormatter {
         } catch (java.text.ParseException e) {
             return new Date(0);
         }
+    }
+
+    public static Date convertStringToDate(String date) throws ParseException {
+        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
+        return m_ISO8601Local.parse(date);
+    }
+
+    public static boolean checkIfDateisTomorrow(String date) throws ParseException {
+        if (getDateDiff(convertStringToDate(date)) == 1)
+            return true;
+        return false;
     }
 
     public static String convertDayShortToLong(String day) throws ParseException {

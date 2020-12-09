@@ -70,15 +70,17 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
             }
             CreditCardDeliveryStatus.CARD_SHREDDED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
+                progressIcon.setBackgroundResource(R.drawable.icon_credit_card_delivery_failed)
                 deliveryDate.text = bindString(R.string.card_delivery_failed)
                 deliveryStatusTitle.text = "Your Card Delivery Hasn"
                 callTheCallCenter.visibility = View.VISIBLE
             }
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
-                progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
                 manageDeliveryLayout.visibility = View.VISIBLE
                 trackDeliveryLayout.visibility = View.VISIBLE
-                statusResponse?.slotDetails?.formattedDate?.let { splitAndApplyFormatedDate(it) }
+                statusResponse?.slotDetails?.formattedDate?.let {
+                    splitAndApplyFormatedDate(it, statusResponse?.slotDetails?.appointmentDate)
+                }
                 val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
                 manageDeliveryDrawable?.alpha = 77
                 manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
@@ -89,11 +91,17 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
     }
 
-    private fun splitAndApplyFormatedDate(date: String) {
-        deliveryStatusTitle.text = bindString(R.string.delivery_confirmation)
-        val parts: List<String> = date.split(" ")
-        deliveryDate.text = parts[1].plus(" ").plus(parts[2])
+    private fun splitAndApplyFormatedDate(formatedDate: String, appointmentDate: String?) {
+        val parts: List<String> = formatedDate.split(" ")
         deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
+        deliveryStatusTitle.text = bindString(R.string.delivery_confirmation)
+        if (WFormatter.checkIfDateisTomorrow(appointmentDate)) {
+            progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
+            deliveryDate.text = bindString(R.string.tomorrow)
+        } else {
+            progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
+            deliveryDate.text = parts[1].plus(" ").plus(parts[2])
+        }
     }
 
     override fun onClick(v: View?) {

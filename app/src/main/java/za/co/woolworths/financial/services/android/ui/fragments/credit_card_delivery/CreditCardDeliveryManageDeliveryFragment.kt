@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliveryDate
@@ -20,6 +23,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
 
     var bundle: Bundle? = null
     private var statusResponse: StatusResponse? = null
+    private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +39,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
         init()
         setupToolbar()
         if (activity is CreditCardDeliveryActivity) {
@@ -46,13 +51,24 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         when (v?.id) {
             R.id.cancelDelivery -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL)
-                val dialog = CreditCardCancelDeliveryFragment()
-                (activity as? CreditCardDeliveryActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction ->
-                    dialog.show(fragmentTransaction, CreditCardCancelDeliveryFragment::class.java.simpleName)
+                activity?.apply {
+                    supportFragmentManager?.apply {
+                        val creditCardCancelDeliveryFragment = CreditCardCancelDeliveryFragment.newInstance(CreditCardDeliveryActivity.DeliveryStatus.CANCEL_DELIVERY)
+                        creditCardCancelDeliveryFragment.show(this, CreditCardCancelDeliveryFragment::class.java.simpleName)
+                    }
                 }
             }
             R.id.editAddress -> {
-                //CreditCardDeliveryValidateAddressRequestFragment
+                if (statusResponse?.deliveryStatus?.isEditable == true) {
+                    //navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
+                } else {
+                    activity?.apply {
+                        supportFragmentManager?.apply {
+                            val creditCardCancelDeliveryFragment = CreditCardCancelDeliveryFragment.newInstance(CreditCardDeliveryActivity.DeliveryStatus.EDIT_ADDRESS)
+                            creditCardCancelDeliveryFragment.show(this, CreditCardCancelDeliveryFragment::class.java.simpleName)
+                        }
+                    }
+                }
             }
             R.id.editRecipient -> {
 

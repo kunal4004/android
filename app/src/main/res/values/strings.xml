@@ -1921,4 +1921,5 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="bullet_point_unicode">\u2022</string>
     <string name="save_card_product_label">Product:</string>
     <string name="save_card_product_payment_total_label">Payment Total:</string>
+    <string name="tomorrow">Tomorrow</string>
 </resources>
