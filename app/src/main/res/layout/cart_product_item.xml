@@ -234,8 +234,8 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.2dp"
-                    android:background="@color/outside_border"/>
+                    android:layout_height="@dimen/one_dp"
+                    android:background="@color/recent_search_bg"/>
             </LinearLayout>
 
 
