@@ -242,14 +242,15 @@ object OneAppService : RetrofitConfig() {
 
     fun productDetail(productId: String, skuId: String): Call<ProductDetailResponse> {
         val loc = getMyLocation()
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getDeviceManufacturer(),
                     getOS(), getNetworkCarrier(), getApiId(), "", "",
-                    getSha1Password(), loc.getLongitude(), loc.getLatitude(), getSessionToken(), productId, skuId)
+                    getSha1Password(), loc.longitude, loc.latitude, getSessionToken(), productId, skuId, suburbId, storeId)
         } else {
             mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getDeviceManufacturer(),
                     getOS(), getNetworkCarrier(), getApiId(), "", "",
-                    getSha1Password(), getSessionToken(), productId, skuId)
+                    getSha1Password(), getSessionToken(), productId, skuId, suburbId, storeId)
         }
     }
 

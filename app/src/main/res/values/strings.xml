@@ -1349,7 +1349,7 @@
     <string name="credit_card_activation_popup_desc">The card activation service is only available between 6am - 9pm, Monday to Saturday.</string>
     <string name="credit_card_activation_popup_call_us">Call us on 0861 50 20 20</string>
     <string name="sending_otp_title">Sending OTP</string>
-    <string name="sending_otp_desc">An One-time PIN is being sent to you. It should arrive shortly.</string>
+    <string name="sending_otp_desc">A One-time PIN is being sent to you. It should arrive shortly.</string>
     <string name="validating_otp">Validating OTP</string>
     <string name="need_help_call_the_center">Need help? call the call center</string>
     <string name="sending_otp_error">There was a Problem  \nSending Your OTP</string>
@@ -1922,4 +1922,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="save_card_product_label">Product:</string>
     <string name="save_card_product_payment_total_label">Payment Total:</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="account_holder_lable">Account Holder:</string>
+    <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
+    <string name="transaction_date_value">03 / 07 / 2016</string>
 </resources>

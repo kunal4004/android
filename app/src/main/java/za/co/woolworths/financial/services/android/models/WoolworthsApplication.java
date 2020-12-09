@@ -28,6 +28,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
@@ -113,8 +114,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Sts stsValues;
     private static CreditCardActivation creditCardActivation;
     private static ClickAndCollect clickAndCollect;
-    private static String transUnionLink;
     private static CreditCardDelivery creditCardDelivery;
+
     private Activity mCurrentActivity = null;
 
     private static ValidatedSuburbProducts validatedSuburbProducts;
@@ -260,7 +261,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(getApplicationContext());
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+        if (FirebaseCrashlytics.getInstance().didCrashOnPreviousExecution()) {
+            FirebaseCrashlytics.getInstance().sendUnsentReports();
+        }
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
@@ -569,14 +574,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
-    }
-
-    public static String getTransUnionLink() {
-        return transUnionLink;
-    }
-
-    public static void setTransUnionLink(String transUnionLink) {
-        WoolworthsApplication.transUnionLink = transUnionLink;
     }
 
     public static void setInAppChat(@Nullable InAppChat inAppChat) {

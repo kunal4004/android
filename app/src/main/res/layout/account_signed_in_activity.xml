@@ -66,11 +66,11 @@
 
             <View
                 android:id="@+id/closeIndicator"
-                android:layout_width="56dp"
-                android:layout_height="6dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/rounded_grey_corner"
+                android:layout_width="@dimen/fourty_dp"
+                android:layout_height="@dimen/six_dp"
+                android:layout_marginTop="@dimen/eight_dp"
+                android:layout_marginBottom="@dimen/ten_dp"
+                android:background="@drawable/half_round_grey_corner"
                 app:layout_constraintBottom_toBottomOf="@+id/topRoundedView"
                 app:layout_constraintEnd_toEndOf="@+id/topRoundedView"
                 app:layout_constraintStart_toStartOf="@+id/topRoundedView"
