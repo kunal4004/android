@@ -52,6 +52,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             recipientOption?.visibility = View.VISIBLE
 
         confirm?.setOnClickListener(this)
+        clearDetails.setOnClickListener(this)
         configureUI()
     }
 
@@ -63,7 +64,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
 
         recipientName?.apply {
-            isEnabled = statusResponse?.deliveryStatus?.isCardNew != true
+            //isEnabled = statusResponse?.deliveryStatus?.isCardNew != true
             setText(statusResponse?.recipientDetails?.deliverTo
                     ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }
@@ -90,6 +91,12 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                             showErrorInputField(it)
                     }
                 }
+            }
+            R.id.clearDetails -> {
+                recipientName?.text?.clear()
+                cellphoneNumber?.text?.clear()
+                alternativeNumber?.text?.clear()
+                if (isRecipientIsThirdPerson) idNumber?.text?.clear()
             }
         }
     }

@@ -50,6 +50,18 @@
             app:destination="@id/creditCardDeliveryValidateAddressRequestFragment"
             app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/creditCardDeliveryManageDelivery"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryManageDeliveryFragment"
+        android:label="CreditCardDeliveryManageDeliveryFragment"
+        tools:layout="@layout/credit_card_delivery_recipient_address_layout">
+        <action
+            android:id="@+id/action_to_creditCardDeliveryValidateAddressRequestFragment"
+            app:destination="@id/creditCardDeliveryValidateAddressRequestFragment"
+            app:popUpTo="@+id/creditCardDeliveryStatusFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/creditCardDeliveryRecipientDetailsFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryRecipientDetailsFragment"

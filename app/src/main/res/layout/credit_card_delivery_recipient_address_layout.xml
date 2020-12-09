@@ -9,11 +9,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
         android:background="@drawable/next_button_icon"
         android:contentDescription="@string/cd_ccd_btnnext"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/clearDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/fourty_seven_dp"
+        android:text="@string/clear_details"
+        android:textSize="@dimen/sixteen_sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"

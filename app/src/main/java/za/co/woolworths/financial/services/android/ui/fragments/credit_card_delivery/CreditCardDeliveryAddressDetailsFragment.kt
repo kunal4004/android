@@ -30,6 +30,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         navController = Navigation.findNavController(view)
         listOfInputFields = listOf(complexOrBuildingName, businessName, streetAddress, suburb, cityOrTown, province, postalCode)
         submitAddress?.setOnClickListener(this)
+        clearDetails.setOnClickListener(this)
         complexOrBuildingName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         businessName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         streetAddress?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
@@ -57,6 +58,15 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         when (v?.id) {
             R.id.submitAddress -> {
                 onSubmit()
+            }
+            R.id.clearDetails -> {
+                businessName.text.clear()
+                complexOrBuildingName.text.clear()
+                streetAddress.text.clear()
+                suburb.text.clear()
+                province.text.clear()
+                cityOrTown.text.clear()
+                postalCode.text.clear()
             }
         }
     }

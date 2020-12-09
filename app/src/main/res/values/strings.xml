@@ -1480,6 +1480,7 @@
     <string name="too_late_to_edit_desc">Unfortunately it\'s too late to edit your delivery details now. Please call us on 0861 50 50 20 for assistance.</string>
     <string name="credit_card_cancel_delivery_title">CANCEL DELIVERY</string>
     <string name="credit_card_cancel_delivery_desc">Please call us on 010 020 1028 to cancel delivery.</string>
+    <string name="credit_card_track_my_delivery_desc">CCD is our trusted delivery partner. On the day of delivery you will be able to track your order. Please use the last 4 digits of your SA ID, and your unique reference (see below) OR your tracking number which will be SMSed to you on the day of delivery.</string>
     <string name="no_timeslots_available_title">No Timeslots Available</string>
     <string name="no_timeslots_available_desc">There are no available timeslots for your address. Please get in touch with our courier partner directly to schedule delivery.</string>
     <string name="call_courier_partners">Call Courier Partners</string>
@@ -1493,7 +1494,7 @@
     <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew Black Credit Card.</string>
     <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know \nwhen and where to send your card.</string>
     <string name="set_up_delivery_nowt">set up delivery now</string>
-    <string name="already_have_card_activate_it_now">Already have card? Activate it now</string>
+    <string name="already_have_card_activate_it_now"><u>Already have card? Activate it now</u></string>
     <string name="recipient_details">Recipient Details</string>
     <string name="recipient_details_desc">Please enter the details of the person we will be delivering to below:</string>
     <string name="documet_requied_at_delivery">You will need to give the courier a copy of your SA Identity Document (ID), when taking delivery of your new credit card.</string>
@@ -1925,4 +1926,5 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="account_holder_lable">Account Holder:</string>
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
     <string name="transaction_date_value">03 / 07 / 2016</string>
+    <string name="clear_details"><u>Clear Details</u></string>
 </resources>

@@ -5,24 +5,27 @@
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/thirty_two_dp">
 
-    <Button
+    <ImageView
         android:id="@+id/confirm"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="@dimen/thirty_two_dp"
-        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:background="@drawable/order_add_to_cart_button_bg"
-        android:fontFamily="@font/futura_semi_bold"
-        android:letterSpacing="0.13"
-        android:text="@string/confirm"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/twelve_sp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/next_button_icon"
         android:contentDescription="@string/cd_ccd_btnnext"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/clearDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/fourty_seven_dp"
+        android:text="@string/clear_details"
+        android:textSize="@dimen/sixteen_sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.core.widget.NestedScrollView
@@ -63,11 +66,11 @@
                 android:id="@+id/alternativeNumber"
                 style="@style/credi_card_delivery_edittext_style"
                 android:contentDescription="@string/cd_ccd_txtalternatecontactnumberr"
+                android:imeOptions="actionDone"
                 android:inputType="number"
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                android:imeOptions="actionDone"
                 app:layout_constraintTop_toBottomOf="@id/alternativeNumberPlaceHolder" />
 
             <EditText
@@ -93,9 +96,9 @@
                     android:id="@+id/mySelf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/cd_ccd_radiobtnmyself"
                     android:button="@drawable/shopping_list_item_selector"
                     android:checked="true"
+                    android:contentDescription="@string/cd_ccd_radiobtnmyself"
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/myself"
@@ -105,9 +108,9 @@
                     android:id="@+id/anotherPerson"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
                     android:layout_marginStart="@dimen/fifty_dp"
                     android:button="@drawable/shopping_list_item_selector"
+                    android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/another_person"
@@ -170,8 +173,8 @@
             <TextView
                 android:id="@+id/recipientDetailsDesc"
                 style="@style/myriad_pro_regular"
-                android:contentDescription="@string/cd_ccd_lablerecipientdetailsdescription"
                 android:layout_marginTop="@dimen/eight_dp"
+                android:contentDescription="@string/cd_ccd_lablerecipientdetailsdescription"
                 android:lineSpacingMultiplier="1.40"
                 android:text="@string/recipient_details_desc"
                 android:textColor="#50333333"
@@ -183,8 +186,8 @@
             <TextView
                 android:id="@+id/recipientNamePlaceHolder"
                 style="@style/myriad_pro_regular_black"
-                android:contentDescription="@string/cd_ccd_labelrecipientname"
                 android:layout_marginTop="@dimen/thirty_two_dp"
+                android:contentDescription="@string/cd_ccd_labelrecipientname"
                 android:text="@string/recipient_name"
                 android:textSize="@dimen/fourteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -205,8 +208,8 @@
             <TextView
                 android:id="@+id/cellphoneNumberPlaceHolder"
                 style="@style/myriad_pro_regular_black"
-                android:contentDescription="@string/cd_ccd_labelcellphonenumber"
                 android:layout_marginTop="@dimen/twenty_four_dp"
+                android:contentDescription="@string/cd_ccd_labelcellphonenumber"
                 android:text="@string/cellphone_number"
                 android:textSize="@dimen/fourteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -216,8 +219,8 @@
             <TextView
                 android:id="@+id/alternativeNumberPlaceHolder"
                 style="@style/myriad_pro_regular_black"
-                android:contentDescription="@string/cd_ccd_labelalternatecontactnumber"
                 android:layout_marginTop="@dimen/twenty_four_dp"
+                android:contentDescription="@string/cd_ccd_labelalternatecontactnumber"
                 android:text="@string/alternate_contact_numberr"
                 android:textSize="@dimen/fourteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -227,8 +230,8 @@
             <TextView
                 android:id="@+id/idNumberPlaceHolder"
                 style="@style/myriad_pro_regular_black"
-                android:contentDescription="@string/cd_ccd_labelidnumber"
                 android:layout_marginTop="@dimen/twenty_four_dp"
+                android:contentDescription="@string/cd_ccd_labelidnumber"
                 android:text="@string/id_number"
                 android:textSize="@dimen/fourteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
