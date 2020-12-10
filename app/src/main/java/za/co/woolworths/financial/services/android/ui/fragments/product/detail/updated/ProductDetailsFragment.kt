@@ -1186,12 +1186,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             images.forEach { image ->
                 when (image) {
                     promoImages?.reduced -> {
-                        val width = deviceWidth() / 4
+                        val width = deviceWidth() / 5
                         layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
                             val promotionImageView = view.findViewById<ImageView>(R.id.promotionImage)
                             promotionImageView?.apply {
                                 adjustViewBounds = true
-                                scaleType = ImageView.ScaleType.FIT_START
+                                scaleType = ImageView.ScaleType.FIT_CENTER
                                 layoutParams?.width = width
                                 maxHeight = Utils.dp2px(18f)
                                 ImageManager.setPictureOverrideWidthHeight(view.promotionImage, image)
@@ -1200,12 +1200,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                     promoImages?.save -> {
-                        val width = deviceWidth() / 8
+                        val width = deviceWidth() / 10
                         layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
                             val promotionImageView = view.findViewById<ImageView>(R.id.promotionImage)
                             promotionImageView?.apply {
                                 adjustViewBounds = true
-                                scaleType = ImageView.ScaleType.FIT_START
+                                scaleType = ImageView.ScaleType.FIT_CENTER
                                 layoutParams?.width = width
                                 maxHeight = Utils.dp2px(18f)
                                 ImageManager.setPictureOverrideWidthHeight(view.promotionImage, image)
