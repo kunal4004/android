@@ -57,6 +57,9 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
 
     fun configureUI() {
         when (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT)) {
+            CreditCardDeliveryStatus.CARD_RECEIVED -> {
+                cardReceivedOrCardDelivered()
+            }
             CreditCardDeliveryStatus.CARD_DELIVERED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
                 deliveryDate.text = bindString(R.string.card_delivery_delivered)
@@ -76,19 +79,23 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
                 callTheCallCenter.visibility = View.VISIBLE
             }
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
-                manageDeliveryLayout.visibility = View.VISIBLE
-                trackDeliveryLayout.visibility = View.VISIBLE
-                statusResponse?.slotDetails?.formattedDate?.let {
-                    splitAndApplyFormatedDate(it, statusResponse?.slotDetails?.appointmentDate)
-                }
-                val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
-                manageDeliveryDrawable?.alpha = 77
-                manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
-                val trackDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_directions)
-                trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
+                cardReceivedOrCardDelivered()
             }
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
+    }
+
+    private fun cardReceivedOrCardDelivered() {
+        manageDeliveryLayout.visibility = View.VISIBLE
+        trackDeliveryLayout.visibility = View.VISIBLE
+        statusResponse?.slotDetails?.formattedDate?.let {
+            splitAndApplyFormatedDate(it, statusResponse?.slotDetails?.appointmentDate)
+        }
+        val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
+        manageDeliveryDrawable?.alpha = 77
+        manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
+        val trackDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_directions)
+        trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
     }
 
     private fun splitAndApplyFormatedDate(formatedDate: String, appointmentDate: String?) {

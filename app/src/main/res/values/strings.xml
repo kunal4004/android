@@ -1515,7 +1515,7 @@
     <string name="schedule_your_delivery">Schedule Your Delivery</string>
     <string name="manage_my_delivery">Manage My Delivery</string>
     <string name="confirm_address">Confirm Address</string>
-    <string name="edit_address">Edit Address</string>
+    <string name="edit_address"><u>Edit Address</u></string>
     <string name="time_slots_page_title">When Would Like Your \nCard Delivered?</string>
     <string name="time_slots_page_desc">Choose a date and select a prefered timeslot for when you would like your card delivered.</string>
     <string name="processing_error">Processing Error</string>
@@ -1927,4 +1927,5 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
     <string name="transaction_date_value">03 / 07 / 2016</string>
     <string name="clear_details"><u>Clear Details</u></string>
+    <string name="checking_available_slots">Checking For Available Timeslots</string>
 </resources>

@@ -15,12 +15,15 @@ import kotlinx.android.synthetic.main.credit_card_delivery_invalid_address_layou
 import kotlinx.android.synthetic.main.credit_card_delivery_no_time_slots_available_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
+import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
@@ -54,6 +57,12 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         cancelOnNoTimeSlots?.setOnClickListener(this)
         cancelOnTimeSlotsError?.setOnClickListener(this)
         cancelOnValidateAddress?.setOnClickListener(this)
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                changeToolbarBackground(R.color.white)
+                hideToolbar()
+            }
+        }
         getValidateAddress()
     }
 
@@ -116,10 +125,12 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                 containerViewId = R.id.flProgressIndicator
         )
         processingLayout?.visibility = View.VISIBLE
+        processRequestTitleTextView.text = bindString(R.string.processing_your_request)
     }
 
     override fun restartProgress() {
         getProgressState()?.restartSpinning()
+        processRequestTitleTextView.text = bindString(R.string.checking_available_slots)
         processingLayout?.visibility = View.VISIBLE
         flProgressIndicator.visibility = View.VISIBLE
         hideAllSuccessAndFailureViews()
