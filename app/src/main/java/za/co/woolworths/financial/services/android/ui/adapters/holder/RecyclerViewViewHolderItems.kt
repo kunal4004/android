@@ -27,7 +27,6 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages)
-            setSaveTextFontFamily(promotionImages)
             setProductName(this)
             setSaveText(this, nextProduct, previousProduct)
             setBrandText(this, nextProduct, previousProduct)
@@ -36,10 +35,6 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             quickShopAddToCartSwitch(this)
             setOnClickListener(navigator, this)
         }
-    }
-
-    private fun setSaveTextFontFamily(promotionImages: PromotionImages?) {
-        itemView.tvSaveText?.typeface = if (TextUtils.isEmpty(promotionImages?.reduced)) getFuturaMediumFont() else getFuturaSemiBoldFont()
     }
 
     private fun setOnClickListener(navigator: IProductListing, productList: ProductList) {
