@@ -119,6 +119,12 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
             }
             R.id.trackDeliveryLayout -> {
                 //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
+                activity?.apply {
+                    supportFragmentManager?.apply {
+                        val creditCardTrackMyDelivery = CreditCardTrackMyDelivery.newInstance(bundleOf("bundle" to bundle))
+                        creditCardTrackMyDelivery.show(this, CreditCardTrackMyDelivery::class.java.simpleName)
+                    }
+                }
             }
         }
     }

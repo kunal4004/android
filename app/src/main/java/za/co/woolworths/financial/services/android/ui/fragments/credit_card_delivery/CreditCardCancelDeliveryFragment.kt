@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.views.actionsheet
+package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_d
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity.DeliveryStatus
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardCancelDeliveryFragment : WBottomSheetDialogFragment(), View.OnClickListener {
