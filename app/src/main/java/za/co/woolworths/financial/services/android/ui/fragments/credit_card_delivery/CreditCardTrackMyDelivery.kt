@@ -42,7 +42,13 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
     }
 
     private fun init() {
-        referenceNumber.text = statusResponse?.bookingreference
+        if (statusResponse?.bookingreference == null) {
+            if (statusResponse?.appointment?.bookingReference != null) {
+                referenceNumber.text = statusResponse?.appointment?.bookingReference
+            }
+        } else {
+            referenceNumber.text = statusResponse?.bookingreference
+        }
         referenceNumberText.setOnClickListener(this)
         trackMyDelivery.setOnClickListener(this)
     }

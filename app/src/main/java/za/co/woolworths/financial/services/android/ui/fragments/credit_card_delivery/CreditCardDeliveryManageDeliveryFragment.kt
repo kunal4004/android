@@ -100,7 +100,13 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         WFormatter.getDayAndFullDate(statusResponse?.slotDetails?.appointmentDate).also { deliveryDate.text = it }
         statusResponse?.addressDetails?.deliveryAddress.also { deliveryAddress.text = it }
         statusResponse?.recipientDetails?.deliverTo.also { name.text = it }
-        statusResponse?.bookingreference.also { bookingReference.text = it }
+        if (statusResponse?.bookingreference == null) {
+            if (statusResponse?.appointment?.bookingReference != null) {
+                bookingReference.text = statusResponse?.appointment?.bookingReference
+            }
+        } else {
+            bookingReference.text = statusResponse?.bookingreference
+        }
         statusResponse?.deliveryStatus?.receivedDate.also { createdDate.text = it }
     }
 }

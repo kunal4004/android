@@ -64,7 +64,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
 
         recipientName?.apply {
-            //isEnabled = statusResponse?.deliveryStatus?.isCardNew != true
+            isEnabled = statusResponse?.deliveryStatus?.isCardNew != true
             setText(statusResponse?.recipientDetails?.deliverTo
                     ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }

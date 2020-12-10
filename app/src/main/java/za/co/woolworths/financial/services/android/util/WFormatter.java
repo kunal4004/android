@@ -267,6 +267,8 @@ public class WFormatter {
     }
 
     public static String getDayAndFullDate(String date) throws ParseException {
+        if (date == null)
+            return "";
         return new SimpleDateFormat("EEEE dd MMMM, yyyy")
                 .format((new SimpleDateFormat("yyyy-MM-dd"))
                         .parse(date));
