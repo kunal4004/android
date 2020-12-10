@@ -10,36 +10,23 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryBoardingFragment"
         android:label="CreditCardDeliveryBoardingFragment"
         tools:layout="@layout/credit_card_delivery_boarding_layout">
-        <!--<action
-            android:id="@+id/action_to_getRecipientDetailsProcessingFragment"
-            app:destination="@id/getRecipientDetailsProcessingFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"
-            />-->
         <action
             android:id="@+id/action_to_creditCardDeliveryRecipientDetailsFragment"
             app:destination="@id/creditCardDeliveryRecipientDetailsFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/creditCardDeliveryManageDeliveryFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryManageDeliveryFragment"
-        android:label="CreditCardDeliveryManageDeliveryFragment"
-        tools:layout="@layout/credit_card_delivery_manage_delivery" />
+
     <fragment
         android:id="@+id/creditCardDeliveryStatusFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryStatusFragment"
         android:label="CreditCardDeliveryStatusFragment"
         tools:layout="@layout/credit_card_delivery_status_layout">
+
         <action
             android:id="@+id/action_to_creditCardDeliveryManageDeliveryFragment"
             app:destination="@id/creditCardDeliveryManageDeliveryFragment"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right" />
+            app:popUpTo="@+id/creditCardDeliveryScheduleDeliveryFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/creditCardDeliveryAddressDetailsFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryAddressDetailsFragment"
@@ -52,13 +39,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/creditCardDeliveryManageDelivery"
+        android:id="@+id/creditCardDeliveryManageDeliveryFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryManageDeliveryFragment"
         android:label="CreditCardDeliveryManageDeliveryFragment"
         tools:layout="@layout/credit_card_delivery_recipient_address_layout">
         <action
-            android:id="@+id/action_to_creditCardDeliveryValidateAddressRequestFragment"
-            app:destination="@id/creditCardDeliveryValidateAddressRequestFragment"
+            android:id="@+id/action_creditCardDeliveryAddressDetailsFragment"
+            app:destination="@id/creditCardDeliveryAddressDetailsFragment"
             app:popUpTo="@+id/creditCardDeliveryStatusFragment" />
     </fragment>
 
@@ -70,7 +57,7 @@
         <action
             android:id="@+id/action_to_creditCardDeliveryAddressDetailsFragment"
             app:destination="@id/creditCardDeliveryAddressDetailsFragment"
-            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment"/>
+            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/creditCardDeliveryValidateAddressRequestFragment"
@@ -105,33 +92,4 @@
             app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
-   <!-- <fragment
-        android:id="@+id/getRecipientDetailsProcessingFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.GetRecipientDetailsProcessingFragment"
-        android:label="GetRecipientDetailsProcessingFragment" >
-        <action
-            android:id="@+id/action_to_creditCardDeliveryRecipientDetailsFragment"
-            app:destination="@id/creditCardDeliveryRecipientDetailsFragment"
-            app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            />
-    </fragment>-->
-    <!--<fragment
-        android:id="@+id/updateRecipientDetailsProcessingFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.UpdateRecipientDetailsProcessingFragment"
-        android:label="UpdateRecipientDetailsProcessingFragment" >
-        <action
-            android:id="@+id/action_to_creditCardDeliveryAddressDetailsFragment"
-            app:destination="@id/creditCardDeliveryAddressDetailsFragment"
-            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            />
-    </fragment>-->
 </navigation>

@@ -11,14 +11,15 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
 
     var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
-    private var recipientDetailsResponse: RecipientDetailsResponse? = null
     private var isBusinessAddress: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -27,6 +28,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpToolBar()
         navController = Navigation.findNavController(view)
         listOfInputFields = listOf(complexOrBuildingName, businessName, streetAddress, suburb, cityOrTown, province, postalCode)
         submitAddress?.setOnClickListener(this)
@@ -41,8 +43,17 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         configureUI()
     }
 
+    private fun setUpToolBar() {
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                setToolbarTitle("")
+                changeToolbarBackground(R.color.white)
+            }
+        }
+    }
+
     fun configureUI() {
-        recipientDetailsResponse?.addressDetails?.let {
+        statusResponse?.addressDetails?.let {
             complexOrBuildingName?.setText(it.buildingName ?: "")
             businessName?.setText(it.buildingName ?: "")
             streetAddress?.setText(it.street ?: "")

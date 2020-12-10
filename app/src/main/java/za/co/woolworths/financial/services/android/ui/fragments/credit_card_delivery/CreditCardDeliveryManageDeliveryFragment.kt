@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -58,7 +59,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
             }
             R.id.editAddress -> {
                 if (statusResponse?.deliveryStatus?.isEditable == true) {
-                    //navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
+                    navController?.navigate(R.id.creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
                 } else {
                     activity?.apply {
                         supportFragmentManager?.apply {
