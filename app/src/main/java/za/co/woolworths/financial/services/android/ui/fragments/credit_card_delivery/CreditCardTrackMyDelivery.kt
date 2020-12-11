@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +12,7 @@ import kotlinx.android.synthetic.main.credit_card_track_my_delivery.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickListener {
@@ -27,6 +31,8 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
         fun newInstance(bundle: Bundle) = CreditCardTrackMyDelivery().withArgs {
             putBundle("bundle", bundle)
         }
+
+        const val TRACK_MY_DELIVERY: String = "https://www.ccdcouriers.co.za/TrackAndTrace.html"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,10 +62,12 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.trackMyDelivery -> {
-                dismiss()
+                KotlinUtils.openBrowserWithUrl(TRACK_MY_DELIVERY, activity)
             }
             R.id.referenceNumberText -> {
-
+                val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(referenceNumber.text, referenceNumber.text)
+                clipboard?.setPrimaryClip(clip)
             }
         }
     }

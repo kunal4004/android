@@ -94,13 +94,26 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                 it.province = province?.text.toString().trim()
                 it.city = cityOrTown?.text.toString().trim()
                 it.postalCode = postalCode?.text.toString().trim()
-                val address: BookingAddress = Utils.jsonStringToObject(bundle?.getString("BookingAddress"), BookingAddress::class.java) as BookingAddress
-                it.telCell = address.telCell
-                it.telWork = address.telWork
-                it.nameSurname = address.deliverTo
-                it.isThirdPartyRecipient = address.isThirdPartyRecipient
-                it.deliverTo = address.deliverTo
-                it.idNumber = address.idNumber
+                val jsonBokingAddress: String? = bundle?.getString("BookingAddress")
+                if (jsonBokingAddress == null) {
+                    val recipDetails: RecipientDetails? = statusResponse?.recipientDetails
+                    if (recipDetails != null) {
+                        it.telCell = recipDetails.telCell
+                        it.telWork = recipDetails.telWork
+                        it.nameSurname = recipDetails.deliverTo
+                        it.isThirdPartyRecipient = recipDetails.isThirdPartyRecipient
+                        it.deliverTo = recipDetails.deliverTo
+                        it.idNumber = recipDetails.idNumber
+                    }
+                } else {
+                    val address: BookingAddress = Utils.jsonStringToObject(jsonBokingAddress, BookingAddress::class.java) as BookingAddress
+                    it.telCell = address.telCell
+                    it.telWork = address.telWork
+                    it.nameSurname = address.deliverTo
+                    it.isThirdPartyRecipient = address.isThirdPartyRecipient
+                    it.deliverTo = address.deliverTo
+                    it.idNumber = address.idNumber
+                }
             }
             scheduleDeliveryRequest = ScheduleDeliveryRequest()
             scheduleDeliveryRequest.bookingAddress = bookingAddress
