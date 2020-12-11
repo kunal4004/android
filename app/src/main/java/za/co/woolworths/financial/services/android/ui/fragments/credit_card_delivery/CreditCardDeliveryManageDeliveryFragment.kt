@@ -30,9 +30,6 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -82,6 +79,9 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
     }
 
     private fun init() {
+        bundle?.apply {
+            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+        }
         editAddress?.setOnClickListener(this)
         cancelDelivery?.setOnClickListener(this)
         editRecipient?.setOnClickListener(this)
