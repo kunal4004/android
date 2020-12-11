@@ -737,7 +737,10 @@ interface ApiInterface {
             @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
             @Path("productId") productId: String,
-            @Query("sku") sku: String): Call<ProductDetailResponse>
+            @Query("sku") sku: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?
+    ): Call<ProductDetailResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
@@ -756,7 +759,10 @@ interface ApiInterface {
             @Header("latitude") latitude: Double,
             @Header("sessionToken") sessionToken: String,
             @Path("productId") productId: String,
-            @Query("sku") sku: String): Call<ProductDetailResponse>
+            @Query("sku") sku: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?
+    ): Call<ProductDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("list")
