@@ -70,7 +70,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 }
             }
             R.id.editRecipient -> {
-
+                navController?.navigate(R.id.creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
             }
         }
     }

@@ -50,6 +50,17 @@
     </fragment>
 
     <fragment
+        android:id="@+id/cardDeliveryManageDeliveryFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryManageDeliveryFragment"
+        android:label="CreditCardDeliveryManageDeliveryFragment"
+        tools:layout="@layout/credit_card_delivery_recipient_details_layout">
+        <action
+            android:id="@+id/action_creditCardDeliveryRecipientDetailsFragment"
+            app:destination="@id/creditCardDeliveryRecipientDetailsFragment"
+            app:popUpTo="@+id/creditCardDeliveryStatusFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/creditCardDeliveryRecipientDetailsFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CreditCardDeliveryRecipientDetailsFragment"
         android:label="CreditCardDeliveryRecipientDetailsFragment"

@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -30,6 +31,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        setUpToolBar()
         listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber, alternativeNumber)
         recipientName?.apply {
             afterTextChanged { clearErrorInputField(this) }
@@ -54,6 +56,15 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         confirm?.setOnClickListener(this)
         clearDetails.setOnClickListener(this)
         configureUI()
+    }
+
+    private fun setUpToolBar() {
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                setToolbarTitle("")
+                changeToolbarBackground(R.color.white)
+            }
+        }
     }
 
     fun configureUI() {

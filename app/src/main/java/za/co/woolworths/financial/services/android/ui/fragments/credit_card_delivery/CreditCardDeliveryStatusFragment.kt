@@ -64,19 +64,27 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
                 deliveryDate.text = bindString(R.string.card_delivery_delivered)
                 deliveryStatusTitle.text = "Your card has been"
+                statusResponse?.slotDetails?.formattedDate?.let {
+                    val parts: List<String> = it.split(" ")
+                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                }
             }
             CreditCardDeliveryStatus.CANCELLED -> {
-                progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
+                progressIcon.setBackgroundResource(R.drawable.icon_credit_card_delivery_failed)
                 deliveryDate.text = bindString(R.string.card_delivery_cancelled)
                 deliveryStatusTitle.text = "Your card has been"
                 callTheCallCenter.visibility = View.VISIBLE
+                statusResponse?.slotDetails?.formattedDate?.let {
+                    val parts: List<String> = it.split(" ")
+                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                }
             }
             CreditCardDeliveryStatus.CARD_SHREDDED -> {
-                progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
                 progressIcon.setBackgroundResource(R.drawable.icon_credit_card_delivery_failed)
                 deliveryDate.text = bindString(R.string.card_delivery_failed)
                 deliveryStatusTitle.text = "Your Card Delivery Hasn"
                 callTheCallCenter.visibility = View.VISIBLE
+                deliveryDayAndTime.text = ""
             }
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
                 cardReceivedOrCardDelivered()
@@ -118,7 +126,6 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
                 navController?.navigate(R.id.action_to_creditCardDeliveryManageDeliveryFragment, bundleOf("bundle" to bundle))
             }
             R.id.trackDeliveryLayout -> {
-                //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
                 activity?.apply {
                     supportFragmentManager?.apply {
                         val creditCardTrackMyDelivery = CreditCardTrackMyDelivery.newInstance(bundleOf("bundle" to bundle))
