@@ -78,12 +78,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
     private fun init() {
         editAddress?.setOnClickListener(this)
         cancelDelivery?.setOnClickListener(this)
-
-        if (statusResponse?.deliveryStatus?.isCardNew == true) {
-            editRecipient?.visibility = View.GONE
-        } else {
-            editRecipient?.setOnClickListener(this)
-        }
+        editRecipient?.setOnClickListener(this)
         splitAndApplyFormatedDate()
     }
 

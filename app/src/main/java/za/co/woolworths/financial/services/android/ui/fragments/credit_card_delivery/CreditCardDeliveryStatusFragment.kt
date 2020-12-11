@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -14,18 +13,15 @@ import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
-class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
+class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
 
-    var bundle: Bundle? = null
     var navController: NavController? = null
-    var statusResponse: StatusResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_status_layout, container, false)
@@ -34,9 +30,6 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,7 +108,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
             deliveryDate.text = bindString(R.string.tomorrow)
         } else {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
-            deliveryDate.text = parts[1].plus(" ").plus(parts[2])
+            deliveryDate.text = parts[1].plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate))
         }
     }
 
@@ -128,7 +121,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
             R.id.trackDeliveryLayout -> {
                 activity?.apply {
                     supportFragmentManager?.apply {
-                        val creditCardTrackMyDelivery = CreditCardTrackMyDelivery.newInstance(bundleOf("bundle" to bundle))
+                        val creditCardTrackMyDelivery = CreditCardTrackMyDelivery.newInstance(bundleOf("bundle" to bundle), envelopeNumber)
                         creditCardTrackMyDelivery.show(this, CreditCardTrackMyDelivery::class.java.simpleName)
                     }
                 }

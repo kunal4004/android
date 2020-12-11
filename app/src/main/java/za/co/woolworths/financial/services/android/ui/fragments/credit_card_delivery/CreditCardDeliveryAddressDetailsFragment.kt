@@ -85,6 +85,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
     private fun onSubmit() {
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
             val bookingAddress = BookingAddress()
+            var isThirdPerson: Boolean? = false;
             bookingAddress.let {
                 it.businessName = businessName?.text.toString().trim()
                 it.complexName = complexOrBuildingName?.text.toString().trim()
@@ -102,6 +103,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                         it.telWork = recipDetails.telWork
                         it.nameSurname = recipDetails.deliverTo
                         it.isThirdPartyRecipient = recipDetails.isThirdPartyRecipient
+                        isThirdPerson = recipDetails.isThirdPartyRecipient
                         it.deliverTo = recipDetails.deliverTo
                         it.idNumber = recipDetails.idNumber
                     }
@@ -111,6 +113,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                     it.telWork = address.telWork
                     it.nameSurname = address.deliverTo
                     it.isThirdPartyRecipient = address.isThirdPartyRecipient
+                    isThirdPerson = address.isThirdPartyRecipient
                     it.deliverTo = address.deliverTo
                     it.idNumber = address.idNumber
                 }
@@ -133,7 +136,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
             scheduleDeliveryRequest.addressDetails = addressDetails
             statusResponse?.addressDetails = addressDetails
-            val recipientDetails = RecipientDetails(bookingAddress.telWork, bookingAddress.telCell, bookingAddress.deliverTo, bookingAddress.idNumber)
+            val recipientDetails = RecipientDetails(bookingAddress.telWork, bookingAddress.telCell, bookingAddress.deliverTo, bookingAddress.idNumber, isThirdPerson)
             statusResponse?.recipientDetails = recipientDetails
 
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))

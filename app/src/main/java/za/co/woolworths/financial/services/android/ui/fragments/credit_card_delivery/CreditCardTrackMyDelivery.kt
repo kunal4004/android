@@ -10,16 +10,14 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_track_my_delivery.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickListener {
 
     var bundle: Bundle? = null
-    private var statusResponse: StatusResponse? = null
+    private var envelopeNumber: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.credit_card_track_my_delivery, container, false)
 
@@ -29,33 +27,20 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
     }
 
     companion object {
-        fun newInstance(bundle: Bundle) = CreditCardTrackMyDelivery().withArgs {
+        fun newInstance(bundle: Bundle, envelopeNumber: String) = CreditCardTrackMyDelivery().withArgs {
             putBundle("bundle", bundle)
+            putString("envelopeNumber", envelopeNumber)
         }
-
-        const val TRACK_MY_DELIVERY: String = "https://www.ccdcouriers.co.za/TrackAndTrace.html"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.apply {
-            if (containsKey("bundle")) {
-                bundle = arguments?.getBundle("bundle")
-                bundle?.apply {
-                    statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
-                }
-            }
-        }
+        bundle = arguments?.getBundle("bundle")
+        envelopeNumber = arguments?.getString("envelopeNumber", "")
     }
 
     private fun init() {
-        if (statusResponse?.bookingreference == null) {
-            if (statusResponse?.appointment?.bookingReference != null) {
-                referenceNumber.text = statusResponse?.appointment?.bookingReference
-            }
-        } else {
-            referenceNumber.text = statusResponse?.bookingreference
-        }
+        referenceNumber.text = envelopeNumber
         referenceNumberText.setOnClickListener(this)
         trackMyDelivery.setOnClickListener(this)
     }

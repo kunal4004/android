@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
@@ -264,6 +265,10 @@ public class WFormatter {
     public static String convertDayShortToLong(String day) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
         return simpleDateFormat.format(simpleDateFormat.parse(day));
+    }
+
+    public static String convertMonthShortToLong(String date) throws ParseException {
+        return (new SimpleDateFormat("LLLL", Locale.getDefault())).format(convertStringToDate(date));
     }
 
     public static String getDayAndFullDate(String date) throws ParseException {
