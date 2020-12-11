@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.chat_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.dto.SendEmailIntentInfo
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 
 open class ChatExtensionFragment : Fragment() {
@@ -30,7 +31,11 @@ open class ChatExtensionFragment : Fragment() {
         }
     }
 
-    fun showAgentsMessage(agentDefaultMessage: String, moreMessage: String = "") {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, moreMessage + agentDefaultMessage))
+    fun showAgentsMessage(agentDefaultMessage: String) {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, message = agentDefaultMessage))
+    }
+
+    fun showAgentsMessage(agentDefaultMessage: String, emailIntentInfo: SendEmailIntentInfo) {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, message = agentDefaultMessage, sendEmailIntentInfo = emailIntentInfo))
     }
 }
