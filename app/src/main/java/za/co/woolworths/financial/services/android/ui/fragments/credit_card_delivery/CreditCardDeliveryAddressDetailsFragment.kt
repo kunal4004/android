@@ -55,7 +55,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
     fun configureUI() {
         statusResponse?.addressDetails?.let {
             complexOrBuildingName?.setText(it.buildingName ?: "")
-            businessName?.setText(it.buildingName ?: "")
+            businessName?.setText(it.businessName ?: "")
             streetAddress?.setText(it.street ?: "")
             suburb?.setText(it.suburb ?: "")
             cityOrTown?.setText(it.city ?: "")

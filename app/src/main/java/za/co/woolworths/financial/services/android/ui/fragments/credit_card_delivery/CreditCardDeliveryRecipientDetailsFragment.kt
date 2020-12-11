@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetails
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -23,6 +24,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     private var bookingAddress: BookingAddress = BookingAddress()
     private lateinit var listOfInputFields: List<EditText>
     private var isRecipientIsThirdPerson: Boolean = false
+    private var isEditRecipientActivity: Boolean? = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
@@ -30,6 +32,9 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (arguments?.containsKey("isEditRecipientActivity") == true) {
+            isEditRecipientActivity = arguments?.get("isEditRecipientActivity") as Boolean
+        }
         navController = Navigation.findNavController(view)
         setUpToolBar()
         listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber, alternativeNumber)
@@ -95,7 +100,14 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                             it.idNumber = idNumber?.text.toString().trim()
                     }
                     bundle?.putString("BookingAddress", Utils.toJson(bookingAddress))
-                    navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
+                    val recipientDetails = RecipientDetails(bookingAddress.telWork, bookingAddress.telCell, bookingAddress.deliverTo, bookingAddress.idNumber, bookingAddress.isThirdPartyRecipient)
+                    statusResponse?.recipientDetails = recipientDetails
+                    bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+                    if (isEditRecipientActivity == true) {
+                        activity?.onBackPressed()
+                    } else {
+                        navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
+                    }
                 } else {
                     listOfInputFields.forEach {
                         if (it.text.toString().trim().isEmpty())

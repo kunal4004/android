@@ -13,8 +13,10 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.credit_card_delivery_prefered_time_slots_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.SlotDetails
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.TimeSlot
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.picker.WheelView
 
 
@@ -46,10 +48,14 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             val slotDetails = SlotDetails()
             slotDetails.slot = selectedTime
             slotDetails.appointmentDate = selectedDate?.date
-            slotDetails.formattedDate = selectedDate?.date
+            slotDetails.formattedDate = WFormatter.convertToFormatedDate(selectedDate?.date)
             val request: ScheduleDeliveryRequest = scheduleDeliveryRequest
             request.slotDetails = slotDetails
+            val response: StatusResponse? = statusResponse
+            response?.slotDetails = slotDetails
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(request))
+            bundle?.putString("StatusResponse", Utils.toJson(response))
+
             this.navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
         }
         configureUI()

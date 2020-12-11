@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.Navigator
+import androidx.navigation.Navigator.Extras
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliveryDate
@@ -70,7 +73,10 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 }
             }
             R.id.editRecipient -> {
-                navController?.navigate(R.id.creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
+                val bundle = bundleOf(
+                        "bundle" to bundle,
+                        "isEditRecipientActivity" to true)
+                navController?.navigate(R.id.creditCardDeliveryRecipientDetailsFragment, bundle)
             }
         }
     }

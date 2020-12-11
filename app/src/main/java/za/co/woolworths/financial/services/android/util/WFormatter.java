@@ -278,4 +278,12 @@ public class WFormatter {
                 .format((new SimpleDateFormat("yyyy-MM-dd"))
                         .parse(date));
     }
+
+    public static String convertToFormatedDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("EEE dd MMM")
+                .format((new SimpleDateFormat("yyyy-MM-dd"))
+                        .parse("2020-12-15"));
+    }
 }
