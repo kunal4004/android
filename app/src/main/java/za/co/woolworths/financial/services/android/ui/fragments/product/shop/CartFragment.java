@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -88,6 +87,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CartUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -691,7 +691,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					}
 					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 				} catch (Exception ex) {
-					Crashlytics.logException(ex);
+					FirebaseManager.Companion.logException(ex);
 				}
 			}
 
@@ -735,7 +735,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						onChangeQuantityComplete();
 					}
 				} catch (Exception ex) {
-					Crashlytics.logException(ex);
+					FirebaseManager.Companion.logException(ex);
 				}
 			}
 
@@ -792,7 +792,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							resetItemDelete(true);
 					}
 				} catch (Exception ex) {
-					Crashlytics.logException(ex);
+					FirebaseManager.Companion.logException(ex);
 				}
 			}
 
@@ -960,7 +960,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.cartItems = cartItemGroups;
 
 		} catch (JSONException e) {
-			Crashlytics.logException(e);
+			FirebaseManager.Companion.logException(e);
 			return null;
 		}
 
@@ -1357,7 +1357,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void showEditDeliveryLocationFeatureWalkthrough(){
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
 			return;
-		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getSimpleName());
+		FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getSimpleName());
 		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
 				.setTarget(imgDeliveryLocation)
 				.setTitle(R.string.your_delivery_location)

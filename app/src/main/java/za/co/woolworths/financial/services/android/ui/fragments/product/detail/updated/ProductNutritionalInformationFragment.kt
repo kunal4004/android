@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import com.daasuu.bl.BubbleLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -20,6 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.NutritionalTableIt
 import za.co.woolworths.financial.services.android.ui.adapters.NutritionalInformationFilterAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.NutritionalInformationListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductNutritionalInformationFragment : Fragment(), NutritionalInformationFilterAdapter.FilterOptionSelection {
@@ -86,7 +86,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
                 }
             }
         } catch (e: Exception) {
-            Crashlytics.logException(e)
+            FirebaseManager.logException(e)
         }
 
         return nutritionalDataList

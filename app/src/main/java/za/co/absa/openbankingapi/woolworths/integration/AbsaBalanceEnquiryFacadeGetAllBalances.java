@@ -1,10 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
-
 import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +11,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 public class AbsaBalanceEnquiryFacadeGetAllBalances {
 
@@ -39,7 +35,7 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
         try {
             body = new AbsaBalanceEnquiryRequest(header).getJson();
         } catch (Exception e) {
-            Crashlytics.logException(e);
+            FirebaseManager.Companion.logException(e);
         }
 
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/BalanceEnquiryFacadeGetAllBalances.exp", AbsaBalanceEnquiryResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<AbsaBalanceEnquiryResponse>() {
@@ -50,7 +46,7 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
                 try {
                     statusCode = response.header.getStatusCode();
                 } catch (Exception e) {
-                    Crashlytics.logException(e);
+                    FirebaseManager.Companion.logException(e);
                 }
 
                 if (response.accountList != null && response.accountList.size() > 0 && statusCode.equalsIgnoreCase("0"))

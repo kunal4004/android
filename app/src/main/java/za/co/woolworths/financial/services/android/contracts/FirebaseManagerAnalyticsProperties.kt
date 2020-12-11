@@ -4,14 +4,14 @@ class FirebaseManagerAnalyticsProperties {
     companion object {
 
         const val WTODAYMENU = "GA_Event_ONE_WTODAYMENU"
-        const val SHOPMENU: String = "one_shopmenu"
+        const val SHOPMENU: String = "shopmenu"
         const val MYCARTMENU: String = "GA_Event_ONE_MYCARTMENU"
-        const val WREWARDSMENU: String = "one_wrewardsmenu"
-        const val MYACCOUNTSMENU: String = "one_myaccountsmenu"
+        const val WREWARDSMENU: String = "wrewardsmenu"
+        const val MYACCOUNTSMENU: String = "myaccountsmenu"
         const val MYACCOUNTSSIGNIN: String = "GA_Event_ONE_MYACCOUNTSSIGNIN"
         const val WREWARDSSIGNIN: String = "GA_Event_ONE_WREWARDSSIGNIN"
         const val MYACCOUNTSREGISTER: String = "GA_Event_ONE_MYACCOUNTSREGISTER"
-        const val WREWARDSREGISTER: String = "one_wrewardsregister"
+        const val WREWARDSREGISTER: String = "wrewardsregister"
         const val SHOPSEARCHBAR: String = "GA_Event_ONE_SHOPSEARCHBAR"
         const val SHOPBARCODE: String = "GA_Event_ONE_SHOPBARCODE"
         const val MYCARTEXIT: String = "GA_Event_ONE_MYCARTEXIT"
@@ -24,10 +24,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYCARTADDTOLIST: String = "GA_Event_ONE_MYCARTADDTOLIST"
         const val MYCARTCHECKOUT: String = "GA_Event_ONE_MYCARTCHECKOUT"
         const val MYCARTREMOVEALL: String = "GA_Event_ONE_MYCARTREMOVEALL"
-        const val WREWARDSOVERVIEW: String = "one_wrewardsoverview"
+        const val WREWARDSOVERVIEW: String = "wrewardsoverview"
         const val WREWARDSVOUCHERS: String = "GA_Event_ONE_WREWARDSVOUCHERS"
-        const val WREWARDSSAVINGS: String = "one_wrewardssavings"
-        const val WREWARDSFLIP: String = "one_wrewardsflip"
+        const val WREWARDSSAVINGS: String = "wrewardssavings"
+        const val WREWARDSFLIP: String = "wrewardsflip"
         const val WREWARDSDESCRIPTION_VOUCHERDESCRIPTION: String = "GA_Event_ONE_WREWARDSDESCRIPTION"
         const val MYACCOUNTSSTORECARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_SC_APPLYNOW"
         const val MYACCOUNTSCREDITCARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_CC_APPLYNOW"
@@ -37,7 +37,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSSTORECARDTRANSACTIONS: String = "GA_Event_ONE_MYACCOUNTS_SC_TRANSACTIONS"
         const val MYACCOUNTSSTORECARDSTATEMENTS: String = "GA_Event_ONE_MYACCOUNTS_SC_STATEMENTS"
         const val MYACCOUNTSPERSONALLOANTRANSACTIONS: String = "GA_Event_ONE_MYACCOUNTS_PL_TRANSACTIONS"
-        const val MYACCOUNTSPERSONALLOANSTATEMENTS: String = "one_myaccounts_pl_statements"
+        const val MYACCOUNTSPERSONALLOANSTATEMENTS: String = "myaccounts_pl_statements"
         const val MYACCOUNTSCREDITCARDBPI: String = "GA_Event_ONE_MYACCOUNTS_CC_BPI"
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
@@ -57,6 +57,7 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOP_PRODUCTDETAIL_DIETARY_INFORMATION: String = "shop_pdp_diet"
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
+        const val SHOP_CATEGORIES: String = "shopcategories"
         const val SHOPMYLISTS: String = "GA_Event_ONE_SHOP_MYLISTS"
         const val SHOPMYORDERS: String = "GA_Event_ONE_SHOP_MYORDERS"
         const val BLOCK_CARD_CONFIRM: String = "GA_Event_ONE_MYACCOUNTSBLOCKCARDCONFIRM"
@@ -64,11 +65,11 @@ class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_SET_UP_PASSOCDE: String = "GA_Event_ONE_ABSA_CC_SETUP_PASSOCDE"
         const val ABSA_CC_COMPLETE_SETUP: String = "GA_Event_ONE_ABSA_CC_COMPLETE_SETUP"
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "GA_Event_ONE_CC_LOGIN_WITH_NEW_PASSCODE"
-        const val ABSA_CC_VIEW_STATEMENTS: String = "one_absa_cc_view_statements"
+        const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statements"
         const val ABSA_CC_SHARE_STATEMENT: String = "GA_Event_ONE_ABSA_CC_SHARE_STATEMENT"
-        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "one_absa_cc_view_ind_statements"
+        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "absa_cc_view_ind_statements"
 
-        const val SHOPQS_ADD_TO_CART = "one_shopqs_add_to_cart"
+        const val SHOPQS_ADD_TO_CART = "shopqs_add_to_cart"
         const val SHOP_SCAN_CODE = "GA_Event_ONE_SHOPSCANCODE"
 
         const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
@@ -133,6 +134,7 @@ class FirebaseManagerAnalyticsProperties {
         const val PMA_SC_PAY_CMPLT = "pma_sc_pay_cmplt"
         const val PMA_PL_PAY_CMPLT = "pma_pl_pay_cmplt"
         const val Myaccounts_creditview = "myaccounts_creditview"
+        const val CREDIT_REPORT_CREDITVIEW_COMPLETE = "creditview_complete"
 
         const val MY_ACCOUNT_INBOX = "myaccount_inbox"
         const val CC_MYACCOUNTS_CHAT_ONLINE = "cc_myaccounts_chat_online"
@@ -186,6 +188,8 @@ class FirebaseManagerAnalyticsProperties {
         const val CC_STATEMENTS_CHAT_END = "cc_statements_chat_end"
         const val SC_STATEMENTS_CHAT_END = "sc_statements_chat_end"
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
+
+        const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
     }
 
     class PropertyNames {
@@ -224,6 +228,7 @@ class FirebaseManagerAnalyticsProperties {
             const val activationInitiated = "Initiate Credit Card Activation"
             const val activationRequested = "Request Credit Card Activation"
             const val activationConfirmed = "Confirm Credit Card Activation"
+            const val PRODUCT_ID: String = "product_id"
 
         }
     }
