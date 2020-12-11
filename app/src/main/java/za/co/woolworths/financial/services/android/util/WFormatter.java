@@ -263,8 +263,12 @@ public class WFormatter {
     }
 
     public static String convertDayShortToLong(String day) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
-        return simpleDateFormat.format(simpleDateFormat.parse(day));
+        /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
+        return simpleDateFormat.format(simpleDateFormat.parse(day));*/
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = simpleDateFormat.parse(day);
+        return new SimpleDateFormat("EEEE").format(date);
+
     }
 
     public static String convertMonthShortToLong(String date) throws ParseException {
@@ -284,6 +288,6 @@ public class WFormatter {
             return "";
         return new SimpleDateFormat("EEE dd MMM")
                 .format((new SimpleDateFormat("yyyy-MM-dd"))
-                        .parse("2020-12-15"));
+                        .parse(date));
     }
 }

@@ -89,9 +89,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     private fun cardReceivedOrCardDelivered() {
         manageDeliveryLayout.visibility = View.VISIBLE
         trackDeliveryLayout.visibility = View.VISIBLE
-        statusResponse?.slotDetails?.formattedDate?.let {
-            splitAndApplyFormatedDate(it, statusResponse?.slotDetails?.appointmentDate)
-        }
+        splitAndApplyFormatedDate(statusResponse?.slotDetails?.appointmentDate)
         val manageDeliveryDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_delivery_truck)
         manageDeliveryDrawable?.alpha = 77
         manageDeliveryText.setCompoundDrawablesWithIntrinsicBounds(manageDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
@@ -99,16 +97,16 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         trackDeliveryText.setCompoundDrawablesWithIntrinsicBounds(trackDeliveryDrawable, null, ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_caret_black), null)
     }
 
-    private fun splitAndApplyFormatedDate(formatedDate: String, appointmentDate: String?) {
-        val parts: List<String> = formatedDate.split(" ")
-        deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
+    private fun splitAndApplyFormatedDate(appointmentDate: String?) {
+        val parts: List<String>? = appointmentDate?.split("-")
+        deliveryDayAndTime.text = WFormatter.convertDayShortToLong(appointmentDate).plus(", ").plus(statusResponse?.slotDetails?.slot)
         deliveryStatusTitle.text = bindString(R.string.delivery_confirmation)
         if (WFormatter.checkIfDateisTomorrow(appointmentDate)) {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
             deliveryDate.text = bindString(R.string.tomorrow)
         } else {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
-            deliveryDate.text = parts[1].plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate))
+            deliveryDate.text = parts?.get(2)?.plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate))
         }
     }
 
