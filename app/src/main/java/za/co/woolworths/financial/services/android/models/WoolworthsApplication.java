@@ -114,6 +114,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Sts stsValues;
     private static CreditCardActivation creditCardActivation;
     private static ClickAndCollect clickAndCollect;
+    private static CreditCardDelivery creditCardDelivery;
 
     private Activity mCurrentActivity = null;
 
