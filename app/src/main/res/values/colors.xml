@@ -91,7 +91,7 @@
     <color name="light_gray_background">#60D8D8D8</color>
     <color name="semi_transparent">#20ffffff</color>
     <color name="searchBarHintColor">#20000000</color>
-    <color name="transaction_date_color">#66030303</color>
+    <color name="transaction_date_color">#4c4c4c</color>
     <color name="accounts_sales_page_bg">#F8F8F8</color>
     <color name="offer_title_70">#70222222</color>
     <color name="status_dark_green">#A5B52B</color>
@@ -100,6 +100,8 @@
     <color name="sign_in_register_button_border">#E5E5E5</color>
     <color name="block_card_color" >#424244</color>
     <color name="gray_35">#35D8D8D8</color>
+    <color name="color_yellow_FDE353">#FDE353</color>
+    <color name="color_7f7f7f">#7f7f7f</color>
     <color name="layout_background_gray">#1A000000</color>
     <color name="colorPrimary">@color/white</color>
     <color name="colorPrimaryDark">@color/white</color>
@@ -113,5 +115,11 @@
     <color name="red_color">#D0021B</color>
     <color name="white_desc">#C4C5C7</color>
     <color name="error_color_code">#D0021B</color>
+    <color name="bg_e6e6e6">#E6E6E6</color>
+    <color name="color_F8F8F8">#F8F8F8</color>
+    <color name="color_e1e1e1">#E1E1E1</color>
+    <color name="reward_benefit_background">#2C2C2D</color>
+    <color name="tab_text_color">#80ffffff</color>
+
     <color name="link_text_color">#7F7F7F</color>
 </resources>

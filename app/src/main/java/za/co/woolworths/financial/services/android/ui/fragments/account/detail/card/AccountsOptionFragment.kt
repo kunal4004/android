@@ -336,6 +336,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     override fun showUserOfferActiveProgress() {
+        increaseMyLimitSepartorView?.visibility = GONE
         cancelRetrofitRequest(mCardPresenterImpl?.mStoreCardCall)
         llIncreaseLimitContainer?.isEnabled = false
         relIncreaseMyLimit?.isEnabled = false

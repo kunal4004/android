@@ -439,7 +439,13 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("apiKey") userAgent: String,
-            @Header("sessionToken") sessionToken: String): Call<RootCategories>
+            @Header("sessionToken") sessionToken: String,
+            //Optional params
+            @Header("latitude") lat: Double?,
+            @Header("longitude") long: Double?,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?
+    ): Call<RootCategories>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
@@ -732,7 +738,10 @@ interface ApiInterface {
             @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
             @Path("productId") productId: String,
-            @Query("sku") sku: String): Call<ProductDetailResponse>
+            @Query("sku") sku: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?
+    ): Call<ProductDetailResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
@@ -751,7 +760,10 @@ interface ApiInterface {
             @Header("latitude") latitude: Double,
             @Header("sessionToken") sessionToken: String,
             @Path("productId") productId: String,
-            @Query("sku") sku: String): Call<ProductDetailResponse>
+            @Query("sku") sku: String,
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?
+    ): Call<ProductDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("list")

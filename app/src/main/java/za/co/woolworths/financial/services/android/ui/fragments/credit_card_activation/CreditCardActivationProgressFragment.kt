@@ -46,7 +46,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
         super.onViewCreated(view, savedInstanceState)
         activateCreditCard()
         okGotItButton?.setOnClickListener(this)
-        processingLayoutTitle?.text = resources.getString(R.string.credit_card_activation_processing_title)
+        processRequestTitleTextView?.text = resources.getString(R.string.credit_card_activation_processing_title)
         callToAction?.setOnClickListener(this)
         cancel?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG

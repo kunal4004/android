@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item_dash_banner_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/sixteen_dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/image_dash_banner_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:clickable="false"
+        android:minHeight="@dimen/hundred_and_four_dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_dash_banner_bg" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/list_item_dash_banner_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/five_dp"
+        android:fontFamily="@font/futura_bold_ttf"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_18sp"
+        app:WTextView_font="bold"
+        app:layout_constraintBottom_toTopOf="@id/list_item_dash_banner_subtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="WOOLIES DASH" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/list_item_dash_banner_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/fifteen_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/color_yellow_FDE353"
+        android:textSize="@dimen/text_size_10sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Same Day Delivery. Download Our App." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

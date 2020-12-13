@@ -29,4 +29,5 @@ public class Configs {
     public InAppChat inAppChat;
     public ProductDetailsPage productDetailsPage;
     public CreditView creditView;
+    public DashConfig dashConfig;
 }

@@ -84,7 +84,7 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
         includePMAProcessingSuccess?.visibility = GONE
         includePMAProcessingFailure?.visibility = GONE
         includePMAProcessing?.visibility = VISIBLE
-        processingLayoutTitle?.text = bindString(R.string.processing_your_request)
+        processRequestTitleTextView?.text = bindString(R.string.processing_your_request)
     }
 
     private fun autoConnection() {
@@ -112,6 +112,9 @@ class PMAProcessRequestFragment : ProcessYourRequestFragment(), View.OnClickList
     private fun queryServicePostPayU() {
         startSpinning()
         payMyAccountViewModel.queryServicePostPayU({
+            // check to prevent action_PMAProcessRequestFragment_to_secure3DPMAFragment throws IllegalStateException
+            // TODO:: Find a way to handle path does not exist in navigation graph
+            if ((activity as? PayMyAccountActivity)?.currentFragment !is PMAProcessRequestFragment) return@queryServicePostPayU
             //Success
             fragmentIsVisible()
             stopSpinning(true)

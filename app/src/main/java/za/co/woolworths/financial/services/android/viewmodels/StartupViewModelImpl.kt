@@ -139,7 +139,10 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setHowToSaveLink(howtosaveLink)
                 WoolworthsApplication.setWrewardsTCLink(wrewardsTCLink)
                 WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
-                WoolworthsApplication.setTransUnionLink(transUnionLink)
+            }
+
+            dashConfig?.apply{
+                WoolworthsApplication.getInstance().dashConfig = this
             }
 
             whatsApp?.apply {
@@ -164,7 +167,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             var inAppChat: InAppChat? = inAppChat
             if (inAppChat == null) {
-                inAppChat = InAppChat("","","","", Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()),null, mutableListOf())
+                inAppChat = InAppChat("","","","", Collections("","", "", "", "", mutableListOf()), CustomerService("","", "", "", "", mutableListOf()),null, mutableListOf())
             } else {
                 inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
             }

@@ -4,7 +4,7 @@
     android:id="@+id/availableFundBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/store_card_background"
+    android:background="@drawable/personal_loan_background"
     android:paddingTop="?attr/actionBarSize">
 
     <androidx.constraintlayout.widget.Guideline
