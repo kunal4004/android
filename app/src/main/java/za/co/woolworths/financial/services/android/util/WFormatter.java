@@ -174,13 +174,13 @@ public class WFormatter {
 
     public static String formatMessagingDate(Date validDate) throws ParseException {
         long diff = getDateDiff(validDate);
-        String days = "Today";
+        String day = "Today";
         if (diff == 1) {
-            days = "Yesterday";
+            day = "Yesterday";
         } else if (diff > 1) {
-            days = new SimpleDateFormat("dd MMM").format(validDate);
+            day = new SimpleDateFormat("dd MMM").format(validDate);
         }
-        return days;
+        return day;
     }
 
     private static long getDateDiff(Date validDate) {
@@ -263,8 +263,6 @@ public class WFormatter {
     }
 
     public static String convertDayShortToLong(String day) throws ParseException {
-        /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
-        return simpleDateFormat.format(simpleDateFormat.parse(day));*/
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date date = simpleDateFormat.parse(day);
         return new SimpleDateFormat("EEEE").format(date);

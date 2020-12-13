@@ -4,13 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.Navigator
-import androidx.navigation.Navigator.Extras
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliveryDate
@@ -52,8 +49,8 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL)
                 activity?.apply {
                     supportFragmentManager?.apply {
-                        val creditCardCancelDeliveryFragment = CreditCardCancelDeliveryFragment.newInstance(CreditCardDeliveryActivity.DeliveryStatus.CANCEL_DELIVERY)
-                        creditCardCancelDeliveryFragment.show(this, CreditCardCancelDeliveryFragment::class.java.simpleName)
+                        val creditCardCancelDeliveryFragment = CancelOrToLateDeliveryDialog.newInstance(CreditCardDeliveryActivity.DeliveryStatus.CANCEL_DELIVERY)
+                        creditCardCancelDeliveryFragment.show(this, CancelOrToLateDeliveryDialog::class.java.simpleName)
                     }
                 }
             }
@@ -63,8 +60,8 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 } else {
                     activity?.apply {
                         supportFragmentManager?.apply {
-                            val creditCardCancelDeliveryFragment = CreditCardCancelDeliveryFragment.newInstance(CreditCardDeliveryActivity.DeliveryStatus.EDIT_ADDRESS)
-                            creditCardCancelDeliveryFragment.show(this, CreditCardCancelDeliveryFragment::class.java.simpleName)
+                            val creditCardCancelDeliveryFragment = CancelOrToLateDeliveryDialog.newInstance(CreditCardDeliveryActivity.DeliveryStatus.EDIT_ADDRESS)
+                            creditCardCancelDeliveryFragment.show(this, CancelOrToLateDeliveryDialog::class.java.simpleName)
                         }
                     }
                 }

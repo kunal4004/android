@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CreditCardCancelDeliveryFragment : WBottomSheetDialogFragment(), View.OnClickListener {
+class CancelOrToLateDeliveryDialog : WBottomSheetDialogFragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,7 @@ class CreditCardCancelDeliveryFragment : WBottomSheetDialogFragment(), View.OnCl
     }
 
     companion object {
-        fun newInstance(deliveryStatus: DeliveryStatus) = CreditCardCancelDeliveryFragment().withArgs {
+        fun newInstance(deliveryStatus: DeliveryStatus) = CancelOrToLateDeliveryDialog().withArgs {
             putInt("creditCardStatus", deliveryStatus.value)
         }
     }

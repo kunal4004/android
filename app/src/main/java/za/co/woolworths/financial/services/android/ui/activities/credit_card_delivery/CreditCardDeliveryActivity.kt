@@ -9,7 +9,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_activity.*
-import kotlinx.android.synthetic.main.credit_card_delivery_activity.toolbarText
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
