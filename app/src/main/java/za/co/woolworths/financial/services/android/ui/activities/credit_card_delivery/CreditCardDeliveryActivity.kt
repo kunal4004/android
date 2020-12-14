@@ -53,6 +53,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     }
 
     fun changeToolbarBackground(color: Int) {
+        toolbar?.visibility = View.VISIBLE
         toolbar.setBackgroundColor(bindColor(color))
         Utils.updateStatusBarBackground(this, color)
     }

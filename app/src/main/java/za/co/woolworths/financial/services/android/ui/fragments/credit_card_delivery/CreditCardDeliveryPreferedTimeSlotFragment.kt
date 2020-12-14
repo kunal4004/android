@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.SlotDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.TimeSlot
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.picker.WheelView
@@ -39,6 +40,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.navController = Navigation.findNavController(view)
+        setUpToolBar()
         datePicker?.onItemSelectedListener = this
         timePicker?.onItemSelectedListener = this
         confirm?.setOnClickListener {
@@ -63,6 +65,15 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
 
     fun configureUI() {
         timeslots?.let { setDatePickerData(it) }
+    }
+
+    private fun setUpToolBar() {
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                setToolbarTitle("")
+                changeToolbarBackground(R.color.white)
+            }
+        }
     }
 
     override fun onItemSelected(wheelView: WheelView<Any>?, data: Any?, position: Int) {

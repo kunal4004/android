@@ -35,7 +35,7 @@
         <action
             android:id="@+id/action_to_creditCardDeliveryValidateAddressRequestFragment"
             app:destination="@id/creditCardDeliveryValidateAddressRequestFragment"
-            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment" />
+            app:popUpTo="@+id/creditCardDeliveryAddressDetailsFragment" />
     </fragment>
 
     <fragment
@@ -79,7 +79,7 @@
         <action
             android:id="@+id/action_to_creditCardDeliveryPreferedTimeslotFragment"
             app:destination="@id/creditCardDeliveryPreferedTimeslotFragment"
-            app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment" />
+            app:popUpTo="@+id/creditCardDeliveryValidateAddressRequestFragment" />
     </fragment>
     <fragment
         android:id="@+id/creditCardDeliveryPreferedTimeslotFragment"

@@ -11,10 +11,14 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetails
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -104,6 +108,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                     statusResponse?.recipientDetails = recipientDetails
                     bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
                     if (isEditRecipientActivity == true) {
+                        updateRecipientDetails()
                         activity?.onBackPressed()
                     } else {
                         navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
@@ -122,6 +127,31 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                 if (isRecipientIsThirdPerson) idNumber?.text?.clear()
             }
         }
+    }
+
+    //This API should be Fire and forget
+    private fun updateRecipientDetails() {
+        val addressDetails: AddressDetails? = statusResponse?.let {
+            AddressDetails(it.addressDetails?.deliveryAddress, it.addressDetails?.name, it.addressDetails?.x,
+                    it.addressDetails?.y, it.addressDetails?.province, it.addressDetails?.city, it.addressDetails?.suburb,
+                    it.addressDetails?.businessName, it.addressDetails?.buildingName, it.addressDetails?.street,
+                    it.addressDetails?.complexName, it.addressDetails?.postalCode)
+        }
+        var scheduleDeliveryRequest = ScheduleDeliveryRequest()
+        scheduleDeliveryRequest.let {
+            it.bookingAddress = statusResponse?.let {
+                BookingAddress(it?.recipientDetails?.deliverTo, it?.recipientDetails?.telWork,
+                        it?.recipientDetails?.telCell, it?.addressDetails?.province,
+                        it?.addressDetails?.city, it?.addressDetails?.suburb,
+                        it?.recipientDetails?.deliverTo, it?.addressDetails?.businessName,
+                        it?.addressDetails?.buildingName, it?.addressDetails?.street, it?.addressDetails?.complexName,
+                        it?.addressDetails?.postalCode, it?.recipientDetails?.idNumber, it?.recipientDetails?.isThirdPartyRecipient
+                )
+            }
+            it.addressDetails = addressDetails
+            it.slotDetails = statusResponse?.slotDetails
+        }
+        envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
     private fun showErrorInputField(editText: EditText) {

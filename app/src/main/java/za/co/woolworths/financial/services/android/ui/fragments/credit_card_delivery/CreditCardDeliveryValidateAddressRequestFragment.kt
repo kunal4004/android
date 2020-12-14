@@ -48,6 +48,9 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        bundle?.apply {
+            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+        }
         confirmAddress?.setOnClickListener(this)
         editAddress?.setOnClickListener(this)
         contactCourier?.setOnClickListener(this)
