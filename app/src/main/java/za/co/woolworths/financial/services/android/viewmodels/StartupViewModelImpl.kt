@@ -139,7 +139,10 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setHowToSaveLink(howtosaveLink)
                 WoolworthsApplication.setWrewardsTCLink(wrewardsTCLink)
                 WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
-                WoolworthsApplication.setTransUnionLink(transUnionLink)
+            }
+
+            dashConfig?.apply{
+                WoolworthsApplication.getInstance().dashConfig = this
             }
 
             whatsApp?.apply {

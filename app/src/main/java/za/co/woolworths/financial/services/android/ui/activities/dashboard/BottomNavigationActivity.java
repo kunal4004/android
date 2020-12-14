@@ -29,6 +29,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -81,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
@@ -170,6 +172,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         try {
             super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         } catch (NullPointerException ex) {
+            FirebaseManager.Companion.logException(ex);
         }
     }
 
@@ -179,7 +182,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
         appLinkData = getIntent().getData();
-
         mNavController = FragNavController.newBuilder(savedInstanceState,
                 getSupportFragmentManager(),
                 R.id.frag_container)

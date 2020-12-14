@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
@@ -233,7 +232,7 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
             val messageError =  ErrorMessageDialogFragment.newInstance(errorMessage, bindString(R.string.ok))
             activity?.supportFragmentManager?.let { supportManager -> messageError.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
         }catch (ex: IllegalStateException){
-            Crashlytics.logException(ex)
+            FirebaseManager.logException(ex)
         }
     }
 

@@ -87,6 +87,7 @@
     <dimen name="eighteen_dp">18dp</dimen>
     <dimen name="twenty_six_dp">26dp</dimen>
     <dimen name="fifty_eight_dp">58dp</dimen>
+    <dimen name="three_seventy_five_dp">375dp</dimen>
     <dimen name="thirty_two_dot_five_dp">32.5dp</dimen>
     <dimen name="thirty_four_dot_five_dp">34.5dp</dimen>
 
@@ -114,6 +115,7 @@
     <dimen name="eighty_four_dp">84dp</dimen>
     <dimen name="nineteen_dp">19dp</dimen>
     <dimen name="line_dp">0.5dp</dimen>
+    <dimen name="seventy_four_dp">74dp</dimen>
     <dimen name="seventy_five_dp">75dp</dimen>
     <dimen name="sixty_dp">60dp</dimen>
     <dimen name="thirteen_sp">13sp</dimen>
@@ -161,17 +163,30 @@
     <dimen name="minimum_spend_top_margin_16dp">16dp</dimen>
     <dimen name="voucher_number_barcode_value_text_size_17sp">17sp</dimen>
     <dimen name="voucher_off_value_25sp">25sp</dimen>
+    <dimen name="text_size_12sp">12sp</dimen>
+    <dimen name="text_size_20sp">20sp</dimen>
+    <dimen name="text_size_15sp">15sp</dimen>
+    <dimen name="three_fifty_five_dp">355dp</dimen>
+    <dimen name="hundred_and_four_dp">104dp</dimen>
+    <dimen name="text_size_18sp">18sp</dimen>
+    <dimen name="text_size_10sp">10sp</dimen>
     <dimen name="one_thirty_four">134dp</dimen>
+    <dimen name="fifty_five_sp">55sp</dimen>
+    <dimen name="seven_dp">7dp</dimen>
     <dimen name="twenty_nine_dp">29dp</dimen>
     <dimen name="one_sp">1sp</dimen>
-    <dimen name="seven_dp">7dp</dimen>
     <dimen name="eighty_five_dp">85dp</dimen>
     <dimen name="fourty_five_sp">45sp</dimen>
-    <dimen name="fifty_five_sp">55sp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
+    <dimen name="two_hundred_and_fifty_dp">250dp</dimen>
+    <dimen name="forty_four_dp">44dp</dimen>
+    <dimen name="forty_eight_sp">48sp</dimen>
     <item name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</item>
     <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
     <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
     <item name="availableFundMaximumHeight" type="dimen" format="float">0.7</item>
+    <dimen name="dimen_0_5dp">0.5dp</dimen>
+    <dimen name="four_hundred_dp">400dp</dimen>
+    <dimen name="hundred_and_sixty_four_dp">164dp</dimen>
 </resources>
 

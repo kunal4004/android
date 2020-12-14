@@ -9,9 +9,9 @@ import android.webkit.*
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 
 import kotlinx.android.synthetic.main.secure_3d_webview_fragment.*
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 
 class Secure3DPMAFragment : PMAFragment() {
 
@@ -49,7 +49,7 @@ class Secure3DPMAFragment : PMAFragment() {
                                     view?.let { v -> Navigation.findNavController(v).navigate(R.id.action_secure3DPMAFragment_to_PMA3DSecureProcessRequestFragment) }
                                 })
                             } catch (iex: IllegalArgumentException) {
-                                Crashlytics.log(iex.toString())
+                                FirebaseManager.logException(iex)
                             }
                         }
                         super.onPageFinished(view, url)
