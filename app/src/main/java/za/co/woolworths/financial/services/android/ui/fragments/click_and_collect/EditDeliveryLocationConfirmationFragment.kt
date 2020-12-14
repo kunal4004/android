@@ -44,7 +44,7 @@ class EditDeliveryLocationConfirmationFragment : Fragment() {
         suburbName?.text = if (deliveryType == DeliveryType.STORE_PICKUP) activity?.resources?.getString(R.string.store)+selectedSuburb?.name else selectedSuburb?.name + ", " + selectedProvince?.name
         address?.text = if (deliveryType == DeliveryType.STORE_PICKUP) selectedSuburb?.storeAddress?.let { it.address1 + ", " + it.address2 } else ""
         WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxItemsInfoMessage?.text = context?.getString(R.string.click_and_collect_max_items)?.let { msgTxt -> String.format(msgTxt, it.toString() ) } }
-        maxItemsInfoMessageLayout?.visibility = if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
+        maxItemsInfoMessageLayout?.visibility = if (deliveryType == DeliveryType.STORE_PICKUP && WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed != null) View.VISIBLE else View.GONE
         dismissActivity()
     }
 
