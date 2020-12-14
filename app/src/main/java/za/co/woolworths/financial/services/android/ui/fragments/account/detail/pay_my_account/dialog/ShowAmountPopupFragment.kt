@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -69,7 +69,16 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
 
                 //Disable change button when amount is R0.00
-                changeTextView?.isEnabled = isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())
+                when (isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())) {
+                    true -> {
+                        changeTextView?.alpha= 1.0f
+                        changeTextView?.isEnabled = true
+                    }
+                    false -> {
+                        changeTextView?.alpha= 0.3f
+                        changeTextView?.isEnabled = false
+                    }
+                }
 
                 // set payment method
                 initPaymentMethod()
@@ -104,7 +113,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm?.hideSoftInputFromWindow(cvvEditTextInput.windowToken, 0)
         } catch (ex: Exception) {
-            Crashlytics.log(ex.message)
+            FirebaseManager.logException(ex)
         }
     }
 
@@ -151,6 +160,13 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@ShowAmountPopupFragment)
         }
+
+        with(viewOtherPaymentOptionsTextView) {
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@ShowAmountPopupFragment)
+        }
+
+        viewOtherPaymentOptionsTextView?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
     }
 
     @SuppressLint("DefaultLocale")
@@ -174,6 +190,9 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                         setCVVNumber(cvvEditTextInput?.text?.toString())
                         navController?.navigate(R.id.action_displayVendorCardDetailFragment_to_PMAProcessRequestFragment)
                     }
+
+                    R.id.viewOtherPaymentOptionsTextView -> dismiss()
+
                     else -> return@with
                 }
             } else {
@@ -189,6 +208,12 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                             ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
                         }
                     }
+
+                    R.id.viewOtherPaymentOptionsTextView -> {
+                        ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, getCardDetail())
+                        dismiss()
+                    }
+
                     R.id.pmaConfirmPaymentButton -> {
                         setCVVNumber(cvvEditTextInput?.text?.toString())
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.SECURE_3D, true)

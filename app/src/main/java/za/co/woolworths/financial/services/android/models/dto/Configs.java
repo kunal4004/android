@@ -26,4 +26,6 @@ public class Configs {
     public ClickAndCollect clickAndCollect;
     public InAppChat inAppChat;
     public ProductDetailsPage productDetailsPage;
+    public CreditView creditView;
+    public DashConfig dashConfig;
 }

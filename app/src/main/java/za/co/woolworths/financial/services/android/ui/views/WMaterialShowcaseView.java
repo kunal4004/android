@@ -94,7 +94,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     private long mFadeDurationInMillis = ShowcaseConfig.DEFAULT_FADE_TIME;
     private Handler mHandler;
     private long mDelayInMillis = 1000;
-    private int mBottomMargin = 0;
     private boolean mSingleUse = false; // should display only once
     private PrefsManager mPrefsManager; // used to store state doe single use mode
     List<IShowcaseListener> mListeners; // external listeners who want to observe when we show and dismiss
@@ -332,17 +331,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         updateDismissButton();
 
         if (mTarget != null) {
-
-            /**
-             * If we're on lollipop then make sure we don't draw over the nav bar
-             */
-            if (!mRenderOverNav && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mBottomMargin = getSoftButtonsBarSizePort((Activity) getContext());
-                FrameLayout.LayoutParams contentLP = (FrameLayout.LayoutParams) getLayoutParams();
-
-                if (contentLP != null && contentLP.bottomMargin != mBottomMargin)
-                    contentLP.bottomMargin = mBottomMargin;
-            }
 
             // apply the target position
             Point targetPoint = mTarget.getPoint();

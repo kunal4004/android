@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
  */
 
 public class WRewardsSavingsFragment extends Fragment implements View.OnClickListener {
-	private ScrollingLinearLayoutManager mLayoutManager;
 	private WRewardsSavingsHorizontalScrollAdapter mAdapter;
 	private RecyclerView recyclerView;
 	public VoucherResponse voucherResponse;
@@ -49,7 +49,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	public TextView savingSince;
 	public ImageView savingSinceInfo;
 	public ImageView yearToDateSpendInfo;
-	private TextView tvWRewardInstantSaving;
 	private RelativeLayout wRewardInstantSavingsRelativeLayout;
 	private RelativeLayout savingSinceRelativeLayout;
 	private RelativeLayout quartlyVoucherEarnedRelativeLayout;
@@ -59,33 +58,32 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.wrewards_savings_fragment, container, false);
-		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
-		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-		wRewardsInstantSaving = (TextView) view.findViewById(R.id.wrewardsInstantSavings);
-		quarterlyVoucherEarned = (TextView) view.findViewById(R.id.quarterlyVouchersEarned);
-		yearToDateSpend = (TextView) view.findViewById(R.id.yearToDateSpend);
-		yearToDateSpendText = (TextView) view.findViewById(R.id.yearToDateSpendText);
-		yearToDateSpendInfo = (ImageView) view.findViewById(R.id.yearToDateSpendInfo);
-		noSavingsView = (RelativeLayout) view.findViewById(R.id.noSavingsView);
-		savingSinceLayout = (LinearLayout) view.findViewById(R.id.savingSinceLayout);
-		savingSince = (TextView) view.findViewById(R.id.savingSince);
-		savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
-		tvWRewardInstantSaving = (TextView) view.findViewById(R.id.tvWRewardInstantSaving);
-		wRewardInstantSavingsRelativeLayout = (RelativeLayout)view.findViewById(R.id.wRewardInstantSavingsRelativeLayout);
-		savingSinceRelativeLayout = (RelativeLayout)view.findViewById(R.id.savingSinceRelativeLayout);
-		yearDateSpendRelativeLayout = (RelativeLayout)view.findViewById(R.id.yearDateSpendRelativeLayout);
-		quartlyVoucherEarnedRelativeLayout = (RelativeLayout)view.findViewById(R.id.quartlyVoucherEarnedRelativeLayout);
-		mLayoutManager = new ScrollingLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false, 1500);
+		recyclerView = view.findViewById(R.id.recycler_view);
+		wRewardsInstantSaving = view.findViewById(R.id.wrewardsInstantSavings);
+		quarterlyVoucherEarned = view.findViewById(R.id.quarterlyVouchersEarned);
+		yearToDateSpend = view.findViewById(R.id.yearToDateSpend);
+		yearToDateSpendText = view.findViewById(R.id.yearToDateSpendText);
+		yearToDateSpendInfo = view.findViewById(R.id.yearToDateSpendInfo);
+		noSavingsView = view.findViewById(R.id.noSavingsView);
+		savingSinceLayout = view.findViewById(R.id.savingSinceLayout);
+		savingSince = view.findViewById(R.id.savingSince);
+		savingSinceInfo = view.findViewById(R.id.savingSinceInfo);
+		TextView tvWRewardInstantSaving = view.findViewById(R.id.tvWRewardInstantSaving);
+		wRewardInstantSavingsRelativeLayout = view.findViewById(R.id.wRewardInstantSavingsRelativeLayout);
+		savingSinceRelativeLayout = view.findViewById(R.id.savingSinceRelativeLayout);
+		yearDateSpendRelativeLayout = view.findViewById(R.id.yearDateSpendRelativeLayout);
+		quartlyVoucherEarnedRelativeLayout = view.findViewById(R.id.quartlyVoucherEarnedRelativeLayout);
+		ScrollingLinearLayoutManager mLayoutManager = new ScrollingLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false, 1500);
 
 		Activity activity = getActivity();
-		if (activity!=null) {
+		if (activity != null) {
 			tvWRewardInstantSaving.setText(WRewardBenefitActivity.Companion.convertWRewardCharacter(getString(R.string.wrewards_instant_savings)));
 		}
 		savingSinceInfo.setOnClickListener(this);
 		yearToDateSpendInfo.setOnClickListener(this);
 		recyclerView.setLayoutManager(mLayoutManager);
 		Bundle bundle = getArguments();
-		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
+		voucherResponse = new Gson().fromJson(bundle != null ? bundle.getString("WREWARDS") : null, VoucherResponse.class);
 		if (voucherResponse.tierInfo == null) {
 			displayNoSavingsView();
 		} else {
@@ -170,23 +168,20 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		if (voucherResponse.tierHistoryList == null || voucherResponse.tierHistoryList.size() == 0) {
 			recyclerView.setVisibility(View.GONE);
 			noSavingsView.setVisibility(View.VISIBLE);
-			setUpYearToDateValue();
 
 		} else {
 			recyclerView.setVisibility(View.VISIBLE);
 			noSavingsView.setVisibility(View.GONE);
 			mAdapter = new WRewardsSavingsHorizontalScrollAdapter(getActivity(), voucherResponse.tierHistoryList);
 			recyclerView.setAdapter(mAdapter);
-			setUpYearToDateValue();
 		}
+		setUpYearToDateValue();
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.savingSinceInfo:
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, getString(R.string.savings_info_message));
-				break;
 
 			case R.id.yearToDateSpendInfo:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, getString(R.string.savings_info_message));

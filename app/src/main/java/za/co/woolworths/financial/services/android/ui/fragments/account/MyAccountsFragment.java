@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -34,7 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -80,6 +81,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -95,7 +97,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
+public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -275,22 +277,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
             preferenceRelativeLayout.setOnClickListener(this);
 
-            mSwipeToRefreshAccount.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
-                    loadAccounts(true);
-                }
+            mSwipeToRefreshAccount.setOnRefreshListener(() -> {
+                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
+                loadAccounts(true);
             });
 
-            view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-                        loadAccounts(false);
-                    }
+            view.findViewById(R.id.btnRetry).setOnClickListener(v -> {
+                if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+                    loadAccounts(false);
                 }
-
             });
         }
 
@@ -581,7 +576,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
             showView(loginUserOptionsLayout);
-			showView(creditReportView);
+            if (WoolworthsApplication.getCreditView().isEnabled())
+                showView(creditReportView);
             mUpdateMyAccount.swipeToRefreshAccount(true);
             if (SessionUtilities.getInstance().isC2User())
                 showView(linkedAccountsLayout);
@@ -613,7 +609,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 		hideView(creditReportView);
     }
 
-    private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
+    private OnClickListener btnSignin_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateMyAccount.accountUpdateActive()) return;
@@ -622,7 +618,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     };
 
-    private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
+    private OnClickListener btnRegister_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateMyAccount.accountUpdateActive())
@@ -632,7 +628,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     };
 
-    private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
+    private OnClickListener btnLinkAccounts_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mUpdateMyAccount.accountUpdateActive()) return;
@@ -646,6 +642,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
             case R.id.openMessageActivity:
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNT_INBOX);
                 Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
                 openMessageActivity.putExtra("fromNotification", false);
                 startActivity(openMessageActivity);
@@ -713,7 +710,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 try {
                     signOutFragment.show((activity instanceof BottomNavigationActivity) ? ((BottomNavigationActivity) activity).getSupportFragmentManager() : ((MyAccountActivity) activity).getSupportFragmentManager(), SignOutFragment.class.getSimpleName());
                 } catch (IllegalStateException ex) {
-                    Crashlytics.logException(ex);
+                    FirebaseManager.Companion.logException(ex);
                 }
                 break;
             case R.id.rlProfile:
@@ -755,7 +752,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
 			case R.id.creditReport:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
-				KotlinUtils.Companion.openBrowserWithUrl(WoolworthsApplication.getTransUnionLink(), activity);
+                startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
             default:
                 break;
@@ -833,7 +831,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                             break;
                     }
                 } catch (Exception ex) {
-                    Crashlytics.logException(ex);
+                    FirebaseManager.Companion.logException(ex);
                 }
                 hideProgressBar();
                 mUpdateMyAccount.swipeToRefreshAccount(false);
@@ -1008,14 +1006,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             //One time biometricsWalkthrough
             ScreenManager.presentBiometricWalkthrough(getActivity());
         } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-            if ((getActivity() instanceof MyAccountActivity)) {
-                onSignOut();
-                initialize();
-            } else {
-                onSignOut();
-                clearActivityStoryStack();
-                initialize();
-            }
+            onSignOut();
+            initialize();
         } else {
             initialize();
         }
@@ -1065,50 +1057,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
 	@SuppressLint("StaticFieldLeak")
-	public void showCreditScoreFeatureWalkthrough() {
-		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
-			return;
-
-		Activity activity = getActivity();
-		if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
-		final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
-
-		mScrollView.post(() -> ObjectAnimator.ofInt(mScrollView, "scrollY", contactUs.getBottom()).setDuration(300).start());
-
-		new AsyncTask<Void,Void,Void>(){
-
-			@Override
-			protected Void doInBackground(Void... voids) {
-				Activity activity = getActivity();
-				if (activity != null || isAdded()){
-					activity.runOnUiThread(creditReportIcon::invalidate);
-				}
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				super.onPostExecute(aVoid);
-				if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.creditScore)
-					return;
-				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CREDIT_SCORE)
-						.setTarget(creditReportIcon)
-						.setTitle(R.string.get_a_free_credit_score)
-						.setDescription(R.string.get_your_free_credit_report_desc)
-						.setActionText(R.string.get_started_now)
-						.setImage(R.drawable.ic_statements)
-						.setAction(listener)
-						.setShapePadding(48)
-						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-				getBottomNavigationActivity().walkThroughPromtView.show(activity);
-
-			}
-		}.execute();
-	}
-
-
-	@SuppressLint("StaticFieldLeak")
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
         if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
@@ -1155,7 +1103,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 super.onPostExecute(aVoid);
                 Activity activity = getActivity();
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
-                Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
+                FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
                 getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
                         .setTarget(target)
                         .setTitle(R.string.tips_tricks_view_your_accounts)
@@ -1209,7 +1157,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void onPromptDismiss() {
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             showInAppChat(getActivity());
-            showCreditScoreFeatureWalkthrough();
         }
     }
 
@@ -1286,7 +1233,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     private void showInAppChat(Activity activity) {
         if (!isAdded() || activity == null || mAccountResponse == null || mAccountResponse.accountList == null) return;
-        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || (AppInstanceObject.get().featureWalkThrough.creditScore && AppInstanceObject.get().featureWalkThrough.account)) {
+        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account) {
             ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
         }

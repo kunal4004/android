@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.Menu
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.process_payment_success_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
-import kotlinx.android.synthetic.main.processing_request_fragment.processingLayoutTitle
+import kotlinx.android.synthetic.main.processing_request_fragment.processRequestTitleTextView
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -138,7 +139,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     }
 
     private fun postUPayResult() {
-        processingLayoutTitle?.text = bindString(R.string.processing_your_payment_label)
+        processRequestTitleTextView?.text = bindString(R.string.processing_your_payment_label)
         startSpinning()
         val payUPayResultRequest = payMyAccountViewModel.getPayUPayResultRequest()
         request(payUPayResultRequest?.let { pay -> OneAppService.queryServicePaymentResult(pay) }, object : IGenericAPILoaderView<Any> {
@@ -209,13 +210,17 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
             }
 
             R.id.backToMyAccountButton -> {
-                payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
-                activity?.apply {
-                    setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
-                    finish()
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                }
+                finishActivity()
             }
+        }
+    }
+
+    private fun finishActivity() {
+        payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
+        activity?.apply {
+            setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE, Intent().putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
     }
 
@@ -229,12 +234,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
-                activity?.apply {
-                    setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE)
-                    finish()
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-                }
+                finishActivity()
                 true
             }
             else -> super.onOptionsItemSelected(item)

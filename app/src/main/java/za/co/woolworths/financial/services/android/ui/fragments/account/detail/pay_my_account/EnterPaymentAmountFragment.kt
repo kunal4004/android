@@ -7,9 +7,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.*
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -22,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -29,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private var isDoneButtonEnabled: Boolean = false
-
+    private var isAmountSelected = false // Prevent cursor to jump to front when re-selecting same amount
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +53,28 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         configureToolbar()
         configureButton()
         configureCurrencyEditText()
+        setListeners()
+
+        paymentAmountInputEditText?.requestFocus()
 
         with(payMyAccountViewModel) {
-            totalAmountDueValueTextView?.text = getOverdueAmount()
-            amountOutstandingValueTextView?.text = getTotalAmountDue()
+            totalAmountDueValueTextView?.text = getTotalAmountDue()
+            amountOutstandingValueTextView?.text = getOverdueAmount()
             paymentAmountInputEditText?.setText(getAmountEntered())
+        }
+    }
+
+    private fun setListeners() {
+        totalAmountDueValueTextView?.apply {
+            if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@EnterPaymentAmountFragment)
+        }
+
+        amountOutstandingValueTextView?.apply {
+            if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@EnterPaymentAmountFragment)
         }
     }
 
@@ -84,20 +104,36 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             setDecimals(true)
             setSeparator(".")
 
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
+            transformationMethod = null
+            typeface = getFuturaMediumFont()
+
             addTextChangedListener(object : TextWatcher {
 
                 override fun afterTextChanged(s: Editable) {
-                    with(payMyAccountViewModel) {
-                        continueToPaymentButton?.isEnabled = s.isNotEmpty()
-                        val paymentAmount = getAmountEnteredAfterTextChanged(s.toString())
-                        amountOutstandingValueTextView?.text = paymentAmount
+                    continueToPaymentButton?.isEnabled = s.isNotEmpty()
+                    when (this@apply.text?.toString()) {
+                        payMyAccountViewModel.getOverdueAmount() -> {
+                            when (enterPaymentAmountTextView?.tag) {
+                                R.id.totalAmountDueValueTextView -> selectTotalAmountDue()
+                                else -> selectOutstandingAmount()
+                            }
+                        }
+                        payMyAccountViewModel.getTotalAmountDue() -> selectTotalAmountDue()
+                        else -> clearSelection()
+                    }
+
+                    if (isAmountSelected && !TextUtils.isEmpty(s)) {
+                        setSelection(s.length)
+                        isAmountSelected = false
                     }
                 }
 
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    reducePaymentAmountTextView?.visibility = INVISIBLE
+                    reducePaymentAmountTextView?.visibility = GONE
                 }
             })
 
@@ -141,18 +177,57 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                     })
                 }
             }
+
+            R.id.totalAmountDueValueTextView -> {
+                if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
+                enterPaymentAmountTextView?.tag = R.id.totalAmountDueValueTextView
+                isAmountSelected = true
+                selectTotalAmountDue()
+                paymentAmountInputEditText?.setText(payMyAccountViewModel.getTotalAmountDue())
+            }
+
+            R.id.amountOutstandingValueTextView -> {
+                if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+                enterPaymentAmountTextView?.tag = R.id.amountOutstandingValueTextView
+                isAmountSelected = true
+                selectOutstandingAmount()
+                paymentAmountInputEditText?.setText(payMyAccountViewModel.getOverdueAmount())
+
+            }
         }
+    }
+
+    private fun selectOutstandingAmount() {
+        when (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) {
+            true -> clearSelection()
+            else -> {
+                totalAmountDueValueTextView?.isSelected = false
+                amountOutstandingValueTextView?.isSelected = true
+            }
+        }
+    }
+
+    private fun selectTotalAmountDue() {
+        when (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) {
+            true -> clearSelection()
+            else -> {
+                totalAmountDueValueTextView?.isSelected = true
+                amountOutstandingValueTextView?.isSelected = false
+            }
+        }
+    }
+
+    private fun isZeroAmount(amount: String?) = payMyAccountViewModel.convertRandFormatToInt(amount) == 0
+
+    private fun clearSelection() {
+        totalAmountDueValueTextView?.isSelected = false
+        amountOutstandingValueTextView?.isSelected = false
     }
 
     private fun enteredAmountValidationError(amount: String) {
         continueToPaymentButton?.isEnabled = false
         reducePaymentAmountTextView?.visibility = VISIBLE
         reducePaymentAmountTextView?.text = amount
-    }
-
-    override fun onResume() {
-        super.onResume()
-        showKeyboard()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -189,5 +264,10 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showKeyboard()
     }
 }
