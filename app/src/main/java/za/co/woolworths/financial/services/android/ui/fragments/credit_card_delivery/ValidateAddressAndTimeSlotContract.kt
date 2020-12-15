@@ -4,7 +4,6 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.UserDetailsForCreditCardDelivery
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 
 interface ValidateAddressAndTimeSlotContract {

@@ -97,7 +97,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
     private fun splitAndApplyFormatedDate() {
         statusResponse?.slotDetails?.slot.also { deliveryTime.text = it }
         WFormatter.getDayAndFullDate(statusResponse?.slotDetails?.appointmentDate).also { deliveryDate.text = it }
-        statusResponse?.addressDetails?.deliveryAddress.also { deliveryAddress.text = it }
+        statusResponse?.addressDetails?.searchPhrase.also { deliveryAddress.text = it }
         statusResponse?.recipientDetails?.deliverTo.also { name.text = it }
         if (statusResponse?.bookingreference == null) {
             if (statusResponse?.appointment?.bookingReference != null) {
