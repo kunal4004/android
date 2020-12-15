@@ -61,7 +61,10 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
                 navigateToRecentTransactionActivity(AccountsProductGroupCode.PERSONAL_LOAN.groupCode)
             }
-            R.id.incViewStatementButton -> navigateToStatementActivity()
+            R.id.incViewStatementButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS)
+                navigateToStatementActivity()
+            }
         }
     }
 
