@@ -33,8 +33,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseFragment(), ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView, IProgressAnimationState, View.OnClickListener {
 
     private var navController: NavController? = null
-    var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
-    var possibleAddressResponse: PossibleAddressResponse? = null
+    private var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
+    private var possibleAddressResponse: PossibleAddressResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_validate_address_request_layout, container, false)
@@ -85,7 +85,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
                     restartProgress()
-                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.addressDetails), it, envelopeNumber) }
+                    productOfferingId.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest.addressDetails), it, envelopeNumber) }
                 }
             }
             R.id.retryGetTimeSlots -> {
@@ -99,15 +99,15 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     override fun getValidateAddress() {
         startProgress()
-        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.addressDetails), it, envelopeNumber) }
+        productOfferingId.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest.addressDetails), it, envelopeNumber) }
     }
 
     override fun getAvailableTimeSlots() {
         activity?.apply {
             possibleAddressResponse?.address?.let {
                 restartProgress()
-                envelopeNumber?.let { it1 ->
-                    productOfferingId?.let { it2 ->
+                envelopeNumber.let { it1 ->
+                    productOfferingId.let { it2 ->
                         presenter?.initAvailableTimeSlots(it1, it2, it.x, it.y, KotlinUtils.toShipByDateFormat(KotlinUtils.getDateDaysAfter(2)))
                         statusResponse?.addressDetails?.x = it.x
                         statusResponse?.addressDetails?.y = it.y
@@ -205,7 +205,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         noTimeSlotsAvailableView.visibility = View.GONE
     }
 
-    fun showAvailableTimeSlotsErrorView() {
+    private fun showAvailableTimeSlotsErrorView() {
         stopProgress(true)
         timeSlotsFailureView.visibility = View.VISIBLE
     }
@@ -252,8 +252,8 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
     private fun updateAddressDetails() {
         val scheduleDeliveryRequest = ScheduleDeliveryRequest()
         scheduleDeliveryRequest.let {
-            it.recipientDetails = this.scheduleDeliveryRequest?.recipientDetails
-            it.addressDetails = this.scheduleDeliveryRequest?.addressDetails
+            it.recipientDetails = this.scheduleDeliveryRequest.recipientDetails
+            it.addressDetails = this.scheduleDeliveryRequest.addressDetails
             it.slotDetails = this.scheduleDeliveryRequest.slotDetails
         }
         envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }

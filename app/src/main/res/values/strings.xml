@@ -1929,4 +1929,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="clear_details"><u>Clear Details</u></string>
     <string name="checking_available_slots">Checking For Available Timeslots</string>
     <string name="copy_reference_number"><u>Copy Reference Number</u></string>
+    <string name="failed_cc_delivery_desc">Your Card Delivery Hasn</string>
+    <string name="cancelled_cc_delivery_desc">Your card has been</string>
+    <string name="delivered_cc_delivery_desc">Your card has been</string>
 </resources>

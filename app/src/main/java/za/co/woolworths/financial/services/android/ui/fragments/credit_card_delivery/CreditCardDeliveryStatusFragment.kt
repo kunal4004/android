@@ -21,6 +21,8 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 
 class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
 
+    enum class DateType(val value: Int) { TODAY(0), TOMORROW(1) }
+
     var navController: NavController? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,7 +58,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             CreditCardDeliveryStatus.CARD_DELIVERED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
                 deliveryDate.text = bindString(R.string.card_delivery_delivered)
-                deliveryStatusTitle.text = "Your card has been"
+                deliveryStatusTitle.text = bindString(R.string.delivered_cc_delivery_desc)
                 statusResponse?.slotDetails?.formattedDate?.let {
                     val parts: List<String> = it.split(" ")
                     deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
@@ -65,7 +67,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             CreditCardDeliveryStatus.CANCELLED -> {
                 progressIcon.setBackgroundResource(R.drawable.icon_credit_card_delivery_failed)
                 deliveryDate.text = bindString(R.string.card_delivery_cancelled)
-                deliveryStatusTitle.text = "Your card has been"
+                deliveryStatusTitle.text = bindString(R.string.cancelled_cc_delivery_desc)
                 callTheCallCenter.visibility = View.VISIBLE
                 statusResponse?.slotDetails?.formattedDate?.let {
                     val parts: List<String> = it.split(" ")
@@ -75,7 +77,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             CreditCardDeliveryStatus.CARD_SHREDDED -> {
                 progressIcon.setBackgroundResource(R.drawable.icon_credit_card_delivery_failed)
                 deliveryDate.text = bindString(R.string.card_delivery_failed)
-                deliveryStatusTitle.text = "Your Card Delivery Hasn"
+                deliveryStatusTitle.text = bindString(R.string.failed_cc_delivery_desc)
                 callTheCallCenter.visibility = View.VISIBLE
                 deliveryDayAndTime.text = ""
             }
@@ -101,9 +103,13 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         val parts: List<String>? = appointmentDate?.split("-")
         deliveryDayAndTime.text = WFormatter.convertDayShortToLong(appointmentDate).plus(", ").plus(statusResponse?.slotDetails?.slot)
         deliveryStatusTitle.text = bindString(R.string.delivery_confirmation)
-        if (WFormatter.checkIfDateisTomorrow(appointmentDate)) {
+        val currentDate: Int = WFormatter.checkIfDateisTomorrow(appointmentDate).toInt()
+        if (currentDate == DateType.TOMORROW.value) {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
             deliveryDate.text = bindString(R.string.tomorrow)
+        } else if (currentDate == DateType.TODAY.value) {
+            progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
+            deliveryDate.text = bindString(R.string.bottom_title_today)
         } else {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
             deliveryDate.text = parts?.get(2)?.plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate))

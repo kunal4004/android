@@ -256,10 +256,8 @@ public class WFormatter {
         return m_ISO8601Local.parse(date);
     }
 
-    public static boolean checkIfDateisTomorrow(String date) throws ParseException {
-        if (getDateDiff(convertStringToDate(date)) == 1)
-            return true;
-        return false;
+    public static long checkIfDateisTomorrow(String date) throws ParseException {
+        return getDateDiff(convertStringToDate(date));
     }
 
     public static String convertDayShortToLong(String day) throws ParseException {

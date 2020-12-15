@@ -48,7 +48,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
             R.id.cancelDelivery -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL)
                 activity?.apply {
-                    supportFragmentManager?.apply {
+                    supportFragmentManager.apply {
                         val creditCardCancelDeliveryFragment = CancelOrToLateDeliveryDialog.newInstance(CreditCardDeliveryActivity.DeliveryStatus.CANCEL_DELIVERY)
                         creditCardCancelDeliveryFragment.show(this, CancelOrToLateDeliveryDialog::class.java.simpleName)
                     }
@@ -59,7 +59,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                     navController?.navigate(R.id.creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
                 } else {
                     activity?.apply {
-                        supportFragmentManager?.apply {
+                        supportFragmentManager.apply {
                             val creditCardCancelDeliveryFragment = CancelOrToLateDeliveryDialog.newInstance(CreditCardDeliveryActivity.DeliveryStatus.EDIT_ADDRESS)
                             creditCardCancelDeliveryFragment.show(this, CancelOrToLateDeliveryDialog::class.java.simpleName)
                         }

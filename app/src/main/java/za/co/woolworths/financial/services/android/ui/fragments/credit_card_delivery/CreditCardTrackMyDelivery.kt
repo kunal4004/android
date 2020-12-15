@@ -53,7 +53,7 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
             R.id.referenceNumberText -> {
                 val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText(referenceNumber.text, referenceNumber.text)
-                clipboard?.setPrimaryClip(clip)
+                clipboard.setPrimaryClip(clip)
             }
         }
     }
