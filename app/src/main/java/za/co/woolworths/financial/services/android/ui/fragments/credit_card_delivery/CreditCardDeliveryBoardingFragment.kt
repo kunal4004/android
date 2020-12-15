@@ -10,6 +10,8 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryBoardingFragment : Fragment() {
 
@@ -30,6 +32,9 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
         navController = Navigation.findNavController(view)
         setUpDeliveryNow?.setOnClickListener {
             navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
+        }
+        activateNow?.setOnClickListener {
+            activity?.apply { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
         }
     }
 }

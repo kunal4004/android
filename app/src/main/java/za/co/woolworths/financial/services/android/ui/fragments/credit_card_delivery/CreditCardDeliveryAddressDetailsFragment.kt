@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_lay
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
@@ -84,59 +83,47 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
     private fun onSubmit() {
         if (complexOrBuildingName?.text.toString().trim().isNotEmpty() && streetAddress?.text.toString().trim().isNotEmpty() && suburb?.text.toString().trim().isNotEmpty() && province?.text.toString().trim().isNotEmpty() && postalCode?.text.toString().trim().isNotEmpty() && if (isBusinessAddress) businessName?.text.toString().trim().isNotEmpty() else true) {
-            val bookingAddress = BookingAddress()
-            var isThirdPerson: Boolean? = false;
-            bookingAddress.let {
-                it.businessName = businessName?.text.toString().trim()
+            val recipientDetails = RecipientDetails()
+            val addressDetails = AddressDetails()
+            val jsonRecipientDetails: String? = bundle?.getString("RecipientDetails")
+            if (jsonRecipientDetails == null) {
+                val recipDetails: RecipientDetails? = statusResponse?.recipientDetails
+                if (recipDetails != null) {
+                    recipientDetails?.telCell = recipDetails.telCell
+                    recipientDetails?.telWork = recipDetails.telWork
+                    recipientDetails?.isThirdPartyRecipient = recipDetails.isThirdPartyRecipient
+                    recipientDetails?.deliverTo = recipDetails.deliverTo
+                    recipientDetails?.idNumber = recipDetails.idNumber
+                }
+            } else {
+                val recipient: RecipientDetails = Utils.jsonStringToObject(jsonRecipientDetails, RecipientDetails::class.java) as RecipientDetails
+                recipientDetails?.telCell = recipient.telCell
+                recipientDetails?.telWork = recipient.telWork
+                recipientDetails?.isThirdPartyRecipient = recipient.isThirdPartyRecipient
+                recipientDetails?.deliverTo = recipient.deliverTo
+                recipientDetails?.idNumber = recipient.idNumber
+            }
+
+            val searchPhase = "${streetAddress?.text.toString().trim()} ${suburb?.text.toString().trim()} ${cityOrTown?.text.toString().trim()} ${postalCode?.text.toString().trim()}"
+            addressDetails?.let {
+                it.deliveryAddress = searchPhase
+                it.searchPhrase = searchPhase
+                it.x = ""
+                it.y = ""
                 it.complexName = complexOrBuildingName?.text.toString().trim()
+                it.businessName = businessName?.text.toString().trim()
                 it.buildingName = complexOrBuildingName?.text.toString().trim()
                 it.street = streetAddress?.text.toString().trim()
                 it.suburb = suburb?.text.toString().trim()
-                it.province = province?.text.toString().trim()
                 it.city = cityOrTown?.text.toString().trim()
+                it.province = province?.text.toString().trim()
                 it.postalCode = postalCode?.text.toString().trim()
-                val jsonBokingAddress: String? = bundle?.getString("BookingAddress")
-                if (jsonBokingAddress == null) {
-                    val recipDetails: RecipientDetails? = statusResponse?.recipientDetails
-                    if (recipDetails != null) {
-                        it.telCell = recipDetails.telCell
-                        it.telWork = recipDetails.telWork
-                        it.nameSurname = recipDetails.deliverTo
-                        it.isThirdPartyRecipient = recipDetails.isThirdPartyRecipient
-                        isThirdPerson = recipDetails.isThirdPartyRecipient
-                        it.deliverTo = recipDetails.deliverTo
-                        it.idNumber = recipDetails.idNumber
-                    }
-                } else {
-                    val address: BookingAddress = Utils.jsonStringToObject(jsonBokingAddress, BookingAddress::class.java) as BookingAddress
-                    it.telCell = address.telCell
-                    it.telWork = address.telWork
-                    it.nameSurname = address.deliverTo
-                    it.isThirdPartyRecipient = address.isThirdPartyRecipient
-                    isThirdPerson = address.isThirdPartyRecipient
-                    it.deliverTo = address.deliverTo
-                    it.idNumber = address.idNumber
-                }
             }
-            scheduleDeliveryRequest = ScheduleDeliveryRequest()
-            scheduleDeliveryRequest.bookingAddress = bookingAddress
-            val addressDetails = AddressDetails(
-                    getDeliveryAddress(bookingAddress),
-                    bookingAddress.deliverTo,
-                    "",
-                    "",
-                    province?.text.toString().trim(),
-                    cityOrTown?.text.toString().trim(),
-                    suburb?.text.toString().trim(),
-                    businessName?.text.toString().trim(),
-                    complexOrBuildingName?.text.toString().trim(),
-                    streetAddress?.text.toString().trim(),
-                    complexOrBuildingName?.text.toString().trim(),
-                    postalCode?.text.toString().trim())
 
+            scheduleDeliveryRequest = ScheduleDeliveryRequest()
+            scheduleDeliveryRequest.recipientDetails = recipientDetails
             scheduleDeliveryRequest.addressDetails = addressDetails
             statusResponse?.addressDetails = addressDetails
-            val recipientDetails = RecipientDetails(bookingAddress.telWork, bookingAddress.telCell, bookingAddress.deliverTo, bookingAddress.idNumber, isThirdPerson)
             statusResponse?.recipientDetails = recipientDetails
 
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
@@ -179,13 +166,5 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
                 cityOrTownErrorMsg.visibility = visible
             }
         }
-    }
-
-    private fun getDeliveryAddress(bookingAddress: BookingAddress?): String {
-        var searchPhase = ""
-        bookingAddress?.let {
-            searchPhase = "${it.street} ${it.suburb} ${it.city} ${it.postalCode}"
-        }
-        return searchPhase
     }
 }

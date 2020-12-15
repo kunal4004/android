@@ -85,7 +85,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
                     restartProgress()
-                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it, envelopeNumber) }
+                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.addressDetails), it, envelopeNumber) }
                 }
             }
             R.id.retryGetTimeSlots -> {
@@ -99,7 +99,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     override fun getValidateAddress() {
         startProgress()
-        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it, envelopeNumber) }
+        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.addressDetails), it, envelopeNumber) }
     }
 
     override fun getAvailableTimeSlots() {
@@ -250,22 +250,18 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     //This API should be Fire and forget
     private fun updateAddressDetails() {
-        val addressDetails: AddressDetails? = scheduleDeliveryRequest?.bookingAddress?.let {
-            AddressDetails(statusResponse?.addressDetails?.deliveryAddress, statusResponse?.addressDetails?.name, statusResponse?.addressDetails?.x,
-                    statusResponse?.addressDetails?.y, it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode)
-        }
         val scheduleDeliveryRequest = ScheduleDeliveryRequest()
         scheduleDeliveryRequest.let {
-            it.bookingAddress = this.scheduleDeliveryRequest?.bookingAddress
-            it.addressDetails = addressDetails
+            it.recipientDetails = this.scheduleDeliveryRequest?.recipientDetails
+            it.addressDetails = this.scheduleDeliveryRequest?.addressDetails
             it.slotDetails = this.scheduleDeliveryRequest.slotDetails
         }
         envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
-    private fun getSearchPhase(bookingAddress: BookingAddress?): String {
+    private fun getSearchPhase(addressDetails: AddressDetails?): String {
         var searchPhase = ""
-        bookingAddress?.let {
+        addressDetails?.let {
             searchPhase = "${it.street} ${it.suburb} ${it.city} ${it.postalCode}"
         }
         return searchPhase

@@ -1,15 +1,15 @@
 package za.co.woolworths.financial.services.android.models.dto.credit_card_delivery
 
 data class AddressDetails(
-        var deliveryAddress: String?,
-        var name: String?,
-        var x: String?,
-        var y: String?,
-        var province: String?,
-        var city: String?,
-        var suburb: String?,
-        var businessName: String?,
-        var buildingName: String?,
-        var street: String?,
-        var complexName: String?,
-        var postalCode: String?)
+        var deliveryAddress: String? = null,
+        var searchPhrase: String? = null,
+        var x: String? = null,
+        var y: String? = null,
+        var complexName: String? = null,
+        var businessName: String? = null,
+        var buildingName: String? = null,
+        var street: String? = null,
+        var suburb: String? = null,
+        var city: String? = null,
+        var province: String? = null,
+        var postalCode: String? = null)

@@ -12,7 +12,6 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_layout.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.BookingAddress
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -25,7 +24,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     var navController: NavController? = null
-    private var bookingAddress: BookingAddress = BookingAddress()
+    private var recipientDetails = RecipientDetails()
     private lateinit var listOfInputFields: List<EditText>
     private var isRecipientIsThirdPerson: Boolean = false
     private var isEditRecipientActivity: Boolean? = false
@@ -95,16 +94,15 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         when (v?.id) {
             R.id.confirm -> {
                 if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
-                    bookingAddress.let {
-                        it.deliverTo = recipientName?.text.toString().trim()
-                        it.telCell = cellphoneNumber?.text.toString().trim()
-                        it.telWork = alternativeNumber?.text.toString().trim()
-                        it.isThirdPartyRecipient = isRecipientIsThirdPerson
+                    recipientDetails.let {
+                        it?.deliverTo = recipientName?.text.toString().trim()
+                        it?.telCell = cellphoneNumber?.text.toString().trim()
+                        it?.telWork = alternativeNumber?.text.toString().trim()
+                        it?.isThirdPartyRecipient = isRecipientIsThirdPerson
                         if (isRecipientIsThirdPerson)
-                            it.idNumber = idNumber?.text.toString().trim()
+                            it?.idNumber = idNumber?.text.toString().trim()
                     }
-                    bundle?.putString("BookingAddress", Utils.toJson(bookingAddress))
-                    val recipientDetails = RecipientDetails(bookingAddress.telWork, bookingAddress.telCell, bookingAddress.deliverTo, bookingAddress.idNumber, bookingAddress.isThirdPartyRecipient)
+                    bundle?.putString("RecipientDetails", Utils.toJson(recipientDetails))
                     statusResponse?.recipientDetails = recipientDetails
                     bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
                     if (isEditRecipientActivity == true) {
@@ -132,22 +130,14 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     //This API should be Fire and forget
     private fun updateRecipientDetails() {
         val addressDetails: AddressDetails? = statusResponse?.let {
-            AddressDetails(it.addressDetails?.deliveryAddress, it.addressDetails?.name, it.addressDetails?.x,
-                    it.addressDetails?.y, it.addressDetails?.province, it.addressDetails?.city, it.addressDetails?.suburb,
-                    it.addressDetails?.businessName, it.addressDetails?.buildingName, it.addressDetails?.street,
-                    it.addressDetails?.complexName, it.addressDetails?.postalCode)
+            AddressDetails(it.addressDetails?.deliveryAddress, it.addressDetails?.deliveryAddress, it.addressDetails?.x,
+                    it.addressDetails?.y, it.addressDetails?.complexName, it.addressDetails?.businessName,
+                    it.addressDetails?.buildingName, it.addressDetails?.street, it.addressDetails?.suburb, it.addressDetails?.city,
+                    it.addressDetails?.province, it.addressDetails?.postalCode)
         }
         var scheduleDeliveryRequest = ScheduleDeliveryRequest()
         scheduleDeliveryRequest.let {
-            it.bookingAddress = statusResponse?.let {
-                BookingAddress(it?.recipientDetails?.deliverTo, it?.recipientDetails?.telWork,
-                        it?.recipientDetails?.telCell, it?.addressDetails?.province,
-                        it?.addressDetails?.city, it?.addressDetails?.suburb,
-                        it?.recipientDetails?.deliverTo, it?.addressDetails?.businessName,
-                        it?.addressDetails?.buildingName, it?.addressDetails?.street, it?.addressDetails?.complexName,
-                        it?.addressDetails?.postalCode, it?.recipientDetails?.idNumber, it?.recipientDetails?.isThirdPartyRecipient
-                )
-            }
+            it.recipientDetails = recipientDetails
             it.addressDetails = addressDetails
             it.slotDetails = statusResponse?.slotDetails
         }
