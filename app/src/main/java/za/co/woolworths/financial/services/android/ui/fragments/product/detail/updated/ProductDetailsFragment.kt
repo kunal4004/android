@@ -818,6 +818,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 item.let {
                     listOfItems.add(it)
                 }
+                scrollView?.fullScroll(View.FOCUS_UP)
                 NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
             }
 
