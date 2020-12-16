@@ -77,7 +77,7 @@ class CreditReportTUAdapter(val context: Activity) : RecyclerView.Adapter<Recycl
         val spanableNote = SpannableString(context.getString(R.string.privacy_policy_note_2))
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
-                KotlinUtils.openBrowserWithUrl(WoolworthsApplication.getCreditView().transUnionPrivacyPolicyUrl, context)
+                KotlinUtils.openBrowserWithUrl(WoolworthsApplication.getCreditView()?.transUnionPrivacyPolicyUrl, context)
             }
 
             override fun updateDrawState(ds: TextPaint) {

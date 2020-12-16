@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Lifecycle;
@@ -71,8 +72,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private static Context context;
     private static Context mContextApplication;
+    @Nullable
     private static WhatsApp whatsApp;
+    @NonNull
     private static List<ContactUs> mContactUs;
+    @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
     private UserManager mUserManager;
@@ -108,6 +112,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static boolean isApplicationInForeground = false;
     private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
     private static QuickShopDefaultValues quickShopDefaultValues;
+    @Nullable
     private static InstantCardReplacement instantCardReplacement;
     private static VirtualTempCard virtualTempCard;
     private static ArrayList<String> whitelistedDomainsForQRScanner;
@@ -198,11 +203,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.wrewardsTCLink = wrewardsTCLink;
     }
 
+    @Nullable
     public static ApplyNowLinks getApplyNowLink() {
         return applyNowLink;
     }
 
-    public static void setApplyNowLink(ApplyNowLinks applyNowLink) {
+    public static void setApplyNowLink(@Nullable ApplyNowLinks applyNowLink) {
         WoolworthsApplication.applyNowLink = applyNowLink;
     }
 
@@ -492,6 +498,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.quickShopDefaultValues = quickShopDefaultValues;
     }
 
+    @Nullable
     public static QuickShopDefaultValues getQuickShopDefaultValues() {
         return quickShopDefaultValues;
     }
@@ -503,10 +510,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         this.mCurrentActivity = mCurrentActivity;
     }
 
-    public static void setInstantCardReplacement(InstantCardReplacement instantCardReplacement) {
+    public static void setInstantCardReplacement(@Nullable InstantCardReplacement instantCardReplacement) {
         WoolworthsApplication.instantCardReplacement = instantCardReplacement;
     }
 
+    @Nullable
     public static InstantCardReplacement getInstantCardReplacement() {
         return instantCardReplacement;
     }
@@ -519,14 +527,16 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.virtualTempCard = virtualTempCard;
     }
 
+    @NonNull
     public static ArrayList<String> getWhitelistedDomainsForQRScanner() {
         return whitelistedDomainsForQRScanner;
     }
 
     public static void setWhitelistedDomainsForQRScanner(ArrayList<String> whitelistedDomainsForQRScanner) {
-        WoolworthsApplication.whitelistedDomainsForQRScanner = whitelistedDomainsForQRScanner;
+        WoolworthsApplication.whitelistedDomainsForQRScanner = whitelistedDomainsForQRScanner.isEmpty() ? new ArrayList<>(0) : whitelistedDomainsForQRScanner;
     }
 
+    @NonNull
     public static Sts getStsValues() {
         return stsValues != null ? stsValues : new Sts();
     }
@@ -535,11 +545,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.stsValues = stsValues;
     }
 
+    @Nullable
     public static CreditCardActivation getCreditCardActivation() {
         return creditCardActivation;
     }
 
-    public static void setCreditCardActivation(CreditCardActivation creditCardActivation) {
+    public static void setCreditCardActivation(@Nullable CreditCardActivation creditCardActivation) {
         WoolworthsApplication.creditCardActivation = creditCardActivation;
     }
 
@@ -547,6 +558,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.whatsApp = whatsApp;
     }
 
+    @Nullable
     public static WhatsApp getWhatsAppConfig() {
         return whatsApp;
     }
@@ -559,6 +571,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return mContactUs;
     }
 
+    @Nullable
     public static ClickAndCollect getClickAndCollect() {
         return clickAndCollect;
     }
@@ -567,6 +580,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		mPayMyAccount = payMyAccount;
 	}
 
+	@Nullable
 	public static PayMyAccount getPayMyAccountOption() {
 		return mPayMyAccount;
 	}
@@ -591,6 +605,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
     }
 
+    @Nullable
     public static ProductDetailsPage getProductDetailsPage() {
         return productDetailsPage;
     }
@@ -599,6 +614,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.productDetailsPage = productDetailsPage;
     }
 
+    @Nullable
     public static CreditView getCreditView() {
         return creditView;
     }
