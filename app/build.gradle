@@ -10,7 +10,7 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 android {
 
     def major = "7"
-    def minor = "6"
+    def minor = "7"
     def fix = "0"
     def jobNumber = 465
 
@@ -89,7 +89,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 150
+            jobNumber = 151
         }
 
         defaultConfig {
