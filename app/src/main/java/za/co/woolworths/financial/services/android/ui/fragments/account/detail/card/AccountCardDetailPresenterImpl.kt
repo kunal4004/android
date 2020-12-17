@@ -164,7 +164,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                     }
                 }
 
-                is CreditCardDeliveryStatusResponse->{
+                is CreditCardDeliveryStatusResponse -> {
                     when (httpCode) {
                         200 -> {
                             mainView?.onGetCreditCardDeliveryStatusSuccess(this)
@@ -265,8 +265,12 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         envelopeNumber?.let { model?.queryServiceGetCreditCardDeliveryStatus(getProductOfferingId().toString(), it, this) }
     }
 
+    fun getCreditCardDeliveryStatus(envelopeNumber: String?, productOfferingId: String) {
+        envelopeNumber?.let { model?.queryServiceGetCreditCardDeliveryStatus(productOfferingId, it, this) }
+    }
+
     override fun isCreditCardSection(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) ==  AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
     }
 
     override fun navigateToPayMyAccountActivity() {
@@ -275,7 +279,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun getStoreCardBlockType(): Boolean {
         val storeCardsData = getStoreCardResponse()?.storeCardsData
-        if (storeCardsData == null || storeCardsData?.primaryCards.isNullOrEmpty()) {
+        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
             return false
         }
         val primaryCard = storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)

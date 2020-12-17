@@ -47,17 +47,25 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
+import za.co.woolworths.financial.services.android.models.dto.DebitOrder;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus;
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
@@ -71,6 +79,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
@@ -99,7 +109,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
-public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
+public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -160,6 +170,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private FloatingActionButton chatWithAgentFloatingButton;
     private RelativeLayout creditReportView;
     RelativeLayout contactUs;
+    AccountCardDetailPresenterImpl mCardPresenterImpl = null;
+    ISetUpDeliveryNowLIstner mSetUpDeliveryListner = null;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -184,6 +196,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ACCOUNTSEVENTSAPPEARED, arguments);
         setHasOptionsMenu(false);
+        mCardPresenterImpl = new AccountCardDetailPresenterImpl(this, new AccountCardDetailModelImpl());
     }
 
     @Override
@@ -1048,26 +1061,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     public void showFeatureWalkthroughPrompts() {
-        showSetUpDeliveryPopUp();
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             isPromptsShown = true;
             showFeatureWalkthroughAccounts(unavailableAccounts);
         }
     }
 
-    /*@Override
-    public void executeCreditCardDeliveryStatusService() {
-        mCardPresenterImpl.getCreditCardDeliveryStatus(mAccountResponse.accountList.get(0).cards.get(0).envelopeNumber);
-    }*/
-
     private void showSetUpDeliveryPopUp() {
-        if (mAccountResponse.accountList.get(0).cards.get(0) != null) {
-            if (mAccountResponse.accountList.get(0).cards.get(0).cardStatus != null) {
-                if (mAccountResponse.accountList.get(0).cards.get(0).cardStatus.equals("PLC") && (mAccountResponse.accountList.get(0).cards.get(0).envelopeNumber != null)) {
-                    JWTDecodedModel jwtDecoded = SessionUtilities.getInstance().getJwt();
-                    String name = jwtDecoded.name.get(0);
-                    SetUpDeliveryNowDialog.Companion.newInstance(name).show(getActivity()
-                            .getSupportFragmentManager(), SetUpDeliveryNowDialog.class.getSimpleName());
+        if (mAccountResponse != null && !mAccountResponse.accountList.isEmpty()) {
+            Account account = mAccountResponse.accountList.get(0);
+            if (account != null && account.cards.get(0) != null) {
+                if (account.cards.get(0).cardStatus != null) {
+                    if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
+                        executeCreditCardDeliveryStatusService();
+                    }
                 }
             }
         } else {
@@ -1180,8 +1187,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void onPromptDismiss() {
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-            // show setup delivery.
-            //showSetUpDeliveryPopUp();
+            showSetUpDeliveryPopUp();
             showInAppChat(getActivity());
         }
     }
@@ -1264,5 +1270,168 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
         }
+    }
+
+    @Override
+    public void handleUnknownHttpCode(@org.jetbrains.annotations.Nullable String description) {
+
+    }
+
+    @Override
+    public void handleSessionTimeOut(@org.jetbrains.annotations.Nullable String stsParams) {
+
+    }
+
+    @Override
+    public void showStoreCardProgress() {
+
+    }
+
+    @Override
+    public void hideStoreCardProgress() {
+
+    }
+
+    @Override
+    public void navigateToGetTemporaryStoreCardPopupActivity(@NotNull StoreCardsResponse storeCardResponse) {
+
+    }
+
+    @Override
+    public void navigateToDebitOrderActivity(@NotNull DebitOrder debitOrder) {
+
+    }
+
+    @Override
+    public void navigateToBalanceProtectionInsurance(@org.jetbrains.annotations.Nullable String accountInfo) {
+
+    }
+
+    @Override
+    public void setBalanceProtectionInsuranceState(boolean coveredText) {
+
+    }
+
+    @Override
+    public void displayCardHolderName(@org.jetbrains.annotations.Nullable String name) {
+
+    }
+
+    @Override
+    public void hideUserOfferActiveProgress() {
+
+    }
+
+    @Override
+    public void showUserOfferActiveProgress() {
+
+    }
+
+    @Override
+    public void disableContentStatusUI() {
+
+    }
+
+    @Override
+    public void enableContentStatusUI() {
+
+    }
+
+    @Override
+    public void handleCreditLimitIncreaseTagStatus(@NotNull OfferActive offerActive) {
+
+    }
+
+    @Override
+    public void hideProductNotInGoodStanding() {
+
+    }
+
+    @Override
+    public void onOfferActiveSuccessResult() {
+
+    }
+
+    @Override
+    public void navigateToLoanWithdrawalActivity() {
+
+    }
+
+    @Override
+    public void navigateToPaymentOptionActivity() {
+
+    }
+
+    @Override
+    public void navigateToPayMyAccountActivity() {
+
+    }
+
+    @Override
+    public void onGetCreditCArdTokenSuccess(@NotNull CreditCardTokenResponse creditCardTokenResponse) {
+    }
+
+    @Override
+    public void onGetCreditCardTokenFailure() {
+    }
+
+    @Override
+    public void showGetCreditCardActivationStatus(@NotNull CreditCardActivationState status) {
+
+    }
+
+    @Override
+    public void executeCreditCardTokenService() {
+
+    }
+
+    @Override
+    public void stopCardActivationShimmer() {
+
+    }
+
+    @Override
+    public void executeCreditCardDeliveryStatusService() {
+        mCardPresenterImpl.getCreditCardDeliveryStatus(mAccountResponse.accountList.get(0).cards.get(0).envelopeNumber, String.valueOf(mAccountResponse.accountList.get(0).productOfferingId));
+    }
+
+    @Override
+    public void onGetCreditCardDeliveryStatusSuccess(@NotNull CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
+        if (creditCardDeliveryStatusResponse.getStatusResponse().getDeliveryStatus().getStatusDescription().equalsIgnoreCase(CreditCardDeliveryStatus.CARD_RECEIVED.name())) {
+            mSetUpDeliveryListner = () -> redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
+            JWTDecodedModel jwtDecoded = SessionUtilities.getInstance().getJwt();
+            String name = jwtDecoded.name.get(0);
+            SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(name, mSetUpDeliveryListner);
+            setUpDeliveryNowDialog.show(getActivity()
+                    .getSupportFragmentManager(), SetUpDeliveryNowDialog.class.getSimpleName());
+        }
+    }
+
+    @Override
+    public void onGetCreditCardDeliveryStatusFailure() {
+    }
+
+    @Override
+    public void showGetCreditCardDeliveryStatus(@NotNull DeliveryStatus deliveryStatus) {
+    }
+
+    @Override
+    public void showOnStoreCardFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+
+    }
+
+    @Override
+    public void handleStoreCardCardsSuccess(@NotNull StoreCardsResponse storeCardResponse) {
+
+    }
+
+    @Override
+    public void showUnBlockStoreCardCardDialog() {
+
+    }
+
+    @Override
+    public void navigateToMyCardDetailActivity(@NotNull StoreCardsResponse storeCardResponse, boolean requestUnblockStoreCardCall) {
+
     }
 }

@@ -7,24 +7,23 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.cancel
 import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.*
+import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
-class SetUpDeliveryNowDialog : WBottomSheetDialogFragment(), View.OnClickListener {
+class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var deliveredToName: String = ""
+    var mSetUpDeliveryListner: ISetUpDeliveryNowLIstner? = null
+
+    constructor(deliveredToName: String, mSetUpDeliveryListner: ISetUpDeliveryNowLIstner?) : this() {
+        this.deliveredToName = deliveredToName
+        this.mSetUpDeliveryListner = mSetUpDeliveryListner
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreate(savedInstanceState)
-        deliveredToName = arguments?.getString("deliveredToName").toString()
         return inflater.inflate(R.layout.credit_card_setup_delivery_now, container, false)
-    }
-
-    companion object {
-        fun newInstance(name: String) = SetUpDeliveryNowDialog().withArgs {
-            putString("deliveredToName", name)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,6 +44,7 @@ class SetUpDeliveryNowDialog : WBottomSheetDialogFragment(), View.OnClickListene
                 dismiss()
             }
             R.id.setUpDeliveryNow -> {
+                mSetUpDeliveryListner?.onSetUpDeliveryNowButtonClick()
                 dismiss()
             }
         }
