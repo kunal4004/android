@@ -98,22 +98,27 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (isPermissionGranted && Utils.isLocationEnabled(context)) {
                 fusedLocationClient?.lastLocation?.addOnSuccessListener {
                     this@DepartmentsFragment.location = it
-                    executeDepartmentRequest()
+                    initializeRootCategoryList()
                 }
             } else  {
-                if(!checkLocationPermission() && !isLocationModalShown) {
-                    executeDepartmentRequest()
+                // when permission granted and location is not enabled
+                if(isPermissionGranted) {
+                    initializeRootCategoryList()
                 }
-                if (!Utils.isDeliverySelectionModalShown()) {
-                    showDeliveryOptionDialog()
+                //When Location permission not granted.
+                else if(!checkLocationPermission() && !isLocationModalShown) {
+                    initializeRootCategoryList()
                 }
             }
         } else if (isFragmentVisible) {
+            initializeRootCategoryList()
+        }
+    }
 
-            executeDepartmentRequest()
-            if (!Utils.isDeliverySelectionModalShown()) {
-                showDeliveryOptionDialog()
-            }
+    private fun initializeRootCategoryList() {
+        if(parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+        if (!Utils.isDeliverySelectionModalShown()) {
+            showDeliveryOptionDialog()
         }
     }
 
