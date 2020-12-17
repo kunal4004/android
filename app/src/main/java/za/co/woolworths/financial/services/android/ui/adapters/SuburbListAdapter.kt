@@ -45,12 +45,12 @@ class SuburbListAdapter(private var suburbList: ArrayList<Suburb>, var listener:
                     when (deliveryType) {
                         DeliveryType.DELIVERY -> {
                             name.paintFlags = if (!it.suburbDeliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
-                            name.setTextColor(if (!it.suburbDeliverable) bindColor(R.color.black_50) else bindColor(R.color.black))
+                            name.setTextColor(if (!it.suburbDeliverable) bindColor(R.color.black_50) else bindColor(R.color.black60))
                             itemView.alpha = if (!it.suburbDeliverable) 0.5f else 1f
                         }
                         DeliveryType.STORE_PICKUP -> {
                             name.paintFlags = if (!it.storeDeliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
-                            name.setTextColor(if (!it.storeDeliverable) bindColor(R.color.black_50) else bindColor(R.color.black))
+                            name.setTextColor(if (!it.storeDeliverable) bindColor(R.color.black_50) else bindColor(R.color.black60))
                             itemView.alpha = if (!it.storeDeliverable) 0.5f else 1f
                         }
                     }
