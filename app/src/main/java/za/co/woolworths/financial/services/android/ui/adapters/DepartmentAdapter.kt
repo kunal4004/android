@@ -63,7 +63,13 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             val dashBanner = RootCategory()
             dashBanner.viewType = RootCategoryViewType.DASH_BANNER
             dash.bannerText = bannerText
-            rootCategories?.add(1, dashBanner)
+            rootCategories?.apply {
+                get(1)?.let{
+                    if(size >= 2 && it.viewType != RootCategoryViewType.DASH_BANNER) {
+                        add(1, dashBanner)
+                    }
+                }
+            }
             mlRootCategories = mutableListOf()
             mlRootCategories = rootCategories
             mDashBanner = dash
