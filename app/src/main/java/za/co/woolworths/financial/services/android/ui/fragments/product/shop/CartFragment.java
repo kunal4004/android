@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -172,6 +174,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private NestedScrollView nestedScrollView;
 	public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
 	public ProductCountMap productCountMap;
+	public ConstraintLayout itemLimitsBanner;
+	public TextView itemLimitsMessage;
+	public TextView itemLimitsCounter;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -223,6 +228,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		orderTotalLayout = view.findViewById(R.id.orderTotalLayout);
 		orderTotalLayout.setOnClickListener(this);
 		nestedScrollView = view.findViewById(R.id.nestedScrollView);
+		itemLimitsBanner = view.findViewById(R.id.itemLimitsBanner);
+		itemLimitsMessage = view.findViewById(R.id.itemLimitsMessage);
+		itemLimitsCounter = view.findViewById(R.id.itemLimitsCounter);
+
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (lastDeliveryLocation != null) {
 			setDeliveryLocation(lastDeliveryLocation);
@@ -458,6 +467,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			updateOrderTotal();
 			isMaterialPopUpClosed = false;
 			showRedeemVoucherFeatureWalkthrough();
+			setItemLimitsBanner();
 		} else {
 			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
@@ -479,6 +489,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		this.orderSummary = cartResponse.orderSummary;
 		this.voucherDetails = cartResponse.voucherDetails;
 		this.productCountMap = cartResponse.productCountMap;
+		setItemLimitsBanner();
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
 			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
@@ -613,6 +624,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 		onChangeQuantityComplete();
+		setItemLimitsBanner();
 	}
 
 	private CommerceItem getUpdatedCommerceItem(ArrayList<CartItemGroup> cartItems, String commerceId) {
@@ -682,6 +694,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								cartProductAdapter.setEditMode(true);
 							}
 							Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+							setItemLimitsBanner();
 							break;
 						case 440:
 							//TODO:: improve error handling
@@ -1549,5 +1562,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onPromoDiscountInfo() {
 		KotlinUtils.Companion.showGeneralInfoDialog(requireActivity().getSupportFragmentManager(), getString(R.string.promo_discount_dialog_desc), getString(R.string.promo_discount_dialog_title), getString(R.string.got_it), 0);
+	}
+
+	private void setItemLimitsBanner() {
+		Activity activity = getActivity();
+		if (activity != null && isAdded()) {
+			CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, Utils.getPreferredDeliveryLocation().suburb.storePickup);
+		}
 	}
 }

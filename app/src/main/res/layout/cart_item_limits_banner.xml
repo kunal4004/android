@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemLimitsBanner"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/fifty_dp"
+    android:paddingLeft="@dimen/sixteen_dp"
+    android:paddingRight="@dimen/sixteen_dp"
+    android:visibility="gone"
+    >
+
+    <TextView
+        android:id="@+id/itemLimitsMessage"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:letterSpacing="0.1"
+        android:paddingRight="@dimen/sixteen_dp"
+        android:text="You have reached the 42 item limit"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/itemLimitsCounter"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_limit_percentage_text_bg"
+        android:letterSpacing="0.1"
+        android:padding="@dimen/seven_dp"
+        android:text="12/24"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/itemLimitsMessage"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
