@@ -485,8 +485,8 @@ class KotlinUtils {
             }
         }
 
-        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "") {
-            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText)
+        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "", infoIcon: Int = 0) {
+            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
             fragmentManager.let { fragmentTransaction -> dialog.show(fragmentTransaction, GeneralInfoDialogFragment::class.java.simpleName) }
         }
 

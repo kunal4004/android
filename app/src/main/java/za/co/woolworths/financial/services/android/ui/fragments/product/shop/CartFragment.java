@@ -68,6 +68,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
@@ -170,6 +171,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private RelativeLayout orderTotalLayout;
 	private NestedScrollView nestedScrollView;
 	public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
+	public ProductCountMap productCountMap;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -333,7 +335,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
-					if (KotlinUtils.Companion.isItemsQuantityForClickAndCollectExceed(orderSummary.totalItemsCount)) {
+					if (Utils.getPreferredDeliveryLocation().suburb.storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
 						showMaxItemView();
 						return;
 					}
@@ -446,6 +448,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			orderSummary = cartResponse.orderSummary;
 			voucherDetails = cartResponse.voucherDetails;
+			productCountMap = cartResponse.productCountMap;
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -475,6 +478,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.orderSummary = cartResponse.orderSummary;
 		this.voucherDetails = cartResponse.voucherDetails;
+		this.productCountMap = cartResponse.productCountMap;
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
 			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
@@ -563,6 +567,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 				orderSummary = cartResponse.orderSummary;
 				voucherDetails = cartResponse.voucherDetails;
+				productCountMap = cartResponse.productCountMap;
 				cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
 			}else {
 				ArrayList<CartItemGroup> currentCartItemGroup = cartProductAdapter.getCartItems();
@@ -591,6 +596,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (shouldEnableCheckOutAndEditButton) {
 					orderSummary = cartResponse.orderSummary;
 					voucherDetails = cartResponse.voucherDetails;
+					productCountMap = cartResponse.productCountMap;
 					cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails);
 					fadeCheckoutButton(false);
 				}
@@ -883,6 +889,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			Data data = response.data[0];
 			cartResponse.orderSummary = data.orderSummary;
 			cartResponse.voucherDetails = data.voucherDetails;
+			cartResponse.productCountMap = data.productCountMap;
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Province province = new Province();
@@ -1408,7 +1415,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void showMaxItemView() {
-		Utils.showGeneralErrorDialog(requireActivity().getSupportFragmentManager(), getString(R.string.click_and_collect_max_quantity_info, String.valueOf(WoolworthsApplication.getClickAndCollect().getMaxNumberOfItemsAllowed())));
+		KotlinUtils.Companion.showGeneralInfoDialog(requireActivity().getSupportFragmentManager(), getString(R.string.unable_process_checkout_desc), getString(R.string.unable_process_checkout_title), getString(R.string.got_it), R.drawable.payment_overdue_icon);
 	}
 
 	public void showRedeemVoucherFeatureWalkthrough(){
@@ -1541,6 +1548,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onPromoDiscountInfo() {
-		KotlinUtils.Companion.showGeneralInfoDialog(requireActivity().getSupportFragmentManager(), getString(R.string.promo_discount_dialog_desc), getString(R.string.promo_discount_dialog_title), getString(R.string.got_it));
+		KotlinUtils.Companion.showGeneralInfoDialog(requireActivity().getSupportFragmentManager(), getString(R.string.promo_discount_dialog_desc), getString(R.string.promo_discount_dialog_title), getString(R.string.got_it), 0);
 	}
 }
