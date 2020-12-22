@@ -30,12 +30,12 @@
         android:id="@+id/space"
         android:layout_width="0dp"
         android:layout_height="@dimen/sixteen_dp"
-        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/thirty_seven_dp"
         android:background="@color/grey_bg"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/callTheCallCenter" />
+        app:layout_constraintTop_toBottomOf="@id/deliveryStatusDescription" />
 
     <RelativeLayout
         android:id="@+id/manageDeliveryLayout"
@@ -185,7 +185,6 @@
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="@dimen/fifty_dp"
-        android:layout_marginTop="@dimen/thirty_seven_dp"
         android:layout_marginBottom="@dimen/thirty_two_dp"
         android:background="@drawable/order_add_to_cart_button_bg"
         android:fontFamily="@font/futura_semi_bold"
@@ -195,10 +194,10 @@
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
-        app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/deliveryStatusDescription" />
-
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
