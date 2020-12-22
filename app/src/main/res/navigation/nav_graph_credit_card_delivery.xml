@@ -100,7 +100,9 @@
         <action
             android:id="@+id/action_to_creditCardDeliveryStatusFragment"
             app:destination="@id/creditCardDeliveryStatusFragment"
-            app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@+id/creditCardDeliveryStatusFragment"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"
+            />
     </fragment>
 </navigation>
