@@ -119,7 +119,9 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                 }
             }
             R.id.clearDetails -> {
-                recipientName?.text?.clear()
+                if(recipientName.isEnabled) {
+                    recipientName?.text?.clear()
+                }
                 cellphoneNumber?.text?.clear()
                 alternativeNumber?.text?.clear()
                 if (isRecipientIsThirdPerson) idNumber?.text?.clear()

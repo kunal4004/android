@@ -89,20 +89,20 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun setDatePickerData(timeSlots: List<TimeSlot>) {
-        val defaultItemPosition = timeSlots.let { (it.size / 2) + (it.size % 2) }
-        selectedDate = timeSlots[defaultItemPosition]
-        selectedTime = selectedDate?.availableTimeslots?.let { (it.size / 2) + (it.size % 2) }?.let { selectedDate?.availableTimeslots?.get(it) }
+        val defaultItemPosition = timeSlots.let { it.size / 2 }
+        selectedDate = timeSlots[defaultItemPosition-1]
+        selectedTime = selectedDate?.availableTimeslots?.let { (it.size / 2) }?.let { selectedDate?.availableTimeslots?.get(it) }
         datePicker?.apply {
-            selectedItemPosition = defaultItemPosition
             data = timeSlots
+            selectedItemPosition = defaultItemPosition-1
         }
-        setTimePickerData(timeSlots[defaultItemPosition])
+        setTimePickerData(timeSlots[defaultItemPosition-1])
     }
 
     private fun setTimePickerData(timeSlot: TimeSlot) {
         timePicker?.apply {
-            selectedItemPosition = timeSlot.availableTimeslots.let { (it.size / 2) + (it.size % 2) }
             data = timeSlot.availableTimeslots
+            selectedItemPosition = timeSlot.availableTimeslots.let { (it.size / 2) }
         }
     }
 

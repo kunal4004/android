@@ -59,9 +59,8 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
                 deliveryDate.text = bindString(R.string.card_delivery_delivered)
                 deliveryStatusTitle.text = bindString(R.string.delivered_cc_delivery_desc)
-                statusResponse?.slotDetails?.formattedDate?.let {
-                    val parts: List<String> = it.split(" ")
-                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                statusResponse?.slotDetails?.appointmentDate?.let {
+                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
                 }
             }
             CreditCardDeliveryStatus.CANCELLED -> {
@@ -69,9 +68,8 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 deliveryDate.text = bindString(R.string.card_delivery_cancelled)
                 deliveryStatusTitle.text = bindString(R.string.cancelled_cc_delivery_desc)
                 callTheCallCenter.visibility = View.VISIBLE
-                statusResponse?.slotDetails?.formattedDate?.let {
-                    val parts: List<String> = it.split(" ")
-                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(parts[0]).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                statusResponse?.slotDetails?.appointmentDate?.let {
+                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
                 }
             }
             CreditCardDeliveryStatus.CARD_SHREDDED -> {

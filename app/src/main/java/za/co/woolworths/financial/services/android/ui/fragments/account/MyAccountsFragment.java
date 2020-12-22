@@ -1068,9 +1068,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void showSetUpDeliveryPopUp() {
-        if (mAccountResponse != null && !mAccountResponse.accountList.isEmpty()) {
+        if (mAccountResponse != null && mAccountResponse.accountList != null) {
             Account account = mAccountResponse.accountList.get(0);
-            if (account != null && account.cards.get(0) != null) {
+            if (account != null && account.cards != null) {
                 if (account.cards.get(0).cardStatus != null) {
                     if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
                         executeCreditCardDeliveryStatusService();
