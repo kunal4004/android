@@ -1408,7 +1408,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void showMaxItemView() {
-		Utils.showGeneralErrorDialog(requireActivity().getSupportFragmentManager(), getString(R.string.click_and_collect_max_quantity_info, String.valueOf(WoolworthsApplication.getClickAndCollect().getMaxNumberOfItemsAllowed())));
+		Utils.showGeneralErrorDialog(requireActivity().getSupportFragmentManager(), getString(R.string.click_and_collect_max_quantity_info, String.valueOf(WoolworthsApplication.getClickAndCollect() != null ? WoolworthsApplication.getClickAndCollect().getMaxNumberOfItemsAllowed() : "")));
 	}
 
 	public void showRedeemVoucherFeatureWalkthrough(){

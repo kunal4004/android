@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
@@ -170,7 +171,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             queryServiceGetConfig(object : IResponseListener<ConfigResponse?> {
                 override fun onSuccess(response: ConfigResponse?) {
                     videoPlayerShouldPlay = false
-                    if (response?.configs?.enviroment?.stsURI == null || response.configs.enviroment.stsURI.isEmpty()) {
+                    if (TextUtils.isEmpty(response?.configs?.environment?.stsURI)) {
                         showNonVideoViewWithErrorLayout()
                         return
                     }

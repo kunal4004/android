@@ -111,7 +111,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     private fun persistGlobalConfig(response: ConfigResponse) {
         response.configs?.apply {
 
-            enviroment?.apply {
+            environment?.apply {
                 this@StartupViewModelImpl.splashScreenText = splashScreenText
                 this@StartupViewModelImpl.isSplashScreenDisplay = splashScreenDisplay
                 this@StartupViewModelImpl.isSplashScreenPersist = splashScreenPersist
@@ -177,7 +177,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
             }
 
-            WoolworthsApplication.setContactUsDetails(contactUs)
+            contactUs?.let { WoolworthsApplication.setContactUsDetails(it) }
 
             WoolworthsApplication.setInAppChat(inAppChat)
 
@@ -197,8 +197,8 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             creditView?.apply {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                WoolworthsApplication.setCreditView(creditView)
             }
-            WoolworthsApplication.setCreditView(creditView)
         }
     }
 
