@@ -25,7 +25,9 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
+        DecimalFormat df = new DecimalFormat("0.00");
+        String decimalPart = df.format(amount / 100f).split("\\.")[1];
+        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
     }
 
     public static String newAmountFormat(int amount) {
@@ -39,7 +41,9 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
+        DecimalFormat df = new DecimalFormat("0.00");
+        String decimalPart = df.format(amount / 100f).split("\\.")[1];
+        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
     }
 
     public static String newRandAmountFormatWithoutSpace(int amount) {
@@ -53,7 +57,9 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return Utils.removeNegativeSymbol(String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100));
+        DecimalFormat df = new DecimalFormat("0.00");
+        String decimalPart = df.format(amount / 100f).split("\\.")[1];
+        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
     }
 
     public static String addSpaceToDate(String value) {
@@ -91,7 +97,9 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
+        DecimalFormat df = new DecimalFormat("0.00");
+        String decimalPart = df.format(amount / 100f).split("\\.")[1];
+        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
     }
 
     public static String formatAmount(String amount) {
@@ -111,7 +119,9 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
+        DecimalFormat df = new DecimalFormat("0.00");
+        String decimalPart = df.format(mIntAmount / 100f).split("\\.")[1];
+        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
     }
 
     public static String formatAmountNoDecimal(int amount) {
