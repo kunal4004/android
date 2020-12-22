@@ -518,5 +518,9 @@ class KotlinUtils {
             }
             return false
         }
+
+        fun isDeliveryOptionClickAndCollect(): Boolean {
+            return Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true
+        }
     }
 }

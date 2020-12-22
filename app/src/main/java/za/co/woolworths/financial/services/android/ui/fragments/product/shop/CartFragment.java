@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -345,6 +344,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Activity checkOutActivity = getActivity();
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
 					if (Utils.getPreferredDeliveryLocation().suburb.storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
+						Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT);
 						showMaxItemView();
 						return;
 					}
@@ -467,7 +467,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			updateOrderTotal();
 			isMaterialPopUpClosed = false;
 			showRedeemVoucherFeatureWalkthrough();
-			setItemLimitsBanner();
 		} else {
 			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
@@ -483,6 +482,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			isMaterialPopUpClosed = true;
 			showEditDeliveryLocationFeatureWalkthrough();
 		}
+		setItemLimitsBanner();
 	}
 
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {

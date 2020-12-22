@@ -1788,5 +1788,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="transaction_date_value">03 / 07 / 2016</string>
     <string name="unable_process_checkout_title">Unable to proceed to Checkout</string>
     <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
+    <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
+    <string name="toast_multiple_item_added_to_cart_message">%1$s items added to cart</string>
 </resources>
 

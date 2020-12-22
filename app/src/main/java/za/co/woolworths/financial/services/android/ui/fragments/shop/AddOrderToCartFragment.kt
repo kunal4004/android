@@ -404,7 +404,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         val postItemToCart = PostItemToCart()
         return postItemToCart.make(addItemToCart, object : IResponseListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {
-                addItemToCartResponse?.let { onAddToCartSuccess(it) }
+                addItemToCartResponse?.let { onAddToCartSuccess(it, addItemToCart.size) }
             }
 
             override fun onFailure(error: Throwable?) {
@@ -413,8 +413,8 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         })
     }
 
-    fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {
-        listener.onItemsAddedToCart(addItemToCartResponse)
+    fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse, size: Int) {
+        listener.onItemsAddedToCart(addItemToCartResponse, size)
     }
 
     override fun onAttach(context: Context) {

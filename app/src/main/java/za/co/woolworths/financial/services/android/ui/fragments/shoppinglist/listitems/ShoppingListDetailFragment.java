@@ -421,13 +421,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         enableAddToCartButton(GONE);
     }
 
-    public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
+    public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse, int size) {
         Activity activity = getActivity();
         if (activity == null) return;
         Intent resultIntent = new Intent();
         if (addItemToCartResponse.data.size() > 0) {
             String successMessage = addItemToCartResponse.data.get(0).message;
             resultIntent.putExtra("addedToCartMessage", successMessage);
+            resultIntent.putExtra("ProductCountMap", Utils.toJson(addItemToCartResponse.data.get(0).productCountMap));
+            resultIntent.putExtra("ItemsCount", size);
         }
 
         // reset selection after items added to cart
@@ -445,7 +447,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             activity.overridePendingTransition(0, 0);
         } else {
             // else display shopping list toast
-            ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size);
+            } else {
+                ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+            }
         }
     }
 
@@ -943,7 +949,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 switch (addItemToCartResponse.httpCode) {
                     case HTTP_OK:
-                        onAddToCartSuccess(addItemToCartResponse);
+                        onAddToCartSuccess(addItemToCartResponse, addItemToCart.size());
                         break;
 
                     case HTTP_EXPECTATION_FAILED_417:
