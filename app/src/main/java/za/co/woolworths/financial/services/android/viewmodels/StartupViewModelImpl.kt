@@ -142,6 +142,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             }
 
             dashConfig?.apply{
+                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 WoolworthsApplication.getInstance().dashConfig = this
             }
 

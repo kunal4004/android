@@ -67,10 +67,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         const val REQUEST_CODE_FINE_GPS = 4771
     }
 
-    init {
-        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance().dashConfig.minimumSupportedAppBuildNumber.toString())
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
     }
@@ -81,6 +77,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
+
+        isDashEnabled = WoolworthsApplication.getInstance()?.dashConfig?.isEnabled ?: false
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
