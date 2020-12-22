@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartResponse
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
@@ -30,6 +31,14 @@ class CartUtils {
                     banner.visibility = View.VISIBLE
                 } else {
                     banner.visibility = View.GONE
+                }
+            }
+        }
+
+        fun updateFoodMaximumQuantityOnConfig(productCountMap: ProductCountMap?) {
+            productCountMap?.quantityLimit?.foodMaximumQuantity?.let {
+                if (KotlinUtils.isDeliveryOptionClickAndCollect()) {
+                    WoolworthsApplication.getClickAndCollect().maxNumberOfItemsAllowed = it
                 }
             }
         }
