@@ -1790,5 +1790,16 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
     <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
     <string name="toast_multiple_item_added_to_cart_message">%1$s items added to cart</string>
+    <string name="cd_labelitemlimit">labelItemLimit</string>
+    <string name="cd_totalitemlimit">totalItemLimit</string>
+    <string name="cd_layouttoastmessage">layoutToastMessage</string>
+    <string name="cd_indcartitems">indCartItems</string>
+    <string name="cd_labelitemadded">labelItemAdded</string>
+    <string name="cd_btnview">btnView</string>
+    <string name="cd_genericicon">genericIcon</string>
+    <string name="cd_layoutgenericpopup">layoutGenericPopup</string>
+    <string name="cd_labelgenericpopup">labelGenericPopup</string>
+    <string name="cd_labelgenericpopupdescription">labelGenericPopupDescription</string>
+    <string name="cd_btngotit">btnGotIt</string>
 </resources>
 

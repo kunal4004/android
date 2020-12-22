@@ -458,7 +458,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			orderSummary = cartResponse.orderSummary;
 			voucherDetails = cartResponse.voucherDetails;
 			productCountMap = cartResponse.productCountMap;
-			CartUtils.Companion.updateFoodMaximumQuantityOnConfig(productCountMap);
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity(), voucherDetails);
             queryServiceInventoryCall(cartResponse.cartItems);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -490,7 +489,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		this.orderSummary = cartResponse.orderSummary;
 		this.voucherDetails = cartResponse.voucherDetails;
 		this.productCountMap = cartResponse.productCountMap;
-		CartUtils.Companion.updateFoodMaximumQuantityOnConfig(productCountMap);
 		setItemLimitsBanner();
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
 			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
@@ -581,7 +579,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				orderSummary = cartResponse.orderSummary;
 				voucherDetails = cartResponse.voucherDetails;
 				productCountMap = cartResponse.productCountMap;
-				CartUtils.Companion.updateFoodMaximumQuantityOnConfig(productCountMap);
 				cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
 			}else {
 				ArrayList<CartItemGroup> currentCartItemGroup = cartProductAdapter.getCartItems();
@@ -611,7 +608,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					orderSummary = cartResponse.orderSummary;
 					voucherDetails = cartResponse.voucherDetails;
 					productCountMap = cartResponse.productCountMap;
-					CartUtils.Companion.updateFoodMaximumQuantityOnConfig(productCountMap);
 					cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails);
 					fadeCheckoutButton(false);
 				}
@@ -907,6 +903,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.orderSummary = data.orderSummary;
 			cartResponse.voucherDetails = data.voucherDetails;
 			cartResponse.productCountMap = data.productCountMap;
+			CartUtils.Companion.updateFoodMaximumQuantityOnConfig(data.productCountMap);
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Province province = new Province();
