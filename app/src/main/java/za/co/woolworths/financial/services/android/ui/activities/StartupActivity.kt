@@ -171,7 +171,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             queryServiceGetConfig(object : IResponseListener<ConfigResponse?> {
                 override fun onSuccess(response: ConfigResponse?) {
                     videoPlayerShouldPlay = false
-                    if (TextUtils.isEmpty(response?.configs?.environment?.stsURI)) {
+                    if (TextUtils.isEmpty(response?.configs?.enviroment?.stsURI)) {
                         showNonVideoViewWithErrorLayout()
                         return
                     }

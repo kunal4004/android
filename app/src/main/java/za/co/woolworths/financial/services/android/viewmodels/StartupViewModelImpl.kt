@@ -111,7 +111,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     private fun persistGlobalConfig(response: ConfigResponse) {
         response.configs?.apply {
 
-            environment?.apply {
+            enviroment?.apply {
                 this@StartupViewModelImpl.splashScreenText = splashScreenText
                 this@StartupViewModelImpl.isSplashScreenDisplay = splashScreenDisplay
                 this@StartupViewModelImpl.isSplashScreenPersist = splashScreenPersist
