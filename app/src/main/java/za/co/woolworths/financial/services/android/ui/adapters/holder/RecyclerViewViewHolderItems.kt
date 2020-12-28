@@ -24,6 +24,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setProductImage(this)
             setPromotionalImage(promotionImages)
             setProductName(this)
+            setProductVariant(this)
             setSaveText(this, nextProduct, previousProduct)
             setBrandText(this, nextProduct, previousProduct)
             val priceItem = PriceItem()
@@ -39,6 +40,10 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setProductName(productList: ProductList?) = with(itemView) {
         tvProductName?.text = productList?.productName ?: ""
+    }
+
+    private fun setProductVariant(productList: ProductList?) = with(itemView) {
+        productVariant?.text = productList?.productVariants ?: ""
     }
 
     private fun setSaveText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
@@ -96,7 +101,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     companion object {
         // Extracting the fulfilmentStoreId from user location or default MC config
-        fun getFulFillmentStoreId(fulfilmentTypeId: String): String? {
+        fun getFulFillmentStoreId(fulfilmentTypeId: String): String {
             val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
             val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
             var defaultStoreId = ""
@@ -113,9 +118,5 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
             return defaultStoreId
         }
-    }
-
-    interface OnDataUpdate{
-        fun onDataUpdate()
     }
 }
