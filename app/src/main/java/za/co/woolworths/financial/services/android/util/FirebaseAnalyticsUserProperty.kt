@@ -19,6 +19,12 @@ class FirebaseAnalyticsUserProperty {
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.SILVER_CARD, ignoreCase = true)) "true" else "false")
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.GOLD_CARD, ignoreCase = true)) "true" else "false")
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.BLACK_CARD, ignoreCase = true)) "true" else "false")
+            if (accountsMap.containsKey(CREDIT_CARD_PRODUCT_GROUP_CODE))
+                firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.CC_ACCOUNT_STATE, accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.delinquencyCycle.toString())
+            if (accountsMap.containsKey(STORE_CARD_PRODUCT_GROUP_CODE))
+                firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SC_ACCOUNT_STATE, accountsMap[STORE_CARD_PRODUCT_GROUP_CODE]?.delinquencyCycle.toString())
+            if (accountsMap.containsKey(PERSONAL_LOAN_PRODUCT_GROUP_CODE))
+                firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PL_ACCOUNT_STATE, accountsMap[PERSONAL_LOAN_PRODUCT_GROUP_CODE]?.delinquencyCycle.toString())
         }
     }
 }
