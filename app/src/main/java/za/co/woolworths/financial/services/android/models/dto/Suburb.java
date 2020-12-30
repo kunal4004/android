@@ -4,11 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by W7099877 on 31/10/2016.
  */
 
-public class Suburb {
+public class Suburb implements Serializable {
 
 	public String id;
 	public String name;
