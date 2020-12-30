@@ -34,8 +34,6 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private var mAddToShoppingListAdapter: ViewShoppingListAdapter? = null
     private var mGetShoppingListRequest: Call<ShoppingListsResponse>? = null
-    private var mSuburbName: String? = null
-    private var mProvinceName: String? = null
     private var isMyListsFragmentVisible: Boolean = false
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
@@ -115,18 +113,19 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                         }
                     }
                 }
-            },ShoppingListsResponse::class.java))
+            }, ShoppingListsResponse::class.java))
         }
     }
 
     private fun bindShoppingListToUI() {
-        val shoppingList: MutableList<ShoppingList>? = parentFragment?.getShoppingListResponseData()?.lists ?: mutableListOf()
+        val shoppingList: MutableList<ShoppingList> = parentFragment?.getShoppingListResponseData()?.lists
+                ?: mutableListOf()
         shoppingList.let {
-            when (it?.size) {
+            when (it.size) {
                 0 -> showEmptyShoppingListView() //no list found
 
                 else -> {
-                    mAddToShoppingListAdapter?.setShoppingList(shoppingList!!)
+                    mAddToShoppingListAdapter?.setShoppingList(shoppingList)
                     mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
             }
@@ -190,7 +189,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun locationSelectionClicked() {
-        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this,0) }
+        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, 0) }
     }
 
     private fun showEmptyShoppingListView() {
@@ -224,10 +223,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         hideEmptyOverlay()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (parentFragment?.getShoppingListResponseData() != null && !isNewSession && !parentFragment?.isDifferentUser()!!) bindShoppingListToUI() else {
-                parentFragment?.clearCachedData()
-                getShoppingList(isNewSession)
-            }
+            parentFragment?.clearCachedData()
+            getShoppingList(isNewSession)
         } else {
             showSignOutView()
         }
@@ -248,8 +245,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
-        val deleteShoppingList =  OneAppService.deleteShoppingList(shoppingList.listId)
-        deleteShoppingList.enqueue(CompletionHandler(object: IResponseListener<ShoppingListsResponse> {
+        val deleteShoppingList = OneAppService.deleteShoppingList(shoppingList.listId)
+        deleteShoppingList.enqueue(CompletionHandler(object : IResponseListener<ShoppingListsResponse> {
             override fun onSuccess(shoppingListsResponse: ShoppingListsResponse?) {
                 shoppingListsResponse?.apply {
                     when (httpCode) {
@@ -266,7 +263,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                 activity?.let { it.runOnUiThread { ErrorHandlerView(it).showToast() } }
             }
 
-        },ShoppingListsResponse::class.java))
+        }, ShoppingListsResponse::class.java))
     }
 
     override fun onShoppingListItemDeleted(shoppingList: ShoppingList, position: Int) {
@@ -281,7 +278,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     override fun onShoppingListItemSelected(shoppingList: ShoppingList) {
-        activity?.let { ScreenManager.presentShoppingListDetailActivity(it, shoppingList.listId, shoppingList.listName,true) }
+        activity?.let { ScreenManager.presentShoppingListDetailActivity(it, shoppingList.listId, shoppingList.listName, true) }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
