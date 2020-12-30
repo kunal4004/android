@@ -106,7 +106,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         confirmLocation?.setOnClickListener(this)
         WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxItemsInfoMessage?.text = context?.getString(R.string.click_and_collect_max_items)?.let { msgTxt -> String.format(msgTxt, it.toString()) } }
         setDeliveryOption(deliveryType)
-        setUsersCurrentDeliveryDetails()
+
+        if(selectedProvince == null) {
+            setUsersCurrentDeliveryDetails()
+        }
     }
 
     override fun onClick(v: View?) {
@@ -472,25 +475,4 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         }
         navController?.navigate(R.id.action_to_provinceSelectorFragment, bundleOf("bundle" to bundle))
     }
-
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                SUBURB_SELECTOR_REQUEST_CODE -> {
-                    val suburb: Suburb? = Utils.strToJson(data?.getStringExtra("Suburb"), Suburb::class.java) as Suburb
-                    suburb?.let {
-                        onSuburbSelected(it)
-                    }
-                }
-                PROVINCE_SELECTOR_REQUEST_CODE -> {
-                    val province: Province? = Utils.strToJson(data?.getStringExtra("Province"), Province::class.java) as Province
-                    province?.let {
-                        onProvinceSelected(it)
-                    }
-                }
-            }
-        }
-    }*/
-
 }
