@@ -209,7 +209,7 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/twelve_sp</item>
-        <item name="android:letterSpacing">0.2</item>
+        <item name="android:letterSpacing">@integer/point_two</item>
         <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
@@ -1003,7 +1003,7 @@
         <item name="WTextView_font">medium</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/offer_title_50</item>
-        <item name="android:letterSpacing">0.08</item>
+        <item name="android:letterSpacing">@integer/point_zero_eight</item>
     </style>
 
     <style name="toolbar_menu_text_style">
@@ -1011,7 +1011,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.15</item>
+        <item name="android:letterSpacing">@integer/point_fifteen</item>
         <item name="WTextView_font">medium</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textAllCaps">true</item>

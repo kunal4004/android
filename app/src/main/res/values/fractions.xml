@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="point_two" format="float" type="integer">0.2</item>
+    <item name="point_zero_eight" format="float" type="integer">0.08</item>
+    <item name="point_fifteen" format="float" type="integer">0.15</item>
+</resources>
