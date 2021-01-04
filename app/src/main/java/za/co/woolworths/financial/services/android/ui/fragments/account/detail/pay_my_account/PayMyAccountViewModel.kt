@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import java.net.ConnectException
 import java.util.*
+import javax.annotation.Nullable
 
 class PayMyAccountViewModel : ViewModel() {
 
@@ -273,6 +274,7 @@ class PayMyAccountViewModel : ViewModel() {
         getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
     }
 
+    @Nullable
     fun getAddNewCardUrl(): String? {
         return WoolworthsApplication.getPayMyAccountOption()?.addCardUrl(getProductGroupCode())
     }

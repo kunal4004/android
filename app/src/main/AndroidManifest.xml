@@ -529,11 +529,6 @@
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/AccountBaseTheme" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.click_and_collect.ProvinceAndSuburbSelectionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"

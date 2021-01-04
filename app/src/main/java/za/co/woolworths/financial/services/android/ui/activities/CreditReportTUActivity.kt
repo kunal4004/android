@@ -65,6 +65,6 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View?) {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE)
-        openBrowserWithUrl(WoolworthsApplication.getCreditView().transUnionLink, this)
+        openBrowserWithUrl(WoolworthsApplication.getCreditView()?.transUnionLink, this)
     }
 }

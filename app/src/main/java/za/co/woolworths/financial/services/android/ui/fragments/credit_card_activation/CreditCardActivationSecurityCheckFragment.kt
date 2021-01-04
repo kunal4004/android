@@ -48,7 +48,7 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
         when (v?.id) {
             R.id.activateCardButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_MY_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationRequested)))
-                navController?.navigate(if (WoolworthsApplication.getCreditCardActivation().otpEnabledForCreditCardActivation)
+                navController?.navigate(if (WoolworthsApplication.getCreditCardActivation() != null && WoolworthsApplication.getCreditCardActivation()!!.otpEnabledForCreditCardActivation)
                     R.id.action_to_RetrieveOTPFragment
                 else
                     R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
