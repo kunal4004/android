@@ -27,7 +27,7 @@ class CreditCardDeliveryStatusFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("delivery_status_response"), StatusResponse::class.java) as StatusResponse?
+            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
         }
     }
 
