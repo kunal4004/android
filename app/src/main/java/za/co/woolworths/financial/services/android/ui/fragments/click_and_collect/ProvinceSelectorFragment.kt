@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -22,6 +25,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelector {
     private var provinceList: ArrayList<Province>? = null
     var provinceListAdapter: ProvinceListAdapter? = null
+    var bundle: Bundle? = null
+    var navController: NavController? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.province_selector_fragment, container, false)
@@ -29,17 +34,17 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.apply {
-            intent?.let {
-                if (it.hasExtra("ProvinceList")) {
-                    provinceList = Gson().fromJson(it.getStringExtra("ProvinceList"), object : TypeToken<List<Province>>() {}.type)
-                }
+        bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            getString("ProvinceList")?.let {
+                provinceList = Gson().fromJson(it, object : TypeToken<List<Province>>() {}.type)
             }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_province)
         loadProvinceList()
     }
@@ -55,8 +60,13 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
 
     override fun onProvinceSelected(province: Province) {
         activity?.apply {
-            setResult(Activity.RESULT_OK, Intent().putExtra("Province", Utils.toJson(province)))
-            finish()
+            // Use the Kotlin extension in the fragment-ktx artifact
+            val bundle = Bundle()
+            bundle?.apply {
+                putString("Province", Utils.toJson(province))
+            }
+            setFragmentResult(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE, bundle)
+            navController?.navigateUp()
         }
     }
 }
