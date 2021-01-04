@@ -63,7 +63,7 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
             // Use the Kotlin extension in the fragment-ktx artifact
             val bundle = Bundle()
             bundle?.apply {
-                putSerializable("Province", province)
+                putString("Province", Utils.toJson(province))
             }
             setFragmentResult(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()

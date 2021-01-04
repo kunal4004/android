@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by W7099877 on 31/10/2016.
  */
 
-public class Suburb implements Serializable {
+public class Suburb {
 
 	public String id;
 	public String name;

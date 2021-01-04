@@ -72,9 +72,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
-            val result = bundle.getSerializable("Suburb") as Suburb
+            val result = bundle.getString("Suburb")
             // Do something with the result
-            val suburb: Suburb? = result //Utils.strToJson(result, Suburb::class.java) as Suburb
+            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as Suburb
             suburb?.let {
                 onSuburbSelected(it)
             }
@@ -82,9 +82,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(PROVINCE_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
-            val result = bundle.getSerializable("Province") as Province
+            val result = bundle.getString("Province")
             // Do something with the result
-            val province: Province? = result //Utils.strToJson(result, Suburb::class.java) as Suburb
+            val province: Province? = Utils.strToJson(result, Province::class.java) as Province
             province?.let {
                 onProvinceSelected(it)
             }

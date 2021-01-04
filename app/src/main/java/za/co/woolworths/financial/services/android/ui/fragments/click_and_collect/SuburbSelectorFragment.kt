@@ -85,7 +85,7 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
             // Use the Kotlin extension in the fragment-ktx artifact
             val bundle = Bundle()
             bundle?.apply {
-                putSerializable("Suburb", suburb)
+                putString("Suburb", Utils.toJson(suburb))
             }
             setFragmentResult(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()
