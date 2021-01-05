@@ -1528,6 +1528,7 @@
     <string name="delivery_setup_complete">Delivery Setup Complete</string>
     <string name="delivery_success_desc">Keep an eye on the app for updates.</string>
     <string name="cellphone_number_error_msg">Please enter a Cellphone Number</string>
+    <string name="phone_number_invalid_error_msg">Please provide a valid phone number</string>
     <string name="recipient_name_error_msg">Please enter a Recipient name</string>
     <string name="build_or_complex_error_msg">Please enter a Complex/Building name</string>
     <string name="business_name_error_msg">Please enter a Business name</string>

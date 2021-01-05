@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -90,7 +91,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirm -> {
-                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
+                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text?.length == 10 && alternativeNumber?.text?.length == 10 && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
                     recipientDetails.let {
                         it?.deliverTo = recipientName?.text.toString().trim()
                         it?.telCell = cellphoneNumber?.text.toString().trim()
@@ -110,8 +111,15 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                     }
                 } else {
                     listOfInputFields.forEach {
-                        if (it.text.toString().trim().isEmpty())
+                        if (it.text.toString().trim().isEmpty()) {
                             showErrorInputField(it)
+                        }
+                        else if (it.id == R.id.cellphoneNumber && it.text.length <10){
+                            showErrorPhoneNumber(it)
+                        }
+                        else if (it.id == R.id.alternativeNumber && it.text.length <10){
+                            showErrorPhoneNumber(it)
+                        }
                     }
                 }
             }
@@ -143,6 +151,19 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
+    private fun showErrorPhoneNumber(editText: EditText){
+        editText.setBackgroundResource(R.drawable.otp_box_error_background)
+        when (editText.id) {
+            R.id.cellphoneNumber -> {
+                cellphoneNumberErrorMsg.visibility = View.VISIBLE
+                cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+            }
+            R.id.alternativeNumber -> {
+                alternativeNumberErrorMsg.visibility = View.VISIBLE
+                alternativeNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+            }
+        }
+    }
     private fun showErrorInputField(editText: EditText) {
         if (editText.id == R.id.idNumber && !isRecipientIsThirdPerson)
             return
@@ -154,12 +175,14 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
             R.id.cellphoneNumber -> {
                 cellphoneNumberErrorMsg.visibility = View.VISIBLE
+                cellphoneNumberErrorMsg.text = bindString(R.string.cellphone_number_error_msg)
             }
             R.id.idNumber -> {
                 idNumberErrorMsg.visibility = View.VISIBLE
             }
             R.id.alternativeNumber -> {
                 alternativeNumberErrorMsg.visibility = View.VISIBLE
+                alternativeNumberErrorMsg.text = bindString(R.string.cellphone_number_error_msg)
             }
         }
     }
