@@ -745,6 +745,7 @@
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
+    <string name="my_card">MY CARD</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
@@ -1492,7 +1493,7 @@
     <string name="booking_reference">BOOKING REFERENCE</string>
     <string name="created">created</string>
     <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew Black Credit Card.</string>
-    <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know \nwhen and where to send your card.</string>
+    <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know when and where to send your card.</string>
     <string name="set_up_delivery_nowt">set up delivery now</string>
     <string name="already_have_card_activate_it_now"><u>Already have card? Activate it now</u></string>
     <string name="recipient_details">Recipient Details</string>

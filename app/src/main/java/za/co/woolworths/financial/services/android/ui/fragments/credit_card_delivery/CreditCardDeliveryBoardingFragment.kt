@@ -11,6 +11,8 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryBoardingFragment : Fragment() {
@@ -30,11 +32,21 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        setupToolbar()
         setUpDeliveryNow?.setOnClickListener {
             navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
         }
         activateNow?.setOnClickListener {
             activity?.apply { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+        }
+    }
+
+    private fun setupToolbar() {
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                setToolbarTitle(bindString(R.string.my_card))
+                changeToolbarBackground(R.color.grey_bg)
+            }
         }
     }
 }
