@@ -1488,6 +1488,7 @@
     <string name="invalid_address_title">Invalid Address</string>
     <string name="invalid_address_desc">We are unable to find the address entered, please re-enter your address and submit. Alternatively contact the courier.</string>
     <string name="contact_courier">Contact Courier</string>
+    <string name="phone_no_hint">Enter 10 digit number</string>
     <string name="address_date_time">Address, Date &amp; Time</string>
     <string name="recipient">Recipient</string>
     <string name="booking_reference">BOOKING REFERENCE</string>

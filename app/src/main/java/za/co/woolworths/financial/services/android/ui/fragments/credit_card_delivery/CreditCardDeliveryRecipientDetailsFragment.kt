@@ -58,9 +58,6 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
 
         recipientOption?.setOnCheckedChangeListener(this)
 
-        if (isThirdPartyRecipientEligible())
-            recipientOption?.visibility = View.VISIBLE
-
         confirm?.setOnClickListener(this)
         clearDetails.setOnClickListener(this)
         configureUI()
@@ -183,10 +180,6 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                 alternativeNumberErrorMsg.visibility = View.GONE
             }
         }
-    }
-
-    private fun isThirdPartyRecipientEligible(): Boolean {
-        return statusResponse?.recipientDetails?.isThirdPartyRecipient == true
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {

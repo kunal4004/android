@@ -147,7 +147,7 @@
                 android:contentDescription="@string/cd_ccd_labelconfirmedtimeslot"
                 android:letterSpacing="0.1"
                 android:text="30 Apr"
-                android:textSize="@dimen/thirty_five_sp"
+                android:textSize="@dimen/thirty_six_sp"
                 app:layout_constraintRight_toRightOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toTopOf="@id/progressIcon" />
