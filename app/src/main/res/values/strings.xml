@@ -693,7 +693,7 @@
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
-    <string name="absa_biometric_please_enter_your_pin">Enter Woolies Credit Card PIN</string>
+    <string name="absa_atm_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_desc"> Please call on 0861 50 20 20 or  email queries@wfs.co.za for assistance</string>
@@ -791,7 +791,8 @@
     <string name="unsuccessful_request">Unsuccessful Request</string>
     <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
     <string name="incorrect_pin_alert">Incorrect PIN. Please note on your third failed attempt your profile will be blocked.</string>
-    <string name="error_atm_pin_locked_title">Credit Card ATM PIN Locked</string>
+    <string name="error_atm_pin_locked_title">Online banking PIN is Now \nLocked</string>
+    <string name="error_atm_pin_locked_desc">In order to unlock your PIN, please call \ncustomer service on 0861 50 20 20 or email \nqueries@wfs.co.za. Please note, your card PIN will \nstill work in both stores &amp; ATMs.</string>
     <string name="passcode_not_match_alert">Your Passcode does not match. Please try again.</string>
     <string name="error_action_later">later</string>
     <string name="reset_passcode">RESET PASSCODE</string>
