@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner;
+import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -669,13 +670,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
                     return;
                 }
-                if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                    redirectToMyAccountsCardsActivity(ApplyNowState.SILVER_CREDIT_CARD);
-                } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                    redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
-                } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
-                    redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
-                }
+                redirectToMyAccountsCardsActivity(getApplyNowState());
                 break;
             case R.id.applyPersonalLoan:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
@@ -685,7 +680,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
                 break;
             case R.id.linkedCrediCard:
-                redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
+                redirectToAccountSignInActivity(getApplyNowState());
                 break;
             case R.id.linkedPersonalLoan:
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
@@ -770,6 +765,18 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 break;
 
         }
+    }
+
+    private ApplyNowState getApplyNowState() {
+        ApplyNowState state = ApplyNowState.BLACK_CREDIT_CARD;
+        if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+            state = ApplyNowState.SILVER_CREDIT_CARD;
+        } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+            state = ApplyNowState.GOLD_CREDIT_CARD;
+        } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+            state = ApplyNowState.BLACK_CREDIT_CARD;
+        }
+        return state;
     }
 
     private void loadAccounts(boolean forceNetworkUpdate) {
@@ -1072,8 +1079,16 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             Account account = mAccountResponse.accountList.get(0);
             if (account != null && account.cards != null) {
                 if (account.cards.get(0).cardStatus != null) {
-                    if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
-                        executeCreditCardDeliveryStatusService();
+                    List<CreditCardDeliveryCardTypes> cardTypes = WoolworthsApplication.getCreditCardDelivery().getCardTypes();
+                    if (cardTypes != null) {
+                        for (CreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                            if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
+                                    && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
+                                if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null))
+                                    executeCreditCardDeliveryStatusService();
+                                return;
+                            }
+                        }
                     }
                 }
             }

@@ -38,13 +38,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return Pair(mApplyNowState, mAccountResponse)
     }
 
-    @Throws(RuntimeException::class)
     private fun getProductCode(applyNowState: ApplyNowState): String {
         return when (applyNowState) {
             ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
             ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+            ApplyNowState.GOLD_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+            ApplyNowState.BLACK_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
             ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode
-            else -> throw RuntimeException("ApplyNowState value not supported $applyNowState")
         }
     }
 
