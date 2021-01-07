@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.click_collect_items_limited_message.*
-import kotlinx.android.synthetic.main.department_header_delivery_location.view.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
@@ -29,14 +27,17 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
-import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.ProvinceAndSuburbSelectionActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.putEnumExtra
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
 class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.EditDeliveryLocationView, View.OnClickListener {
+
+    companion object {
+        const val SUBURB_SELECTOR_REQUEST_CODE = "1717"
+        const val PROVINCE_SELECTOR_REQUEST_CODE = "1818"
+    }
 
     var navController: NavController? = null
     var bundle: Bundle? = null
@@ -48,9 +49,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
     var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
-    var rootView :View ? = null
-    var SUBURB_SELECTOR_REQUEST_CODE = 1717
-    var PROVINCE_SELECTOR_REQUEST_CODE = 1818
+    var rootView: View? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootView == null)
@@ -60,10 +60,34 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        addFragmentResultListener()
         presenter = EditDeliveryLocationPresenterImpl(this, EditDeliveryLocationInteractorImpl())
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             deliveryType = DeliveryType.valueOf(getString(DELIVERY_TYPE, DeliveryType.DELIVERY.name))
+        }
+    }
+
+    private fun addFragmentResultListener() {
+        // Use the Kotlin extension in the fragment-ktx artifact
+        setFragmentResultListener(SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+            // We use a String here, but any type that can be put in a Bundle is supported
+            val result = bundle.getString("Suburb")
+            // Do something with the result
+            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as Suburb
+            suburb?.let {
+                onSuburbSelected(it)
+            }
+        }
+        // Use the Kotlin extension in the fragment-ktx artifact
+        setFragmentResultListener(PROVINCE_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+            // We use a String here, but any type that can be put in a Bundle is supported
+            val result = bundle.getString("Province")
+            // Do something with the result
+            val province: Province? = Utils.strToJson(result, Province::class.java) as Province
+            province?.let {
+                onProvinceSelected(it)
+            }
         }
     }
 
@@ -82,7 +106,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         confirmLocation?.setOnClickListener(this)
         WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxItemsInfoMessage?.text = context?.getString(R.string.click_and_collect_max_items)?.let { msgTxt -> String.format(msgTxt, it.toString()) } }
         setDeliveryOption(deliveryType)
-        setUsersCurrentDeliveryDetails()
+
+        if(selectedProvince == null) {
+            setUsersCurrentDeliveryDetails()
+        }
     }
 
     override fun onClick(v: View?) {
@@ -433,40 +460,19 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun navigateToSuburbSelection(suburbs: List<Suburb>) {
-        activity?.let {
-            val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
-            intent.putExtra("SuburbList", Utils.toJson(suburbs))
-            intent.putEnumExtra(deliveryType)
-            startActivityForResult(intent, SUBURB_SELECTOR_REQUEST_CODE)
+        bundle = Bundle()
+        bundle?.apply {
+            putString("SuburbList", Utils.toJson(suburbs))
+            putSerializable("deliveryType", deliveryType)
         }
+        navController?.navigate(R.id.action_to_suburbSelectorFragment, bundleOf("bundle" to bundle))
     }
 
     override fun navigateToProvinceSelection(regions: List<Province>) {
-        activity?.let {
-            val intent = Intent(it, ProvinceAndSuburbSelectionActivity::class.java)
-            intent.putExtra("ProvinceList", Utils.toJson(regions))
-            startActivityForResult(intent, PROVINCE_SELECTOR_REQUEST_CODE)
+        bundle = Bundle()
+        bundle?.apply {
+            putString("ProvinceList", Utils.toJson(regions))
         }
+        navController?.navigate(R.id.action_to_provinceSelectorFragment, bundleOf("bundle" to bundle))
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                SUBURB_SELECTOR_REQUEST_CODE -> {
-                    val suburb: Suburb? = Utils.strToJson(data?.getStringExtra("Suburb"), Suburb::class.java) as Suburb
-                    suburb?.let {
-                        onSuburbSelected(it)
-                    }
-                }
-                PROVINCE_SELECTOR_REQUEST_CODE -> {
-                    val province: Province? = Utils.strToJson(data?.getStringExtra("Province"), Province::class.java) as Province
-                    province?.let {
-                        onProvinceSelected(it)
-                    }
-                }
-            }
-        }
-    }
-
 }
