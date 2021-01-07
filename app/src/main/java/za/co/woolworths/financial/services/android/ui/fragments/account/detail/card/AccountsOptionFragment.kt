@@ -31,10 +31,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.Card
-import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
-import za.co.woolworths.financial.services.android.models.dto.DebitOrder
-import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -384,6 +381,11 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     override fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse) {
+        val accountList = mCardPresenterImpl?.getAccount()
+        val accounts: HashMap<String, Account?> = HashMap()
+        accounts.put(AccountsProductGroupCode.CREDIT_CARD.groupCode, accountList)
+        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCode(accounts)
+
         creditCardTokenResponse.apply {
             if (cards.isNullOrEmpty()) {
                 showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)

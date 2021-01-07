@@ -157,9 +157,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private View linkedAccountBottomDivider;
     private RelativeLayout myOrdersRelativeLayout;
     private FloatingActionButton chatWithAgentFloatingButton;
-	private ImageView creditReportIcon;
-	private RelativeLayout creditReportView;
-	RelativeLayout contactUs;
+    private ImageView creditReportIcon;
+    private RelativeLayout creditReportView;
+    RelativeLayout contactUs;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -243,11 +243,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
-			creditReportView = view.findViewById(R.id.creditReport);
-			creditReportIcon = view.findViewById(R.id.creditReportIcon);
+            creditReportView = view.findViewById(R.id.creditReport);
+            creditReportIcon = view.findViewById(R.id.creditReportIcon);
 
 
-			openMessageActivity.setOnClickListener(this);
+            openMessageActivity.setOnClickListener(this);
             contactUs.setOnClickListener(this);
             applyPersonalCardView.setOnClickListener(this);
             applyStoreCardView.setOnClickListener(this);
@@ -262,7 +262,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             helpSectionRelativeLayout.setOnClickListener(this);
             storeLocatorRelativeLayout.setOnClickListener(this);
             myOrdersRelativeLayout.setOnClickListener(this);
-			creditReportView.setOnClickListener(this);
+            creditReportView.setOnClickListener(this);
 
             NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
             KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
@@ -606,7 +606,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         hideView(unlinkedLayout);
         hideView(loginUserOptionsLayout);
         hideView(preferenceRelativeLayout);
-		hideView(creditReportView);
+        hideView(creditReportView);
     }
 
     private OnClickListener btnSignin_onClick = new OnClickListener() {
@@ -677,6 +677,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
                 break;
             case R.id.linkedPersonalLoan:
+                Map<String, Account> accountsMap = new HashMap<>();
+                if (accounts.containsKey("PL")) {
+                    accountsMap.put("PL", accounts.get("PL"));
+                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode(accountsMap);
+                }
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.contactUs:
@@ -750,11 +755,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 }
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders);
                 break;
-			case R.id.creditReport:
-				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
+            case R.id.creditReport:
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
                 startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-				break;
+                break;
             default:
                 break;
 
@@ -798,6 +803,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             }
 
                             FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
+                            FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode(accounts);
 
                             isAccountsCallMade = true;
                             configureView();
@@ -1056,7 +1062,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
-	@SuppressLint("StaticFieldLeak")
+    @SuppressLint("StaticFieldLeak")
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
         if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
@@ -1126,32 +1132,35 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-	public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
-		switch (feature){
-			case ACCOUNTS:{
-				switch (promptsActionListener) {
-					case 1:
-						if (unavailableAccounts.size() == 3) {
-							onClick(applyStoreCardView);
-						} else {
-							if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
-								onClick(linkedStoreCardView);
-							} else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
-								onClick(linkedCreditCardView);
-							} else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
-								onClick(linkedPersonalCardView);
-							}
-						}
-						break;
-				}
-			}break;
-			case CREDIT_SCORE:{
-				onClick(creditReportView);
-			}break;
-			default:break;
-		}
+    public void onWalkthroughActionButtonClick(WMaterialShowcaseView.Feature feature) {
+        switch (feature) {
+            case ACCOUNTS: {
+                switch (promptsActionListener) {
+                    case 1:
+                        if (unavailableAccounts.size() == 3) {
+                            onClick(applyStoreCardView);
+                        } else {
+                            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
+                                onClick(linkedStoreCardView);
+                            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
+                                onClick(linkedCreditCardView);
+                            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
+                                onClick(linkedPersonalCardView);
+                            }
+                        }
+                        break;
+                }
+            }
+            break;
+            case CREDIT_SCORE: {
+                onClick(creditReportView);
+            }
+            break;
+            default:
+                break;
+        }
 
-	}
+    }
 
     @Override
     public void onPromptDismiss() {
@@ -1232,7 +1241,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void showInAppChat(Activity activity) {
-        if (!isAdded() || activity == null || mAccountResponse == null || mAccountResponse.accountList == null) return;
+        if (!isAdded() || activity == null || mAccountResponse == null || mAccountResponse.accountList == null)
+            return;
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account) {
             ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
