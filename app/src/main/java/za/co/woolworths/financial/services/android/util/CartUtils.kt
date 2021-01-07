@@ -24,7 +24,7 @@ class CartUtils {
 
         fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout, message: TextView, counter: TextView, isClickAndCollect: Boolean) {
             productCountMap.let {
-                if (it != null && it.quantityLimit?.foodLayoutColour != null && isClickAndCollect) {
+                if (it != null && it.quantityLimit?.foodLayoutColour != null && isClickAndCollect && it.totalProductCount ?: 0 > 0) {
                     message.text = it.quantityLimit.foodLayoutMessage ?: ""
                     counter.text = it.totalProductCount.toString() + "/" + it.quantityLimit.foodMaximumQuantity?:""
                     banner.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
