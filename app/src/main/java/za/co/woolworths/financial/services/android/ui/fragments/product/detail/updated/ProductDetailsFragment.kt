@@ -784,8 +784,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             addItemToCartResponse.data?.let {
                 if (it.size > 0) {
                     val intent: Intent = Intent()
-                    intent.putExtra("addedToCartMessage", it[0].message)
-                    intent.putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
+                    intent.apply {
+                        putExtra("addedToCartMessage", it[0].message)
+                        putExtra("ItemsCount", getSelectedQuantity())
+                        putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
+                    }
                     setResult(RESULT_OK, intent)
                     onBackPressed()
                 }
