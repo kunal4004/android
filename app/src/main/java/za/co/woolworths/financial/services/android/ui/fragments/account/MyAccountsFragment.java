@@ -1079,14 +1079,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             Account account = mAccountResponse.accountList.get(0);
             if (account != null && account.cards != null) {
                 if (account.cards.get(0).cardStatus != null) {
-                    List<CreditCardDeliveryCardTypes> cardTypes = WoolworthsApplication.getCreditCardDelivery().getCardTypes();
-                    if (cardTypes != null) {
-                        for (CreditCardDeliveryCardTypes ccdTypes : cardTypes) {
-                            if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
-                                    && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
-                                if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null))
+                    if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
+                        List<CreditCardDeliveryCardTypes> cardTypes = WoolworthsApplication.getCreditCardDelivery().getCardTypes();
+                        if (cardTypes != null) {
+                            for (CreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                                if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
+                                        && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
                                     executeCreditCardDeliveryStatusService();
-                                return;
+                                    return;
+                                }
                             }
                         }
                     }
