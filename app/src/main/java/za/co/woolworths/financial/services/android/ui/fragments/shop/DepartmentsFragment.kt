@@ -134,6 +134,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         } else {
             startLocationUpdates()
         }
+
+        showDeliveryOptionDialog()
     }
 
     private fun setListener() {

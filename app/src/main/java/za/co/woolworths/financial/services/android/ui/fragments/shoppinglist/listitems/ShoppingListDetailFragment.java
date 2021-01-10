@@ -949,7 +949,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 switch (addItemToCartResponse.httpCode) {
                     case HTTP_OK:
-                        onAddToCartSuccess(addItemToCartResponse, addItemToCart.size());
+                        onAddToCartSuccess(addItemToCartResponse, getTotalItemQuantity(addItemToCart));
                         break;
 
                     case HTTP_EXPECTATION_FAILED_417:
@@ -1113,5 +1113,14 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     @Override
     public void onSetNewLocation() {
         KotlinUtils.Companion.presentEditDeliveryLocationActivity(this.getActivity(), REQUEST_SUBURB_CHANGE, null);
+    }
+
+    public int getTotalItemQuantity(List<AddItemToCart> addItemToCart) {
+        int totalQuantity = 0;
+        for (AddItemToCart item :
+                addItemToCart) {
+            totalQuantity = totalQuantity + item.getQuantity();
+        }
+        return totalQuantity;
     }
 }
