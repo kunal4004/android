@@ -9,12 +9,15 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
+import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.imgCreditCard
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -24,6 +27,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     enum class DateType(val value: Int) { TODAY(0), TOMORROW(1) }
 
     var navController: NavController? = null
+    var accountBinNumber: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_status_layout, container, false)
@@ -32,6 +36,9 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            accountBinNumber = getString("accountBinNumber")
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +54,18 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         }
         manageDeliveryLayout.setOnClickListener(this)
         trackDeliveryLayout.setOnClickListener(this)
+        init()
         configureUI()
+    }
+
+    private fun init() {
+        if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
+            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
+        } else if (accountBinNumber.equals(Utils.SILVER_CARD, true)) {
+            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
+        } else if (accountBinNumber.equals(Utils.BLACK_CARD, true)) {
+            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
+        }
     }
 
     fun configureUI() {

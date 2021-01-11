@@ -6,18 +6,28 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.cancel
+import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
 import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.*
+import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.setUpDeliveryNow
+import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.title
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.Utils
 
 class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListener {
 
-    private var deliveredToName: String = ""
+    private var deliveredToName: String? = ""
     var mSetUpDeliveryListner: ISetUpDeliveryNowLIstner? = null
+    var accountBinNumber: String? = null
 
-    constructor(deliveredToName: String, mSetUpDeliveryListner: ISetUpDeliveryNowLIstner?) : this() {
-        this.deliveredToName = deliveredToName
+    constructor(bundle: Bundle, mSetUpDeliveryListner: ISetUpDeliveryNowLIstner?) : this() {
+        bundle.apply {
+            deliveredToName = getString("name")
+            accountBinNumber = getString("accountBinNumber")
+
+        }
         this.mSetUpDeliveryListner = mSetUpDeliveryListner
     }
 
@@ -32,10 +42,22 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
     }
 
     private fun init() {
+        var creditCardName: String = bindString(R.string.blackCreditCard_title)
+        if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
+            cardImage.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
+            creditCardName = bindString(R.string.goldCreditCard_title)
+        } else if (accountBinNumber.equals(Utils.SILVER_CARD, true)) {
+            cardImage.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
+            creditCardName = bindString(R.string.silverCreditCard_title)
+        } else if (accountBinNumber.equals(Utils.BLACK_CARD, true)) {
+            cardImage.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
+            creditCardName = bindString(R.string.blackCreditCard_title)
+        }
+
         cancel.setOnClickListener(this)
         setUpDeliveryNow.setOnClickListener(this)
         val nameTitleText1 = "Hey\u0020"
-        title.text = nameTitleText1.plus(deliveredToName).plus(bindString(R.string.title_subdesc_setup_cc_delivery))
+        title.text = nameTitleText1.plus(deliveredToName).plus(bindString(R.string.title_subdesc_setup_cc_delivery).plus(creditCardName).plus("?"))
     }
 
     override fun onClick(v: View?) {

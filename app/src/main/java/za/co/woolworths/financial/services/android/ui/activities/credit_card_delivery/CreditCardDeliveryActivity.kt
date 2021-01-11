@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryActivity : AppCompatActivity() {
 
     var bundle: Bundle? = null
+    var accountBinNumber: String? = null
     var statusResponse: StatusResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +28,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         bundle = intent.getBundleExtra("bundle")
         bundle?.apply {
             statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+            accountBinNumber = getString("accountBinNumber")
         }
         actionBar()
         loadNavHostFragment()

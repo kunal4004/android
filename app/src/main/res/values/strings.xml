@@ -1196,6 +1196,7 @@
     <string name="storeCardCardCollection_row_2">Latest three payslips or the last three months\' bank statements.</string>
 
     <string name="goldCreditCard_title">Gold Credit Card</string>
+    <string name="silverCreditCard_title">Silver Credit Card</string>
     <string name="goldCreditCard_desc">Get 2% back on all Woolies purchases when you pay with your card</string>
 
     <string name="goldCreditCardQualify_row_1">Be 18 years of age, or older</string>
@@ -1493,7 +1494,7 @@
     <string name="recipient">Recipient</string>
     <string name="booking_reference">BOOKING REFERENCE</string>
     <string name="created">created</string>
-    <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew Black Credit Card.</string>
+    <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew\u0020</string>
     <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know when and where to send your card.</string>
     <string name="set_up_delivery_nowt">set up delivery now</string>
     <string name="already_have_card_activate_it_now"><u>Already have card? Activate it now</u></string>
@@ -1936,7 +1937,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="cancelled_cc_delivery_desc">Your card has been</string>
     <string name="delivered_cc_delivery_desc">Your card has been</string>
     <string name="title_desc_setup_cc_delivery">Hey Thuli. Would you like to set\nup delivery of your new Black\nCredit Card?</string>
-    <string name="title_subdesc_setup_cc_delivery">. Would you like to set\nup delivery of your new Black\nCredit Card?</string>
+    <string name="title_subdesc_setup_cc_delivery">. Would you like to set\nup delivery of your new\u0020</string>
     <string name="subtitle_desc_setup_cc_delivery">We will deliver your card at a time that is convenient for you.</string>
     <string name="will_do_later"><u>i’ll do this later</u></string>
 </resources>

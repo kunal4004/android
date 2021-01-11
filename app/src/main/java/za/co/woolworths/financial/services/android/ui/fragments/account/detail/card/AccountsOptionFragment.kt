@@ -238,6 +238,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                         val intent = Intent(this, CreditCardDeliveryActivity::class.java)
                         val mBundle = Bundle()
                         mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
+                        mBundle.putString("accountBinNumber", mCardPresenterImpl?.getAccount()?.accountNumberBin)
                         mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse))
                         mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
                         intent.putExtra("bundle", mBundle)

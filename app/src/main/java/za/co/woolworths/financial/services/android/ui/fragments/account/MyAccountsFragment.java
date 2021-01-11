@@ -1417,7 +1417,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mSetUpDeliveryListner = () -> redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
             JWTDecodedModel jwtDecoded = SessionUtilities.getInstance().getJwt();
             String name = jwtDecoded.name.get(0);
-            SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(name, mSetUpDeliveryListner);
+            Bundle bundle = new Bundle();
+            bundle.putString("name", name);
+            bundle.putString("accountBinNumber", mCreditCardAccount.accountNumberBin);
+            SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
             setUpDeliveryNowDialog.show(getActivity()
                     .getSupportFragmentManager(), SetUpDeliveryNowDialog.class.getSimpleName());
         }
