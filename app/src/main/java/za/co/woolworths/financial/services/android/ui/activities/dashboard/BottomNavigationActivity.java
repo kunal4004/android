@@ -249,7 +249,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     public void setToast(String message, String cartText, ProductCountMap productCountMap, int noOfItems) {
         if (productCountMap != null && KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-            ToastFactory.Companion.showItemsLimitToastOnAddToCart(getBottomNavigationById(), productCountMap, this, noOfItems);
+            ToastFactory.Companion.showItemsLimitToastOnAddToCart(getBottomNavigationById(), productCountMap, this, noOfItems, true);
             return;
         }
         mToastUtils = new ToastUtils(BottomNavigationActivity.this);

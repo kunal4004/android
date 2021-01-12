@@ -49,6 +49,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -84,6 +85,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment;
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -1071,6 +1073,18 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 				case PDP_REQUEST_CODE:
+					Activity activity = getActivity();
+					if (activity == null) return;
+					loadShoppingCartAndSetDeliveryLocation();
+					ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
+					int itemsCount = data.getIntExtra("ItemsCount", 0);
+
+					if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+						ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, false);
+					} else {
+						ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, false, activity, null);
+					}
+					break;
 				case REQUEST_SUBURB_CHANGE:
                     loadShoppingCartAndSetDeliveryLocation();
 					break;

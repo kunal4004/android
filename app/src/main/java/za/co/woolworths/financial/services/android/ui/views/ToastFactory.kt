@@ -17,8 +17,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import android.util.DisplayMetrics
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.gson.JsonArray
@@ -190,7 +189,7 @@ class ToastFactory {
             return (size.y * (3/4)).toFloat() + 100f
         }
 
-        fun buildAddToCartSuccessToast(viewLocation: View, buttonIsVisible: Boolean, activity: Activity, toastInterface: IToastInterface): PopupWindow? {
+        fun buildAddToCartSuccessToast(viewLocation: View, buttonIsVisible: Boolean, activity: Activity, toastInterface: IToastInterface?): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
@@ -210,7 +209,7 @@ class ToastFactory {
             tvAddedTo?.setAllCaps(true)
 
             tvButtonClick?.setOnClickListener {
-                toastInterface.onToastButtonClicked(JsonObject())
+                toastInterface?.onToastButtonClicked(JsonObject())
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false
@@ -221,7 +220,7 @@ class ToastFactory {
             return popupWindow
         }
 
-        fun showItemsLimitToastOnAddToCart(viewLocation: View, productCountMap: ProductCountMap, activity: Activity, count: Int = 0): PopupWindow? {
+        fun showItemsLimitToastOnAddToCart(viewLocation: View, productCountMap: ProductCountMap, activity: Activity, count: Int = 0, viewButtonVisible: Boolean = true): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
@@ -231,6 +230,7 @@ class ToastFactory {
             val tvFoodLayoutMessage = view?.findViewById<TextView>(R.id.foodLayoutMessage)
             val viewCart = view?.findViewById<TextView>(R.id.viewCart)
             val toastView = view?.findViewById<ConstraintLayout>(R.id.toastView)
+            viewCart?.visibility = if (viewButtonVisible) VISIBLE else INVISIBLE
             productCountMap.let {
                 tvTotalProductCount?.apply {
                     text = it.totalProductCount.toString()
@@ -248,7 +248,7 @@ class ToastFactory {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT, true)
 
-            toastView?.setOnClickListener {
+            viewCart?.setOnClickListener {
                 ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }

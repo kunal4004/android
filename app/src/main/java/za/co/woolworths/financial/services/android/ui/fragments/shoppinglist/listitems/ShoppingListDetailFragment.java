@@ -450,7 +450,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         } else {
             // else display shopping list toast
             if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size);
+                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
             } else {
                 ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
             }
@@ -918,7 +918,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             int itemsCount = data.getIntExtra("ItemsCount", 0);
 
             if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
-                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount);
+                ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
             } else {
                 ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
             }
