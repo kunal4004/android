@@ -208,7 +208,7 @@ class KotlinUtils {
             val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
 
-            var output =  words[0].toUpperCase()+" "
+            var output = words[0].toUpperCase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -521,14 +521,15 @@ class KotlinUtils {
             activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
 
+        fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
+            return Gson().fromJson<Pair<ApplyNowState, Account>>(accountExtras, object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type)
+        }
+
         fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
             activity?.apply {
                 return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
             }
             return false
-        }
-        fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
-            return Gson().fromJson<Pair<ApplyNowState, Account>>(accountExtras, object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type)
         }
     }
 }

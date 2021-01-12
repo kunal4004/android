@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
