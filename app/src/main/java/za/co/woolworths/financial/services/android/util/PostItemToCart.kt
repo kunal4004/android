@@ -19,8 +19,8 @@ class PostItemToCart {
                 when (response?.httpCode) {
                     200 -> {
                         QueryBadgeCounter.instance.queryCartSummaryCount()
-                        response.data[0]?.productCountMap?.quantityLimit?.foodMaximumQuantity?.let {
-                            WoolworthsApplication.getClickAndCollect().maxNumberOfItemsAllowed = it
+                        response.data[0]?.productCountMap?.let {
+                           CartUtils.updateFoodMaximumQuantityOnConfig(it)
                         }
                     }
                     else -> {
