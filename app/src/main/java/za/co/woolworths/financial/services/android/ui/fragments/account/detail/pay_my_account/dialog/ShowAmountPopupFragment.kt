@@ -31,6 +31,9 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
     private var root: View? = null
     private var navController: NavController? = null
+    private val changeCardLabel = bindString(R.string.change_label)
+    private val addCardLabel = bindString(R.string.add_card_label)
+
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
@@ -53,10 +56,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             navController = NavHostFragment.findNavController(this)
 
         setupListener()
-
-        // Required to stop playing shimmering by default when fragment is visible
-        ShimmerAnimationManager.initShimmer(changeTextViewShimmerLayout)
-        ShimmerAnimationManager.stopProgress(changeTextViewShimmerLayout)
 
         with(payMyAccountViewModel) {
             pmaCardPopupModel.observe(viewLifecycleOwner, { card ->
@@ -102,7 +101,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
@@ -110,7 +108,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
     private fun hideKeyboard() {
         try {
-            val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.hideSoftInputFromWindow(cvvEditTextInput.windowToken, 0)
         } catch (ex: Exception) {
             FirebaseManager.logException(ex)
@@ -123,10 +121,13 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
             if (isSelectedCardExpired()) {
                 cardExpiredTagTextView?.visibility = VISIBLE
-                changeTextView?.text = bindString(R.string.add_card_label)
+                val userHasOneCard = payMyAccountViewModel.getPaymentMethodList()?.size == 1
+                changeTextView?.text = if (userHasOneCard) addCardLabel else changeCardLabel
+                cvvEditTextInput?.isEnabled = false
             } else {
                 cardExpiredTagTextView?.visibility = GONE
-                changeTextView?.text = bindString(R.string.change_label)
+                changeTextView?.text = changeCardLabel
+                cvvEditTextInput?.isEnabled = true
             }
 
             with(getSelectedPaymentMethodCard()) {
@@ -202,7 +203,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
                     R.id.changeTextView -> {
-                        if (changeTextView.text.toString().toLowerCase() == bindString(R.string.add_card_label).toLowerCase()) {
+                        if (changeTextView.text.toString().equals(bindString(R.string.add_card_label), ignoreCase = true)) {
                             ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.ADD_NEW_CARD, true)
                         } else {
                             ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.MANAGE_CARD, true)
