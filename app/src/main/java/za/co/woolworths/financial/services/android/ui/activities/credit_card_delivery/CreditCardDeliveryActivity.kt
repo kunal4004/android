@@ -20,6 +20,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     var bundle: Bundle? = null
     var accountBinNumber: String? = null
     var statusResponse: StatusResponse? = null
+    var setUpDeliveryNowClicked: Boolean = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         bundle?.apply {
             statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
             accountBinNumber = getString("accountBinNumber")
+            setUpDeliveryNowClicked = getBoolean("setUpDeliveryNowClicked", false);
         }
         actionBar()
         loadNavHostFragment()
@@ -64,7 +66,12 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         val navHostFragment = nav_host_fragment as NavHostFragment
         val graph = navHostFragment.navController.navInflater.inflate(R.navigation.nav_graph_credit_card_delivery)
 
-        graph.startDestination = if (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT) == CreditCardDeliveryStatus.CARD_RECEIVED) R.id.creditCardDeliveryBoardingFragment else R.id.creditCardDeliveryStatusFragment
+        if (setUpDeliveryNowClicked)
+            graph.startDestination = R.id.creditCardDeliveryRecipientDetailsFragment
+        else if (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT) == CreditCardDeliveryStatus.CARD_RECEIVED)
+            graph.startDestination = R.id.creditCardDeliveryBoardingFragment
+        else
+            graph.startDestination = R.id.creditCardDeliveryStatusFragment
         findNavController(R.id.nav_host_fragment)
                 .setGraph(
                         graph,

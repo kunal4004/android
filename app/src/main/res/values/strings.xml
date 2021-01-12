@@ -1936,8 +1936,8 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="failed_cc_delivery_desc">Your Card Delivery Has</string>
     <string name="cancelled_cc_delivery_desc">Your card has been</string>
     <string name="delivered_cc_delivery_desc">Your card has been</string>
-    <string name="title_desc_setup_cc_delivery">Hey Thuli. Would you like to set\nup delivery of your new Black\nCredit Card?</string>
-    <string name="title_subdesc_setup_cc_delivery">. Would you like to set\nup delivery of your new\u0020</string>
+    <string name="title_desc_setup_cc_delivery">Hey Thuli. Would you like to set up delivery of your new Black Credit Card?</string>
+    <string name="title_subdesc_setup_cc_delivery">. Would you like to set up delivery of your new\u0020</string>
     <string name="subtitle_desc_setup_cc_delivery">We will deliver your card at a time that is convenient for you.</string>
     <string name="will_do_later"><u>i’ll do this later</u></string>
 </resources>

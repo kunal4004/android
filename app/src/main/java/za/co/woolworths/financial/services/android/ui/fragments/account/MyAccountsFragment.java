@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.MyAccou
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
@@ -1288,6 +1289,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
+    private void redirectToCreditCardActivity(CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY);
+        Account account = mAccountResponse.accountList.get(0);
+        Intent intent = new Intent(getContext(), CreditCardDeliveryActivity.class);
+        Bundle mBundle = new Bundle();
+        mBundle.putString("envelopeNumber", account.cards.get(0).envelopeNumber);
+        mBundle.putString("accountBinNumber", account.accountNumberBin);
+        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse.getStatusResponse()));
+        mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
+        mBundle.putBoolean("setUpDeliveryNowClicked", true);
+        intent.putExtra("bundle", mBundle);
+        startActivity(intent);
+    }
+
     @Override
     public void handleUnknownHttpCode(@org.jetbrains.annotations.Nullable String description) {
 
@@ -1414,7 +1429,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void onGetCreditCardDeliveryStatusSuccess(@NotNull CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
         if (creditCardDeliveryStatusResponse.getStatusResponse().getDeliveryStatus().getStatusDescription().equalsIgnoreCase(CreditCardDeliveryStatus.CARD_RECEIVED.name())) {
-            mSetUpDeliveryListner = () -> redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
+            mSetUpDeliveryListner = () -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse);
             JWTDecodedModel jwtDecoded = SessionUtilities.getInstance().getJwt();
             String name = jwtDecoded.name.get(0);
             Bundle bundle = new Bundle();
