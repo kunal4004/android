@@ -9,7 +9,6 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.imgCreditCard
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -71,7 +70,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     fun configureUI() {
         when (statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(CreditCardDeliveryStatus.DEFAULT)) {
             CreditCardDeliveryStatus.CARD_RECEIVED -> {
-                cardReceivedOrCardDelivered()
+                cardReceivedOrAppointmentScheduled()
             }
             CreditCardDeliveryStatus.CARD_DELIVERED -> {
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
@@ -98,13 +97,13 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 deliveryDayAndTime.text = ""
             }
             CreditCardDeliveryStatus.APPOINTMENT_SCHEDULED -> {
-                cardReceivedOrCardDelivered()
+                cardReceivedOrAppointmentScheduled()
             }
         }
         deliveryStatusDescription.text = statusResponse?.deliveryStatus?.displayCopy
     }
 
-    private fun cardReceivedOrCardDelivered() {
+    private fun cardReceivedOrAppointmentScheduled() {
         manageDeliveryLayout.visibility = View.VISIBLE
         trackDeliveryLayout.visibility = View.VISIBLE
         splitAndApplyFormatedDate(statusResponse?.slotDetails?.appointmentDate)

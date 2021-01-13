@@ -523,8 +523,11 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
             APPOINTMENT_SCHEDULED, CANCELLED, CARD_SHREDDED -> {
                 showManageMyDelivery()
             }
-            CARD_NOT_RECEIVED, AWAITING_INSTRUCTION -> {
+            AWAITING_INSTRUCTION -> {
                 showDefaultCreditCardStatusView()
+            }
+            CARD_NOT_RECEIVED -> {
+                showGetCreditCardActivationStatus(CreditCardActivationState.AVAILABLE)
             }
             else -> {
                 showDefaultCreditCardStatusView()

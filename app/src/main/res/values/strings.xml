@@ -1430,6 +1430,7 @@
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
     <string name="cancel_order">Cancel Order</string>
+    <string name="cancel_delivery">Cancel Delivery</string>
     <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
     <string name="confirm_cancel_order_dialog_title">Are you sure you wish to \ncancel this order?</string>
     <string name="cancel_order_failure_title">There was a Problem Cancelling your Order</string>

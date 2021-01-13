@@ -260,7 +260,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="14dp"
                     android:layout_toEndOf="@+id/imLogoIncreaseLimit"
-                    android:text="@string/cancel_order" />
+                    android:text="@string/cancel_delivery" />
 
             </RelativeLayout>
 
