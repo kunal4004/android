@@ -121,8 +121,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
 
             if (isSelectedCardExpired()) {
                 cardExpiredTagTextView?.visibility = VISIBLE
-                val userHasOneCard = payMyAccountViewModel.getPaymentMethodList()?.size == 1
-                changeTextView?.text = if (userHasOneCard) addCardLabel else changeCardLabel
+                changeTextView?.text =  addCardLabel
                 cvvEditTextInput?.isEnabled = false
             } else {
                 cardExpiredTagTextView?.visibility = GONE
