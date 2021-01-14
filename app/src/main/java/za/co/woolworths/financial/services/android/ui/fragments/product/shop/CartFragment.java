@@ -550,8 +550,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void changeQuantity(CartResponse cartResponse, ChangeQuantity changeQuantity) {
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
 			CommerceItem updatedCommerceItem = getUpdatedCommerceItem(cartResponse.cartItems, changeQuantity.getCommerceId());
-			//update list instead of using the new list to handle inventory data.
+			//update list instead of using the new list to handle inventory data
+			for (CartItemGroup cartItemGroupUpdated : cartResponse.cartItems) {
+				boolean isGroup = false;
+				for (CartItemGroup cartItemGroup : cartItems) {
+					if (cartItemGroupUpdated.type.equalsIgnoreCase(cartItemGroup.type)) {
+						isGroup = true;
+						break;
+					}
+				}
+				if (!isGroup)
+					cartItems.add(cartItemGroupUpdated);
+			}
+
+
 			if (updatedCommerceItem != null) {
+				ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 				for (CartItemGroup cartItemGroup : cartItems) {
 					for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 						if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(updatedCommerceItem.commerceItemInfo.commerceId)) {
@@ -560,7 +574,33 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							commerceItem.setQuantityUploading(false);
 						}
 					}
+
+					if (cartItemGroup.type.equalsIgnoreCase("GIFT")) {
+						boolean isGiftsThere = false;
+						for (CartItemGroup UpdatedCartItemGroup : cartResponse.cartItems) {
+							if (UpdatedCartItemGroup.type.equalsIgnoreCase("GIFT")) {
+								cartItemGroup.commerceItems = UpdatedCartItemGroup.commerceItems;
+								isGiftsThere = true;
+							}
+						}
+						if (!isGiftsThere)
+							cartItemGroup.commerceItems.clear();
+					}
+
+					/***
+					 * Remove header when commerceItems is empty
+					 */
+					if (cartItemGroup.commerceItems.size() == 0) {
+						emptyCartItemGroups.add(cartItemGroup);// Gather all the empty groups after deleting item.
+					}
+
 				}
+
+				//remove all the empty groups
+				for (CartItemGroup cartItemGroup : emptyCartItemGroups) {
+					cartItems.remove(cartItemGroup);
+				}
+
 				orderSummary = cartResponse.orderSummary;
 				voucherDetails = cartResponse.voucherDetails;
 				cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
