@@ -352,9 +352,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onItemDeleteClick(CommerceItem commerceItem) {
+	public void onItemDeleteClickInEditMode(CommerceItem commerceItem) {
 		// TODO: Make API call to remove item + show loading before removing from list
 		removeItemAPI(commerceItem);
+	}
+
+	@Override
+	public void onItemDeleteClick(CommerceItem commerceId) {
+		enableItemDelete(true);
+		removeItemAPI(commerceId);
 	}
 
 	@Override
@@ -417,6 +423,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
 				for (CommerceItem cm : commerceItemList) {
 					cm.setDeleteIconWasPressed(false);
+					cm.setDeletePressed(false);
 				}
 			}
 		}
@@ -791,6 +798,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						if (cartProductAdapter != null)
 							resetItemDelete(true);
 					}
+					enableItemDelete(false);
 				} catch (Exception ex) {
 					FirebaseManager.Companion.logException(ex);
 				}
@@ -806,6 +814,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (cartProductAdapter != null) {
 								onRemoveItemLoadFail(commerceItem, true);
 								onRemoveItemFailed = true;
+								enableItemDelete(false);
 							}
 							mErrorHandlerView.showToast();
 						}
@@ -1542,5 +1551,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onPromoDiscountInfo() {
 		KotlinUtils.Companion.showGeneralInfoDialog(requireActivity().getSupportFragmentManager(), getString(R.string.promo_discount_dialog_desc), getString(R.string.promo_discount_dialog_title), getString(R.string.got_it));
+	}
+
+	public void enableItemDelete(boolean enable) {
+		enableEditCart(enable);
+		fadeCheckoutButton(enable);
+		deliveryLocationEnabled(!enable);
 	}
 }
