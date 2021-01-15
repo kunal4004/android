@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/line_dp"
             android:layout_marginRight="1dp"
-            android:background="@color/outside_border"/>
+            android:background="@color/color_separator_light_grey"/>
 
 
         <RelativeLayout
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_dp"
                 android:layout_marginRight="1dp"
-                android:background="@color/outside_border"/>
+                android:background="@color/color_separator_light_grey"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
@@ -96,8 +96,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_dp"
-                android:layout_marginRight="1dp"
-                android:background="@color/outside_border"/>
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/color_separator_light_grey"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
@@ -128,8 +128,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_dp"
-                android:layout_marginRight="1dp"
-                android:background="@color/outside_border"/>
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/color_separator_light_grey"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
@@ -159,8 +159,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_dp"
-                android:layout_marginRight="1dp"
-                android:background="@color/outside_border"/>
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/color_separator_light_grey"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
@@ -200,8 +200,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_dp"
-                android:layout_marginRight="1dp"
-                android:background="@color/outside_border"/>
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/color_separator_light_grey"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
@@ -230,9 +230,9 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/line_dp"
-                android:layout_marginRight="1dp"
-                android:background="@color/outside_border"/>
+                android:layout_height="@dimen/one_dp"
+                android:layout_marginRight="@dimen/one_dp"
+                android:background="@color/color_separator_light_grey"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_basket_label"
@@ -255,9 +255,9 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/line_dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/outside_border"/>
+            android:layout_height="@dimen/one_dp"
+            android:layout_marginRight="@dimen/one_dp"
+            android:background="@color/color_separator_light_grey"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/style_cart_basket_label"

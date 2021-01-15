@@ -22,13 +22,12 @@
         android:layout_width="0dp"
         android:gravity="start"
         android:text="@string/bpi_not_covered"
-        android:fontFamily="@font/futura_medium_ttf"
         android:textColor="@color/sem_per_black"
         android:textSize="11sp"
         app:layout_constraintEnd_toStartOf="@+id/notCoveredImageView"
         app:layout_constraintTop_toBottomOf="@+id/bpiCoveredTextView"
-        tools:targetApi="lollipop"
-        tools:ignore="SmallSp" />
+        tools:ignore="SmallSp"
+        tools:targetApi="lollipop" />
 
     <ImageView
         android:id="@+id/notCoveredImageView"

@@ -1,35 +1,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:contentDescription="@string/transactions_layout"
-    android:layout_height="wrap_content">
+    android:contentDescription="@string/transactions_layout">
 
     <TextView
         android:id="@+id/transactionDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/eight_dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="03 / 07 / 2016"
+        android:letterSpacing="0.1"
+        android:text="@string/transaction_date_value"
         android:textColor="@color/transaction_date_color"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
+        android:textSize="@dimen/fourteen_dp"
+        app:layout_constraintEnd_toStartOf="@+id/transactionAmount"
         app:layout_constraintStart_toStartOf="@+id/beginGuideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/transactionDescription" />
 
     <TextView
         android:id="@+id/transactionDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:text="Purchase - Foods"
+        android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toStartOf="@+id/transactionAmount"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintStart_toStartOf="@+id/beginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/transactionDate" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/transactionAmount"
@@ -38,9 +40,9 @@
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:text="R 50.00"
         android:textColor="@color/black_off"
-        android:textSize="15sp"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
-        app:layout_constraintTop_toBottomOf="@+id/transactionDate" />
+        app:layout_constraintTop_toBottomOf="@+id/transactionDescription" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -48,25 +50,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="24dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="24dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
     <View
         android:layout_width="0dp"
-        android:layout_height="17dp"
+        android:layout_height="@dimen/seventeen_dp"
         app:layout_constraintEnd_toStartOf="@+id/endGuideLine"
         app:layout_constraintStart_toStartOf="@+id/beginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/transactionDescription" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/one_dp"
         android:background="@color/recent_search_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
