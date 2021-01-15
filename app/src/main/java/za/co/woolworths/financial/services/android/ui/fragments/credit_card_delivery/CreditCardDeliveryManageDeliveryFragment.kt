@@ -106,6 +106,6 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         } else {
             bookingReference.text = statusResponse?.bookingreference
         }
-        statusResponse?.deliveryStatus?.receivedDate.also { createdDate.text = it }
+        WFormatter.getFullMonthDate(statusResponse?.deliveryStatus?.receivedDate).also { createdDate.text = it }
     }
 }

@@ -72,7 +72,7 @@
                 android:contentDescription="@string/cd_ccd_labelsetupdeliverydescription"
                 android:gravity="center_horizontal"
                 android:lineSpacingMultiplier="1.40"
-                android:text="@string/setup_credit_card_delivery_desc_please_note_1"
+                android:text="@string/setup_credit_card_delivery_desc_please_note"
                 android:textColor="@color/text_description_color"
                 android:textSize="@dimen/fifteen_sp"
                 android:visibility="gone"

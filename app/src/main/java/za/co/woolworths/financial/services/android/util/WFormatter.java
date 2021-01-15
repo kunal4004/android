@@ -279,6 +279,14 @@ public class WFormatter {
                         .parse(date));
     }
 
+    public static String getFullMonthDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("dd MMMM yyyy")
+                .format((new SimpleDateFormat("yyyy-MM-dd"))
+                        .parse(date));
+    }
+
     public static String convertToFormatedDate(String date) throws ParseException {
         if (date == null)
             return "";
