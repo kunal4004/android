@@ -163,7 +163,7 @@
                 style="@style/myriad_pro_regular"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:lineSpacingMultiplier="1.40"
-                android:text="@string/cellphone_number_error_msg"
+                android:text="@string/alternate_number_error_msg"
                 android:textColor="@color/input_error_color_code"
                 android:textSize="@dimen/fourteen_sp"
                 android:visibility="gone"

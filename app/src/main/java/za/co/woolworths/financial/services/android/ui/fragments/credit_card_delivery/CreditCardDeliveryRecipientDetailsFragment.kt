@@ -182,7 +182,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
             R.id.alternativeNumber -> {
                 alternativeNumberErrorMsg.visibility = View.VISIBLE
-                alternativeNumberErrorMsg.text = bindString(R.string.cellphone_number_error_msg)
+                alternativeNumberErrorMsg.text = bindString(R.string.alternate_number_error_msg)
             }
         }
     }

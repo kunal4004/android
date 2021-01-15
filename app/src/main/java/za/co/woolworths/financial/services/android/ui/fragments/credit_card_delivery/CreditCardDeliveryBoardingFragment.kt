@@ -52,9 +52,17 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
         if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
             imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
             creditCardName = bindString(R.string.goldCreditCard_title)
+            descriptionNote.visibility = View.VISIBLE
+            descriptionNote.text = bindString(R.string.setup_credit_card_delivery_desc_please_note_1)
+                    .plus(bindString(R.string.goldCreditCard_title_small))
+                    .plus(bindString(R.string.setup_credit_card_delivery_desc_please_note_2))
         } else if (accountBinNumber.equals(Utils.SILVER_CARD, true)) {
             imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
             creditCardName = bindString(R.string.silverCreditCard_title)
+            descriptionNote.visibility = View.VISIBLE
+            descriptionNote.text = bindString(R.string.setup_credit_card_delivery_desc_please_note_1)
+                    .plus(bindString(R.string.silver_credit_card))
+                    .plus(bindString(R.string.setup_credit_card_delivery_desc_please_note_2))
         } else if (accountBinNumber.equals(Utils.BLACK_CARD, true)) {
             imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
             creditCardName = bindString(R.string.blackCreditCard_title)
