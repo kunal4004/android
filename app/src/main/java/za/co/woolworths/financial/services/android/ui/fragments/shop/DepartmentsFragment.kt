@@ -116,10 +116,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun initializeRootCategoryList() {
-        if(parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
-        if (!Utils.isDeliverySelectionModalShown()) {
-            showDeliveryOptionDialog()
-        }
+        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+        showDeliveryOptionDialog()
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -136,6 +134,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         } else {
             startLocationUpdates()
         }
+
+        showDeliveryOptionDialog()
     }
 
     private fun setListener() {
@@ -299,6 +299,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 executeValidateSuburb()
                 //When moved from My Cart to department
                 startLocationUpdates()
+
+                showDeliveryOptionDialog()
             }
         }
     }
@@ -353,7 +355,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun showDeliveryOptionDialog() {
-        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+        if (!Utils.isDeliverySelectionModalShown()) {
+            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+        }
     }
 
     private fun executeValidateSuburb() {
