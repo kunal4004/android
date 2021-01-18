@@ -12,6 +12,8 @@ import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class WFormatter {
 
     public static String formatAmount(int amount) {
@@ -277,6 +279,25 @@ public class WFormatter {
         return new SimpleDateFormat("EEEE dd MMMM, yyyy")
                 .format((new SimpleDateFormat("yyyy-MM-dd"))
                         .parse(date));
+    }
+
+    public static String getDayAndFormatedDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("EE, dd MMMM").format((new SimpleDateFormat("yyyy-MM-dd")).parse(date));
+    }
+
+    public static String getDayOfMonthSuffix(final int day) {
+        checkArgument(day >= 1 && day <= 31, "illegal day of month: " + day);
+        if (day >= 11 && day <= 13) {
+            return "th";
+        }
+        switch (day % 10) {
+            case 1:  return "st";
+            case 2:  return "nd";
+            case 3:  return "rd";
+            default: return "th";
+        }
     }
 
     public static String getFullMonthDate(String date) throws ParseException {

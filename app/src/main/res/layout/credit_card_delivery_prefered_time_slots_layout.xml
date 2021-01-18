@@ -26,8 +26,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/seventy_dp"
-        android:orientation="horizontal"
         android:contentDescription="@string/cd_ccd_btnconfirm"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pageDesc">
@@ -39,8 +39,8 @@
             android:layout_height="220dp"
             android:layout_weight="1"
             android:background="@color/white"
-            android:visibility="visible"
             android:contentDescription="@string/cd_ccd_listdayanddate"
+            android:visibility="visible"
             app:wv_curvedArcDirection="left"
             app:wv_curvedArcDirectionFactor="0.5"
             app:wv_dividerColor="#12000000"
@@ -54,6 +54,7 @@
             app:wv_textBoundaryMargin="@dimen/sixteen_dp"
             app:wv_textFont="medium"
             app:wv_textSize="18sp" />
+
         <View
             android:layout_width="1dp"
             android:layout_height="36dp"
@@ -66,8 +67,8 @@
             android:layout_height="220dp"
             android:layout_weight="1"
             android:background="@color/white"
-            android:visibility="visible"
             android:contentDescription="@string/cd_ccd_listtime"
+            android:visibility="visible"
             app:wv_curvedArcDirection="right"
             app:wv_curvedArcDirectionFactor="0.5"
             app:wv_dividerColor="#12000000"
@@ -113,11 +114,12 @@
 
     <TextView
         android:id="@+id/pageTitle"
-        style="@style/futura_medium_black"
+        style="@style/futura_semi_bold"
         android:contentDescription="@string/cd_ccd_lableconfirmtimeslottitle"
         android:letterSpacing="0.1"
         android:lineSpacingMultiplier="1.20"
         android:text="@string/time_slots_page_title"
+        android:textColor="@color/currency_color"
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintRight_toRightOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -126,8 +128,8 @@
     <TextView
         android:id="@+id/pageDesc"
         style="@style/myriad_pro_regular"
-        android:contentDescription="@string/cd_ccd_labeltimeslotdescription"
         android:layout_marginTop="@dimen/eight_dp"
+        android:contentDescription="@string/cd_ccd_labeltimeslotdescription"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/time_slots_page_desc"
         android:textColor="#50333333"

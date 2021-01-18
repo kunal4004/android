@@ -79,7 +79,8 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     override fun onItemSelected(wheelView: WheelView<Any>?, data: Any?, position: Int) {
         when (wheelView?.id) {
             R.id.datePicker -> {
-                selectedDate = data as TimeSlot?
+                timeslots = Gson().fromJson(bundle?.getString("available_time_slots"), object : TypeToken<List<TimeSlot>>() {}.type)
+                selectedDate = timeslots?.get(position)
                 selectedDate?.let { setTimePickerData(it) }
             }
             R.id.timePicker -> {
@@ -89,6 +90,14 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun setDatePickerData(timeSlots: List<TimeSlot>) {
+        timeSlots.forEachIndexed { index, slot ->
+            var unformattedDate: String = changeDateFormat(slot.date)
+            val parts: List<String>? = slot.date.split("-")
+            parts?.get(2)?.let {
+                unformattedDate = unformattedDate.replace(it,it+ WFormatter.getDayOfMonthSuffix(it.toInt()))
+            }
+            timeSlots.get(index).date = unformattedDate
+        }
         val defaultItemPosition = timeSlots.let { it.size / 2 }
         selectedDate = timeSlots[defaultItemPosition-1]
         selectedTime = selectedDate?.availableTimeslots?.let { (it.size / 2) }?.let { selectedDate?.availableTimeslots?.get(it) }
@@ -97,6 +106,10 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             selectedItemPosition = defaultItemPosition-1
         }
         setTimePickerData(timeSlots[defaultItemPosition-1])
+    }
+
+    private fun changeDateFormat(date: String): String {
+        return WFormatter.getDayAndFormatedDate(date)
     }
 
     private fun setTimePickerData(timeSlot: TimeSlot) {
