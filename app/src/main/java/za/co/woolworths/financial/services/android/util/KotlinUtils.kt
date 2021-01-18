@@ -503,8 +503,8 @@ class KotlinUtils {
             }
         }
 
-        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "") {
-            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText)
+        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "", infoIcon: Int = 0) {
+            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
             fragmentManager.let { fragmentTransaction -> dialog.show(fragmentTransaction, GeneralInfoDialogFragment::class.java.simpleName) }
         }
 
@@ -539,6 +539,10 @@ class KotlinUtils {
                 return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
             }
             return false
+        }
+
+        fun isDeliveryOptionClickAndCollect(): Boolean {
+            return Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true
         }
     }
 }
