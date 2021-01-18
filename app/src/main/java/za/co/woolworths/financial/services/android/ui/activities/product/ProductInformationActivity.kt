@@ -6,6 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_product_information.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_ALLERGEN_INFORMATION
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_DIETARY_INFORMATION
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_INGREDIENTS_INFORMATION
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_NUTRITIONAL_INFORMATION
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_PRODUCTDETAILS_INFORMATION
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.*
@@ -55,6 +60,7 @@ class ProductInformationActivity : AppCompatActivity() {
                 ProductInformationType.DETAILS -> {
                     val arguments = HashMap<String, String>()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_DETAILS_INFORMATION_PRODUCT_ID] = productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_PRODUCTDETAILS_INFORMATION
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAILS_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductDetailsInformationFragment.newInstance(longDescription, productId),
@@ -64,6 +70,7 @@ class ProductInformationActivity : AppCompatActivity() {
                 ProductInformationType.INGREDIENTS -> {
                     val arguments = HashMap<String, String>()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.INGREDIENTS_INFORMATION_PRODUCT_ID] = productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_INGREDIENTS_INFORMATION
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_INGREDIENTS_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductIngredientsInformationFragment.newInstance(this.ingredients),
@@ -73,6 +80,7 @@ class ProductInformationActivity : AppCompatActivity() {
                 ProductInformationType.NUTRITIONAL_INFO -> {
                     val arguments = HashMap<String, String>()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.NUTRITIONAL_INFORMATION_PRODUCT_ID] = productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_NUTRITIONAL_INFORMATION
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductNutritionalInformationFragment.newInstance(Utils.toJson(this.nutritionalInformationDetails)),
@@ -82,6 +90,7 @@ class ProductInformationActivity : AppCompatActivity() {
                 ProductInformationType.ALLERGEN_INFO -> {
                     val arguments = HashMap<String, String>()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ALLERGEN_INFORMATION_PRODUCT_ID] = productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_ALLERGEN_INFORMATION
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_ALLERGEN_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductAllergensInformationFragment.newInstance(this.allergens.get(0)),
@@ -91,6 +100,7 @@ class ProductInformationActivity : AppCompatActivity() {
                 ProductInformationType.DIETARY_INFO -> {
                     val arguments = HashMap<String, String>()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.DIETARY_INFORMATION_PRODUCT_ID] = productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_DIETARY_INFORMATION
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_DIETARY_INFORMATION, arguments)
                     addFragment(
                             fragment = ProductDietaryInformationFragment.newInstance(this.dietary.get(0)),

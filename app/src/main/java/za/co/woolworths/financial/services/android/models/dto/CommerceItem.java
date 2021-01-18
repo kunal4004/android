@@ -22,6 +22,7 @@ public class CommerceItem {
 	public boolean isStockChecked = false;
 	public boolean isItemRemoved = false;
 	public String commerceItemClassType;
+	private boolean deletePressed = false;
 
 	public void setDeleteSingleItem(boolean deleteSingleItem) {
 		this.deleteSingleItem = deleteSingleItem;
@@ -77,5 +78,13 @@ public class CommerceItem {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public boolean isDeletePressed() {
+		return deletePressed;
+	}
+
+	public void setDeletePressed(boolean deletePressed) {
+		this.deletePressed = deletePressed;
 	}
 }
