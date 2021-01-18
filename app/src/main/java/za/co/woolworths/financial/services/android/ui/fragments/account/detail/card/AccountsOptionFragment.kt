@@ -381,11 +381,6 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     override fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse) {
-        val accountList = mCardPresenterImpl?.getAccount()
-        val accounts: HashMap<String, Account?> = HashMap()
-        accounts.put(AccountsProductGroupCode.CREDIT_CARD.groupCode, accountList)
-        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCode(accounts)
-
         creditCardTokenResponse.apply {
             if (cards.isNullOrEmpty()) {
                 showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)

@@ -193,10 +193,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
-        val accountList = getAccount()
-        val accounts:  HashMap<String, Account?> = HashMap()
-        accounts.put(AccountsProductGroupCode.STORE_CARD.groupCode, accountList)
-        setUserPropertiesDelinquencyCode(accounts)
         this.mStoreCardResponse = storeCardResponse
         mainView?.handleStoreCardCardsSuccess(storeCardResponse)
     }

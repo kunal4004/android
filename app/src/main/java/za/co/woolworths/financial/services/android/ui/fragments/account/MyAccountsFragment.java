@@ -677,11 +677,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
                 break;
             case R.id.linkedPersonalLoan:
-                Map<String, Account> accountsMap = new HashMap<>();
-                if (accounts.containsKey("PL")) {
-                    accountsMap.put("PL", accounts.get("PL"));
-                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode(accountsMap);
-                }
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.contactUs:
