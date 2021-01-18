@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -12,12 +14,14 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
+import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
+import za.co.woolworths.financial.services.android.ui.extension.getFuturaSemiBoldFont
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
+class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
     fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
         with(productList) {
@@ -77,11 +81,20 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imFreeGiftImage, imPromo?.freeGift ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")
-        ImageManager.setPictureWithoutPlaceHolder(itemView.imNewImage, imPromo?.newImage ?: "")
+        with(itemView) {
+
+            measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            val itemWidth = itemView.measuredWidth
+            imReducedImage?.layoutParams?.width = (itemWidth / 2) -  Utils.dp2px(8f)
+            imSave?.layoutParams?.width =  (itemWidth / 4) -  Utils.dp2px(16f)
+
+            ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
+            ImageManager.setPictureOverrideWidthHeight(imSave, imPromo?.save ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+        }
     }
 
     private fun setProductImage(productList: ProductList) {

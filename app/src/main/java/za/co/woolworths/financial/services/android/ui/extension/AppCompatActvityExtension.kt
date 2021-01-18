@@ -10,6 +10,8 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.View
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.AnimRes
@@ -303,7 +305,8 @@ fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
 inline fun <reified T : Enum<T>> Intent.putEnumExtra(victim: T): Intent =
         putExtra(T::class.java.name, victim.ordinal)
 
-inline fun <reified T: Enum<T>> Intent.getEnumExtra(): T? =
+inline fun <reified T : Enum<T>> Intent.getEnumExtra(): T? =
         getIntExtra(T::class.java.name, -1)
                 .takeUnless { it == -1 }
                 ?.let { T::class.java.enumConstants?.get(it) }
+
