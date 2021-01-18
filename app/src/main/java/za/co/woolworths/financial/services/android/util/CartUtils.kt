@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util
 
 import za.co.woolworths.financial.services.android.models.dto.CartResponse
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 
 class CartUtils {
     companion object {
@@ -14,6 +15,10 @@ class CartUtils {
                     return commerceItem
             }
             return commerceItem
+        }
+
+        fun getAppliedVouchersCount(vouchers: ArrayList<Voucher>): Int {
+            return vouchers.filter { it.voucherApplied }.size
         }
 
     }

@@ -1787,5 +1787,6 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="account_holder_lable">Account Holder:</string>
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
     <string name="transaction_date_value">03 / 07 / 2016</string>
+    <string name="vouchers_removed_toast_message">Your &lt;b>Vouchers&lt;/b> have been removed</string>
 </resources>
 
