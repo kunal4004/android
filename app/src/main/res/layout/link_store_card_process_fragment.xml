@@ -79,5 +79,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/close_24" />
 
-
+    <include
+        android:id="@+id/includeVirtualTempCardSuccessMessage"
+        layout="@layout/npc_virtual_temp_card_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
 </androidx.constraintlayout.widget.ConstraintLayout>
