@@ -19,12 +19,14 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
     private var mAliasId: String? = null
 
     companion object {
+        private var mCreditCardToken: String? = null
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
         private const val ALIAS_ID = "ALIAS_ID"
 
-        fun newInstance(aliasId: String?) = AbsaFiveDigitCodeFragment().apply {
+        fun newInstance(aliasId: String?,creditCardToken:String?) = AbsaFiveDigitCodeFragment().apply {
             arguments = Bundle(3).apply {
                 putString(ALIAS_ID, aliasId)
+                putString("creditCardToken", creditCardToken)
             }
         }
     }
@@ -35,6 +37,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
             getString(ALIAS_ID)?.apply { mAliasId = this }
+            mCreditCardToken = getString("creditCardToken") ?: ""
         }
     }
 
@@ -70,7 +73,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), mAliasId),
+                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), mAliasId,mCreditCardToken),
                     tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,
