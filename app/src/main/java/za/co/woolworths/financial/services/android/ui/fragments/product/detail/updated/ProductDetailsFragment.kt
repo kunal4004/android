@@ -1317,7 +1317,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, productDetails?.productId
                     ?: "")))
-            val message = WoolworthsApplication.getProductDetailsPage().shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage().shareItemURITemplate.replace("{product_id}", it, true) }
+            val message = WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace("{product_id}", it, true) }
             val shareIntent = Intent()
             shareIntent.apply {
                 action = Intent.ACTION_SEND
