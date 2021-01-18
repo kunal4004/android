@@ -230,22 +230,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
          * Result from success add to cart
          */
 
-        if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-            if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-
-                if (fragment instanceof CartFragment) {
-                    fragment.onActivityResult(requestCode, resultCode, null);
-                }
-
-                ToastUtils mToastUtils = new ToastUtils(this);
-                mToastUtils.setActivity(this);
-                mToastUtils.setGravity(Gravity.BOTTOM);
-                mToastUtils.setCartText(R.string.cart);
-                mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
-                mToastUtils.setPixel(Utils.dp2px(105));
-                mToastUtils.setMessage(R.string.added_to);
-                mToastUtils.setViewState(false);
-                mToastUtils.build();
+        if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (fragment instanceof CartFragment) {
+                fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
 

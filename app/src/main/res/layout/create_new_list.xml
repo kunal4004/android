@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="@dimen/twenty_four_dp"
             android:contentDescription="@string/shop_create_a_list"
             app:srcCompat="@drawable/back_arrow" />
 
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
             android:contentDescription="@string/shop_create_a_list"
             app:srcCompat="@drawable/close_24" />
 
@@ -58,7 +58,7 @@
         android:imeOptions="actionDone"
         android:inputType="textCapWords"
         android:maxLength="50"
-        android:minHeight="200dp"
+        android:minHeight="@dimen/two_hundred_dp"
         android:singleLine="true"
         android:textColor="@color/black"
         android:textColorHint="@color/recent_search_bg"

@@ -16,6 +16,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.*
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
+import android.util.Pair
 import android.text.style.*
 import android.util.TypedValue
 import android.view.View
@@ -29,10 +33,15 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
+
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
@@ -199,7 +208,7 @@ class KotlinUtils {
             val value = str.toLowerCase()
             val words = value.split(" ").toMutableList()
 
-            var output =  words[0].toUpperCase()+" "
+            var output = words[0].toUpperCase() + " "
             words.removeAt(0)
             for (word in words) {
                 output += word.capitalize() + " "
@@ -485,8 +494,8 @@ class KotlinUtils {
             }
         }
 
-        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "") {
-            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText)
+        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "", infoIcon: Int = 0) {
+            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
             fragmentManager.let { fragmentTransaction -> dialog.show(fragmentTransaction, GeneralInfoDialogFragment::class.java.simpleName) }
         }
 
@@ -512,11 +521,19 @@ class KotlinUtils {
             activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
 
+        fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
+            return Gson().fromJson<Pair<ApplyNowState, Account>>(accountExtras, object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type)
+        }
+
         fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
             activity?.apply {
                 return appURI?.let { this.packageManager.getLaunchIntentForPackage(it) } != null
             }
             return false
+        }
+
+        fun isDeliveryOptionClickAndCollect(): Boolean {
+            return Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true
         }
     }
 }

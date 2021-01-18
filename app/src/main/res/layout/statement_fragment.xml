@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -34,14 +33,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sixteen_dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rclEStatement"
@@ -49,8 +51,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginBottom="@dimen/fifty_eight_dp"
                         android:background="@color/white"
-                        android:contentDescription="@string/statement_list_layout"
-                        />
+                        android:contentDescription="@string/statement_list_layout" />
 
                 </LinearLayout>
 
@@ -66,13 +67,13 @@
                     <RelativeLayout
                         android:id="@+id/relNextButton"
                         style="@style/blackButtonStyle"
-                        android:layout_marginBottom="@dimen/eight_dp"
-                        android:layout_marginEnd="@dimen/eight_dp"
                         android:layout_marginStart="@dimen/eight_dp"
+                        android:layout_marginEnd="@dimen/eight_dp"
+                        android:layout_marginBottom="@dimen/eight_dp"
                         android:background="@drawable/button_disable_color"
                         android:gravity="center"
-                        android:paddingEnd="@dimen/eight_dp"
-                        android:paddingStart="@dimen/eight_dp">
+                        android:paddingStart="@dimen/eight_dp"
+                        android:paddingEnd="@dimen/eight_dp">
 
                         <za.co.woolworths.financial.services.android.ui.views.WButton
                             android:id="@+id/btnEmailStatement"
@@ -83,7 +84,7 @@
                             android:gravity="center"
                             android:text="@string/email_statement"
                             android:textColor="@color/text_color_selector"
-                            app:WButton_font="medium_bold"/>
+                            app:WButton_font="medium_bold" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -98,21 +99,26 @@
                 <FrameLayout
                     android:id="@+id/flAccountStatement"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
         </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
 
-        <include layout="@layout/circular_progress_layout"/>
+        <include layout="@layout/circular_progress_layout" />
 
     </FrameLayout>
 
-    <include layout="@layout/no_result_layout"/>
+    <include layout="@layout/no_result_layout" />
 
-    <include layout="@layout/no_connection_layout"/>
+    <include layout="@layout/no_connection_layout" />
 
-    <include layout="@layout/chat_collect_agent_floating_button_layout" />
+    <include
+        layout="@layout/chat_collect_agent_floating_button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp" />
 
 </FrameLayout>

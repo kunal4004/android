@@ -31,13 +31,15 @@ import java.net.HttpCookie
 
 class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener {
 
+    private var mCreditCardToken: String? = null
     private var userCellNumber: String? = ""
 
     companion object {
         const val MAXIMUM_PIN_ALLOWED: Int = 7
-        fun newInstance(userCellNumber: String?) = AbsaOTPConfirmationFragment().apply {
+        fun newInstance(userCellNumber: String?, creditCardToken: String?) = AbsaOTPConfirmationFragment().apply {
             arguments = Bundle(1).apply {
                 putString("userCellNumber", userCellNumber)
+                putString("creditCardToken", creditCardToken)
             }
         }
     }
@@ -47,6 +49,9 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         arguments?.apply {
             if (containsKey("userCellNumber")) {
                 userCellNumber = arguments?.getString("userCellNumber") ?: ""
+                if (containsKey("creditCardToken")) {
+                    mCreditCardToken = arguments?.getString("creditCardToken") ?: ""
+                }
             }
         }
     }
@@ -160,7 +165,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
     fun onSuccessHandler(aliasId: String) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasId),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasId,mCreditCardToken),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

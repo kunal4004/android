@@ -24,8 +24,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include
-                    layout="@layout/delivery_location_layout"/>
+                <include layout="@layout/delivery_location_layout" />
+                <include layout="@layout/cart_item_limits_banner" />
 
                 <TextView
                     android:id="@+id/upSellMessageTextView"
