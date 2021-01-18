@@ -196,6 +196,8 @@ class FirebaseManagerAnalyticsProperties {
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
 
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
+        const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
+
     }
 
     class PropertyNames {
