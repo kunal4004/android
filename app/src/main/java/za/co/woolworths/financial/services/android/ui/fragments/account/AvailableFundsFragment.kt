@@ -86,6 +86,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
         activity?.apply {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
             val openStatement = Intent(this, StatementActivity::class.java)
+            openStatement.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
             startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }

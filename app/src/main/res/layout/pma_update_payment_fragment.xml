@@ -182,19 +182,14 @@
         app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem"
         app:srcCompat="@drawable/card_visa" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/changeTextViewShimmerLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/twenty_four_dp"
-        app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem">
-
         <TextView
+            app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem"
             android:id="@+id/changeTextView"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
             android:letterSpacing="0.12"
@@ -202,7 +197,6 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="@dimen/twelve_sp" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
         android:id="@+id/cardNumberItemTextView"
@@ -246,7 +240,7 @@
         android:textSize="10sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/cardNumberItemTextView"
-        app:layout_constraintEnd_toStartOf="@+id/changeTextViewShimmerLayout"
+        app:layout_constraintEnd_toStartOf="@+id/changeTextView"
         app:layout_constraintTop_toTopOf="@+id/cardNumberItemTextView"
         tools:ignore="SmallSp" />
 

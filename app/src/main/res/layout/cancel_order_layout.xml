@@ -17,7 +17,7 @@
             android:drawableLeft="@drawable/ic_cancel_order"
             android:drawablePadding="@dimen/sixteen_dp"
             android:gravity="center_vertical"
-            android:text="@string/cancel_order"
+            android:text="@string/cancel_delivery"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
