@@ -101,6 +101,7 @@
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/myself"
+                    android:textColor="@color/currency_color"
                     android:textSize="@dimen/fifteen_sp" />
 
                 <RadioButton
@@ -113,6 +114,7 @@
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/another_person"
+                    android:textColor="@color/currency_color"
                     android:textSize="@dimen/fifteen_sp" />
             </RadioGroup>
 
