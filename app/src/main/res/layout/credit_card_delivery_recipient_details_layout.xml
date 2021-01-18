@@ -18,13 +18,11 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/clearDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_regular_black"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/fourty_seven_dp"
         android:text="@string/clear_details"
         android:textSize="@dimen/sixteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -55,8 +53,8 @@
                 android:id="@+id/cellphoneNumber"
                 style="@style/credi_card_delivery_edittext_style"
                 android:contentDescription="@string/cd_ccd_txtcellphonenumber"
-                android:inputType="number"
                 android:hint="@string/phone_no_hint"
+                android:inputType="number"
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
@@ -67,9 +65,9 @@
                 android:id="@+id/alternativeNumber"
                 style="@style/credi_card_delivery_edittext_style"
                 android:contentDescription="@string/cd_ccd_txtalternatecontactnumberr"
+                android:hint="@string/phone_no_hint"
                 android:imeOptions="actionDone"
                 android:inputType="number"
-                android:hint="@string/phone_no_hint"
                 android:maxLength="10"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"

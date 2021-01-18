@@ -174,7 +174,6 @@
                 android:contentDescription="@string/cd_ccd_txtcreatedvalue"
                 android:lineSpacingMultiplier="1.33"
                 android:text="12 April 2019"
-                android:textAllCaps="true"
                 android:textColor="@color/offer_title"
                 android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
