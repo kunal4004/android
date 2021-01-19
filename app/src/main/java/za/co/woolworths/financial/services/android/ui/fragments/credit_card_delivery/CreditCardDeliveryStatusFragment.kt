@@ -76,8 +76,16 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 progressIcon.setBackgroundResource(R.drawable.ic_delivered)
                 deliveryDate.text = bindString(R.string.card_delivery_delivered)
                 deliveryStatusTitle.text = bindString(R.string.delivered_cc_delivery_desc)
+                val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
+                deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
                 statusResponse?.slotDetails?.appointmentDate?.let {
-                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                    if (it == "" || it == null) {
+                        deliveryDayAndTime.text = ""
+                    } else {
+                        val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
+                        deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
+                        deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                    }
                 }
             }
             CreditCardDeliveryStatus.CANCELLED -> {
@@ -85,8 +93,15 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                 deliveryDate.text = bindString(R.string.card_delivery_cancelled)
                 deliveryStatusTitle.text = bindString(R.string.cancelled_cc_delivery_desc)
                 callTheCallCenter.visibility = View.VISIBLE
+
                 statusResponse?.slotDetails?.appointmentDate?.let {
-                    deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                    if (it == "" || it == null) {
+                        deliveryDayAndTime.text = ""
+                    } else {
+                        val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
+                        deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
+                        deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                    }
                 }
             }
             CreditCardDeliveryStatus.CARD_SHREDDED -> {

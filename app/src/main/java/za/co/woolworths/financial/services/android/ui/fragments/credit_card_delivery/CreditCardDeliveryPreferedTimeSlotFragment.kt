@@ -90,22 +90,27 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun setDatePickerData(timeSlots: List<TimeSlot>) {
+        val daySet: HashSet<String> = getDaySet()
         timeSlots.forEachIndexed { index, slot ->
             var unformattedDate: String = changeDateFormat(slot.date)
             val parts: List<String>? = slot.date.split("-")
             parts?.get(2)?.let {
-                unformattedDate = unformattedDate.replace(it,it+ WFormatter.getDayOfMonthSuffix(it.toInt()))
+                var day: String = it
+                if (daySet.contains(it)) {
+                    day = it.get(1).toString()
+                }
+                unformattedDate = unformattedDate.replace(it, day + WFormatter.getDayOfMonthSuffix(it.toInt()))
             }
             timeSlots.get(index).date = unformattedDate
         }
         val defaultItemPosition = timeSlots.let { it.size / 2 }
-        selectedDate = timeSlots[defaultItemPosition-1]
+        selectedDate = timeSlots[defaultItemPosition - 1]
         selectedTime = selectedDate?.availableTimeslots?.let { (it.size / 2) }?.let { selectedDate?.availableTimeslots?.get(it) }
         datePicker?.apply {
             data = timeSlots
-            selectedItemPosition = defaultItemPosition-1
+            selectedItemPosition = defaultItemPosition - 1
         }
-        setTimePickerData(timeSlots[defaultItemPosition-1])
+        setTimePickerData(timeSlots[defaultItemPosition - 1])
     }
 
     private fun changeDateFormat(date: String): String {
@@ -119,4 +124,16 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
         }
     }
 
+    private fun getDaySet(): HashSet<String> {
+        var dayNumber = HashSet<String>()
+        dayNumber.add("01")
+        dayNumber.add("02")
+        dayNumber.add("03")
+        dayNumber.add("04")
+        dayNumber.add("06")
+        dayNumber.add("07")
+        dayNumber.add("08")
+        dayNumber.add("09")
+        return dayNumber
+    }
 }

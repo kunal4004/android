@@ -152,7 +152,7 @@
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toTopOf="@id/progressIcon" />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/deliveryDayAndTime"
                 style="@style/futura_medium_black"
                 android:layout_marginTop="@dimen/eight_dp"
@@ -188,25 +188,6 @@
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@id/progressIcon" />
 
-            <Button
-                android:id="@+id/callTheCallCenter"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/fifty_dp"
-                android:layout_marginBottom="@dimen/thirty_two_dp"
-                android:background="@drawable/order_add_to_cart_button_bg"
-                android:fontFamily="@font/futura_semi_bold"
-                android:letterSpacing="0.13"
-                android:text="@string/call_the_call_centre"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twelve_sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/right_guideline"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/left_guideline" />
-
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline"
                 android:layout_width="wrap_content"
@@ -222,4 +203,44 @@
                 app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/callTheCallCenter"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:background="@drawable/order_add_to_cart_button_bg"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.13"
+        android:text="@string/call_the_call_centre"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
+        app:layout_constraintEnd_toEndOf="@+id/rightguideline"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/leftguideline"
+        app:layout_constraintTop_toBottomOf="@+id/nestedScrollView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

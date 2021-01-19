@@ -1610,7 +1610,7 @@
     <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
     <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
     <string name="id_number_error_msg">Please enter a ID Number</string>
-    <string name="myself">Myself</string>
+    <string name="myself">Myself\u0020</string>
     <string name="another_person">Another Person</string>
     <string name="business_name_optional">Business Name (Optional)</string>
 
