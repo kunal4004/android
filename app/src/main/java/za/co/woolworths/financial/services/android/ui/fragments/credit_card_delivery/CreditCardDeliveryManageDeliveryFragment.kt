@@ -56,7 +56,10 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
             }
             R.id.editAddress -> {
                 if (statusResponse?.deliveryStatus?.isEditable == true) {
-                    navController?.navigate(R.id.creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
+                    val bundle = bundleOf(
+                            "bundle" to bundle,
+                            "isEditAddressActivity" to true)
+                    navController?.navigate(R.id.creditCardDeliveryAddressDetailsFragment, bundle)
                 } else {
                     activity?.apply {
                         supportFragmentManager.apply {

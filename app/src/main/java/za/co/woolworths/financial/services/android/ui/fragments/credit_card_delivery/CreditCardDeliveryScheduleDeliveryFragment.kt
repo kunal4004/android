@@ -55,11 +55,20 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
     override fun onScheduleDeliverySuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         activity?.apply {
             getProgressState()?.animateSuccessEnd(true)
-            scheduleDeliverySuccessView.visibility = View.VISIBLE
-            processingLayout?.visibility = View.GONE
+            Handler().postDelayed({
+                processingLayout?.visibility = View.GONE
+                if (bundle?.containsKey("isEditAddressActivity") == true) {
+                    if (bundle?.getBoolean("isEditAddressActivity") == true) {
+                        scheduleDeliveryUpdateSuccessView.visibility = View.VISIBLE
+                    } else
+                        scheduleDeliverySuccessView.visibility = View.VISIBLE
+                } else {
+                    scheduleDeliverySuccessView.visibility = View.VISIBLE
+                }
+            }, 1000)
             Handler().postDelayed({
                 navController?.navigate(R.id.action_to_creditCardDeliveryStatusFragment, bundleOf("bundle" to bundle))
-            }, 2000)
+            }, 4000)
         }
     }
 

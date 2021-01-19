@@ -1531,6 +1531,7 @@
     <string name="delivery_failed_title">Delivery Failed</string>
     <string name="delivery_failed_desc">We are currently unable to schedule your delivery. Please try again later, or contact us on 010 020 1028.</string>
     <string name="delivery_setup_complete">Delivery Setup Complete</string>
+    <string name="delivery_setup_update">Your Delivery Information Has Been Updated</string>
     <string name="delivery_success_desc">Keep an eye on the app for updates.</string>
     <string name="cellphone_number_error_msg">Please enter a Cellphone Number</string>
     <string name="alternate_number_error_msg">Please enter Alternate Contact Number</string>

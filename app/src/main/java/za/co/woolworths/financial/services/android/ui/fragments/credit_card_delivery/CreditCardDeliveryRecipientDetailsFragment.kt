@@ -39,6 +39,13 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         if (arguments?.containsKey("isEditRecipientActivity") == true) {
             isEditRecipientActivity = arguments?.get("isEditRecipientActivity") as Boolean
         }
+        if (isEditRecipientActivity == true) {
+            confirmBtn.visibility = View.VISIBLE
+            confirm.visibility = View.GONE
+            clearDetails.visibility = View.GONE
+            recipientOption.visibility = View.GONE
+        }
+
         navController = Navigation.findNavController(view)
         setUpToolBar()
         listOfInputFields = listOf(recipientName, cellphoneNumber, idNumber, alternativeNumber)
@@ -76,6 +83,11 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     fun configureUI() {
         statusResponse?.recipientDetails?.let {
             idNumber?.setText(it.idNumber ?: "")
+            if (it.idNumber?.isEmpty() == true) {
+                mySelf.isChecked = true
+            } else {
+                anotherPerson.isChecked = true
+            }
             cellphoneNumber?.setText(it.telCell ?: "")
             alternativeNumber?.setText(it.telWork ?: "")
         }
@@ -90,7 +102,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.confirm -> {
+            R.id.confirm, R.id.confirmBtn -> {
                 if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text?.length == 10 && alternativeNumber?.text?.length == 10 && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
                     recipientDetails.let {
                         it?.deliverTo = recipientName?.text.toString().trim()
@@ -113,18 +125,16 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
                     listOfInputFields.forEach {
                         if (it.text.toString().trim().isEmpty()) {
                             showErrorInputField(it)
-                        }
-                        else if (it.id == R.id.cellphoneNumber && it.text.length <10){
+                        } else if (it.id == R.id.cellphoneNumber && it.text.length < 10) {
                             showErrorPhoneNumber(it)
-                        }
-                        else if (it.id == R.id.alternativeNumber && it.text.length <10){
+                        } else if (it.id == R.id.alternativeNumber && it.text.length < 10) {
                             showErrorPhoneNumber(it)
                         }
                     }
                 }
             }
             R.id.clearDetails -> {
-                if(recipientName.isEnabled) {
+                if (recipientName.isEnabled) {
                     recipientName?.text?.clear()
                 }
                 cellphoneNumber?.text?.clear()
@@ -151,7 +161,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
-    private fun showErrorPhoneNumber(editText: EditText){
+    private fun showErrorPhoneNumber(editText: EditText) {
         editText.setBackgroundResource(R.drawable.otp_box_error_background)
         when (editText.id) {
             R.id.cellphoneNumber -> {
@@ -164,6 +174,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
         }
     }
+
     private fun showErrorInputField(editText: EditText) {
         if (editText.id == R.id.idNumber && !isRecipientIsThirdPerson)
             return
