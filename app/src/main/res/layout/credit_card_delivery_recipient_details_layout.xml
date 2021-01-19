@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/confirmBtn"
+        android:id="@+id/confirmProceedButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="@dimen/fifty_dp"
@@ -47,11 +47,11 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@id/confirm"
+        app:layout_constraintBottom_toTopOf="@id/confirmProceedButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

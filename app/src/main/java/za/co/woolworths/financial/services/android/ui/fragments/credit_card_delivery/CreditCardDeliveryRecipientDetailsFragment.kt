@@ -14,11 +14,9 @@ import kotlinx.android.synthetic.main.credit_card_delivery_recipient_details_lay
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AddressDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.RecipientDetails
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -28,7 +26,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     private var recipientDetails = RecipientDetails()
     private lateinit var listOfInputFields: List<EditText>
     private var isRecipientIsThirdPerson: Boolean = false
-    private var isEditRecipientActivity: Boolean? = false
+    private var isEditRecipientActivity: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
@@ -39,8 +37,8 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         if (arguments?.containsKey("isEditRecipientActivity") == true) {
             isEditRecipientActivity = arguments?.get("isEditRecipientActivity") as Boolean
         }
-        if (isEditRecipientActivity == true) {
-            confirmBtn.visibility = View.VISIBLE
+        if (isEditRecipientActivity) {
+            confirmProceedButton.visibility = View.VISIBLE
             confirm.visibility = View.GONE
             clearDetails.visibility = View.GONE
             recipientOption.visibility = View.GONE
@@ -67,6 +65,9 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         recipientOption?.setOnCheckedChangeListener(this)
 
         confirm?.setOnClickListener(this)
+        confirmProceedButton?.setOnClickListener { view ->
+            onConfirmButtonClicked()
+        }
         clearDetails.setOnClickListener(this)
         configureUI()
     }
@@ -97,41 +98,12 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             setText(statusResponse?.recipientDetails?.deliverTo
                     ?: SessionUtilities.getInstance().jwt?.name?.get(0))
         }
-
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.confirm, R.id.confirmBtn -> {
-                if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text?.length == 10 && alternativeNumber?.text?.length == 10 && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
-                    recipientDetails.let {
-                        it?.deliverTo = recipientName?.text.toString().trim()
-                        it?.telCell = cellphoneNumber?.text.toString().trim()
-                        it?.telWork = alternativeNumber?.text.toString().trim()
-                        it?.isThirdPartyRecipient = isRecipientIsThirdPerson
-                        if (isRecipientIsThirdPerson)
-                            it?.idNumber = idNumber?.text.toString().trim()
-                    }
-                    bundle?.putString("RecipientDetails", Utils.toJson(recipientDetails))
-                    statusResponse?.recipientDetails = recipientDetails
-                    bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
-                    if (isEditRecipientActivity == true) {
-                        updateRecipientDetails()
-                        activity?.onBackPressed()
-                    } else {
-                        navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
-                    }
-                } else {
-                    listOfInputFields.forEach {
-                        if (it.text.toString().trim().isEmpty()) {
-                            showErrorInputField(it)
-                        } else if (it.id == R.id.cellphoneNumber && it.text.length < 10) {
-                            showErrorPhoneNumber(it)
-                        } else if (it.id == R.id.alternativeNumber && it.text.length < 10) {
-                            showErrorPhoneNumber(it)
-                        }
-                    }
-                }
+            R.id.confirm -> {
+                onConfirmButtonClicked()
             }
             R.id.clearDetails -> {
                 if (recipientName.isEnabled) {
@@ -158,7 +130,9 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             it.addressDetails = addressDetails
             it.slotDetails = statusResponse?.slotDetails
         }
-        envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
+        bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
+        bundle?.putBoolean("isEditRecipientActivity", isEditRecipientActivity)
+        navController?.navigate(R.id.creditCardDeliveryScheduleDeliveryFrag, bundleOf("bundle" to bundle))
     }
 
     private fun showErrorPhoneNumber(editText: EditText) {
@@ -212,6 +186,36 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
             R.id.alternativeNumber -> {
                 alternativeNumberErrorMsg.visibility = View.GONE
+            }
+        }
+    }
+    private fun onConfirmButtonClicked() {
+        if (recipientName?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty() && alternativeNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text?.length == 10 && alternativeNumber?.text?.length == 10 && if (isRecipientIsThirdPerson) idNumber?.text.toString().trim().isNotEmpty() else true) {
+            recipientDetails.let {
+                it?.deliverTo = recipientName?.text.toString().trim()
+                it?.telCell = cellphoneNumber?.text.toString().trim()
+                it?.telWork = alternativeNumber?.text.toString().trim()
+                it?.isThirdPartyRecipient = isRecipientIsThirdPerson
+                if (isRecipientIsThirdPerson)
+                    it?.idNumber = idNumber?.text.toString().trim()
+            }
+            bundle?.putString("RecipientDetails", Utils.toJson(recipientDetails))
+            statusResponse?.recipientDetails = recipientDetails
+            bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+            if (isEditRecipientActivity) {
+                updateRecipientDetails()
+            } else {
+                navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))
+            }
+        } else {
+            listOfInputFields.forEach {
+                if (it.text.toString().trim().isEmpty()) {
+                    showErrorInputField(it)
+                } else if (it.id == R.id.cellphoneNumber && it.text.length < 10) {
+                    showErrorPhoneNumber(it)
+                } else if (it.id == R.id.alternativeNumber && it.text.length < 10) {
+                    showErrorPhoneNumber(it)
+                }
             }
         }
     }

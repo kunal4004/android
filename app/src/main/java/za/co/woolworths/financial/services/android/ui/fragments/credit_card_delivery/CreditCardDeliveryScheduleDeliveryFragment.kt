@@ -90,7 +90,10 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         activity?.apply {
             scheduleDeliveryRequest.let {
                 startProgress()
-                presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, true, "", it)
+                if (isEditRecipient() == true) {
+                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, false, "", it)
+                } else
+                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, true, "", it)
             }
         }
     }
@@ -101,7 +104,10 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
             getProgressState()?.restartSpinning()
             processingLayout?.visibility = View.VISIBLE
             scheduleDeliveryRequest.let {
-                presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, true, "", it)
+                if (isEditRecipient() == true) {
+                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, false, "", it)
+                } else
+                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, true, "", it)
             }
         }
     }
@@ -113,5 +119,12 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         }
     }
 
-
+    private fun isEditRecipient(): Boolean {
+        var isEdited: Boolean
+        if (bundle?.containsKey("isEditRecipientActivity") == true) {
+            isEdited = bundle?.getBoolean("isEditRecipientActivity") == true
+        } else
+            isEdited = false
+        return isEdited
+    }
 }
