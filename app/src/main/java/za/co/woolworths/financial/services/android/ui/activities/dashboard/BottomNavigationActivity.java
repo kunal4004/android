@@ -241,7 +241,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (mBundle == null) {
             return;
         }
-        String deepLinkData = mBundle.getString("parameters").replace("\\", "");
+        String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
         if (deepLinkData == null) {
             return;
         }
@@ -317,6 +317,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     }
                     break;
 
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS:
 
                     BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
@@ -730,6 +731,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 return wRewardsFragment;
             case INDEX_ACCOUNT:
                 MyAccountsFragment myAccountsFragment = new MyAccountsFragment();
+                myAccountsFragment.setArguments(mBundle);
                 return myAccountsFragment;
         }
         throw new IllegalStateException("Need to send an index that we know");

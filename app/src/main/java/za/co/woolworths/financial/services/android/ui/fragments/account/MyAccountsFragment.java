@@ -20,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +81,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
@@ -160,6 +163,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 	private ImageView creditReportIcon;
 	private RelativeLayout creditReportView;
 	RelativeLayout contactUs;
+    private JsonObject deepLinkParams;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -310,6 +314,81 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
 
         uniqueIdentifiersForAccount();
+
+        parseDeepLinkData();
+    }
+
+    private void validateDeepLinkData() {
+        if (deepLinkParams == null || deepLinkParams.get("productGroupCode") == null) {
+            return;
+        }
+        String productGroupCode = deepLinkParams.get("productGroupCode").getAsString();
+        AccountsProductGroupCode groupCode = AccountsProductGroupCode.Companion.getEnum(productGroupCode);
+        if (groupCode == null) {
+            return;
+        }
+        switch (groupCode) {
+            case STORE_CARD:
+                navigateToStoreCard();
+                break;
+            case CREDIT_CARD:
+                navigateToCreditCard();
+                break;
+            case PERSONAL_LOAN:
+                navigateToPersonalLoan();
+                break;
+        }
+        setArguments(null);
+        deepLinkParams = null;
+    }
+
+    private void navigateToPersonalLoan() {
+        if (applyPersonalCardView.getVisibility() != View.VISIBLE) {
+            redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
+        } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
+            redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
+        }
+    }
+
+    private void navigateToCreditCard() {
+        if (applyCreditCardView.getVisibility() != View.VISIBLE) {
+            redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
+        } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
+            if (mCreditCardAccount == null) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
+                return;
+            }
+            if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.SILVER_CREDIT_CARD);
+            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
+            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
+            }
+        }
+    }
+
+    private void navigateToStoreCard() {
+        if (applyStoreCardView.getVisibility() != View.VISIBLE) {
+            redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
+        } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
+            redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD);
+        }
+    }
+
+    private void parseDeepLinkData() {
+        Bundle deepLinkData = getArguments();
+        if (deepLinkData == null) {
+            return;
+        }
+        String data = deepLinkData.getString("parameters", "").replace("\\", "");
+        if (TextUtils.isEmpty(data)) {
+            return;
+        }
+        deepLinkParams = new Gson().fromJson(data, JsonObject.class);
     }
 
     private void hideToolbar() {
@@ -801,6 +880,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                             isAccountsCallMade = true;
                             configureView();
+                            validateDeepLinkData();
 
                             showInAppChat(activity);
 
