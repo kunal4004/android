@@ -28,16 +28,18 @@ import java.net.HttpCookie
 
 class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
 
+    private var mCreditCardNumber: String? = null
     private var mAliasId: String? = null
     private var fiveDigitPin: String? = null
 
     companion object {
         private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
         private const val ALIAS_ID = "ALIAS_ID"
-        fun newInstance(aliasId: String?, fiveDigitPin: String) = AbsaPinCodeSuccessFragment().apply {
+        fun newInstance(aliasId: String?, fiveDigitPin: String, creditAccountInfo: String?) = AbsaPinCodeSuccessFragment().apply {
             arguments = Bundle(4).apply {
                 putString(FIVE_DIGIT_PIN_CODE, fiveDigitPin)
                 putString(ALIAS_ID, aliasId)
+                putString("creditCardToken", creditAccountInfo)
             }
         }
     }
@@ -59,7 +61,10 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         arguments?.apply {
             getString(FIVE_DIGIT_PIN_CODE)?.apply { fiveDigitPin = this }
             getString(ALIAS_ID)?.apply { mAliasId = this }
-         }
+            if (containsKey("creditCardToken")) {
+                mCreditCardNumber = getString("creditCardToken") ?: ""
+            }
+        }
     }
 
 
@@ -72,9 +77,9 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
     }
 
     private fun initView() {
-        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle() }
         gotItButton.setOnClickListener { navigateToAbsaLoginFragment() }
-        registerCredentials(mAliasId,fiveDigitPin!!)
+        registerCredentials(mAliasId, fiveDigitPin!!)
     }
 
     private fun registerCredentials(aliasId: String?, fiveDigitPin: String) {
@@ -122,7 +127,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
     private fun navigateToAbsaLoginFragment() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_LOGIN_WITH_NEW_PASSCODE)
         replaceFragment(
-                fragment = AbsaLoginFragment.newInstance(),
+                fragment = AbsaLoginFragment.newInstance(mCreditCardNumber),
                 tag = AbsaLoginFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
@@ -138,7 +143,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }*/
 
-    private fun showErrorScreen(errorType: Int,errorMessage:String = "") {
+    private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
@@ -152,7 +157,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun showProgress(){
+    private fun showProgress() {
         tvTitle.text = resources.getString(R.string.processing_your_request)
         tvDescription.text = resources.getString(R.string.absa_registration_in_progress_desc)
         progressBar.visibility = View.VISIBLE
@@ -163,7 +168,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
         if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
             when (resultCode) {
                 ErrorHandlerActivity.RESULT_RETRY -> {
-                    registerCredentials(mAliasId,fiveDigitPin!!)
+                    registerCredentials(mAliasId, fiveDigitPin!!)
                 }
             }
         }

@@ -61,7 +61,6 @@ public class AbsaValidateSureCheckRequest {
                 responseDelegate.onFatalError(error);
             }
         });
-
-
+        
     }
 }

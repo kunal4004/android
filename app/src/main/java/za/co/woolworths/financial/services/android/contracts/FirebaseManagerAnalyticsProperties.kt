@@ -55,6 +55,12 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOP_PRODUCTDETAIL_INGREDIENTS_INFORMATION: String = "shop_pdp_ingr"
         const val SHOP_PRODUCTDETAIL_ALLERGEN_INFORMATION: String = "shop_pdp_allerg"
         const val SHOP_PRODUCTDETAIL_DIETARY_INFORMATION: String = "shop_pdp_diet"
+        const val ACTION_NUTRITIONAL_INFORMATION = "Selects Accordion to view Nutritional Information"
+        const val ACTION_PRODUCTDETAILS_INFORMATION = "Selects Accordion to view Product Detail"
+        const val ACTION_INGREDIENTS_INFORMATION = "Selects Accordion to view Ingredients"
+        const val ACTION_ALLERGEN_INFORMATION = "Selects Accordion to view Allergens"
+        const val ACTION_DIETARY_INFORMATION = "Selects Accordion to view Dietary Information"
+
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
         const val SHOP_CATEGORIES: String = "shopcategories"
@@ -194,6 +200,8 @@ class FirebaseManagerAnalyticsProperties {
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
 
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
+        const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
+
     }
 
     class PropertyNames {
