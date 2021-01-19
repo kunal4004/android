@@ -17,13 +17,12 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/clearDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/myriad_pro_regular_black"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/fourty_seven_dp"
         android:text="@string/clear_details"
         android:textSize="@dimen/sixteen_sp"
-        app:WTextView_font="myriadpro_regular"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -216,7 +215,7 @@
 
             <TextView
                 android:id="@+id/deliveryDetailsTitle"
-                style="@style/futura_medium_black"
+                style="@style/futura_semi_bold_black"
                 android:contentDescription="@string/cd_ccd_labledeliverydetailstitle"
                 android:letterSpacing="0.1"
                 android:text="@string/delivery_details"

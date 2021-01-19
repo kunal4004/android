@@ -23,6 +23,7 @@
         android:layout_marginBottom="@dimen/fourty_seven_dp"
         android:text="@string/clear_details"
         android:textSize="@dimen/sixteen_sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

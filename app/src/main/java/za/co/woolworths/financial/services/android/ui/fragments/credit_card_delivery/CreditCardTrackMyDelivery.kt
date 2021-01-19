@@ -10,14 +10,19 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_track_my_delivery.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ToastUtils
+import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
+import kotlin.math.roundToInt
 
-class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickListener {
+class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickListener, ToastInterface {
 
     var bundle: Bundle? = null
     private var envelopeNumber: String? = null
+    private var mToastUtils: ToastUtils? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.credit_card_track_my_delivery, container, false)
 
@@ -35,6 +40,7 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mToastUtils = ToastUtils(this)
         bundle = arguments?.getBundle("bundle")
         envelopeNumber = arguments?.getString("envelopeNumber", "")
     }
@@ -54,7 +60,18 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
                 val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText(referenceNumber.text, referenceNumber.text)
                 clipboard.setPrimaryClip(clip)
+
+                mToastUtils?.activity = activity
+                mToastUtils?.pixel = ((trackMyDelivery.getHeight() * 2.5).roundToInt())
+                mToastUtils?.view = trackMyDelivery
+                mToastUtils?.setMessage(bindString(R.string.copied_to_clipboard))
+                mToastUtils?.viewState = false
+                mToastUtils?.buildCustomToast()
             }
         }
+    }
+
+    override fun onToastButtonClicked(currentState: String?) {
+        TODO("Not yet implemented")
     }
 }

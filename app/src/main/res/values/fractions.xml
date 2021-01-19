@@ -14,4 +14,5 @@
     <item name="point_fifteen" format="float" type="integer">0.15</item>
     <item name="point_eighteen" format="float" type="integer">0.18</item>
     <item name="point_two" format="float" type="integer">0.2</item>
+    <item name="point_five" format="float" type="integer">0.5</item>
 </resources>

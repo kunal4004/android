@@ -1480,6 +1480,7 @@
     <string name="manage_delivery">Manage Delivery</string>
     <string name="manage_delivery_title">MANAGE DELIVERY</string>
     <string name="track_my_delivery">Track My Delivery</string>
+    <string name="copied_to_clipboard">COPIED TO CLIPBOARD!</string>
     <string name="too_late_to_edit_tiitle">Too Late To Edit</string>
     <string name="too_late_to_edit_desc">Unfortunately it\'s too late to edit your delivery details now. Please call us on 0861 50 50 20 for assistance.</string>
     <string name="credit_card_cancel_delivery_title">CANCEL DELIVERY</string>
