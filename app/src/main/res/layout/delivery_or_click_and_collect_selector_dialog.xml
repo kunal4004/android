@@ -84,6 +84,7 @@
             android:id="@+id/itemsLimit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="@dimen/eleven_sp"
             android:fontFamily="@font/myriad_pro_regular"
             android:layout_below="@+id/clickAndCollectView"

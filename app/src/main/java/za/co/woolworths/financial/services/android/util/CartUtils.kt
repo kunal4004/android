@@ -35,13 +35,5 @@ class CartUtils {
             }
         }
 
-        fun updateFoodMaximumQuantityOnConfig(productCountMap: ProductCountMap?) {
-            productCountMap?.quantityLimit?.foodMaximumQuantity?.let {
-                if (KotlinUtils.isDeliveryOptionClickAndCollect()) {
-                    WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed = it
-                }
-            }
-        }
-
     }
 }
