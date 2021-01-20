@@ -163,4 +163,13 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.supportFragmentManager?.apply {
+            if (findFragmentById(R.id.flProgressIndicator) != null) {
+                findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
+            }
+        }
+    }
 }

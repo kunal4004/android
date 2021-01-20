@@ -539,6 +539,9 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
             if (!statusDescription.isNullOrEmpty() && !displayColour.isNullOrEmpty()) {
                 KotlinUtils.roundCornerDrawable(creditCardStatus, displayColour)
                 creditCardStatus.text = displayTitle
+            } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(CARD_DELIVERED.name) == true)) {
+                KotlinUtils.roundCornerDrawable(creditCardStatus, "#bad110")
+                creditCardStatus.text = displayTitle
             } else creditCardStatus.visibility = INVISIBLE
         }
     }
