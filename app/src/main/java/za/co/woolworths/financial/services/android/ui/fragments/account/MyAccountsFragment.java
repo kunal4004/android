@@ -1430,12 +1430,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void onGetCreditCardDeliveryStatusSuccess(@NotNull CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
         if (creditCardDeliveryStatusResponse.getStatusResponse().getDeliveryStatus().getStatusDescription().equalsIgnoreCase(CreditCardDeliveryStatus.CARD_RECEIVED.name())) {
             mSetUpDeliveryListner = () -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse);
-            JWTDecodedModel jwtDecoded = SessionUtilities.getInstance().getJwt();
-            String name = jwtDecoded.name.get(0);
             Bundle bundle = new Bundle();
-            bundle.putString("name", name);
             bundle.putString("accountBinNumber", mCreditCardAccount.accountNumberBin);
             SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
+            Activity activity = getActivity();
+            if (activity == null)
+                return;
             setUpDeliveryNowDialog.show(getActivity()
                     .getSupportFragmentManager(), SetUpDeliveryNowDialog.class.getSimpleName());
         }

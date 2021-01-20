@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragment(), ScheduleDeliveryContract.ScheduleDeliverView, IProgressAnimationState, View.OnClickListener {
@@ -72,10 +73,10 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
                 } else {
                     scheduleDeliverySuccessView.visibility = View.VISIBLE
                 }
-            }, 1000)
+            }, AppConstant.DELAY_1000_MS)
             Handler().postDelayed({
                 navController?.navigate(R.id.action_to_creditCardDeliveryStatusFragment, bundleOf("bundle" to bundle))
-            }, 3000)
+            }, AppConstant.DELAY_3000_MS)
         }
     }
 

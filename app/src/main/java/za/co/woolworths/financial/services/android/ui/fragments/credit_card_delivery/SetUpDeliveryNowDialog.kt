@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.cancel
-import kotlinx.android.synthetic.main.credit_card_delivery_boarding_layout.*
 import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.*
-import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.setUpDeliveryNow
 import kotlinx.android.synthetic.main.credit_card_setup_delivery_now.title
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListener {
@@ -24,9 +23,7 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
 
     constructor(bundle: Bundle, mSetUpDeliveryListner: ISetUpDeliveryNowLIstner?) : this() {
         bundle.apply {
-            deliveredToName = getString("name")
             accountBinNumber = getString("accountBinNumber")
-
         }
         this.mSetUpDeliveryListner = mSetUpDeliveryListner
     }
@@ -42,6 +39,7 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
     }
 
     private fun init() {
+        deliveredToName = SessionUtilities.getInstance().getJwt().name.get(0)
         var creditCardName: String = bindString(R.string.blackCreditCard_title)
         if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
             cardImage.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))

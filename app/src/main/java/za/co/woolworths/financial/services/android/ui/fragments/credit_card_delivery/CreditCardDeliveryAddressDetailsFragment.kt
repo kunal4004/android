@@ -32,7 +32,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         navController = Navigation.findNavController(view)
         listOfInputFields = listOf(complexOrBuildingName, businessName, streetAddress, suburb, cityOrTown, province, postalCode)
         submitAddress?.setOnClickListener(this)
-        clearDetails.setOnClickListener(this)
+        clearDetails?.setOnClickListener(this)
         complexOrBuildingName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         businessName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         streetAddress?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
