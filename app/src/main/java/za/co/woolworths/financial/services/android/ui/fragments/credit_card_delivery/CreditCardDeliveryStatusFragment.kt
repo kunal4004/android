@@ -59,11 +59,11 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
 
     private fun init() {
         if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
-            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
+            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.gold_cc_envelope))
         } else if (accountBinNumber.equals(Utils.SILVER_CARD, true)) {
-            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
+            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.silver_cc_envelope))
         } else if (accountBinNumber.equals(Utils.BLACK_CARD, true)) {
-            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
+            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.black_cc_envelope))
         }
     }
 
