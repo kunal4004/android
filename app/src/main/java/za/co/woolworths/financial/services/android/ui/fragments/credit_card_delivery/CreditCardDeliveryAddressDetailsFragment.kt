@@ -20,7 +20,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
     var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
     private var isBusinessAddress: Boolean = false
-    private var isEditAddressActivity: Boolean = false
+    private var isEditRecipient: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_address_layout, container, false)
@@ -41,8 +41,8 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
         province?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         configureUI()
-        if (arguments?.containsKey("isEditAddressActivity") == true) {
-            isEditAddressActivity = arguments?.get("isEditAddressActivity") as Boolean
+        if (arguments?.containsKey("isEditRecipient") == true) {
+            isEditRecipient = arguments?.get("isEditRecipient") as Boolean
         }
     }
 
@@ -132,7 +132,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
 
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
             bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
-            bundle?.putBoolean("isEditAddressActivity", isEditAddressActivity)
+            bundle?.putBoolean("isEditRecipient", isEditRecipient)
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 
         } else {

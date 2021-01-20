@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_requ
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
@@ -41,6 +42,12 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         retryScheduleDeliveryBtn.setOnClickListener(this)
         callCourierPartner.setOnClickListener(this)
         postScheduleDelivery()
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as? CreditCardDeliveryActivity)?.apply {
+                changeToolbarBackground(R.color.white)
+                hideToolbar()
+            }
+        }
     }
 
     override fun startProgress() {
@@ -57,8 +64,8 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
             getProgressState()?.animateSuccessEnd(true)
             Handler().postDelayed({
                 processingLayout?.visibility = View.GONE
-                if (bundle?.containsKey("isEditAddressActivity") == true) {
-                    if (bundle?.getBoolean("isEditAddressActivity") == true) {
+                if (bundle?.containsKey("isEditRecipient") == true) {
+                    if (bundle?.getBoolean("isEditRecipient") == true) {
                         scheduleDeliveryUpdateSuccessView.visibility = View.VISIBLE
                     } else
                         scheduleDeliverySuccessView.visibility = View.VISIBLE
@@ -68,7 +75,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
             }, 1000)
             Handler().postDelayed({
                 navController?.navigate(R.id.action_to_creditCardDeliveryStatusFragment, bundleOf("bundle" to bundle))
-            }, 4000)
+            }, 3000)
         }
     }
 
@@ -121,10 +128,19 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
 
     private fun isEditRecipient(): Boolean {
         var isEdited: Boolean
-        if (bundle?.containsKey("isEditRecipientActivity") == true) {
-            isEdited = bundle?.getBoolean("isEditRecipientActivity") == true
+        if (bundle?.containsKey("isEditRecipient") == true) {
+            isEdited = bundle?.getBoolean("isEditRecipient") == true
         } else
             isEdited = false
         return isEdited
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.supportFragmentManager?.apply {
+            if (findFragmentById(R.id.flProgressIndicator) != null) {
+                findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
+            }
+        }
     }
 }

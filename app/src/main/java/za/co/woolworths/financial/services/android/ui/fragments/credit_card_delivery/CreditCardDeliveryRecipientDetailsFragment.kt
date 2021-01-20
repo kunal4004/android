@@ -26,7 +26,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     private var recipientDetails = RecipientDetails()
     private lateinit var listOfInputFields: List<EditText>
     private var isRecipientIsThirdPerson: Boolean = false
-    private var isEditRecipientActivity: Boolean = false
+    private var isEditRecipient: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_recipient_details_layout, container, false)
@@ -34,10 +34,10 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (arguments?.containsKey("isEditRecipientActivity") == true) {
-            isEditRecipientActivity = arguments?.get("isEditRecipientActivity") as Boolean
+        if (arguments?.containsKey("isEditRecipient") == true) {
+            isEditRecipient = arguments?.get("isEditRecipient") as Boolean
         }
-        if (isEditRecipientActivity) {
+        if (isEditRecipient) {
             confirmProceedButton.visibility = View.VISIBLE
             confirm.visibility = View.GONE
             clearDetails.visibility = View.GONE
@@ -131,8 +131,8 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             it.slotDetails = statusResponse?.slotDetails
         }
         bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
-        bundle?.putBoolean("isEditRecipientActivity", isEditRecipientActivity)
-        navController?.navigate(R.id.creditCardDeliveryScheduleDeliveryFrag, bundleOf("bundle" to bundle))
+        bundle?.putBoolean("isEditRecipient", isEditRecipient)
+        navController?.navigate(R.id.creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
     }
 
     private fun showErrorPhoneNumber(editText: EditText) {
@@ -202,7 +202,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             bundle?.putString("RecipientDetails", Utils.toJson(recipientDetails))
             statusResponse?.recipientDetails = recipientDetails
             bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
-            if (isEditRecipientActivity) {
+            if (isEditRecipient) {
                 updateRecipientDetails()
             } else {
                 navController?.navigate(R.id.action_to_creditCardDeliveryAddressDetailsFragment, bundleOf("bundle" to bundle))

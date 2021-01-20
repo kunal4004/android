@@ -58,7 +58,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                 if (statusResponse?.deliveryStatus?.isEditable == true) {
                     val bundle = bundleOf(
                             "bundle" to bundle,
-                            "isEditAddressActivity" to true)
+                            "isEditRecipient" to true)
                     navController?.navigate(R.id.creditCardDeliveryAddressDetailsFragment, bundle)
                 } else {
                     activity?.apply {
@@ -72,7 +72,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
             R.id.editRecipient -> {
                 val bundle = bundleOf(
                         "bundle" to bundle,
-                        "isEditRecipientActivity" to true)
+                        "isEditRecipient" to true)
                 navController?.navigate(R.id.creditCardDeliveryRecipientDetailsFragment, bundle)
             }
         }
