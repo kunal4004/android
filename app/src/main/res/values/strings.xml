@@ -1687,8 +1687,8 @@
     <string name="collection_date">Collection Date:</string>
     <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
-    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
-    <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
+    <string name="click_and_collect_max_items">Click &amp; Collect orders have a maximum limit of between %1$s and %2$s food items, store dependent.</string>
+    <string name="click_and_collect_dialog_items_limit">UP TO %1$s ITEMS\n STORE DEPENDENT</string>
     <string name="cli_got_it">GOT IT</string>
     <string name="layout_gift_items">layoutGiftItems</string>
     <string name="gwp_img_gift">imgGift</string>

@@ -380,15 +380,6 @@ class KotlinUtils {
             request(OneAppService.queryServicePostEvent(featureName, appScreen))
         }
 
-        fun isItemsQuantityForClickAndCollectExceed(totalItemsCount: Int): Boolean {
-            WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { maxAllowedQuantity ->
-                Utils.getPreferredDeliveryLocation()?.suburb?.let { suburb ->
-                    return (totalItemsCount > maxAllowedQuantity && suburb.storePickup)
-                }
-            }
-            return false
-        }
-
         fun parseMoneyValue(value: String, groupingSeparator: String, currencySymbol: String): String =
                 value.replace(groupingSeparator, "").replace(currencySymbol, "")
 
