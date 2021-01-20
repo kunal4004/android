@@ -2,9 +2,9 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.CreditCardDelivery;
 import javax.annotation.Nullable;
 
-import za.co.woolworths.financial.services.android.models.CreditCardDelivery;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;

@@ -24,7 +24,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this, R.color.grey_bg)
         bundle = intent.getBundleExtra("bundle")
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+            statusResponse = Utils.jsonStringToObject(getString("delivery_status_response"), StatusResponse::class.java) as StatusResponse?
         }
         actionBar()
         loadNavHostFragment()
