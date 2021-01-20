@@ -140,6 +140,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         } else if (currentDate == DateType.TODAY.value) {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_tomorrow)
             deliveryDate.text = bindString(R.string.bottom_title_today)
+            deliveryStatusTitle.text = bindString(R.string.arriving)
         } else {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
             deliveryDate.text = parts?.get(2)?.plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate))
