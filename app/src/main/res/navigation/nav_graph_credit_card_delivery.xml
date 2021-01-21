@@ -90,6 +90,7 @@
             android:id="@+id/action_to_creditCardDeliveryScheduleDeliveryFragment"
             app:destination="@id/creditCardDeliveryScheduleDeliveryFragment"
             app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
+            app:launchSingleTop="true"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment

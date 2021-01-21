@@ -40,7 +40,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         if (isEditRecipient) {
             confirmProceedButton.visibility = View.VISIBLE
             val param = nestedScrollView.layoutParams as ViewGroup.MarginLayoutParams
-            param.setMargins(0,0,0,40)
+            param.setMargins(0, 0, 0, 40)
             nestedScrollView.layoutParams = param
 
             confirm.visibility = View.GONE

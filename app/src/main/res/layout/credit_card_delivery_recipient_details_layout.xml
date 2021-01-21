@@ -116,14 +116,13 @@
                     android:id="@+id/mySelf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:alpha="@integer/point_five"
                     android:button="@drawable/shopping_list_item_selector"
                     android:checked="true"
                     android:contentDescription="@string/cd_ccd_radiobtnmyself"
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/myself"
-                    android:textColor="@color/currency_color"
+                    android:textColor="@color/radio_button_color"
                     android:textSize="@dimen/fifteen_sp" />
 
                 <RadioButton
@@ -131,13 +130,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/fifty_dp"
-                    android:alpha="@integer/point_five"
                     android:button="@drawable/shopping_list_item_selector"
                     android:contentDescription="@string/cd_ccd_radiobtnanotherperson"
                     android:fontFamily="@font/myriad_pro_regular"
                     android:paddingStart="@dimen/sixteen_dp"
                     android:text="@string/another_person"
-                    android:textColor="@color/currency_color"
+                    android:textColor="@color/radio_button_color"
                     android:textSize="@dimen/fifteen_sp" />
             </RadioGroup>
 
