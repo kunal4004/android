@@ -1139,13 +1139,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				case APPLY_PROMO_CODE_REQUEST_CODE:
 					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
 					updateCart(convertResponseToCartResponseObject(shoppingCartResponse), null);
-					if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE) {
-						if (CartUtils.Companion.getAppliedVouchersCount(voucherDetails.getVouchers()) > 0) {
-							showVouchersOrPromoCodeAppliedToast(getString(R.string.vouchers_applied_toast_message));
-						} else {
-							showVouchersOrPromoCodeAppliedToast(getString(R.string.vouchers_removed_toast_message));
-						}
-					}
+					if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE)
+						showVouchersOrPromoCodeAppliedToast(getString(CartUtils.Companion.getAppliedVouchersCount(voucherDetails.getVouchers()) > 0 ? R.string.vouchers_applied_toast_message : R.string.vouchers_removed_toast_message));
 					if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
 						showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
 					break;
