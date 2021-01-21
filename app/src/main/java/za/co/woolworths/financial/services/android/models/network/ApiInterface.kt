@@ -694,7 +694,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String): Call<CartSummaryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("cart/item")
+    @DELETE("cartV2/item")
     fun removeAllCartItems(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,

@@ -1423,7 +1423,7 @@
     <string name="plp_savePromotionalImage">savePromotionalImage</string>
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
-    <string name="cancel_order">Cancel Order</string>
+    <string name="cancel_delivery">Cancel Delivery</string>
     <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
     <string name="confirm_cancel_order_dialog_title">Are you sure you wish to \ncancel this order?</string>
     <string name="cancel_order_failure_title">There was a Problem Cancelling your Order</string>
@@ -1539,9 +1539,8 @@
     <string name="collection_date">Collection Date:</string>
     <string name="store">Store\u0020</string>
     <string name="my_orders_title">My Orders</string>
-    <string name="click_and_collect_max_quantity_info">Click &amp; Collect orders are limited to %1$s items.\nPlease remove some items from your cart to proceed.</string>
-    <string name="click_and_collect_max_items">Click &amp; Collect orders are limited to %1$s food items.</string>
-    <string name="click_and_collect_dialog_items_limit">%1$s item Limit</string>
+    <string name="click_and_collect_max_items">Click &amp; Collect orders have a maximum limit of between %1$s and %2$s food items, store dependent.</string>
+    <string name="click_and_collect_dialog_items_limit">UP TO %1$s ITEMS\n STORE DEPENDENT</string>
     <string name="cli_got_it">GOT IT</string>
     <string name="layout_gift_items">layoutGiftItems</string>
     <string name="gwp_img_gift">imgGift</string>
@@ -1663,8 +1662,8 @@
     <string name="redeem_voucher_generic_error_message">There was a problem redeeming your voucher(s) Please try again</string>
     <string name="no_vouchers_available">NO VOUCHERS AVAILABLE</string>
     <string name="applied">\u0020Applied</string>
-    <string name="available_vouchers_title">Select the vouchers that you\'d like to redeem.</string>
-    <string name="available_vouchers_sub_title"><b>Note:</b> Some vouchers can\'t be used in conjunction with other offers or promotions.</string>
+    <string name="available_vouchers_title">Select the vouchers you\'d like to redeem.\nSome vouchers can\'t be used in conjunction with\n other offers or promotions.</string>
+    <string name="available_vouchers_sub_title">Please Note: Your Woolies cash-back vouchers,\n quarterly vouchers and coffee vouchers are only\n redeemable in store.</string>
     <string name="vouchers_applied_toast_message">Your &lt;b>Vouchers&lt;/b> have been applied</string>
 
     <string name="pma_retry_error_title">Oops!</string>
@@ -1788,5 +1787,20 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
     <string name="transaction_date_value">03 / 07 / 2016</string>
     <string name="vouchers_removed_toast_message">Your &lt;b>Vouchers&lt;/b> have been removed</string>
+    <string name="unable_process_checkout_title">Unable to proceed to Checkout</string>
+    <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
+    <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
+    <string name="toast_multiple_item_added_to_cart_message">%1$s items added to cart</string>
+    <string name="cd_labelitemlimit">labelItemLimit</string>
+    <string name="cd_totalitemlimit">totalItemLimit</string>
+    <string name="cd_layouttoastmessage">layoutToastMessage</string>
+    <string name="cd_indcartitems">indCartItems</string>
+    <string name="cd_labelitemadded">labelItemAdded</string>
+    <string name="cd_btnview">btnView</string>
+    <string name="cd_genericicon">genericIcon</string>
+    <string name="cd_layoutgenericpopup">layoutGenericPopup</string>
+    <string name="cd_labelgenericpopup">labelGenericPopup</string>
+    <string name="cd_labelgenericpopupdescription">labelGenericPopupDescription</string>
+    <string name="cd_btngotit">btnGotIt</string>
 </resources>
 

@@ -4,22 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:contentDescription="@string/cancel_order_popup_layout">
+    android:contentDescription="@string/cd_layoutgenericpopup">
+
+    <ImageView
+        android:id="@+id/infoIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:visibility="gone"
+        android:contentDescription="@string/cd_genericicon"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/emptySpace" />
 
     <TextView
         android:id="@+id/title"
         style="@style/dialog_title_text_style"
-        android:layout_marginTop="@dimen/fifty_dp"
-        android:contentDescription="@string/cancel_order_popup_confirmation_message"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:contentDescription="@string/cd_labelgenericpopup"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
+        app:layout_constraintTop_toBottomOf="@+id/infoIcon" />
 
     <TextView
         android:id="@+id/description"
         style="@style/dialog_description_text_style"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:contentDescription="@string/cancel_order_popup_confirmation_message"
+        android:contentDescription="@string/cd_labelgenericpopupdescription"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/title" />
@@ -31,18 +42,20 @@
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/black"
-        android:contentDescription="@string/cancel_order_popup_button_cancel"
+        android:contentDescription="@string/cd_btngotit"
         app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/description" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+    <View
+        android:id="@+id/emptySpace"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/thirty_dp"
+        android:background="@color/white"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -59,6 +72,13 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
     <include
         android:id="@+id/incSwipeCloseIndicator"
         layout="@layout/popup_close_header_bar"
@@ -66,9 +86,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginBottom="@dimen/hundred_and_fifty_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

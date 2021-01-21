@@ -4,9 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
@@ -14,10 +14,12 @@ import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.absa.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {
 
+    private var mAccounts: String? = null
     private var mShouldDisplayABSALogin: Boolean? = false
     private var mCreditAccountInfo: String? = ""
 
@@ -35,7 +37,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
             getBundleArgument()
             if (mShouldDisplayABSALogin!!) {
                 addFragment(
-                        fragment = AbsaLoginFragment.newInstance(),
+                        fragment = AbsaLoginFragment.newInstance(mCreditAccountInfo),
                         tag = AbsaLoginFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice)
             } else {
@@ -54,6 +56,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
         intent?.extras?.apply {
             mShouldDisplayABSALogin = getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
+            mAccounts = bundle.getString(ChatExtensionFragment.ACCOUNTS, "")
             mCreditAccountInfo = getString("creditCardToken")
         }
     }
@@ -145,10 +148,6 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
         } else {
             getCurrentFragment()?.onActivityResult(requestCode, resultCode, data)
         }
-    }
-
-    override fun onDialogButtonAction() {
-
     }
 
     fun startAbsaRegistration() {
