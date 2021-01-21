@@ -953,9 +953,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			Data data = response.data[0];
 			cartResponse.orderSummary = data.orderSummary;
 			cartResponse.voucherDetails = data.voucherDetails;
-			cartResponse.productCountMap = data.productCountMap;
-			CartUtils.Companion.updateFoodMaximumQuantityOnConfig(data.productCountMap);
-			// set delivery location
+			cartResponse.productCountMap = data.productCountMap;// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Province province = new Province();
 				province.name = data.provinceName;
