@@ -90,7 +90,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun setDatePickerData(timeSlots: List<TimeSlot>) {
-        val daySet: HashSet<String> = getDaySet()
+        val daySet: HashSet<String> = Utils.getDaySet()
         timeSlots.forEachIndexed { index, slot ->
             var unformattedDate: String = changeDateFormat(slot.date)
             val parts: List<String>? = slot.date.split("-")
@@ -122,18 +122,5 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             data = timeSlot.availableTimeslots
             selectedItemPosition = timeSlot.availableTimeslots.let { (it.size / 2) }
         }
-    }
-
-    private fun getDaySet(): HashSet<String> {
-        var dayNumber = HashSet<String>()
-        dayNumber.add("01")
-        dayNumber.add("02")
-        dayNumber.add("03")
-        dayNumber.add("04")
-        dayNumber.add("06")
-        dayNumber.add("07")
-        dayNumber.add("08")
-        dayNumber.add("09")
-        return dayNumber
     }
 }

@@ -75,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -1552,4 +1553,18 @@ public class Utils {
 		String firstTime = Utils.getSessionDaoValue(DELIVERY_OPTION);
 		return (firstTime != null);
 	}
+
+	public static HashSet<String> getDaySet() {
+		HashSet dayNumber = new HashSet<String>();
+		dayNumber.add("01");
+		dayNumber.add("02");
+		dayNumber.add("03");
+		dayNumber.add("04");
+		dayNumber.add("06");
+		dayNumber.add("07");
+		dayNumber.add("08");
+		dayNumber.add("09");
+		return dayNumber;
+	}
+
 }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -61,12 +62,15 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
                 val clip = ClipData.newPlainText(referenceNumber.text, referenceNumber.text)
                 clipboard.setPrimaryClip(clip)
 
-                mToastUtils?.activity = activity
-                mToastUtils?.pixel = ((trackMyDelivery.getHeight() * 2.5).roundToInt())
-                mToastUtils?.view = trackMyDelivery
-                mToastUtils?.setMessage(bindString(R.string.copied_to_clipboard))
-                mToastUtils?.viewState = false
-                mToastUtils?.buildCustomToast()
+                val currentActivity: Activity? = activity
+                mToastUtils?.apply {
+                    activity = currentActivity
+                    pixel = ((trackMyDelivery.getHeight() * 2.5).roundToInt())
+                    view = trackMyDelivery
+                    setMessage(bindString(R.string.copied_to_clipboard))
+                    viewState = false
+                    buildCustomToast()
+                }
             }
         }
     }
