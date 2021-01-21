@@ -974,6 +974,7 @@
     <string name="apply_store_card_layout">Apply Store Card</string>
     <string name="linked_credit_card_layout"> Linked Credit Card</string>
     <string name="apply_credit_card_layout"> Apply Credit Card</string>
+    <string name="activate">ACTIVATE</string>
     <string name="linked_personal_loan_layout">Linked Personal Loan</string>
     <string name="apply_personal_loan_layout">Apply Personal Loan</string>
     <string name="messages_layout">Messages</string>

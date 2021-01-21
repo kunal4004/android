@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
@@ -541,7 +542,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 creditCardStatus.text = displayTitle
             } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(CARD_DELIVERED.name) == true)) {
                 KotlinUtils.roundCornerDrawable(creditCardStatus, "#bad110")
-                creditCardStatus.text = displayTitle
+                creditCardStatus.text = bindString(R.string.activate)
             } else creditCardStatus.visibility = INVISIBLE
         }
     }
