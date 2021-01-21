@@ -88,7 +88,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
     fun configureUI() {
         statusResponse?.recipientDetails?.let {
             idNumber?.setText(it.idNumber ?: "")
-            if (it.idNumber?.isEmpty() == true) {
+            if (it.idNumber?.isEmpty() == true || it.idNumber == null) {
                 mySelf.isChecked = true
             } else {
                 anotherPerson.isChecked = true

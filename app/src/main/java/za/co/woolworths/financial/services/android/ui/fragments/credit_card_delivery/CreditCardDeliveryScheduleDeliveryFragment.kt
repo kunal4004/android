@@ -98,10 +98,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         activity?.apply {
             scheduleDeliveryRequest.let {
                 startProgress()
-                if (isEditRecipient() == true) {
-                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, false, "", it)
-                } else
-                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, true, "", it)
+                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, isEditRecipient(), "", it)
             }
         }
     }
@@ -112,10 +109,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
             getProgressState()?.restartSpinning()
             processingLayout?.visibility = View.VISIBLE
             scheduleDeliveryRequest.let {
-                if (isEditRecipient() == true) {
-                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, false, "", it)
-                } else
-                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, true, "", it)
+                presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, isEditRecipient(), "", it)
             }
         }
     }
