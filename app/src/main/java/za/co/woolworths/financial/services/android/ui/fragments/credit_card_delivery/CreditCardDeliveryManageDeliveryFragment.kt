@@ -59,7 +59,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
                     val bundle = bundleOf(
                             "bundle" to bundle,
                             "isEditRecipient" to true)
-                    navController?.navigate(R.id.creditCardDeliveryAddressDetailsFragment, bundle)
+                    navController?.navigate(R.id.action_creditCardDeliveryAddressDetailsFragment, bundle)
                 } else {
                     activity?.apply {
                         supportFragmentManager.apply {

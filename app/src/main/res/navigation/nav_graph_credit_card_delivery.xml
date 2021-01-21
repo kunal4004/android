@@ -25,6 +25,10 @@
             android:id="@+id/action_to_creditCardDeliveryManageDeliveryFragment"
             app:destination="@id/creditCardDeliveryManageDeliveryFragment"
             app:popUpTo="@+id/creditCardDeliveryBoardingFragment" />
+        <action
+            android:id="@+id/action_to_creditCardDeliveryManageDeliveryFragmentToStatusFrag"
+            app:destination="@id/creditCardDeliveryManageDeliveryFragment"
+            app:popUpTo="@+id/creditCardDeliveryStatusFragment" />
     </fragment>
 
     <fragment
@@ -47,6 +51,10 @@
             android:id="@+id/action_creditCardDeliveryAddressDetailsFragment"
             app:destination="@id/creditCardDeliveryAddressDetailsFragment"
             app:popUpTo="@+id/creditCardDeliveryStatusFragment" />
+        <!--<action
+            android:id="@+id/action_creditCardDeliveryAddressDetailsFrag"
+            app:destination="@id/creditCardDeliveryAddressDetailsFragment"
+            app:popUpTo="@+id/creditCardDeliveryManageDeliveryFragment" />-->
     </fragment>
 
     <fragment
@@ -69,6 +77,11 @@
             android:id="@+id/action_to_creditCardDeliveryAddressDetailsFragment"
             app:destination="@id/creditCardDeliveryAddressDetailsFragment"
             app:popUpTo="@+id/creditCardDeliveryRecipientDetailsFragment" />
+        <action
+            android:id="@+id/action_from_recipient_to_creditCardScheduleDelivery"
+            app:destination="@id/creditCardDeliveryScheduleDeliveryFragment"
+            app:popUpTo="@+id/creditCardDeliveryStatusFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/creditCardDeliveryValidateAddressRequestFragment"
@@ -90,7 +103,11 @@
             android:id="@+id/action_to_creditCardDeliveryScheduleDeliveryFragment"
             app:destination="@id/creditCardDeliveryScheduleDeliveryFragment"
             app:popUpTo="@+id/creditCardDeliveryBoardingFragment"
-            app:launchSingleTop="true"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_to_creditCardDeliveryScheduleDeliveryFrag"
+            app:destination="@id/creditCardDeliveryScheduleDeliveryFragment"
+            app:popUpTo="@+id/creditCardDeliveryAddressDetailsFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -102,7 +119,7 @@
             android:id="@+id/action_to_creditCardDeliveryStatusFragment"
             app:destination="@id/creditCardDeliveryStatusFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@+id/creditCardDeliveryStatusFragment"
+            app:popUpTo="@id/creditCardDeliveryScheduleDeliveryFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

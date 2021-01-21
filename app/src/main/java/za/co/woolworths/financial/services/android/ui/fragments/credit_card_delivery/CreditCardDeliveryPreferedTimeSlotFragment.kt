@@ -58,7 +58,13 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(request))
             bundle?.putString("StatusResponse", Utils.toJson(response))
 
-            this.navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
+            if (bundle?.containsKey("isEditRecipient") == true) {
+                if (bundle?.getBoolean("isEditRecipient") == true) {
+                    this.navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFrag, bundleOf("bundle" to bundle))
+                } else
+                    this.navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
+            } else
+                this.navController?.navigate(R.id.action_to_creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
         }
         configureUI()
     }

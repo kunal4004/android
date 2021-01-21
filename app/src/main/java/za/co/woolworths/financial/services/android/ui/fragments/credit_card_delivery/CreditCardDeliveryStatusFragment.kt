@@ -151,7 +151,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         when (v?.id) {
             R.id.manageDeliveryLayout -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY)
-                navController?.navigate(R.id.action_to_creditCardDeliveryManageDeliveryFragment, bundleOf("bundle" to bundle))
+                navController?.navigate(R.id.action_to_creditCardDeliveryManageDeliveryFragmentToStatusFrag, bundleOf("bundle" to bundle))
             }
             R.id.trackDeliveryLayout -> {
                 activity?.apply {

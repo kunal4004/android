@@ -136,7 +136,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
         }
         bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
         bundle?.putBoolean("isEditRecipient", isEditRecipient)
-        navController?.navigate(R.id.creditCardDeliveryScheduleDeliveryFragment, bundleOf("bundle" to bundle))
+        navController?.navigate(R.id.action_from_recipient_to_creditCardScheduleDelivery, bundleOf("bundle" to bundle))
     }
 
     private fun showErrorPhoneNumber(editText: EditText) {
