@@ -53,7 +53,7 @@ class ConfigureViewPagerWithTab(val activity: AppCompatActivity?, private val vi
                 override fun onTabReselected(tab: TabLayout.Tab?) {}
             })
 
-            viewPager?.currentItem = defaultViewPagerPosition
+            viewPager?.setCurrentItem(defaultViewPagerPosition, false)
         }
     }
 

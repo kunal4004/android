@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/applyNowCardDetailScrollView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <include layout="@layout/account_sales_card_benefit_layout" />
-
-    <include layout="@layout/account_sales_more_benefit_layout" />
-
-    <include layout="@layout/account_sales_qualify_criteria_layout" />
-
-    <include
-        android:id="@+id/cardCollectionConstraintLayout"
-        layout="@layout/account_sales_card_collection_layout" />
-
-    <View
-        style="@style/account_sales_card_benefits_bottom_margin_style"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view3" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <include layout="@layout/account_sales_card_benefit_layout" />
+
+        <include layout="@layout/account_sales_more_benefit_layout" />
+
+        <include layout="@layout/account_sales_qualify_criteria_layout" />
+
+        <include
+            android:id="@+id/cardCollectionConstraintLayout"
+            layout="@layout/account_sales_card_collection_layout" />
+
+        <View
+            style="@style/account_sales_card_benefits_bottom_margin_style"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+    </LinearLayout>
+</za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView>
