@@ -91,7 +91,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                             SessionStateType.CONNECT -> {
                                 chatLoaderProgressBar?.visibility = GONE
                                 showAgentsMessage(result.content)
-                                isChatButtonEnabled(true)
+                                isChatButtonEnabled(false)
                                 isUserOnline(true)
                             }
 
