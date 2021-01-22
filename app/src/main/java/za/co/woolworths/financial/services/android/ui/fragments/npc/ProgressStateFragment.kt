@@ -64,6 +64,7 @@ class ProgressStateFragment : Fragment() {
 
     fun restartSpinning() {
         imFailureIcon?.visibility = GONE
+        success_tick?.visibility = GONE
         circularProgressIndicator?.apply {
             spin()
         }

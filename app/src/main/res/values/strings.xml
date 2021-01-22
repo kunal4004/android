@@ -15,6 +15,7 @@
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
     <string name="next">NEXT</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
+    <string name="cancel_underline" tools:ignore="ButtonCase"><u>CANCEL</u></string>
     <string name="submit">SUBMIT</string>
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
@@ -40,13 +41,13 @@
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
     <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
-    <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
+    <string name="location_off_message">We use location services to show you stock at your nearest store, and delivery slots in your area.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="off_instantly">OFF</string>
 
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="apply_now">APPLY NOW</string>
-    f
+
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
     <string name="call_us">CALL US</string>
@@ -693,7 +694,7 @@
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
-    <string name="absa_biometric_please_enter_your_pin">Enter Woolies Credit Card PIN</string>
+    <string name="absa_atm_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_desc"> Please call on 0861 50 20 20 or  email queries@wfs.co.za for assistance</string>
@@ -745,6 +746,7 @@
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
     <string name="my_card_title">My Card</string>
+    <string name="my_card">MY CARD</string>
     <string name="card_number_title">Card Number:</string>
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
@@ -791,7 +793,8 @@
     <string name="unsuccessful_request">Unsuccessful Request</string>
     <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
     <string name="incorrect_pin_alert">Incorrect PIN. Please note on your third failed attempt your profile will be blocked.</string>
-    <string name="error_atm_pin_locked_title">Credit Card ATM PIN Locked</string>
+    <string name="error_atm_pin_locked_title">Online banking PIN is Now \nLocked</string>
+    <string name="error_atm_pin_locked_desc">In order to unlock your PIN, please call \ncustomer service on 0861 50 20 20 or email \nqueries@wfs.co.za. Please note, your card PIN will \nstill work in both stores &amp; ATMs.</string>
     <string name="passcode_not_match_alert">Your Passcode does not match. Please try again.</string>
     <string name="error_action_later">later</string>
     <string name="reset_passcode">RESET PASSCODE</string>
@@ -972,6 +975,7 @@
     <string name="apply_store_card_layout">Apply Store Card</string>
     <string name="linked_credit_card_layout"> Linked Credit Card</string>
     <string name="apply_credit_card_layout"> Apply Credit Card</string>
+    <string name="activate">ACTIVATE</string>
     <string name="linked_personal_loan_layout">Linked Personal Loan</string>
     <string name="apply_personal_loan_layout">Apply Personal Loan</string>
     <string name="messages_layout">Messages</string>
@@ -1195,6 +1199,8 @@
     <string name="storeCardCardCollection_row_2">Latest three payslips or the last three months\' bank statements.</string>
 
     <string name="goldCreditCard_title">Gold Credit Card</string>
+    <string name="goldCreditCard_title_small">gold credit card</string>
+    <string name="silverCreditCard_title">Silver Credit Card</string>
     <string name="goldCreditCard_desc">Get 2% back on all Woolies purchases when you pay with your card</string>
 
     <string name="goldCreditCardQualify_row_1">Be 18 years of age, or older</string>
@@ -1300,6 +1306,10 @@
     <string name="black_credit_card_available_fund_arrears_information_desc">Funds available for you to use.</string>
     <string name="black_credit_card_current_information_arrears_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="silver_credit_card">silver credit card</string>
+    <string name="delivery_confirmation">DELIVERY CONFIRMATION</string>
+    <string name="card_delivery_failed">Failed</string>
+    <string name="card_delivery_cancelled">Cancelled</string>
+    <string name="card_delivery_delivered">Delivered</string>
 
     <string name="label_recent_transactions">Recent\nTransactions</string>
     <string name="label_view_statements">View\nStatements</string>
@@ -1424,6 +1434,7 @@
     <string name="plp_rewardsPromotionalImage">rewardsPromotionalImage</string>
     <string name="plp_vitalityPromotionalImage">vitalityPromotionalImage</string>
     <string name="cancel_delivery">Cancel Delivery</string>
+    <string name="cancel_order">Cancel Order</string>
     <string name="yes_i_d_like_to_cancel">yes, i\'d like to cancel</string>
     <string name="confirm_cancel_order_dialog_title">Are you sure you wish to \ncancel this order?</string>
     <string name="cancel_order_failure_title">There was a Problem Cancelling your Order</string>
@@ -1469,6 +1480,74 @@
     <string name="personal_loan_payment_options_desc">You can easily pay your Woolies Personal Loan using any of the following payment options:</string>
 
     <string name="credit_card_payment_options_title">Credit Card Payment Options</string>
+    <string name="manage_delivery">Manage Delivery</string>
+    <string name="manage_delivery_title">MANAGE DELIVERY</string>
+    <string name="track_my_delivery">Track My Delivery</string>
+    <string name="copied_to_clipboard">COPIED TO CLIPBOARD!</string>
+    <string name="too_late_to_edit_tiitle">Too Late To Edit</string>
+    <string name="too_late_to_edit_desc">Unfortunately it\'s too late to edit your delivery details now. Please call us on 0861 50 50 20 for assistance.</string>
+    <string name="credit_card_cancel_delivery_title">CANCEL DELIVERY</string>
+    <string name="credit_card_cancel_delivery_desc">Please call us on 010 020 1028 to cancel delivery.</string>
+    <string name="credit_card_track_my_delivery_desc">CCD is our trusted delivery partner. On the day of delivery you will be able to track your order. Please use the last 4 digits of your SA ID, and your unique reference (see below) OR your tracking number which will be SMSed to you on the day of delivery.</string>
+    <string name="no_timeslots_available_title">No Timeslots Available</string>
+    <string name="no_timeslots_available_desc">There are no available timeslots for your address. Please get in touch with our courier partner directly to schedule delivery.</string>
+    <string name="call_courier_partners">Call Courier Partners</string>
+    <string name="invalid_address_title">Invalid Address</string>
+    <string name="invalid_address_desc">We are unable to find the address entered, please re-enter your address and submit. Alternatively contact the courier.</string>
+    <string name="contact_courier">Contact Courier</string>
+    <string name="phone_no_hint">Enter 10 digit number</string>
+    <string name="address_date_time">Address, Date &amp; Time</string>
+    <string name="recipient">Recipient</string>
+    <string name="booking_reference">BOOKING REFERENCE</string>
+    <string name="created">created</string>
+    <string name="setup_credit_card_delivery_title">Setup Delivery For Your \nNew %1$s.</string>
+    <string name="setup_credit_card_delivery_desc">Set up your delivery information so we know when and where to send your card.</string>
+    <string name="setup_credit_card_delivery_desc_please_note"><b>Please note:</b> the delivery of your %1$s will come at an additional cost of <b>R%2$s</b></string>
+    <string name="set_up_delivery_nowt">set up delivery now</string>
+    <string name="already_have_card_activate_it_now"><u>Already have card? Activate it now</u></string>
+    <string name="recipient_details">Recipient Details</string>
+    <string name="recipient_details_desc">Please enter the details of the person we will be delivering to below:</string>
+    <string name="documet_requied_at_delivery">You will need to give the courier a copy of your SA Identity Document (ID), when taking delivery of your new credit card.</string>
+    <string name="recipient_name">Recipient Name</string>
+    <string name="id_number">ID Number</string>
+    <string name="cellphone_number">Cellphone Number</string>
+    <string name="alternate_contact_numberr">Alternate Contact Number</string>
+    <string name="delivery_details">Delivery Details</string>
+    <string name="delivery_details_desc">Please complete your delivery details below:</string>
+    <string name="residential">Residential</string>
+    <string name="business">Business</string>
+    <string name="complex_building">Complex/Building</string>
+    <string name="street_address">Street Address</string>
+    <string name="suburb">Suburb</string>
+    <string name="city_town">City/Town</string>
+    <string name="province">Province</string>
+    <string name="postal_code">Postal Code</string>
+    <string name="schedule_your_delivery">Schedule Your Delivery</string>
+    <string name="manage_my_delivery">Manage My Delivery</string>
+    <string name="confirm_address">Confirm Address</string>
+    <string name="edit_address"><u>Edit Address</u></string>
+    <string name="time_slots_page_title">When Would Like Your \nCard Delivered?</string>
+    <string name="time_slots_page_desc">Choose a date and select a prefered timeslot for when you would like your card delivered.</string>
+    <string name="processing_error">Processing Error</string>
+    <string name="time_slots_error_desc">We were unable to find available time slots.</string>
+    <string name="validate_address_error_desc">We were unable to confirm your \nrequest at this time.</string>
+    <string name="delivery_failed_title">Delivery Failed</string>
+    <string name="delivery_failed_desc">We are currently unable to schedule your delivery. Please try again later, or contact us on 010 020 1028.</string>
+    <string name="delivery_setup_complete">Delivery Setup Complete</string>
+    <string name="delivery_setup_update">Your Delivery Information Has Been Updated</string>
+    <string name="delivery_success_desc">Keep an eye on the app for updates.</string>
+    <string name="cellphone_number_error_msg">Please enter a Cellphone Number</string>
+    <string name="alternate_number_error_msg">Please enter Alternate Contact Number</string>
+    <string name="phone_number_invalid_error_msg">Please provide a valid phone number</string>
+    <string name="recipient_name_error_msg">Please enter a Recipient name</string>
+    <string name="build_or_complex_error_msg">Please enter a Complex/Building name</string>
+    <string name="business_name_error_msg">Please enter a Business name</string>
+    <string name="street_address_error_msg">Please enter a Street address</string>
+    <string name="suburb_error_msg">Please enter a Suburb</string>
+    <string name="city_or_town_error_msg">Please enter a City/Town</string>
+    <string name="province_error_msg">Please enter a Province</string>
+    <string name="postalcode_error_msg">Please enter a Postal code</string>
+    <string name="please_confirm_your_address">Please Confirm Your Address</string>
     <string name="credit_card_payment_options_desc">You can pay your Woolies Credit Card using any of the following payment options:</string>
     <string name="account_in_arrears_toolbar">Account In Arrears Toolbar</string>
     <string name="account_in_arrears_layout">Account In Arrears Layout</string>
@@ -1534,6 +1613,78 @@
     <string name="temp_card_how_to_use8">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
     <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
     <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
+    <string name="id_number_error_msg">Please enter a ID Number</string>
+    <string name="myself">Myself\u0020</string>
+    <string name="another_person">Another Person</string>
+    <string name="business_name_optional">Business Name (Optional)</string>
+
+    <!-- Unique Ids for Credit Card Delivery-->
+    <string name="cd_ccd_labelrecipientname">labelRecipientName</string>
+    <string name="cd_ccd_labelcellphonenumber">labelCellPhoneNumber</string>
+    <string name="cd_ccd_labelalternatecontactnumber">labelAlternateContactNumber</string>
+    <string name="cd_ccd_labelidnumber">labelIDNumber</string>
+    <string name="cd_ccd_txtrecipientname">txtRecipientName</string>
+    <string name="cd_ccd_txtcellphonenumber">txtCellPhoneNumber</string>
+    <string name="cd_ccd_txtalternatecontactnumberr">txtAlternateContactNumberr</string>
+    <string name="cd_ccd_txtidnumber">txtIDNumber</string>
+    <string name="cd_ccd_lablerecipientdetailstitle">lableRecipientDetailsTitle</string>
+    <string name="cd_ccd_lablerecipientdetailsdescription">lableRecipientDetailsDescription</string>
+    <string name="cd_ccd_radiobtnmyself">radioBtnMySelf</string>
+    <string name="cd_ccd_radiobtnanotherperson">radioBtnAnotherPerson</string>
+    <string name="cd_ccd_btnnext">btnNext</string>
+    <string name="cd_ccd_imgcreditcard">imgCreditCard</string>
+    <string name="cd_ccd_labelsetupdeliverytitle">labelSetupDeliveryTitle</string>
+    <string name="cd_ccd_labelsetupdeliverydescription">labelSetupDeliveryDescription</string>
+    <string name="cd_ccd_btnsetupdeliverydescription">btnSetupDeliveryDescription</string>
+    <string name="cd_ccd_linkalreadyhavecard">linkAlreadyHaveCard</string>
+    <string name="cd_ccd_labledeliverydetailstitle">lableDeliveryDetailsTitle</string>
+    <string name="cd_ccd_labledeliverydetailsdescription">lableDeliveryDetailsDescription</string>
+    <string name="cd_ccd_radiobtnresidential">radiobtnResidential</string>
+    <string name="cd_ccd_radiobtnbusiness">radiobtnBusiness</string>
+    <string name="cd_ccd_labelcomplexname">labelComplexName</string>
+    <string name="cd_ccd_txtcomplexname">txtComplexName</string>
+    <string name="cd_ccd_labelstreetaddress">labelStreetAddress</string>
+    <string name="cd_ccd_txtstreetaddress">txtStreetAddress</string>
+    <string name="cd_ccd_labelsuburb">labelSuburb</string>
+    <string name="cd_ccd_txtsuburb">txtSuburb</string>
+    <string name="cd_ccd_labelcity">labelCity</string>
+    <string name="cd_ccd_txtcity">txtCity</string>
+    <string name="cd_ccd_labelprovince">labelProvince</string>
+    <string name="cd_ccd_txtprovince">txtProvince</string>
+    <string name="cd_ccd_labelpostalcode">labelPostalCode</string>
+    <string name="cd_ccd_txtpostalcode">txtPostalCode</string>
+    <string name="cd_ccd_btnconfirm">btnConfirm</string>
+    <string name="cd_ccd_lableconfirmaddresstitle">lableConfirmAddressTitle</string>
+    <string name="cd_ccd_txtvalueaddress">txtValueAddress</string>
+    <string name="cd_ccd_linkeditaddress">linkEditAddress</string>
+    <string name="cd_ccd_lableconfirmtimeslottitle">lableConfirmTimeslotTitle</string>
+    <string name="cd_ccd_labeltimeslotdescription">labelTimeslotDescription</string>
+    <string name="cd_ccd_listdayanddate">listDayAndDate</string>
+    <string name="cd_ccd_listtime">listTime</string>
+    <string name="cd_ccd_lableconfirmdeliverytitle">lableConfirmDeliveryTitle</string>
+    <string name="cd_ccd_labeltimeslotdeliverydescription">labelTimeslotDeliveryDescription</string>
+    <string name="cd_ccd_imgdeliverycard">imgDeliveryCard</string>
+    <string name="cd_ccd_lableconfirmeddeliverytitle">lableConfirmedDeliveryTitle</string>
+    <string name="cd_ccd_labelconfirmedtimeslot">labelConfirmedTimeslot</string>
+    <string name="cd_ccd_imgdelivery">imgDelivery</string>
+    <string name="cd_ccd_labelconfirmeddeliverydescription">labelConfirmedDeliveryDescription</string>
+    <string name="cd_ccd_btnmanagedelivery">btnManageDelivery</string>
+    <string name="cd_ccd_btntrackdelivery">btnTrackDelivery</string>
+    <string name="cd_ccd_labeladdressdateandtime">labelAddressDateAndTime</string>
+    <string name="cd_ccd_txtdayanddate">txtDayAndDate</string>
+    <string name="cd_ccd_txttimeslot">txtTimeSlot</string>
+    <string name="cd_ccd_btnedit">btnEdit</string>
+    <string name="cd_ccd_txtdeliveryaddress">txtDeliveryAddress</string>
+    <string name="cd_ccd_labelrecipient">labelRecipient</string>
+    <string name="cd_ccd_labelname">labelName</string>
+    <string name="cd_ccd_btneditrecipient">btnEditRecipient</string>
+    <string name="cd_ccd_txtvalue">txtValue</string>
+    <string name="cd_ccd_labelbookingref">labelBookingRef</string>
+    <string name="cd_ccd_txtbookingref">txtBookingRef</string>
+    <string name="cd_ccd_labelcreated">labelCreated</string>
+    <string name="cd_ccd_txtcreatedvalue">txtCreatedValue</string>
+    <string name="cd_ccd_btncanceldelivery">btnCancelDelivery</string>
+    <string name="collecting_from_confirm_suburb">Collecting from</string>
     <string name="select_an_option">Please Select an Option</string>
     <string name="collection_location">Collection Location:</string>
     <string name="collection_date">Collection Date:</string>
@@ -1783,9 +1934,21 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="bullet_point_unicode">\u2022</string>
     <string name="save_card_product_label">Product:</string>
     <string name="save_card_product_payment_total_label">Payment Total:</string>
+    <string name="tomorrow">Tomorrow</string>
     <string name="account_holder_lable">Account Holder:</string>
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
     <string name="transaction_date_value">03 / 07 / 2016</string>
+    <string name="clear_details"><u>Clear Details</u></string>
+    <string name="checking_available_slots">Checking For Available Timeslots</string>
+    <string name="copy_reference_number"><u>Copy Reference Number</u></string>
+    <string name="arriving">ARRIVING</string>
+    <string name="failed_cc_delivery_desc">Your Card Delivery Has</string>
+    <string name="cancelled_cc_delivery_desc">Your card has been</string>
+    <string name="delivered_cc_delivery_desc">Your card has been</string>
+    <string name="title_desc_setup_cc_delivery">Hey Thuli. Would you like to set up delivery of your new Black Credit Card?</string>
+    <string name="title_subdesc_setup_cc_delivery">. Would you like to set up delivery of your new\u0020</string>
+    <string name="subtitle_desc_setup_cc_delivery">We will deliver your card at a time that is convenient for you.</string>
+    <string name="will_do_later"><u>i’ll do this later</u></string>
     <string name="unable_process_checkout_title">Unable to proceed to Checkout</string>
     <string name="unable_process_checkout_desc">Please remove items from your cart in order to proceed with your checkout.</string>
     <string name="toast_single_item_added_to_cart_message">%1$s item added to cart</string>
@@ -1801,5 +1964,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="cd_labelgenericpopup">labelGenericPopup</string>
     <string name="cd_labelgenericpopupdescription">labelGenericPopupDescription</string>
     <string name="cd_btngotit">btnGotIt</string>
+    <string name="set_up_delivery_now">YES, SET UP DELIVERY NOW</string>
+    <string name="name">Name</string>
+    <string name="hey_with_space">Hey\u0020</string>
 </resources>
-
