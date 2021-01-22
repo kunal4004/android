@@ -30,14 +30,19 @@ enum class CreditCardActivationState(val value: String) {
     FAILED("FAILED"), AVAILABLE("ACTIVATE"), ACTIVATED("ACTIVATED"), UNAVAILABLE("ACTIVATE")
 }
 
+enum class CreditCardDeliveryStatus {
+    CARD_RECEIVED, CARD_DELIVERED, APPOINTMENT_SCHEDULED, AWAITING_INSTRUCTION, CANCELLED, CARD_SHREDDED, CARD_NOT_RECEIVED, DEFAULT
+
+}
+
 enum class AccountsProductGroupCode(val groupCode: String) {
     STORE_CARD("SC"), CREDIT_CARD("CC"), PERSONAL_LOAN("PL");
 
-    fun equals(code: String): Boolean{
+    fun equals(code: String): Boolean {
         return groupCode.equals(code, ignoreCase = true)
     }
 
-    companion object{
+    companion object {
         fun getEnum(code: String?): AccountsProductGroupCode? = values().find { it.groupCode == code?.toUpperCase(Locale.getDefault()) }
     }
 }
