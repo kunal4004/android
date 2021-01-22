@@ -27,7 +27,7 @@ class SuccessTickView : View {
     private var mRightRectWidth: Float = 0.toFloat()
     private var mLeftRectGrowMode: Boolean = false
 
-    var colorCode: Int = R.color.success_stroke_color
+    var colorCode: Int = R.color.success_tick_color
 
     constructor(context: Context) : super(context) {
         init()

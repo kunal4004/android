@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/thirty_two_dp">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/cardImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_dp"
+        android:src="@drawable/w_black_credit_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
+
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/dialog_title_text_style"
+        android:layout_marginTop="@dimen/thirty_one_dp"
+        android:text="@string/title_desc_setup_cc_delivery"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/cardImage" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/dialog_description_text_style"
+        android:layout_marginTop="@dimen/twelve_dp"
+        android:text="@string/subtitle_desc_setup_cc_delivery"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+
+    <Button
+        android:id="@+id/setUpDeliveryNow"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/eighteen_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/order_add_to_cart_button_bg"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.13"
+        android:text="@string/set_up_delivery_now"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
+
+    <TextView
+        android:id="@+id/cancel"
+        style="@style/link_text_style"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:text="@string/will_do_later"
+        app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/setUpDeliveryNow" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
