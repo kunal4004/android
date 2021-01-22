@@ -98,7 +98,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         activity?.apply {
             scheduleDeliveryRequest.let {
                 startProgress()
-                    presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, isEditRecipient(), "", it)
+                presenter?.initScheduleDelivery(productOfferingId, envelopeNumber, isEditRecipient(), "", it)
             }
         }
     }
@@ -122,12 +122,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
     }
 
     private fun isEditRecipient(): Boolean {
-        var isEdited: Boolean
-        if (bundle?.containsKey("isEditRecipient") == true) {
-            isEdited = bundle?.getBoolean("isEditRecipient") == true
-        } else
-            isEdited = false
-        return isEdited
+        return bundle?.getBoolean("isEditRecipient", false) ?: false
     }
 
     override fun onDestroy() {
