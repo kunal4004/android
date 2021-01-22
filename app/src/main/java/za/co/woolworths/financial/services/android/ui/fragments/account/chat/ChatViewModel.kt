@@ -137,7 +137,7 @@ class ChatViewModel : ViewModel() {
 
     fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
         val conversationId = getConversationMessageId()
-        if (conversationId == null) {
+        if (conversationId.isEmpty()) {
             logExceptionToFirebase("subscribeToMessageByConversationId")
             failure(failure)
             return
@@ -151,7 +151,7 @@ class ChatViewModel : ViewModel() {
                 { data -> result(data) }, { failure(failure) })
     }
 
-    private fun getConversationMessageId(): String? = conversation?.id
+    private fun getConversationMessageId(): String = conversation?.id ?: ""
 
     override fun onCleared() {
         awsAmplify?.cancelSubscribeMessageByConversationId()
@@ -165,7 +165,7 @@ class ChatViewModel : ViewModel() {
 
     fun sendMessage(content: String) {
         val conversationId = getConversationMessageId()
-        if (conversationId == null) {
+        if (conversationId.isEmpty()) {
             logExceptionToFirebase("sendMessage conversationId")
             return
         }
@@ -181,7 +181,7 @@ class ChatViewModel : ViewModel() {
 
     fun signOut(result: () -> Unit) {
         val conversationId = getConversationMessageId()
-        if (conversationId == null) {
+        if (conversationId.isEmpty()) {
             logExceptionToFirebase("signOut conversationId")
             return
         }
@@ -319,7 +319,7 @@ class ChatViewModel : ViewModel() {
     fun getMessagesListByConversation(result: ((MutableList<ChatMessage>?) -> Unit)) {
 
         val conversationId = getConversationMessageId()
-        if (conversationId == null) {
+        if (conversationId.isEmpty()) {
             logExceptionToFirebase("getMessagesListByConversation conversationId")
             return
         }

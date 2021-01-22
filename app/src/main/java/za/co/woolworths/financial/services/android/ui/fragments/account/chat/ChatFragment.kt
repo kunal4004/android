@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.app.Activity
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.TextUtils
 import android.view.*
 import android.view.View.GONE
