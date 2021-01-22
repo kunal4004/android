@@ -106,6 +106,7 @@
     <dimen name="email_height_50">50dp</dimen>
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
+    <dimen name="hundred_and_thirty_dp">130dp</dimen>
     <dimen name="hundred_and_fifty_dp">150dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="six_dp">6dp</dimen>
@@ -178,6 +179,7 @@
     <dimen name="hundred_and_four_dp">104dp</dimen>
     <dimen name="text_size_18sp">18sp</dimen>
     <dimen name="text_size_10sp">10sp</dimen>
+    <dimen name="one_twenty_dp">120dp</dimen>
     <dimen name="one_thirty_four">134dp</dimen>
     <dimen name="fifty_five_sp">55sp</dimen>
     <dimen name="seven_dp">7dp</dimen>
@@ -185,6 +187,8 @@
     <dimen name="one_sp">1sp</dimen>
     <dimen name="eighty_five_dp">85dp</dimen>
     <dimen name="fourty_five_sp">45sp</dimen>
+    <dimen name="thirty_five_sp">35sp</dimen>
+    <dimen name="thirty_six_sp">36sp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
     <dimen name="two_hundred_and_fifty_dp">250dp</dimen>
     <dimen name="forty_four_dp">44dp</dimen>

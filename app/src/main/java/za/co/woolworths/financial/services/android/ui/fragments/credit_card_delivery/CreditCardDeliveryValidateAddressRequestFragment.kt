@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -16,12 +15,15 @@ import kotlinx.android.synthetic.main.credit_card_delivery_invalid_address_layou
 import kotlinx.android.synthetic.main.credit_card_delivery_no_time_slots_available_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
+import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
@@ -31,8 +33,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseFragment(), ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotView, IProgressAnimationState, View.OnClickListener {
 
     private var navController: NavController? = null
-    var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
-    var possibleAddressResponse: PossibleAddressResponse? = null
+    private var presenter: ValidateAddressAndTimeSlotContract.ValidateAddressAndTimeSlotPresenter? = null
+    private var possibleAddressResponse: PossibleAddressResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.credit_card_delivery_validate_address_request_layout, container, false)
@@ -46,6 +48,9 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        bundle?.apply {
+            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+        }
         confirmAddress?.setOnClickListener(this)
         editAddress?.setOnClickListener(this)
         contactCourier?.setOnClickListener(this)
@@ -55,6 +60,12 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         cancelOnNoTimeSlots?.setOnClickListener(this)
         cancelOnTimeSlotsError?.setOnClickListener(this)
         cancelOnValidateAddress?.setOnClickListener(this)
+        if (activity is CreditCardDeliveryActivity) {
+            (activity as CreditCardDeliveryActivity)?.apply {
+                changeToolbarBackground(R.color.white)
+                hideToolbar()
+            }
+        }
         getValidateAddress()
     }
 
@@ -74,7 +85,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
                     restartProgress()
-                    productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it) }
+                    productOfferingId.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest.addressDetails), it, envelopeNumber) }
                 }
             }
             R.id.retryGetTimeSlots -> {
@@ -88,14 +99,24 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     override fun getValidateAddress() {
         startProgress()
-        productOfferingId?.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest?.bookingAddress), it) }
+        productOfferingId.let { presenter?.initValidateAddress(getSearchPhase(scheduleDeliveryRequest.addressDetails), it, envelopeNumber) }
     }
 
     override fun getAvailableTimeSlots() {
         activity?.apply {
             possibleAddressResponse?.address?.let {
                 restartProgress()
-                envelopeNumber?.let { it1 -> productOfferingId?.let { it2 -> presenter?.initAvailableTimeSlots(it1, it2, it.x, it.y, KotlinUtils.toShipByDateFormat(KotlinUtils.getDateDaysAfter(2))) } }
+                envelopeNumber.let { it1 ->
+                    productOfferingId.let { it2 ->
+                        presenter?.initAvailableTimeSlots(it1, it2, it.x, it.y, KotlinUtils.toShipByDateFormat(KotlinUtils.getDateDaysAfter(2)))
+                        statusResponse?.addressDetails?.x = it.x
+                        statusResponse?.addressDetails?.y = it.y
+                        scheduleDeliveryRequest.addressDetails?.x = it.x
+                        scheduleDeliveryRequest.addressDetails?.y = it.y
+                        bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
+                        bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+                    }
+                }
             }
         }
     }
@@ -107,10 +128,12 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                 containerViewId = R.id.flProgressIndicator
         )
         processingLayout?.visibility = View.VISIBLE
+        processRequestTitleTextView.text = bindString(R.string.processing_your_request)
     }
 
     override fun restartProgress() {
         getProgressState()?.restartSpinning()
+        processRequestTitleTextView.text = bindString(R.string.checking_available_slots)
         processingLayout?.visibility = View.VISIBLE
         flProgressIndicator.visibility = View.VISIBLE
         hideAllSuccessAndFailureViews()
@@ -182,7 +205,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         noTimeSlotsAvailableView.visibility = View.GONE
     }
 
-    fun showAvailableTimeSlotsErrorView() {
+    private fun showAvailableTimeSlotsErrorView() {
         stopProgress(true)
         timeSlotsFailureView.visibility = View.VISIBLE
     }
@@ -227,18 +250,18 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
 
     //This API should be Fire and forget
     private fun updateAddressDetails() {
-        val addressDetails: AddressDetails? = scheduleDeliveryRequest?.bookingAddress?.let { AddressDetails(it.province, it.city, it.suburb, it.businessName, it.buildingName, it.street, it.complexName, it.postalCode) }
         val scheduleDeliveryRequest = ScheduleDeliveryRequest()
         scheduleDeliveryRequest.let {
-            it.bookingAddress = this.scheduleDeliveryRequest?.bookingAddress
-            it.addressDetails = addressDetails
+            it.recipientDetails = this.scheduleDeliveryRequest.recipientDetails
+            it.addressDetails = this.scheduleDeliveryRequest.addressDetails
+            it.slotDetails = this.scheduleDeliveryRequest.slotDetails
         }
         envelopeNumber.let { request(OneAppService.postScheduleDelivery(productOfferingId, envelopeNumber, false, "", scheduleDeliveryRequest)) }
     }
 
-    private fun getSearchPhase(bookingAddress: BookingAddress?): String {
-        var searchPhase: String = ""
-        bookingAddress?.let {
+    private fun getSearchPhase(addressDetails: AddressDetails?): String {
+        var searchPhase = ""
+        addressDetails?.let {
             searchPhase = "${it.street} ${it.suburb} ${it.city} ${it.postalCode}"
         }
         return searchPhase

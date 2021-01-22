@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingBottom="@dimen/thirty_two_dp"
-    >
+    android:paddingBottom="@dimen/thirty_two_dp">
 
     <include
         android:id="@+id/incSwipeCloseIndicator"
         layout="@layout/popup_close_header_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,9 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_dp"
+        android:src="@drawable/icon_cancel_delivery_truck"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/ic_error_icon"
         app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
 
 
@@ -52,9 +51,9 @@
         android:id="@+id/callCallCenter"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/fifty_dp"
         android:layout_marginTop="@dimen/thirty_two_dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
         android:background="@drawable/order_add_to_cart_button_bg"
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.13"
@@ -71,11 +70,10 @@
         style="@style/link_text_style"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/thirty_two_dp"
-        android:text="@string/cancel"
+        android:text="@string/cancel_underline"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/callCallCenter"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/callCallCenter" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
