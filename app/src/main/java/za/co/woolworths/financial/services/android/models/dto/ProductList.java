@@ -53,6 +53,9 @@ public class ProductList {
     @SerializedName("brandText")
     @Expose
     public String brandText;
+    @SerializedName("productVariants")
+    @Expose
+    public String productVariants;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;

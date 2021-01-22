@@ -10,7 +10,6 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
 import com.awfs.coordination.BuildConfig
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.OneAppEvents

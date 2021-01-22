@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
+
 public class AddToCartDaTum {
 	@SerializedName("suburbId")
 	@Expose
@@ -19,4 +21,7 @@ public class AddToCartDaTum {
 	@SerializedName("totalCommerceIteItemCount")
 	@Expose
 	public Integer totalCommerceIteItemCount;
+	@SerializedName("productCountMap")
+	@Expose
+	public ProductCountMap productCountMap;
 }

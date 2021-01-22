@@ -13,15 +13,19 @@ class GeneralInfoDialogFragment : WBottomSheetDialogFragment() {
     private var mDescription: String = ""
     private var mTitle: String = ""
     private var mActionText: String = ""
+    private var mInfoIcon:Int = 0
 
     companion object {
         private const val DESCRIPTION = "DESCRIPTION"
         private const val TITLE = "TITLE"
         private const val ACTION_TEXT = "ACTION_TEXT"
-        fun newInstance(description: String, title: String, actionText: String) = GeneralInfoDialogFragment().withArgs {
+        private const val INFO_ICON = "INFO_ICON"
+        fun newInstance(description: String, title: String, actionText: String, infoIcon:Int? = null) = GeneralInfoDialogFragment().withArgs {
             putString(DESCRIPTION, description)
             putString(TITLE, title)
             putString(ACTION_TEXT, actionText)
+            if (infoIcon != null)
+                putInt(INFO_ICON, infoIcon)
         }
     }
 
@@ -31,6 +35,7 @@ class GeneralInfoDialogFragment : WBottomSheetDialogFragment() {
             mDescription = getString(DESCRIPTION, "")
             mTitle = getString(TITLE, "")
             mActionText = getString(ACTION_TEXT, "")
+            mInfoIcon = getInt(INFO_ICON)
         }
     }
 
@@ -50,6 +55,15 @@ class GeneralInfoDialogFragment : WBottomSheetDialogFragment() {
         if (mActionText.isNotEmpty()) {
             actionButton?.apply {
                 text = mActionText
+            }
+        }
+
+        if (mInfoIcon == 0)
+            infoIcon?.visibility = View.GONE
+        else {
+            infoIcon?.apply {
+                setBackgroundResource(mInfoIcon)
+                visibility = View.VISIBLE
             }
         }
         actionButton?.setOnClickListener { dismissAllowingStateLoss() }
