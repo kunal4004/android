@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
-
 import android.app.Activity
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.TextUtils
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
 
 class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -33,6 +34,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     private var appScreen: String? = ChatFragment::class.java.simpleName
 
     private val chatViewModel: ChatViewModel by activityViewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +63,18 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         onClickListener()
         autoConnectToNetwork()
         setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
+        detectKeyboardVisibilityState()
+    }
+
+    private fun detectKeyboardVisibilityState() {
+        activity?.let { activity ->
+            SoftKeyboardObserver(activity)
+                    .listen { isKeyboardVisible ->
+                        if (isKeyboardVisible) {
+                            mChatAdapter?.itemCount?.minus(1)?.let { messageListRecyclerView?.scrollToPosition(it) }
+                        }
+                    }
+        }
     }
 
     private fun onClickListener() {
