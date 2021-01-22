@@ -9,7 +9,7 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="130dp"
+        android:layout_marginBottom="@dimen/hundred_and_thirty_dp"
         android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +19,7 @@
             <View
                 android:id="@+id/cardViewBackground"
                 android:layout_width="wrap_content"
-                android:layout_height="150dp"
+                android:layout_height="@dimen/hundred_and_fifty_dp"
                 android:background="@color/grey_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -30,7 +30,7 @@
                 android:id="@+id/imgCreditCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/eight_dp"
                 android:contentDescription="@string/cd_ccd_imgcreditcard"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

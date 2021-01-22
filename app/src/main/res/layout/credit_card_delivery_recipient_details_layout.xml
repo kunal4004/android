@@ -50,7 +50,7 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="@dimen/sixty_dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/confirmProceedButton"
         app:layout_constraintEnd_toEndOf="parent"

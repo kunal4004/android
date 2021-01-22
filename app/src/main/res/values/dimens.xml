@@ -106,6 +106,7 @@
     <dimen name="email_height_50">50dp</dimen>
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
+    <dimen name="hundred_and_thirty_dp">130dp</dimen>
     <dimen name="hundred_and_fifty_dp">150dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="six_dp">6dp</dimen>

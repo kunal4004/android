@@ -61,7 +61,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         cancelOnTimeSlotsError?.setOnClickListener(this)
         cancelOnValidateAddress?.setOnClickListener(this)
         if (activity is CreditCardDeliveryActivity) {
-            (activity as? CreditCardDeliveryActivity)?.apply {
+            (activity as CreditCardDeliveryActivity)?.apply {
                 changeToolbarBackground(R.color.white)
                 hideToolbar()
             }

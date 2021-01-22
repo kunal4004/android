@@ -143,7 +143,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
             deliveryStatusTitle.text = bindString(R.string.arriving)
         } else {
             progressIcon.setBackgroundResource(R.drawable.ic_delivery_later)
-            deliveryDate.text = parts?.get(2)?.plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate))
+                deliveryDate.text = if (parts?.size!! >= 2) parts?.get(2)?.plus(" ").plus(WFormatter.convertMonthShortToLong(appointmentDate)) else ""
         }
     }
 
@@ -167,7 +167,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     override fun onDestroy() {
         super.onDestroy()
         activity?.supportFragmentManager?.apply {
-            if (findFragmentById(R.id.flProgressIndicator) != null) {
+            findFragmentById(R.id.flProgressIndicator)?.apply {
                 findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
             }
         }

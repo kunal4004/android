@@ -57,7 +57,7 @@
         android:background="@drawable/order_add_to_cart_button_bg"
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.13"
-        android:text="YES, SET UP DELIVERY NOW"
+        android:text="@string/set_up_delivery_now"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"

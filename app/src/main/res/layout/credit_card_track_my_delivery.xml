@@ -67,7 +67,6 @@
         android:layout_marginTop="@dimen/twenty_five_dp"
         android:fontFamily="@font/futura_medium"
         android:gravity="center"
-        android:text="04/08WOOP100001"
         android:textSize="@dimen/eighteen_sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"

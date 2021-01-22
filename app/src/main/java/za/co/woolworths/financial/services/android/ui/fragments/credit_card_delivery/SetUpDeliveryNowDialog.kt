@@ -54,7 +54,7 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
 
         cancel.setOnClickListener(this)
         setUpDeliveryNow.setOnClickListener(this)
-        val nameTitleText1 = "Hey\u0020"
+        val nameTitleText1 = bindString(R.string.hey_with_space)
         title.text = nameTitleText1.plus(deliveredToName).plus(bindString(R.string.title_subdesc_setup_cc_delivery).plus(creditCardName).plus("?"))
     }
 

@@ -1963,4 +1963,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="cd_labelgenericpopup">labelGenericPopup</string>
     <string name="cd_labelgenericpopupdescription">labelGenericPopupDescription</string>
     <string name="cd_btngotit">btnGotIt</string>
+    <string name="set_up_delivery_now">YES, SET UP DELIVERY NOW</string>
+    <string name="name">Name</string>
+    <string name="hey_with_space">Hey\u0020</string>
 </resources>

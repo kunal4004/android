@@ -100,12 +100,14 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
         timeSlots.forEachIndexed { index, slot ->
             var unformattedDate: String = changeDateFormat(slot.date)
             val parts: List<String>? = slot.date.split("-")
-            parts?.get(2)?.let {
-                var day: String = it
-                if (daySet.contains(it)) {
-                    day = it.get(1).toString()
+            if (parts?.size!! >= 2) {
+                parts?.get(2)?.let {
+                    var day: String = it
+                    if (daySet.contains(it)) {
+                        day = it.get(1).toString()
+                    }
+                    unformattedDate = unformattedDate.replace(it, day + WFormatter.getDayOfMonthSuffix(it.toInt()))
                 }
-                unformattedDate = unformattedDate.replace(it, day + WFormatter.getDayOfMonthSuffix(it.toInt()))
             }
             timeSlots.get(index).date = unformattedDate
         }
