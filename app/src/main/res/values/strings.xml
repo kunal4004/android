@@ -40,13 +40,13 @@
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
     <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
-    <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
+    <string name="location_off_message">We use location services to show you stock at your nearest store, and delivery slots in your area.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="off_instantly">OFF</string>
 
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="apply_now">APPLY NOW</string>
-    f
+
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
     <string name="call_us">CALL US</string>
