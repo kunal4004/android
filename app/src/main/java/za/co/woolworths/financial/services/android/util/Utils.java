@@ -1560,6 +1560,7 @@ public class Utils {
 		dayNumber.add("02");
 		dayNumber.add("03");
 		dayNumber.add("04");
+		dayNumber.add("05");
 		dayNumber.add("06");
 		dayNumber.add("07");
 		dayNumber.add("08");
