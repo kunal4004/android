@@ -15,7 +15,7 @@
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/futura_bold_ttf"
         android:gravity="start|bottom"
-        android:text="@string/absa_biometric_please_enter_your_pin"
+        android:text="@string/absa_atm_please_enter_your_pin"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/titleGuideLine"
@@ -31,39 +31,17 @@
         app:layout_constraintGuide_percent="0.2" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/descriptionGuideLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.55" />
-
-    <TextView
-        android:id="@+id/description"
-        style="@style/absa_page_description_text_style"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/absa_biometric_please_enter_your_pin_desc"
-        app:autoSizeMaxTextSize="16sp"
-        app:autoSizeMinTextSize="14sp"
-        app:autoSizeStepGranularity="1sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/descriptionGuideLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleGuideLine" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/progressGuideLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.66" />
+        app:layout_constraintGuide_percent="0.50" />
 
     <ProgressBar
         android:id="@+id/pbEnterAtmPin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/description"
+        android:layout_below="@+id/progressGuideLine"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginBottom="13dp"
@@ -71,7 +49,7 @@
         app:layout_constraintBottom_toTopOf="@+id/progressGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/descriptionGuideLine" />
+        app:layout_constraintTop_toTopOf="@+id/progressGuideLine" />
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
         android:id="@+id/edtEnterATMPin"
