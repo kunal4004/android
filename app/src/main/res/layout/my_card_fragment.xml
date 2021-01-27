@@ -276,7 +276,7 @@
             <TextView
                 style="@style/card_item_semi_bold_text_style"
                 android:layout_toEndOf="@+id/logoBlockCard"
-                android:text="@string/block_card_title" />
+                android:text="@string/block_and_replace_card_title" />
 
             <ImageView style="@style/card_item_end_icon_style" />
 
