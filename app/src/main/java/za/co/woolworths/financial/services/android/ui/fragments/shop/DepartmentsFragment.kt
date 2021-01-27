@@ -444,11 +444,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     alertBuilder.setCancelable(true)
                     alertBuilder.setTitle(bindString(R.string.dash_banner_location_perms_title))
                     alertBuilder.setMessage(bindString(R.string.dash_banner_location_perms_subtitle))
-                    alertBuilder.setPositiveButton("Allow") { dialog, which ->
+                    alertBuilder.setPositiveButton(bindString(R.string.allow)) { dialog, which ->
                         ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                         alert?.dismiss()
                     }
-                    alertBuilder.setNegativeButton("Deny") { dialog, which ->
+                    alertBuilder.setNegativeButton(bindString(R.string.deny)) { dialog, which ->
                         //When user clicks deny location
                         executeDepartmentRequest()
                         alert?.dismiss()
