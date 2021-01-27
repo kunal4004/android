@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -17,20 +18,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class WFormatter {
 
     public static String formatAmount(int amount) {
-        String[] split = String.valueOf((amount / 100)).split("");
-        StringBuilder stringBuilder = new StringBuilder();
-        int counter = 0;
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (counter != 0 && counter % 3 == 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(split[i]);
-            counter++;
-        }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
-    }
-
-    public static String newAmountFormat(int amount) {
         String[] split = String.valueOf((amount / 100)).split("");
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
@@ -118,10 +105,6 @@ public class WFormatter {
 
     public static String formatAmountNoDecimal(int amount) {
         return Utils.removeNegativeSymbol(String.format("R%d", amount / 100));
-    }
-
-    public static String escapeDecimalFormat(int amount) {
-        return newAmountFormat(amount * 100).replaceAll("\\.0*$", "");
     }
 
     public static String formatPercent(int amount) {

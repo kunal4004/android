@@ -134,7 +134,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val account = mAvailableFundPresenter?.getAccountDetail()
-                val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+                val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amountDue)) }
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList
 
@@ -194,13 +194,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         mAvailableFundPresenter?.getAccount()?.apply {
             activity?.apply {
                 val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1))
-                val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1))
+                val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(currentBalance))
+                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(creditLimit), 1))
                 val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
                         ?: "N/A"
-                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amountOverdue), 1))
+                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(amountOverdue), 1))
 
-                val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+                val totalAmountDueAmount = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
                 currentBalanceAmountTextView?.text = currentBalance

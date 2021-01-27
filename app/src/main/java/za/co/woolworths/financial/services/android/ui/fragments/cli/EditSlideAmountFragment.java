@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -194,12 +195,12 @@ public class EditSlideAmountFragment extends CLIFragment {
 	}
 
 	private void minAmountMessage(int progressValue, int drawnDownAmount) {
-		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(currentCredit)));
+		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", CurrencyFormatter.Companion.escapeDecimalFormat(currentCredit)));
 		minAmountDialog.show(getFragmentManager(),EnterAmountToSlideFragment.class.getSimpleName());
 	}
 
 	private void maxAmountMessage(int progressValue, int drawnDownAmount) {
-		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
+		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", CurrencyFormatter.Companion.escapeDecimalFormat(creditRequestMax)));
 		minAmountDialog.show(getFragmentManager(),EnterAmountToSlideFragment.class.getSimpleName());
 	}
 
