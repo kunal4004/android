@@ -69,6 +69,7 @@
     <dimen name="twenty_eight_dp">28dp</dimen>
     <dimen name="thirty_two_dp">32dp</dimen>
     <dimen name="eight_dp">8dp</dimen>
+    <dimen name="nine_dp">9dp</dimen>
     <dimen name="thirty_four_dp">34dp</dimen>
     <dimen name="fifteen_sp">15sp</dimen>
     <dimen name="fourteen_dp">14dp</dimen>
@@ -105,6 +106,7 @@
     <dimen name="email_height_50">50dp</dimen>
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
+    <dimen name="hundred_and_thirty_dp">130dp</dimen>
     <dimen name="hundred_and_fifty_dp">150dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="six_dp">6dp</dimen>
@@ -119,6 +121,8 @@
     <dimen name="seventy_five_dp">75dp</dimen>
     <dimen name="sixty_dp">60dp</dimen>
     <dimen name="thirteen_sp">13sp</dimen>
+    <dimen name="two_hundred_dp">200dp</dimen>
+    <dimen name="two_hundred_and_twenty_dp">220dp</dimen>
     <dimen name="two_hundred_and_twenty_one_dp">221dp</dimen>
     <dimen name="twenty_eight_sp">28sp</dimen>
     <dimen name="exr_margin">16dp</dimen>
@@ -150,6 +154,11 @@
     <dimen name="available_fund_16dp_margin">16dp</dimen>
     <dimen name="apply_now_card_type_title_size_32">32sp</dimen>
     <dimen name="apply_now_card_type_desc_size_18">18sp</dimen>
+    <dimen name="voucher_off_price_text_size">93sp</dimen>
+    <dimen name="voucher_off_text_size">20sp</dimen>
+    <dimen name="voucher_description_text_size">15sp</dimen>
+    <dimen name="voucher_barcode_text_size">20sp</dimen>
+    <dimen name="fourty_eight_dp">48dp</dimen>
     <dimen name="voucher_date_text_size_11sp">11sp</dimen>
     <dimen name="voucher_value_text_size_93sp">93sp</dimen>
     <dimen name="barcode_voucher_top_margin_39dp">39dp</dimen>
@@ -170,6 +179,7 @@
     <dimen name="hundred_and_four_dp">104dp</dimen>
     <dimen name="text_size_18sp">18sp</dimen>
     <dimen name="text_size_10sp">10sp</dimen>
+    <dimen name="one_twenty_dp">120dp</dimen>
     <dimen name="one_thirty_four">134dp</dimen>
     <dimen name="fifty_five_sp">55sp</dimen>
     <dimen name="seven_dp">7dp</dimen>
@@ -177,6 +187,8 @@
     <dimen name="one_sp">1sp</dimen>
     <dimen name="eighty_five_dp">85dp</dimen>
     <dimen name="fourty_five_sp">45sp</dimen>
+    <dimen name="thirty_five_sp">35sp</dimen>
+    <dimen name="thirty_six_sp">36sp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
     <dimen name="two_hundred_and_fifty_dp">250dp</dimen>
     <dimen name="forty_four_dp">44dp</dimen>

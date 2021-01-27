@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.ActivityType
@@ -41,19 +42,21 @@ class ChatViewModel : ViewModel() {
     private var awsAmplify: ChatAWSAmplify? = null
     private var conversation: Conversation? = null
     private var mAccount: MutableLiveData<Account?> = MutableLiveData()
+
     private var sessionStateType: MutableLiveData<SessionStateType?> = MutableLiveData()
     private var sessionType: MutableLiveData<SessionType?> = MutableLiveData()
-    var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
+
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
-    var absaCreditCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
+    var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
+
+    var mAbsaCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
     private var activityType: ActivityType? = null
 
     private var trackFirebaseEvent: ChatTrackFirebaseEvent = ChatTrackFirebaseEvent()
-
     private var chatTrackPostEvent: ChatTrackPostEvent = ChatTrackPostEvent()
 
     init {
-        absaCreditCard.value = getAccount()?.cards ?: mutableListOf()
+        mAbsaCard.value = getAccount()?.cards
         isChatToCollectionAgent.value = false
         isCustomerSignOut.value = false
         setSessionStateType(SessionStateType.DISCONNECT)
@@ -84,7 +87,8 @@ class ChatViewModel : ViewModel() {
                 val collections = inAppChatMessage?.collections
                 val emailAddress = collections?.emailAddress ?: ""
                 val subjectLine = collections?.emailSubjectLine ?: ""
-                val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress) ?: ""
+                val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+                        ?: ""
 
                 Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
             }
@@ -92,9 +96,10 @@ class ChatViewModel : ViewModel() {
                 val customerService = inAppChatMessage?.customerService
                 val emailAddress = customerService?.emailAddress ?: ""
                 val subjectLine = customerService?.emailSubjectLine ?: ""
-                val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress) ?: ""
+                val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+                        ?: ""
 
-                Pair(SendEmailIntentInfo(emailAddress, subjectLine),serviceUnavailable)
+                Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
             }
             SessionType.Fraud -> Pair(SendEmailIntentInfo(), "")
         }
@@ -120,14 +125,25 @@ class ChatViewModel : ViewModel() {
         awsAmplify?.apply {
             signIn({ conversation ->
                 this@ChatViewModel.conversation = conversation
-                result()
+                if (conversation == null) {
+                    logExceptionToFirebase("subscribeToMessageByConversationId")
+                    failure(failure)
+                } else {
+                    result()
+                }
             }, { failure -> failure(failure) })
         }
     }
 
     fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
+        val conversationId = getConversationMessageId()
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("subscribeToMessageByConversationId")
+            failure(failure)
+            return
+        }
         awsAmplify?.subscribeToMessageByConversationId(
-                getConversationMessageId(),
+                conversationId,
                 getSessionType(),
                 getSessionVars(),
                 getCustomerInfo().getCustomerFamilyName(),
@@ -148,8 +164,13 @@ class ChatViewModel : ViewModel() {
     }
 
     fun sendMessage(content: String) {
+        val conversationId = getConversationMessageId()
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("sendMessage conversationId")
+            return
+        }
         awsAmplify?.sendMessage(
-                getConversationMessageId(),
+                conversationId,
                 getSessionType(),
                 getSessionStateType(),
                 content,
@@ -159,8 +180,13 @@ class ChatViewModel : ViewModel() {
     }
 
     fun signOut(result: () -> Unit) {
+        val conversationId = getConversationMessageId()
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("signOut conversationId")
+            return
+        }
         awsAmplify?.queryServiceSignOut(
-                getConversationMessageId(),
+                conversationId,
                 getSessionType(),
                 SessionStateType.DISCONNECT,
                 "",
@@ -182,10 +208,6 @@ class ChatViewModel : ViewModel() {
 
     fun isOperatingHoursForInAppChat(): Boolean {
         return getTradingHours()?.let { KotlinUtils.isOperatingHoursForInAppChat(it) } ?: false
-    }
-
-    fun getInAppTradingHoursForToday(): TradingHours? {
-        return getTradingHours()?.let { KotlinUtils.getInAppTradingHoursForToday(it) }
     }
 
     fun offlineMessageTemplate(onClick: (Triple<String, String, String>) -> Unit): SpannableString {
@@ -258,6 +280,7 @@ class ChatViewModel : ViewModel() {
         })
     }
 
+    @SuppressLint("DefaultLocale")
     private fun getSessionVars(): String {
 
         val account = getAccount()
@@ -289,13 +312,19 @@ class ChatViewModel : ViewModel() {
     }
 
     fun getABSACardToken(): String? = getAccount()?.cards?.get(0)?.absaCardToken
-            ?: absaCreditCard.value?.get(0)?.absaCardToken
+            ?: mAbsaCard.value?.get(0)?.absaCardToken
 
     fun getCustomerInfo() = ChatCustomerInfo
 
     fun getMessagesListByConversation(result: ((MutableList<ChatMessage>?) -> Unit)) {
 
-        awsAmplify?.getMessagesListByConversation(getConversationMessageId()) { message ->
+        val conversationId = getConversationMessageId()
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("getMessagesListByConversation conversationId")
+            return
+        }
+
+        awsAmplify?.getMessagesListByConversation(conversationId) { message ->
 
             val messageList: MutableList<ChatMessage> = mutableListOf()
             message?.items?.forEach { item ->
@@ -396,4 +425,7 @@ class ChatViewModel : ViewModel() {
     fun triggerFirebaseEventEndSession() {
         trackFirebaseEvent.chatEnd(getApplyNowState(), activityType)
     }
+
+    private fun logExceptionToFirebase(value: String?) = FirebaseManager.logException(value.plus(" ${Utils.toJson(conversation)}"))
+
 }

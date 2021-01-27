@@ -22,13 +22,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.google.firebase.ktx.Firebase
 import com.skydoves.balloon.balloon
 import kotlinx.android.synthetic.main.grid_layout.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
-import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -48,25 +46,24 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
-import java.lang.IllegalStateException
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -732,24 +729,27 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                     return
                                 }
                             }
+                            if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                                addItemToCartResponse.data[0]?.productCountMap?.let { addItemToCart?.quantity?.let { it1 -> ToastFactory.showItemsLimitToastOnAddToCart(productList, it, this, it1) } }
+                            }else {
+                                val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                                val bottomView = (activity as? BottomNavigationActivity)?.bottomNavigationById
+                                val buttonView: Button = addToCartBalloon.getContentView().findViewById(R.id.btnView)
+                                val tvAddedItem: TextView = addToCartBalloon.getContentView().findViewById(R.id.tvAddedItem)
+                                val quantityAdded = addItemToCart?.quantity?.toString()
+                                val quantityDesc = "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
+                                tvAddedItem.text = quantityDesc
 
-                            val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
-                            val bottomView = (activity as? BottomNavigationActivity)?.bottomNavigationById
-                            val buttonView: Button = addToCartBalloon.getContentView().findViewById(R.id.btnView)
-                            val tvAddedItem: TextView = addToCartBalloon.getContentView().findViewById(R.id.tvAddedItem)
-                            val quantityAdded = addItemToCart?.quantity?.toString()
-                            val quantityDesc = "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
-                            tvAddedItem.text = quantityDesc
+                                buttonView.setOnClickListener {
+                                    openCartActivity()
+                                    addToCartBalloon.dismiss()
+                                }
 
-                            buttonView.setOnClickListener {
-                                openCartActivity()
-                                addToCartBalloon.dismiss()
+                                bottomView?.let { bottomNavigationView -> addToCartBalloon.showAlignBottom(bottomNavigationView, 0, 16) }
+                                Handler().postDelayed({
+                                    addToCartBalloon.dismiss()
+                                }, 3000)
                             }
-
-                            bottomView?.let { bottomNavigationView -> addToCartBalloon.showAlignBottom(bottomNavigationView, 0, 16) }
-                            Handler().postDelayed({
-                                addToCartBalloon.dismiss()
-                            }, 3000)
                         }
 
                         HTTP_EXPECTATION_FAILED_417 -> resources?.let {
@@ -946,4 +946,5 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             KotlinUtils.presentEditDeliveryLocationActivity(this, SET_DELIVERY_LOCATION_REQUEST_CODE)
         }
     }
+
 }

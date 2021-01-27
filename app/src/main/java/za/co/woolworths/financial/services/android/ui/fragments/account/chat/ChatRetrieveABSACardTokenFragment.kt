@@ -61,7 +61,7 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
                         if (cards.isNullOrEmpty()) {
                             (activity as? WChatActivity)?.setStartDestination(R.id.chatToCollectionAgentOfflineFragment)
                         } else {
-                            chatViewModel.absaCreditCard.value = cards
+                            chatViewModel.mAbsaCard.value = cards
                             (activity as? WChatActivity)?.setStartDestination(R.id.chatFragment)
                         }
                     }

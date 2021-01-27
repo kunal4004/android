@@ -8,8 +8,7 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -29,11 +28,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationInitiated
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
+import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
@@ -42,8 +45,11 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
+import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
@@ -61,6 +67,8 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
+    private val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+    private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,6 +95,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
         withdrawCashView?.setOnClickListener(this)
         viewPaymentOptions?.setOnClickListener(this)
         activateCreditCard?.setOnClickListener(this)
+        scheduleOrManageCreditCardDelivery?.setOnClickListener(this)
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
@@ -212,13 +221,27 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                     navigateToLoanWithdrawalActivity()
                 }
                 R.id.viewPaymentOptions -> {
-                    mCardPresenterImpl?.navigateToPayMyAccountActivity()
+                    mCardPresenterImpl?.navigateToPaymentOptionActivity()
                 }
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
                         navigateToCreditCardActivation()
                     else
                         showCreditCardActivationUnavailableDialog()
+                }
+                R.id.scheduleOrManageCreditCardDelivery -> {
+                    activity?.apply {
+                        if (creditCardDeliveryStatusResponse?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT) == CARD_RECEIVED)
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY)
+                        val intent = Intent(this, CreditCardDeliveryActivity::class.java)
+                        val mBundle = Bundle()
+                        mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
+                        mBundle.putString("accountBinNumber", mCardPresenterImpl?.getAccount()?.accountNumberBin)
+                        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse))
+                        mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+                        intent.putExtra("bundle", mBundle)
+                        startActivity(intent)
+                    }
                 }
             }
         }
@@ -389,7 +412,10 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 if (cardWithPLCState == null) {
                     showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
                 } else {
-                    showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
+                    if (isCreditCardEnable()) {
+                        executeCreditCardDeliveryStatusService()
+                    } else
+                        showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
                 }
             }
         }
@@ -410,8 +436,9 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
             CreditCardActivationState.AVAILABLE -> {
                 stopCardActivationShimmer()
                 creditCardActivationView.visibility = VISIBLE
-                KotlinUtils.roundCornerDrawable(creditCardActivationState, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
-                creditCardActivationState.text = status.value
+                activateCreditCard.visibility = VISIBLE
+                KotlinUtils.roundCornerDrawable(creditCardStatus, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
+                creditCardStatus.text = status.value
             }
         }
     }
@@ -459,6 +486,101 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
             }
         }
     }
+
+    override fun executeCreditCardDeliveryStatusService() {
+        activity?.apply {
+            mCardPresenterImpl?.getCreditCardDeliveryStatus(cardWithPLCState?.envelopeNumber)
+        }
+    }
+
+    override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
+        this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
+        with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
+            when {
+                isNullOrEmpty() -> onGetCreditCardDeliveryStatusFailure()
+                else -> {
+                    creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                }
+            }
+        }
+    }
+
+    override fun onGetCreditCardDeliveryStatusFailure() {
+        stopCardActivationShimmer()
+        includeAccountDetailHeaderView.visibility = VISIBLE
+    }
+
+    override fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus) {
+        when (deliveryStatus.statusDescription?.asEnumOrDefault(DEFAULT)) {
+            CARD_RECEIVED -> {
+                showScheduleYourDelivery()
+            }
+            CARD_DELIVERED -> {
+                showGetCreditCardActivationStatus(CreditCardActivationState.AVAILABLE)
+            }
+            APPOINTMENT_SCHEDULED, CANCELLED, CARD_SHREDDED -> {
+                showManageMyDelivery()
+            }
+            AWAITING_INSTRUCTION -> {
+                showDefaultCreditCardStatusView()
+            }
+            CARD_NOT_RECEIVED -> {
+                showGetCreditCardActivationStatus(CreditCardActivationState.AVAILABLE)
+            }
+            else -> {
+                showDefaultCreditCardStatusView()
+            }
+        }
+
+
+        deliveryStatus.apply {
+            if (!statusDescription.isNullOrEmpty() && !displayColour.isNullOrEmpty()) {
+                KotlinUtils.roundCornerDrawable(creditCardStatus, displayColour)
+                creditCardStatus.text = displayTitle
+            } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(CARD_DELIVERED.name) == true)) {
+                KotlinUtils.roundCornerDrawable(creditCardStatus, "#bad110")
+                creditCardStatus.text = bindString(R.string.activate)
+            } else creditCardStatus.visibility = INVISIBLE
+        }
+    }
+
+    private fun isCreditCardEnable(): Boolean {
+        var isEnable = false
+        if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
+            val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
+            if (cardTypes != null) {
+                for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
+                    if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
+                            && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
+                        isEnable = true;
+                    }
+                }
+            } else {
+                isEnable = false
+            }
+        }
+        return isEnable
+    }
+
+    private fun showManageMyDelivery() {
+        stopCardActivationShimmer()
+        creditCardActivationView.visibility = VISIBLE
+        scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
+        tvScheduleOrMangeDelivery.text = activity?.resources?.getString(R.string.manage_my_delivery)
+    }
+
+    private fun showDefaultCreditCardStatusView() {
+        stopCardActivationShimmer()
+        includeAccountDetailHeaderView.visibility = VISIBLE
+    }
+
+    private fun showScheduleYourDelivery() {
+        stopCardActivationShimmer()
+        creditCardActivationView.visibility = VISIBLE
+        scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
+        tvScheduleOrMangeDelivery.text = activity?.resources?.getString(R.string.schedule_your_delivery)
+    }
+
 }
 
 

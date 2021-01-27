@@ -121,6 +121,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditCardActivation creditCardActivation;
     private static ClickAndCollect clickAndCollect;
     private static UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
+    private static CreditCardDelivery creditCardDelivery;
 
     private Activity mCurrentActivity = null;
 
@@ -614,6 +615,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setProductDetailsPage(ProductDetailsPage productDetailsPage) {
         WoolworthsApplication.productDetailsPage = productDetailsPage;
+    }
+
+    public static CreditCardDelivery getCreditCardDelivery() {
+        return creditCardDelivery;
+    }
+
+    public static void setCreditCardDelivery(CreditCardDelivery creditCardDelivery) {
+        WoolworthsApplication.creditCardDelivery = creditCardDelivery;
     }
 
     @Nullable

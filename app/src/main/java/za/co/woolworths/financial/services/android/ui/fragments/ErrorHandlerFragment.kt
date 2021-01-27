@@ -64,10 +64,12 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         when (errorType) {
             ErrorHandlerActivity.ATM_PIN_LOCKED -> {
                 errorLogo.setImageResource(R.drawable.ic_passcode_locked_icon)
-                errorTitle.text = getString(R.string.error_atm_pin_locked_title)
-                errorDescription.visibility = View.INVISIBLE
+                errorTitle.text = context?.getString(R.string.error_atm_pin_locked_title)
+                errorDescription.text = context?.getString(R.string.error_atm_pin_locked_desc)
+                errorDescription.visibility = View.VISIBLE
                 cancelButton.visibility = View.GONE
-                actionButton.text = getString(R.string.absa_biometric_forgot_atm_pin_code)
+                actionButton.text = getString(R.string.ok_got_it)
+                actionButton.isAllCaps = true
             }
             ErrorHandlerActivity.PASSCODE_LOCKED -> {
                 errorLogo.setImageResource(R.drawable.ic_passcode_locked_icon)
@@ -99,13 +101,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
             R.id.actionButton -> {
                 when (errorType) {
                     ErrorHandlerActivity.ATM_PIN_LOCKED -> {
-                        val openDialogFragment =
-                                GotITDialogFragment.newInstance(getString(R.string.absa_forgot_atm_pin_code_title),
-                                        getString(R.string.absa_forgot_atm_pin_code_desc), getString(R.string.got_it),
-                                        this)
-                        activity?.let {
-                            openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
-                        }
+                        setResultBAck(Activity.RESULT_CANCELED)
                     }
                     ErrorHandlerActivity.PASSCODE_LOCKED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RESET_PASSCODE)

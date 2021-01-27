@@ -92,6 +92,8 @@
     <color name="semi_transparent">#20ffffff</color>
     <color name="searchBarHintColor">#20000000</color>
     <color name="transaction_date_color">#4c4c4c</color>
+    <color name="accounts_sales_page_bg">#F8F8F8</color>
+    <color name="offer_title_70">#70222222</color>
     <color name="status_dark_green">#A5B52B</color>
     <color name="lighter_gray_background">#30D8D8D8</color>
     <color name="arrears_red_color_code">#F43F37</color>
@@ -110,6 +112,7 @@
     <color name="text_description_color">#7F7F7F</color>
     <color name="success_tick_color">#0085AD</color>
     <color name="currency_color">#222222</color>
+    <color name="radio_button_color">#80222222</color>
     <color name="red_color">#D0021B</color>
     <color name="white_desc">#C4C5C7</color>
     <color name="error_color_code">#D0021B</color>
