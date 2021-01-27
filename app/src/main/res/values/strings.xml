@@ -751,6 +751,7 @@
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
     <string name="block_card_title">Block Card</string>
+    <string name="block_and_replace_card_title">Block and Replace Card</string>
     <string name="block_card_desc">Please select the reason for blocking your card.</string>
     <string name="permanent_card_block_title">Permanent Card Block</string>
     <string name="permanent_card_block_desc">Are you sure you want to permanently block this card? You will need to collect a replacement card at a participating Woolworths store; or call us.</string>
