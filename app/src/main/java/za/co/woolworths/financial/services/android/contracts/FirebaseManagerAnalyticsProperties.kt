@@ -237,6 +237,10 @@ class FirebaseManagerAnalyticsProperties {
             const val GOLD_CREDIT_CARD_PRODUCT_OFFERING = "gold_credit_card"
             const val SILVER_CREDIT_CARD_PRODUCT_OFFERING = "silver_credit_card"
             const val BLACK_CREDIT_CARD_PRODUCT_OFFERING = "black_credit_card"
+            const val PERSONAL_LOAN_PRODUCT_STATE: String = "pl_account_dc_state"
+            const val CREDIT_CARD_PRODUCT_STATE: String = "cc_account_dc_state"
+            const val STORE_CARD_PRODUCT_STATE: String = "sc_account_dc_state"
+
             const val activationInitiated = "Initiate Credit Card Activation"
             const val activationRequested = "Request Credit Card Activation"
             const val activationConfirmed = "Confirm Credit Card Activation"
