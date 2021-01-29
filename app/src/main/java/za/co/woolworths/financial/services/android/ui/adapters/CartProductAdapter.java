@@ -71,7 +71,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     public interface OnItemClick {
-        void onItemDeleteClick(CommerceItem commerceId);
+        void onItemDeleteClickInEditMode(CommerceItem commerceId);
 
         void onChangeQuantity(CommerceItem commerceId);
 
@@ -90,6 +90,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         void onRemovePromoCode(String promoCode);
 
         void onPromoDiscountInfo();
+
+        void onItemDeleteClick(CommerceItem commerceId);
     }
 
     private OnItemClick onItemClick;
@@ -158,11 +160,15 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 ImageManager.Companion.setPicture(productHolder.productImage, productImageUrl);
                 productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
                 productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+                productHolder.rlDelete.setVisibility(this.editMode ? View.GONE : View.VISIBLE);
+                onRemoveSingleItemInEditMode(productHolder, commerceItem);
                 onRemoveSingleItem(productHolder, commerceItem);
                 //enable/disable change quantity click
                 productHolder.llQuantity.setEnabled(!this.editMode);
                 Utils.fadeInFadeOutAnimation(productHolder.llQuantity, this.editMode);
-
+                productHolder.llQuantity.setEnabled(!commerceItem.isDeletePressed());
+                productHolder.btnDelete.setVisibility(!commerceItem.isDeletePressed() ? View.VISIBLE : View.GONE);
+                productHolder.pbDelete.setVisibility(commerceItem.isDeletePressed() ? View.VISIBLE : View.GONE);
                 // prevent triggering animation on first load
                 if (firstLoadWasCompleted())
                     animateOnDeleteButtonVisibility(productHolder.llCartItems, this.editMode);
@@ -230,6 +236,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     commerceItem.setQuantityUploading(true);
                     setFirstLoadCompleted(false);
                     onItemClick.onChangeQuantity(commerceItem);
+                });
+
+                productHolder.btnDelete.setOnClickListener(v -> {
+                    commerceItem.commerceItemDeletedId(commerceItem);
+                    commerceItem.setDeletePressed(true);
+                    notifyItemRangeChanged(productHolder.getAdapterPosition(), cartItems.size());
                 });
 
                 productHolder.swipeLayout.setOnClickListener(view -> onItemClick.onOpenProductDetail(commerceItem));
@@ -363,7 +375,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         return sizeColor;
     }
 
-    private void onRemoveSingleItem(final ProductHolder productHolder, final CommerceItem commerceItem) {
+    private void onRemoveSingleItemInEditMode(final ProductHolder productHolder, final CommerceItem commerceItem) {
         if (this.editMode) {
             if (commerceItem.deleteIconWasPressed()) {
                 Animation animateRowToDelete = android.view.animation.AnimationUtils.loadAnimation(mContext, R.anim.animate_layout_delete);
@@ -376,7 +388,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     public void onAnimationEnd(Animation animation) {
                         productHolder.pbDeleteProgress.setVisibility(commerceItem.deleteIconWasPressed() ? View.VISIBLE : View.GONE);
                         productHolder.btnDeleteRow.setVisibility(commerceItem.deleteIconWasPressed() ? View.GONE : View.VISIBLE);
-                        onItemClick.onItemDeleteClick(commerceItem.getDeletedCommerceItemId());
+                        onItemClick.onItemDeleteClickInEditMode(commerceItem.getDeletedCommerceItemId());
                     }
 
                     @Override
@@ -390,6 +402,30 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             }
         } else {
             productHolder.pbDeleteProgress.setVisibility(View.GONE);
+        }
+    }
+
+    private void onRemoveSingleItem(final ProductHolder productHolder, final CommerceItem commerceItem) {
+        if (commerceItem.isDeletePressed()) {
+            Animation animateRowToDelete = android.view.animation.AnimationUtils.loadAnimation(mContext, R.anim.animate_layout_delete);
+            animateRowToDelete.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    productHolder.pbDelete.setVisibility(commerceItem.isDeletePressed() ? View.VISIBLE : View.GONE);
+                    productHolder.btnDelete.setVisibility(commerceItem.isDeletePressed() ? View.GONE : View.VISIBLE);
+                    onItemClick.onItemDeleteClick(commerceItem.getDeletedCommerceItemId());
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            productHolder.llCartItems.startAnimation(animateRowToDelete);
         }
     }
 
@@ -530,6 +566,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private RelativeLayout rlDeleteButton;
         private WTextView tvProductAvailability;
         private SwipeLayout swipeLayout;
+        private ImageView btnDelete;
+        private ProgressBar pbDelete;
+        private RelativeLayout rlDelete;
 
         public ProductHolder(View view) {
             super(view);
@@ -550,6 +589,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
             tvProductAvailability = view.findViewById(R.id.tvProductAvailability);
             swipeLayout = view.findViewById(R.id.swipe);
+            btnDelete = view.findViewById(R.id.btnDelete);
+            rlDelete = view.findViewById(R.id.rlDelete);
+            pbDelete = view.findViewById(R.id.pbDelete);
         }
     }
 

@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -241,14 +242,15 @@ object OneAppService : RetrofitConfig() {
 
     fun productDetail(productId: String, skuId: String): Call<ProductDetailResponse> {
         val loc = getMyLocation()
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getDeviceManufacturer(),
                     getOS(), getNetworkCarrier(), getApiId(), "", "",
-                    getSha1Password(), loc.getLongitude(), loc.getLatitude(), getSessionToken(), productId, skuId)
+                    getSha1Password(), loc.longitude, loc.latitude, getSessionToken(), productId, skuId, suburbId, storeId)
         } else {
             mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getDeviceManufacturer(),
                     getOS(), getNetworkCarrier(), getApiId(), "", "",
-                    getSha1Password(), getSessionToken(), productId, skuId)
+                    getSha1Password(), getSessionToken(), productId, skuId, suburbId, storeId)
         }
     }
 
@@ -344,6 +346,22 @@ object OneAppService : RetrofitConfig() {
 
     fun queryServiceCancelOrder(orderId: String): Call<CancelOrderResponse> {
         return mApiInterface.queryServiceCancelOrder(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), orderId)
+    }
+
+    fun getCreditCardDeliveryStatus(envelopeReference: String, productOfferingId: String): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.cardDeliveryStatus(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeReference, productOfferingId)
+    }
+
+    fun getPossibleAddress(searchPhrase: String, productOfferingId: String, envelopeNumber: String): Call<PossibleAddressResponse> {
+        return mApiInterface.possibleAddress(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), searchPhrase, envelopeNumber, productOfferingId)
+    }
+
+    fun getAvailableTimeSlots(envelopeReference: String, productOfferingId: String, x: String, y: String, shipByDate: String): Call<AvailableTimeSlotsResponse> {
+        return mApiInterface.availableTimeSlots(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), envelopeReference, productOfferingId, x, y, shipByDate)
+    }
+
+    fun postScheduleDelivery(productOfferingId: String, envelopeNumber: String, schedule: Boolean, bookingReference: String, scheduleDeliveryRequest: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse> {
+        return mApiInterface.scheduleDelivery(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, envelopeNumber, schedule, bookingReference, scheduleDeliveryRequest)
     }
 
     fun queryServicePostEvent(featureName: String?, appScreen: String?): Call<Response> {

@@ -2,7 +2,6 @@
 
 package za.co.woolworths.financial.services.android.ui.extension
 
-
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 
@@ -10,6 +9,8 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.View
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.AnimRes
@@ -18,6 +19,8 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
@@ -231,6 +234,27 @@ inline fun <reified RESPONSE_OBJECT> cancelRetrofitRequest(call: Call<RESPONSE_O
     }
 }
 
+// Find current fragments in navigation graph
+fun Fragment.getFragmentNavController(@IdRes id: Int) = activity?.let {
+    return@let Navigation.findNavController(it, id)
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
+    val navHostFragment = this.supportFragmentManager.fragments.first() as NavHostFragment
+
+    navHostFragment.childFragmentManager.fragments.forEach {
+        if (fragmentClass.isAssignableFrom(it.javaClass)) {
+            return it as F
+        }
+    }
+
+    return null
+}
+
+inline fun <reified T : Enum<T>> String.asEnumOrDefault(defaultValue: T? = null): T? =
+        enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
+
 fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
@@ -303,7 +327,8 @@ fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
 inline fun <reified T : Enum<T>> Intent.putEnumExtra(victim: T): Intent =
         putExtra(T::class.java.name, victim.ordinal)
 
-inline fun <reified T: Enum<T>> Intent.getEnumExtra(): T? =
+inline fun <reified T : Enum<T>> Intent.getEnumExtra(): T? =
         getIntExtra(T::class.java.name, -1)
                 .takeUnless { it == -1 }
                 ?.let { T::class.java.enumConstants?.get(it) }
+

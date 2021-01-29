@@ -21,4 +21,7 @@ public class Card implements Serializable {
     @SerializedName("absaAccountToken")
     @Expose
     public String absaAccountToken;
+    @SerializedName("envelopeNumber")
+    @Expose
+    public String envelopeNumber;
 }

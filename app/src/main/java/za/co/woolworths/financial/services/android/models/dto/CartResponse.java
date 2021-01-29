@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 
 /**
@@ -16,4 +17,5 @@ public class CartResponse {
 	//public ArrayList<OrderSummary> orderSummaries;
 	public OrderSummary orderSummary;
 	public VoucherDetails voucherDetails;
+	public ProductCountMap productCountMap;
 }
