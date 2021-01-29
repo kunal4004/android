@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/mToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:contentDescription="@string/view_statements_title_layout"
-        >
+        android:contentDescription="@string/view_statements_title_layout">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/toolbarText"
@@ -23,7 +22,7 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:WTextView_font="medium_bold"/>
+            app:WTextView_font="medium_bold" />
 
 
     </androidx.appcompat.widget.Toolbar>
@@ -32,12 +31,11 @@
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
         android:alpha="0.5"
-        android:background="@color/black_desc_opacity"/>
+        android:background="@color/black_desc_opacity" />
 
     <FrameLayout
         android:id="@+id/flEStatement"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

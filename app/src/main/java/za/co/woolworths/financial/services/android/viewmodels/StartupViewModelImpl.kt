@@ -168,7 +168,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             var inAppChat: InAppChat? = inAppChat
             if (inAppChat == null) {
-                inAppChat = InAppChat("","","","", Collections("", "", "", "", mutableListOf()), CustomerService("", "", "", "", mutableListOf()),null, mutableListOf())
+                inAppChat = InAppChat("","","","", Collections("","", "", "", "", mutableListOf()), CustomerService("","", "", "", "", mutableListOf()),null, mutableListOf())
             } else {
                 inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
             }
@@ -178,7 +178,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 virtualTempCard.isEnabled = Utils.isFeatureEnabled(virtualTempCard.minimumSupportedAppBuildNumber)
             }
 
-            WoolworthsApplication.setContactUsDetails(contactUs)
+            contactUs?.let { WoolworthsApplication.setContactUsDetails(it) }
 
             WoolworthsApplication.setInAppChat(inAppChat)
 
@@ -193,13 +193,14 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
             }
             WoolworthsApplication.setCreditCardActivation(creditCardActivation)
+            WoolworthsApplication.setCreditCardDelivery(creditCardDelivery)
             WoolworthsApplication.setClickAndCollect(clickAndCollect)
             WoolworthsApplication.setProductDetailsPage(productDetailsPage)
 
             creditView?.apply {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                WoolworthsApplication.setCreditView(creditView)
             }
-            WoolworthsApplication.setCreditView(creditView)
         }
     }
 

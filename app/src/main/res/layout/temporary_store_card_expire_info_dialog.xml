@@ -22,7 +22,7 @@
         android:id="@+id/imageIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/fourty_dp"
         android:background="@drawable/ic_card_expire"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
     <TextView
         android:id="@+id/title"
         style="@style/dialog_title_text_style"
-        android:layout_marginTop="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/fourty_dp"
         android:text="@string/dialog_temp_store_card_expire_info_title"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"

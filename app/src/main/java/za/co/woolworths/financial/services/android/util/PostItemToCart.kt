@@ -16,7 +16,9 @@ class PostItemToCart {
 
                 // Ensure counter is always updated after a successful add to cart
                 when (response?.httpCode) {
-                    200 -> QueryBadgeCounter.instance.queryCartSummaryCount()
+                    200 -> {
+                        QueryBadgeCounter.instance.queryCartSummaryCount()
+                    }
                     else -> {
                     }
                 }

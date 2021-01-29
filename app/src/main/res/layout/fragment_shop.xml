@@ -70,7 +70,7 @@
         app:tabPaddingStart="2dp"
         app:tabRippleColor="@null"
         app:tabSelectedTextColor="@color/black"
-        app:tabTextColor="#40000000" />
+        app:tabTextColor="@color/drawer_color" />
 
     <za.co.woolworths.financial.services.android.ui.views.ShopViewPager
         android:id="@+id/viewpager_main"

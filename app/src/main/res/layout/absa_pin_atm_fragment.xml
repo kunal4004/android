@@ -15,7 +15,7 @@
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/futura_bold_ttf"
         android:gravity="start|bottom"
-        android:text="@string/absa_biometric_please_enter_your_pin"
+        android:text="@string/absa_atm_please_enter_your_pin"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/titleGuideLine"

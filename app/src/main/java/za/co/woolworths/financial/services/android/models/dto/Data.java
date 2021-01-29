@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherErrorMessage;
 
@@ -31,5 +32,7 @@ public class Data {
 	public ArrayList<VoucherErrorMessage> messages;
 
 	public String provinceId;
+
+	public ProductCountMap productCountMap;
 
 }
