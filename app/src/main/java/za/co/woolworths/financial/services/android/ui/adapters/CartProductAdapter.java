@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -155,7 +156,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 productHolder.tvTitle.setText((commerceItemInfo == null) ? "" : commerceItemInfo.getProductDisplayName());
                 Utils.truncateMaxLine(productHolder.tvTitle);
                 productHolder.quantity.setText((commerceItemInfo == null) ? "" : String.valueOf(commerceItemInfo.getQuantity()));
-                productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
+                productHolder.price.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo().getAmount()));
                 String productImageUrl = (productImageUrl((commerceItemInfo == null) ? "" : commerceItemInfo.externalImageURL));
                 ImageManager.Companion.setPicture(productHolder.productImage, productImageUrl);
                 productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
@@ -180,7 +181,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
                 //Set Promotion Text START
                 if (commerceItem.getPriceInfo().getDiscountedAmount() > 0) {
-                    productHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
+                    productHolder.promotionalText.setText(" " + CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo().getDiscountedAmount()));
                     productHolder.llPromotionalText.setVisibility(View.VISIBLE);
                 } else {
                     productHolder.llPromotionalText.setVisibility(View.GONE);
@@ -430,11 +431,11 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     private void setPriceValue(WTextView textView, double value) {
-        textView.setText(WFormatter.formatAmount(value));
+        textView.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(value));
     }
 
     private void setDiscountPriceValue(WTextView textView, double value) {
-        textView.setText("- " + WFormatter.formatAmount(value));
+        textView.setText("- " + CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(value));
     }
 
     @Override

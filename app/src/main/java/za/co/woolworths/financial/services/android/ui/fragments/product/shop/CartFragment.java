@@ -90,6 +90,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CartUtils;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -1551,7 +1552,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void updateOrderTotal() {
 		if (orderSummary != null) {
-			orderTotal.setText(WFormatter.formatAmount(orderSummary.total));
+			orderTotal.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(orderSummary.total));
 		}
 	}
 

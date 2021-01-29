@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cart_product_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -35,12 +36,12 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
             itemView.tvTitle.text = commerceItem.commerceItemInfo.productDisplayName ?: ""
             Utils.truncateMaxLine(itemView.tvTitle)
             itemView.llQuantity.visibility = View.INVISIBLE
-            itemView.price.text = WFormatter.formatAmount(commerceItem.priceInfo.amount)
+            itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.amount)
             itemView.rlDeleteButton.visibility = View.GONE
             setProductImage(itemView.cartProductImage, commerceItem.commerceItemInfo.externalImageURL
                     ?: "")
             if (commerceItem.priceInfo.discountedAmount > 0) {
-                itemView.promotionalText.text = " " + WFormatter.formatAmount(commerceItem.priceInfo.discountedAmount)
+                itemView.promotionalText.text = " " + CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.discountedAmount)
                 itemView.promotionalTextLayout.visibility = View.VISIBLE
             } else {
                 itemView.promotionalTextLayout.visibility = View.GONE

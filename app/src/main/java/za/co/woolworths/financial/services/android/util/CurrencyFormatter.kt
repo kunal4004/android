@@ -29,10 +29,17 @@ class CurrencyFormatter {
                 applyPattern("#,###,###")
             }
 
-            return "$currency ${numberFormatter?.format(rand)}.$cents"
+            return "${numberFormatter?.format(rand)}.$cents"
         }
 
 
+        fun formatAmountToRandAndCentWithSpace(amount: Any?): String {
+            return "$currency ${amount?.let { formatAmountToRandAndCent(it) } ?: 0.00}"
+        }
+
+        fun formatAmountToRandAndCentNoSpace(amount: Any?): String {
+            return "$currency${amount?.let { formatAmountToRandAndCent(it) } ?: 0.00}"
+        }
 
         fun escapeDecimalFormat(amount: Any?): String {
             return formatAmountToRandAndCent((amount as? Int)

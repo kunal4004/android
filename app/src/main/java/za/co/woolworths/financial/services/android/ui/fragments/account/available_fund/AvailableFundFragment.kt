@@ -193,14 +193,14 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     private fun setUpView() {
         mAvailableFundPresenter?.getAccount()?.apply {
             activity?.apply {
-                val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1))
-                val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(currentBalance))
-                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(creditLimit), 1))
+                val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentNoSpace(availableFunds), 1))
+                val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(currentBalance))
+                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentWithSpace(creditLimit), 1))
                 val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
                         ?: "N/A"
-                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(amountOverdue), 1))
+                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentWithSpace(amountOverdue), 1))
 
-                val totalAmountDueAmount = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))
+                val totalAmountDueAmount = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
                 currentBalanceAmountTextView?.text = currentBalance
