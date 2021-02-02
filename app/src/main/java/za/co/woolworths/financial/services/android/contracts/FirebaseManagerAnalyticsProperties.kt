@@ -46,7 +46,7 @@ class FirebaseManagerAnalyticsProperties {
         const val SORTBY_EVENT_APPLIED: String = "sortsfilters_option"
         const val REFINE_EVENT_APPEARED: String = "sortsfilters_refine"
         const val REFINE_EVENT_PROMO_ON: String = "sortsfilters_promo_on"
-        const val REFINE_EVENT_PROMO_OFF: String = "sortfilters_promo_off"
+        const val REFINE_EVENT_PROMO_OFF: String = "sortsfilters_promo_off"
         const val REFINE_EVENT_SEE_RESULT: String = "sortsfilters_seersb"
         const val REFINE_EVENT_BACK_BUTTON: String = "sortsfilters_seersb"
         const val SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION: String = "shop_pdp_ni"
