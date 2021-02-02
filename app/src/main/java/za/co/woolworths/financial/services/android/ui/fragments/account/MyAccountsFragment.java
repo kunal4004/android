@@ -330,7 +330,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void validateDeepLinkData() {
-        if (deepLinkParams == null || deepLinkParams.get("productGroupCode") == null) {
+        if (deepLinkParams == null || deepLinkParams.get("productGroupCode") == null || !SessionUtilities.getInstance().isUserAuthenticated()) {
             return;
         }
         String productGroupCode = deepLinkParams.get("productGroupCode").getAsString();
