@@ -287,6 +287,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun isProductCodeStoreCard(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
+        return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true)
     }
 }
