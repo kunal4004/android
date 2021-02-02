@@ -9,24 +9,29 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.View
-import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.AnimRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+
+import androidx.fragment.app.FragmentManager
+
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+
+import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -332,3 +337,19 @@ inline fun <reified T : Enum<T>> Intent.getEnumExtra(): T? =
                 .takeUnless { it == -1 }
                 ?.let { T::class.java.enumConstants?.get(it) }
 
+/**
+ *  Access items of ViewPager2
+ *  If Activity is the host, use FragmentManager or supportFragmentManager
+ *  If Fragment is the host, use childFragmentManager
+ */
+
+fun ViewPager2.findCurrentFragment(fragmentManager: FragmentManager): Fragment? {
+    return fragmentManager.findFragmentByTag("f$currentItem")
+}
+
+fun ViewPager2.findFragmentAtPosition(
+        fragmentManager: FragmentManager,
+        position: Int
+): Fragment? {
+    return fragmentManager.findFragmentByTag("f$position")
+}

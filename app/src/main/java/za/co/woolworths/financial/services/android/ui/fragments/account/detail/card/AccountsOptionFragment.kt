@@ -304,9 +304,16 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI)
-            val navigateToBalanceProtectionInsurance =
-                    Intent(this, BPIBalanceProtectionActivity::class.java)
+
+            val productGroupCode = when (mCardPresenterImpl?.getAccount()?.productGroupCode) {
+                AccountsProductGroupCode.CREDIT_CARD.groupCode -> FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI
+                AccountsProductGroupCode.STORE_CARD.groupCode -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDBPI
+                AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANBPI
+                else -> null
+            }
+
+            productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
+            val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
             navigateToBalanceProtectionInsurance.putExtra("account_info", accountInfo)
             startActivity(navigateToBalanceProtectionInsurance)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
