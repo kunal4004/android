@@ -5,8 +5,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -40,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -435,7 +438,23 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 //                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                 } else {
                     //we can request the permission.
-                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
+
+                    var alert: AlertDialog? = null
+                    val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    alertBuilder.setCancelable(true)
+                    alertBuilder.setTitle(bindString(R.string.dash_banner_location_perms_title))
+                    alertBuilder.setMessage(bindString(R.string.dash_banner_location_perms_subtitle))
+                    alertBuilder.setPositiveButton(bindString(R.string.allow)) { dialog, which ->
+                        ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
+                        alert?.dismiss()
+                    }
+                    alertBuilder.setNegativeButton(bindString(R.string.deny)) { dialog, which ->
+                        //When user clicks deny location
+                        executeDepartmentRequest()
+                        alert?.dismiss()
+                    }
+                    alert = alertBuilder.create()
+                    alert?.show()
                     isLocationModalShown = true
                 }
                 false
