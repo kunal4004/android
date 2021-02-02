@@ -270,7 +270,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun isCreditCardSection(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+        return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
     }
 
     override fun navigateToPayMyAccountActivity() {

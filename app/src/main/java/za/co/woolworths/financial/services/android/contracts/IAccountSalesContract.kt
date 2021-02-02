@@ -17,9 +17,9 @@ interface IAccountSalesContract {
 
     interface AccountSalesPresenter {
         fun switchAccountSalesProduct()
-        fun getAnchoredHeight(slideOffset: Float, toolbar: Toolbar?): Int?
         fun setAccountSalesIntent(intent: Intent?)
         fun getApplyNowState(): ApplyNowState?
+        fun isCreditCardProduct(): Boolean
         fun bottomSheetBehaviourHeight(): Int
         fun bottomSheetPeekHeight() : Int
     }
