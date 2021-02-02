@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
@@ -36,6 +38,10 @@ interface IAccountCardDetailsContract {
         fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
         fun executeCreditCardTokenService()
         fun stopCardActivationShimmer()
+        fun executeCreditCardDeliveryStatusService()
+        fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse)
+        fun onGetCreditCardDeliveryStatusFailure()
+        fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus)
         fun showOnStoreCardFailure(error: Throwable?) {}
         fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {}
         fun showUnBlockStoreCardCardDialog() {}
@@ -71,6 +77,7 @@ interface IAccountCardDetailsContract {
         fun navigateToPaymentOptionActivity()
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
+        fun getCreditCardDeliveryStatus(envelopeNumber: String?)
         fun isCreditCardSection():Boolean
         fun navigateToPayMyAccountActivity()
         fun getStoreCardBlockType(): Boolean
@@ -81,5 +88,6 @@ interface IAccountCardDetailsContract {
         fun queryServiceGetAccountStoreCardCards(storeCardsRequestBody: StoreCardsRequestBody?, requestListener: IGenericAPILoaderView<Any>): Call<StoreCardsResponse>?
         fun queryServiceGetUserCLIOfferActive(productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<OfferActive>?
         fun queryServiceGetCreditCartToken(requestListener: IGenericAPILoaderView<Any>):Call<CreditCardTokenResponse>?
+        fun queryServiceGetCreditCardDeliveryStatus(productOfferingId: String, envelopeReference: String, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>?
     }
 }

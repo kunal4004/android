@@ -281,6 +281,15 @@ class KotlinUtils {
             return transactionList
         }
 
+        fun getDateDaysAfter(daysAfter: Int): Date {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, daysAfter)
+            return calendar.time
+        }
+
+        fun toShipByDateFormat(date: Date?) :String {
+            return SimpleDateFormat("dd-MM-yyy").format(date)}
+
         fun presentEditDeliveryLocationActivity(activity: Activity?, requestCode: Int, deliveryType: DeliveryType? = null) {
             var type = deliveryType
             if (type == null) {
