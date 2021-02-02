@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
-
 import android.app.Activity
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.TextUtils
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -23,9 +23,8 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
 
 class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListener {
 
@@ -33,6 +32,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     private var appScreen: String? = ChatFragment::class.java.simpleName
 
     private val chatViewModel: ChatViewModel by activityViewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +61,18 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         onClickListener()
         autoConnectToNetwork()
         setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
+        detectKeyboardVisibilityState()
+    }
+
+    private fun detectKeyboardVisibilityState() {
+        activity?.let { activity ->
+            SoftKeyboardObserver(activity)
+                    .listen { isKeyboardVisible ->
+                        if (isKeyboardVisible) {
+                            mChatAdapter?.itemCount?.minus(1)?.let { messageListRecyclerView?.scrollToPosition(it) }
+                        }
+                    }
+        }
     }
 
     private fun onClickListener() {
@@ -91,7 +103,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                             SessionStateType.CONNECT -> {
                                 chatLoaderProgressBar?.visibility = GONE
                                 showAgentsMessage(result.content)
-                                isChatButtonEnabled(true)
+                                isChatButtonEnabled(false)
                                 isUserOnline(true)
                             }
 
@@ -154,18 +166,22 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_send -> {
-                val message = edittext_chatbox?.text?.toString() ?: ""
-                if (TextUtils.isEmpty(message)) return
-                val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
-                updateMessageList(chatMessage)
-                chatViewModel.setSessionStateType(SessionStateType.ONLINE)
-                chatViewModel.sendMessage(message)
-                edittext_chatbox?.setText("")
-                try {
-                    val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    imm?.hideSoftInputFromWindow(view?.windowToken, 0)
-                } catch (ex: Exception) {
-                    FirebaseManager.logException(ex)
+                if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                    val message = edittext_chatbox?.text?.toString() ?: ""
+                    if (TextUtils.isEmpty(message)) return
+                    val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
+                    updateMessageList(chatMessage)
+                    chatViewModel.setSessionStateType(SessionStateType.ONLINE)
+                    chatViewModel.sendMessage(message)
+                    edittext_chatbox?.setText("")
+                    try {
+                        val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+                    } catch (ex: Exception) {
+                        FirebaseManager.logException(ex)
+                    }
+                } else {
+                    ErrorHandlerView(activity).showToast()
                 }
             }
         }

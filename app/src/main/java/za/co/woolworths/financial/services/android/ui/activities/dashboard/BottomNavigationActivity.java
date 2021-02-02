@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
+import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
@@ -86,6 +87,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
@@ -212,7 +214,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 // product item successfully added to cart
                 cartSummaryAPI();
                 closeSlideUpPanel();
-                setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart));
+                setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart), null, 0);
             } else if (object instanceof BadgeState) {
                 // call observer to update independent count
                 BadgeState badgeState = (BadgeState) object;
@@ -260,7 +262,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         mQueryBadgeCounter.addObserver(this);
     }
 
-    public void setToast(String message, String cartText) {
+    public void setToast(String message, String cartText, ProductCountMap productCountMap, int noOfItems) {
+        if (productCountMap != null && KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+            ToastFactory.Companion.showItemsLimitToastOnAddToCart(getBottomNavigationById(), productCountMap, this, noOfItems, true);
+            return;
+        }
         mToastUtils = new ToastUtils(BottomNavigationActivity.this);
         mToastUtils.setActivity(BottomNavigationActivity.this);
         mToastUtils.setView(getBottomNavigationById());
@@ -893,8 +899,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     case RESULT_OK:
                         // Open Shopping List Detail Fragment From MyList and Add item to cart
                         String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+                        ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
+                        int itemsCount = data.getIntExtra("ItemsCount",0);
                         if (itemAddToCartMessage != null) {
-                            setToast(itemAddToCartMessage, "");
+                            setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                         }
                         break;
                 }
@@ -959,8 +967,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             navigateToMyList(requestCode, resultCode, data);
             if (resultCode == RESULT_OK) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+                ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
+                int itemsCount = data.getIntExtra("ItemsCount",0);
                 if (itemAddToCartMessage != null) {
-                    setToast(itemAddToCartMessage, "");
+                    setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                 }
                 return;
             }
@@ -1040,8 +1050,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
             if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+                ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
+                int itemsCount = data.getIntExtra("ItemsCount",0);
                 if (itemAddToCartMessage != null) {
-                    setToast(itemAddToCartMessage, "");
+                    setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                 }
             }
         }

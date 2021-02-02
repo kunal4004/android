@@ -12,6 +12,8 @@ import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class WFormatter {
 
     public static String formatAmount(int amount) {
@@ -25,9 +27,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        DecimalFormat df = new DecimalFormat("0.00");
-        String decimalPart = df.format(amount / 100f).split("\\.")[1];
-        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
     }
 
     public static String newAmountFormat(int amount) {
@@ -41,9 +41,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        DecimalFormat df = new DecimalFormat("0.00");
-        String decimalPart = df.format(amount / 100f).split("\\.")[1];
-        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
     }
 
     public static String newRandAmountFormatWithoutSpace(int amount) {
@@ -57,9 +55,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        DecimalFormat df = new DecimalFormat("0.00");
-        String decimalPart = df.format(amount / 100f).split("\\.")[1];
-        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
+        return Utils.removeNegativeSymbol(String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100));
     }
 
     public static String addSpaceToDate(String value) {
@@ -97,9 +93,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        DecimalFormat df = new DecimalFormat("0.00");
-        String decimalPart = df.format(amount / 100f).split("\\.")[1];
-        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
     }
 
     public static String formatAmount(String amount) {
@@ -119,9 +113,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        DecimalFormat df = new DecimalFormat("0.00");
-        String decimalPart = df.format(mIntAmount / 100f).split("\\.")[1];
-        return Utils.removeNegativeSymbol(String.format("R %s.%s", stringBuilder.reverse().toString(), decimalPart));
+        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
     }
 
     public static String formatAmountNoDecimal(int amount) {
@@ -183,6 +175,17 @@ public class WFormatter {
     }
 
     public static String formatMessagingDate(Date validDate) throws ParseException {
+        long diff = getDateDiff(validDate);
+        String day = "Today";
+        if (diff == 1) {
+            day = "Yesterday";
+        } else if (diff > 1) {
+            day = new SimpleDateFormat("dd MMM").format(validDate);
+        }
+        return day;
+    }
+
+    private static long getDateDiff(Date validDate) {
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy/MM/dd");
         Date today = new Date();
         long diff = 0;
@@ -193,18 +196,7 @@ public class WFormatter {
         } catch (Exception e) {
         }
 
-        diff = Math.abs(diff);
-        String days = "Today";
-        if (diff == 1) {
-            days = "Yesterday";
-        } else if (diff > 1) {
-            days = new SimpleDateFormat("dd MMM").format(validDate);
-        }
-
-        return days;
-        //final DateFormat formatter = new SimpleDateFormat("dd MM yyyy");
-
-
+        return Math.abs(diff);
     }
 
     public static String formatMeter(double meter) {
@@ -261,5 +253,66 @@ public class WFormatter {
         }
     }
 
+    public static Date convertStringToDate(String date) throws ParseException {
+        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
+        return m_ISO8601Local.parse(date);
+    }
 
+    public static long checkIfDateisTomorrow(String date) throws ParseException {
+        return getDateDiff(convertStringToDate(date));
+    }
+
+    public static String convertDayShortToLong(String day) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = simpleDateFormat.parse(day);
+        return new SimpleDateFormat("EEEE").format(date);
+
+    }
+
+    public static String convertMonthShortToLong(String date) throws ParseException {
+        return (new SimpleDateFormat("LLLL", Locale.getDefault())).format(convertStringToDate(date));
+    }
+
+    public static String getDayAndFullDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("EEEE dd MMMM, yyyy")
+                .format((new SimpleDateFormat("yyyy-MM-dd"))
+                        .parse(date));
+    }
+
+    public static String getDayAndFormatedDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("EE, dd MMMM").format((new SimpleDateFormat("yyyy-MM-dd")).parse(date));
+    }
+
+    public static String getDayOfMonthSuffix(final int day) {
+        checkArgument(day >= 1 && day <= 31, "illegal day of month: " + day);
+        if (day >= 11 && day <= 13) {
+            return "th";
+        }
+        switch (day % 10) {
+            case 1:  return "st";
+            case 2:  return "nd";
+            case 3:  return "rd";
+            default: return "th";
+        }
+    }
+
+    public static String getFullMonthDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("dd MMMM yyyy")
+                .format((new SimpleDateFormat("yyyy-MM-dd"))
+                        .parse(date));
+    }
+
+    public static String convertToFormatedDate(String date) throws ParseException {
+        if (date == null)
+            return "";
+        return new SimpleDateFormat("EEE dd MMM")
+                .format((new SimpleDateFormat("yyyy-MM-dd"))
+                        .parse(date));
+    }
 }

@@ -37,6 +37,7 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
             itemView.llQuantity.visibility = View.INVISIBLE
             itemView.price.text = commerceItem.price.amount.let { WFormatter.formatAmount(it) }
             itemView.rlDeleteButton.visibility = View.GONE
+            itemView.rlDelete.visibility = View.GONE
             setProductImage(itemView.cartProductImage, commerceItem.externalImageURL
                     ?: "")
             if (commerceItem.price.getDiscountedAmount() > 0) {

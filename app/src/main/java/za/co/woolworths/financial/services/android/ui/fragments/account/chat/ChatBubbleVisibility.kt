@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.Utils
@@ -211,7 +212,8 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
                 var productGroupCodeAccount: Account? = null
                 accountList?.forEach { account ->
-                    if (account.productGroupCode?.toLowerCase(Locale.getDefault()) == productGroupCode) {
+                    if (account.productGroupCode.toLowerCase(Locale.getDefault()) == productGroupCode) {
+
                         productGroupCodeAccount = account
                         return@forEach
                     }
@@ -267,7 +269,6 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
         return when (activity) {
             // PayMyAccountActivity:: Show to all Customer
             is PayMyAccountActivity, is WTransactionsActivity -> true
-
             else -> when (activity) {
                 // Account Landing: show only to Customer in arrears
                 is MyAccountActivity, is BottomNavigationActivity -> isChatVisibleForAccountLanding()
