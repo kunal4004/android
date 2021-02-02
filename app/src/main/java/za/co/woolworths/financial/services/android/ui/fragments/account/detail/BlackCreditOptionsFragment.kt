@@ -17,6 +17,6 @@ class BlackCreditOptionsFragment : AccountsOptionFragment() {
         debitOrderViewGroup?.visibility = View.GONE
         myCardDetailTextView?.visibility = View.GONE
         paymentOptionLogoImageView?.setImageResource(R.drawable.icon_money)
-        cardImage.setBackgroundResource(R.drawable.black_cc_envelope)
+        cardImage.setBackgroundResource(R.drawable.w_black_credit_card)
     }
 }

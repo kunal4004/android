@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.util
 
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -19,9 +18,6 @@ class PostItemToCart {
                 when (response?.httpCode) {
                     200 -> {
                         QueryBadgeCounter.instance.queryCartSummaryCount()
-                        response.data[0]?.productCountMap?.let {
-                           CartUtils.updateFoodMaximumQuantityOnConfig(it)
-                        }
                     }
                     else -> {
                     }

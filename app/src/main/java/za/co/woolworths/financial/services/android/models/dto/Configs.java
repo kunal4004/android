@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.CreditCardDelivery;
 import javax.annotation.Nullable;
 
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -34,6 +35,7 @@ public class Configs {
     public Sts sts;
     @Nullable
     public CreditCardActivation creditCardActivation;
+    public CreditCardDelivery creditCardDelivery;
     @Nullable
     public WhatsApp whatsApp;
     @Nullable

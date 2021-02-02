@@ -5,6 +5,7 @@ import za.co.woolworths.financial.services.android.contracts.IAccountCardDetails
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -22,5 +23,9 @@ class AccountCardDetailModelImpl : IAccountCardDetailsContract.AccountCardDetail
 
     override fun queryServiceGetCreditCartToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>? {
         return request(OneAppService.getCreditCardToken(), requestListener)
+    }
+
+    override fun queryServiceGetCreditCardDeliveryStatus(productOfferingId: String, envelopeReference: String, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>? {
+        return request(OneAppService.getCreditCardDeliveryStatus(envelopeReference, productOfferingId), requestListener)
     }
 }
