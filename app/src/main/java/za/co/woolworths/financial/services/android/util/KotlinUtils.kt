@@ -407,6 +407,20 @@ class KotlinUtils {
             return noteStringBuilder
         }
 
+
+        fun highlightText(string: String, keys: MutableList<String>?): SpannableStringBuilder {
+            val noteStringBuilder = SpannableStringBuilder(string)
+            keys?.forEach { key ->
+                val start = string.indexOf(key)
+                val end = start.plus(key.length)
+                val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+                noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            }
+
+            return noteStringBuilder
+        }
+
         fun getJSONFileFromRAWResFolder(context: Context?, @RawRes id: Int): JSONObject {
             val awsConfiguration: InputStream? = context?.resources?.openRawResource(id)
             val writer: Writer = StringWriter()
