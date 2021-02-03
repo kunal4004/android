@@ -4,9 +4,9 @@ import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartResponse
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
+import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 
 class CartUtils {
@@ -20,6 +20,10 @@ class CartUtils {
                     return commerceItem
             }
             return commerceItem
+        }
+
+        fun getAppliedVouchersCount(vouchers: ArrayList<Voucher>): Int {
+            return vouchers.filter { it.voucherApplied }.size
         }
 
         fun updateItemLimitsBanner(productCountMap: ProductCountMap?, banner: ConstraintLayout, message: TextView, counter: TextView, isClickAndCollect: Boolean) {

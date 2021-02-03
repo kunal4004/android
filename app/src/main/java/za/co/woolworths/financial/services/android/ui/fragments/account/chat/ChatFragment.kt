@@ -23,9 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
 
 class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListener {
@@ -168,18 +166,22 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_send -> {
-                val message = edittext_chatbox?.text?.toString() ?: ""
-                if (TextUtils.isEmpty(message)) return
-                val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
-                updateMessageList(chatMessage)
-                chatViewModel.setSessionStateType(SessionStateType.ONLINE)
-                chatViewModel.sendMessage(message)
-                edittext_chatbox?.setText("")
-                try {
-                    val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    imm?.hideSoftInputFromWindow(view?.windowToken, 0)
-                } catch (ex: Exception) {
-                    FirebaseManager.logException(ex)
+                if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                    val message = edittext_chatbox?.text?.toString() ?: ""
+                    if (TextUtils.isEmpty(message)) return
+                    val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
+                    updateMessageList(chatMessage)
+                    chatViewModel.setSessionStateType(SessionStateType.ONLINE)
+                    chatViewModel.sendMessage(message)
+                    edittext_chatbox?.setText("")
+                    try {
+                        val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+                    } catch (ex: Exception) {
+                        FirebaseManager.logException(ex)
+                    }
+                } else {
+                    ErrorHandlerView(activity).showToast()
                 }
             }
         }

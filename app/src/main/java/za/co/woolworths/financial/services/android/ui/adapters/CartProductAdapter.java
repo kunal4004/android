@@ -38,11 +38,13 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
-import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.VoucherDetails;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
+import za.co.woolworths.financial.services.android.util.CartUtils;
+
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -770,11 +772,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
     }
 
     public int getAppliedVouchersCount() {
-        int count = 0;
-        for (Voucher voucher : voucherDetails.getVouchers()) {
-            if (voucher.getVoucherApplied())
-                count++;
-        }
-        return count;
+        return CartUtils.Companion.getAppliedVouchersCount(voucherDetails.getVouchers());
     }
 }
