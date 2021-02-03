@@ -397,17 +397,6 @@ class KotlinUtils {
             }
         }
 
-        fun highlightText(string: String, key: String): SpannableStringBuilder {
-            val noteStringBuilder = SpannableStringBuilder(string)
-            val start = string.indexOf(key)
-            val end = start.plus(key.length) + 1
-            val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
-            noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-            noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-            return noteStringBuilder
-        }
-
-
         fun highlightText(string: String, keys: MutableList<String>?): SpannableStringBuilder {
             val noteStringBuilder = SpannableStringBuilder(string)
             keys?.forEach { key ->
