@@ -28,7 +28,9 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
+            R.id.incRecentTransactionButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)}
             R.id.incPayMyAccountButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
                 navigateToPayMyAccountActivity()
