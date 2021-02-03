@@ -365,26 +365,29 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
-                if (it.suburb.id.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
+                val storeOrSuburbId = if(it.storePickup) it.store.id else it.suburb.id
+                if (storeOrSuburbId.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
                     updateDeliveryDates()
                 } else {
                     mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                    OneAppService.validateSelectedSuburb(it.suburb.id, it.suburb.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
-                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                            when (response?.httpCode) {
-                                200 -> response.validatedSuburbProducts?.let { it1 ->
-                                    it1.suburbId = it.suburb.id
-                                    WoolworthsApplication.setValidatedSuburbProducts(it1)
-                                    updateDeliveryDates()
+                    storeOrSuburbId?.let { it1 ->
+                        OneAppService.validateSelectedSuburb(it1, it.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                            override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                                when (response?.httpCode) {
+                                    200 -> response.validatedSuburbProducts?.let { it1 ->
+                                        it1.suburbId = storeOrSuburbId
+                                        WoolworthsApplication.setValidatedSuburbProducts(it1)
+                                        updateDeliveryDates()
+                                    }
+                                    else -> mDepartmentAdapter?.hideDeliveryDates()
                                 }
-                                else -> mDepartmentAdapter?.hideDeliveryDates()
                             }
-                        }
 
-                        override fun onFailure(error: Throwable?) {
-                            mDepartmentAdapter?.hideDeliveryDates()
-                        }
-                    }, ValidateSelectedSuburbResponse::class.java))
+                            override fun onFailure(error: Throwable?) {
+                                mDepartmentAdapter?.hideDeliveryDates()
+                            }
+                        }, ValidateSelectedSuburbResponse::class.java))
+                    }
                 }
             }
         }

@@ -192,8 +192,8 @@ object OneAppService : RetrofitConfig() {
         var storeId: String? = null
         Utils.getPreferredDeliveryLocation()?.apply {
             if (province?.id.isNullOrEmpty()) return Pair(null, null)
-            if (suburb?.storePickup == true) {
-                storeId = suburb.id
+            if (storePickup) {
+                storeId = store.id
             } else {
                 suburbId = suburb?.id
             }

@@ -294,7 +294,7 @@ class KotlinUtils {
             var type = deliveryType
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
-                    type = if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                    type = if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
                 }
             }
             activity?.apply {
@@ -309,10 +309,10 @@ class KotlinUtils {
 
         fun setDeliveryAddressView(context: Activity?, shoppingDeliveryLocation: ShoppingDeliveryLocation, tvDeliveringTo: WTextView, tvDeliveryLocation: WTextView, deliverLocationIcon: ImageView?) {
             with(shoppingDeliveryLocation) {
-                when (suburb.storePickup) {
+                when (storePickup) {
                     true -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + suburb.name
+                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + store?.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
@@ -533,7 +533,7 @@ class KotlinUtils {
         }
 
         fun isDeliveryOptionClickAndCollect(): Boolean {
-            return Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true
+            return Utils.getPreferredDeliveryLocation()?.storePickup == true
         }
     }
 }

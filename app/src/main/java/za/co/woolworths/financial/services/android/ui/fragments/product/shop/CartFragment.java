@@ -345,7 +345,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
-					if (Utils.getPreferredDeliveryLocation().suburb.storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
+					if (Utils.getPreferredDeliveryLocation().storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
 						Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT);
 						showMaxItemView();
 						return;
@@ -958,10 +958,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Province province = new Province();
 				province.name = data.provinceName;
 				province.id = data.provinceId;
-				if (cartResponse.orderSummary.suburb != null) {
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb));
-					setDeliveryLocation(Utils.getPreferredDeliveryLocation());
+				if (cartResponse.orderSummary.store != null) {
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, null, cartResponse.orderSummary.store));
+				} else if (cartResponse.orderSummary.suburb != null) {
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb, null));
 				}
+				if (cartResponse.orderSummary.store != null || cartResponse.orderSummary.suburb != null)
+					setDeliveryLocation(Utils.getPreferredDeliveryLocation());
 			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
@@ -1083,7 +1086,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							CartActivity cartActivity = (CartActivity) activity;
 							cartActivity.hideEditCart();
 						}
-						Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.suburb.id);
+						Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
 						setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
 							@Override
 							public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
@@ -1629,7 +1632,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private void setItemLimitsBanner() {
 		Activity activity = getActivity();
 		if (activity != null && isAdded()) {
-			CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, Utils.getPreferredDeliveryLocation().suburb.storePickup);
+			CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, Utils.getPreferredDeliveryLocation().storePickup);
 		}
 	}
 

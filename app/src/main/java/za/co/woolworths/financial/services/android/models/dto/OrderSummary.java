@@ -22,6 +22,7 @@ public class OrderSummary {
 	public String submittedDate;
 	public JsonElement deliveryDates;
 	public DiscountDetails discountDetails;
+	public Store store;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;
