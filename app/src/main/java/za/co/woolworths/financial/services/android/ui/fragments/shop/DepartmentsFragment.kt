@@ -49,6 +49,8 @@ import za.co.woolworths.financial.services.android.util.*
 
 class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
+    private var isFirstCallToLocationModal: Boolean = false
+    private var isLocationModalShown: Boolean = false
     private var isRootCallInProgress: Boolean = false
     private var location: Location? = null
     private var rootCategoryCall: Call<RootCategories>? = null
@@ -67,8 +69,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         const val REQUEST_CODE_FINE_GPS = 4771
     }
 
+
     init {
-        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance().dashConfig.minimumSupportedAppBuildNumber.toString())
+        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber?.toString())
+                ?: false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,6 +85,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
+
+        isDashEnabled = WoolworthsApplication.getInstance()?.dashConfig?.isEnabled ?: false
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
@@ -95,23 +101,26 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (isPermissionGranted && Utils.isLocationEnabled(context)) {
                 fusedLocationClient?.lastLocation?.addOnSuccessListener {
                     this@DepartmentsFragment.location = it
-                    executeDepartmentRequest()
+                    initializeRootCategoryList()
                 }
-            } else {
-                checkLocationPermission()
-                //When user launches second time without permissions
-                executeDepartmentRequest()
-                if (!Utils.isDeliverySelectionModalShown()) {
-                    showDeliveryOptionDialog()
+            } else  {
+                // when permission granted and location is not enabled
+                if(isPermissionGranted) {
+                    initializeRootCategoryList()
+                }
+                //When Location permission not granted.
+                else if(!checkLocationPermission() && !isLocationModalShown) {
+                    initializeRootCategoryList()
                 }
             }
         } else if (isFragmentVisible) {
-
-            executeDepartmentRequest()
-            if (!Utils.isDeliverySelectionModalShown()) {
-                showDeliveryOptionDialog()
-            }
+            initializeRootCategoryList()
         }
+    }
+
+    private fun initializeRootCategoryList() {
+        if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+        showDeliveryOptionDialog()
     }
 
     private fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -122,9 +131,14 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
+            if(isFirstCallToLocationModal) {
+                executeDepartmentRequest()
+            }
         } else {
             startLocationUpdates()
         }
+
+        showDeliveryOptionDialog()
     }
 
     private fun setListener() {
@@ -138,7 +152,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-            if(isRootCallInProgress){
+            if (isRootCallInProgress) {
                 return
             }
 
@@ -288,6 +302,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 executeValidateSuburb()
                 //When moved from My Cart to department
                 startLocationUpdates()
+
+                showDeliveryOptionDialog()
             }
         }
     }
@@ -318,6 +334,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                             startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         }
+                        isFirstCallToLocationModal = true
                     }
                 }
                 RESULT_CANCELED -> {
@@ -341,7 +358,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     }
 
     private fun showDeliveryOptionDialog() {
-        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+        if (!Utils.isDeliverySelectionModalShown()) {
+            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+        }
     }
 
     private fun executeValidateSuburb() {
@@ -420,6 +439,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 } else {
                     //we can request the permission.
                     ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
+                    isLocationModalShown = true
                 }
                 false
             } else {

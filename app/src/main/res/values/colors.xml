@@ -43,9 +43,9 @@
     <color name="cli_button_border">#19000000</color>
     <color name="cli_yes_no_button_color">#212b36</color>
     <color name="cli_step_indicator_done_text_color">#030303</color>
-    <color name="black30">#4c000000</color>
+    <color name="black30">#4D000000</color>
     <color name="black10">#10000000</color>
-
+    <color name="black60">#99000000</color>
     <color name="status_red">#e41f1f</color>
     <color name="status_green">#bad110</color>
     <color name="status_amber">#f4b421</color>
@@ -69,7 +69,7 @@
     <color name="bpi_background">#D8D8D8</color>
     <color name="in_app_msg_color_desc">#7C7C7C</color>
     <color name="swatch_border_color">#E5E5E5</color>
-    <color name="black40">#40000000</color>
+    <color name="black40">#66000000</color>
     <color name="orders_bg">#F0F0F0</color>
     <color name="shop_search_color">#F6F6F6</color>
     <color name="button_disable">#C1C1C1</color>
@@ -91,7 +91,9 @@
     <color name="light_gray_background">#60D8D8D8</color>
     <color name="semi_transparent">#20ffffff</color>
     <color name="searchBarHintColor">#20000000</color>
-    <color name="transaction_date_color">#66030303</color>
+    <color name="transaction_date_color">#4c4c4c</color>
+    <color name="accounts_sales_page_bg">#F8F8F8</color>
+    <color name="offer_title_70">#70222222</color>
     <color name="status_dark_green">#A5B52B</color>
     <color name="lighter_gray_background">#30D8D8D8</color>
     <color name="arrears_red_color_code">#F43F37</color>
@@ -110,6 +112,7 @@
     <color name="text_description_color">#7F7F7F</color>
     <color name="success_tick_color">#0085AD</color>
     <color name="currency_color">#222222</color>
+    <color name="radio_button_color">#80222222</color>
     <color name="red_color">#D0021B</color>
     <color name="white_desc">#C4C5C7</color>
     <color name="error_color_code">#D0021B</color>

@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
+    private var mCreditAccountInfo: String? = null
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mBundleFiveDigitCodePinCode: Int? = null
     private var mAliasId: String? = null
@@ -29,10 +30,11 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
         private const val ALIAS_ID = "ALIAS_ID"
 
-        fun newInstance(fiveDigitCodePinCode: Int, aliasId: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
+        fun newInstance(fiveDigitCodePinCode: Int, aliasId: String?,creditAccountInfo: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
             arguments = Bundle(4).apply {
                 putInt(FIVE_DIGIT_PIN_CODE, fiveDigitCodePinCode)
                 putString(ALIAS_ID, aliasId)
+                putString("creditCardToken", creditAccountInfo)
             }
         }
     }
@@ -44,6 +46,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         arguments?.apply {
             mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE, 0)
             getString(ALIAS_ID)?.apply { mAliasId = this }
+            mCreditAccountInfo = getString("creditCardToken")
         }
     }
 
@@ -93,7 +96,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_COMPLETE_SETUP)
         hideKeyboard()
         replaceFragment(
-                fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, fiveDigitPin),
+                fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, fiveDigitPin, mCreditAccountInfo),
                 tag = AbsaPinCodeSuccessFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

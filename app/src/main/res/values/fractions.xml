@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="zero" format="float" type="integer">0</item>
+    <item name="point_zero_one" format="float" type="integer">0.01</item>
+    <item name="point_zero_twenty_one" format="float" type="integer">0.021</item>
+    <item name="point_zero_three" format="float" type="integer">0.03</item>
+    <item name="point_zero_six" format="float" type="integer">0.06</item>
+    <item name="point_zero_seven" format="float" type="integer">0.07</item>
+    <item name="point_zero_eight" format="float" type="integer">0.08</item>
+    <item name="point_zero_eighty_three" format="float" type="integer">0.083</item>
+    <item name="point_one" format="float" type="integer">0.1</item>
+    <item name="point_eleven" format="float" type="integer">0.11</item>
+    <item name="point_twelve" format="float" type="integer">0.12</item>
+    <item name="point_fifteen" format="float" type="integer">0.15</item>
+    <item name="point_eighteen" format="float" type="integer">0.18</item>
+    <item name="point_two" format="float" type="integer">0.2</item>
+    <item name="point_five" format="float" type="integer">0.5</item>
+</resources>
