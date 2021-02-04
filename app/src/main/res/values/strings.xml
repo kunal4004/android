@@ -694,7 +694,7 @@
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
-    <string name="absa_atm_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
+    <string name="absa_atm_please_enter_your_pin">Enter Woolies Credit Card ATM PIN</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_desc"> Please call on 0861 50 20 20 or  email queries@wfs.co.za for assistance</string>
@@ -751,6 +751,7 @@
     <string name="card_holder_title">Cardholder:</string>
     <string name="manage">Manage</string>
     <string name="block_card_title">Block Card</string>
+    <string name="block_and_replace_card_title">Block and Replace Card</string>
     <string name="block_card_desc">Please select the reason for blocking your card.</string>
     <string name="permanent_card_block_title">Permanent Card Block</string>
     <string name="permanent_card_block_desc">Are you sure you want to permanently block this card? You will need to collect a replacement card at a participating Woolworths store; or call us.</string>
@@ -1938,6 +1939,7 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="account_holder_lable">Account Holder:</string>
     <string name="woolworths_credit_card_lable">Woolworths Credit Card</string>
     <string name="transaction_date_value">03 / 07 / 2016</string>
+    <string name="vouchers_removed_toast_message">Your &lt;b>Vouchers&lt;/b> have been removed</string>
     <string name="clear_details"><u>Clear Details</u></string>
     <string name="checking_available_slots">Checking For Available Timeslots</string>
     <string name="copy_reference_number"><u>Copy Reference Number</u></string>

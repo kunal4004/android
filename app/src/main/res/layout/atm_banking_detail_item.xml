@@ -1,44 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        style="@style/layout_without_top_border"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/twenty_four_dp"
-        android:paddingTop="@dimen/sixteen_dp"
-        android:paddingRight="@dimen/twenty_four_dp"
-        android:paddingBottom="@dimen/nineteen_dp">
+    <TextView
+        android:id="@+id/paymentName"
+        style="@style/contact_us_item_header_textview"
+        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/nineteen_dp"
+        android:layout_marginEnd="@dimen/five_dp"
+        android:layout_weight="0.5"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="start|top"
+        android:paddingStart="0dp"
+        android:text="@string/account_holder_lable"
+        android:textColor="@color/black_50"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry" />
 
-        <TextView
-            android:id="@+id/paymentName"
-            style="@style/contact_us_item_header_textview"
-            android:layout_width="0dp"
-            android:layout_marginEnd="@dimen/five_dp"
-            android:layout_weight="1"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:text="@string/account_holder_lable"
-            android:textColor="@color/black_50" />
+    <TextView
+        android:id="@+id/paymentvalue"
+        style="@style/contact_us_item_header_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/five_dp"
+        android:layout_marginTop="@dimen/nineteen_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_weight="0.5"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="end"
+        android:singleLine="false"
+        android:text="@string/woolworths_credit_card_lable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/paymentvalue"
-            style="@style/contact_us_item_header_textview"
-            android:layout_width="0dp"
-            android:layout_marginStart="@dimen/five_dp"
-            android:layout_weight="1.1"
-            android:gravity="end"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:singleLine="false"
-            android:text="@string/woolworths_credit_card_lable" />
-    </LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
 
     <View
         style="@style/horizontal_divider_how_to_pay"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp" />
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paymentvalue" />
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.app.Activity
-import android.content.Intent
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -23,9 +21,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getEnumExtra
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment.Companion.SHARED_PREFS
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment.Companion.SUBURB_LIST
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.EnumSet.of
 
 class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
 
@@ -41,14 +40,24 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.apply {
+            intent?.let {
+                if (it.hasExtra(SUBURB_LIST)) {
+                    val sharedPreferences = activity?.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+                    val suburbLists = sharedPreferences?.getString(SUBURB_LIST, "")
+                    suburbList = Gson().fromJson(suburbLists, object : TypeToken<List<Suburb>>() {}.type)
+                }
+                deliveryType = it.getEnumExtra<DeliveryType>()
+                bundle = arguments?.getBundle("bundle")
+                bundle?.apply {
+                    getString("SuburbList")?.let {
+                        suburbList = Gson().fromJson(it, object : TypeToken<List<Suburb>>() {}.type)
+                    }
+                    getSerializable("deliveryType")?.let {
+                        deliveryType = it as DeliveryType
 
-        bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            getString("SuburbList")?.let {
-                suburbList = Gson().fromJson(it, object : TypeToken<List<Suburb>>() {}.type)
-            }
-            getSerializable("deliveryType")?.let {
-                deliveryType = it as DeliveryType
+                    }
+                }
             }
         }
     }
