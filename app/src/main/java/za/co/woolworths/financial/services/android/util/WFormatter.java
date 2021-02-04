@@ -266,7 +266,12 @@ public class WFormatter {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse(day);
         return new SimpleDateFormat("EEEE").format(date);
+    }
 
+    public static String convertDayToShortDay(String day) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = simpleDateFormat.parse(day);
+        return new SimpleDateFormat("EEE dd MMM").format(date);
     }
 
     public static String convertMonthShortToLong(String date) throws ParseException {
