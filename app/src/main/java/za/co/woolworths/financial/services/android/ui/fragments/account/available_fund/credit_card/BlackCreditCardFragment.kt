@@ -30,8 +30,13 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
-                navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)}
+                activity?.runOnUiThread {
+                    activity?.runOnUiThread {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                        navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
+                    }
+                }
+            }
             R.id.incPayMyAccountButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
                 navigateToPayMyAccountActivity()
