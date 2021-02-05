@@ -9,9 +9,8 @@ import kotlinx.android.synthetic.main.activity_debit_order.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
-import kotlin.math.absoluteValue
 
 class DebitOrderActivity : AppCompatActivity() {
 
@@ -35,7 +34,7 @@ class DebitOrderActivity : AppCompatActivity() {
                 .replace("debit_order_status", if (debitOrder?.debitOrderActive == true) "ACTIVE" else "EXPIRED")
         val description = bindString(R.string.debit_order_description)
                 .replace("debit_order_status", if (debitOrder?.debitOrderActive == true) "active" else "expired")
-        var amountToBeDebited = WFormatter.formatAmount(debitOrder?.debitOrderProjectedAmount?.toInt() ?: 0)
+        var amountToBeDebited = CurrencyFormatter.formatAmountToRandAndCentWithSpace(debitOrder?.debitOrderProjectedAmount?.toInt() ?: 0)
         if (amountToBeDebited.contains("-")) {
             amountToBeDebited = "- " + amountToBeDebited.replace("-", "")
         }
