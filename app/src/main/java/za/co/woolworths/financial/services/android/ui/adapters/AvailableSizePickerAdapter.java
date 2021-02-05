@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
@@ -53,7 +54,7 @@ public class AvailableSizePickerAdapter extends RecyclerView.Adapter<AvailableSi
 
 		boolean isQuantityAvailable = otherSkuses.get(position).quantity > 0;
 		holder.productSize.setText(otherSkuses.get(position).size);
-		holder.productPrice.setText(isQuantityAvailable ? WFormatter.formatAmount(otherSkuses.get(position).price) : holder.productPrice.getContext().getString(R.string.stock_finder_btn_label));
+		holder.productPrice.setText(isQuantityAvailable ? CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(otherSkuses.get(position).price) : holder.productPrice.getContext().getString(R.string.stock_finder_btn_label));
 		holder.productSize.setAlpha(isQuantityAvailable ? 1f : 0.5f);
 		holder.productPrice.setAlpha(isQuantityAvailable ? 0.6f : 1f);
 		holder.productSize.setPaintFlags(isQuantityAvailable ? Paint.ANTI_ALIAS_FLAG : holder.productSize.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);

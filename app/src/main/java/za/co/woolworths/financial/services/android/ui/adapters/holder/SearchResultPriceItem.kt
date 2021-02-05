@@ -5,13 +5,14 @@ import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.price_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.ProductList
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 class SearchResultPriceItem {
 
     fun setPrice(productList: ProductList?, itemView: View, shopFromItem: Boolean = false) {
-        val wasPrice: String? = productList?.wasPrice?.toString() ?: ""
-        val price: String? = productList?.price?.toString() ?: ""
+        val wasPrice: String = productList?.wasPrice?.toString() ?: ""
+        val price: String = productList?.price?.toString() ?: ""
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
         val priceType = productList?.priceType
         if (productList?.productName?.toLowerCase()?.contains("short sleeve khaki sch") == true) {
@@ -37,7 +38,7 @@ class SearchResultPriceItem {
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
                     if (price!!.isEmpty()) {
-                        tvPrice?.text = WFormatter.formatAmount(wasPrice)
+                        tvPrice?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice)
                     } else {
                         tvPrice?.text = getMassPrice(price, priceType, kilogramPrice, shopFromItem)
                     }
@@ -46,7 +47,7 @@ class SearchResultPriceItem {
                     fromPriceStrikeThrough?.visibility = View.GONE
                     tvWasPrice?.text = ""
                 } else {
-                    tvPrice?.text = WFormatter.formatAmount(price)
+                    tvPrice?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                     tvPrice?.setTextColor(androidx.core.content.ContextCompat.getColor(za.co.woolworths.financial.services.android.models.WoolworthsApplication.getAppContext(), com.awfs.coordination.R.color.was_price_color))
                     wasPrice.let {
                         tvWasPrice?.text = getMassPrice(it, priceType, kilogramPrice, shopFromItem)
@@ -64,16 +65,16 @@ class SearchResultPriceItem {
     private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String, shopFromItem: Boolean = false): String {
         return with(priceType) {
             when {
-                isNullOrEmpty() -> WFormatter.formatAmount(price)
-                this!!.toLowerCase().contains("from", true) -> WFormatter.formatAmount(price)
+                isNullOrEmpty() -> CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
+                this!!.toLowerCase().contains("from", true) -> CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                 this.contains("Kilogram", true) -> {
                     if (shopFromItem) {
-                        WFormatter.formatAmount(price) + "\n(" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
+                        CurrencyFormatter.formatAmountToRandAndCentWithSpace(price) + "\n(" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice) + "/kg)"
                     } else {
-                        WFormatter.formatAmount(price) + " (" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
+                        CurrencyFormatter.formatAmountToRandAndCentWithSpace(price) + " (" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice) + "/kg)"
                     }
                 }
-                else -> WFormatter.formatAmount(price)
+                else -> CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
             }
         }
     }

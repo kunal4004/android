@@ -72,6 +72,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         const val REQUEST_CODE_FINE_GPS = 4771
     }
 
+
     init {
         isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber?.toString())
                 ?: false
@@ -87,6 +88,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
+
+        isDashEnabled = WoolworthsApplication.getInstance()?.dashConfig?.isEnabled ?: false
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
@@ -438,23 +441,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 //                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                 } else {
                     //we can request the permission.
-
-                    var alert: AlertDialog? = null
-                    val alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-                    alertBuilder.setCancelable(true)
-                    alertBuilder.setTitle(bindString(R.string.dash_banner_location_perms_title))
-                    alertBuilder.setMessage(bindString(R.string.dash_banner_location_perms_subtitle))
-                    alertBuilder.setPositiveButton(bindString(R.string.allow)) { dialog, which ->
-                        ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
-                        alert?.dismiss()
-                    }
-                    alertBuilder.setNegativeButton(bindString(R.string.deny)) { dialog, which ->
-                        //When user clicks deny location
-                        executeDepartmentRequest()
-                        alert?.dismiss()
-                    }
-                    alert = alertBuilder.create()
-                    alert?.show()
+                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
                     isLocationModalShown = true
                 }
                 false
