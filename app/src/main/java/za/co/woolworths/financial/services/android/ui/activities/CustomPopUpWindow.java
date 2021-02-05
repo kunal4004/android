@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailS
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -287,7 +289,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mTextDesc.setText(getString(R.string.loan_request_low_desc));
                 if (description != null && TextUtils.isEmpty(description)) {
                     mTextDesc.setText(getString(R.string.loan_request_low_desc).replace
-                            ("R1 500.00", WFormatter.formatAmount(description)));
+                            ("R1 500.00", CurrencyFormatter.Companion.formatAmountToRandAndCentNoSpace(description)));
                 }
                 mLowLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
@@ -1107,6 +1109,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
         }
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setResult(resultCode, data);

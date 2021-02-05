@@ -20,7 +20,7 @@ class PMAPayByDebitOrderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        debitOrderDeductionDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.debit_order_deduction_desc), "Note")
+        debitOrderDeductionDescTextView?.text = KotlinUtils.highlightText(bindString(R.string.debit_order_deduction_desc), mutableListOf("Note:"))
 
     }
 }
