@@ -269,6 +269,8 @@ public class WFormatter {
     }
 
     public static String convertDayToShortDay(String day) throws ParseException {
+        if (TextUtils.isEmpty(day)) return "";
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse(day);
         return new SimpleDateFormat("EEE dd MMM").format(date);
