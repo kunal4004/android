@@ -71,8 +71,4 @@ class CurrencyFormatter {
         return formatAmountToRandAndCentNoSpace(value)
     }
 
-    @VisibleForTesting
-    fun formatAmountEscapeDecimal(value: Any): String {
-        return escapeDecimal(value)
-    }
 }
