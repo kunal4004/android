@@ -9,9 +9,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cart_product_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
 
 class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerceItem>) : RecyclerView.Adapter<UnsellableItemsListAdapter.ViewHolder>() {
 
@@ -35,13 +35,13 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
             itemView.tvTitle.text = commerceItem.productDisplayName ?: ""
             Utils.truncateMaxLine(itemView.tvTitle)
             itemView.llQuantity.visibility = View.INVISIBLE
-            itemView.price.text = commerceItem.price.amount.let { WFormatter.formatAmount(it) }
+            itemView.price.text = commerceItem.price.amount.let { CurrencyFormatter.formatAmountToRandAndCentWithSpace(it) }
             itemView.rlDeleteButton.visibility = View.GONE
             itemView.rlDelete.visibility = View.GONE
             setProductImage(itemView.cartProductImage, commerceItem.externalImageURL
                     ?: "")
             if (commerceItem.price.getDiscountedAmount() > 0) {
-                itemView.promotionalText.text = " " + WFormatter.formatAmount(commerceItem.price.getDiscountedAmount())
+                itemView.promotionalText.text = " ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.price.getDiscountedAmount())}"
                 itemView.promotionalTextLayout.visibility = View.VISIBLE
             } else {
                 itemView.promotionalTextLayout.visibility = View.GONE

@@ -11,13 +11,14 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import java.util.*
 
 class PriceItem {
 
     fun setPrice(productList: ProductList?, itemView: View, shopFromItem: Boolean = false) {
-        val wasPrice: String? = productList?.wasPrice?.toString() ?: ""
-        val price: String? = productList?.price?.toString() ?: "0"
+        val wasPrice: String = productList?.wasPrice?.toString() ?: ""
+        val price: String = productList?.price?.toString() ?: "0"
         val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
         val priceType = productList?.priceType
         var priceText: String = ""
@@ -26,18 +27,18 @@ class PriceItem {
             fromLabel?.visibility = GONE
             tvWasOrKgPrice.visibility = GONE
             if (TextUtils.isEmpty(wasPrice)) {
-                priceText = WFormatter.formatAmount(price)
+                priceText = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                 with(priceType) {
                     when {
-                        isNullOrEmpty() -> priceText = WFormatter.formatAmount(price)
-                        this!!.toLowerCase().contains("from", true) -> priceText = "From " + WFormatter.formatAmount(price)
+                        isNullOrEmpty() -> priceText = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
+                        this?.toLowerCase(Locale.getDefault()).contains("from", true) -> priceText = "From " +CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                         this.contains("Kilogram", true) -> {
                             tvWasOrKgPrice.apply {
-                                text = "(" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
+                                text = "( ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice)} /kg)"
                                 visibility = VISIBLE
                             }
                         }
-                        else -> priceText = WFormatter.formatAmount(price)
+                        else -> priceText = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                     }
                 }
                 tvPrice?.apply {
@@ -49,17 +50,17 @@ class PriceItem {
                 if (wasPrice.equals(price, ignoreCase = true)) {
                     with(priceType) {
                         when {
-                            isNullOrEmpty() -> priceText = WFormatter.formatAmount(price)
+                            isNullOrEmpty() -> priceText =CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                             this!!.toLowerCase().contains("from", true) -> fromLabel.visibility = GONE
                             this.contains("Kilogram", true) -> {
-                                wasPriceText = "(" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
+                                wasPriceText = "(" +CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice) + "/kg)"
                                 tvWasOrKgPrice.apply {
                                     text = wasPriceText
                                     visibility = VISIBLE
                                 }
 
                             }
-                            else -> priceText = WFormatter.formatAmount(price)
+                            else -> priceText = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                         }
                     }
                     tvPrice?.apply {
@@ -70,20 +71,20 @@ class PriceItem {
                 } else {
                     // Create a span that will strikeThrough the text
                     val strikeThroughSpan = StrikethroughSpan()
-                    priceText = WFormatter.formatAmount(price)
+                    priceText =CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                     with(priceType) {
                         when {
                             isNullOrEmpty() -> {
-                                wasPriceText = WFormatter.formatAmount(wasPrice)
+                                wasPriceText =CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice)
                                 tvWasOrKgPrice?.apply {
                                     text = wasPriceText
                                     paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                                     visibility = VISIBLE
                                 }
                             }
-                            this!!.toLowerCase().contains("from", true) -> {
+                            this.toLowerCase(Locale.ROOT).contains("from", true) -> {
                                 fromLabel.visibility = VISIBLE
-                                wasPriceText = WFormatter.formatAmount(wasPrice)
+                                wasPriceText =CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice)
                                 tvWasOrKgPrice?.apply {
                                     text = wasPriceText
                                     paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
@@ -91,13 +92,13 @@ class PriceItem {
                                 }
                             }
                             this.contains("Kilogram", true) -> {
-                                wasPriceText = "(" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
+                                wasPriceText = "(" +CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice) + "/kg)"
                                 tvWasOrKgPrice?.apply {
                                     text = wasPriceText
                                     visibility = VISIBLE
                                 }
                             }
-                            else -> priceText = WFormatter.formatAmount(price)
+                            else -> priceText =CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                         }
                     }
 

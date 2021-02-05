@@ -93,6 +93,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
@@ -396,7 +397,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
                     imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
+                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
                     break;
                 case CREDIT_CARD:
@@ -413,14 +414,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     }
                     imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                     cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
+                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     break;
                 case PERSONAL_LOAN:
                     linkedPersonalCardView.setVisibility(View.VISIBLE);
                     applyPersonalCardView.setVisibility(View.GONE);
                     imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                     pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
+                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     break;
             }
 
@@ -482,7 +483,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 case STORE_CARD:
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
-                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
+                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     break;
                 case CREDIT_CARD:
                     linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -496,13 +497,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         imgCreditCard.setBackgroundResource(R.drawable.small_3);
                     }
 
-                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
+                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     break;
                 case PERSONAL_LOAN:
                     showView(linkedPersonalCardView);
                     hideView(applyPersonalCardView);
 
-                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1)));
+                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     break;
             }
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
+import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -236,7 +237,7 @@ class ToastFactory {
                     text = it.totalProductCount.toString()
                     setTextColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
                 }
-                toastView?.setBackgroundColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
+                (toastView?.background as GradientDrawable).setColor(Color.parseColor(it.quantityLimit?.foodLayoutColour))
                 tvFoodLayoutMessage?.text = it.quantityLimit?.foodLayoutMessage ?: ""
                 tvNoOfItemsAddedToCart?.text = when (count) {
                     0 -> bindString(R.string.toast_multiple_item_added_to_cart_message, "")

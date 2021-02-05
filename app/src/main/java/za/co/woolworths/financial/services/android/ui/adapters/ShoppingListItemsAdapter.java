@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -110,7 +111,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.cartProductImage.setImageURI(Utils.getExternalImageRef() + shoppingListItem.externalImageURL + "?w=" + 85 + "&q=" + 85);
 				holder.productName.setText(shoppingListItem.displayName);
 				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
-				holder.price.setText(WFormatter.formatAmount(shoppingListItem.price));
+				holder.price.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(shoppingListItem.price));
 				holder.cbxSelectShoppingListItem.setChecked(shoppingListItem.isSelected);
 				holder.delete.setVisibility(VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
