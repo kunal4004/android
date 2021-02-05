@@ -127,13 +127,19 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 if (selectedSuburb != null || selectedStore != null) {
                     when (deliveryType) {
                         DeliveryType.STORE_PICKUP -> {
-                            validatedSuburbProductsForStore?.let {
-                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                           validatedSuburbProductsForStore.let {
+                                when (it) {
+                                    null -> executeSetSuburb()
+                                    else -> if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                                }
                             }
                         }
                         DeliveryType.DELIVERY -> {
-                            validatedSuburbProductsForDelivery?.let {
-                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                            validatedSuburbProductsForDelivery.let {
+                                when (it) {
+                                    null -> executeSetSuburb()
+                                    else -> if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                                }
                             }
                         }
                     }
@@ -207,21 +213,25 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun showGetProvincesProgress() {
         dropdownGetProvinces?.visibility = View.INVISIBLE
         progressGetProvinces?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun showGetSuburbProgress() {
         dropdownGetSuburb?.visibility = View.INVISIBLE
         progressGetSuburb?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun hideGetProvincesProgress() {
         progressGetProvinces?.visibility = View.INVISIBLE
         dropdownGetProvinces?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun hideGetSuburbProgress() {
         progressGetSuburb?.visibility = View.INVISIBLE
         dropdownGetSuburb?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun showErrorDialog() {
@@ -311,9 +321,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null && !isStoreClosed(validatedSuburbProductsForDelivery))
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE)
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null && !isStoreClosed(validatedSuburbProductsForStore))
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE)
     }
 
     override fun hideSetSuburbProgressBar() {
