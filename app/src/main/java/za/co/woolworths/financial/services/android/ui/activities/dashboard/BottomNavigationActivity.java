@@ -247,7 +247,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (deepLinkData == null) {
             return;
         }
-        appLinkData = new Gson().fromJson(deepLinkData, JsonObject.class);
+        appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
     }
 
     private void queryBadgeCountOnStart() {
