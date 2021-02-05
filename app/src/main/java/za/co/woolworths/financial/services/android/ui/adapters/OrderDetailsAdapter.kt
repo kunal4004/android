@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -66,7 +67,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val item = dataList[position].item as OrderDetailsResponse
             itemView.orderState.text = item.orderSummary?.state
             itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.orderSummary?.submittedDate)
-            itemView.total.text = WFormatter.formatAmount(item.orderSummary?.total!!)
+            itemView.total.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.orderSummary?.total!!)
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
             itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
@@ -112,7 +113,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val item = dataList[position].item as CommerceItem
             setProductImage(itemView.imProductImage, item.commerceItemInfo.externalImageURL)
             itemView.itemName.text = item.commerceItemInfo.quantity.toString()+" x "+item.commerceItemInfo.productDisplayName
-            itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
+            itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
             itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
             itemView.setOnClickListener { listner.onOpenProductDetail(item) }

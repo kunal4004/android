@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_ADD_TO_CART;
 
@@ -69,7 +69,7 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 				tvPrice.setAlpha(quantityIsAvailable ? 0.6f : 1f);
 				relRootSizeLayout.setBackgroundColor(quantityIsAvailable ? ContextCompat.getColor(context, R.color.white) : ContextCompat.getColor(context, R.color.unavailable_color));
 				tvName.setPaintFlags(quantityIsAvailable ? Paint.ANTI_ALIAS_FLAG : tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				tvPrice.setText(quantityIsAvailable ? WFormatter.formatAmount(otherSkus.price) : context.getString(R.string.stock_finder_btn_label));
+				tvPrice.setText(quantityIsAvailable ? CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(otherSkus.price) : context.getString(R.string.stock_finder_btn_label));
 			}
 		}
 	}
@@ -86,7 +86,7 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 		holder.tvName.setGravity((shouldShowPrice()) ? Gravity.START : Gravity.CENTER);
 		//skipping the filling of the view
 		holder.tvName.setText(size);
-		holder.tvPrice.setText(WFormatter.formatAmount(otherSkus.price));
+		holder.tvPrice.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(otherSkus.price));
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

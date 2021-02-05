@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.transaction_list_child_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
-import za.co.woolworths.financial.services.android.util.WFormatter
 import kotlin.math.roundToInt
 
 class TransactionItemViewHolder(parent: ViewGroup) : WParentItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.transaction_list_child_item, parent, false)) {
@@ -28,7 +28,7 @@ class TransactionItemViewHolder(parent: ViewGroup) : WParentItemViewHolder(Layou
         val amount = transactionAmount.roundToInt()
         val formattedAmount: String
         //Convert amount to +ve
-        formattedAmount = if (amount < 0) WFormatter.formatAmount(-amount) else WFormatter.formatAmount(amount)
+        formattedAmount = if (amount < 0) CurrencyFormatter.formatAmountToRandAndCentWithSpace(-amount) else CurrencyFormatter.formatAmountToRandAndCentWithSpace(amount)
         return if (transactionAmount < 0) formattedAmount.replace("R", "R-") else formattedAmount
     }
 
