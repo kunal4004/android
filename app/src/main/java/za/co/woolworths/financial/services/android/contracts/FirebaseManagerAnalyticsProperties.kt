@@ -34,6 +34,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSPERSONALLOANINCREASE: String = "myaccounts_pl_increase"
         const val MYACCOUNTSPERSONALLOANMORE: String = "myaccounts_pl_more"
         const val MYACCOUNTSSTORECARDTRANSACTIONS: String = "myaccounts_sc_transactions"
+        const val MYACCOUNTSCREDITCARDTRANSACTIONS: String = "myaccounts_cc_transactions"
         const val MYACCOUNTSSTORECARDSTATEMENTS: String = "myaccounts_sc_statements"
         const val MYACCOUNTSPERSONALLOANTRANSACTIONS: String = "myaccounts_pl_transactions"
         const val MYACCOUNTSPERSONALLOANSTATEMENTS: String = "myaccounts_pl_statements"
