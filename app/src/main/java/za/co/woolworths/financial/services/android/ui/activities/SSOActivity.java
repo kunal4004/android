@@ -464,6 +464,7 @@ public class SSOActivity extends WebViewActivity {
 			if (isNavigatingToRedirectURL(url)) {
 				//get state and scope from webview posted form
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
+					KotlinUtils.setUserPropertiesToNull();
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 

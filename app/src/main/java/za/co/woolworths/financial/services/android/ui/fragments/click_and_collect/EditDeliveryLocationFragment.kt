@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
+import android.content.Context.MODE_PRIVATE
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,6 +38,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     companion object {
         const val SUBURB_SELECTOR_REQUEST_CODE = "1717"
         const val PROVINCE_SELECTOR_REQUEST_CODE = "1818"
+        const val SUBURB_LIST = "SuburbList"
+        const val SHARED_PREFS = "sharedPrefs"
     }
 
     var navController: NavController? = null
@@ -465,12 +468,21 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun navigateToSuburbSelection(suburbs: List<Suburb>) {
-        bundle = Bundle()
-        bundle?.apply {
-            putString("SuburbList", Utils.toJson(suburbs))
-            putSerializable("deliveryType", deliveryType)
+        activity?.let {
+
+            // TODO:: WOP-9342 - Handle Transaction too large exception android nougat
+            //  and remove share preference temp fix
+            val sharedPreferences = it.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+            val editor = sharedPreferences?.edit()
+            editor?.putString(SUBURB_LIST, Utils.toJson(suburbs))
+            editor?.apply()
+            bundle = Bundle()
+            bundle?.apply {
+                putString("SuburbList", Utils.toJson(suburbs))
+                putSerializable("deliveryType", deliveryType)
+            }
+            navController?.navigate(R.id.action_to_suburbSelectorFragment, bundleOf("bundle" to bundle))
         }
-        navController?.navigate(R.id.action_to_suburbSelectorFragment, bundleOf("bundle" to bundle))
     }
 
     override fun navigateToProvinceSelection(regions: List<Province>) {
@@ -480,4 +492,5 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         }
         navController?.navigate(R.id.action_to_provinceSelectorFragment, bundleOf("bundle" to bundle))
     }
+
 }
