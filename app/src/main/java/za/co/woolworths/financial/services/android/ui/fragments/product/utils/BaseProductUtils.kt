@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 open class BaseProductUtils {
@@ -29,12 +30,12 @@ open class BaseProductUtils {
 
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
-                    tvPrice.text = if (price!!.isEmpty()) WFormatter.formatAmount(wasPrice) else getMassPrice(price, priceType, kilogramPrice)
+                    tvPrice.text = if (price!!.isEmpty())CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice) else getMassPrice(price, priceType, kilogramPrice)
                     tvPrice.setTextColor(android.graphics.Color.BLACK)
                     tvWasPrice.text = ""
                     tvWasPrice.visibility = GONE
                 } else {
-                    tvPrice.text = WFormatter.formatAmount(price)
+                    tvPrice.text =CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                     tvPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
                     tvWasPrice.text = wasPrice?.let { getMassPrice(it, priceType, kilogramPrice) }
                     tvWasPrice.paintFlags = tvWasPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -51,15 +52,15 @@ open class BaseProductUtils {
             return with(priceType) {
                 when {
                     isNullOrEmpty() -> {
-                        WFormatter.formatAmount(price)
+                       CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                     }
                     this!!.contains("from", true) -> {
-                        WFormatter.formatAmount(price)
+                       CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                     }
                     this.contains("Kilogram", true) -> {
-                        WFormatter.formatAmount(price) + " (" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
+                       CurrencyFormatter.formatAmountToRandAndCentWithSpace(price) + " (" +CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice) + "/kg)"
                     }
-                    else -> WFormatter.formatAmount(price)
+                    else ->CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                 }
             }
         }

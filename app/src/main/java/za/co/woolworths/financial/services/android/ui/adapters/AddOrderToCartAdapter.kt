@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
 import za.co.woolworths.financial.services.android.models.dto.OrderHistoryCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -47,7 +48,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             setProductImage(itemView.cartProductImage, item.commerceItemInfo.externalImageURL)
             itemView.tvTitle.text = item.commerceItemInfo.productDisplayName
             itemView.tvQuantity.text = item.userQuantity.toString()
-            itemView.tvPrice.text = WFormatter.formatAmount(item.priceInfo.amount)
+            itemView.tvPrice.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
             itemView.selector.isChecked = item.isSelected
 
             // Set Color and Size START

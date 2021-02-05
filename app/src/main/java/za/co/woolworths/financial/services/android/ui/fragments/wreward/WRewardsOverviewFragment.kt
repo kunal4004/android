@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.util.Utils.triggerFireBaseEve
 
 class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
-    private val TAGREWARD: String? = WRewardsOverviewFragment::class.java.simpleName
+    private val TAGREWARD: String = WRewardsOverviewFragment::class.java.simpleName
     private var mIsBackVisible: Boolean = false
     private var mSetLeftIn: AnimatorSet? = null
     private var mSetRightOut: AnimatorSet? = null
@@ -114,14 +114,14 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         overviewLayout.visibility = VISIBLE
         noTireHistory.visibility = GONE
         currentStatus = tireInfo.currentTier
-        savings.setText(WFormatter.formatAmount(tireInfo.earned))
+        savings.setText(CurrencyFormatter.formatAmountToRandAndCentWithSpace(tireInfo.earned))
         flipCardFrontLayout.setOnClickListener(this)
         flipCardBackLayout.setOnClickListener(this)
         currentStatus?.let {
             if (!it.contains(tireStatusVIP, true)) {
                 toNextTireLayout.visibility = VISIBLE
                 vipLogo.visibility = GONE
-                toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
+                toNextTire.setText(CurrencyFormatter.formatAmountToRandAndCentWithSpace(tireInfo.toSpend))
             }
         }
         loadPromotionsAPI()
