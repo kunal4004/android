@@ -447,8 +447,8 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 stopCardActivationShimmer()
                 creditCardActivationView.visibility = VISIBLE
                 activateCreditCard.visibility = VISIBLE
-                KotlinUtils.roundCornerDrawable(creditCardStatus, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
-                creditCardStatus.text = status.value
+                KotlinUtils.roundCornerDrawable(creditCardStatusTextView, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
+                creditCardStatusTextView.text = status.value
             }
         }
     }
@@ -505,13 +505,24 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
-        with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
-            when {
-                isNullOrEmpty() -> onGetCreditCardDeliveryStatusFailure()
-                else -> {
-                    creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+            with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
+                when {
+                    isNullOrEmpty() -> {
+                        when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
+                            CARD_NOT_RECEIVED -> {
+                                with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus){
+                                    displayColour = "#bad110"
+                                    displayTitle = CreditCardActivationState.AVAILABLE.value
+                                }
+                                showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
+                            }
+                            else -> onGetCreditCardDeliveryStatusFailure()
+                        }
+                    }
+                    else -> {
+                        creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                    }
                 }
-            }
         }
     }
 
@@ -545,12 +556,12 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
         deliveryStatus.apply {
             if (!statusDescription.isNullOrEmpty() && !displayColour.isNullOrEmpty()) {
-                KotlinUtils.roundCornerDrawable(creditCardStatus, displayColour)
-                creditCardStatus.text = displayTitle
+                KotlinUtils.roundCornerDrawable(creditCardStatusTextView, displayColour)
+                creditCardStatusTextView.text = displayTitle
             } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(CARD_DELIVERED.name) == true)) {
-                KotlinUtils.roundCornerDrawable(creditCardStatus, "#bad110")
-                creditCardStatus.text = bindString(R.string.activate)
-            } else creditCardStatus.visibility = INVISIBLE
+                KotlinUtils.roundCornerDrawable(creditCardStatusTextView, "#bad110")
+                creditCardStatusTextView.text = bindString(R.string.activate)
+            } else creditCardStatusTextView.visibility = INVISIBLE
         }
     }
 
