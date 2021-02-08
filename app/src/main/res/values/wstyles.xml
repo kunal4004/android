@@ -49,6 +49,8 @@
         <item name="android:maxLength">10</item>
         <item name="android:minWidth">1dp</item>
         <item name="WEditTextView_font">medium_bold</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+        <item name="currencySymbol">" "</item>
         <item name="android:textCursorDrawable">@drawable/cursor_custom_color</item>
     </style>
 
