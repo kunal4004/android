@@ -62,8 +62,7 @@
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMortgagePayments"
-                        style="@style/editCurrencyValue"
-                        app:currencySymbol="R" />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -86,8 +85,7 @@
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etRentalPayments"
-                        style="@style/editCurrencyValue"
-                        app:currencySymbol="R" />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -110,8 +108,7 @@
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMaintainanceExpenses"
-                        style="@style/editCurrencyValue"
-                        app:currencySymbol="R" />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -134,8 +131,7 @@
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMonthlyCreditPayments"
-                        style="@style/editCurrencyValue"
-                        app:currencySymbol="R" />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -158,8 +154,7 @@
 
                     <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etOtherExpenses"
-                        style="@style/editCurrencyValue"
-                        app:currencySymbol="R" />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
