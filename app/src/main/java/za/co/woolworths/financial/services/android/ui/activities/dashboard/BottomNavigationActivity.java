@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.text.TextUtilsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -307,7 +308,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
         removeToolbar();
-        if (appLinkData != null && mBundle != null) {
+        if (mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString()) && mBundle != null) {
             String deepLinkType = mBundle.get("feature").toString();
 
             switch (deepLinkType) {
