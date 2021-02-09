@@ -308,7 +308,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
         removeToolbar();
-        if (mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString()) && mBundle != null) {
+        if (mBundle != null && mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString())) {
             String deepLinkType = mBundle.get("feature").toString();
 
             switch (deepLinkType) {
