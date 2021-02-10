@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.protobuf.Any;
 
 import java.util.HashMap;
 
@@ -229,10 +231,9 @@ public class ScreenManager {
 	}
 
 
-	public static void presentMain(Activity activity, Uri data) {
-
+	public static void presentMain(Activity activity, Bundle data) {
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
-		intent.setData(data);
+		intent.putExtras(data);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 		activity.finish();
