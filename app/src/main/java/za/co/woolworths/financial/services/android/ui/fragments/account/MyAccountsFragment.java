@@ -34,6 +34,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.awfs.coordination.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -173,6 +174,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private FloatingActionButton chatWithAgentFloatingButton;
     private RelativeLayout creditReportView;
     RelativeLayout contactUs;
+    private JsonObject deepLinkParams;
     AccountCardDetailPresenterImpl mCardPresenterImpl = null;
     ISetUpDeliveryNowLIstner mSetUpDeliveryListner = null;
 
@@ -324,6 +326,81 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
 
         uniqueIdentifiersForAccount();
+
+        parseDeepLinkData();
+    }
+
+    private void validateDeepLinkData() {
+        if (deepLinkParams == null || deepLinkParams.get("productGroupCode") == null || !SessionUtilities.getInstance().isUserAuthenticated()) {
+            return;
+        }
+        String productGroupCode = deepLinkParams.get("productGroupCode").getAsString();
+        AccountsProductGroupCode groupCode = AccountsProductGroupCode.Companion.getEnum(productGroupCode);
+        if (groupCode == null) {
+            return;
+        }
+        switch (groupCode) {
+            case STORE_CARD:
+                navigateToStoreCard();
+                break;
+            case CREDIT_CARD:
+                navigateToCreditCard();
+                break;
+            case PERSONAL_LOAN:
+                navigateToPersonalLoan();
+                break;
+        }
+        setArguments(null);
+        deepLinkParams = null;
+    }
+
+    private void navigateToPersonalLoan() {
+        if (applyPersonalCardView.getVisibility() != View.VISIBLE) {
+            redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
+        } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
+            redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
+        }
+    }
+
+    private void navigateToCreditCard() {
+        if (applyCreditCardView.getVisibility() != View.VISIBLE) {
+            redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
+        } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
+            if (mCreditCardAccount == null) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
+                return;
+            }
+            if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.SILVER_CREDIT_CARD);
+            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
+            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
+            }
+        }
+    }
+
+    private void navigateToStoreCard() {
+        if (applyStoreCardView.getVisibility() != View.VISIBLE) {
+            redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
+        } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
+            redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD);
+        }
+    }
+
+    private void parseDeepLinkData() {
+        Bundle deepLinkData = getArguments();
+        if (deepLinkData == null) {
+            return;
+        }
+        String data = deepLinkData.getString("parameters", "").replace("\\", "");
+        if (TextUtils.isEmpty(data)) {
+            return;
+        }
+        deepLinkParams = new Gson().fromJson(data, JsonObject.class);
     }
 
     private void hideToolbar() {
@@ -821,6 +898,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                             isAccountsCallMade = true;
                             configureView();
+                            validateDeepLinkData();
 
                             showInAppChat(activity);
 
