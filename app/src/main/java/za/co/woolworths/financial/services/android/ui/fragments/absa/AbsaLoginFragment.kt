@@ -55,11 +55,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        arguments?.apply {
-            if (containsKey("creditCardToken")) {
-                mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
-            }
-        }
         (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -71,6 +66,13 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     private fun initViewsAndEvents() {
+
+        arguments?.apply {
+            if (containsKey("creditCardToken")) {
+                mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
+            }
+        }
+
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPasscode.setOnClickListener {
@@ -155,6 +157,9 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
             }
         }
 
+        //Clearing up sensitive info.
+        mCreditCardNumber = "";
+        clearPin()
     }
 
     private fun failureHandler(message: String?) {
@@ -163,7 +168,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         when {
             message?.trim()?.contains("authentication failed", true)!! -> {
                 ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
-                clearPin()
             }
             message.trim().contains("credential revoked", true) -> {
                 showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
@@ -172,6 +176,10 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                 showErrorScreen(ErrorHandlerActivity.COMMON, message)
             }
         }
+
+        //Clearing up sensitive info.
+        mCreditCardNumber = "";
+        clearPin()
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.account_details_bottom_sheet_overlay.*
+
 import kotlinx.android.synthetic.main.account_sales_card_benefit_layout.*
 import kotlinx.android.synthetic.main.account_sales_card_collection_layout.*
 import kotlinx.android.synthetic.main.account_sales_detail_fragment.*
@@ -63,7 +63,6 @@ class AccountSalesFragment : Fragment() {
                 ViewCompat.setNestedScrollingEnabled(this, isCreditCardProduct == true)
             }
         }
-
 
         accountSales?.apply {
             displayCardBenefits(cardBenefit)
