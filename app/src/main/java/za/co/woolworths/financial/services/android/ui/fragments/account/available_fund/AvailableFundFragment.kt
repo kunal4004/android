@@ -362,7 +362,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 val deepLinkingObject = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.getDeepLinkData()
                 when (deepLinkingObject?.get("feature")?.asString) {
                     DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
-                        incViewStatementButton.performClick()
+                        incViewStatementButton?.performClick()
                     }
                 }
             }
