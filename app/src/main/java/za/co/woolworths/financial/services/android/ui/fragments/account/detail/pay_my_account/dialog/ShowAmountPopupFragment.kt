@@ -33,6 +33,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     private var navController: NavController? = null
     private val changeCardLabel = bindString(R.string.change_label)
     private val addCardLabel = bindString(R.string.add_card_label)
+    
+    companion object {
+        const val ONE_RAND = "R1.00"
+    }
 
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -64,17 +68,25 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 // Update amount entered
                 pmaAmountEnteredTextView?.text = updateAmountEntered(card?.amountEntered)
 
+                //WOP-9291 - Prevent user from paying amount less than R 1. For
+                // this user it has overdue amount as R0.34 so it will populate R1.00 as default amount to pay
+                pmaAmountEnteredTextView?.text = if (card?.amountEntered?.contains("R") != true && card?.amountEntered?.toDouble() ?: 0.0 in 0.01..0.99) {
+                    getCardDetail()?.amountEntered = ONE_RAND
+                    updateAmountEntered(ONE_RAND)
+                } else {
+                    updateAmountEntered(card?.amountEntered)
+                }
                 // Enable/Disable confirm payment button
                 pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
 
                 //Disable change button when amount is R0.00
                 when (isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())) {
                     true -> {
-                        changeTextView?.alpha= 1.0f
+                        changeTextView?.alpha = 1.0f
                         changeTextView?.isEnabled = true
                     }
                     false -> {
-                        changeTextView?.alpha= 0.3f
+                        changeTextView?.alpha = 0.3f
                         changeTextView?.isEnabled = false
                     }
                 }

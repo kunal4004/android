@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/default_background"
     android:clickable="true"
     android:focusableInTouchMode="true">
@@ -60,10 +60,9 @@
                         android:id="@+id/tvMortgagePayments"
                         style="@style/editCurrencyStyle"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                    <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMortgagePayments"
-                        style="@style/editCurrencyValue"
-                        />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -84,10 +83,9 @@
                         android:id="@+id/tvRentalPayments"
                         style="@style/editCurrencyStyle"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                    <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etRentalPayments"
-                        style="@style/editCurrencyValue"
-                        />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -108,10 +106,9 @@
                         android:id="@+id/tvMaintainanceExpenses"
                         style="@style/editCurrencyStyle"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                    <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMaintainanceExpenses"
-                        style="@style/editCurrencyValue"
-                        />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -132,10 +129,9 @@
                         android:id="@+id/tvMonthlyCreditPayments"
                         style="@style/editCurrencyStyle"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                    <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etMonthlyCreditPayments"
-                        style="@style/editCurrencyValue"
-                        />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -156,10 +152,9 @@
                         android:id="@+id/tvOtherExpenses"
                         style="@style/editCurrencyStyle"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                    <za.co.woolworths.financial.services.android.util.CurrencyEditText
                         android:id="@+id/etOtherExpenses"
-                        style="@style/editCurrencyValue"
-                        />
+                        style="@style/editCurrencyValue" />
                 </LinearLayout>
 
             </LinearLayout>
