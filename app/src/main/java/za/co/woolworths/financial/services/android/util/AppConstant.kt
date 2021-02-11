@@ -32,6 +32,8 @@ class AppConstant {
         const val DP_LINKING_PRODUCT_LISTING = "Product Listing"
         const val DP_LINKING_MY_ACCOUNTS = "Accounts Landing"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT = "Accounts Product"
+        const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
