@@ -1918,7 +1918,7 @@
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
     <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>
     <!-- Credit Report Transunion -->
-    <string name="credit_report_title_tu">CREDIT REPORT</string>
+    <string name="credit_report_title_tu">FREE CREDIT REPORT</string>
     <string name="register_or_login_now">REGISTER OR LOG IN NOW</string>
     <string name="access_your_full_credit_report">Access your full credit report</string>
     <string name="view_your_credit_overview_and_history">View your credit overview and history</string>
@@ -1928,9 +1928,9 @@
     <string name="privacy_policy_note_1">You can view the\u0020</string>
     <string name="privacy_policy_note_2">Privacy Policy</string>
     <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
-    <string name="credit_report_title_details">Register with TransUnion to\nCheck Your Credit Score and Stay Credit Healthy.</string>
-    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, please register an account using your\npersonal information.\n\n
-Your credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile. </string>
+    <string name="credit_report_title_details">Create a Free TransUnion \nProfile to Access Your \nFree Credit Score.</string>
+    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, you’ll need to create a profile using your personal information.
+        \n\nYour credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile.  </string>
     <string name="please_note_title">Please Note</string>
     <string name="bullet_point_unicode">\u2022</string>
     <string name="save_card_product_label">Product:</string>
