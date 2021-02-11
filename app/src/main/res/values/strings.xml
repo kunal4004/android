@@ -153,12 +153,12 @@
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your\naccount in 48 hours</string>
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
-    <string name="loan_withdrawal_popup_low_error">Loan request too low</string>
+    <string name="loan_withdrawal_popup_low_error">Withdrawal Amount Too Low</string>
 
-    <string name="loan_request_low_desc">Please enter an amount greater\nor equal to R1 000.00</string>
+    <string name="loan_request_low_desc">Please enter an amount greater\nthan R1000.</string>
 
-    <string name="loan_request_high">Loan request too high</string>
-    <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+    <string name="loan_request_high">Withdrawal Amount Too High</string>
+    <string name="loan_request_high_desc">Please request an amount lower than %s to withdraw.</string>
 
     <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>

@@ -288,7 +288,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
             }, IssueLoanResponse::class.java))
 
         } else {
-            activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "") }
+            activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, getAvailableFundWithoutCent().toString()) }
         }
     }
 

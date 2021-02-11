@@ -262,7 +262,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView wTextTitle = findViewById(R.id.title);
                 WTextView wTextProofIncome = findViewById(R.id.textProofIncome);
                 wTextTitle.setText(getString(R.string.loan_request_high));
-                wTextProofIncome.setText(getString(R.string.loan_request_high_desc));
+                wTextProofIncome.setText(getString(R.string.loan_request_high_desc, description));
                 mHighLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
@@ -287,9 +287,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView mTextDesc = findViewById(R.id.textProofIncome);
                 mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
                 mTextDesc.setText(getString(R.string.loan_request_low_desc));
-                if (description != null && TextUtils.isEmpty(description)) {
+                if (description != null && !TextUtils.isEmpty(description)) {
                     mTextDesc.setText(getString(R.string.loan_request_low_desc).replace
-                            ("R1 500.00", CurrencyFormatter.Companion.formatAmountToRandAndCentNoSpace(description)));
+                            ("R1000", CurrencyFormatter.Companion.formatAmountToRandAndCentNoSpace(description)));
                 }
                 mLowLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
