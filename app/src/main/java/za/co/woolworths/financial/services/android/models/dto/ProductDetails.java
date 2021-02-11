@@ -93,5 +93,8 @@ public class ProductDetails {
 	@SerializedName("brandText")
 	@Expose
 	public String brandText;
+	@SerializedName("sizeGuideId")
+	@Expose
+	public String sizeGuideId;
 
 }

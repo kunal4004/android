@@ -1973,4 +1973,5 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="dash_banner_location_perms_subtitle">We use location services to show you \nstock at your nearest store, and \ndelivery slots in your area.</string>
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
+    <string name="size_guide">Size Guide</string>
 </resources>
