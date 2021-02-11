@@ -23,6 +23,7 @@
                 android:background="@color/black"
                 android:elevation="@dimen/five_dp"
                 android:fontFamily="@font/futura_semi_bold"
+                app:WTextView_font="medium_bold"
                 android:gravity="center"
                 android:letterSpacing="0.2"
                 android:paddingStart="@dimen/twenty_six_dp"
