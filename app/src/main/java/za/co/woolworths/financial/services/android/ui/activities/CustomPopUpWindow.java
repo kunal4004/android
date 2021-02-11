@@ -98,7 +98,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
         HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, BARCODE_ERROR,
         SHOPPING_LIST_INFO, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
         CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-        STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO
+        STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO,
+        NOT_AVAILABLE_LOAN_AMOUNT
     }
 
     MODAL_LAYOUT current_view;
@@ -287,11 +288,25 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView mTextDesc = findViewById(R.id.textProofIncome);
                 mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
                 mTextDesc.setText(getString(R.string.loan_request_low_desc));
-                if (description != null && !TextUtils.isEmpty(description)) {
+                if (description != null && TextUtils.isEmpty(description)) {
                     mTextDesc.setText(getString(R.string.loan_request_low_desc).replace
-                            ("R1000", CurrencyFormatter.Companion.formatAmountToRandAndCentNoSpace(description)));
+                            ("R1 500.00", CurrencyFormatter.Companion.formatAmountToRandAndCentNoSpace(description)));
                 }
                 mLowLoanAmount.setOnClickListener(this);
+                mRelPopContainer.setOnClickListener(this);
+                break;
+
+            case NOT_AVAILABLE_LOAN_AMOUNT:
+                setContentView(R.layout.error_title_desc_layout);
+                mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+                mRelPopContainer = findViewById(R.id.relPopContainer);
+                WButton mNotAvailableLoanAmount = findViewById(R.id.btnLoanHighOk);
+                WTextView wFundNotAvailableTitle = findViewById(R.id.title);
+                WTextView wFundNotAvailableDesc = findViewById(R.id.textProofIncome);
+                wFundNotAvailableTitle.setText(getString(R.string.loan_request_fund_not_available_title));
+                wFundNotAvailableDesc.setText(getString(R.string.loan_request_fund_not_available_desc));
+                mNotAvailableLoanAmount.setText(getString(R.string.got_it));
+                mNotAvailableLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
 
