@@ -66,8 +66,6 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val currentFragment = getCurrentFragment(position)
-                currentFragment?.smoothScrollToTop()
                 onTabStateChange(mBottomSheetBehaviorState)
             }
         })

@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/default_background"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -58,9 +59,10 @@
                             android:id="@+id/tvGrossMonthlyIncome"
                             style="@style/editCurrencyStyle" />
 
-                        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        <za.co.woolworths.financial.services.android.util.CurrencyEditText
                             android:id="@+id/etGrossMonthlyIncome"
-                            style="@style/editCurrencyValue" />
+                            style="@style/editCurrencyValue"
+                            />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -81,9 +83,10 @@
                             android:id="@+id/tvNetMonthlyIncome"
                             style="@style/editCurrencyStyle" />
 
-                        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        <za.co.woolworths.financial.services.android.util.CurrencyEditText
                             android:id="@+id/etNetMonthlyIncome"
-                            style="@style/editCurrencyValue" />
+                            style="@style/editCurrencyValue"
+                             />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -104,9 +107,11 @@
                             android:id="@+id/tvAdditionalMonthlyIncome"
                             style="@style/editCurrencyStyle" />
 
-                        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        <za.co.woolworths.financial.services.android.util.CurrencyEditText
                             android:id="@+id/etAdditionalMonthlyIncome"
-                            style="@style/editCurrencyValue" />
+                            style="@style/editCurrencyValue"
+                          />
+
                     </LinearLayout>
 
                 </LinearLayout>
