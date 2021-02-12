@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_credit_report_tu.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.adapters.CreditReportTUAdapter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.openBrowserWithUrl
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -44,6 +45,7 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
         }
+        KotlinUtils.setTransparentStatusBar(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
