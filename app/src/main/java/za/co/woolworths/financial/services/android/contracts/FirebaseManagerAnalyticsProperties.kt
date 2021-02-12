@@ -246,6 +246,15 @@ class FirebaseManagerAnalyticsProperties {
             const val activationConfirmed = "Confirm Credit Card Activation"
             const val PRODUCT_ID: String = "product_id"
 
+            const val TAPPED: String = "tapped"
+            const val PASSCODE: String = "passcode"
+            const val NETWORK: String = "network"
+            const val PIN: String = "pin"
+            const val TIMEOUT:String = "timeout"
+            const val UNDEFINED: String = "undefined"
+            const val FAILED: String = "failed"
+            const val SUCCESSFUL: String = "successful"
+
         }
     }
 

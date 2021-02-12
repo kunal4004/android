@@ -5,6 +5,7 @@ import android.text.TextUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -12,6 +13,9 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.ABSAStatementFirebaseEvent
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 
 class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.AvailableFundsView?, private var model: IAvailableFundsContract.AvailableFundsModel?) : IAvailableFundsContract.AvailableFundsPresenter, IGenericAPILoaderView<Any> {
 
@@ -40,7 +44,9 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
                 is CreditCardTokenResponse -> {
                     when (httpCode) {
                         200 -> handleUserCreditCardToken(this)
-                        440 -> this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) }
+                        440 -> {
+                           ABSAStatementFirebaseEvent.timeout()
+                            this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) } }
                         else -> mainView?.handleUnknownHttpResponse(this.response?.desc)
                     }
                     mainView?.hideABSAServiceGetUserCreditCardTokenProgressBar()

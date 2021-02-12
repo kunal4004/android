@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.ABSAStatementFirebaseEvent
 import za.co.woolworths.financial.services.android.util.*
 import java.net.HttpCookie
 import java.util.*
@@ -97,12 +98,13 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         AbsaGetArchivedStatementListRequest().make(header, accountNumber, object : AbsaBankingOpenApiResponse.ResponseDelegate<StatementListResponse> {
             override fun onSuccess(response: StatementListResponse?, cookies: MutableList<HttpCookie>?) {
                 if (response?.archivedStatementList != null)
-                    showStatementsList(response?.archivedStatementList)
+                    showStatementsList(response.archivedStatementList)
                 else
                     showErrorView()
             }
 
             override fun onFailure(errorMessage: String?) {
+               ABSAStatementFirebaseEvent.network()
                 showErrorView()
             }
 
@@ -135,7 +137,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     fun showStatementsList(archivedStatementList: ArrayList<ArchivedStatement>?) {
-
+        ABSAStatementFirebaseEvent.success()
         archivedStatementList?.let {
             if (it.size > 0) {
                 hideProgress()
