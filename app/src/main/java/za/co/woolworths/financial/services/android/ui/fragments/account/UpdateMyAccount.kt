@@ -11,7 +11,6 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.Products
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.MockOneAppService
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 
 class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, private val imRefreshAccount: ImageView?) {
@@ -48,9 +47,9 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
     fun accountUpdateActive() = (mRefreshAccountType !== RefreshAccountType.NONE)
 
     fun make(forceNetworkUpdate: Boolean, result: (HashMap<Products, Account?>?) -> Unit, failure: (Throwable?) -> Unit) {
-        val oneAppService = MockOneAppService
+        val oneAppService = OneAppService
         mAccountRequest = oneAppService.getAccounts()
-        MockOneAppService.forceNetworkUpdate = forceNetworkUpdate
+        OneAppService.forceNetworkUpdate = forceNetworkUpdate
         mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
             override fun onSuccess(accountsResponse: AccountsResponse?) {
                 if (accountsResponse != null) {
@@ -92,7 +91,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
 
     fun getAccountsByProductGroupCode(products: Products?, result: (AccountsResponse?) -> Unit, failure: (Throwable?) -> Unit) {
         val productOfferingId = products?.productOfferingId ?: 0
-        mAccountRequest = MockOneAppService.getAccountsByProductOfferingId(productOfferingId.toString())
+        mAccountRequest = OneAppService.getAccountsByProductOfferingId(productOfferingId.toString())
         mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
             override fun onSuccess(response: AccountsResponse?) {
                 AccountMasterCache.setAccountsProduct(products,response)
