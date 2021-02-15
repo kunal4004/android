@@ -263,6 +263,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView wTextTitle = findViewById(R.id.title);
                 WTextView wTextProofIncome = findViewById(R.id.textProofIncome);
                 wTextTitle.setText(getString(R.string.loan_request_high));
+//              Fix for https://wigroup2.atlassian.net/browse/WOP-9946
                 wTextTitle.setAllCaps(false);
                 wTextProofIncome.setText(getString(R.string.loan_request_high_desc, description));
                 mHighLoanAmount.setOnClickListener(this);
@@ -288,6 +289,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView mTextTitle = findViewById(R.id.title);
                 WTextView mTextDesc = findViewById(R.id.textProofIncome);
                 mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
+//              Fix for https://wigroup2.atlassian.net/browse/WOP-9946
                 mTextTitle.setAllCaps(false);
                 mTextDesc.setText(getString(R.string.loan_request_low_desc));
                 if (description != null && TextUtils.isEmpty(description)) {
@@ -306,6 +308,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView wFundNotAvailableTitle = findViewById(R.id.title);
                 WTextView wFundNotAvailableDesc = findViewById(R.id.textProofIncome);
                 wFundNotAvailableTitle.setText(getString(R.string.loan_request_fund_not_available_title));
+//              Fix for https://wigroup2.atlassian.net/browse/WOP-9946
                 wFundNotAvailableTitle.setAllCaps(false);
                 wFundNotAvailableDesc.setText(getString(R.string.loan_request_fund_not_available_desc));
                 mNotAvailableLoanAmount.setText(getString(R.string.got_it));
