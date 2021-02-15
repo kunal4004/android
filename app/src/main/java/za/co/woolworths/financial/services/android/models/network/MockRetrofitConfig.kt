@@ -33,7 +33,7 @@ abstract class MockRetrofitConfig : NetworkConfig() {
         }
 
         mApiInterface = Retrofit.Builder()
-                .baseUrl ("https://16f2157fcc82.ngrok.io/wfs/app/v4/")
+                .baseUrl ("https://ef39bb3c8db8.ngrok.io/wfs/app/v4/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(httpBuilder.build())
