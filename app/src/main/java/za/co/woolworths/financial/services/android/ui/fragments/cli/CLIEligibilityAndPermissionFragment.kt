@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cli_eligibility_and_permission_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease
+import za.co.woolworths.financial.services.android.models.dto.EligibilityQuestions
+import za.co.woolworths.financial.services.android.models.dto.Permissions
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.FragmentUtils
@@ -29,6 +33,21 @@ class CLIEligibilityAndPermissionFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val creditLimitIncrease: CreditLimitIncrease? = WoolworthsApplication.getInstance()?.creditLimitIncrease
+        val eligibilityQuestions: EligibilityQuestions? = creditLimitIncrease?.eligibilityQuestions
+        val permissions: Permissions? = creditLimitIncrease?.permissions
+
+        var eligibilityQuestionsDesc = ""
+        eligibilityQuestions?.description?.forEach {
+             it?.let { eligibilityQuestionsDesc += "• $it \n" }
+        }
+
+        eligibilityQuestion.text = eligibilityQuestions?.title
+        eligibilityQuestionDesc?.text = eligibilityQuestionsDesc
+        permissionsTitle?.text = permissions?.title
+        permissionsDesc?.text = permissions?.description
+
         eligibilityNo?.setOnClickListener(this)
         eligibilityYes?.setOnClickListener(this)
         permissionYes?.setOnClickListener(this)
