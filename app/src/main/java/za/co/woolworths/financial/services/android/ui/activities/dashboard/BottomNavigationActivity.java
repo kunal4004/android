@@ -66,6 +66,7 @@ import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksVi
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
@@ -137,6 +138,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int TIPS_AND_TRICKS_CTA_REQUEST_CODE = 3627;
 
     public final String TAG = this.getClass().getSimpleName();
+    public AccountMasterCache mAccountMasterCache = AccountMasterCache.INSTANCE;
     private PermissionUtils permissionUtils;
     private ArrayList<String> permissions;
     private BottomNavigationViewModel bottomNavigationViewModel;
