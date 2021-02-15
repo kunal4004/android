@@ -10,7 +10,7 @@ interface ProductSizeGuideContract {
         fun showProgressBar()
         fun hideProgressBar()
         fun onSizeGuideContentSuccess(sizeGuideHtmlContent: String?)
-        fun onSizeGuideContentFailed()
+        fun onSizeGuideContentFailed(errorMessage: String?)
         fun loadSizeGuideView(sizeGuideHtmlContent: String?)
         fun getSizeGuideContent()
     }

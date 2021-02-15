@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_prodcut_size_guide.*
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
+import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSizeGuideView {
+class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSizeGuideView, ErrorDialogFragment.IOnErrorDialogDismiss {
     private var sizeGuideId: String? = null
     var presenter: ProductSizeGuideContract.ProductSizeGuidePresenter? = null
 
@@ -53,10 +57,14 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
         loadSizeGuideView(sizeGuideHtmlContent)
     }
 
-    override fun onSizeGuideContentFailed() {
-
+    override fun onSizeGuideContentFailed(errorMessage: String?) {
+        hideProgressBar()
+        activity?.apply {
+            this@ProductSizeGuideFragment.childFragmentManager?.let { fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, errorMessage) }
+        }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun loadSizeGuideView(sizeGuideHtmlContent: String?) {
         sizeGuideContentWebView?.apply {
             settings?.javaScriptEnabled = true
@@ -64,5 +72,10 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
             visibility = View.VISIBLE
         }
         hideProgressBar()
+    }
+
+    override fun onErrorDialogDismiss() {
+        super.onErrorDialogDismiss()
+        activity?.onBackPressed()
     }
 }
