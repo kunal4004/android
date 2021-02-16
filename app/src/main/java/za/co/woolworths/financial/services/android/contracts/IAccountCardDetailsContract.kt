@@ -33,7 +33,7 @@ interface IAccountCardDetailsContract {
         fun navigateToLoanWithdrawalActivity()
         fun navigateToPaymentOptionActivity()
         fun navigateToPayMyAccountActivity()
-        fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse)
+        fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse){}
         fun onGetCreditCardTokenFailure()
         fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
         fun executeCreditCardTokenService()

@@ -139,7 +139,7 @@
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
     <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
-    <string name="cli_pop_confidential_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
+    <string name="cli_pop_confidential_desc">You will only be able to apply for a limit increase 6 months after this application has been concluded.\nYou will need to go through a credit and affordability assessment at the time.</string>
 
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
@@ -158,7 +158,7 @@
     <string name="loan_request_low_desc">Please enter an amount greater\nthan R1000.</string>
 
     <string name="loan_request_high">Withdrawal Amount Too High</string>
-    <string name="loan_request_high_desc">Please request an amount lower than %s to withdraw.</string>
+    <string name="loan_request_high_desc">Please request an amount lower than R%s to withdraw.</string>
 
     <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>

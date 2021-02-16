@@ -194,6 +194,10 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setCreditView(creditView)
             }
+
+            creditLimitIncrease?.apply {
+                WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
+            }
         }
     }
 
