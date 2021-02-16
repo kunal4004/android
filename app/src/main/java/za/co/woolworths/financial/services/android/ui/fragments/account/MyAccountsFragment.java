@@ -1374,6 +1374,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             //One time biometricsWalkthrough
             ScreenManager.presentBiometricWalkthrough(getActivity());
         } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+            Activity activity = getActivity();
+            if (activity == null)return;
+            setAccountResponse(activity, null);
             onSignOut();
             initialize();
         } else {
