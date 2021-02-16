@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.JsonObject
+import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -23,17 +25,20 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null
     private var mProductGroupCode: String? = null
-    var isAccountInArrearsState : Boolean = false
+    private var mDeepLinkingData: String? = null
+    var isAccountInArrearsState: Boolean = false
 
     companion object {
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
+        const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?>? {
         mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState
                 ?: ApplyNowState.STORE_CARD
         val accountResponseString = bundle?.getString(MY_ACCOUNT_RESPONSE, "")
+        mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
         return Pair(mApplyNowState, mAccountResponse)
     }
@@ -102,7 +107,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.blackCreditCard_title)
             ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.goldCreditCard_title)
             ApplyNowState.PERSONAL_LOAN -> resources?.getString(R.string.personal_loan)
-            else ->  ""
+            else -> ""
         }
     }
 
@@ -143,6 +148,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun chatWithCollectionAgent() {
         mainView?.chatToCollectionAgent(mApplyNowState, mAccountResponse?.accountList)
+    }
+
+    override fun getDeepLinkData(): JsonObject? {
+        return Gson().fromJson(mDeepLinkingData, JsonObject::class.java)
     }
 
     private fun getAccount(): Account? {

@@ -177,6 +177,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private JsonObject deepLinkParams;
     AccountCardDetailPresenterImpl mCardPresenterImpl = null;
     ISetUpDeliveryNowLIstner mSetUpDeliveryListner = null;
+    Bundle mDeepLinkData;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -392,15 +393,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void parseDeepLinkData() {
-        Bundle deepLinkData = getArguments();
-        if (deepLinkData == null) {
+        mDeepLinkData = getArguments();
+        if (mDeepLinkData == null) {
             return;
         }
-        String data = deepLinkData.getString("parameters", "").replace("\\", "");
+        String data = mDeepLinkData.getString("parameters", "").replace("\\", "");
         if (TextUtils.isEmpty(data)) {
             return;
         }
         deepLinkParams = new Gson().fromJson(data, JsonObject.class);
+
+        deepLinkParams.addProperty("feature", mDeepLinkData.getString("feature"));
     }
 
     private void hideToolbar() {
@@ -1335,6 +1338,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Intent intent = new Intent(activity, AccountSignedInActivity.class);
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
         intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
+        intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS,Utils.objectToJson(deepLinkParams));
         activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
@@ -1547,4 +1551,5 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void navigateToMyCardDetailActivity(@NotNull StoreCardsResponse storeCardResponse, boolean requestUnblockStoreCardCall) {
 
     }
+
 }
