@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
+import za.co.woolworths.financial.services.android.models.dto.account.Products;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
@@ -96,7 +97,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -105,12 +105,15 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
 public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener, IAccountCardDetailsContract.AccountCardDetailView {
@@ -143,7 +146,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private FrameLayout imgPersonalLoanCardContainer;
     private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
 
-    private final Map<String, Account> accounts;
     private final List<String> unavailableAccounts;
     private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
 
@@ -173,16 +175,29 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private View linkedAccountBottomDivider;
     private FloatingActionButton chatWithAgentFloatingButton;
     private RelativeLayout creditReportView;
+    private HashMap<Products, Account> mAccountsHashMap;
+
+
     RelativeLayout contactUs;
     private JsonObject deepLinkParams;
     AccountCardDetailPresenterImpl mCardPresenterImpl = null;
     ISetUpDeliveryNowLIstner mSetUpDeliveryListner = null;
     Bundle mDeepLinkData;
 
+    private TextView retryStoreCardTextView;
+    private ImageView retryStoreCardImageView;
+    private TextView retryCreditCardTextView;
+    private ImageView retryCreditCardImageView;
+    private TextView retryPersonalLoanTextView;
+    private ImageView retryPersonalLoanImageView;
+    private LinearLayout retryStoreCardLinearLayout;
+    private LinearLayout retryCreditCardLinearLayout;
+    private LinearLayout retryPersonalLoanLinearLayout;
+
     public MyAccountsFragment() {
         // Required empty public constructor
-        this.accounts = new HashMap<>();
         this.unavailableAccounts = new ArrayList<>();
+        this.mAccountsHashMap = new HashMap<>();
         this.mAccountResponse = null;
     }
 
@@ -263,6 +278,19 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
             creditReportView = view.findViewById(R.id.creditReport);
+
+            retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
+            retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
+
+            retryCreditCardTextView = view.findViewById(R.id.retryCreditCardTextView);
+            retryCreditCardImageView = view.findViewById(R.id.retryCreditCardImageView);
+
+            retryPersonalLoanImageView = view.findViewById(R.id.retryPersonalLoanImageView);
+            retryPersonalLoanTextView = view.findViewById(R.id.retryPersonalLoanTextView);
+
+            retryCreditCardLinearLayout = view.findViewById(R.id.retryCreditCardLinearLayout);
+            retryStoreCardLinearLayout = view.findViewById(R.id.retryStoreCardLinearLayout);
+            retryPersonalLoanLinearLayout = view.findViewById(R.id.retryPersonalLoanLinearLayout);
 
             openMessageActivity.setOnClickListener(this);
             contactUs.setOnClickListener(this);
@@ -416,7 +444,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void initialize() {
         this.mAccountResponse = null;
         this.hideAllLayers();
-        this.accounts.clear();
+        this.mAccountsHashMap.clear();
         this.unavailableAccounts.clear();
         this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),
                 AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
@@ -452,7 +480,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         if (getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() != null
                 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
-                && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
+                && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == HTTP_EXPECTATION_FAILED_502) {
             initialize();
         }
     }
@@ -467,44 +495,42 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void configureView() {
+        this.isAccountsCallMade = true;
+        this.unavailableAccounts.clear();
+        this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),
+                AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
         this.configureAndLayoutTopLayerView();
-
+        
         //show content for all available products
-        for (Map.Entry<String, Account> item : accounts.entrySet()) {
+        for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
             Account account = item.getValue();
-            switch (AccountsProductGroupCode.Companion.getEnum(account.productGroupCode)) {
+            Products products = item.getKey();
+            switch (AccountsProductGroupCode.Companion.getEnum(products.getProductGroupCode())) {
+
                 case STORE_CARD:
-                    linkedStoreCardView.setVisibility(View.VISIBLE);
-                    applyStoreCardView.setVisibility(View.GONE);
-                    imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
-                    sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+                    showStoreCardContent(account);
                     break;
+
                 case CREDIT_CARD:
-                    linkedCreditCardView.setVisibility(View.VISIBLE);
-                    applyCreditCardView.setVisibility(View.GONE);
-                    //Check with AccountNumber and change the image accordingly
-                    this.mCreditCardAccount = account;
-                    if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                        imgCreditCard.setBackgroundResource(R.drawable.small_5);
-                    } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                        imgCreditCard.setBackgroundResource(R.drawable.small_4);
-                    } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
-                        imgCreditCard.setBackgroundResource(R.drawable.small_3);
-                    }
-                    imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                    showCreditCardContent(account);
                     break;
+
                 case PERSONAL_LOAN:
-                    linkedPersonalCardView.setVisibility(View.VISIBLE);
-                    applyPersonalCardView.setVisibility(View.GONE);
-                    imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                    showPersonalLoanContent(account);
                     break;
             }
+        }
 
+        for (Map.Entry<Products, Account> products : mAccountsHashMap.entrySet()) {
+            Products product = products.getKey();
+            int indexOfUnavailableAccount = unavailableAccounts.indexOf(product.getProductGroupCode().toUpperCase());
+            if (indexOfUnavailableAccount > -1) {
+                try {
+                    unavailableAccounts.remove(indexOfUnavailableAccount);
+                } catch (Exception e) {
+                    FirebaseManager.Companion.logException(e);
+                }
+            }
         }
 
         //hide content for unavailable products
@@ -533,8 +559,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideView(linkedAccountsLayout);
         }
 
-        moveLinkedLayoutPosition();
-
         if (unavailableAccounts.size() == 0) {
             //all accounts are shown/linked
             applyNowAccountsLayout.setVisibility(View.GONE);
@@ -545,6 +569,76 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         allUserOptionsLayout.setVisibility(View.VISIBLE);
         showFeatureWalkthroughPrompts();
     }
+
+    private void showPersonalLoanContent(Account account) {
+        showView(linkedPersonalCardView);
+        hideView(applyPersonalCardView);
+        if (account == null) {
+            showView(retryPersonalLoanLinearLayout);
+            hideView(pl_available_funds);
+            hideView(imgPersonalLoanStatusIndicator);
+            linkedAccountsLayout.removeView(linkedPersonalCardView);
+            linkedAccountsLayout.addView(linkedPersonalCardView);
+            linkedAccountsLayout.removeView(linkedAccountBottomDivider);
+            linkedAccountsLayout.addView(linkedAccountBottomDivider);
+        } else {
+            showView(pl_available_funds);
+            hideView(retryPersonalLoanLinearLayout);
+            imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+            pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+        }
+    }
+
+    private void showCreditCardContent(Account account) {
+        showView(linkedCreditCardView);
+        hideView(applyCreditCardView);
+        if (account == null) {
+            hideView(imgCreditCardStatusIndicator);
+            hideView(cc_available_funds);
+            showView(retryCreditCardLinearLayout);
+            linkedAccountsLayout.removeView(linkedCreditCardView);
+            linkedAccountsLayout.addView(linkedCreditCardView);
+            linkedAccountsLayout.removeView(linkedAccountBottomDivider);
+            linkedAccountsLayout.addView(linkedAccountBottomDivider);
+        } else {
+            showView(cc_available_funds);
+            hideView(retryCreditCardLinearLayout);
+            //Check with AccountNumber and change the image accordingly
+            this.mCreditCardAccount = account;
+            if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                imgCreditCard.setBackgroundResource(R.drawable.small_5);
+            } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                imgCreditCard.setBackgroundResource(R.drawable.small_4);
+            } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                imgCreditCard.setBackgroundResource(R.drawable.small_3);
+            }
+            imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+            cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+        }
+    }
+
+    private void showStoreCardContent(Account account) {
+        showView(linkedStoreCardView);
+        hideView(applyStoreCardView);
+        if (account == null) {
+            showView(retryStoreCardLinearLayout);
+            hideView(sc_available_funds);
+            hideView(imgStoreCardStatusIndicator);
+            linkedAccountsLayout.removeView(linkedStoreCardView);
+            linkedAccountsLayout.addView(linkedStoreCardView);
+            linkedAccountsLayout.removeView(linkedAccountBottomDivider);
+            linkedAccountsLayout.addView(linkedAccountBottomDivider);
+        } else {
+            showView(sc_available_funds);
+            hideView(retryStoreCardLinearLayout);
+            imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+            sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+            sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+        }
+    }
+
 
     private void disableRefresh() {
         if (mUpdateMyAccount != null)
@@ -557,33 +651,63 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         this.configureAndLayoutTopLayerView();
 
         //show content for all available products
-        for (Map.Entry<String, Account> item : accounts.entrySet()) {
+        for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
+            Products product = item.getKey();
             Account account = item.getValue();
-            switch (AccountsProductGroupCode.Companion.getEnum(account.productGroupCode)) {
+            boolean isAccountValueNullOrEmpty = account == null;
+            switch (AccountsProductGroupCode.Companion.getEnum(product.getProductGroupCode())) {
                 case STORE_CARD:
                     linkedStoreCardView.setVisibility(View.VISIBLE);
                     applyStoreCardView.setVisibility(View.GONE);
-                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                    if (isAccountValueNullOrEmpty) {
+                        imgStoreCardStatusIndicator.setVisibility(View.GONE);
+                        sc_available_funds.setVisibility(View.GONE);
+                        retryStoreCardLinearLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        sc_available_funds.setVisibility(View.VISIBLE);
+                        retryStoreCardLinearLayout.setVisibility(View.GONE);
+                        imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                        sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                    }
                     break;
                 case CREDIT_CARD:
                     linkedCreditCardView.setVisibility(View.VISIBLE);
                     applyCreditCardView.setVisibility(View.GONE);
-                    //Check with AccountNumber and change the image accordingly
-                    if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                        imgCreditCard.setBackgroundResource(R.drawable.small_5);
-                    } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                        imgCreditCard.setBackgroundResource(R.drawable.small_4);
-                    } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
-                        imgCreditCard.setBackgroundResource(R.drawable.small_3);
+                    if (isAccountValueNullOrEmpty) {
+                        imgCreditCardStatusIndicator.setVisibility(View.GONE);
+                        cc_available_funds.setVisibility(View.GONE);
+                        retryCreditCardLinearLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        showView(cc_available_funds);
+                        hideView(retryCreditCardLinearLayout);
+                        //Check with AccountNumber and change the image accordingly
+                        this.mCreditCardAccount = account;
+                        if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                            imgCreditCard.setBackgroundResource(R.drawable.small_5);
+                        } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                            imgCreditCard.setBackgroundResource(R.drawable.small_4);
+                        } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                            imgCreditCard.setBackgroundResource(R.drawable.small_3);
+                        }
+                        imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                        cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     }
-
-                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
                     break;
                 case PERSONAL_LOAN:
                     showView(linkedPersonalCardView);
                     hideView(applyPersonalCardView);
 
-                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                    if (isAccountValueNullOrEmpty) {
+                        imgPersonalLoanStatusIndicator.setVisibility(View.GONE);
+                        pl_available_funds.setVisibility(View.GONE);
+                        retryPersonalLoanLinearLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        pl_available_funds.setVisibility(View.VISIBLE);
+                        retryPersonalLoanLinearLayout.setVisibility(View.GONE);
+                        imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                        pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+                        pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                    }
                     break;
             }
 
@@ -607,8 +731,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         }
 
-        moveLinkedLayoutPosition();
-
         if (unavailableAccounts.size() == 0) {
             //all accounts are shown/linked
             hideView(applyNowAccountsLayout);
@@ -621,35 +743,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         // prompts when user not linked
         isAccountsCallMade = true;
         showFeatureWalkthroughPrompts();
-    }
-
-    private void moveLinkedLayoutPosition() {
-        if (mAccountResponse != null &&
-                mAccountResponse.accountList != null &&
-                mAccountResponse.accountList.size() > 0 && isAdded()) {
-            List<Account> accountsList = mAccountResponse.accountList;
-            for (Account account : accountsList) {
-                switch (AccountsProductGroupCode.Companion.getEnum(account.productGroupCode)) {
-                    case PERSONAL_LOAN:
-                        linkedAccountsLayout.removeView(linkedPersonalCardView);
-                        linkedAccountsLayout.addView(linkedPersonalCardView);
-                        break;
-
-                    case STORE_CARD:
-                        linkedAccountsLayout.removeView(linkedStoreCardView);
-                        linkedAccountsLayout.addView(linkedStoreCardView);
-                        break;
-                    case CREDIT_CARD:
-                        linkedAccountsLayout.removeView(linkedCreditCardView);
-                        linkedAccountsLayout.addView(linkedCreditCardView);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            linkedAccountsLayout.removeView(linkedAccountBottomDivider);
-            linkedAccountsLayout.addView(linkedAccountBottomDivider);
-        }
     }
 
     private void showView(View view) {
@@ -759,13 +852,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.linkedStoreCard:
-                redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
+                navigateToLinkedStoreCard();
                 break;
             case R.id.linkedCrediCard:
-                redirectToAccountSignInActivity(getApplyNowState());
+                navigateToLinkedCreditCard();
                 break;
             case R.id.linkedPersonalLoan:
-                redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
+                navigateToLinkedPersonalLoan();
                 break;
             case R.id.contactUs:
                 if (activity instanceof BottomNavigationActivity) {
@@ -849,6 +942,172 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
+    private void navigateToLinkedStoreCard() {
+        Activity activity = getActivity();
+        if (activity == null)return;
+        if (retryStoreCardLinearLayout.getVisibility() == View.VISIBLE) {
+            if (new NetworkManager().isConnectedToNetwork(activity)) {
+                Products products = mUpdateMyAccount.getProductByProductGroupCode(AccountsProductGroupCode.STORE_CARD.getGroupCode());
+                hideView(retryStoreCardTextView);
+                mUpdateMyAccount.retryStoreCardAnimationOnTap(retryStoreCardImageView);
+                mUpdateMyAccount.getAccountsByProductGroupCode(products, accountsResponse -> {
+                    if (activity instanceof BottomNavigationActivity)
+                        showView(retryStoreCardTextView);
+                    mUpdateMyAccount.cancelRetryStoreCardAnimation();
+                    switch (accountsResponse.httpCode) {
+                        case HTTP_OK:
+                            if (accountsResponse.accountList != null && accountsResponse.accountList.size() > 0) {
+                                Account account = accountsResponse.accountList.get(0);
+                                mAccountResponse.accountList.add(account);
+                                setAccountResponse(activity, mAccountResponse);
+                                hideView(retryStoreCardLinearLayout);
+                                showStoreCardContent(account);
+                            }
+                            break;
+
+                        case HTTP_SESSION_TIMEOUT_440:
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
+                            onSessionExpired(activity);
+                            initialize();
+                            break;
+                        case HTTP_SESSION_TIMEOUT_400:
+                            showView(retryStoreCardTextView);
+                            mUpdateMyAccount.cancelAnimation();
+                            defaultErrorMessage(accountsResponse);
+                            break;
+                        default:
+                            break;
+                    }
+                    return null;
+                }, error -> {
+                    activity.runOnUiThread(() -> {
+                        showView(retryStoreCardTextView);
+                        mUpdateMyAccount.cancelRetryStoreCardAnimation();
+                    });
+                    return null;
+                });
+            } else {
+                mErrorHandlerView.showToast();
+            }
+        } else {
+            redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
+        }
+    }
+
+    private void navigateToLinkedPersonalLoan() {
+        Activity activity = getActivity();
+        if (activity == null)return;
+        if (retryPersonalLoanLinearLayout.getVisibility() == View.VISIBLE) {
+            if (new NetworkManager().isConnectedToNetwork(activity)) {
+                Products products = mUpdateMyAccount.getProductByProductGroupCode(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode());
+                hideView(retryPersonalLoanTextView);
+                mUpdateMyAccount.retryPersonalLoanAnimationOnTap(retryPersonalLoanImageView);
+                mUpdateMyAccount.getAccountsByProductGroupCode(products, accountsResponse -> {
+                    showView(retryPersonalLoanTextView);
+                    mUpdateMyAccount.cancelRetryPersonalLoanAnimation();
+                    switch (accountsResponse.httpCode) {
+                        case HTTP_OK:
+                            if (accountsResponse.accountList != null && accountsResponse.accountList.size() > 0) {
+                                Account account = accountsResponse.accountList.get(0);
+                                mAccountResponse.accountList.add(account);
+                                setAccountResponse(activity, mAccountResponse);
+                                hideView(retryPersonalLoanLinearLayout);
+                                showPersonalLoanContent(account);
+                            }
+                            break;
+
+                        case HTTP_SESSION_TIMEOUT_440:
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
+                            onSessionExpired(activity);
+                            initialize();
+                            break;
+                        case HTTP_SESSION_TIMEOUT_400:
+                            showView(retryPersonalLoanTextView);
+                            defaultErrorMessage(accountsResponse);
+                            break;
+                        default:
+                            break;
+                    }
+                    return null;
+                }, error -> {
+                    activity.runOnUiThread(() -> {
+                        showView(retryPersonalLoanTextView);
+                        mUpdateMyAccount.cancelRetryPersonalLoanAnimation();
+                    });
+                    return null;
+                });
+            } else {
+                mErrorHandlerView.showToast();
+            }
+        } else {
+            redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
+        }
+    }
+
+    private void navigateToLinkedCreditCard() {
+        Activity activity = getActivity();
+        if (activity == null)return;
+        if (retryCreditCardLinearLayout.getVisibility() == View.VISIBLE) {
+            if (new NetworkManager().isConnectedToNetwork(activity)) {
+                Products products = mUpdateMyAccount.getProductByProductGroupCode(AccountsProductGroupCode.CREDIT_CARD.getGroupCode());
+                hideView(retryCreditCardTextView);
+                mUpdateMyAccount.retryCreditCardAnimationOnTap(retryCreditCardImageView);
+                mUpdateMyAccount.getAccountsByProductGroupCode(products, accountsResponse -> {
+                    showView(retryCreditCardTextView);
+                    mUpdateMyAccount.cancelRetryCreditCardAnimation();
+                    switch (accountsResponse.httpCode) {
+                        case HTTP_OK:
+                            if (accountsResponse.accountList != null && accountsResponse.accountList.size() > 0) {
+                                Account account = accountsResponse.accountList.get(0);
+                                mAccountResponse.accountList.add(account);
+                                setAccountResponse(activity, mAccountResponse);
+                                hideView(retryCreditCardLinearLayout);
+                                showCreditCardContent(account);
+                            }
+                            break;
+
+                        case HTTP_SESSION_TIMEOUT_440:
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
+                            onSessionExpired(activity);
+                            initialize();
+                            break;
+
+                        case HTTP_SESSION_TIMEOUT_400:
+                            showView(retryCreditCardTextView);
+                            defaultErrorMessage(accountsResponse);
+                            break;
+                        default:
+                            break;
+                    }
+                    return null;
+                }, error -> {
+                    activity.runOnUiThread(() -> {
+                        showView(retryCreditCardTextView);
+                        mUpdateMyAccount.cancelRetryCreditCardAnimation();
+                    });
+                    return null;
+                });
+            } else {
+                mErrorHandlerView.showToast();
+            }
+        } else {
+            redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
+        }
+    }
+
+
+    private void defaultErrorMessage(AccountsResponse accountsResponse) {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null && activity.getSupportFragmentManager() !=null && accountsResponse != null && accountsResponse.response != null && !TextUtils.isEmpty(accountsResponse.response.desc)) {
+            try {
+                AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(accountsResponse.response.desc);
+                accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), AccountsErrorHandlerFragment.class.getSimpleName());
+            } catch (IllegalStateException ex) {
+                FirebaseManager.Companion.logException(ex);
+            }
+        }
+    }
+
     private ApplyNowState getApplyNowState() {
         ApplyNowState state = ApplyNowState.BLACK_CREDIT_CARD;
         if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
@@ -864,96 +1123,104 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void loadAccounts(boolean forceNetworkUpdate) {
         if (!SessionUtilities.getInstance().isC2User()) return;
         mErrorHandlerView.hideErrorHandlerLayout();
-        Activity activity = getActivity();
+        FragmentActivity activity = getActivity();
         if (activity != null)
             mScrollView.setBackgroundColor(ContextCompat.getColor(activity, R.color.recent_search_bg));
         if (forceNetworkUpdate)
             mUpdateMyAccount.swipeToRefreshAccount(true);
         else
             showProgressBar();
-        mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
-            @Override
-            public void onSuccess(AccountsResponse accountsResponse) {
-                FragmentActivity activity = getActivity();
-                if (activity == null) return;
+
+        mUpdateMyAccount.make(forceNetworkUpdate, accountsHashMap -> {
+            if (activity == null) return null;
+            mAccountResponse = mUpdateMyAccount.mAccountResponse;
+            switch (mAccountResponse.httpCode) {
+                case HTTP_EXPECTATION_FAILED_502:
+                case HTTP_OK:
+                    mAccountsHashMap = accountsHashMap;
+                    if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
+                        setAccountResponse(activity, mAccountResponse);
+                    } else {
+                        if (activity instanceof BottomNavigationActivity) {
+                            mAccountResponse = ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse();
+                            if (isAccountsCallMade)
+                                mAccountsHashMap = mUpdateMyAccount.getProductAccountHashMap(mAccountResponse);
+                        } else {
+                            if (MyAccountActivity.Companion.getMAccountMasterCache() != null && MyAccountActivity.Companion.getMAccountMasterCache().getAccountsResponse() != null) {
+                                mAccountResponse = MyAccountActivity.Companion.getMAccountMasterCache().getAccountsResponse();
+                                if (isAccountsCallMade)
+                                    mAccountsHashMap = mUpdateMyAccount.getProductAccountHashMap(mAccountResponse);
+                            }
+                        }
+                    }
+
+                    if (mAccountResponse == null) {
+                        mAccountResponse = mUpdateMyAccount.mAccountResponse;
+                    }
+                    configureView();
+                    // FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
+                    validateDeepLinkData();
+                    showInAppChat(activity);
+                    // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
+                    if (activity instanceof BottomNavigationActivity) {
+                        if (httpCode == 502 && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+                            if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)) {
+                                AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
+                                accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+                            }
+                        }
+                    }
+                    break;
+
+                case HTTP_SESSION_TIMEOUT_440:
+                    mUpdateMyAccount.swipeToRefreshAccount(false);
+                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mAccountResponse.response.stsParams);
+                    onSessionExpired(activity);
+                    initialize();
+                    break;
+
+                default:
+                    if (mAccountResponse.response != null) {
+                        configureView();
+                        mUpdateMyAccount.enableSwipeToRefreshAccount(true);
+                        mUpdateMyAccount.swipeToRefreshAccount(true);
+                        imRefreshAccount.setEnabled(true);
+                        Utils.alertErrorMessage(activity, mAccountResponse.response.desc);
+                    }
+                    break;
+            }
+
+            hideProgressBar();
+            mUpdateMyAccount.swipeToRefreshAccount(false);
+            return null;
+        }, error -> {
+            if (activity == null) return null;
+            activity.runOnUiThread(() -> {
                 try {
-                    httpCode = accountsResponse.httpCode;
-                    switch (httpCode) {
-                        case 502:
-                        case 200:
-                            mAccountResponse = accountsResponse;
-                            List<Account> accountList = accountsResponse.accountList;
-                            if (accountList == null) accountList = new ArrayList<>();
-                            for (Account p : accountList) {
-
-                                accounts.put(p.productGroupCode.toUpperCase(), p);
-                                int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
-                                if (indexOfUnavailableAccount > -1) {
-                                    try {
-                                        unavailableAccounts.remove(indexOfUnavailableAccount);
-                                    } catch (Exception e) {
-                                        Log.e("", e.getMessage());
-                                    }
-                                }
-                            }
-
-                            FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
-
-                            isAccountsCallMade = true;
-                            configureView();
-                            validateDeepLinkData();
-
-                            showInAppChat(activity);
-
-                            // # WOP-6284 - Show a retry button on accounts section when an error is returned from server
-                            if (activity instanceof BottomNavigationActivity) {
-                                if (httpCode == 502 && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-                                    if (mAccountResponse.response != null && !TextUtils.isEmpty(mAccountResponse.response.desc)) {
-                                        AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(mAccountResponse.response.desc);
-                                        accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-                                    }
-                                }
-                            }
-                            break;
-                        case 440:
-                            mUpdateMyAccount.swipeToRefreshAccount(false);
-                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
-                            onSessionExpired(activity);
-                            initialize();
-                            break;
-                        default:
-                            if (accountsResponse.response != null) {
-                                configureView();
-                                mUpdateMyAccount.enableSwipeToRefreshAccount(true);
-                                mUpdateMyAccount.swipeToRefreshAccount(true);
-                                imRefreshAccount.setEnabled(true);
-                                Utils.alertErrorMessage(activity, accountsResponse.response.desc);
-                            }
-                            break;
-                    }
-                } catch (Exception ex) {
-                    FirebaseManager.Companion.logException(ex);
+                    mUpdateMyAccount.swipeToRefreshAccount(false);
+                    hideProgressBar();
+                } catch (Exception ignored) {
                 }
-                hideProgressBar();
-                mUpdateMyAccount.swipeToRefreshAccount(false);
-            }
-
-            @Override
-            public void onFailure(Throwable error) {
-                Activity activity = getActivity();
-                if (activity == null) return;
-                activity.runOnUiThread(() -> {
-                    try {
-                        mUpdateMyAccount.swipeToRefreshAccount(false);
-                        hideProgressBar();
-                    } catch (Exception ignored) {
-                    }
-                    if (error != null)
-                        mErrorHandlerView.networkFailureHandler(error.getMessage());
-                });
-
-            }
+                if (error != null)
+                    mErrorHandlerView.networkFailureHandler(error.getMessage());
+            });
+            return null;
         });
+    }
+
+    private void setAccountResponse(Activity activity, AccountsResponse accountsResponse) {
+        AccountMasterCache masterCache;
+        if (activity instanceof BottomNavigationActivity) {
+            masterCache = ((BottomNavigationActivity) activity).mAccountMasterCache;
+        } else if (activity instanceof MyAccountActivity)
+            masterCache = MyAccountActivity.Companion.getMAccountMasterCache();
+        else {
+            masterCache = null;
+        }
+        if (masterCache != null) {
+            masterCache.resetAccountResponse();
+            masterCache.setAccountsResponse(accountsResponse);
+        }
     }
 
     @Override
@@ -1348,9 +1615,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (activity == null) return;
         Intent intent = new Intent(getActivity(), AccountSalesActivity.class);
         Bundle bundle = new Bundle();
-
         bundle.putSerializable("APPLY_NOW_STATE", applyNowState);
-        bundle.putString("ACCOUNT_INFO", new Gson().toJson(accounts));
+        HashMap<String, Account> accountHashMap = new HashMap<>();
+        for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
+            accountHashMap.put(item.getKey().getProductGroupCode(), item.getValue());
+        }
+        bundle.putString("ACCOUNT_INFO", new Gson().toJson(accountHashMap));
         intent.putExtras(bundle);
         startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
@@ -1482,10 +1752,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void onGetCreditCArdTokenSuccess(@NotNull CreditCardTokenResponse creditCardTokenResponse) {
-    }
-
-    @Override
     public void onGetCreditCardTokenFailure() {
     }
 
@@ -1549,6 +1815,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     @Override
     public void navigateToMyCardDetailActivity(@NotNull StoreCardsResponse storeCardResponse, boolean requestUnblockStoreCardCall) {
+
+    }
+
+    @Override
+    public void onGetCreditCArdTokenSuccess(@NotNull CreditCardTokenResponse creditCardTokenResponse) {
 
     }
 
