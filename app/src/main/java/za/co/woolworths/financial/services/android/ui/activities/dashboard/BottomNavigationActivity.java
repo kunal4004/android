@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.text.TextUtilsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -32,7 +30,6 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -100,7 +97,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
-import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
 
@@ -326,14 +322,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     }
                     break;
 
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS:
-
                     BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
                     new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
                     break;
+
             }
         }
+
     }
 
     @Override

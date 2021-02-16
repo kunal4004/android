@@ -35,6 +35,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         incViewStatementButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)
 
+        navigateToDeepLinkView()
     }
 
     override fun onClick(view: View?) {

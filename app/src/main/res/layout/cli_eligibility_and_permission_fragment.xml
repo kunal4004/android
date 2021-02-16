@@ -25,7 +25,8 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/cli_permission_title_text"
-                android:text="@string/cli_eligibility_check_title"
+                tools:text="@string/cli_eligibility_check_title"
+                android:id="@+id/eligibilityQuestion"
                 />
 
             <LinearLayout
@@ -38,7 +39,8 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/cli_permission_description_text"
-                    android:text="@string/cli_eligibility_check_description"
+                    tools:text="@string/cli_eligibility_check_description"
+                    android:id="@+id/eligibilityQuestionDesc"
                     />
 
                 <LinearLayout
@@ -85,7 +87,8 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/cli_permission_title_text"
-                android:text="@string/cli_permission_check_title"
+                tools:text="@string/cli_permission_check_title"
+                android:id="@+id/permissionsTitle"
                 />
 
             <LinearLayout
@@ -98,7 +101,8 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/cli_permission_description_text"
-                    android:text="@string/cli_permission_check_description"
+                    tools:text="@string/cli_permission_check_description"
+                    android:id="@+id/permissionsDesc"
                     />
 
                 <LinearLayout

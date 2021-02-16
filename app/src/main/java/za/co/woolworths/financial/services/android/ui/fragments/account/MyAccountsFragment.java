@@ -182,6 +182,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private JsonObject deepLinkParams;
     AccountCardDetailPresenterImpl mCardPresenterImpl = null;
     ISetUpDeliveryNowLIstner mSetUpDeliveryListner = null;
+    Bundle mDeepLinkData;
 
     private TextView retryStoreCardTextView;
     private ImageView retryStoreCardImageView;
@@ -420,15 +421,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void parseDeepLinkData() {
-        Bundle deepLinkData = getArguments();
-        if (deepLinkData == null) {
+        mDeepLinkData = getArguments();
+        if (mDeepLinkData == null) {
             return;
         }
-        String data = deepLinkData.getString("parameters", "").replace("\\", "");
+        String data = mDeepLinkData.getString("parameters", "").replace("\\", "");
         if (TextUtils.isEmpty(data)) {
             return;
         }
         deepLinkParams = new Gson().fromJson(data, JsonObject.class);
+
+        deepLinkParams.addProperty("feature", mDeepLinkData.getString("feature"));
     }
 
     private void hideToolbar() {
@@ -477,7 +480,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         if (getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() != null
                 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
-                && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == 502) {
+                && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == HTTP_EXPECTATION_FAILED_502) {
             initialize();
         }
     }
@@ -1135,7 +1138,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 case HTTP_EXPECTATION_FAILED_502:
                 case HTTP_OK:
                     mAccountsHashMap = accountsHashMap;
-                    if (forceNetworkUpdate) {
+                    if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {
                         if (activity instanceof BottomNavigationActivity) {
@@ -1602,6 +1605,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Intent intent = new Intent(activity, AccountSignedInActivity.class);
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
         intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
+        intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS,Utils.objectToJson(deepLinkParams));
         activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
@@ -1818,4 +1822,5 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void onGetCreditCArdTokenSuccess(@NotNull CreditCardTokenResponse creditCardTokenResponse) {
 
     }
+
 }

@@ -40,21 +40,21 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginEnd="@dimen/five_dp"
                     android:background="@drawable/small_2" />
 
                 <ImageView
                     android:id="@+id/storeCardStatusIndicator"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="@dimen/ten_dp"
+                    android:layout_height="@dimen/ten_dp"
                     android:layout_gravity="end"
                     android:background="@drawable/account_status_indicator" />
             </FrameLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
-                android:layout_marginStart="7dp"
+                android:layout_marginStart="@dimen/seven_dp"
                 android:layout_toEndOf="@+id/imgStoreCard"
                 android:contentDescription="@string/cd_store_card_text"
                 android:text="@string/store_card"
@@ -214,7 +214,7 @@
         <View
             android:id="@+id/linkedAccountBottomDivider"
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="@dimen/sixteen_dp"
             android:background="@android:color/transparent" />
 
     </LinearLayout>
