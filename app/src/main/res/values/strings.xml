@@ -158,7 +158,7 @@
     <string name="loan_request_low_desc">Please enter an amount greater\nthan R1000.</string>
 
     <string name="loan_request_high">Withdrawal Amount Too High</string>
-    <string name="loan_request_high_desc">Please request an amount lower than %s to withdraw.</string>
+    <string name="loan_request_high_desc">Please request an amount lower than R%s to withdraw.</string>
 
     <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
