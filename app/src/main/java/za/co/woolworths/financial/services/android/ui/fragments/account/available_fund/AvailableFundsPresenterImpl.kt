@@ -13,9 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.helper.ABSAStatementFirebaseEvent
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 
 class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.AvailableFundsView?, private var model: IAvailableFundsContract.AvailableFundsModel?) : IAvailableFundsContract.AvailableFundsPresenter, IGenericAPILoaderView<Any> {
 
@@ -45,7 +43,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
                     when (httpCode) {
                         200 -> handleUserCreditCardToken(this)
                         440 -> {
-                           ABSAStatementFirebaseEvent.timeout()
+                           FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                             this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) } }
                         else -> mainView?.handleUnknownHttpResponse(this.response?.desc)
                     }

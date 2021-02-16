@@ -249,6 +249,7 @@ class FirebaseManagerAnalyticsProperties {
             const val TAPPED: String = "tapped"
             const val PASSCODE: String = "passcode"
             const val NETWORK: String = "network"
+            const val OTHER_HTTP_CODE: String = "other http code"
             const val PIN: String = "pin"
             const val TIMEOUT:String = "timeout"
             const val UNDEFINED: String = "undefined"
