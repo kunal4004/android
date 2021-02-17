@@ -404,5 +404,10 @@ object OneAppService : RetrofitConfig() {
 
     fun getSizeGuideContent(contentId: String): Call<SizeGuideResponse> {
         return mApiInterface.getSizeGuideContent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), contentId)
+
+    }
+
+    fun getAccountsByProductOfferingId(productOfferingId: String): Call<AccountsResponse> {
+        return mApiInterface.getAccountsByProductOfferingId(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId)
     }
 }

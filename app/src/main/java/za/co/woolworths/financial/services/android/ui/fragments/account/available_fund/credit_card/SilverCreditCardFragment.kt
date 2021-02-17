@@ -24,6 +24,8 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)
+
+        navigateToDeepLinkView()
     }
 
     override fun onClick(view: View?) {

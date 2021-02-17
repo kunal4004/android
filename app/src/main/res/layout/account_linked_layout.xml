@@ -8,15 +8,15 @@
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment"/>
+            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment" />
 
         <variable
             name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel"/>
+            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel" />
     </data>
 
     <LinearLayout
@@ -40,25 +40,41 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="@dimen/five_dp"
+                    android:layout_marginEnd="@dimen/five_dp"
                     android:background="@drawable/small_2" />
 
                 <ImageView
                     android:id="@+id/storeCardStatusIndicator"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="@dimen/ten_dp"
+                    android:layout_height="@dimen/ten_dp"
                     android:layout_gravity="end"
                     android:background="@drawable/account_status_indicator" />
             </FrameLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
-                android:layout_marginStart="7dp"
+                android:layout_marginStart="@dimen/seven_dp"
                 android:layout_toEndOf="@+id/imgStoreCard"
-                android:text="@string/store_card"
                 android:contentDescription="@string/cd_store_card_text"
+                android:text="@string/store_card"
                 app:WTextView_font="medium" />
+
+            <LinearLayout
+                android:id="@+id/retryStoreCardLinearLayout"
+                style="@style/retryAccountLandingStyle">
+
+                <TextView
+                    android:id="@+id/retryStoreCardTextView"
+                    style="@style/retryAccountLandingTextViewStyle"
+                    android:text="@string/retry" />
+
+                <ImageView
+                    android:id="@+id/retryStoreCardImageView"
+                    style="@style/retryImageViewStyle"
+                    app:srcCompat="@drawable/refresh_account_drawable_icon" />
+
+            </LinearLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/sc_available_funds"
@@ -66,9 +82,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
+                android:contentDescription="@string/cd_store_card_available_funds_text"
                 android:textColor="@color/black_off"
                 android:textSize="@dimen/acc_thirteen_sp"
-                android:contentDescription="@string/cd_store_card_available_funds_text"
                 app:WTextView_font="medium_bold" />
         </RelativeLayout>
 
@@ -87,8 +103,8 @@
                     android:id="@+id/imgCreditCard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
                     android:background="@drawable/small_3" />
 
                 <ImageView
@@ -106,6 +122,22 @@
                 android:text="@string/credit_card"
                 android:textSize="@dimen/acc_thirteen_sp"
                 app:WTextView_font="medium" />
+
+            <LinearLayout
+                android:id="@+id/retryCreditCardLinearLayout"
+                style="@style/retryAccountLandingStyle">
+
+                <TextView
+                    android:id="@+id/retryCreditCardTextView"
+                    style="@style/retryAccountLandingTextViewStyle"
+                    android:text="@string/retry" />
+
+                <ImageView
+                    android:id="@+id/retryCreditCardImageView"
+                    style="@style/retryImageViewStyle"
+                    app:srcCompat="@drawable/refresh_account_drawable_icon" />
+
+            </LinearLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/cc_available_funds"
@@ -132,8 +164,8 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
                     android:background="@drawable/small" />
 
                 <ImageView
@@ -152,6 +184,22 @@
                 android:textSize="@dimen/acc_thirteen_sp"
                 app:WTextView_font="medium" />
 
+            <LinearLayout
+                android:id="@+id/retryPersonalLoanLinearLayout"
+                style="@style/retryAccountLandingStyle">
+
+                <TextView
+                    android:id="@+id/retryPersonalLoanTextView"
+                    style="@style/retryAccountLandingTextViewStyle"
+                    android:text="@string/retry" />
+
+                <ImageView
+                    android:id="@+id/retryPersonalLoanImageView"
+                    style="@style/retryImageViewStyle"
+                    app:srcCompat="@drawable/refresh_account_drawable_icon" />
+
+            </LinearLayout>
+
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/pl_available_funds"
                 android:layout_width="wrap_content"
@@ -166,7 +214,7 @@
         <View
             android:id="@+id/linkedAccountBottomDivider"
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="@dimen/sixteen_dp"
             android:background="@android:color/transparent" />
 
     </LinearLayout>

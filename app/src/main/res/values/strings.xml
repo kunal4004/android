@@ -139,7 +139,7 @@
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
     <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
-    <string name="cli_pop_confidential_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
+    <string name="cli_pop_confidential_desc">You will only be able to apply for a limit increase 6 months after this application has been concluded.\nYou will need to go through a credit and affordability assessment at the time.</string>
 
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
@@ -153,12 +153,12 @@
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your\naccount in 48 hours</string>
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
-    <string name="loan_withdrawal_popup_low_error">Loan request too low</string>
+    <string name="loan_withdrawal_popup_low_error">Withdrawal Amount Too Low</string>
 
-    <string name="loan_request_low_desc">Please enter an amount greater\nor equal to R1 000.00</string>
+    <string name="loan_request_low_desc">Please enter an amount greater\nthan R1000.</string>
 
-    <string name="loan_request_high">Loan request too high</string>
-    <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+    <string name="loan_request_high">Withdrawal Amount Too High</string>
+    <string name="loan_request_high_desc">Please request an amount lower than R%s to withdraw.</string>
 
     <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
@@ -1918,7 +1918,7 @@
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
     <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>
     <!-- Credit Report Transunion -->
-    <string name="credit_report_title_tu">CREDIT REPORT</string>
+    <string name="credit_report_title_tu">FREE CREDIT REPORT</string>
     <string name="register_or_login_now">REGISTER OR LOG IN NOW</string>
     <string name="access_your_full_credit_report">Access your full credit report</string>
     <string name="view_your_credit_overview_and_history">View your credit overview and history</string>
@@ -1928,9 +1928,9 @@
     <string name="privacy_policy_note_1">You can view the\u0020</string>
     <string name="privacy_policy_note_2">Privacy Policy</string>
     <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
-    <string name="credit_report_title_details">Register with TransUnion to\nCheck Your Credit Score and Stay Credit Healthy.</string>
-    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, please register an account using your\npersonal information.\n\n
-Your credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile. </string>
+    <string name="credit_report_title_details">Create a Free TransUnion \nProfile to Access Your \nFree Credit Score.</string>
+    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, you’ll need to create a profile using your personal information.
+        \n\nYour credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile.  </string>
     <string name="please_note_title">Please Note</string>
     <string name="bullet_point_unicode">\u2022</string>
     <string name="save_card_product_label">Product:</string>
@@ -1974,4 +1974,6 @@ Your credit score today is a snapshot reflecting how you have handled your credi
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="size_guide">Size Guide</string>
+    <string name="loan_request_fund_not_available_title">Funds Not Available</string>
+    <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
 </resources>

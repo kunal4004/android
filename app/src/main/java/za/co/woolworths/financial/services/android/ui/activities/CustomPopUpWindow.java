@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,7 +100,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
         HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, BARCODE_ERROR,
         SHOPPING_LIST_INFO, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
         CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-        STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO
+        STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO,
+        NOT_AVAILABLE_LOAN_AMOUNT
     }
 
     MODAL_LAYOUT current_view;
@@ -262,7 +265,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView wTextTitle = findViewById(R.id.title);
                 WTextView wTextProofIncome = findViewById(R.id.textProofIncome);
                 wTextTitle.setText(getString(R.string.loan_request_high));
-                wTextProofIncome.setText(getString(R.string.loan_request_high_desc));
+//              Fix for all letters are capitalized
+                wTextTitle.setAllCaps(false);
+                wTextProofIncome.setText(getString(R.string.loan_request_high_desc, description));
                 mHighLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
@@ -286,12 +291,30 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView mTextTitle = findViewById(R.id.title);
                 WTextView mTextDesc = findViewById(R.id.textProofIncome);
                 mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
+//              Fix for all letters are capitalized
+                mTextTitle.setAllCaps(false);
                 mTextDesc.setText(getString(R.string.loan_request_low_desc));
                 if (description != null && TextUtils.isEmpty(description)) {
                     mTextDesc.setText(getString(R.string.loan_request_low_desc).replace
                             ("R1 500.00", CurrencyFormatter.Companion.formatAmountToRandAndCentNoSpace(description)));
                 }
                 mLowLoanAmount.setOnClickListener(this);
+                mRelPopContainer.setOnClickListener(this);
+                break;
+
+            case NOT_AVAILABLE_LOAN_AMOUNT:
+                setContentView(R.layout.error_title_desc_layout);
+                mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+                mRelPopContainer = findViewById(R.id.relPopContainer);
+                WButton mNotAvailableLoanAmount = findViewById(R.id.btnLoanHighOk);
+                WTextView wFundNotAvailableTitle = findViewById(R.id.title);
+                WTextView wFundNotAvailableDesc = findViewById(R.id.textProofIncome);
+                wFundNotAvailableTitle.setText(getString(R.string.loan_request_fund_not_available_title));
+                // Fix for all letters are capitalized
+                wFundNotAvailableTitle.setAllCaps(false);
+                wFundNotAvailableDesc.setText(getString(R.string.loan_request_fund_not_available_desc));
+                mNotAvailableLoanAmount.setText(getString(R.string.got_it));
+                mNotAvailableLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
 
@@ -1042,7 +1065,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                     }
                 });
             }
-        },SendUserStatementResponse.class));
+        }, SendUserStatementResponse.class));
     }
 
     public void onLoad() {
