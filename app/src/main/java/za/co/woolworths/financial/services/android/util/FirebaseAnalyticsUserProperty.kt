@@ -14,6 +14,7 @@ class FirebaseAnalyticsUserProperty {
         private const val PERSONAL_LOAN_PRODUCT_GROUP_CODE = "PL"
         val firebaseInstance = FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
 
+        @JvmStatic
         fun setUserPropertiesForCardProductOfferings(accountsMap: Map<String, Account?>) {
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, if (accountsMap.containsKey(PERSONAL_LOAN_PRODUCT_GROUP_CODE)) "true" else "false")
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, if (accountsMap.containsKey(STORE_CARD_PRODUCT_GROUP_CODE)) "true" else "false")
@@ -22,6 +23,7 @@ class FirebaseAnalyticsUserProperty {
             firebaseInstance.setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, if (accountsMap[CREDIT_CARD_PRODUCT_GROUP_CODE]?.accountNumberBin.equals(Utils.BLACK_CARD, ignoreCase = true)) "true" else "false")
         }
 
+        @JvmStatic
         fun setUserPropertiesDelinquencyCode(accountsMap: Map<String, Account?>) {
             val userPropertiesForDelinquentCodes: HashMap<String, String> = getUserPropertiesForDelinquentCodes()
             for (key in userPropertiesForDelinquentCodes.keys) {
@@ -33,23 +35,35 @@ class FirebaseAnalyticsUserProperty {
             }
         }
 
+        @JvmStatic
+        fun setUserPropertiesDelinquencyCodeForProduct(productCode: String, account: Account?) {
+
+            val userPropertiesForDelinquentCodes: HashMap<String, String> = getUserPropertiesForDelinquentCodes()
+            for (key in userPropertiesForDelinquentCodes.keys) {
+                if (key.equals(productCode, ignoreCase = true)) {
+                    firebaseInstance.setUserProperty(account?.delinquencyCycle.toString(), userPropertiesForDelinquentCodes[key])
+                    break
+                }
+            }
+        }
+
         private fun getUserPropertiesForDelinquentCodes(): HashMap<String, String> {
             val userProperty: UserPropertiesForDelinquentCodes = WoolworthsApplication.getFirebaseUserPropertiesForDelinquentProductGroupCodes()
             var userPropertiesForDelinquentCodes: HashMap<String, String> = HashMap()
             if (userProperty.cc != null) {
-                userPropertiesForDelinquentCodes.put(CREDIT_CARD_PRODUCT_GROUP_CODE, userProperty.cc)
+                userPropertiesForDelinquentCodes[CREDIT_CARD_PRODUCT_GROUP_CODE] = userProperty.cc
             } else {
-                userPropertiesForDelinquentCodes.put(CREDIT_CARD_PRODUCT_GROUP_CODE, "N/A")
+                userPropertiesForDelinquentCodes[CREDIT_CARD_PRODUCT_GROUP_CODE] = "N/A"
             }
             if (userProperty.sc != null) {
-                userPropertiesForDelinquentCodes.put(STORE_CARD_PRODUCT_GROUP_CODE, userProperty.sc)
+                userPropertiesForDelinquentCodes[STORE_CARD_PRODUCT_GROUP_CODE] = userProperty.sc
             } else {
-                userPropertiesForDelinquentCodes.put(STORE_CARD_PRODUCT_GROUP_CODE, "N/A")
+                userPropertiesForDelinquentCodes[STORE_CARD_PRODUCT_GROUP_CODE] = "N/A"
             }
             if (userProperty.pl != null) {
-                userPropertiesForDelinquentCodes.put(PERSONAL_LOAN_PRODUCT_GROUP_CODE, userProperty.pl)
+                userPropertiesForDelinquentCodes[PERSONAL_LOAN_PRODUCT_GROUP_CODE] = userProperty.pl
             } else {
-                userPropertiesForDelinquentCodes.put(PERSONAL_LOAN_PRODUCT_GROUP_CODE, "N/A")
+                userPropertiesForDelinquentCodes[PERSONAL_LOAN_PRODUCT_GROUP_CODE] = "N/A"
             }
             return userPropertiesForDelinquentCodes
         }

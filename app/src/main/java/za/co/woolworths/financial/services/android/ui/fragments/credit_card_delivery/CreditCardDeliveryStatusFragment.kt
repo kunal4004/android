@@ -100,7 +100,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
                     } else {
                         val deliveryDayTimeDrawable = ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_time24)
                         deliveryDayAndTime.setCompoundDrawablesWithIntrinsicBounds(deliveryDayTimeDrawable, null, null, null)
-                        deliveryDayAndTime.text = WFormatter.convertDayShortToLong(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
+                        deliveryDayAndTime.text = WFormatter.convertDayToShortDay(it).plus(", ").plus(statusResponse?.slotDetails?.slot)
                     }
                 }
             }

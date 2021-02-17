@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_six_dp"
         android:contentDescription="@string/cd_layouttoastmessage"
+        android:background="@drawable/items_limits_toast_background"
         android:minHeight="@dimen/fifty_six_dp"
         android:paddingLeft="@dimen/sixteen_dp"
         android:paddingRight="@dimen/sixteen_dp">

@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApi
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
+import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease;
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
 import za.co.woolworths.financial.services.android.models.dto.DashConfig;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
@@ -131,6 +132,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     private static CreditView creditView;
     private DashConfig dashConfig;
+    private CreditLimitIncrease creditLimitIncrease;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -648,5 +650,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setFirebaseUserPropertiesForDelinquentProductGroupCodes(UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes) {
         WoolworthsApplication.firebaseUserPropertiesForDelinquentProductGroupCodes = firebaseUserPropertiesForDelinquentProductGroupCodes;
+    }
+
+    public CreditLimitIncrease getCreditLimitIncrease() {
+        return creditLimitIncrease;
+    }
+
+    public void setCreditLimitsIncrease(CreditLimitIncrease creditLimitIncrease) {
+        this.creditLimitIncrease = creditLimitIncrease;
     }
 }

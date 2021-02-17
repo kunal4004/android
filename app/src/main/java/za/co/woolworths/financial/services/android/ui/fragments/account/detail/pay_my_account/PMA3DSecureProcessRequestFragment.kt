@@ -153,7 +153,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                         200 -> {
                             if (paymentSuccessful) {
                                 stopSpinning(true)
-                                paymentValueTextView?.text = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amount))
+                                paymentValueTextView?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
                                 updateUIOnSuccess()
                             } else {
                                 stopSpinning(false)

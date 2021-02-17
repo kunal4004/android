@@ -23,6 +23,7 @@
                 android:background="@color/black"
                 android:elevation="@dimen/five_dp"
                 android:fontFamily="@font/futura_semi_bold"
+                app:WTextView_font="medium_bold"
                 android:gravity="center"
                 android:letterSpacing="0.2"
                 android:paddingStart="@dimen/twenty_six_dp"
@@ -44,30 +45,36 @@
                 android:background="@color/bg_e6e6e6"
                 android:elevation="@dimen/zero_dp"
                 app:elevation="@dimen/zero_dp"
+                android:layout_marginTop="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbarCreditReport"
+                <RelativeLayout
+                    android:layout_marginTop="0dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal">
 
-                    <RelativeLayout
+                    <ImageView
+                        android:layout_marginTop="0dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
+                        android:minHeight="@dimen/three_seventy_five_dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/credit_report_title_tu"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/header_image" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_centerHorizontal="true"
-                            android:contentDescription="@string/credit_report_title_tu"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/header_image" />
-                    </RelativeLayout>
-                </androidx.appcompat.widget.Toolbar>
+                    <androidx.appcompat.widget.Toolbar
+                        android:layout_marginTop="@dimen/fifteen_dp"
+                        android:id="@+id/toolbarCreditReport"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+
+
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.constraintlayout.widget.Guideline
@@ -103,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/twenty_four_dp"
             android:background="@color/black"
-            android:fontFamily="@font/futura_semi_bold"
+            app:WTextView_font="medium_bold"
             android:gravity="center"
             android:letterSpacing="0.2"
             android:minHeight="@dimen/fifty_dp"

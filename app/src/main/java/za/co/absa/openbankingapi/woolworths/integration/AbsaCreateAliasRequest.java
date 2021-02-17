@@ -77,11 +77,16 @@ public class AbsaCreateAliasRequest {
 				else {
 						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 				}
+
+				//Clearing up sensitive info
+				sessionKey = null;
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				responseDelegate.onFatalError(error);
+				//Clearing up sensitive info
+				sessionKey = null;
 			}
 		});
 

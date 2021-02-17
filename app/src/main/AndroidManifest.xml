@@ -344,10 +344,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity"
             android:screenOrientation="portrait"

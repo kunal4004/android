@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -100,9 +101,9 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 					yearToDateSpendInfo.setVisibility(View.GONE);
 					yearToDateSpendText.setText(getString(R.string.wrewards_monthly_spend));
 					//Get data on Position-1 from Array List. And bind to UI
-					wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySavings));
-					quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).wVouchers));
-					yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySpend));
+					wRewardsInstantSaving.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(voucherResponse.tierHistoryList.get(position - 1).monthlySavings));
+					quarterlyVoucherEarned.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(voucherResponse.tierHistoryList.get(position - 1).wVouchers));
+					yearToDateSpend.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(voucherResponse.tierHistoryList.get(position - 1).monthlySpend));
 				}
 				mAdapter.setSelectedPosition(position);
 				mAdapter.notifyDataSetChanged();
@@ -148,9 +149,9 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 			e.printStackTrace();
 			savingSince.setText(voucherResponse.tierInfo.earnedSince);
 		}
-		wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierInfo.earned));
-		quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateWVouchers));
-		yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateSpend));
+		wRewardsInstantSaving.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(voucherResponse.tierInfo.earned));
+		quarterlyVoucherEarned.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(voucherResponse.tierInfo.yearToDateWVouchers));
+		yearToDateSpend.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(voucherResponse.tierInfo.yearToDateSpend));
 	}
 
 	public void displayNoSavingsView() {
@@ -158,9 +159,9 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		noSavingsView.setVisibility(View.VISIBLE);
 		savingSinceLayout.setVisibility(View.GONE);
 		yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
-		wRewardsInstantSaving.setText(WFormatter.formatAmount(0));
-		quarterlyVoucherEarned.setText(WFormatter.formatAmount(0));
-		yearToDateSpend.setText(WFormatter.formatAmount(0));
+		wRewardsInstantSaving.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(0));
+		quarterlyVoucherEarned.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(0));
+		yearToDateSpend.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(0));
 
 	}
 

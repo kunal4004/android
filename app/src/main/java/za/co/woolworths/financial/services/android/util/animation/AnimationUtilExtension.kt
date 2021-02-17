@@ -47,11 +47,11 @@ class AnimationUtilExtension {
 
         fun animateButtonIn(view: View?) {
             if (view?.visibility == View.VISIBLE) return
-            view?.visibility = View.VISIBLE
             val animate = TranslateAnimation(0f, 0F, view?.height?.toFloat() ?: 0f, 0f)
             animate.duration = APPLY_NOW_BUTTON_ANIMATE_DURATION
             animate.fillAfter = true
             view?.startAnimation(animate)
+            view?.visibility = View.VISIBLE
             view?.isEnabled = true
         }
 

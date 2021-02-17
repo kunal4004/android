@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
@@ -21,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
-
+import za.co.woolworths.financial.services.android.util.CurrencyEditText;
 public class IncreaseLimitController {
 
 	public static final String INCOME_DETAILS = "INCOME_DETAILS";
@@ -37,7 +42,17 @@ public class IncreaseLimitController {
 	}
 
 	public static boolean editTextLength(String value) {
-		return value.length() > 0;
+		int randAmount = 0;
+		if (!TextUtils.isEmpty(value)) {
+			randAmount = Integer.parseInt(value.substring(0, value.indexOf(".")).replaceAll("\\s+", ""));
+		}
+		return !TextUtils.isEmpty(value) && value.length() > 0 && randAmount > 0;
+	}
+
+	public static void showKeyboard(CurrencyEditText wEditTextView, Context context) {
+		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		assert imm != null;
+		imm.showSoftInput(wEditTextView, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	public static void showKeyboard(WEditTextView wEditTextView, Context context) {
@@ -46,11 +61,11 @@ public class IncreaseLimitController {
 		imm.showSoftInput(wEditTextView, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
-	private static String removeNonDigit(WEditTextView view) {
+	private static String removeNonDigit(CurrencyEditText view) {
 		return view.getText().toString().replaceAll("\\D+", "");
 	}
 
-	public void populateExpenseField(WEditTextView wEditText, WTextView wTextView, Context context) {
+	public void populateExpenseField(CurrencyEditText wEditText, WTextView wTextView, Context context) {
 		wEditText.requestFocus();
 		showKeyboard(wEditText, context);
 		wTextView.setVisibility(View.VISIBLE);
@@ -58,7 +73,7 @@ public class IncreaseLimitController {
 		wEditText.setSelection(wEditText.getText().length());
 	}
 
-	public void populateExpenseField(WEditTextView editTextView, String value, WTextView wTextView) {
+	public void populateExpenseField(CurrencyEditText editTextView, String value, WTextView wTextView) {
 		wTextView.setVisibility(View.VISIBLE);
 		editTextView.setText(value);
 		editTextView.clearFocus();
@@ -81,6 +96,11 @@ public class IncreaseLimitController {
 		openCLIIncrease.putExtra("OFFER_IS_ACTIVE", offerIsActive());
 		activity.startActivityForResult(openCLIIncrease, 0);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static void populateExpenseField(CurrencyEditText wEditText, Context context) {
+		wEditText.requestFocus();
+		showKeyboard(wEditText, context);
 	}
 
 	public static void populateExpenseField(WEditTextView wEditText, Context context) {
@@ -118,7 +138,7 @@ public class IncreaseLimitController {
 		}
 	}
 
-	public HashMap<String, String> expenseHashMap(WEditTextView etMortgagePayments, WEditTextView etRentalPayments, WEditTextView etMaintainanceExpenses, WEditTextView etMonthlyCreditPayments, WEditTextView etOtherExpenses) {
+	public HashMap<String, String> expenseHashMap(CurrencyEditText etMortgagePayments, CurrencyEditText etRentalPayments, CurrencyEditText etMaintainanceExpenses, CurrencyEditText etMonthlyCreditPayments, CurrencyEditText etOtherExpenses) {
 		HashMap<String, String> mHashExpenseDetail = new HashMap<>();
 		mHashExpenseDetail.put("MORTGAGE_PAYMENTS", removeNonDigit(etMortgagePayments));
 		mHashExpenseDetail.put("RENTAL_PAYMENTS", removeNonDigit(etRentalPayments));
@@ -128,7 +148,7 @@ public class IncreaseLimitController {
 		return mHashExpenseDetail;
 	}
 
-	public HashMap<String, String> incomeHashMap(WEditTextView etGrossMonthlyIncome, WEditTextView etNetMonthlyIncome, WEditTextView etAdditionalMonthlyIncome) {
+	public HashMap<String, String> incomeHashMap(CurrencyEditText etGrossMonthlyIncome, CurrencyEditText etNetMonthlyIncome, CurrencyEditText etAdditionalMonthlyIncome) {
 		HashMap<String, String> mHmSupplyIncomeDetail = new HashMap<>();
 		mHmSupplyIncomeDetail.put("GROSS_MONTHLY_INCOME", IncreaseLimitController.removeNonDigit(etGrossMonthlyIncome));
 		mHmSupplyIncomeDetail.put("NET_MONTHLY_INCOME", IncreaseLimitController.removeNonDigit(etNetMonthlyIncome));

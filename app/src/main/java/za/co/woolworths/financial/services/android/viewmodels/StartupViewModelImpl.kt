@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InApp
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.fromJson
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
@@ -73,19 +74,11 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
     override fun presentNextScreen() {
 
         val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
-        var appLinkData = intent?.data
+        var appLinkData: Any? = intent?.data
 
         if (appLinkData == null && intent?.extras != null){
-            val data: Bundle = intent!!.extras!!;
-            when {
-                ("Product Listing").equals(data.get("feature")) -> {
-                    var json = data.getString("parameters")!!.replace("\\", "");
-
-                    var jsonObject = Gson().fromJson<JsonObject>(json);
-                    appLinkData = Uri.parse(jsonObject.get("url").asString);
-                    intent?.action = Intent.ACTION_VIEW;
-                }
-            }
+            appLinkData = intent!!.extras!!
+            intent?.action = Intent.ACTION_VIEW
         }
 
         if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
@@ -100,12 +93,12 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         }
     }
 
-    private fun handleAppLink(appLinkData: Uri) {
+    private fun handleAppLink(appLinkData: Any?) {
         // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
-        ScreenManager.presentMain(mContext as Activity, appLinkData)
+        ScreenManager.presentMain(mContext as Activity, appLinkData as Bundle)
     }
 
     private fun persistGlobalConfig(response: ConfigResponse) {
@@ -143,6 +136,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             }
 
             dashConfig?.apply{
+                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 WoolworthsApplication.getInstance().dashConfig = this
             }
 
@@ -200,6 +194,10 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
             creditView?.apply {
                 isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                 WoolworthsApplication.setCreditView(creditView)
+            }
+
+            creditLimitIncrease?.apply {
+                WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
             }
         }
     }

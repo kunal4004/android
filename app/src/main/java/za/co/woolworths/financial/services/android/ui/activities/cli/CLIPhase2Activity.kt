@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeFragment
+import za.co.woolworths.financial.services.android.ui.fragments.cli.SupplyIncomeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.cli.*
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface
 import za.co.woolworths.financial.services.android.util.FragmentUtils
