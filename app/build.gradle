@@ -12,6 +12,7 @@ android {
     def major = "7"
     def minor = "7"
     def fix = "0"
+    
     def jobNumber = 477
 
 
