@@ -1055,7 +1055,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     public boolean shouldUserSetSuburb() {
         ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        return shoppingDeliveryLocation.suburb == null;
+        return (shoppingDeliveryLocation.suburb == null && shoppingDeliveryLocation.store == null);
     }
 
     public void toggleEditButton(String name) {

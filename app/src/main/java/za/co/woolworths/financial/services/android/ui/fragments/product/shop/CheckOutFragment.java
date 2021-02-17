@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -275,7 +276,8 @@ public class CheckOutFragment extends Fragment {
 	public void initPostCheckout()
 	{
 		QueryBadgeCounter.getInstance().setCartCount(0);
-		Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(Utils.getPreferredDeliveryLocation().suburb.id));
+		ShoppingDeliveryLocation preferredDeliveryLocation = Utils.getPreferredDeliveryLocation();
+		Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(preferredDeliveryLocation.storePickup ? preferredDeliveryLocation.store.getId() : preferredDeliveryLocation.suburb.id));
 		checkoutSuccess.enqueue(new CompletionHandler<>(new IResponseListener<Void>() {
 			@Override
 			public void onSuccess(Void response) {

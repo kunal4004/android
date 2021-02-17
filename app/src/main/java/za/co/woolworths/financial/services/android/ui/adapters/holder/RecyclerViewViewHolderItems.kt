@@ -118,7 +118,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
             val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
             var defaultStoreId = ""
-            if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null || !SessionUtilities.getInstance().isUserAuthenticated) {
+            if (userSelectedDeliveryLocation == null || (userSelectedDeliveryLocation.suburb?.fulfillmentStores == null && userSelectedDeliveryLocation.store?.fulfillmentStores == null) || !SessionUtilities.getInstance().isUserAuthenticated) {
                 quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
                     if (fulfillmentType.fulfilmentTypeId.equals(fulfilmentTypeId, ignoreCase = true)) {
                         defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
