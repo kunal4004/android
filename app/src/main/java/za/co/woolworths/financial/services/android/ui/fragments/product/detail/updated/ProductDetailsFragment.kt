@@ -254,11 +254,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
-                    message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is unavailable in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
-                    message = "Unfortunately this item is out of stock in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name  + ". Try changing your delivery location and try again."
                 }
             }
             activity?.apply {
@@ -308,7 +308,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelectedGroupKey(defaultGroupKey)
 
         Utils.getPreferredDeliveryLocation()?.let {
-            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
                 updateDefaultUI(false)
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -874,7 +874,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         updateStockAvailabilityLocation()
 
                         Utils.getPreferredDeliveryLocation()?.let {
-                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
                                 showProductUnavailable()
@@ -1135,9 +1135,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             getDeliveryLocation()?.let {
                 when (it) {
                     is ShoppingDeliveryLocation -> {
-                        when (it.suburb.storePickup) {
+                        when (it.storePickup) {
                             true -> {
-                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.suburb?.name
+                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.store?.name
                                 defaultLocationPlaceholder.text = getString(R.string.collecting_from) + " "
                             }
                             else -> {
@@ -1265,7 +1265,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             getDeliveryLocation().let {
                 val suburbName = when (it) {
-                    is ShoppingDeliveryLocation -> it.suburb.name
+                    is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
                     is QuickShopDefaultValues -> it.suburb.name
                     else -> ""
                 }

@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.CurrencyEditText;
 public class IncreaseLimitController {
@@ -41,12 +42,22 @@ public class IncreaseLimitController {
 		this.mContext = context;
 	}
 
-	public static boolean editTextLength(String value) {
+	public static boolean validateIncomeAmount(String value) {
 		int randAmount = 0;
 		if (!TextUtils.isEmpty(value)) {
-			randAmount = Integer.parseInt(value.substring(0, value.indexOf(".")).replaceAll("\\s+", ""));
+			if (!value.contains(".")) {
+				value = CurrencyFormatter.Companion.formatAmountToCentNoGroupingSeparator(value);
+			}
+			String randValue = value.substring(0, value.indexOf("."));
+			if (!TextUtils.isEmpty(randValue) && !randValue.equalsIgnoreCase(" ")) {
+				randAmount = Integer.parseInt(randValue.replaceAll("\\s+", ""));
+			}
 		}
 		return !TextUtils.isEmpty(value) && value.length() > 0 && randAmount > 0;
+	}
+
+	public static boolean validateExpenseAmount(String value) {
+		return !TextUtils.isEmpty(value) && value.length() > 0;
 	}
 
 	public static void showKeyboard(CurrencyEditText wEditTextView, Context context) {
