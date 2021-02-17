@@ -89,15 +89,15 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
             val currentAmount = editable.toString()
             when (view.id) {
                 R.id.etGrossMonthlyIncome -> {
-                    grossMonthlyIncomeWasEdited = IncreaseLimitController.editTextLength(currentAmount)
+                    grossMonthlyIncomeWasEdited = IncreaseLimitController.validateIncomeAmount(currentAmount)
                     enableNextButton()
                 }
                 R.id.etNetMonthlyIncome -> {
-                    netMonthlyIncomeWasEdited = IncreaseLimitController.editTextLength(currentAmount)
+                    netMonthlyIncomeWasEdited = IncreaseLimitController.validateIncomeAmount(currentAmount)
                     enableNextButton()
                 }
                 R.id.etAdditionalMonthlyIncome -> {
-                    additionalMonthlyIncomeWasEdited = IncreaseLimitController.editTextLength(currentAmount)
+                    additionalMonthlyIncomeWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount)
                     enableNextButton()
                 }
             }
