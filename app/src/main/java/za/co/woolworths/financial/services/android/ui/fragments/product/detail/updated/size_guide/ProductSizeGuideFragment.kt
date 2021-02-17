@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_prodcut_size_guide.*
@@ -76,6 +74,21 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
 
     override fun onErrorDialogDismiss() {
         super.onErrorDialogDismiss()
-        activity?.onBackPressed()
+        activity?.finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.close_menu_item, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.closeIcon -> {
+                activity?.finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

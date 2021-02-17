@@ -110,6 +110,7 @@ class ProductInformationActivity : AppCompatActivity() {
                             containerViewId = R.id.fragmentContainer)
                 }
                 ProductInformationType.SIZE_GUIDE->{
+                    supportActionBar?.apply { setDisplayHomeAsUpEnabled(false) }
                     val arguments = HashMap<String, String>()
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID] = productId
                     arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_SIZE_GUIDE
