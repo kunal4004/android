@@ -973,6 +973,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
                                 hideView(retryStoreCardLinearLayout);
                                 showStoreCardContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+
                             }
                             break;
 
@@ -1024,6 +1027,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
                                 hideView(retryPersonalLoanLinearLayout);
                                 showPersonalLoanContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
                             }
                             break;
 
@@ -1074,6 +1079,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
                                 hideView(retryCreditCardLinearLayout);
                                 showCreditCardContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
                             }
                             break;
 

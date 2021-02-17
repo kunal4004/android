@@ -28,9 +28,9 @@ class FirebaseAnalyticsUserProperty {
             val userPropertiesForDelinquentCodes: HashMap<String, String> = getUserPropertiesForDelinquentCodes()
             for (key in userPropertiesForDelinquentCodes.keys) {
                 if (accountsMap.containsKey(key)) {
-                    firebaseInstance.setUserProperty(accountsMap[key]?.delinquencyCycle.toString(), userPropertiesForDelinquentCodes.get(key))
+                    userPropertiesForDelinquentCodes[key]?.let { firebaseInstance.setUserProperty(it, accountsMap[key]?.delinquencyCycle.toString() ?: "N/A") }
                 } else {
-                    firebaseInstance.setUserProperty("N/A", userPropertiesForDelinquentCodes.get(key))
+                    userPropertiesForDelinquentCodes[key]?.let { firebaseInstance.setUserProperty(it, "N/A" ) }
                 }
             }
         }
@@ -41,7 +41,7 @@ class FirebaseAnalyticsUserProperty {
             val userPropertiesForDelinquentCodes: HashMap<String, String> = getUserPropertiesForDelinquentCodes()
             for (key in userPropertiesForDelinquentCodes.keys) {
                 if (key.equals(productCode, ignoreCase = true)) {
-                    firebaseInstance.setUserProperty(account?.delinquencyCycle.toString(), userPropertiesForDelinquentCodes[key])
+                    userPropertiesForDelinquentCodes[key]?.let { firebaseInstance.setUserProperty(it, account?.delinquencyCycle.toString() ?: "N/A") }
                     break
                 }
             }
