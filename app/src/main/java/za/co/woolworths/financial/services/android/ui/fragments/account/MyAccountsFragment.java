@@ -1416,6 +1416,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             //One time biometricsWalkthrough
             ScreenManager.presentBiometricWalkthrough(getActivity());
         } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+            Activity activity = getActivity();
+            if (activity == null)return;
+            setAccountResponse(activity, null);
             onSignOut();
             initialize();
         } else {
@@ -1647,7 +1650,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Intent intent = new Intent(activity, AccountSignedInActivity.class);
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
         intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-        intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
+        if (deepLinkParams != null)
+            intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
         activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
