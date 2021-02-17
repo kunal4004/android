@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryBoardingFragment : Fragment() {
@@ -49,22 +50,27 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
 
     private fun init() {
         var creditCardName: String = bindString(R.string.blackCreditCard_title)
-        val formattedCardDeliveryFee: String = WoolworthsApplication.getCreditCardDelivery().formattedCardDeliveryFee
-        if (accountBinNumber.equals(Utils.GOLD_CARD, true)) {
-            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
-            creditCardName = bindString(R.string.goldCreditCard_title)
-            descriptionNote.visibility = View.VISIBLE
-            descriptionNote.text = bindString(R.string.setup_credit_card_delivery_desc_please_note, bindString(R.string.goldCreditCard_title_small), formattedCardDeliveryFee)
-        } else if (accountBinNumber.equals(Utils.SILVER_CARD, true)) {
-            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
-            creditCardName = bindString(R.string.silverCreditCard_title)
-            descriptionNote.visibility = View.VISIBLE
-            descriptionNote.text = bindString(R.string.setup_credit_card_delivery_desc_please_note, bindString(R.string.silver_credit_card), formattedCardDeliveryFee)
-        } else if (accountBinNumber.equals(Utils.BLACK_CARD, true)) {
-            imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
-            creditCardName = bindString(R.string.blackCreditCard_title)
+        val formattedCardDeliveryFee: String = WoolworthsApplication.getCreditCardDelivery()?.formattedCardDeliveryFee ?: ""
+        when {
+            accountBinNumber.equals(Utils.GOLD_CARD, true) -> {
+                imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
+                creditCardName = bindString(R.string.goldCreditCard_title)
+                descriptionNoteTextView?.visibility = View.VISIBLE
+                descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note,bindString(R.string.goldCreditCard_title_small),formattedCardDeliveryFee), mutableListOf("Please note:","R${formattedCardDeliveryFee}"))
+            }
+            accountBinNumber.equals(Utils.SILVER_CARD, true) -> {
+                imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
+                creditCardName = bindString(R.string.silverCreditCard_title)
+
+                descriptionNoteTextView?.visibility = View.VISIBLE
+                descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note,bindString(R.string.silver_credit_card),formattedCardDeliveryFee), mutableListOf("Please note:","R${formattedCardDeliveryFee}"))
+            }
+            accountBinNumber.equals(Utils.BLACK_CARD, true) -> {
+                imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
+                creditCardName = bindString(R.string.blackCreditCard_title)
+            }
         }
-        title.setText(bindString(R.string.setup_credit_card_delivery_title, creditCardName))
+        titleTextView?.text = bindString(R.string.setup_credit_card_delivery_title, creditCardName)
     }
 
     private fun setupToolbar() {

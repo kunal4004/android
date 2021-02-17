@@ -26,7 +26,7 @@ class PayMyAccountLearnMoreFragment : Fragment() {
     }
 
     private fun noteStringBuilder() {
-        val note = KotlinUtils.highlightText(bindString(R.string.atm_payment_note), "Note")
+        val note = KotlinUtils.highlightText(bindString(R.string.atm_payment_note), mutableListOf("Note:"))
         atmPaymentNoteTextView?.text = note
     }
 

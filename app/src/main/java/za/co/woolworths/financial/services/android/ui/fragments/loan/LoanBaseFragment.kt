@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -53,7 +54,7 @@ open class LoanBaseFragment : Fragment() {
         }
     }
 
-    fun currencyFormatter(amount: Int): String = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
+    fun currencyFormatter(amount: Int): String = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(amount), 1))
 
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
 

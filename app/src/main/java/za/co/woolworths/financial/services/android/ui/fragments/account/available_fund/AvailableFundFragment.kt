@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.android.synthetic.main.view_statement_button.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
@@ -35,10 +36,12 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
 
@@ -134,7 +137,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val account = mAvailableFundPresenter?.getAccountDetail()
-                val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountDue)) }
+                val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amountDue)) }
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList
 
@@ -193,14 +196,14 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     private fun setUpView() {
         mAvailableFundPresenter?.getAccount()?.apply {
             activity?.apply {
-                val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newRandAmountFormatWithoutSpace(availableFunds), 1))
-                val currentBalance = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(currentBalance))
-                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(creditLimit), 1))
+                val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentNoSpace(availableFunds), 1))
+                val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(currentBalance))
+                val creditLimit = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentWithSpace(creditLimit), 1))
                 val paymentDueDate = paymentDueDate?.let { paymentDueDate -> WFormatter.addSpaceToDate(WFormatter.newDateFormat(paymentDueDate)) }
                         ?: "N/A"
-                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amountOverdue), 1))
+                val amountOverdue = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentWithSpace(amountOverdue), 1))
 
-                val totalAmountDueAmount = Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+                val totalAmountDueAmount = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(totalAmountDue))
 
                 availableFundAmountTextView?.text = availableFund
                 currentBalanceAmountTextView?.text = currentBalance
@@ -350,6 +353,19 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         when {
             (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) && isFeatureEnabled -> openCardOptionsDialog()
             else -> navigateToPayMyAccountActivity()
+        }
+    }
+
+    fun navigateToDeepLinkView() {
+        if (activity is AccountSignedInActivity) {
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                val deepLinkingObject = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.getDeepLinkData()
+                when (deepLinkingObject?.get("feature")?.asString) {
+                    DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
+                        incViewStatementButton?.performClick()
+                    }
+                }
+            }
         }
     }
 }

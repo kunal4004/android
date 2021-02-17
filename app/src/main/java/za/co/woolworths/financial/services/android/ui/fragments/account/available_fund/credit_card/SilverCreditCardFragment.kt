@@ -24,11 +24,18 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)
+
+        navigateToDeepLinkView()
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.incRecentTransactionButton -> navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
+            R.id.incRecentTransactionButton -> {
+                activity?.runOnUiThread {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                    navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
+                }
+            }
             R.id.incPayMyAccountButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
                 navigateToPayMyAccountActivity()
