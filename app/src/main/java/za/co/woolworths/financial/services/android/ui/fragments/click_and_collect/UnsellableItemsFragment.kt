@@ -76,13 +76,18 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
 
     private fun executeSetSuburb() {
         showSetSuburbProgressBar()
-        selectedSuburb?.id?.let {
-            OneAppService.setSuburb(it).enqueue(CompletionHandler(object : IResponseListener<SetDeliveryLocationSuburbResponse> {
+        selectedSuburb?.let {
+            OneAppService.setSuburb(it.id).enqueue(CompletionHandler(object : IResponseListener<SetDeliveryLocationSuburbResponse> {
                 override fun onSuccess(response: SetDeliveryLocationSuburbResponse?) {
                     when (response?.httpCode) {
                         200 -> {
                             QueryBadgeCounter.instance.queryCartSummaryCount()
-                            Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, selectedSuburb))
+                            when (deliveryType) {
+                                DeliveryType.DELIVERY -> Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, it, null))
+                                DeliveryType.STORE_PICKUP -> {
+                                    Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, null, Store(it.id, it.name, it.fulfillmentStores, it.storeAddress.address1)))
+                                }
+                            }
                             navigateToSuburbConfirmationFragment()
                         }
                         else -> {
