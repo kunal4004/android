@@ -1148,38 +1148,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(true);
         else
             showProgressBar();
-/*
-        mUpdateMyAccount.make(forceNetworkUpdate, new IResponseListener<AccountsResponse>() {
-            @Override
-            public void onSuccess(AccountsResponse accountsResponse) {
-                FragmentActivity activity = getActivity();
-                if (activity == null) return;
-                try {
-                    httpCode = accountsResponse.httpCode;
-                    switch (httpCode) {
-                        case 502:
-                        case 200:
-                            mAccountResponse = accountsResponse;
-                            List<Account> accountList = accountsResponse.accountList;
-                            if (accountList == null) accountList = new ArrayList<>();
-                            for (Account p : accountList) {
-
-
-                                int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
-                                if (indexOfUnavailableAccount > -1) {
-                                    try {
-                                        unavailableAccounts.remove(indexOfUnavailableAccount);
-                                    } catch (Exception e) {
-                                        Log.e("", e.getMessage());
-                                    }
-                                }
-                            }
-
-
-
-                            isAccountsCallMade = true;
-                            configureView();
-*/
+        
         mUpdateMyAccount.make(forceNetworkUpdate, accountsHashMap -> {
             if (activity == null) return null;
             mAccountResponse = mUpdateMyAccount.mAccountResponse;
