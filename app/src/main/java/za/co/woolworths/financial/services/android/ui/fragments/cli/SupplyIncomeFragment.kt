@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments
+package za.co.woolworths.financial.services.android.ui.fragments.cli
 
 import android.os.Bundle
 import android.text.Editable
@@ -15,10 +15,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.bindStringArray
-import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher
-import za.co.woolworths.financial.services.android.util.FragmentUtils
-import za.co.woolworths.financial.services.android.util.MultiClickPreventer
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 import java.util.HashMap
@@ -53,7 +50,7 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
         mIncreaseLimitController?.populateExpenseField(etNetMonthlyIncome, mHashIncomeDetail?.get("NET_MONTHLY_INCOME"), tvNetMonthlyIncome)
         mIncreaseLimitController?.populateExpenseField(etAdditionalMonthlyIncome, mHashIncomeDetail?.get("ADDITIONAL_MONTHLY_INCOME"), tvAdditionalMonthlyIncome)
         nextFocusEditText()
-        mCliStepIndicatorListener.onStepSelected(1)
+        mCliStepIndicatorListener?.onStepSelected(1)
         mIncreaseLimitController?.dynamicLayoutPadding(llSupplyIncomeContainer)
         llAdditionalMonthlyIncomeLayout?.requestFocus()
         etGrossMonthlyIncome?.isEnabled = false
@@ -72,13 +69,13 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
 
         imInfo?.setOnClickListener(this)
 
-        etGrossMonthlyIncome?.addTextChangedListener(CurrencyTextWatcher(etGrossMonthlyIncome))
-        etNetMonthlyIncome?.addTextChangedListener(CurrencyTextWatcher(etNetMonthlyIncome))
-        etAdditionalMonthlyIncome?.addTextChangedListener(CurrencyTextWatcher(etAdditionalMonthlyIncome))
+        currencyEditTextParams(etGrossMonthlyIncome)
+        currencyEditTextParams(etNetMonthlyIncome)
+        currencyEditTextParams(etAdditionalMonthlyIncome)
+
         etGrossMonthlyIncome?.addTextChangedListener(GenericTextWatcher(etGrossMonthlyIncome))
         etNetMonthlyIncome?.addTextChangedListener(GenericTextWatcher(etNetMonthlyIncome))
         etAdditionalMonthlyIncome?.addTextChangedListener(GenericTextWatcher(etAdditionalMonthlyIncome))
-
 
         llNextButtonLayout?.setOnClickListener(this)
         btnContinue?.setOnClickListener(this)
@@ -92,18 +89,15 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
             val currentAmount = editable.toString()
             when (view.id) {
                 R.id.etGrossMonthlyIncome -> {
-                    grossMonthlyIncomeWasEdited =
-                            IncreaseLimitController.editTextLength(currentAmount)
+                    grossMonthlyIncomeWasEdited = IncreaseLimitController.editTextLength(currentAmount)
                     enableNextButton()
                 }
                 R.id.etNetMonthlyIncome -> {
-                    netMonthlyIncomeWasEdited =
-                            IncreaseLimitController.editTextLength(currentAmount)
+                    netMonthlyIncomeWasEdited = IncreaseLimitController.editTextLength(currentAmount)
                     enableNextButton()
                 }
                 R.id.etAdditionalMonthlyIncome -> {
-                    additionalMonthlyIncomeWasEdited =
-                            IncreaseLimitController.editTextLength(currentAmount)
+                    additionalMonthlyIncomeWasEdited = IncreaseLimitController.editTextLength(currentAmount)
                     enableNextButton()
                 }
             }
@@ -158,7 +152,7 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
                 val arrDescription = resources.getStringArray(R.array.supply_info_income_desc)
                 val incomeMap = LinkedHashMap<String, String>()
                 var position = 0
-                val sizeOfArray =  arrTitle?.size ?: 0
+                val sizeOfArray = arrTitle?.size ?: 0
                 while (position < sizeOfArray) {
                     val itemPosition = arrTitle?.get(position) ?: ""
                     incomeMap[itemPosition] = arrDescription[position]
@@ -173,7 +167,7 @@ class SupplyIncomeFragment : CLIFragment(), View.OnClickListener {
             R.id.llAdditionalMonthlyIncomeLayout -> mIncreaseLimitController?.populateExpenseField(etAdditionalMonthlyIncome, tvAdditionalMonthlyIncome, activity)
             R.id.btnContinue, R.id.llNextButtonLayout -> {
                 val fragmentUtils = FragmentUtils(activity)
-                val hmIncomeDetail = mIncreaseLimitController!!.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome)
+                val hmIncomeDetail = mIncreaseLimitController?.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome)
                 val bundle = Bundle()
                 bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmIncomeDetail)
                 bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseDetail)

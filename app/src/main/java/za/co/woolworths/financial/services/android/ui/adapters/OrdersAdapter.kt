@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.contracts.IPresentOrderDetail
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPresentOrderDetailInterface?, var dataList: ArrayList<OrderItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
@@ -48,7 +49,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             itemView.orderId.text = item.orderId
             itemView.orderState.text = item.state
             itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.submittedDate)
-            itemView.total.text = WFormatter.formatAmount(item.total)
+            itemView.total.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
             itemView.orderState.setBackgroundResource(if (item.state.equals("Order Cancelled", true)) R.drawable.order_state_orange_bg else R.drawable.order_state_bg)
             itemView.deliveryItemsType.text = bindString(if (item.clickAndCollectOrder) R.string.collection_date else R.string.delivery_date)
@@ -96,7 +97,7 @@ class OrdersAdapter(val context: Context, val iPresentOrderDetailInterface: IPre
             val item = dataList[position].item as Order
             itemView.orderId.text = item.orderId
             itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.submittedDate)
-            itemView.total.text = WFormatter.formatAmount(item.total)
+            itemView.total.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.total)
             itemView.setOnClickListener { iPresentOrderDetailInterface?.presentOrderDetailsPage(item) }
         }
 

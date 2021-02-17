@@ -90,6 +90,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CartUtils;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -1143,7 +1144,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) Utils.strToJson(data.getStringExtra("ShoppingCartResponse"), ShoppingCartResponse.class);
 					updateCart(convertResponseToCartResponseObject(shoppingCartResponse), null);
 					if (requestCode == REDEEM_VOUCHERS_REQUEST_CODE)
-						showVouchersOrPromoCodeAppliedToast(getString(R.string.vouchers_applied_toast_message));
+						showVouchersOrPromoCodeAppliedToast(getString(CartUtils.Companion.getAppliedVouchersCount(voucherDetails.getVouchers()) > 0 ? R.string.vouchers_applied_toast_message : R.string.vouchers_removed_toast_message));
 					if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
 						showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
 					break;
@@ -1554,7 +1555,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void updateOrderTotal() {
 		if (orderSummary != null) {
-			orderTotal.setText(WFormatter.formatAmount(orderSummary.total));
+			orderTotal.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(orderSummary.total));
 		}
 	}
 

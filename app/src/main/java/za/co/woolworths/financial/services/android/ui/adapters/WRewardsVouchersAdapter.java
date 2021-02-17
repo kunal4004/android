@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -90,7 +91,7 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         }
         holder.message.setText(vouchers.get(position).description);
         holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));
-        holder.minimumSpend.setText(WFormatter.formatAmount(vouchers.get(position).minimumSpend));
+        holder.minimumSpend.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(vouchers.get(position).minimumSpend));
         try {
             holder.barCode.setImageBitmap(Utils.encodeAsBitmap(vouchers.get(position).voucherNumber, BarcodeFormat.CODE_128, convertView.getWidth(), 60));
         } catch (WriterException e) {

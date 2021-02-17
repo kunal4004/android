@@ -401,4 +401,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.payURemovePaymentMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), paymenToken)
     }
 
+    fun getAccountsByProductOfferingId(productOfferingId: String): Call<AccountsResponse> {
+        return mApiInterface.getAccountsByProductOfferingId(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId)
+    }
 }

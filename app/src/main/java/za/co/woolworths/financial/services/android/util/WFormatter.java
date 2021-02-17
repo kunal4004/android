@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -15,48 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class WFormatter {
-
-    public static String formatAmount(int amount) {
-        String[] split = String.valueOf((amount / 100)).split("");
-        StringBuilder stringBuilder = new StringBuilder();
-        int counter = 0;
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (counter != 0 && counter % 3 == 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(split[i]);
-            counter++;
-        }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
-    }
-
-    public static String newAmountFormat(int amount) {
-        String[] split = String.valueOf((amount / 100)).split("");
-        StringBuilder stringBuilder = new StringBuilder();
-        int counter = 0;
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (counter != 0 && counter % 3 == 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(split[i]);
-            counter++;
-        }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100));
-    }
-
-    public static String newRandAmountFormatWithoutSpace(int amount) {
-        String[] split = String.valueOf((amount / 100)).split("");
-        StringBuilder stringBuilder = new StringBuilder();
-        int counter = 0;
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (counter != 0 && counter % 3 == 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(split[i]);
-            counter++;
-        }
-        return Utils.removeNegativeSymbol(String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100));
-    }
 
     public static String addSpaceToDate(String value) {
         return value.replaceAll("/", " / ");
@@ -76,52 +35,8 @@ public class WFormatter {
         return Utils.removeNegativeSymbol(String.format("R%s", stringBuilder.reverse().toString(), amount));
     }
 
-    public static String formatAmount(double amount) {
-        String sAmount = roundDouble(amount);
-        if (sAmount.contains(",")) {
-            sAmount = sAmount.replace(",", ".");
-        }
-        double mAmount = Double.valueOf(sAmount);
-        int mIntAmount = (int) Math.round(mAmount * 100);
-        String[] split = String.valueOf((mIntAmount / 100)).split("");
-        StringBuilder stringBuilder = new StringBuilder();
-        int counter = 0;
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (counter != 0 && counter % 3 == 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(split[i]);
-            counter++;
-        }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
-    }
-
-    public static String formatAmount(String amount) {
-        String sAmount = TextUtils.isEmpty(amount) ? "0.0" : amount;
-        if (sAmount.contains(",")) {
-            sAmount = sAmount.replace(",", ".");
-        }
-        double mAmount = Double.valueOf(TextUtils.isEmpty(sAmount) ? "0.0" : sAmount);
-        int mIntAmount = (int) (mAmount * 100);
-        String[] split = String.valueOf((mIntAmount / 100)).split("");
-        StringBuilder stringBuilder = new StringBuilder();
-        int counter = 0;
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (counter != 0 && counter % 3 == 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(split[i]);
-            counter++;
-        }
-        return Utils.removeNegativeSymbol(String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100));
-    }
-
     public static String formatAmountNoDecimal(int amount) {
         return Utils.removeNegativeSymbol(String.format("R%d", amount / 100));
-    }
-
-    public static String escapeDecimalFormat(int amount) {
-        return newAmountFormat(amount * 100).replaceAll("\\.0*$", "");
     }
 
     public static String formatPercent(int amount) {
@@ -266,7 +181,14 @@ public class WFormatter {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = simpleDateFormat.parse(day);
         return new SimpleDateFormat("EEEE").format(date);
+    }
 
+    public static String convertDayToShortDay(String day) throws ParseException {
+        if (TextUtils.isEmpty(day)) return "";
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = simpleDateFormat.parse(day);
+        return new SimpleDateFormat("EEE dd MMM").format(date);
     }
 
     public static String convertMonthShortToLong(String date) throws ParseException {

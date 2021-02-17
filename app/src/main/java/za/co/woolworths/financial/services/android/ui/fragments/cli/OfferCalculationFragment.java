@@ -636,15 +636,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
 				WoolworthsApplication.getProductOfferingId(),
-				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
-				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
-				Integer.valueOf(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
-				Integer.valueOf(hashExpenseDetail.get("MORTGAGE_PAYMENTS")),
-				Integer.valueOf(hashExpenseDetail.get("RENTAL_PAYMENTS")),
-				Integer.valueOf(hashExpenseDetail.get("MAINTENANCE_EXPENSES")),
-				Integer.valueOf(hashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES")),
-				Integer.valueOf(hashExpenseDetail.get("OTHER_EXPENSES")
-				));
+				replaceCentsWithZero(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
+				replaceCentsWithZero(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
+				replaceCentsWithZero(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
+				replaceCentsWithZero(hashExpenseDetail.get("MORTGAGE_PAYMENTS")),
+				replaceCentsWithZero(hashExpenseDetail.get("RENTAL_PAYMENTS")),
+				replaceCentsWithZero(hashExpenseDetail.get("MAINTENANCE_EXPENSES")),
+				replaceCentsWithZero(hashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES")),
+				replaceCentsWithZero(hashExpenseDetail.get("OTHER_EXPENSES")));
 	}
 
 	public void displayApplication(OfferActive mObjOffer) {
@@ -889,5 +888,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance(formatAmount(slideProgressAmount));
 			creditLimitDecreaseConfirmationFragment.show(getFragmentManager(), StartupActivity.class.getSimpleName());
 		}
+	}
+
+	public static int replaceCentsWithZero(String s) {
+		int length = s.length();
+		if (length < 2) return Integer.parseInt(s);
+		return Integer.parseInt(s.substring(0, length - 2) + "00");
 	}
 }

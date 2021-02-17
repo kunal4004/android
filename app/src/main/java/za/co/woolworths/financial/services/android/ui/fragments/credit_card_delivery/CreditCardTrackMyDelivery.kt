@@ -69,7 +69,7 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
                     view = trackMyDelivery
                     setMessage(bindString(R.string.copied_to_clipboard))
                     viewState = false
-                    buildCustomToast()
+                    buildCustomTrackMyDeliveryToast(context)
                 }
             }
         }

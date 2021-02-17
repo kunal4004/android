@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 
@@ -17,7 +18,7 @@ public class CurrencyEditText extends TextInputEditText {
     private CurrencyEditText editText = CurrencyEditText.this;
 
     //properties
-    private String Currency = "";
+    private String currencySymbol = "";
     private String Separator = " ";
     private Boolean Spacing = false;
     private Boolean Delimiter = false;
@@ -57,7 +58,7 @@ public class CurrencyEditText extends TextInputEditText {
                 if (!s.equals(current)) {
                     editText.removeTextChangedListener(this);
 
-                    String cleanString = s.replaceAll("[R $,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
+                    String cleanString = s.replaceAll("[R $,.]", "").replaceAll(currencySymbol, "").replaceAll("\\s+", "");
 
                     if (cleanString.length() != 0) {
                         try {
@@ -65,15 +66,15 @@ public class CurrencyEditText extends TextInputEditText {
                             String currencyFormat = "";
                             if (Spacing) {
                                 if (Delimiter) {
-                                    currencyFormat = Currency + ". ";
+                                    currencyFormat = currencySymbol + ". ";
                                 } else {
-                                    currencyFormat = Currency + " ";
+                                    currencyFormat = currencySymbol + " ";
                                 }
                             } else {
                                 if (Delimiter) {
-                                    currencyFormat = Currency + ".";
+                                    currencyFormat = currencySymbol + ".";
                                 } else {
-                                    currencyFormat = Currency;
+                                    currencyFormat = currencySymbol;
                                 }
                             }
 
@@ -86,7 +87,7 @@ public class CurrencyEditText extends TextInputEditText {
                                 formatted = NumberFormat.getCurrencyInstance(Locale.US).format((parsed / 100)).replace(NumberFormat.getCurrencyInstance(Locale.US).getCurrency().getSymbol(), "R ");
                             } else {
                                 parsedInt = Integer.parseInt(cleanString);
-                                formatted = "R " + NumberFormat.getNumberInstance(Locale.US).format(parsedInt);
+                                formatted = TextUtils.isEmpty(currencySymbol) ? "R " : "" + NumberFormat.getNumberInstance(Locale.US).format(parsedInt);
                             }
 
                             formatted = formatted.replaceAll(",", " ").replace("$", currencyFormat);
@@ -95,9 +96,16 @@ public class CurrencyEditText extends TextInputEditText {
                             //if decimals are turned off and Separator is set as anything other than commas..
                             if (!Separator.equals(" ") && !Decimals) {
                                 //..replace the commas with the new separator
-                                editText.setText(formatted.replaceAll(" ", Separator));
+                                String text = formatted.replaceAll(" ", Separator);
+                                if(TextUtils.isEmpty(currencySymbol)){
+                                    formatted = formatted.replace("R ", currencyFormat);
+                                }
+                                editText.setText(formatted);
                             } else {
                                 //since no custom separators were set, proceed with comma separation
+                                if(TextUtils.isEmpty(currencySymbol)){
+                                    formatted = formatted.replace("R ", currencyFormat);
+                                }
                                 editText.setText(formatted);
                             }
                             try {
@@ -116,46 +124,12 @@ public class CurrencyEditText extends TextInputEditText {
         });
     }
 
-    /*
-     *
-     */
-    public double getCleanDoubleValue() {
-        double value = 0.0;
-        if (Decimals) {
-            value = Double.parseDouble(editText.getText().toString().replaceAll("[$,]", "").replaceAll(Currency, ""));
-        } else {
-            String cleanString = editText.getText().toString().replaceAll("[$,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
-            try {
-                value = Double.parseDouble(cleanString);
-            } catch (NumberFormatException e) {
-
-            }
-        }
-        return value;
-    }
-
-    public int getCleanIntValue() {
-        int value = 0;
-        if (Decimals) {
-            double doubleValue = Double.parseDouble(editText.getText().toString().replaceAll("[$,]", "").replaceAll(Currency, ""));
-            value = (int) Math.round(doubleValue);
-        } else {
-            String cleanString = editText.getText().toString().replaceAll("[$,.]", "").replaceAll(Currency, "").replaceAll("\\s+", "");
-            try {
-                value = Integer.parseInt(cleanString);
-            } catch (NumberFormatException e) {
-
-            }
-        }
-        return value;
-    }
-
     public void setDecimals(boolean value) {
         this.Decimals = value;
     }
 
-    public void setCurrency(String currencySymbol) {
-        this.Currency = currencySymbol;
+    public void setCurrencySymbol(String currencySymbol) {
+        this.currencySymbol = currencySymbol;
     }
 
     public void setSpacing(boolean value) {

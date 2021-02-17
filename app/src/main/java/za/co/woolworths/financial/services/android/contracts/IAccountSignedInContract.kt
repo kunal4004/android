@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -37,6 +38,7 @@ interface IAccountSignedInContract {
         fun bottomSheetBehaviourPeekHeight(): Int
         fun isAccountInArrearsState(): Boolean?
         fun chatWithCollectionAgent()
+        fun getDeepLinkData(): JsonObject?
     }
 
     interface MyAccountModel {
