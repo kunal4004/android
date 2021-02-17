@@ -403,11 +403,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showColors()
         if (hasSize)
             showSize()
-        if(!productDetails?.sizeGuideId.isNullOrEmpty())
+
+        if(productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants,productDetails?.sizeGuideId) == true) {
             sizeGuide?.apply {
                 underline()
                 visibility = View.VISIBLE
             }
+        }
 
     }
 

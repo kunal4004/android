@@ -96,5 +96,9 @@ public class ProductDetails {
 	@SerializedName("sizeGuideId")
 	@Expose
 	public String sizeGuideId;
+	@SerializedName("colourSizeVariants")
+	@Expose
+	public String colourSizeVariants;
+
 
 }

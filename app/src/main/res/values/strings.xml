@@ -1976,4 +1976,5 @@
     <string name="size_guide">Size Guide</string>
     <string name="loan_request_fund_not_available_title">Funds Not Available</string>
     <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
+    <string name="cd_lnksizeguide">lnkSizeGuide</string>
 </resources>
