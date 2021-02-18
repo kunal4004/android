@@ -166,9 +166,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/seventy_five_dp"
             app:layout_constraintStart_toStartOf="@+id/startGuideLine"
-            app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount"
-            >
-
+            app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount">
             <requestFocus />
         </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
