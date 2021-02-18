@@ -844,6 +844,7 @@ public class Utils {
 	}
 
 	public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
+		shoppingDeliveryLocation.storePickup = shoppingDeliveryLocation.store != null;
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
 		currentUserObject.save();
@@ -1030,10 +1031,17 @@ public class Utils {
 	public static String retrieveStoreId(String fulFillmentType) {
 		JsonParser parser = new JsonParser();
 		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+		String fulfillmentStore = "";
 		if (shoppingDeliveryLocation == null) return "";
-		if (shoppingDeliveryLocation.suburb == null) return "";
-		if (shoppingDeliveryLocation.suburb.fulfillmentStores == null) return "";
-		String fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
+		if (shoppingDeliveryLocation.storePickup) {
+			if (shoppingDeliveryLocation.store != null && shoppingDeliveryLocation.store.getFulfillmentStores() != null)
+				fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.store.getFulfillmentStores());
+			else return "";
+		} else {
+			if (shoppingDeliveryLocation.suburb != null && shoppingDeliveryLocation.suburb.fulfillmentStores != null)
+				fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
+			else return "";
+		}
 		String swapFulFillmentStore = TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? "" : fulfillmentStore;
 		JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
 		String storeId = "";
