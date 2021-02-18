@@ -132,6 +132,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setHowToSaveLink(howtosaveLink)
                 WoolworthsApplication.setWrewardsTCLink(wrewardsTCLink)
                 WoolworthsApplication.setCartCheckoutLink(cartCheckoutLink)
+                WoolworthsApplication.setFirebaseUserPropertiesForDelinquentProductGroupCodes(firebaseUserPropertiesForDelinquentProductGroupCodes)
             }
 
             dashConfig?.apply{

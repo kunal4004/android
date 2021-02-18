@@ -97,6 +97,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -174,6 +175,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private Account mCreditCardAccount;
     private View linkedAccountBottomDivider;
     private FloatingActionButton chatWithAgentFloatingButton;
+    private ImageView creditReportIcon;
     private RelativeLayout creditReportView;
     private HashMap<Products, Account> mAccountsHashMap;
 
@@ -278,6 +280,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
             creditReportView = view.findViewById(R.id.creditReport);
+            creditReportIcon = view.findViewById(R.id.creditReportIcon);
+
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
             retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
@@ -500,7 +504,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),
                 AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
         this.configureAndLayoutTopLayerView();
-        
+
         //show content for all available products
         for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
             Account account = item.getValue();
@@ -521,9 +525,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         }
 
+        Map<String, Account> accounts = new HashMap();
         for (Map.Entry<Products, Account> products : mAccountsHashMap.entrySet()) {
             Products product = products.getKey();
+
+            accounts.put(product.getProductGroupCode(), products.getValue());
             int indexOfUnavailableAccount = unavailableAccounts.indexOf(product.getProductGroupCode().toUpperCase());
+
             if (indexOfUnavailableAccount > -1) {
                 try {
                     unavailableAccounts.remove(indexOfUnavailableAccount);
@@ -532,6 +540,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 }
             }
         }
+
+        FirebaseAnalyticsUserProperty.setUserPropertiesForCardProductOfferings(accounts);
+        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCode(accounts);
 
         //hide content for unavailable products
         boolean sc = true, cc = true, pl = true;
@@ -944,7 +955,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void navigateToLinkedStoreCard() {
         Activity activity = getActivity();
-        if (activity == null)return;
+        if (activity == null) return;
         if (retryStoreCardLinearLayout.getVisibility() == View.VISIBLE) {
             if (new NetworkManager().isConnectedToNetwork(activity)) {
                 Products products = mUpdateMyAccount.getProductByProductGroupCode(AccountsProductGroupCode.STORE_CARD.getGroupCode());
@@ -962,6 +973,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
                                 hideView(retryStoreCardLinearLayout);
                                 showStoreCardContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+
                             }
                             break;
 
@@ -996,7 +1010,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void navigateToLinkedPersonalLoan() {
         Activity activity = getActivity();
-        if (activity == null)return;
+        if (activity == null) return;
         if (retryPersonalLoanLinearLayout.getVisibility() == View.VISIBLE) {
             if (new NetworkManager().isConnectedToNetwork(activity)) {
                 Products products = mUpdateMyAccount.getProductByProductGroupCode(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode());
@@ -1013,6 +1027,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
                                 hideView(retryPersonalLoanLinearLayout);
                                 showPersonalLoanContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
                             }
                             break;
 
@@ -1046,7 +1062,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void navigateToLinkedCreditCard() {
         Activity activity = getActivity();
-        if (activity == null)return;
+        if (activity == null) return;
         if (retryCreditCardLinearLayout.getVisibility() == View.VISIBLE) {
             if (new NetworkManager().isConnectedToNetwork(activity)) {
                 Products products = mUpdateMyAccount.getProductByProductGroupCode(AccountsProductGroupCode.CREDIT_CARD.getGroupCode());
@@ -1063,6 +1079,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
                                 hideView(retryCreditCardLinearLayout);
                                 showCreditCardContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
                             }
                             break;
 
@@ -1098,7 +1116,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void defaultErrorMessage(AccountsResponse accountsResponse) {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity != null && activity.getSupportFragmentManager() !=null && accountsResponse != null && accountsResponse.response != null && !TextUtils.isEmpty(accountsResponse.response.desc)) {
+        if (activity != null && activity.getSupportFragmentManager() != null && accountsResponse != null && accountsResponse.response != null && !TextUtils.isEmpty(accountsResponse.response.desc)) {
             try {
                 AccountsErrorHandlerFragment accountsErrorHandlerFragment = AccountsErrorHandlerFragment.Companion.newInstance(accountsResponse.response.desc);
                 accountsErrorHandlerFragment.show(activity.getSupportFragmentManager(), AccountsErrorHandlerFragment.class.getSimpleName());
@@ -1130,7 +1148,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(true);
         else
             showProgressBar();
-
+        
         mUpdateMyAccount.make(forceNetworkUpdate, accountsHashMap -> {
             if (activity == null) return null;
             mAccountResponse = mUpdateMyAccount.mAccountResponse;
@@ -1158,7 +1176,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         mAccountResponse = mUpdateMyAccount.mAccountResponse;
                     }
                     configureView();
-                    // FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
+
                     validateDeepLinkData();
                     showInAppChat(activity);
                     // # WOP-6284 - Show a retry button on accounts section when an error is returned from server

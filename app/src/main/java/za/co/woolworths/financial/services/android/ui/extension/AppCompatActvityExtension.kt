@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
+import android.graphics.Paint
 
 import android.os.CountDownTimer
 import android.text.Editable
@@ -11,6 +12,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.AnimRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
@@ -352,4 +354,16 @@ fun ViewPager2.findFragmentAtPosition(
         position: Int
 ): Fragment? {
     return fragmentManager.findFragmentByTag("f$position")
+}
+
+fun TextView.underline() {
+    paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+}
+
+inline fun <reified T : Enum<T>> valueOf(type: String, default: T): T {
+    return try {
+        java.lang.Enum.valueOf(T::class.java, type)
+    } catch (e: Exception) {
+        default
+    }
 }
