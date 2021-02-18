@@ -1973,6 +1973,8 @@
     <string name="dash_banner_location_perms_subtitle">We use location services to show you \nstock at your nearest store, and \ndelivery slots in your area.</string>
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
+    <string name="size_guide">Size Guide</string>
     <string name="loan_request_fund_not_available_title">Funds Not Available</string>
     <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
+    <string name="cd_lnksizeguide">lnkSizeGuide</string>
 </resources>

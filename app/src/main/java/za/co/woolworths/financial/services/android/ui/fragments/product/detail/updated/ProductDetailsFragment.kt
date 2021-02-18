@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
+import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
@@ -138,6 +139,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         share?.setOnClickListener(this)
+        sizeGuide?.setOnClickListener(this)
         configureDefaultUI()
     }
 
@@ -158,6 +160,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.dietaryInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DIETARY_INFO)
             R.id.moreColor -> showMoreColors()
             R.id.share -> shareProduct()
+            R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
         }
     }
 
@@ -400,6 +403,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showColors()
         if (hasSize)
             showSize()
+
+        if(productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants,productDetails?.sizeGuideId) == true) {
+            sizeGuide?.apply {
+                underline()
+                visibility = View.VISIBLE
+            }
+        }
 
     }
 
