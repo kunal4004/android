@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -120,6 +121,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Sts stsValues;
     private static CreditCardActivation creditCardActivation;
     private static ClickAndCollect clickAndCollect;
+    private static UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
     private static CreditCardDelivery creditCardDelivery;
 
     private Activity mCurrentActivity = null;
@@ -642,6 +644,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return dashConfig;
     }
 
+    public static UserPropertiesForDelinquentCodes getFirebaseUserPropertiesForDelinquentProductGroupCodes() {
+        return firebaseUserPropertiesForDelinquentProductGroupCodes;
+    }
+
+    public static void setFirebaseUserPropertiesForDelinquentProductGroupCodes(UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes) {
+        WoolworthsApplication.firebaseUserPropertiesForDelinquentProductGroupCodes = firebaseUserPropertiesForDelinquentProductGroupCodes;
+    }
 
     public CreditLimitIncrease getCreditLimitIncrease() {
         return creditLimitIncrease;

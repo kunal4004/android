@@ -247,6 +247,9 @@ class FirebaseManagerAnalyticsProperties {
             const val activationRequested = "Request Credit Card Activation"
             const val activationConfirmed = "Confirm Credit Card Activation"
             const val PRODUCT_ID: String = "product_id"
+            const val SC_ACCOUNT_STATE = "sc_account_dc_state"
+            const val CC_ACCOUNT_STATE = "cc_account_dc_state"
+            const val PL_ACCOUNT_STATE = "pl_account_dc_state"
 
         }
     }
