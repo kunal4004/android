@@ -140,8 +140,7 @@
             app:layout_constraintBottom_toTopOf="@+id/fundGuideLine"
             app:layout_constraintEnd_toEndOf="@+id/creditLimitView"
             app:layout_constraintStart_toStartOf="@+id/tvCreditLimit" />
-
-
+        
         <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
             android:id="@+id/edtWithdrawAmount"
             android:layout_width="wrap_content"
