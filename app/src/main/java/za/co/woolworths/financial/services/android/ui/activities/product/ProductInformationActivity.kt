@@ -11,9 +11,11 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_INGREDIENTS_INFORMATION
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_NUTRITIONAL_INFORMATION
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_PRODUCTDETAILS_INFORMATION
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.Companion.ACTION_SIZE_GUIDE
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.ProductSizeGuideFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductInformationActivity : AppCompatActivity() {
@@ -22,7 +24,7 @@ class ProductInformationActivity : AppCompatActivity() {
     private var productInformationType: ProductInformationType? = null
 
     enum class ProductInformationType {
-        DETAILS, INGREDIENTS, NUTRITIONAL_INFO, DIETARY_INFO, ALLERGEN_INFO
+        DETAILS, INGREDIENTS, NUTRITIONAL_INFO, DIETARY_INFO, ALLERGEN_INFO, SIZE_GUIDE
     }
 
     companion object {
@@ -105,6 +107,17 @@ class ProductInformationActivity : AppCompatActivity() {
                     addFragment(
                             fragment = ProductDietaryInformationFragment.newInstance(this.dietary.get(0)),
                             tag = ProductDietaryInformationFragment::class.java.simpleName,
+                            containerViewId = R.id.fragmentContainer)
+                }
+                ProductInformationType.SIZE_GUIDE->{
+                    supportActionBar?.apply { setDisplayHomeAsUpEnabled(false) }
+                    val arguments = HashMap<String, String>()
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID] = productId
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = ACTION_SIZE_GUIDE
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_SIZE_GUIDE, arguments)
+                    addFragment(
+                            fragment = ProductSizeGuideFragment.newInstance(productDetails?.sizeGuideId),
+                            tag = ProductSizeGuideFragment::class.java.simpleName,
                             containerViewId = R.id.fragmentContainer)
                 }
             }

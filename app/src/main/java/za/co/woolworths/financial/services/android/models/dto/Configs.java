@@ -50,4 +50,6 @@ public class Configs {
     public CreditView creditView;
     @Nullable
     public DashConfig dashConfig;
+    @Nullable
+    public CreditLimitIncrease creditLimitIncrease;
 }

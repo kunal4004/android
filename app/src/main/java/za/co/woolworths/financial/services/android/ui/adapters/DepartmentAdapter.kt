@@ -127,7 +127,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             } else {
                 validatedSuburbProducts?.let { it ->
                     itemView.apply {
-                        when (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup) {
+                        when (Utils.getPreferredDeliveryLocation()?.storePickup) {
                             true -> {
                                 earliestDateValue?.text = it.firstAvailableFoodDeliveryDate ?: ""
                                 earliestDateValue?.visibility = View.VISIBLE
@@ -144,7 +144,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                                 otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                             }
                         }
-                        earliestDateTitle?.text = bindString(if (Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == false) R.string.earliest_delivery_date else R.string.earliest_collection_date)
+                        earliestDateTitle?.text = bindString(if (Utils.getPreferredDeliveryLocation()?.storePickup == false) R.string.earliest_delivery_date else R.string.earliest_collection_date)
                         deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
                     }
                 }
