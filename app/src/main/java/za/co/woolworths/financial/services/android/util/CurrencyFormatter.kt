@@ -51,6 +51,10 @@ class CurrencyFormatter {
             return "$currency${amount?.let { formatAmountToRandAndCent(it) } ?: 0.00}"
         }
 
+        fun formatAmountToCentNoGroupingSeparator(amount: Any?): String {
+            return "${amount?.toString()?.replace(" ","")?.let { formatAmountToRandAndCent(it).replace(" ","") } ?: 0.00}"
+        }
+
         fun escapeDecimal(amount: Any?): String {
             return (formatAmountToRandAndCent(amount ?: 0 * 100)).replace(Regex("\\.0*$"), "")
         }

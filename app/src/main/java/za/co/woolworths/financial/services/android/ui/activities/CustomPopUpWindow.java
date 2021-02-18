@@ -547,9 +547,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WTextView tvLocation = findViewById(R.id.tvLocation);
                 ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
                 if (shoppingDeliveryLocation != null) {
-                    Suburb suburb = shoppingDeliveryLocation.suburb;
-                    if (suburb != null) {
-                        tvLocation.setText(suburb.name + ", " + shoppingDeliveryLocation.province.name);
+                    if (shoppingDeliveryLocation.suburb != null || shoppingDeliveryLocation.store!=null) {
+                        tvLocation.setText(shoppingDeliveryLocation.storePickup ? shoppingDeliveryLocation.store.getName() : shoppingDeliveryLocation.suburb.name + ", " + shoppingDeliveryLocation.province.name);
                     }
                 }
                 break;
