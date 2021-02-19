@@ -22,7 +22,7 @@ class CurrencyFormatterTest {
     @Test
     fun check_if_amount_is_formatted_using_string_variable_without_dot() {
 
-        val amountMap = mapOf<Any, String>(Pair("13000", "130.00"), Pair("12000", "120.00"), Pair("30000", "300.00"), Pair("200", "2.00"),
+        val amountMap = mapOf<Any, String>(Pair("5213.300054931", "5 213.30"), Pair("12000", "120.00"), Pair("30000", "300.00"), Pair("200", "2.00"),
                 Pair("221", "2.21"), Pair("101", "1.01"), Pair("4022", "40.22"), Pair("-120332", "-1 203.32"), Pair("5003", "50.03"), Pair("2102", "21.02"), Pair("30", "0.30"))
 
         conversionResult(amountMap, ::formatAmountFunc)

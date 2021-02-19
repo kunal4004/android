@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -47,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -420,6 +420,7 @@ public class SSOActivity extends WebViewActivity {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
+						clearAllCookies();
 						closeActivity();
 					} else {
 					}
@@ -710,14 +711,9 @@ public class SSOActivity extends WebViewActivity {
 		super.onDestroy();
 	}
 
-	private void clearHistory() {
-		mGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		startActivity(i);
-		closeActivity();
+	private void clearAllCookies() {
+		CookieManager.getInstance().removeAllCookies(null);
+		CookieManager.getInstance().flush();
 	}
 
 	private void showFailureView(String s) {
