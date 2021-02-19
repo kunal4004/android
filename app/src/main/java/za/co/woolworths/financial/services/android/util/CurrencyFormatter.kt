@@ -12,6 +12,7 @@ class CurrencyFormatter {
 
         private const val currency = "R"
         private const val decimalPlaces = 2
+        private const val dot = "."
         private const val formatPattern = "#,###,###"
         private val regexRemoveAllNonNumericCharactersExceptNegativeSymbol = Regex("[^\\d-]")
 
@@ -19,9 +20,16 @@ class CurrencyFormatter {
         fun formatAmountToRandAndCent(amount: Any): String {
             var amountStr = amount.toString()
 
-            val cent: String = amountStr.takeLast(decimalPlaces)
-            if (cent.contains(".") && cent.length == 2)
-                amountStr = "${amountStr}0"
+            if (amountStr.contains(dot)) {
+                val indexOfDot = amountStr.indexOf(dot)+1
+                val amountLength = amountStr.length
+                val cent: String = amountStr.substring(indexOfDot, amountLength)
+                amountStr = when {
+                    cent.length == 1 -> "${amountStr}0"
+                    cent.length > decimalPlaces -> "${amountStr.substring(0, indexOfDot)}${amountStr.substring(indexOfDot, indexOfDot + decimalPlaces)}"
+                    else -> amountStr
+                }
+            }
 
             amountStr = amountStr.replace(regexRemoveAllNonNumericCharactersExceptNegativeSymbol, "")
 
@@ -52,7 +60,7 @@ class CurrencyFormatter {
         }
 
         fun formatAmountToCentNoGroupingSeparator(amount: Any?): String {
-            return "${amount?.toString()?.replace(" ","")?.let { formatAmountToRandAndCent(it).replace(" ","") } ?: 0.00}"
+            return "${amount?.toString()?.replace(" ", "")?.let { formatAmountToRandAndCent(it).replace(" ", "") } ?: 0.00}"
         }
 
         fun escapeDecimal(amount: Any?): String {
