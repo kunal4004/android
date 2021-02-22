@@ -31,7 +31,12 @@ class GetCartSummary {
             if (TextUtils.isEmpty(suburbName) || TextUtils.isEmpty(provinceName)) return
             val province = getProvince(this)
             val suburb = suburb
-            Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(province, suburb))
+            val store = store
+            if (store != null) {
+                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(province, null, store))
+            } else {
+                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(province, suburb, null))
+            }
         }
     }
 

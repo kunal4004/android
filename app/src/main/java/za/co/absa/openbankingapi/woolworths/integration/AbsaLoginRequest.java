@@ -92,16 +92,22 @@ public class AbsaLoginRequest {
 							xfpt = new JSession(cookie.getName(), cookie);
 					}
 					responseDelegate.onSuccess(loginResponse, cookies);
+					//clearing up sensitive values
+					sessionKey = null;
 				}
 
 				else {
 					responseDelegate.onFailure(resultMessage);
+					//clearing up sensitive values
+					sessionKey = null;
 				}
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				responseDelegate.onFatalError(error);
+				//clearing up sensitive values
+				sessionKey = null;
 			}
 		});
 

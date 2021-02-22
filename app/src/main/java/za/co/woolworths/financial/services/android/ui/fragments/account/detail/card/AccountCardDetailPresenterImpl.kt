@@ -25,9 +25,11 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
+import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.util.*
+import kotlin.collections.HashMap
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
 
@@ -270,7 +272,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun isCreditCardSection(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+        return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
     }
 
     override fun navigateToPayMyAccountActivity() {
@@ -287,6 +289,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun isProductCodeStoreCard(): Boolean {
-        return getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault()) == AccountsProductGroupCode.STORE_CARD.groupCode.toLowerCase()
+        return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true)
     }
 }

@@ -7,8 +7,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +28,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -63,6 +63,7 @@ import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksVi
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
@@ -81,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
@@ -95,7 +97,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
-import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
 
@@ -133,6 +134,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int TIPS_AND_TRICKS_CTA_REQUEST_CODE = 3627;
 
     public final String TAG = this.getClass().getSimpleName();
+    public AccountMasterCache mAccountMasterCache = AccountMasterCache.INSTANCE;
     private PermissionUtils permissionUtils;
     private ArrayList<String> permissions;
     private BottomNavigationViewModel bottomNavigationViewModel;
@@ -145,7 +147,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int PDP_REQUEST_CODE = 18;
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
-    public Uri appLinkData;
+    public JsonObject appLinkData;
 
     @Override
     public int getLayoutId() {
@@ -183,7 +185,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
-        appLinkData = getIntent().getData();
+        parseDeepLinkData();
+
         mNavController = FragNavController.newBuilder(savedInstanceState,
                 getSupportFragmentManager(),
                 R.id.frag_container)
@@ -227,12 +230,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         });
 
-        if (mBundle!=null && mBundle.containsKey("OnBoardingLoginBadge")){
+        if (mBundle != null && mBundle.containsKey("OnBoardingLoginBadge")) {
             QueryBadgeCounter.getInstance().queryCartSummaryCount();
             QueryBadgeCounter.getInstance().queryVoucherCount();
         }
         queryBadgeCountOnStart();
         addDrawerFragment();
+    }
+
+    private void parseDeepLinkData() {
+        if (mBundle == null) {
+            return;
+        }
+        String deepLinkData = mBundle.getString("parameters", "").replace("\\", "");
+        if (deepLinkData == null) {
+            return;
+        }
+        appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
     }
 
     private void queryBadgeCountOnStart() {
@@ -292,16 +306,32 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
         removeToolbar();
-        if (appLinkData != null) {
-            ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(appLinkData.toString());
-            if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
-                Map<String, String> arguments = new HashMap<>();
-                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
-                arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, appLinkData.toString());
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
-                pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+        if (mBundle != null && mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString())) {
+            String deepLinkType = mBundle.get("feature").toString();
+
+            switch (deepLinkType) {
+                case AppConstant.DP_LINKING_PRODUCT_LISTING:
+                    Uri linkData = Uri.parse(appLinkData.get("url").toString());
+                    ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(linkData.toString());
+                    if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
+                        Map<String, String> arguments = new HashMap<>();
+                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
+                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
+                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+                    }
+                    break;
+
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS:
+                    BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
+                    new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
+                    break;
+
             }
         }
+
     }
 
     @Override
@@ -708,6 +738,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 return wRewardsFragment;
             case INDEX_ACCOUNT:
                 MyAccountsFragment myAccountsFragment = new MyAccountsFragment();
+                myAccountsFragment.setArguments(mBundle);
                 return myAccountsFragment;
         }
         throw new IllegalStateException("Need to send an index that we know");
@@ -1303,7 +1334,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void setUpDrawerFragment(ProductView productsResponse, ProductsRequestParams productsRequestParams) {
         unLockDrawerFragment();
-        if (drawerFragment != null && getViewDataBinding().drawerLayout !=null)
+        if (drawerFragment != null && getViewDataBinding().drawerLayout != null)
             drawerFragment.setUpDrawer(getViewDataBinding().drawerLayout, productsResponse, productsRequestParams);
     }
 
@@ -1331,7 +1362,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
-    public void onSignedOut(){
+    public void onSignedOut() {
         clearBadgeCount();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
     }

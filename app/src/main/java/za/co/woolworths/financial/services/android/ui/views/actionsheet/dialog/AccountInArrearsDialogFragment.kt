@@ -15,8 +15,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
@@ -37,7 +37,7 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_overdue_error_desc, Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))) }
+        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue -> activity?.resources?.getString(R.string.payment_overdue_error_desc, Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))) }
 
         payNowButton?.apply {
             setOnClickListener(this@AccountInArrearsDialogFragment)

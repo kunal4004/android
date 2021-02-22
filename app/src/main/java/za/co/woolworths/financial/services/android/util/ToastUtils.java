@@ -2,9 +2,11 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.icu.lang.UProperty;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.HtmlCompat;
 
 import com.awfs.coordination.R;
@@ -173,6 +176,43 @@ public class ToastUtils {
 			View layout = LayoutInflater.from(getActivity()).inflate(R.layout.single_line_toast_layout, null);
 
 			TextView toastMessage = layout.findViewById(R.id.toastMessage);
+			toastMessage.setText(HtmlCompat.fromHtml(getMessage(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+
+			// initialize your popupWindow and use your custom layout as the view
+			final PopupWindow pw = new PopupWindow(layout,
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT, true);
+			pw.setFocusable(false);
+
+			// dismiss the popup window after 3sec
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					if (pw != null)
+						pw.dismiss();
+				}
+			}, POPUP_DELAY_MILLIS);
+
+			if (getActivity() != null) {
+				pw.showAsDropDown(view, 0, (int) -(view.getHeight() * 2.1));
+			}
+			return pw;
+		}
+
+		return null;
+	}
+
+	public PopupWindow buildCustomTrackMyDeliveryToast(Context context){
+		if (getActivity() != null) {
+
+			View layout = LayoutInflater.from(getActivity()).inflate(R.layout.single_line_toast_layout, null);
+
+			TextView toastMessage = layout.findViewById(R.id.toastMessage);
+			Resources r = context.getResources();
+			int height =  r.getDimensionPixelSize(R.dimen.fifty_dp);
+			ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, height);
+			int margin = r.getDimensionPixelSize(R.dimen.thirty_two_dp);
+			params.setMargins(margin, 0, margin,0);
+			toastMessage.setLayoutParams(params);
 			toastMessage.setText(HtmlCompat.fromHtml(getMessage(), HtmlCompat.FROM_HTML_MODE_LEGACY));
 
 			// initialize your popupWindow and use your custom layout as the view

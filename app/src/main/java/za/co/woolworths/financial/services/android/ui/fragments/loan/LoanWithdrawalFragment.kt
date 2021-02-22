@@ -92,7 +92,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home ->  activity?.let { finishActivity(it) }
+            android.R.id.home -> activity?.let { finishActivity(it) }
 
         }
         return super.onOptionsItemSelected(item)
@@ -126,7 +126,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
             //If s is empty disable next arrow,else enable s arrow
-          menuItemVisible(!TextUtils.isEmpty(s))
+            menuItemVisible(!TextUtils.isEmpty(s))
         }
 
         @SuppressLint("SetTextI18n")
@@ -237,58 +237,66 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
 
     private fun confirmDrawnDownAmount() {
         val drawnDownAmount = getDrawnDownAmount()
-        if (drawnDownAmount < getMinDrawnAmountWithoutCent()) {
-            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT, drawnDownAmount.toString())
-        } else if (drawnDownAmount >= getMinDrawnAmountWithoutCent() && drawnDownAmount <= getAvailableFundWithoutCent()) {
-            val productOfferingId = getProductOfferingId()
-            val drawnDownAmountInCent = getDrawnDownAmount() * 100
-            val creditLimit = getCreditLimit()
-            val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(), creditLimit)
-            showProgressDialog(true)
-            mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
-            mPostLoanIssue?.enqueue(CompletionHandler(object : IResponseListener<IssueLoanResponse> {
-                override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
-                    activity?.let { activity ->
-                        issueLoanResponse?.apply {
-                            autoConnectRequest(false)
-                            showProgressDialog(false)
-                            hideKeyboard()
-                            when (httpCode) {
-                                200 -> {
-                                    replaceFragment(
-                                            fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), installmentAmount),
-                                            tag = LoanWithdrawalDetailFragment::class.java.simpleName,
-                                            containerViewId = R.id.flLoanContent,
-                                            allowStateLoss = true,
-                                            enterAnimation = R.anim.slide_in_from_right,
-                                            exitAnimation = R.anim.slide_to_left,
-                                            popEnterAnimation = R.anim.slide_from_left,
-                                            popExitAnimation = R.anim.slide_to_right
-                                    )
-                                }
-                                440 -> {
-                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, activity)
-                                }
 
-                                else -> {
-                                    response?.desc?.let { DialogManager(activity).showBasicDialog(it) }
+        when {
+            //Available fund less than minimum draw amount
+            getAvailableFundWithoutCent() < getMinDrawnAmountWithoutCent() -> {
+                activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NOT_AVAILABLE_LOAN_AMOUNT, drawnDownAmount.toString()) }
+            }
+            drawnDownAmount < getMinDrawnAmountWithoutCent() -> {
+                activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT, drawnDownAmount.toString()) }
+            }
+            drawnDownAmount >= getMinDrawnAmountWithoutCent() && drawnDownAmount <= getAvailableFundWithoutCent() -> {
+                val productOfferingId = getProductOfferingId()
+                val drawnDownAmountInCent = getDrawnDownAmount() * 100
+                val creditLimit = getCreditLimit()
+                val issueLoanRequest = IssueLoan(productOfferingId, drawnDownAmountInCent, repaymentPeriod(), creditLimit)
+                showProgressDialog(true)
+                mPostLoanIssue = OneAppService.issueLoan(issueLoanRequest)
+                mPostLoanIssue?.enqueue(CompletionHandler(object : IResponseListener<IssueLoanResponse> {
+                    override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
+                        activity?.let { activity ->
+                            issueLoanResponse?.apply {
+                                autoConnectRequest(false)
+                                showProgressDialog(false)
+                                hideKeyboard()
+                                when (httpCode) {
+                                    200 -> {
+                                        replaceFragment(
+                                                fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), installmentAmount),
+                                                tag = LoanWithdrawalDetailFragment::class.java.simpleName,
+                                                containerViewId = R.id.flLoanContent,
+                                                allowStateLoss = true,
+                                                enterAnimation = R.anim.slide_in_from_right,
+                                                exitAnimation = R.anim.slide_to_left,
+                                                popEnterAnimation = R.anim.slide_from_left,
+                                                popExitAnimation = R.anim.slide_to_right
+                                        )
+                                    }
+                                    440 -> {
+                                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, activity)
+                                    }
+
+                                    else -> {
+                                        response?.desc?.let { DialogManager(activity).showBasicDialog(it) }
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                override fun onFailure(error: Throwable?) {
-                    activity?.apply {
-                        autoConnectRequest(true)
-                        showProgressDialog(false)
+                    override fun onFailure(error: Throwable?) {
+                        activity?.apply {
+                            autoConnectRequest(true)
+                            showProgressDialog(false)
+                        }
                     }
-                }
 
-            }, IssueLoanResponse::class.java))
-
-        } else {
-            activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "") }
+                }, IssueLoanResponse::class.java))
+            }
+            else -> {
+                activity?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, getAvailableFundWithoutCent().toString()) }
+            }
         }
     }
 
@@ -326,7 +334,7 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
             activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
             if (!drawnDownAmountIsEmpty)
                 setText(drawnDownAmount)
-            Handler().postDelayed({ mMenu?.let { menuItemVisible( drawnDownAmountIsEmpty) } }, MILIS)
+            Handler().postDelayed({ mMenu?.let { menuItemVisible(drawnDownAmountIsEmpty) } }, MILIS)
             showKeyboard()
         }
     }
@@ -366,8 +374,8 @@ class LoanWithdrawalFragment : LoanBaseFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.nexImageView ->  confirmDrawnDownAmount()
+        when (v?.id) {
+            R.id.nexImageView -> confirmDrawnDownAmount()
             else -> throw IllegalStateException("Unknown Id : $v")
         }
     }

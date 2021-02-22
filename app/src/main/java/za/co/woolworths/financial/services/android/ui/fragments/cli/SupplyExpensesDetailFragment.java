@@ -1,6 +1,7 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -10,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -28,11 +28,9 @@ import java.util.LinkedHashMap;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.fragments.cli.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
+import za.co.woolworths.financial.services.android.util.CurrencyEditText;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -43,7 +41,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	private View rootView;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
 	private WTextView tvMortgagePayments, tvRentalPayments, tvMaintainanceExpenses, tvMonthlyCreditPayments, tvOtherExpenses;
-	private WEditTextView etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses;
+	private CurrencyEditText etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses;
 	private boolean etMortgagePaymentsWasEdited, etRentalPaymentsWasEdited, etMaintainanceExpensesWasEdited, etMonthlyCreditPaymentsWasEdited, etOtherExpensesWasEdited;
 	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer, llSupplyExpenseContainer;
 	private NestedScrollView nsSupplyExpense;
@@ -108,17 +106,17 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		llNextButtonLayout.setOnClickListener(this);
 		llOtherExpensesContainer.setOnClickListener(this);
 
-		etMortgagePayments = (WEditTextView) view.findViewById(R.id.etMortgagePayments);
-		etRentalPayments = (WEditTextView) view.findViewById(R.id.etRentalPayments);
-		etMaintainanceExpenses = (WEditTextView) view.findViewById(R.id.etMaintainanceExpenses);
-		etMonthlyCreditPayments = (WEditTextView) view.findViewById(R.id.etMonthlyCreditPayments);
-		etOtherExpenses = (WEditTextView) view.findViewById(R.id.etOtherExpenses);
+		etMortgagePayments = (CurrencyEditText) view.findViewById(R.id.etMortgagePayments);
+		etRentalPayments = (CurrencyEditText) view.findViewById(R.id.etRentalPayments);
+		etMaintainanceExpenses = (CurrencyEditText) view.findViewById(R.id.etMaintainanceExpenses);
+		etMonthlyCreditPayments = (CurrencyEditText) view.findViewById(R.id.etMonthlyCreditPayments);
+		etOtherExpenses = (CurrencyEditText) view.findViewById(R.id.etOtherExpenses);
 
-		etMortgagePayments.addTextChangedListener(new CurrencyTextWatcher(etMortgagePayments));
-		etRentalPayments.addTextChangedListener(new CurrencyTextWatcher(etRentalPayments));
-		etMaintainanceExpenses.addTextChangedListener(new CurrencyTextWatcher(etMaintainanceExpenses));
-		etMonthlyCreditPayments.addTextChangedListener(new CurrencyTextWatcher(etMonthlyCreditPayments));
-		etOtherExpenses.addTextChangedListener(new CurrencyTextWatcher(etOtherExpenses));
+		currencyEditTextParams(etMortgagePayments);
+		currencyEditTextParams(etRentalPayments);
+		currencyEditTextParams(etMaintainanceExpenses);
+		currencyEditTextParams(etMonthlyCreditPayments);
+		currencyEditTextParams(etOtherExpenses);
 
 		etMortgagePayments.addTextChangedListener(new GenericTextWatcher(etMortgagePayments));
 		etRentalPayments.addTextChangedListener(new GenericTextWatcher(etRentalPayments));
@@ -230,24 +228,24 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			String currentAmount = editable.toString();
 			switch (view.getId()) {
 				case R.id.etMortgagePayments:
-					etMortgagePaymentsWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etMortgagePaymentsWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				case R.id.etRentalPayments:
-					etRentalPaymentsWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etRentalPaymentsWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				case R.id.etMaintainanceExpenses:
-					etMaintainanceExpensesWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etMaintainanceExpensesWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				case R.id.etMonthlyCreditPayments:
-					etMonthlyCreditPaymentsWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etMonthlyCreditPaymentsWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 
 				case R.id.etOtherExpenses:
-					etOtherExpensesWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etOtherExpensesWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				default:
@@ -256,6 +254,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		}
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	private void nextFocusEditText() {
 		etMortgagePayments.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView exampleView, int actionId, KeyEvent event) {
@@ -295,12 +294,9 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			}
 		});
 
-		etOtherExpenses.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				etOtherExpensesWasTouched = true;
-				return false;
-			}
+		etOtherExpenses.setOnTouchListener((v, event) -> {
+			etOtherExpensesWasTouched = true;
+			return false;
 		});
 
 		etOtherExpenses.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -343,4 +339,5 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		CLIPhase2Activity cliPhase2Activity = (CLIPhase2Activity) getActivity();
 		cliPhase2Activity.actionBarBackIcon();
 	}
+
 }

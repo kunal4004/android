@@ -48,6 +48,9 @@ public class Account implements Serializable {
 	@SerializedName("productOfferingGoodStanding")
 	@Expose
 	public boolean productOfferingGoodStanding;
+	@SerializedName("delinquencyCycle")
+	@Expose
+	public int delinquencyCycle;
 	@SerializedName("totalAmountDue")
 	@Expose
 	public int totalAmountDue;

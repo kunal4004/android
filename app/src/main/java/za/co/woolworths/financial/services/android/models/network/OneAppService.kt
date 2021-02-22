@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -192,8 +193,8 @@ object OneAppService : RetrofitConfig() {
         var storeId: String? = null
         Utils.getPreferredDeliveryLocation()?.apply {
             if (province?.id.isNullOrEmpty()) return Pair(null, null)
-            if (suburb?.storePickup == true) {
-                storeId = suburb.id
+            if (storePickup) {
+                storeId = store.id
             } else {
                 suburbId = suburb?.id
             }
@@ -401,4 +402,11 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.payURemovePaymentMethod(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), paymenToken)
     }
 
+    fun getSizeGuideContent(contentId: String): Call<SizeGuideResponse> {
+        return mApiInterface.getSizeGuideContent(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), contentId)
+    }
+
+    fun getAccountsByProductOfferingId(productOfferingId: String): Call<AccountsResponse> {
+        return mApiInterface.getAccountsByProductOfferingId(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId)
+    }
 }

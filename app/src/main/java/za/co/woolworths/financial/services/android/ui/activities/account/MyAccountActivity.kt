@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_account_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
+import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class MyAccountActivity : AppCompatActivity() {
 
     companion object {
+        var mAccountMasterCache: AccountMasterCache? = AccountMasterCache
         private const val REQUEST_CODE_OPEN_STATEMENT = 3334
         const val REQUEST_CODE_MY_ACCOUNT_FRAGMENT = 4444
         const val RESULT_CODE_MY_ACCOUNT_FRAGMENT = 4444

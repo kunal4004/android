@@ -16,11 +16,8 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.*
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
-import android.util.Pair
 import android.text.style.*
+import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
@@ -28,16 +25,15 @@ import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import com.awfs.coordination.R
-
 import com.google.common.reflect.TypeToken
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
@@ -48,13 +44,13 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.activities.DashDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
+import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl
 import java.io.*
 import java.text.NumberFormat
 import java.text.ParseException
@@ -287,14 +283,15 @@ class KotlinUtils {
             return calendar.time
         }
 
-        fun toShipByDateFormat(date: Date?) :String {
-            return SimpleDateFormat("dd-MM-yyy").format(date)}
+        fun toShipByDateFormat(date: Date?): String {
+            return SimpleDateFormat("dd-MM-yyy").format(date)
+        }
 
         fun presentEditDeliveryLocationActivity(activity: Activity?, requestCode: Int, deliveryType: DeliveryType? = null) {
             var type = deliveryType
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
-                    type = if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                    type = if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
                 }
             }
             activity?.apply {
@@ -309,10 +306,10 @@ class KotlinUtils {
 
         fun setDeliveryAddressView(context: Activity?, shoppingDeliveryLocation: ShoppingDeliveryLocation, tvDeliveringTo: WTextView, tvDeliveryLocation: WTextView, deliverLocationIcon: ImageView?) {
             with(shoppingDeliveryLocation) {
-                when (suburb.storePickup) {
+                when (storePickup) {
                     true -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + suburb.name
+                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + store?.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
@@ -400,13 +397,16 @@ class KotlinUtils {
             }
         }
 
-        fun highlightText(string: String, key: String): SpannableStringBuilder {
+        fun highlightText(string: String, keys: MutableList<String>?): SpannableStringBuilder {
             val noteStringBuilder = SpannableStringBuilder(string)
-            val start = string.indexOf(key)
-            val end = start.plus(key.length) + 1
-            val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
-            noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-            noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            keys?.forEach { key ->
+                val start = string.indexOf(key)
+                val end = start.plus(key.length)
+                val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
+                noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            }
+
             return noteStringBuilder
         }
 
@@ -533,7 +533,25 @@ class KotlinUtils {
         }
 
         fun isDeliveryOptionClickAndCollect(): Boolean {
-            return Utils.getPreferredDeliveryLocation()?.suburb?.storePickup == true
+            return Utils.getPreferredDeliveryLocation()?.storePickup == true
+        }
+
+        @SuppressLint("MissingPermission")
+        @JvmStatic
+        fun setUserPropertiesToNull() {
+            val firebaseInstance = FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
+            firebaseInstance?.apply {
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, null)
+                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, null)
+            }
         }
     }
 }
