@@ -78,6 +78,11 @@ public class AbsaRegisterCredentialRequest {
 			else{
 				responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 			}
+
+			//Clearing up sensitive info
+			sessionKey = null;
+			deviceId = null;
+
 		}, responseDelegate::onFatalError);
 
 		}

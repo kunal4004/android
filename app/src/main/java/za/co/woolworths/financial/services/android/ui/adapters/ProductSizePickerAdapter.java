@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
@@ -63,7 +64,7 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 		//skipping the filling of the view
 		//holder.productName.setText(colorArray.get(position));
 		holder.productSize.setText(otherSkuses.get(position).size);
-		holder.productPrice.setText(WFormatter.formatAmount(otherSkuses.get(position).price));
+		holder.productPrice.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(otherSkuses.get(position).price));
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

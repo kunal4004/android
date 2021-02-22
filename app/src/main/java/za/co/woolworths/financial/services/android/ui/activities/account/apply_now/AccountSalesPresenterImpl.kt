@@ -3,9 +3,9 @@ package za.co.woolworths.financial.services.android.ui.activities.account.apply_
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -45,8 +45,6 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
 
     fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
-    private fun getStatusBarHeight(actionBarHeight: Int): Int = KotlinUtils.getStatusBarHeight(actionBarHeight)
-
     fun onDestroy() {
         mainView = null
     }
@@ -54,6 +52,8 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
     fun setAccountSalesDetailPage(storeCard: AccountSales, navDetailController: NavController) {
         val bundle = Bundle()
         bundle.putString(ACCOUNT_SALES_CREDIT_CARD, Gson().toJson(storeCard))
+        val graph = navDetailController.navInflater.inflate(R.navigation.account_sales_detail_nav_graph)
+        navDetailController.graph = graph
         navDetailController.setGraph(navDetailController.graph, bundle)
     }
 
@@ -82,25 +82,26 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
         }
     }
 
-    override fun getAnchoredHeight(slideOffset: Float, toolbar: Toolbar?): Int? {
-        return toolbar?.layoutParams?.height?.let { toolBarHeight -> getStatusBarHeight(toolBarHeight) }
-    }
-
     override fun setAccountSalesIntent(intent: Intent?) {
         mApplyNowState = intent?.extras?.getSerializable("APPLY_NOW_STATE") as? ApplyNowState
     }
 
     override fun getApplyNowState(): ApplyNowState? = mApplyNowState
 
+    override fun isCreditCardProduct(): Boolean {
+         return  when (getApplyNowState()) {
+            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> false
+            else -> true
+        }
+    }
+
     override fun bottomSheetPeekHeight(): Int {
-        val height = (deviceHeight() / 4)
-        return height
+        return (deviceHeight() / 3) +  KotlinUtils.getStatusBarHeight()
     }
 
     override fun bottomSheetBehaviourHeight(): Int {
         val height = deviceHeight()
         val toolbarHeight = KotlinUtils.getToolbarHeight()
-        val h = height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight().div(4))
-        return h
+        return height.minus(toolbarHeight).minus(KotlinUtils.getStatusBarHeight().div(2))
     }
 }

@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.account.PayMyCardHeaderItem
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import java.lang.RuntimeException
@@ -125,11 +126,11 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     override fun getTotalAmountDue(totalAmountDue: Int): String {
-        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(totalAmountDue))
+        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))
     }
 
     override fun getAmountOutstanding(amountOutstanding: Int): String {
-        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(amountOutstanding))
+        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amountOutstanding))
     }
 
     override fun getPayMyAccountSection(): ApplyNowState {

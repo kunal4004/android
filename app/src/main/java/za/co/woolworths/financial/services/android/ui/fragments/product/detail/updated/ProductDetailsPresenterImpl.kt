@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 
 class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, ProductDetailsContract.ProductDetailsInteractor.OnFinishListener {
 
@@ -134,5 +135,8 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
         getInteractor?.getLocationItems(otherSkus,this)
     }
 
-
+    override fun isSizeGuideApplicable(colourSizeVariants: String?, sizeGuideId: String?): Boolean {
+        val variant = ColourSizeVariants.find(colourSizeVariants ?: "")
+        return (!sizeGuideId.isNullOrEmpty() && (variant == ColourSizeVariants.COLOUR_SIZE_VARIANT || variant == ColourSizeVariants.SIZE_VARIANT))
+    }
 }

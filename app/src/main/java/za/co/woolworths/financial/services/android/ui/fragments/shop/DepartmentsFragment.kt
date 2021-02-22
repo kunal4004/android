@@ -5,8 +5,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -40,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -368,26 +371,29 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
-                if (it.suburb.id.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
+                val storeOrSuburbId = if(it.storePickup) it.store.id else it.suburb.id
+                if (storeOrSuburbId.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
                     updateDeliveryDates()
                 } else {
                     mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                    OneAppService.validateSelectedSuburb(it.suburb.id, it.suburb.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
-                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                            when (response?.httpCode) {
-                                200 -> response.validatedSuburbProducts?.let { it1 ->
-                                    it1.suburbId = it.suburb.id
-                                    WoolworthsApplication.setValidatedSuburbProducts(it1)
-                                    updateDeliveryDates()
+                    storeOrSuburbId?.let { it1 ->
+                        OneAppService.validateSelectedSuburb(it1, it.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
+                            override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                                when (response?.httpCode) {
+                                    200 -> response.validatedSuburbProducts?.let { it1 ->
+                                        it1.suburbId = storeOrSuburbId
+                                        WoolworthsApplication.setValidatedSuburbProducts(it1)
+                                        updateDeliveryDates()
+                                    }
+                                    else -> mDepartmentAdapter?.hideDeliveryDates()
                                 }
-                                else -> mDepartmentAdapter?.hideDeliveryDates()
                             }
-                        }
 
-                        override fun onFailure(error: Throwable?) {
-                            mDepartmentAdapter?.hideDeliveryDates()
-                        }
-                    }, ValidateSelectedSuburbResponse::class.java))
+                            override fun onFailure(error: Throwable?) {
+                                mDepartmentAdapter?.hideDeliveryDates()
+                            }
+                        }, ValidateSelectedSuburbResponse::class.java))
+                    }
                 }
             }
         }

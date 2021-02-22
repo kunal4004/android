@@ -38,7 +38,7 @@
                 app:srcCompat="@drawable/w_black_credit_card" />
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/titleTextView"
                 style="@style/futura_semi_bold_black"
                 android:layout_marginTop="@dimen/sixty_dp"
                 android:contentDescription="@string/cd_ccd_labelsetupdeliverytitle"
@@ -63,10 +63,10 @@
                 android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@id/title" />
+                app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
             <TextView
-                android:id="@+id/descriptionNote"
+                android:id="@+id/descriptionNoteTextView"
                 style="@style/myriad_pro_regular"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 android:contentDescription="@string/cd_ccd_labelsetupdeliverydescription"
