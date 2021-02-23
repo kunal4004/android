@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities
+package za.co.woolworths.financial.services.android.startup.view
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,10 +29,10 @@ import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.viewmodels.StartupViewModel
-import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl
-import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl.Companion.APP_SERVER_ENVIRONMENT_KEY
-import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl.Companion.APP_VERSION_KEY
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModelImpl
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModelImpl.Companion.APP_SERVER_ENVIRONMENT_KEY
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModelImpl.Companion.APP_VERSION_KEY
 import java.util.*
 
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, View.OnClickListener {

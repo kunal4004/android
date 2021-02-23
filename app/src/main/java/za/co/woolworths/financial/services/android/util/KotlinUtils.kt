@@ -50,7 +50,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoa
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
-import za.co.woolworths.financial.services.android.viewmodels.StartupViewModelImpl
 import java.io.*
 import java.text.NumberFormat
 import java.text.ParseException

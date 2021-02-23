@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.viewmodels
+package za.co.woolworths.financial.services.android.startup.viewmodel
 
 import android.content.Intent
 import android.view.View

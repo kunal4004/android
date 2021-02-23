@@ -20,7 +20,7 @@
         android:paddingRight="0dp"
         android:paddingTop="0dp"
         android:visibility="gone"
-        tools:context="za.co.woolworths.financial.services.android.ui.activities.StartupActivity">
+        tools:context="za.co.woolworths.financial.services.android.startup.view.StartupActivity">
 
         <za.co.woolworths.financial.services.android.ui.views.WVideoView
             android:id="@+id/activity_wsplash_screen_videoview"

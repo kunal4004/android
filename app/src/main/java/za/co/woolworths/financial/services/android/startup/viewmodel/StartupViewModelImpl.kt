@@ -1,13 +1,10 @@
-package za.co.woolworths.financial.services.android.viewmodels
+package za.co.woolworths.financial.services.android.startup.viewmodel
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -18,8 +15,6 @@ import za.co.woolworths.financial.services.android.models.dto.chat.CustomerServi
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.extension.fromJson
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*

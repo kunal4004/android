@@ -11,6 +11,7 @@ import com.awfs.coordination.R
 import com.microsoft.appcenter.espresso.Factory
 import org.junit.*
 import org.junit.runner.RunWith
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import java.util.concurrent.CountDownLatch
 
