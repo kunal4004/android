@@ -30,17 +30,6 @@ object OneAppService : RetrofitConfig() {
 
     var forceNetworkUpdate: Boolean = false
 
-    fun getConfig(): Call<ConfigResponse> = mApiInterface.getConfig(
-            WoolworthsApplication.getApiId(),
-            getSha1Password(),
-            getDeviceManufacturer(),
-            getDeviceModel(),
-            getNetworkCarrier(),
-            getOS(),
-            getOsVersion(),
-            getSessionToken(),
-            WoolworthsApplication.getAppVersionName())
-
     fun login(loginRequest: LoginRequest): Call<LoginResponse> {
         return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), loginRequest)
     }

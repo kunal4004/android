@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.view
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -13,36 +14,40 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
-import com.awfs.coordination.BuildConfig
+import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
+import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
+import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
+import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
+import za.co.woolworths.financial.services.android.startup.utils.Resource
+import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel.Companion.APP_SERVER_ENVIRONMENT_KEY
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel.Companion.APP_VERSION_KEY
+import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.util.*
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModelImpl
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModelImpl.Companion.APP_SERVER_ENVIRONMENT_KEY
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModelImpl.Companion.APP_VERSION_KEY
 import java.util.*
 
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, View.OnClickListener {
 
-    private var startupViewModel: StartupViewModel? = null
+    private lateinit var startupViewModel: StartupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
         setSupportActionBar(mToolbar)
+        setupViewModel()
         window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         supportActionBar?.hide()
 
@@ -55,7 +60,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         // Disable first time launch splash video screen, remove to enable video on startup
         Utils.sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1")
 
-        startupViewModel = StartupViewModelImpl(this)
         startupViewModel?.apply {
             this.intent = getIntent()
             val bundle = getIntent()?.extras
@@ -75,7 +79,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
                     setUserProperty(APP_VERSION_KEY, appVersion)
 
-                    val token =  SessionUtilities.getInstance().jwt
+                    val token = SessionUtilities.getInstance().jwt
                     token.AtgId?.apply {
                         val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
                         setUserId(atgId)
@@ -100,7 +104,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     private fun setupScreen() {
-       val isFirstTime: Boolean = isFirstTime()
+        val isFirstTime: Boolean = isFirstTime()
         if (isFirstTime) {
             showVideoView()
         } else {
@@ -157,7 +161,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                             setUserProperty(APP_VERSION_KEY, appVersion)
                         }
                         setupScreen()
-                        initialize()
+                        getConfig()
                     } else {
                         showNonVideoViewWithErrorLayout()
                     }
@@ -166,25 +170,29 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun initialize() {
-        startupViewModel?.apply {
-            queryServiceGetConfig(object : IResponseListener<ConfigResponse?> {
-                override fun onSuccess(response: ConfigResponse?) {
-                    videoPlayerShouldPlay = false
-                    if (TextUtils.isEmpty(response?.configs?.enviroment?.stsURI)) {
+    private fun getConfig() {
+        startupViewModel.queryServiceGetConfig().observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    Resource.persistGlobalConfig(it.data, startupViewModel)
+                    startupViewModel.videoPlayerShouldPlay = false
+                    if (TextUtils.isEmpty(it.data?.configs?.enviroment?.stsURI)) {
                         showNonVideoViewWithErrorLayout()
-                        return
+                        return@observe
                     }
-                    if (!isVideoPlaying) {
+                    if (!startupViewModel.isVideoPlaying) {
                         presentNextScreenOrServerMessage()
                     }
-                }
 
-                override fun onFailure(error: Throwable?) {
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
                     showNonVideoViewWithErrorLayout()
                 }
-            })
-        }
+            }
+        })
     }
 
     //video player on completion
@@ -205,7 +213,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             showServerMessage()
         } else {
             showNonVideoViewWithoutErrorLayout()
-            startupViewModel?.presentNextScreen()
+            presentNextScreen()
         }
     }
 
@@ -221,16 +229,53 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             proceedButton?.visibility = View.VISIBLE
             proceedButton?.setOnClickListener { _: View? ->
                 showNonVideoViewWithoutErrorLayout()
-                startupViewModel?.presentNextScreen()
+                presentNextScreen()
             }
         }
         splashServerMessageView?.visibility = View.VISIBLE
         startupViewModel?.isServerMessageShown = true
     }
 
+    fun setupViewModel() {
+        startupViewModel = ViewModelProviders.of(
+                this,
+                ViewModelFactory(StartUpRepository(StartupApiHelper()))
+        ).get(StartupViewModel::class.java)
+    }
+
+    fun presentNextScreen() {
+
+        val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
+        var appLinkData: Any? = intent?.data
+
+        if (appLinkData == null && intent?.extras != null) {
+            appLinkData = intent!!.extras!!
+            intent?.action = Intent.ACTION_VIEW
+        }
+
+        if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
+            handleAppLink(appLinkData)
+        } else {
+            val activity = this as Activity
+            if (isFirstTime == null || Utils.isAppUpdated(this))
+                ScreenManager.presentOnboarding(activity)
+            else {
+                ScreenManager.presentMain(activity)
+            }
+        }
+    }
+
+    private fun handleAppLink(appLinkData: Any?) {
+        // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
+        //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
+        //1. check URL
+        //2. navigate to facet that URL corresponds to
+        ScreenManager.presentMain(this as Activity, appLinkData as Bundle)
+    }
+
     override fun onStart() {
         super.onStart()
-        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug( WoolworthsApplication.getAppContext())) {
+        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(WoolworthsApplication.getAppContext())) {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
             val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
             rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
@@ -241,13 +286,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                 isAppMinimized = false
                 if (isServerMessageShown) {
                     showNonVideoViewWithoutErrorLayout()
-                    initialize()
+                    getConfig()
                 } else {
                     startActivity(Intent(this@StartupActivity, StartupActivity::class.java))
                     finish()
                 }
             } else {
-                initialize()
+                getConfig()
             }
         }
     }
