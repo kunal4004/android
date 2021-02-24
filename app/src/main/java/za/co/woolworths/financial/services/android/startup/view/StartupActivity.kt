@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.startup.view
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.MediaPlayer
@@ -16,23 +15,19 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
-import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
-import za.co.woolworths.financial.services.android.startup.utils.Resource
-import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel.Companion.APP_SERVER_ENVIRONMENT_KEY
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel.Companion.APP_VERSION_KEY
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment.Companion.newInstance
@@ -53,59 +48,28 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationUtils.createNotificationChannelIfNeeded(this);
-        };
+        }
 
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+        retry?.setOnClickListener(this@StartupActivity)
 
         // Disable first time launch splash video screen, remove to enable video on startup
-        Utils.sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1")
-
-        startupViewModel?.apply {
-            this.intent = getIntent()
-            val bundle = getIntent()?.extras
-
-            try {
-                appVersion = packageManager.getPackageInfo(packageName, 0).versionName
-                environment = BuildConfig.ENV
-            } catch (e: PackageManager.NameNotFoundException) {
-                appVersion = "6.1.0"
-                environment = "QA"
-            }
-
-            firebaseAnalytics = FirebaseAnalytics.getInstance(this@StartupActivity)
-
-            if (NetworkManager.getInstance().isConnectedToNetwork(this@StartupActivity)) {
-                firebaseAnalytics?.apply {
-                    setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
-                    setUserProperty(APP_VERSION_KEY, appVersion)
-
-                    val token = SessionUtilities.getInstance().jwt
-                    token.AtgId?.apply {
-                        val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
-                        setUserId(atgId)
-                        setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
-                    }
-
-                    token.C2Id?.apply {
-                        setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
-                    }
-                }
-                setupScreen()
-            } else {
-                showNonVideoViewWithErrorLayout()
-            }
-
-            retry?.setOnClickListener(this@StartupActivity)
-
-            //Remove old usage of SharedPreferences data.
-            Utils.clearSharedPreferences(this@StartupActivity)
-            AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
+        startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
+        startupViewModel.setUpEnvironment(this@StartupActivity)
+        this.intent = getIntent()
+        if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            startupViewModel.setUpFirebaseEvents()
+            setupScreen()
+        } else {
+            showNonVideoViewWithErrorLayout()
         }
+        //Remove old usage of SharedPreferences data.
+        startupViewModel.clearSharedPreference(this@StartupActivity)
+        AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
     }
 
     private fun setupScreen() {
-        val isFirstTime: Boolean = isFirstTime()
-        if (isFirstTime) {
+        if (isFirstTime()) {
             showVideoView()
         } else {
             showNonVideoViewWithoutErrorLayout()
@@ -113,7 +77,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     private fun isFirstTime(): Boolean {
-        return Utils.getSessionDaoValue(SessionDao.KEY.SPLASH_VIDEO) == null
+        return startupViewModel.getSessionDao(SessionDao.KEY.SPLASH_VIDEO)
     }
 
     private fun showVideoView() {
@@ -155,11 +119,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         startupViewModel?.apply {
             when (v?.id) {
                 R.id.retry -> {
-                    if (NetworkManager.getInstance().isConnectedToNetwork(this@StartupActivity)) {
-                        firebaseAnalytics?.apply {
-                            setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
-                            setUserProperty(APP_VERSION_KEY, appVersion)
-                        }
+                    if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+                        startupViewModel.setupFirebaseUserProperty()
                         setupScreen()
                         getConfig()
                     } else {
@@ -174,7 +135,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         startupViewModel.queryServiceGetConfig().observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    Resource.persistGlobalConfig(it.data, startupViewModel)
+                    ConfigResource.persistGlobalConfig(it.data, startupViewModel)
                     startupViewModel.videoPlayerShouldPlay = false
                     if (TextUtils.isEmpty(it.data?.configs?.enviroment?.stsURI)) {
                         showNonVideoViewWithErrorLayout()
@@ -183,10 +144,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     if (!startupViewModel.isVideoPlaying) {
                         presentNextScreenOrServerMessage()
                     }
-
                 }
                 ResponseStatus.LOADING -> {
-
                 }
                 ResponseStatus.ERROR -> {
                     showNonVideoViewWithErrorLayout()
@@ -239,13 +198,12 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     fun setupViewModel() {
         startupViewModel = ViewModelProviders.of(
                 this,
-                ViewModelFactory(StartUpRepository(StartupApiHelper()))
+                ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
         ).get(StartupViewModel::class.java)
     }
 
     fun presentNextScreen() {
-
-        val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
+        val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
         var appLinkData: Any? = intent?.data
 
         if (appLinkData == null && intent?.extras != null) {

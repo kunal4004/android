@@ -11,26 +11,26 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.StartupView
 import za.co.woolworths.financial.services.android.util.Utils
 
 /**
- * Created by Kunal Uttarwar on 28/1/21.
+ * Created by Kunal Uttarwar on 23/2/21.
  */
 
 /**
  * Returns Status with stream of data.
  */
-data class Resource(val responseStatus: ResponseStatus, val data: ConfigResponse, val message: String?) {
+data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigResponse, val message: String?) {
 
     companion object {
 
-        fun success(data: ConfigResponse): Resource {
-            return Resource(ResponseStatus.SUCCESS, data, null)
+        fun success(data: ConfigResponse): ConfigResource {
+            return ConfigResource(ResponseStatus.SUCCESS, data, null)
         }
 
-        fun  error(msg: String, data: ConfigResponse): Resource {
-            return Resource(ResponseStatus.ERROR, data, msg)
+        fun  error(msg: String, data: ConfigResponse): ConfigResource {
+            return ConfigResource(ResponseStatus.ERROR, data, msg)
         }
 
-        fun loading(data: ConfigResponse): Resource {
-            return Resource(ResponseStatus.LOADING, data, null)
+        fun loading(data: ConfigResponse): ConfigResource {
+            return ConfigResource(ResponseStatus.LOADING, data, null)
         }
 
         fun persistGlobalConfig(response: ConfigResponse?, startupViewModel: StartupViewModel) {
