@@ -58,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.d
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -451,18 +452,34 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
+
+        when (ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")) {
+            ColourSizeVariants.DEFAULT, ColourSizeVariants.NO_VARIANT -> {
+                hasColor = false
+                hasSize = false
+            }
+            ColourSizeVariants.COLOUR_VARIANT -> {
+                hasColor = true
+                hasSize = false
+            }
+            ColourSizeVariants.SIZE_VARIANT,ColourSizeVariants.COLOUR_SIZE_VARIANT -> {
+                hasColor = true
+                hasSize = true
+            }
+            ColourSizeVariants.NO_COLOUR_SIZE_VARIANT -> {
+                hasColor = false
+                hasSize = true
+            }
+        }
+
         for (otherSkuObj in otherSKUsList) {
             var groupKey = ""
-            if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
-                groupKey = otherSkuObj.size.trim()
+            groupKey = if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                otherSkuObj.size.trim()
             } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                this.hasColor = !otherSkuObj.colour.equals("N/A", ignoreCase = true)
-                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
-                groupKey = otherSkuObj.colour.trim()
+                otherSkuObj.colour.trim()
             } else {
-                this.hasColor = true
-                groupKey = otherSkuObj.colour.trim()
+                otherSkuObj.colour.trim()
             }
 
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
