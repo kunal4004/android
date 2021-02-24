@@ -47,7 +47,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         supportActionBar?.hide()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.createNotificationChannelIfNeeded(this);
+            NotificationUtils.createNotificationChannelIfNeeded(this)
         }
 
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
@@ -59,7 +59,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         this.intent = getIntent()
         if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
             startupViewModel.setUpFirebaseEvents()
-            setupScreen()
         } else {
             showNonVideoViewWithErrorLayout()
         }
@@ -68,7 +67,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
     }
 
-    private fun setupScreen() {
+    private fun setupLoadingScreen() {
         if (isFirstTime()) {
             showVideoView()
         } else {
@@ -85,15 +84,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         splashServerMessageView?.visibility = View.GONE
         videoViewLayout?.visibility = View.VISIBLE
 
-        val randomVideo = startupViewModel?.randomVideoPath
-        if (randomVideo?.isNotEmpty() == true) {
+        val randomVideo = startupViewModel.randomVideoPath
+        if (randomVideo.isNotEmpty() == true) {
             val videoUri = Uri.parse(randomVideo)
             activity_wsplash_screen_videoview?.apply {
                 setVideoURI(videoUri)
                 start()
                 setOnCompletionListener(this@StartupActivity)
             }
-            startupViewModel?.isVideoPlaying = false
+            startupViewModel.isVideoPlaying = false
         }
     }
 
@@ -116,12 +115,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     override fun onClick(v: View?) {
-        startupViewModel?.apply {
+        startupViewModel.apply {
             when (v?.id) {
                 R.id.retry -> {
                     if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
                         startupViewModel.setupFirebaseUserProperty()
-                        setupScreen()
                         getConfig()
                     } else {
                         showNonVideoViewWithErrorLayout()
@@ -137,7 +135,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                 ResponseStatus.SUCCESS -> {
                     ConfigResource.persistGlobalConfig(it.data, startupViewModel)
                     startupViewModel.videoPlayerShouldPlay = false
-                    if (TextUtils.isEmpty(it.data?.configs?.enviroment?.stsURI)) {
+                    if (TextUtils.isEmpty(it.data.configs?.enviroment?.stsURI)) {
                         showNonVideoViewWithErrorLayout()
                         return@observe
                     }
@@ -146,6 +144,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     }
                 }
                 ResponseStatus.LOADING -> {
+                    setupLoadingScreen()
                 }
                 ResponseStatus.ERROR -> {
                     showNonVideoViewWithErrorLayout()
@@ -156,7 +155,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     //video player on completion
     override fun onCompletion(mp: MediaPlayer?) {
-        startupViewModel?.apply {
+        startupViewModel.apply {
             isVideoPlaying = false
             if (!videoPlayerShouldPlay) {
                 presentNextScreenOrServerMessage()
@@ -168,7 +167,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     private fun presentNextScreenOrServerMessage() {
-        if (startupViewModel?.isSplashScreenDisplay == true) {
+        if (startupViewModel.isSplashScreenDisplay) {
             showServerMessage()
         } else {
             showNonVideoViewWithoutErrorLayout()
@@ -181,8 +180,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         videoViewLayout?.visibility = View.GONE
         errorLayout?.visibility = View.GONE
         splashNoVideoView?.visibility = View.GONE
-        messageLabel?.setText(startupViewModel?.splashScreenText)
-        if (startupViewModel?.isSplashScreenPersist == true) {
+        messageLabel?.setText(startupViewModel.splashScreenText)
+        if (startupViewModel.isSplashScreenPersist == true) {
             proceedButton?.visibility = View.GONE
         } else {
             proceedButton?.visibility = View.VISIBLE
@@ -192,10 +191,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             }
         }
         splashServerMessageView?.visibility = View.VISIBLE
-        startupViewModel?.isServerMessageShown = true
+        startupViewModel.isServerMessageShown = true
     }
 
-    fun setupViewModel() {
+    private fun setupViewModel() {
         startupViewModel = ViewModelProviders.of(
                 this,
                 ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
@@ -239,7 +238,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
             return
         }
-        startupViewModel?.apply {
+        startupViewModel.apply {
             if (isAppMinimized) {
                 isAppMinimized = false
                 if (isServerMessageShown) {
@@ -250,14 +249,16 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                     finish()
                 }
             } else {
-                getConfig()
+                if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+                    getConfig()
+                }
             }
         }
     }
 
     override fun onStop() {
         super.onStop()
-        startupViewModel?.isAppMinimized = true
+        startupViewModel.isAppMinimized = true
     }
 
     override fun onResume() {
@@ -272,7 +273,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     @VisibleForTesting
-    fun testGetRandomVideos(): String? {
-        return startupViewModel?.randomVideoPath
+    fun testGetRandomVideos(): String {
+        return startupViewModel.randomVideoPath
     }
 }
