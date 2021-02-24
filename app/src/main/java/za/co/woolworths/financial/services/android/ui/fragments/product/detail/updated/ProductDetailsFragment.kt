@@ -453,7 +453,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
 
-        when (ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")) {
+        val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
+        when (variant) {
             ColourSizeVariants.DEFAULT, ColourSizeVariants.NO_VARIANT -> {
                 hasColor = false
                 hasSize = false
@@ -480,6 +481,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 otherSkuObj.colour.trim()
             } else {
                 otherSkuObj.colour.trim()
+            }
+
+            if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
+                otherSkuObj.apply { size = colour }
+                groupKey = "N/A"
             }
 
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
