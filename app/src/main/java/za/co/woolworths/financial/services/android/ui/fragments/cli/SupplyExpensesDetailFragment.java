@@ -11,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -229,24 +228,24 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			String currentAmount = editable.toString();
 			switch (view.getId()) {
 				case R.id.etMortgagePayments:
-					etMortgagePaymentsWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etMortgagePaymentsWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				case R.id.etRentalPayments:
-					etRentalPaymentsWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etRentalPaymentsWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				case R.id.etMaintainanceExpenses:
-					etMaintainanceExpensesWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etMaintainanceExpensesWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				case R.id.etMonthlyCreditPayments:
-					etMonthlyCreditPaymentsWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etMonthlyCreditPaymentsWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 
 				case R.id.etOtherExpenses:
-					etOtherExpensesWasEdited = IncreaseLimitController.editTextLength(currentAmount);
+					etOtherExpensesWasEdited = IncreaseLimitController.validateExpenseAmount(currentAmount);
 					enableNextButton();
 					break;
 				default:

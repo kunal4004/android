@@ -80,6 +80,16 @@
         app:layout_constraintLeft_toRightOf="@+id/selectedSizePlaceholder"
         app:layout_constraintTop_toTopOf="@id/selectedSizePlaceholder" />
 
+    <TextView
+        android:id="@+id/sizeGuide"
+        style="@style/futura_medium_black_12_text_style"
+        android:contentDescription="@string/cd_lnksizeguide"
+        android:letterSpacing="0.05"
+        android:text="@string/size_guide"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/selectedSizePlaceholder" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sizeSelectorRecycleView"

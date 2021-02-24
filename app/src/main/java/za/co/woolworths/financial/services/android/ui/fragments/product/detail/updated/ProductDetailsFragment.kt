@@ -49,9 +49,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelect
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
-import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
-import za.co.woolworths.financial.services.android.ui.extension.valueOf
+import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
@@ -59,7 +58,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.d
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -141,6 +139,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         moreColor.setOnClickListener(this)
         closePage.setOnClickListener { activity?.onBackPressed() }
         share?.setOnClickListener(this)
+        sizeGuide?.setOnClickListener(this)
         configureDefaultUI()
     }
 
@@ -161,6 +160,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.dietaryInformation -> showDetailsInformation(ProductInformationActivity.ProductInformationType.DIETARY_INFO)
             R.id.moreColor -> showMoreColors()
             R.id.share -> shareProduct()
+            R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
         }
     }
 
@@ -254,11 +254,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
-                    message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is unavailable in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
-                    message = "Unfortunately this item is out of stock in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name  + ". Try changing your delivery location and try again."
                 }
             }
             activity?.apply {
@@ -308,7 +308,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelectedGroupKey(defaultGroupKey)
 
         Utils.getPreferredDeliveryLocation()?.let {
-            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
                 updateDefaultUI(false)
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -404,6 +404,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (hasSize)
             showSize()
 
+        if(productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants,productDetails?.sizeGuideId) == true) {
+            sizeGuide?.apply {
+                underline()
+                visibility = View.VISIBLE
+            }
+        }
+
     }
 
     private fun showColors() {
@@ -444,34 +451,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
-
-        when (ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")) {
-            ColourSizeVariants.DEFAULT, ColourSizeVariants.NO_VARIANT -> {
-                hasColor = false
-                hasSize = false
-            }
-            ColourSizeVariants.COLOUR_VARIANT -> {
-                hasColor = true
-                hasSize = false
-            }
-            ColourSizeVariants.SIZE_VARIANT,ColourSizeVariants.COLOUR_SIZE_VARIANT -> {
-                hasColor = true
-                hasSize = true
-            }
-            ColourSizeVariants.NO_COLOUR_SIZE_VARIANT -> {
-                hasColor = false
-                hasSize = true
-            }
-        }
-
         for (otherSkuObj in otherSKUsList) {
             var groupKey = ""
-            groupKey = if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                otherSkuObj.size.trim()
+            if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
+                groupKey = otherSkuObj.size.trim()
             } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                otherSkuObj.colour.trim()
+                this.hasColor = !otherSkuObj.colour.equals("N/A", ignoreCase = true)
+                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
+                groupKey = otherSkuObj.colour.trim()
             } else {
-                otherSkuObj.colour.trim()
+                this.hasColor = true
+                groupKey = otherSkuObj.colour.trim()
             }
 
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
@@ -883,7 +874,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         updateStockAvailabilityLocation()
 
                         Utils.getPreferredDeliveryLocation()?.let {
-                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.suburb.storePickup) {
+                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
                                 showProductUnavailable()
@@ -1144,9 +1135,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             getDeliveryLocation()?.let {
                 when (it) {
                     is ShoppingDeliveryLocation -> {
-                        when (it.suburb.storePickup) {
+                        when (it.storePickup) {
                             true -> {
-                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.suburb?.name
+                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.store?.name
                                 defaultLocationPlaceholder.text = getString(R.string.collecting_from) + " "
                             }
                             else -> {
@@ -1274,7 +1265,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             getDeliveryLocation().let {
                 val suburbName = when (it) {
-                    is ShoppingDeliveryLocation -> it.suburb.name
+                    is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
                     is QuickShopDefaultValues -> it.suburb.name
                     else -> ""
                 }

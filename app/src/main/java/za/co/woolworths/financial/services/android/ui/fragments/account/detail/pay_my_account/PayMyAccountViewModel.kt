@@ -259,7 +259,8 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun updateAmountEntered(amountEntered: String?): String {
-        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) getOverdueAmount() ?: "" else amountEntered
+        val overdueAmount = if (getOverdueAmount()?.contains("R ")==true) getOverdueAmount() else "R ${getOverdueAmount()}"
+        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) overdueAmount ?: DEFAULT_RAND_CURRENCY else amountEntered
     }
 
     fun isPaymentListEmpty(paymentMethodList: MutableList<GetPaymentMethod>?): Boolean {

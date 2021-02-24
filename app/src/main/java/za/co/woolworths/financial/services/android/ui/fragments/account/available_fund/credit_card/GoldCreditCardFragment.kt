@@ -24,6 +24,8 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incRecentTransactionButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
+
+        navigateToDeepLinkView()
     }
 
     override fun onClick(view: View?) {

@@ -60,6 +60,8 @@ class FirebaseManagerAnalyticsProperties {
         const val ACTION_INGREDIENTS_INFORMATION = "Selects Accordion to view Ingredients"
         const val ACTION_ALLERGEN_INFORMATION = "Selects Accordion to view Allergens"
         const val ACTION_DIETARY_INFORMATION = "Selects Accordion to view Dietary Information"
+        const val SHOP_PRODUCTDETAIL_SIZE_GUIDE: String = "shop_pdp_sg"
+        const val ACTION_SIZE_GUIDE = "Product id for product that customer has selected the size guide for"
 
 
         const val CRASH_CAUTION: String = "crash_caution"
@@ -245,6 +247,9 @@ class FirebaseManagerAnalyticsProperties {
             const val activationRequested = "Request Credit Card Activation"
             const val activationConfirmed = "Confirm Credit Card Activation"
             const val PRODUCT_ID: String = "product_id"
+            const val SC_ACCOUNT_STATE = "sc_account_dc_state"
+            const val CC_ACCOUNT_STATE = "cc_account_dc_state"
+            const val PL_ACCOUNT_STATE = "pl_account_dc_state"
 
         }
     }

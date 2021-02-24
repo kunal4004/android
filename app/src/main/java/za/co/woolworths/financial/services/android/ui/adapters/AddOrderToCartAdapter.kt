@@ -176,7 +176,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
     fun userShouldSetSuburb(): Boolean {
         val deliveryLocation = Utils.getPreferredDeliveryLocation() ?: return true
-        return deliveryLocation.suburb == null
+        return (deliveryLocation.suburb == null && deliveryLocation.store == null)
     }
 
     public fun adapterClickable(clickable: Boolean) {
