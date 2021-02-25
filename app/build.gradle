@@ -253,10 +253,11 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    
+
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
 
+    implementation 'org.junit.vintage:junit-vintage-engine:5.7.0'
     testImplementation 'junit:junit:4.13.1'
     testImplementation "org.mockito:mockito-core:3.4.6"
     testImplementation "org.mockito:mockito-inline:2.21.0"

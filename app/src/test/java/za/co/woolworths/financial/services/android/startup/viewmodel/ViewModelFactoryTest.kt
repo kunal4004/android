@@ -1,4 +1,4 @@
-package com.example.milkyway.mainscreen.viewmodel
+package za.co.woolworths.financial.services.android.startup.viewmodel
 
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
@@ -10,9 +10,6 @@ import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
-import za.co.woolworths.financial.services.android.startup.viewmodel.TestViewModel
-import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.utils.mock
 
 
