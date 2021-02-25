@@ -2,20 +2,21 @@ package za.co.woolworths.financial.services.android.ui.fragments.cli
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_cli_marital_status.*
 import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FragmentUtils
-import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.picker.WheelView
+
 
 class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<Any>, View.OnClickListener {
 
@@ -89,13 +90,17 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
 
             R.id.cli_marital_status_selection -> {
                 cli_marital_status_picker_container.visibility = View.VISIBLE
-//                AnimationUtilExtension.slideUp(cli_marital_status_picker_container)
+                val slideUpAnimation: Animation = AnimationUtils.loadAnimation(context,
+                        R.anim.slide_in_up)
+                cli_marital_status_picker_container.startAnimation(slideUpAnimation)
             }
 
             R.id.cli_marital_status_picker_done -> {
                 setMaritalStatusPicker(cli_marital_status_picker?.selectedItemPosition ?: 0)
 
-//                AnimationUtilExtension.slideDown(cli_marital_status_picker_container)
+                val slideDownAnimation: Animation = AnimationUtils.loadAnimation(context,
+                        R.anim.slide_down_anim)
+                cli_marital_status_picker_container.startAnimation(slideDownAnimation)
 
                 cli_marital_status_picker_container.visibility = View.GONE
 
