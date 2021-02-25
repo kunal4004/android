@@ -123,4 +123,6 @@
     <color name="tab_text_color">#80ffffff</color>
 
     <color name="link_text_color">#7F7F7F</color>
+    <color name="color_222222">#222222</color>
+    <color name="color_7b7b7b">#7b7b7b</color>
 </resources>
