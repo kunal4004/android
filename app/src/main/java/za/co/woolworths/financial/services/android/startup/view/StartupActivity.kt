@@ -135,7 +135,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
                 ResponseStatus.SUCCESS -> {
                     ConfigResource.persistGlobalConfig(it.data, startupViewModel)
                     startupViewModel.videoPlayerShouldPlay = false
-                    if (TextUtils.isEmpty(it.data.configs?.enviroment?.stsURI)) {
+                    if (TextUtils.isEmpty(it.data?.configs?.enviroment?.stsURI)) {
                         showNonVideoViewWithErrorLayout()
                         return@observe
                     }

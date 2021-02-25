@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Returns Status with stream of data.
  */
-data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigResponse, val message: String?) {
+data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigResponse?, val message: String?) {
 
     companion object {
 
@@ -25,11 +25,11 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
             return ConfigResource(ResponseStatus.SUCCESS, data, null)
         }
 
-        fun  error(msg: String, data: ConfigResponse): ConfigResource {
+        fun  error(msg: String, data: ConfigResponse?): ConfigResource {
             return ConfigResource(ResponseStatus.ERROR, data, msg)
         }
 
-        fun loading(data: ConfigResponse): ConfigResource {
+        fun loading(data: ConfigResponse?): ConfigResource {
             return ConfigResource(ResponseStatus.LOADING, data, null)
         }
 

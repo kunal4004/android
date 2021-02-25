@@ -10,7 +10,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
@@ -38,11 +37,11 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     var intent: Intent? = null
 
     fun queryServiceGetConfig() = liveData(Dispatchers.IO) {
-        emit(ConfigResource.loading(data = ConfigResponse()))
+        emit(ConfigResource.loading(data = null))
         try {
             emit(ConfigResource.success(data = startUpRepository.queryServiceGetConfig()))
         } catch (exception: Exception) {
-            emit(ConfigResource.error(data = ConfigResponse(), msg = exception.toString()))
+            emit(ConfigResource.error(data = null, msg = exception.toString()))
         }
     }
 
