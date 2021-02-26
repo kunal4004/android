@@ -40,9 +40,9 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        WoolworthsApplication.getInstance()?.creditLimitIncrease?.init()
-        WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatusList?.apply {
-            add(0, MaritalStatus(0, context?.getString(R.string.please_select)))
+        WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus?.apply {
+            if (!contains(MaritalStatus(0, context?.getString(R.string.please_select))))
+                add(0, MaritalStatus(0, context?.getString(R.string.please_select)))
         }
 
         //set default text for picker selection.
@@ -67,7 +67,7 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
     override fun onItemSelected(wheelView: WheelView<Any>?, data: Any?, position: Int) {
         when (wheelView?.id) {
             R.id.cli_marital_status_picker -> {
-                val maritalStatusList = WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatusList
+                val maritalStatusList = WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus
                 if (maritalStatusList == null || maritalStatusList.isEmpty() || position >= maritalStatusList.size) {
                     return
                 }
@@ -78,7 +78,7 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
     }
 
     private fun setMaritalStatusPicker(position: Int) {
-        val maritalStatusList = WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatusList
+        val maritalStatusList = WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus
         if (maritalStatusList == null || maritalStatusList.isEmpty()) {
             return
         }
