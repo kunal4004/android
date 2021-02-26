@@ -65,12 +65,11 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             pmaCardPopupModel.observe(viewLifecycleOwner, { card ->
                 if (!isAdded) return@observe
 
-                // Update amount entered
-                pmaAmountEnteredTextView?.text = updateAmountEntered(card?.amountEntered)
+                card?.amountEntered = if (card?.amountEntered?.contains("R") == true) card.amountEntered else "R ${card?.amountEntered}"
 
                 //WOP-9291 - Prevent user from paying amount less than R 1. For
                 // this user it has overdue amount as R0.34 so it will populate R1.00 as default amount to pay
-                pmaAmountEnteredTextView?.text = if (card?.amountEntered?.contains("R") != true && card?.amountEntered?.toDouble() ?: 0.0 in 0.01..0.99) {
+                pmaAmountEnteredTextView?.text = if (convertRandFormatToDouble(card?.amountEntered) in 0.01..0.99) {
                     getCardDetail()?.amountEntered = ONE_RAND
                     updateAmountEntered(ONE_RAND)
                 } else {
