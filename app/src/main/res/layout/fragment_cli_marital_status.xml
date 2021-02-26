@@ -15,7 +15,7 @@
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.1"
         android:padding="@dimen/fifteen_dp"
-        android:text="Marital Status"
+        android:text="@string/cli_marital_status_txt"
         android:textAllCaps="true"
         android:textColor="@color/color_222222"
         android:textSize="@dimen/twelve_sp"
@@ -51,7 +51,7 @@
             android:fontFamily="@font/futura_medium"
             android:letterSpacing="0.1"
             android:paddingVertical="@dimen/fifteen_dp"
-            android:text="Marital Status"
+            android:text="@string/cli_marital_status_txt"
             android:textAllCaps="true"
             android:textColor="@color/black_50"
             android:textSize="@dimen/twelve_sp" />
@@ -65,7 +65,6 @@
             android:fontFamily="@font/futura_semi_bold"
             android:gravity="end|center_vertical"
             android:paddingVertical="@dimen/fifteen_dp"
-            android:text="Select"
             android:textAlignment="viewEnd"
             android:textAllCaps="true"
             android:textColor="@color/black"
@@ -92,8 +91,8 @@
 
         <ImageView
             android:id="@+id/cli_marital_status_agreement_check"
-            android:layout_width="@dimen/twenty_five_dp"
-            android:layout_height="@dimen/twenty_five_dp"
+            android:layout_width="@dimen/twenty_dp"
+            android:layout_height="@dimen/twenty_dp"
             android:layout_margin="@dimen/fifteen_dp"
             android:src="@drawable/uncheck_item" />
 
@@ -104,7 +103,7 @@
             android:fontFamily="@font/myriad_pro_regular"
             android:gravity="start|top"
             android:paddingVertical="@dimen/fifteen_dp"
-            android:text="I confirm that I have written consent from my spouse to enter into a credit agreement."
+            android:text="@string/cli_married_in_community_agreement"
             android:textAlignment="viewStart"
             android:textColor="@color/color_7b7b7b"
             android:textSize="@dimen/fifteen_sp" />
@@ -121,7 +120,7 @@
         android:gravity="center"
         android:letterSpacing="0.2"
         android:minHeight="@dimen/fifty_dp"
-        android:text="Next"
+        android:text="@string/next"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/white"
@@ -154,7 +153,7 @@
                 android:layout_alignParentEnd="true"
                 android:fontFamily="@font/futura_semi_bold"
                 android:padding="@dimen/fifteen_dp"
-                android:text="Done"
+                android:text="@string/done"
                 android:textAlignment="viewEnd"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
@@ -168,8 +167,8 @@
             android:background="@color/black40"
             android:contentDescription="@string/cd_ccd_listtime"
             app:wv_dividerColor="#12000000"
-            app:wv_dividerHeight="1dp"
-            app:wv_lineSpacing="18dp"
+            app:wv_dividerHeight="@dimen/one_dp"
+            app:wv_lineSpacing="@dimen/eighteen_dp"
             app:wv_normalItemTextColor="@color/semi_transparent_white"
             app:wv_selectedItemTextColor="@color/white"
             app:wv_selectedTextFont="medium_bold"
@@ -177,6 +176,6 @@
             app:wv_textAlign="center"
             app:wv_textBoundaryMargin="@dimen/sixteen_dp"
             app:wv_textFont="medium"
-            app:wv_textSize="18sp" />
+            app:wv_textSize="@dimen/eighteen_sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

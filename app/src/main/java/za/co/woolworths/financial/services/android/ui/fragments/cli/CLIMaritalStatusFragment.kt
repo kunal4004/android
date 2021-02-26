@@ -41,6 +41,12 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
         super.onViewCreated(view, savedInstanceState)
 
         WoolworthsApplication.getInstance()?.creditLimitIncrease?.init()
+        WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatusList?.apply {
+            add(0, MaritalStatus(0, context?.getString(R.string.please_select)))
+        }
+
+        //set default text for picker selection.
+        cli_marital_status_selection.text = context?.getString(R.string.please_select)
 
         // Default selected position
         setMaritalStatusPicker(0)
