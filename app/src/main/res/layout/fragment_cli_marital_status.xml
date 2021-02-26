@@ -170,7 +170,7 @@
             android:layout_height="@dimen/two_hundred_dp"
             android:background="@color/black40"
             android:contentDescription="@string/cd_ccd_listtime"
-            app:wv_dividerColor="#12000000"
+            app:wv_dividerColor="@color/color_12000000"
             app:wv_dividerHeight="@dimen/one_dp"
             app:wv_lineSpacing="@dimen/eighteen_dp"
             app:wv_normalItemTextColor="@color/semi_transparent_white"
