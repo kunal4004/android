@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.test.InstrumentationRegistry
 import com.awfs.coordination.BuildConfig
+import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
@@ -18,6 +19,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
@@ -103,5 +105,12 @@ class StartupViewModelTest : ViewModel() {
         startupViewModel.setUpEnvironment(instrumentationContext)
         Assert.assertEquals(BuildConfig.ENV, startupViewModel.environment)
         Assert.assertThat(startupViewModel.firebaseAnalytics, `is`(IsNull.notNullValue()))
+    }
+
+    @Test
+    fun check_for_firebase_events() {
+        //FirebaseApp.initializeApp(instrumentationContext)
+        startupViewModel.setUpEnvironment(instrumentationContext)
+        startupViewModel.setUpFirebaseEvents()
     }
 }
