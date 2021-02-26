@@ -103,6 +103,8 @@
             android:fontFamily="@font/myriad_pro_regular"
             android:gravity="start|top"
             android:paddingVertical="@dimen/fifteen_dp"
+            android:paddingEnd="@dimen/twenty_five_dp"
+            android:lineSpacingMultiplier="@integer/one_point_five"
             android:text="@string/cli_married_in_community_agreement"
             android:textAlignment="viewStart"
             android:textColor="@color/color_7b7b7b"
