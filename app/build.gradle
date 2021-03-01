@@ -253,8 +253,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
-
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
