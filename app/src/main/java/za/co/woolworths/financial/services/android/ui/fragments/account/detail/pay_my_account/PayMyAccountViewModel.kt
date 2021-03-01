@@ -222,7 +222,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
-        return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1))
+        return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCent(amount), 1))
     }
 
     //Disable change button when amount is R0.00
@@ -259,7 +259,8 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun updateAmountEntered(amountEntered: String?): String {
-        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) getOverdueAmount() ?: "" else amountEntered
+        val overdueAmount = if (getOverdueAmount()?.contains("R ")==true) getOverdueAmount() else "R ${getOverdueAmount()}"
+        return if (amountEntered.isNullOrEmpty() || amountEntered == DEFAULT_RAND_CURRENCY) overdueAmount ?: DEFAULT_RAND_CURRENCY else amountEntered
     }
 
     fun isPaymentListEmpty(paymentMethodList: MutableList<GetPaymentMethod>?): Boolean {
@@ -352,7 +353,7 @@ class PayMyAccountViewModel : ViewModel() {
         val account = getAccount()
         val inputAmount = convertRandFormatToInt(item)
         val enteredAmount = account?.amountOverdue?.minus(inputAmount) ?: 0
-        return Utils.removeNegativeSymbol(WFormatter.newAmountFormat(if (enteredAmount < 0) 0 else enteredAmount))
+        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(if (enteredAmount < 0) 0 else enteredAmount))
     }
 
     fun validateAmountEntered(amount: Double, minAmount: () -> Unit, maxAmount: () -> Unit, validAmount: () -> Unit) {

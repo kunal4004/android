@@ -98,7 +98,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     private fun configureCurrencyEditText() {
         paymentAmountInputEditText?.apply {
 
-            setCurrency(CurrencySymbols.NONE)
+            setCurrencySymbol(CurrencySymbols.NONE)
             setDelimiter(false)
             setSpacing(true)
             setDecimals(true)

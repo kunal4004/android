@@ -52,6 +52,7 @@ interface ProductDetailsContract {
         fun loadCartSummary()
         fun postAddItemToCart(addItemToCart: List<AddItemToCart>)
         fun findStoresForSelectedSku(otherSkus: OtherSkus?)
+        fun isSizeGuideApplicable(colourSizeVariants: String?, sizeGuideId: String?): Boolean
     }
 
     interface ProductDetailsInteractor {

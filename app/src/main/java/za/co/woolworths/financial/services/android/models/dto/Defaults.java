@@ -16,6 +16,7 @@ public class Defaults {
     private String howtosaveLink;
     private String wrewardsTCLink;
     private String cartCheckoutLink;
+    private UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
 
 
     public String getAnalitics() {
@@ -112,5 +113,13 @@ public class Defaults {
 
     public String getCartCheckoutLink() {
         return cartCheckoutLink;
+    }
+
+    public UserPropertiesForDelinquentCodes getFirebaseUserPropertiesForDelinquentProductGroupCodes() {
+        return firebaseUserPropertiesForDelinquentProductGroupCodes;
+    }
+
+    public void setFirebaseUserPropertiesForDelinquentProductGroupCodes(UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes) {
+        this.firebaseUserPropertiesForDelinquentProductGroupCodes = firebaseUserPropertiesForDelinquentProductGroupCodes;
     }
 }

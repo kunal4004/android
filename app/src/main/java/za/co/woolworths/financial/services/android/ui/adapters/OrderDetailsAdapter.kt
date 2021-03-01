@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.order_details_gift_commerce_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -64,19 +65,20 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as OrderDetailsResponse
+            val storePickup = item.orderSummary?.store != null
             itemView.orderState.text = item.orderSummary?.state
             itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.orderSummary?.submittedDate)
-            itemView.total.text = WFormatter.formatAmount(item.orderSummary?.total!!)
+            itemView.total.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.orderSummary?.total!!)
             itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             itemView.noOfItems.text = item?.orderSummary?.totalItemsCount.toString()+if(item?.orderSummary?.totalItemsCount>1)context.getString(R.string.no_of_items) else context.getString(R.string.no_of_item)
             itemView.deliverySuburb.text = item?.orderSummary?.suburb?.name
-            itemView.deliverySuburbLbl.text = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_location else R.string.delivery_suburb)
-            itemView.deliverySuburbLbl.contentDescription = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_location_title else R.string.delivery_suburb)
-            itemView.deliverySuburb.contentDescription = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_location_value else R.string.delivery_suburb)
+            itemView.deliverySuburbLbl.text = context?.resources.getString(if(storePickup) R.string.collection_location else R.string.delivery_suburb)
+            itemView.deliverySuburbLbl.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_location_title else R.string.delivery_suburb)
+            itemView.deliverySuburb.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_location_value else R.string.delivery_suburb)
             if (!item.orderSummary?.deliveryDates.isJsonNull) {
-                itemView.deliveryItemsType.text = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_date else R.string.delivery_date)
-                itemView.deliveryItemsType.contentDescription = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_details_date_title else R.string.delivery_location_title1)
-                itemView.deliveryDate.contentDescription = context?.resources.getString(if(item.orderSummary.suburb.storePickup) R.string.collection_details_date_value else R.string.delivery_location_value)
+                itemView.deliveryItemsType.text = context?.resources.getString(if(storePickup) R.string.collection_date else R.string.delivery_date)
+                itemView.deliveryItemsType.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_details_date_title else R.string.delivery_location_title1)
+                itemView.deliveryDate.contentDescription = context?.resources.getString(if(storePickup) R.string.collection_details_date_value else R.string.delivery_location_value)
                 itemView.deliveryDateContainer.removeAllViews()
                 val deliveryDates: HashMap<String, String> = hashMapOf()
                 for (i in 0 until item.orderSummary?.deliveryDates.asJsonArray.size()) {
@@ -112,7 +114,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val item = dataList[position].item as CommerceItem
             setProductImage(itemView.imProductImage, item.commerceItemInfo.externalImageURL)
             itemView.itemName.text = item.commerceItemInfo.quantity.toString()+" x "+item.commerceItemInfo.productDisplayName
-            itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
+            itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
             itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
             itemView.setOnClickListener { listner.onOpenProductDetail(item) }

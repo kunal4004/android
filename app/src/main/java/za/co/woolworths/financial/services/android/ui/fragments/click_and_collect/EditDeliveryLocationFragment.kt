@@ -23,10 +23,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.storeName
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
-import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
@@ -127,13 +124,19 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
                 if (selectedSuburb != null || selectedStore != null) {
                     when (deliveryType) {
                         DeliveryType.STORE_PICKUP -> {
-                            validatedSuburbProductsForStore?.let {
-                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                           validatedSuburbProductsForStore.let {
+                                when (it) {
+                                    null -> executeSetSuburb()
+                                    else -> if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                                }
                             }
                         }
                         DeliveryType.DELIVERY -> {
-                            validatedSuburbProductsForDelivery?.let {
-                                if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                            validatedSuburbProductsForDelivery.let {
+                                when (it) {
+                                    null -> executeSetSuburb()
+                                    else -> if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
+                                }
                             }
                         }
                     }
@@ -207,21 +210,25 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun showGetProvincesProgress() {
         dropdownGetProvinces?.visibility = View.INVISIBLE
         progressGetProvinces?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun showGetSuburbProgress() {
         dropdownGetSuburb?.visibility = View.INVISIBLE
         progressGetSuburb?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun hideGetProvincesProgress() {
         progressGetProvinces?.visibility = View.INVISIBLE
         dropdownGetProvinces?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun hideGetSuburbProgress() {
         progressGetSuburb?.visibility = View.INVISIBLE
         dropdownGetSuburb?.visibility = View.VISIBLE
+        validateConfirmLocationButtonAvailability()
     }
 
     override fun showErrorDialog() {
@@ -232,7 +239,15 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun onSetSuburbSuccess() {
         hideSetSuburbProgressBar()
-        Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
+        when (deliveryType) {
+            DeliveryType.DELIVERY -> {
+                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, selectedSuburb, null))
+            }
+            DeliveryType.STORE_PICKUP -> {
+                val store = selectedStore?.let { Store(it.id, it.name, it.fulfillmentStores, it.storeAddress.address1) }
+                Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, null, store))
+            }
+        }
         navigateToSuburbConfirmationFragment()
     }
 
@@ -311,9 +326,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && validatedSuburbProductsForDelivery != null && !isStoreClosed(validatedSuburbProductsForDelivery))
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE)
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && validatedSuburbProductsForStore != null && !isStoreClosed(validatedSuburbProductsForStore))
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE)
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -358,8 +373,14 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             if (province?.id.isNullOrEmpty()) return
             selectedProvince = province
             tvSelectedProvince?.setText(selectedProvince?.name)
-            if (suburb.storePickup)
-                selectedStore = suburb
+            if (storePickup) {
+                selectedStore =  Suburb().apply {
+                    id = store.id
+                    name = store.name
+                    fulfillmentStores = store.fulfillmentStores
+                    storeAddress = StoreAddress(store.storeAddress)
+                }
+            }
             else
                 selectedSuburb = suburb
             setDeliveryOption(deliveryType)
