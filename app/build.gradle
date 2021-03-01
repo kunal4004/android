@@ -13,7 +13,7 @@ android {
     def minor = "8"
 
     def fix = "0"
-    def jobNumber = 9854
+    def jobNumber = 481
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -90,7 +90,7 @@ android {
             jobNumber = 1
         } else{
             //assume prod
-            jobNumber = 153
+            jobNumber = 155
         }
 
         defaultConfig {
