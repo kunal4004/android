@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.test.InstrumentationRegistry
 import com.awfs.coordination.BuildConfig
-import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
@@ -18,8 +16,7 @@ import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
-import org.robolectric.RobolectricTestRunner
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import org.powermock.modules.junit4.PowerMockRunner
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
@@ -33,7 +30,7 @@ import za.co.woolworths.financial.services.android.utils.mock
  */
 
 @ExperimentalCoroutinesApi
-@RunWith(RobolectricTestRunner::class)
+@RunWith(PowerMockRunner::class)
 class StartupViewModelTest : ViewModel() {
     @get:Rule
     val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -43,17 +40,15 @@ class StartupViewModelTest : ViewModel() {
     private lateinit var startUpRepository: StartUpRepository
     private lateinit var startupApiHelper: StartupApiHelper
     private lateinit var apiObserver: Observer<ConfigResource>
-    private lateinit var configResponse: ConfigResponse
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var instrumentationContext: Context
 
     @Before
     fun setUp() {
-        configResponse = mock()
         startUpRepository = mock()
         startupApiHelper = mock()
         apiObserver = mock()
-        instrumentationContext = InstrumentationRegistry.getInstrumentation().context
+        instrumentationContext = mock(Context::class.java, RETURNS_DEEP_STUBS)
         startupViewModel = StartupViewModel(startUpRepository, startupApiHelper)
         TestViewModel()
     }
