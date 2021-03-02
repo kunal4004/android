@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -76,7 +77,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         val isFirstTime = Utils.getSessionDaoValue(SessionDao.KEY.ON_BOARDING_SCREEN)
         var appLinkData: Any? = intent?.data
 
-        if (appLinkData == null && intent?.extras != null){
+        if (appLinkData == null && intent?.extras != null) {
             appLinkData = intent!!.extras!!
             intent?.action = Intent.ACTION_VIEW
         }
@@ -98,7 +99,16 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
-        ScreenManager.presentMain(mContext as Activity, appLinkData as Bundle)
+        if(appLinkData is Uri){
+
+            val bundle =  bundleOf(
+                    "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
+                    "parameters" to "{\"url\": \"${appLinkData}\"}"
+            )
+            ScreenManager.presentMain(mContext as Activity, bundle)
+        } else {
+            ScreenManager.presentMain(mContext as Activity, appLinkData as Bundle)
+        }
     }
 
     private fun persistGlobalConfig(response: ConfigResponse) {
@@ -135,7 +145,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
                 WoolworthsApplication.setFirebaseUserPropertiesForDelinquentProductGroupCodes(firebaseUserPropertiesForDelinquentProductGroupCodes)
             }
 
-            dashConfig?.apply{
+            dashConfig?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 WoolworthsApplication.getInstance().dashConfig = this
             }
@@ -162,7 +172,7 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
 
             var inAppChat: InAppChat? = inAppChat
             if (inAppChat == null) {
-                inAppChat = InAppChat("","","","", Collections("","", "", "", "", mutableListOf()), CustomerService("","", "", "", "", mutableListOf()),null, mutableListOf())
+                inAppChat = InAppChat("", "", "", "", Collections("", "", "", "", "", mutableListOf()), CustomerService("", "", "", "", "", mutableListOf()), null, mutableListOf())
             } else {
                 inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
             }

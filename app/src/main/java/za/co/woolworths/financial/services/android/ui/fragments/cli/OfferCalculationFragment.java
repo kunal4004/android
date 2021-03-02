@@ -636,14 +636,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
 				WoolworthsApplication.getProductOfferingId(),
-				replaceCentsWithZero(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
-				replaceCentsWithZero(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
-				replaceCentsWithZero(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
-				replaceCentsWithZero(hashExpenseDetail.get("MORTGAGE_PAYMENTS")),
-				replaceCentsWithZero(hashExpenseDetail.get("RENTAL_PAYMENTS")),
-				replaceCentsWithZero(hashExpenseDetail.get("MAINTENANCE_EXPENSES")),
-				replaceCentsWithZero(hashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES")),
-				replaceCentsWithZero(hashExpenseDetail.get("OTHER_EXPENSES")));
+				roundOffCentValues(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
+				roundOffCentValues(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
+				roundOffCentValues(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
+				roundOffCentValues(hashExpenseDetail.get("MORTGAGE_PAYMENTS")),
+				roundOffCentValues(hashExpenseDetail.get("RENTAL_PAYMENTS")),
+				roundOffCentValues(hashExpenseDetail.get("MAINTENANCE_EXPENSES")),
+				roundOffCentValues(hashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES")),
+				roundOffCentValues(hashExpenseDetail.get("OTHER_EXPENSES")));
 	}
 
 	public void displayApplication(OfferActive mObjOffer) {
@@ -890,9 +890,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
-	public static int replaceCentsWithZero(String s) {
+	public static int roundOffCentValues(String s) {
 		int length = s.length();
 		if (length < 2) return Integer.parseInt(s);
-		return Integer.parseInt(s.substring(0, length - 2) + "00");
+		return Integer.parseInt(s.substring(0, length - 2));
 	}
 }
