@@ -13,6 +13,8 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
@@ -52,7 +54,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         retry?.setOnClickListener(this@StartupActivity)
+        init()
+    }
 
+    fun init() {
         // Disable first time launch splash video screen, remove to enable video on startup
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
         startupViewModel.setUpEnvironment(this@StartupActivity)
@@ -227,7 +232,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
-        ScreenManager.presentMain(this as Activity, appLinkData as Bundle)
+        if (appLinkData is Uri) {
+            val bundle = bundleOf(
+                    "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
+                    "parameters" to "{\"url\": \"${appLinkData}\"}"
+            )
+            ScreenManager.presentMain(this@StartupActivity, bundle)
+        } else {
+            ScreenManager.presentMain(this@StartupActivity, appLinkData as Bundle)
+        }
     }
 
     override fun onStart() {

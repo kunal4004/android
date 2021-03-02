@@ -34,7 +34,6 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     var appVersion: String? = null
 
     var firebaseAnalytics: FirebaseAnalytics? = null
-    var intent: Intent? = null
 
     fun queryServiceGetConfig() = liveData(Dispatchers.IO) {
         emit(ConfigResource.loading(data = null))
