@@ -194,7 +194,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     private fun setUpView() {
-        mAvailableFundPresenter?.getAccount()?.apply {
+        mAvailableFundPresenter.getAccount()?.apply {
             activity?.apply {
                 val availableFund = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.formatAmountToRandAndCentNoSpace(availableFunds), 1))
                 val currentBalance = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(currentBalance))
