@@ -62,8 +62,7 @@ class StartUpRepositoryTest {
         Assert.assertTrue(startUpRepository.getSessionDao(SessionDao.KEY.SPLASH_VIDEO))
 
         verify(startupApiHelper, times(1)).getConfig()
-        /*verify(sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1"))
-        verify(clearSharedPreferences(instrumentationContext))
-        verify(getSessionDaoValue(SessionDao.KEY.SPLASH_VIDEO))*/
+        //verify(sessionDaoSave(SessionDao.KEY.SPLASH_VIDEO, "1"))
+        //verify(clearSharedPreferences(instrumentationContext))
     }
 }

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.viewmodel
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -60,7 +59,11 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
             appVersion = "6.1.0"
             environment = "QA"
         }
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+        firebaseAnalytics = getFirebaseInstance(context)
+    }
+
+    fun getFirebaseInstance(context: Context): FirebaseAnalytics{
+        return FirebaseAnalytics.getInstance(context)
     }
 
     fun setUpFirebaseEvents() {
