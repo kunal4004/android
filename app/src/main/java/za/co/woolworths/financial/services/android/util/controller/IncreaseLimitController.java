@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util.controller;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -84,8 +85,11 @@ public class IncreaseLimitController {
 		wEditText.setSelection(wEditText.getText().length());
 	}
 
+	@SuppressLint("SetTextI18n")
 	public void populateExpenseField(CurrencyEditText editTextView, String value, WTextView wTextView) {
 		wTextView.setVisibility(View.VISIBLE);
+		if (!TextUtils.isEmpty(value))
+			value = value + "00";
 		editTextView.setText(value);
 		editTextView.clearFocus();
 		editTextView.setSelection(editTextView.getText().length());
