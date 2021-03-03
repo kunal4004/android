@@ -4,19 +4,15 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.awfs.coordination.BuildConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.core.IsNull
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
-import org.powermock.modules.junit4.PowerMockRunner
+import org.mockito.junit.MockitoJUnitRunner
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
@@ -30,7 +26,7 @@ import za.co.woolworths.financial.services.android.utils.mock
  */
 
 @ExperimentalCoroutinesApi
-@RunWith(PowerMockRunner::class)
+@RunWith(MockitoJUnitRunner::class)
 class StartupViewModelTest : ViewModel() {
     @get:Rule
     val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -93,19 +89,5 @@ class StartupViewModelTest : ViewModel() {
         verify(startUpRepository, times(1)).getSessionDao(SessionDao.KEY.SPLASH_VIDEO)
         verify(startupApiHelper, times(1)).isConnectedToInternet(instrumentationContext)
         verify(startUpRepository, times(1)).clearSharedPreference(instrumentationContext)
-    }
-
-    @Test
-    fun check_for_environment_variable() {
-        startupViewModel.setUpEnvironment(instrumentationContext)
-        Assert.assertEquals(BuildConfig.ENV, startupViewModel.environment)
-        Assert.assertThat(startupViewModel.firebaseAnalytics, `is`(IsNull.notNullValue()))
-    }
-
-    @Test
-    fun check_for_firebase_events() {
-        //FirebaseApp.initializeApp(instrumentationContext)
-        startupViewModel.setUpEnvironment(instrumentationContext)
-        startupViewModel.setUpFirebaseEvents()
     }
 }
