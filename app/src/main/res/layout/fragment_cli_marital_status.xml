@@ -51,7 +51,7 @@
             android:fontFamily="@font/futura_medium"
             android:letterSpacing="0.1"
             android:paddingVertical="@dimen/fifteen_dp"
-            android:text="@string/cli_marital_status_txt"
+            android:text="@string/cli_marital_status_with_colon_txt"
             android:textAllCaps="true"
             android:textColor="@color/black_50"
             android:textSize="@dimen/twelve_sp" />

@@ -23,12 +23,14 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
     private var isChecked: Boolean = false
     private var selectedMaritalStatus: MaritalStatus? = null
     private var maritalStatusListener: MaritalStatusListener? = null
+    private lateinit var mContext: Context
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is MaritalStatusListener) {
             maritalStatusListener = context
         }
+        mContext = context
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,12 +43,12 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
         super.onViewCreated(view, savedInstanceState)
 
         WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus?.apply {
-            if (!contains(MaritalStatus(0, context?.getString(R.string.please_select))))
-                add(0, MaritalStatus(0, context?.getString(R.string.please_select)))
+            if (!contains(MaritalStatus(0, mContext.getString(R.string.please_select))))
+                add(0, MaritalStatus(0, mContext.getString(R.string.please_select)))
         }
 
         //set default text for picker selection.
-        cli_marital_status_selection.text = context?.getString(R.string.please_select)
+        cli_marital_status_selection.text = mContext.getString(R.string.select)
 
         // Default selected position
         setMaritalStatusPicker(0)
@@ -112,7 +114,8 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
 
                 cli_marital_status_agreement_container?.visibility = if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
                 cli_marital_status_agreement_container?.visibility = if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
-                cli_marital_status_selection?.text = selectedMaritalStatus?.statusDesc
+
+                cli_marital_status_selection?.text = if(mContext.getString(R.string.please_select).equals(selectedMaritalStatus?.statusDesc, ignoreCase = true)) context?.getString(R.string.select)  else selectedMaritalStatus?.statusDesc
 
                 // Set marital status id for Create and update offer application.
                 selectedMaritalStatus?.let { maritalStatusListener?.setMaritalStatus(it) }
