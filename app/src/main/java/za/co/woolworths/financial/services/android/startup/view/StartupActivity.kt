@@ -38,6 +38,7 @@ import java.util.*
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, View.OnClickListener {
 
     private lateinit var startupViewModel: StartupViewModel
+    private lateinit var deeplinkIntent: Intent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +49,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         supportActionBar?.hide()
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         retry?.setOnClickListener(this@StartupActivity)
-        this.intent = getIntent()
+        deeplinkIntent = getIntent()
         init()
     }
 
@@ -81,7 +82,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         return startupViewModel.getSessionDao(SessionDao.KEY.SPLASH_VIDEO)
     }
 
-     fun showVideoView() {
+    fun showVideoView() {
         splashNoVideoView?.visibility = View.GONE
         splashServerMessageView?.visibility = View.GONE
         videoViewLayout?.visibility = View.VISIBLE
@@ -108,7 +109,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-     fun showNonVideoViewWithoutErrorLayout() {
+    fun showNonVideoViewWithoutErrorLayout() {
         progressBar?.visibility = View.VISIBLE
         videoViewLayout?.visibility = View.GONE
         errorLayout?.visibility = View.GONE
@@ -131,7 +132,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun getConfig() {
+     fun getConfig() {
         startupViewModel.queryServiceGetConfig().observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
@@ -168,7 +169,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun presentNextScreenOrServerMessage() {
+    fun presentNextScreenOrServerMessage() {
         if (startupViewModel.isSplashScreenDisplay) {
             showServerMessage()
         } else {
@@ -177,7 +178,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun showServerMessage() {
+    fun showServerMessage() {
         progressBar?.visibility = View.GONE
         videoViewLayout?.visibility = View.GONE
         errorLayout?.visibility = View.GONE
@@ -205,14 +206,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     fun presentNextScreen() {
         val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
-        var appLinkData: Any? = intent?.data
+        var appLinkData: Any? = deeplinkIntent?.data
 
-        if (appLinkData == null && intent?.extras != null) {
-            appLinkData = intent!!.extras!!
-            intent?.action = Intent.ACTION_VIEW
+        if (appLinkData == null && deeplinkIntent?.extras != null) {
+            appLinkData = deeplinkIntent!!.extras!!
+            deeplinkIntent?.action = Intent.ACTION_VIEW
         }
 
-        if (Intent.ACTION_VIEW == intent?.action && appLinkData != null) {
+        if (Intent.ACTION_VIEW == deeplinkIntent?.action && appLinkData != null) {
             handleAppLink(appLinkData)
         } else {
             val activity = this as Activity
@@ -224,7 +225,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun handleAppLink(appLinkData: Any?) {
+    fun handleAppLink(appLinkData: Any?) {
         // val productSearchViewModel: ProductSearchViewModel = ProductSearchViewModelImpl();
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
@@ -248,6 +249,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
             rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
             return
         }
+        onStartInit()
+    }
+
+    fun onStartInit() {
         startupViewModel.apply {
             if (isAppMinimized) {
                 isAppMinimized = false
@@ -285,5 +290,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     @VisibleForTesting
     fun testSetViewModelInstance(viewModel: StartupViewModel) {
         startupViewModel = viewModel
+    }
+
+    @VisibleForTesting
+    fun testSetIntent(intent: Intent) {
+        deeplinkIntent = intent
     }
 }
