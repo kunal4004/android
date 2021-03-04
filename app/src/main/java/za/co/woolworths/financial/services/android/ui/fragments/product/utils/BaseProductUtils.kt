@@ -60,6 +60,9 @@ open class BaseProductUtils {
                     this.contains("Kilogram", true) -> {
                        CurrencyFormatter.formatAmountToRandAndCentWithSpace(price) + " (" +CurrencyFormatter.formatAmountToRandAndCentWithSpace(kilogramPrice) + "/kg)"
                     }
+                    this.contains("Each", true) -> {
+                        CurrencyFormatter.formatAmountToRandAndCentWithSpace(price) + " (" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(price) + "/each)"
+                    }
                     else ->CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
                 }
             }
