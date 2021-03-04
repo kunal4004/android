@@ -774,7 +774,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
             showView(loginUserOptionsLayout);
-            if (WoolworthsApplication.getCreditView().isEnabled())
+            if (WoolworthsApplication.getCreditView() != null && WoolworthsApplication.getCreditView().isEnabled())
                 showView(creditReportView);
             mUpdateMyAccount.swipeToRefreshAccount(true);
             if (SessionUtilities.getInstance().isC2User())
