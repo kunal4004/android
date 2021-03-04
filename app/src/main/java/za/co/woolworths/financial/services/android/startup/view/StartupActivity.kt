@@ -14,7 +14,6 @@ import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
@@ -47,21 +46,19 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         setupViewModel()
         window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         supportActionBar?.hide()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationUtils.createNotificationChannelIfNeeded(this)
-        }
-
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         retry?.setOnClickListener(this@StartupActivity)
+        this.intent = getIntent()
         init()
     }
 
     fun init() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationUtils.createNotificationChannelIfNeeded(this)
+        }
         // Disable first time launch splash video screen, remove to enable video on startup
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
         startupViewModel.setUpEnvironment(this@StartupActivity)
-        this.intent = getIntent()
         if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
             startupViewModel.setUpFirebaseEvents()
         } else {
@@ -84,7 +81,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         return startupViewModel.getSessionDao(SessionDao.KEY.SPLASH_VIDEO)
     }
 
-    private fun showVideoView() {
+     fun showVideoView() {
         splashNoVideoView?.visibility = View.GONE
         splashServerMessageView?.visibility = View.GONE
         videoViewLayout?.visibility = View.VISIBLE
@@ -101,7 +98,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun showNonVideoViewWithErrorLayout() {
+    fun showNonVideoViewWithErrorLayout() {
         runOnUiThread {
             progressBar?.visibility = View.GONE
             splashNoVideoView?.visibility = View.GONE
@@ -111,7 +108,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-    private fun showNonVideoViewWithoutErrorLayout() {
+     fun showNonVideoViewWithoutErrorLayout() {
         progressBar?.visibility = View.VISIBLE
         videoViewLayout?.visibility = View.GONE
         errorLayout?.visibility = View.GONE
@@ -281,12 +278,12 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
     }
 
     @VisibleForTesting
-    fun testIsFirstTime(): Boolean {
-        return isFirstTime()
+    fun testsetupLoadingScreen() {
+        return setupLoadingScreen()
     }
 
     @VisibleForTesting
-    fun testGetRandomVideos(): String {
-        return startupViewModel.randomVideoPath
+    fun testSetViewModelInstance(viewModel: StartupViewModel) {
+        startupViewModel = viewModel
     }
 }
