@@ -61,7 +61,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:maxLines="1"
             android:drawableEnd="@drawable/icon_dropdown"
             android:fontFamily="@font/futura_semi_bold"
             android:gravity="end|center_vertical"
