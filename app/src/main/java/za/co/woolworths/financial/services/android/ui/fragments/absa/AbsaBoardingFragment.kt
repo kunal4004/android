@@ -12,8 +12,6 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-import za.co.woolworths.financial.services.android.util.FirebaseE
-import za.co.woolworths.financial.services.android.util.Utils
 
 
 class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
