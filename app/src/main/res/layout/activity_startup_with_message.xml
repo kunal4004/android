@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/splashLogo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="@dimen/sixty_five_dp"
         android:orientation="vertical">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -27,27 +27,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/eight_dp"
             android:gravity="center"
-            android:lineSpacingExtra="4sp"
+            android:lineSpacingExtra="@dimen/four_sp"
             android:text="Lorem Ipsum Sit Dolor..."
             android:textColor="@color/semi_transparent_black"
-            android:textSize="15sp"
+            android:textSize="@dimen/fifteen_sp"
             app:WTextView_font="myriadpro_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/proceedButton"
-            android:layout_width="156dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/hundred_and_fifty_six_dp"
+            android:layout_height="@dimen/fifty_dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
             android:background="@drawable/register_button_bg"
             android:gravity="center"
             android:letterSpacing="0.2"
             android:text="@string/ok"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="@dimen/twelve_sp"
             app:WButton_font="medium_bold" />
     </LinearLayout>
 </RelativeLayout>

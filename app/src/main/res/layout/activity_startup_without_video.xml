@@ -15,11 +15,11 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/thirty_six_dp"
+        android:layout_height="@dimen/thirty_six_dp"
         android:layout_below="@+id/splashLogo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
+        android:layout_marginTop="@dimen/hundred_dp" />
 
     <LinearLayout
         android:id="@+id/errorLayout"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/splashLogo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="@dimen/sixty_five_dp"
         android:orientation="vertical">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -38,7 +38,7 @@
             android:letterSpacing="0.04"
             android:text="@string/no_connection_desc"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/sixteen_sp"
             app:WTextView_font="medium_bold" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -46,27 +46,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/eight_dp"
             android:gravity="center"
-            android:lineSpacingExtra="4sp"
+            android:lineSpacingExtra="@dimen/four_sp"
             android:text="@string/please_ensure_connection"
             android:textColor="@color/semi_transparent_black"
-            android:textSize="15sp"
+            android:textSize="@dimen/fifteen_sp"
             app:WTextView_font="myriadpro_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/retry"
-            android:layout_width="156dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/hundred_and_fifty_six_dp"
+            android:layout_height="@dimen/fifty_dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
             android:background="@drawable/register_button_bg"
             android:gravity="center"
             android:letterSpacing="0.2"
             android:text="@string/retry"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="@dimen/twelve_sp"
             app:WButton_font="medium_bold" />
     </LinearLayout>
 </RelativeLayout>

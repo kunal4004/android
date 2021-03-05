@@ -34,6 +34,11 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     var firebaseAnalytics: FirebaseAnalytics? = null
 
+    companion object {
+        const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
+        const val APP_VERSION_KEY = "app_version"
+    }
+
     fun queryServiceGetConfig() = liveData(Dispatchers.IO) {
         emit(ConfigResource.loading(data = null))
         try {
@@ -87,10 +92,5 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
             setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
             setUserProperty(APP_VERSION_KEY, appVersion)
         }
-    }
-
-    companion object {
-        const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
-        const val APP_VERSION_KEY = "app_version"
     }
 }
