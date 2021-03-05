@@ -11,6 +11,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBanki
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+import za.co.woolworths.financial.services.android.util.FirebaseE
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -49,7 +51,7 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.setupPasscode -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSOCDE)
+                FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSCODE)
                 replaceFragment(
                         fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditCardNumber),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
