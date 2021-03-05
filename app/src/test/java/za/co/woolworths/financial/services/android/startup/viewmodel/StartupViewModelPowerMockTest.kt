@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.SystemClock
 import com.awfs.coordination.BuildConfig
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.JsonElement
 import org.hamcrest.CoreMatchers
 import org.hamcrest.core.IsNull
 import org.junit.Assert
@@ -15,11 +16,16 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.powermock.api.mockito.PowerMockito
+import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.utils.mock
+import za.co.woolworths.financial.services.android.utils.setFinalStatic
 
 
 /**
@@ -27,6 +33,7 @@ import za.co.woolworths.financial.services.android.utils.mock
  */
 
 @RunWith(PowerMockRunner::class)
+@PrepareForTest(SessionUtilities::class)
 class StartupViewModelPowerMockTest {
 
     private lateinit var startUpRepository: StartUpRepository
@@ -79,8 +86,19 @@ class StartupViewModelPowerMockTest {
     @Test
     fun check_for_firebase_events() {
         `when`(packageManager.getPackageInfo(packageName, 0)).thenReturn(packageInfo)
+        val sessionUtilities: SessionUtilities = mock()
+        PowerMockito.whenNew(SessionUtilities::class.java).withNoArguments().thenReturn(sessionUtilities)
+        val mockModel: JWTDecodedModel = mock()
+        val jsonElement: JsonElement = mock()
+        mockModel.AtgId = jsonElement
+        mockModel.C2Id = "test"
+        `when`(sessionUtilities.jwt).thenReturn(mockModel)
+        `when`(jsonElement.asString).thenReturn("Woolworth")
         startupViewModel.setUpEnvironment(instrumentationContext)
         startupViewModel.setUpFirebaseEvents()
         verify(startupViewModel, times(1)).setupFirebaseUserProperty()
+        verify(firebaseAnalytics, times(1)).setUserId("Woolworth")
+        verify(firebaseAnalytics, times(1)).setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, "Woolworth")
+        verify(firebaseAnalytics, times(1)).setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, "test")
     }
 }

@@ -2,14 +2,20 @@ package za.co.woolworths.financial.services.android.startup.view
 
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.awfs.coordination.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.*
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
@@ -144,6 +150,51 @@ class StartupActivityUnitTest : Activity() {
         startupActivity.onStartInit()
         verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
         Assert.assertFalse(startupViewModel.isAppMinimized)
+    }
+
+    @Test
+    fun testonClick_for_retry_with_internet() {
+        val view: View = mock()
+        `when`(view.id).thenReturn(R.id.retry)
+        `when`(startupViewModel.isConnectedToInternet(startupActivity)).thenReturn(true)
+        doNothing().`when`(startupViewModel).setupFirebaseUserProperty()
+        doNothing().`when`(startupActivity).getConfig()
+        startupActivity.onClick(view)
+        verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
+        verify(startupViewModel, times(1)).setupFirebaseUserProperty()
+        verify(startupActivity, times(1)).getConfig()
+    }
+
+    @Test
+    fun testonClick_for_retry_without_internet() {
+        val view: View = mock()
+        `when`(view.id).thenReturn(R.id.retry)
+        `when`(startupViewModel.isConnectedToInternet(startupActivity)).thenReturn(false)
+        doNothing().`when`(startupActivity).showNonVideoViewWithErrorLayout()
+        startupActivity.onClick(view)
+        verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
+        verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
+    }
+
+    @Test
+    fun testonCompletion_for_videoPlayerShouldPlay() {
+        val mediaPlayer: MediaPlayer = mock()
+        doNothing().`when`(startupActivity).presentNextScreenOrServerMessage()
+        startupActivity.onCompletion(mediaPlayer)
+        Assert.assertFalse(startupViewModel.isVideoPlaying)
+        Assert.assertFalse(startupViewModel.videoPlayerShouldPlay)
+        verify(startupActivity, times(1)).presentNextScreenOrServerMessage()
+    }
+
+    @Test
+    fun testonCompletion() {
+        val mediaPlayer: MediaPlayer = mock()
+        doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
+        `when`(startupViewModel.videoPlayerShouldPlay).thenReturn(true)
+        startupActivity.onCompletion(mediaPlayer)
+        Assert.assertFalse(startupViewModel.isVideoPlaying)
+        Assert.assertTrue(startupViewModel.videoPlayerShouldPlay)
+        verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
     }
 
     @Test
