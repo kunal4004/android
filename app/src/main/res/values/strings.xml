@@ -1977,4 +1977,10 @@
     <string name="loan_request_fund_not_available_title">Funds Not Available</string>
     <string name="loan_request_fund_not_available_desc">Your credit facility does not allow for a Personal Loan drawdown at this time.</string>
     <string name="cd_lnksizeguide">lnkSizeGuide</string>
+
+    <!--  CLI Marital status  -->
+    <string name="cli_marital_status_txt">Marital Status</string>
+    <string name="cli_marital_status_with_colon_txt">Marital Status:</string>
+    <string name="cli_married_in_community_agreement">I confirm that I have written consent from my spouse to enter into a credit agreement.</string>
+    <string name="please_select">Please Select</string>
 </resources>
