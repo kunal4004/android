@@ -32,7 +32,7 @@ abstract class SimpleActivityLifecycleCallbacks(private val targetActivity: Acti
         // no-op
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle?) {
+    override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {
         // no-op
     }
 

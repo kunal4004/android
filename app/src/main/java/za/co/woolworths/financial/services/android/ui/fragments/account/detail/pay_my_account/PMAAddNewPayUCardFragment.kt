@@ -101,7 +101,7 @@ class PMAAddNewPayUCardFragment : PMAFragment() {
                     when (hasConnection && !payMyAccountViewModel.isAddNewCardFormLoaded) {
                         true -> {
                             loadAddPayUForm()
-                            addNewUserPayUWebView?.loadUrl(payMyAccountViewModel.getAddNewCardUrl())
+                            addNewUserPayUWebView?.loadUrl(payMyAccountViewModel.getAddNewCardUrl()!!)
                         }
                         else -> {
                             if (!hasConnection)
