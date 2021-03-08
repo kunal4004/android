@@ -43,10 +43,19 @@ class QuantitySelectorFragment(private val listener: IQuantitySelector?) : WBott
         val selectQuantityAdapter = SelectQuantityAdapter { selectedQuantity: Int -> quantityItemClicked(selectedQuantity) }
 
         quantityInStock?.let {
+            var dividerFactor = 3
+            if (it == 1){
+                dividerFactor = 11
+            }else if (it == 2){
+                dividerFactor = 6
+            }else if (it ==3){
+                dividerFactor = 4
+            }
+
             rclSelectYourQuantity?.apply {
                 layoutManager = activity?.let { activity -> LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false) }
                 layoutParams?.height = (Resources.getSystem()?.displayMetrics?.heightPixels
-                        ?: 0) / (if (it <= 2) 4 else 3)
+                        ?: 0) / dividerFactor
                 adapter = selectQuantityAdapter
             }
             selectQuantityAdapter.setItem(it)
