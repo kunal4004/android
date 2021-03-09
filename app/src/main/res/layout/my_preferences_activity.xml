@@ -295,7 +295,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="24dp"
-                        android:drawableLeft="@drawable/ic_"
+                        android:drawableLeft="@drawable/ic_touch_id"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="0.4sp"
