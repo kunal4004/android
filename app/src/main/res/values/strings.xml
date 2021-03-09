@@ -1983,4 +1983,10 @@
     <string name="cli_marital_status_with_colon_txt">Marital Status:</string>
     <string name="cli_married_in_community_agreement">I confirm that I have written consent from my spouse to enter into a credit agreement.</string>
     <string name="please_select">Please Select</string>
+
+    <!--  My Preferences - Link Devices -->
+    <string name="my_preferences_linked_devices">Linked Devices</string>
+    <string name="my_preferences_linked_devices_desc">Transactions, statements and balance messages will only be sent to this device and future transactions will be quicker and easier with less verification steps required.</string>
+    <string name="my_preferences_link_this_device">Link this device</string>
+
 </resources>
