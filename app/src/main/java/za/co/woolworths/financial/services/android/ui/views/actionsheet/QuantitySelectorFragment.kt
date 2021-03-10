@@ -43,13 +43,11 @@ class QuantitySelectorFragment(private val listener: IQuantitySelector?) : WBott
         val selectQuantityAdapter = SelectQuantityAdapter { selectedQuantity: Int -> quantityItemClicked(selectedQuantity) }
 
         quantityInStock?.let {
-            var dividerFactor = 3
-            if (it == 1){
-                dividerFactor = 11
-            }else if (it == 2){
-                dividerFactor = 6
-            }else if (it ==3){
-                dividerFactor = 4
+            val dividerFactor = when (it) {
+                1 -> 11
+                2 -> 6
+                3 -> 4
+                else -> 3
             }
 
             rclSelectYourQuantity?.apply {
