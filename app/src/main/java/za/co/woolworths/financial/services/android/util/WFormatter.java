@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -66,9 +65,12 @@ public class WFormatter {
     }
 
     public static boolean isDateExpired(String validToDate) throws ParseException {
-        Date parsedValidDate = new Date(formatDateTOddMMMYYYY(validToDate));
-        if (parsedValidDate.before(new Date())) {
-            return true;
+        String formattedDate = formatDateTOddMMMYYYY(validToDate);
+        if (!TextUtils.isEmpty(formattedDate)) {
+            Date parsedValidDate = new Date(formattedDate);
+            if (parsedValidDate.before(new Date())) {
+                return true;
+            }
         }
         return false;
     }
@@ -82,8 +84,8 @@ public class WFormatter {
     }
 
     public static String formatDateTOddMMMYYYY(String validFromDate) throws ParseException {
-        if (validFromDate == null) {
-            return "N/A";
+        if (TextUtils.isEmpty(validFromDate)) {
+            return "";
         }
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
         return new SimpleDateFormat("dd MMM yyyy").format(m_ISO8601Local.parse(validFromDate));
@@ -215,10 +217,14 @@ public class WFormatter {
             return "th";
         }
         switch (day % 10) {
-            case 1:  return "st";
-            case 2:  return "nd";
-            case 3:  return "rd";
-            default: return "th";
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
         }
     }
 
