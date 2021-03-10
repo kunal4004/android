@@ -25,12 +25,24 @@
     <TextView
         android:id="@+id/productVariant"
         style="@style/futura_semi_bold_black"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/transperant_options_button"
         android:gravity="center"
         android:includeFontPadding="false"
         android:lineSpacingMultiplier="1"
-        android:paddingBottom="@dimen/five_dp"
+        android:padding="@dimen/five_dp"
         android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/marginTextView"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
+
+    <TextView
+        android:id="@+id/marginTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/five_dp"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
         app:layout_constraintTop_toBottomOf="@+id/imProductImage" />
@@ -124,7 +136,7 @@
         android:background="@color/recent_search_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/productVariant" />
+        app:layout_constraintTop_toBottomOf="@id/marginTextView" />
 
     <View
         android:id="@+id/brandMarginTopView"
