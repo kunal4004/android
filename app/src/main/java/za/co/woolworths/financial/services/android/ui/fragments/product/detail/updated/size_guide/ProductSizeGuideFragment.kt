@@ -66,7 +66,7 @@ class ProductSizeGuideFragment : Fragment(), ProductSizeGuideContract.ProductSiz
     override fun loadSizeGuideView(sizeGuideHtmlContent: String?) {
         sizeGuideContentWebView?.apply {
             settings?.javaScriptEnabled = true
-            loadDataWithBaseURL(null, sizeGuideHtmlContent, "text/html", "UTF-8", null)
+            loadDataWithBaseURL(null, sizeGuideHtmlContent!!, "text/html", "UTF-8", null)
             visibility = View.VISIBLE
         }
         hideProgressBar()

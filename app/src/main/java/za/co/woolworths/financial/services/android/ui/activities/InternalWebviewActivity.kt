@@ -31,7 +31,7 @@ class InternalWebViewActivity : AppCompatActivity() {
         private const val REQUEST_CODE = 123
     }
 
-    private var mLink: String? = ""
+    private var mLink: String = ""
     private var downLoadUrl: String? = null
     private var downLoadMimeType: String? = null
     private var downLoadUserAgent: String? = null
