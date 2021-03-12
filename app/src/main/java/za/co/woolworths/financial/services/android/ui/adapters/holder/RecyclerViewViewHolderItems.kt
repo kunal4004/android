@@ -89,8 +89,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
             measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
             val itemWidth = itemView.measuredWidth
-            imReducedImage?.layoutParams?.width = (itemWidth / 2) -  Utils.dp2px(8f)
-            imSave?.layoutParams?.width =  (itemWidth / 4) -  Utils.dp2px(16f)
+            imReducedImage?.layoutParams?.width = (itemWidth) -  Utils.dp2px(8f)
+            imSave?.layoutParams?.width =  (itemWidth) -  Utils.dp2px(16f)
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
