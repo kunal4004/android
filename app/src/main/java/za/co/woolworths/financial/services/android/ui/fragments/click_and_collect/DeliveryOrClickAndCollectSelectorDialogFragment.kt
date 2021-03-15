@@ -34,7 +34,7 @@ class DeliveryOrClickAndCollectSelectorDialogFragment(var listener: IDeliveryOpt
         justBrowsing?.setOnClickListener(this)
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
-        WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed?.let { itemsLimit?.text = getString(R.string.click_and_collect_dialog_items_limit, it.toString()) }
+        WoolworthsApplication.getClickAndCollect()?.maxItemsAllowedText?.let { itemsLimit?.text = it }
     }
 
     override fun onClick(v: View?) {
