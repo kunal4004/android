@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/enterOTPTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/enter_otp_title"
+        android:textColor="@color/color_222222"
+        android:textSize="@dimen/twenty_sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/enterOTPSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:lineSpacingExtra="@dimen/five_dp"
+        android:paddingEnd="@dimen/thirty_two_dp"
+        android:textColor="@color/color_7f7f7f"
+        android:textSize="@dimen/fifteen_sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toBottomOf="@id/enterOTPTitle" />
+
+    <EditText
+        android:id="@+id/linkDeviceOTPEdtTxt1"
+        style="@style/enter_otp_edit_text_style"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:background="@drawable/otp_box_background_focus_selector"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:imeOptions="actionNext"
+        android:importantForAutofill="no"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/linkDeviceOTPEdtTxt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterOTPSubtitle" />
+
+    <EditText
+        android:id="@+id/linkDeviceOTPEdtTxt2"
+        style="@style/enter_otp_edit_text_style"
+        android:background="@drawable/otp_box_background_focus_selector"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:imeOptions="actionNext"
+        android:importantForAutofill="no"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/linkDeviceOTPEdtTxt3"
+        app:layout_constraintBottom_toBottomOf="@+id/linkDeviceOTPEdtTxt1"
+        app:layout_constraintEnd_toStartOf="@+id/linkDeviceOTPEdtTxt3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/linkDeviceOTPEdtTxt1" />
+
+    <EditText
+        android:id="@+id/linkDeviceOTPEdtTxt3"
+        style="@style/enter_otp_edit_text_style"
+        android:layout_marginStart="2dp"
+        android:background="@drawable/otp_box_background_focus_selector"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:imeOptions="actionNext"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/linkDeviceOTPEdtTxt4"
+        app:layout_constraintBottom_toBottomOf="@+id/linkDeviceOTPEdtTxt2"
+        app:layout_constraintEnd_toStartOf="@+id/linkDeviceOTPEdtTxt4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/linkDeviceOTPEdtTxt2" />
+
+    <EditText
+        android:id="@+id/linkDeviceOTPEdtTxt4"
+        style="@style/enter_otp_edit_text_style"
+        android:layout_marginStart="1dp"
+        android:background="@drawable/otp_box_background_focus_selector"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:imeOptions="actionNext"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/edtVerificationCode5"
+        app:layout_constraintBottom_toBottomOf="@id/linkDeviceOTPEdtTxt3"
+        app:layout_constraintEnd_toStartOf="@+id/linkDeviceOTPEdtTxt5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/linkDeviceOTPEdtTxt3" />
+
+    <EditText
+        android:id="@+id/linkDeviceOTPEdtTxt5"
+        style="@style/enter_otp_edit_text_style"
+        android:layout_marginStart="2dp"
+        android:background="@drawable/otp_box_background_focus_selector"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:imeOptions="actionDone"
+        android:maxLength="1"
+        app:layout_constraintBottom_toBottomOf="@id/linkDeviceOTPEdtTxt4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linkDeviceOTPEdtTxt4" />
+
+    <ImageView
+        android:id="@+id/buttonNext"
+        android:layout_width="@dimen/store_card_next_button_size_48_dp"
+        android:layout_height="@dimen/store_card_next_button_size_48_dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/next_button_inactive"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/didNotReceiveOTPTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="start|center"
+        android:letterSpacing="0.015"
+        android:text="@string/did_not_receive_title"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/store_card_text_size_15_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/buttonNext"
+        app:layout_constraintEnd_toStartOf="@id/buttonNext"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/buttonNext"
+        tools:ignore="UnusedAttribute"
+        tools:text="@string/did_not_receive_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

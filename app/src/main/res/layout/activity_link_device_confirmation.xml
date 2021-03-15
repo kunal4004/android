@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/linkDeviceConfirmToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/linkDeviceConfirmToolbarTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:letterSpacing="0.2"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp" />
+
+            <TextView
+                android:id="@+id/linkDeviceConfirmToolbarRightButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="0dp"
+                android:fontFamily="@font/futura_medium"
+                android:letterSpacing="0.2"
+                android:maxLines="1"
+                android:padding="@dimen/fifteen_dp"
+                android:singleLine="true"
+                android:text="@string/skip"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/linkDeviceConfirmationNavHost"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linkDeviceConfirmToolbar"
+        app:navGraph="@navigation/link_device_confirmation_nav_host" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

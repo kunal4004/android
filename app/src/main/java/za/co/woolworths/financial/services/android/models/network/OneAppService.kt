@@ -409,4 +409,8 @@ object OneAppService : RetrofitConfig() {
     fun getAccountsByProductOfferingId(productOfferingId: String): Call<AccountsResponse> {
         return mApiInterface.getAccountsByProductOfferingId(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId)
     }
+
+    fun getLinkDeviceOtp(otpMethod: String): Call<RetrieveOTPResponse> {
+        return mApiInterface.getLinkDeviceOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethod)
+    }
 }

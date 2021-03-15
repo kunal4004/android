@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_preferences_nav_host.xml"
+    app:startDestination="@id/myPreferencesFragment">
+
+    <include app:graph="@navigation/graph_link_device_otp" />
+
+    <fragment
+        android:id="@+id/myPreferencesFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment"
+        android:label="fragment_my_preferences"
+        tools:layout="@layout/fragment_my_preferences" >
+        <action
+            android:id="@+id/action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment"
+            app:destination="@id/unlinkDeviceBottomSheetFragment" />
+
+        <action
+            android:id="@+id/action_myPreferencesFragment_to_navigation"
+            app:destination="@id/graph_otp_navigation" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/unlinkDeviceBottomSheetFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.UnlinkDeviceBottomSheetFragment"
+        android:label="UnlinkDeviceBottomSheetFragment" />
+</navigation>
