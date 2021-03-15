@@ -22,7 +22,7 @@
     <color name="bg_overlay">#20000000</color>
     <color name="bg_light_overlay">#10000000</color>
     <color name="sem_per_black">#99000000</color>
-    <color name="transperant_options_background">#80FFFFFF</color>
+    <color name="transperant_options_background">#80eeeeee</color>
 
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>

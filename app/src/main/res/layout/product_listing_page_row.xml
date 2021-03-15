@@ -38,6 +38,7 @@
         android:id="@+id/marginTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/seven_dp"
         android:textSize="@dimen/five_sp"
         app:layout_constraintBottom_toBottomOf="@+id/imProductImage"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
