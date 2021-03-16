@@ -518,6 +518,9 @@
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
     <string name="promotional_text">You saved </string>
+    <string name="labelPromotionOne">labelPromotionOne</string>
+    <string name="labelPromotionTwo">labelPromotionTwo</string>
+    <string name="labelPromotionThree">labelPromotionThree</string>
     <string name="enter_list_name">Enter list name</string>
     <string name="select_all">SELECT ALL</string>
     <string name="deselect_all">DESELECT ALL</string>

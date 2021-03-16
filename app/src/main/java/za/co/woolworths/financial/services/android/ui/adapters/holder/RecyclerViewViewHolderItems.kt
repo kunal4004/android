@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.text.Html
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -28,7 +30,6 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setProductName(this)
             setPromotionalText(this)
             setProductVariant(this)
-            setSaveText(this, nextProduct, previousProduct)
             setBrandText(this, nextProduct, previousProduct)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
@@ -48,14 +49,27 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
         if (productList?.promotionsList?.isEmpty() == false) {
             productList?.promotionsList.forEachIndexed { i, it ->
+                var editedPromotionalText: String? = it.promotionalText
+                if (it.promotionalText?.contains(":") == true) {
+                    val beforeColon: String? = it.promotionalText?.substringBefore(":")
+                    val afterColon: String? = it.promotionalText?.substringAfter(":")
+                    editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                }
                 when (i) {
                     0 -> {
+                        onlinePromotionalTextView1.ellipsize = TextUtils.TruncateAt.END
+                        if (productList?.promotionsList.size >= 2)
+                            onlinePromotionalTextView1.maxLines = 1
+                        else
+                            onlinePromotionalTextView1.maxLines = 2
                         onlinePromotionalTextView1.visibility = VISIBLE
-                        onlinePromotionalTextView1.text = it.promotionalText
+                        onlinePromotionalTextView1.text = Html.fromHtml(editedPromotionalText)
                     }
                     1 -> {
+                        onlinePromotionalTextView2.ellipsize = TextUtils.TruncateAt.END
+                        onlinePromotionalTextView2.maxLines = 1
                         onlinePromotionalTextView2.visibility = VISIBLE
-                        onlinePromotionalTextView2.text = it.promotionalText
+                        onlinePromotionalTextView2.text = Html.fromHtml(editedPromotionalText)
                     }
                 }
             }
@@ -64,16 +78,6 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setProductVariant(productList: ProductList?) = with(itemView) {
         productVariant?.text = productList?.productVariants ?: ""
-    }
-
-    private fun setSaveText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
-        tvSaveText?.text = productList?.saveText ?: ""
-        previousProduct?.let {
-            tvSaveText.visibility = if (productList?.saveText.isNullOrEmpty() && it.saveText.isNullOrEmpty()) GONE else VISIBLE
-        }
-        nextProduct?.let {
-            tvSaveText.visibility = if (productList?.saveText.isNullOrEmpty() && it.saveText.isNullOrEmpty()) GONE else VISIBLE
-        }
     }
 
     private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {

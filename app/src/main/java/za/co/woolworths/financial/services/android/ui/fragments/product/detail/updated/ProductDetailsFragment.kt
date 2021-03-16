@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
+import android.text.Html
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -199,7 +200,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
-            it.saveText?.apply { setPromotionalText(this) }
         }
 
         mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
@@ -512,7 +512,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
 
         productDetails?.let {
-            it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             brandName.apply {
                 if (!it.brandText.isNullOrEmpty()) {
@@ -526,18 +525,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             if (productDetails?.promotionsList?.isEmpty() == false) {
                 productDetails?.promotionsList?.forEachIndexed { i, it ->
+                    var editedPromotionalText: String? = it.promotionalText
+                    if (it.promotionalText?.contains(":") == true) {
+                        val beforeColon: String? = it.promotionalText?.substringBefore(":")
+                        val afterColon: String? = it.promotionalText?.substringAfter(":")
+                        editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                    }
                     when (i) {
                         0 -> {
                             onlinePromotionalTextView1.visibility = View.VISIBLE
-                            onlinePromotionalTextView1.text = it.promotionalText
+                            onlinePromotionalTextView1.text = Html.fromHtml(editedPromotionalText)
                         }
                         1 -> {
                             onlinePromotionalTextView2.visibility = View.VISIBLE
-                            onlinePromotionalTextView2.text = it.promotionalText
+                            onlinePromotionalTextView2.text = Html.fromHtml(editedPromotionalText)
                         }
                         2 -> {
                             onlinePromotionalTextView3.visibility = View.VISIBLE
-                            onlinePromotionalTextView3.text = it.promotionalText
+                            onlinePromotionalTextView3.text = Html.fromHtml(editedPromotionalText)
                         }
                     }
                 }
@@ -579,15 +584,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     pager.adapter = this
                     productImagesViewPagerIndicator.setViewPager(pager)
                 }
-            }
-        }
-    }
-
-    override fun setPromotionalText(promotionValue: String) {
-        if (promotionValue.isNotEmpty()) {
-            promotionText.apply {
-                text = promotionValue
-                visibility = View.VISIBLE
             }
         }
     }

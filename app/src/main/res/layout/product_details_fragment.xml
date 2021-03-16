@@ -145,7 +145,8 @@
                     android:id="@+id/onlinePromotionalTextView1"
                     style="@style/futura_medium"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/two_line_promo_text_color"
+                    android:contentDescription="@string/labelPromotionOne"
+                    android:textColor="@color/promo_text_color"
                     android:textSize="@dimen/thirteen_sp"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -156,7 +157,8 @@
                     android:id="@+id/onlinePromotionalTextView2"
                     style="@style/futura_medium"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/two_line_promo_text_color"
+                    android:contentDescription="@string/labelPromotionTwo"
+                    android:textColor="@color/promo_text_color"
                     android:textSize="@dimen/thirteen_sp"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -167,25 +169,13 @@
                     android:id="@+id/onlinePromotionalTextView3"
                     style="@style/futura_medium"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/two_line_promo_text_color"
+                    android:contentDescription="@string/labelPromotionThree"
+                    android:textColor="@color/promo_text_color"
                     android:textSize="@dimen/thirteen_sp"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
-
-                <TextView
-                    android:id="@+id/promotionText"
-                    style="@style/futura_medium_black_12_text_style"
-                    android:layout_marginTop="33dp"
-                    android:layout_marginBottom="24dp"
-                    android:letterSpacing="0.1"
-                    android:textAllCaps="true"
-                    android:textColor="@color/promo_text_color"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@id/right_guideline"
-                    app:layout_constraintStart_toStartOf="@id/left_guideline"
-                    app:layout_constraintTop_toBottomOf="@id/onlinePromotionalTextView3" />
 
                 <include
                     android:id="@+id/freeGiftWithPurchaseLayout"
@@ -196,7 +186,7 @@
                     android:layout_marginTop="@dimen/thirty_dp"
                     android:layout_marginRight="@dimen/twenty_four_dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/promotionText" />
+                    app:layout_constraintTop_toBottomOf="@id/onlinePromotionalTextView3" />
 
                 <include
                     android:id="@+id/sizeColorSelectorLayout"
