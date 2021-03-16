@@ -31,6 +31,7 @@ import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
@@ -259,7 +260,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
-                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name  + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
                 }
             }
             activity?.apply {
@@ -405,7 +406,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (hasSize)
             showSize()
 
-        if(productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants,productDetails?.sizeGuideId) == true) {
+        if (productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants, productDetails?.sizeGuideId) == true) {
             sizeGuide?.apply {
                 underline()
                 visibility = View.VISIBLE
@@ -463,7 +464,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 hasColor = true
                 hasSize = false
             }
-            ColourSizeVariants.SIZE_VARIANT,ColourSizeVariants.COLOUR_SIZE_VARIANT -> {
+            ColourSizeVariants.SIZE_VARIANT, ColourSizeVariants.COLOUR_SIZE_VARIANT -> {
                 hasColor = true
                 hasSize = true
             }
@@ -522,6 +523,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+            }
+            if (productDetails?.promotionsList?.isEmpty() == false) {
+                productDetails?.promotionsList?.forEachIndexed { i, it ->
+                    when (i) {
+                        0 -> {
+                            onlinePromotionalTextView1.visibility = View.VISIBLE
+                            onlinePromotionalTextView1.text = it.promotionalText
+                        }
+                        1 -> {
+                            onlinePromotionalTextView2.visibility = View.VISIBLE
+                            onlinePromotionalTextView2.text = it.promotionalText
+                        }
+                        2 -> {
+                            onlinePromotionalTextView3.visibility = View.VISIBLE
+                            onlinePromotionalTextView3.text = it.promotionalText
+                        }
+                    }
+                }
             }
         }
 

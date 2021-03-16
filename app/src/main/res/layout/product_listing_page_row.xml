@@ -74,6 +74,34 @@
         tools:targetApi="lollipop" />
 
     <TextView
+        android:id="@+id/onlinePromotionalTextView1"
+        style="@style/futura_medium"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:minLines="1"
+        android:singleLine="true"
+        android:textColor="@color/two_line_promo_text_color"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+
+    <TextView
+        android:id="@+id/onlinePromotionalTextView2"
+        style="@style/futura_medium"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:minLines="1"
+        android:singleLine="true"
+        android:textColor="@color/two_line_promo_text_color"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1" />
+
+    <TextView
         android:id="@+id/brandNameFakeView"
         style="@style/futura_semi_bold_black_12_text_style"
         android:layout_height="wrap_content"
@@ -84,7 +112,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
 
     <TextView
         android:id="@+id/tvSaveText"
