@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,18 +13,23 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import za.co.woolworths.financial.services.android.models.UserManager
-import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.util.Utils
 
 
 class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
+    private var mApplyNowState: ApplyNowState? = null
     private var toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            mApplyNowState = it.getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
+                    ?: ApplyNowState.STORE_CARD
         }
     }
 
@@ -73,9 +79,11 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.linkDeviceConfirmToolbarRightButton -> {
                 activity?.apply {
-                    val prefs = getSharedPreferences(Utils.SHARED_PREF, Context.MODE_PRIVATE)
-                    prefs.edit().putBoolean(UserManager.LINK_DEVICE_CONFIRMATION, true).apply()
-                    setResult(MyAccountsFragment.REQUEST_CODE_LINK_DEVICE)
+                    val prefs = WoolworthsApplication.getInstance()?.getSharedPreferences(Utils.SHARED_PREF, Context.MODE_PRIVATE)
+                    prefs?.edit()?.putBoolean(UserManager.LINK_DEVICE_CONFIRMATION, true)?.commit()
+                    val intent = Intent()
+                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                    setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
                     finish()
                 }
             }

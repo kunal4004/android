@@ -74,7 +74,7 @@
             android:background="@color/black"
             android:fontFamily="@font/futura_semi_bold"
             android:gravity="center"
-            android:lineSpacingExtra="@dimen/five_dp"
+            android:letterSpacing="@integer/point_two"
             android:minHeight="@dimen/fifty_dp"
             android:text="@string/link_device_confirm_button"
             android:textAlignment="center"

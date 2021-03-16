@@ -63,7 +63,7 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
             val graph = linkDeviceNavHost?.graph
             graph?.startDestination = R.id.linkDeviceConfirmationFragment
 
-            graph?.let { linkDeviceNavHost?.setGraph(it, null) }
+            graph?.let { linkDeviceNavHost?.setGraph(it, intent.extras) }
     }
 
     override fun setToolbarTitle(title: String) {

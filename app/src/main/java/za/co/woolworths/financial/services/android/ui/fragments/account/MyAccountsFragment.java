@@ -40,6 +40,7 @@ import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -151,7 +152,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private FrameLayout imgStoreCardContainer;
     private FrameLayout imgPersonalLoanCardContainer;
     private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
-    public static final int REQUEST_CODE_LINK_DEVICE = 5432;
+    public static final int RESULT_CODE_LINK_DEVICE = 5432;
 
     private final List<String> unavailableAccounts;
     private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
@@ -978,8 +979,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (activity != null) {
-                                    SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+                                if (WoolworthsApplication.getInstance() != null) {
+                                    SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
                                     boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
                                     if (!isShown) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
@@ -1018,8 +1019,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (activity != null) {
-                SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+            if (WoolworthsApplication.getInstance() != null) {
+                SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
                 boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
                 if (!isShown) {
                     navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
@@ -1058,8 +1059,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (activity != null) {
-                                    SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+                                if (WoolworthsApplication.getInstance() != null) {
+                                    SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
                                     boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
                                     if (!isShown) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
@@ -1097,8 +1098,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (activity != null) {
-                SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+            if (WoolworthsApplication.getInstance() != null) {
+                SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
                 boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
                 if (!isShown) {
                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
@@ -1127,8 +1128,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (activity != null) {
-                                    SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+                                if (WoolworthsApplication.getInstance() != null) {
+                                    SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
                                     boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
                                     if (!isShown) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
@@ -1167,8 +1168,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (activity != null) {
-                SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+            if (WoolworthsApplication.getInstance() != null) {
+                SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
                 boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
                 if (!isShown) {
                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
@@ -1453,8 +1454,23 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 isActivityInForeground = true;
                 showFeatureWalkthroughPrompts();
             }
-        } else if(resultCode == REQUEST_CODE_LINK_DEVICE){
-                Log.e(TAG, "REQUEST_CODE_LINK_DEVICE");
+        } else if(resultCode == RESULT_CODE_LINK_DEVICE) {
+                Serializable intentResult =  data.getSerializableExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE);
+                if(!(intentResult instanceof ApplyNowState)) {
+                    return;
+                }
+                ApplyNowState state = (ApplyNowState) intentResult;
+                switch (state) {
+                    case STORE_CARD:
+                        navigateToLinkedStoreCard();
+                        break;
+                    case PERSONAL_LOAN:
+                        navigateToLinkedPersonalLoan();
+                        break;
+                    case SILVER_CREDIT_CARD:
+                        navigateToLinkedCreditCard();
+                        break;
+                }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             initialize();
             //One time biometricsWalkthrough

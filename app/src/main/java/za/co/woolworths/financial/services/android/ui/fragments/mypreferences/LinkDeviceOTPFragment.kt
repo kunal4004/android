@@ -38,44 +38,46 @@ import za.co.woolworths.financial.services.android.util.Utils
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
     private var otpNumber: String? = null
-    private val mKeyListener: View.OnKeyListener = View.OnKeyListener { v, keyCode, event -> //You can identify which key pressed by checking keyCode value with KeyEvent.KEYCODE_
-        if (keyCode == KeyEvent.KEYCODE_DEL) {
-            //this is for backspace
-            when {
-                linkDeviceOTPEdtTxt5.isFocused -> {
-                    linkDeviceOTPEdtTxt4.requestFocus()
-                    disableNextButton()
-                }
-                linkDeviceOTPEdtTxt4.isFocused -> {
-                    linkDeviceOTPEdtTxt3.requestFocus()
-                }
-                linkDeviceOTPEdtTxt3.isFocused -> {
-                    linkDeviceOTPEdtTxt2.requestFocus()
-                }
-                linkDeviceOTPEdtTxt2.isFocused -> {
-                    linkDeviceOTPEdtTxt1.requestFocus()
-                }
-            }
-        }
-        false
-    }
+
     private val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
             when {
                 linkDeviceOTPEdtTxt5.isFocused -> {
-                    enableNextButton()
+                    if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text)) {
+                        disableNextButton()
+                        linkDeviceOTPEdtTxt4.requestFocus()
+                    } else {
+                        enableNextButton()
+                    }
                 }
                 linkDeviceOTPEdtTxt4.isFocused -> {
-                    linkDeviceOTPEdtTxt5.requestFocus()
+                    if(TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text)){
+                        linkDeviceOTPEdtTxt3.requestFocus()
+                    } else {
+                        linkDeviceOTPEdtTxt5.requestFocus()
+                    }
                 }
                 linkDeviceOTPEdtTxt3.isFocused -> {
-                    linkDeviceOTPEdtTxt4.requestFocus()
+                    if(TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text)) {
+                        linkDeviceOTPEdtTxt2.requestFocus()
+                    } else {
+                        linkDeviceOTPEdtTxt4.requestFocus()
+
+                    }
+
                 }
                 linkDeviceOTPEdtTxt2.isFocused -> {
-                    linkDeviceOTPEdtTxt3.requestFocus()
+                    if(TextUtils.isEmpty(linkDeviceOTPEdtTxt2.text)) {
+                        linkDeviceOTPEdtTxt1.requestFocus()
+                    } else {
+                        linkDeviceOTPEdtTxt3.requestFocus()
+                    }
                 }
                 linkDeviceOTPEdtTxt1.isFocused -> {
                     if (!TextUtils.isEmpty(linkDeviceOTPEdtTxt1?.text)) {
@@ -84,8 +86,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-
-        override fun afterTextChanged(s: Editable?) {}
     }
 
 
@@ -138,56 +138,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         linkDeviceOTPEdtTxt4.addTextChangedListener(mTextWatcher)
         linkDeviceOTPEdtTxt5.addTextChangedListener(mTextWatcher)
 
-        linkDeviceOTPEdtTxt5.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt4.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt3.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt2.setOnKeyListener(mKeyListener)
         buttonNext.setOnClickListener(this)
 
         callGetOTPAPI(OTPMethodType.SMS.name)
-    }
-
-    private fun callGetOTPAPI(otpMethod: String?) {
-        mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
-
-        sendinOTPLayout?.visibility = View.VISIBLE
-        linkDeviceOTPScreen?.visibility = View.GONE
-        mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
-            override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
-                sendinOTPLayout?.visibility = View.GONE
-                when (retrieveOTPResponse?.httpCode) {
-                    200 -> {
-                        Log.e(TAG, "response >> $retrieveOTPResponse")
-                        linkDeviceOTPScreen?.visibility = View.VISIBLE
-                        retrieveOTPResponse?.otpSentTo?.let {
-                            if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
-                                otpNumber = it
-                            }
-                            enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
-                            linkDeviceOTPEdtTxt1.requestFocus()
-                        }
-                    }
-                    440 ->
-                        activity?.apply {
-                            if (!isFinishing) {
-                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, retrieveOTPResponse?.response?.stsParams, this)
-                            }
-                        }
-                    else -> retrieveOTPResponse?.response?.desc?.let { desc ->
-                        try {
-                            linkDeviceOTPScreen?.visibility = View.GONE
-                        } catch (ex: IllegalStateException) {
-                            FirebaseManager.logException(ex)
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                linkDeviceOTPScreen?.visibility = View.VISIBLE
-            }
-        }, RetrieveOTPResponse::class.java))
-
     }
 
     private fun setToolbar() {
@@ -234,9 +187,59 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 ))
             }
             R.id.buttonNext -> {
+                callValidatingOTPAPI()
+
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         }
+    }
+
+    private fun callGetOTPAPI(otpMethod: String?) {
+        mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
+
+        sendinOTPLayout?.visibility = View.VISIBLE
+        linkDeviceOTPScreen?.visibility = View.GONE
+        mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
+            override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
+                sendinOTPLayout?.visibility = View.GONE
+                when (retrieveOTPResponse?.httpCode) {
+                    200 -> {
+                        Log.e(TAG, "response >> $retrieveOTPResponse")
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
+                        retrieveOTPResponse?.otpSentTo?.let {
+                            if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
+                                otpNumber = it
+                            }
+                            enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
+                            linkDeviceOTPEdtTxt1.requestFocus()
+                        }
+                    }
+                    440 ->
+                        activity?.apply {
+                            if (!isFinishing) {
+                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, retrieveOTPResponse?.response?.stsParams, this)
+                            }
+                        }
+                    else -> retrieveOTPResponse?.response?.desc?.let { desc ->
+                        try {
+                            linkDeviceOTPScreen?.visibility = View.GONE
+                        } catch (ex: IllegalStateException) {
+                            FirebaseManager.logException(ex)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                linkDeviceOTPScreen?.visibility = View.VISIBLE
+            }
+        }, RetrieveOTPResponse::class.java))
+
+    }
+
+    private fun callValidatingOTPAPI() {
+        
+
     }
 
     private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
