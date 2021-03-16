@@ -104,11 +104,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
         confirmLocation?.setOnClickListener(this)
-        WoolworthsApplication.getClickAndCollect()?.minNumberOfItemsAllowed?.let {
-            maxItemsInfoMessage?.text = context?.getString(R.string.click_and_collect_max_items)?.let { msgTxt ->
-                String.format(msgTxt, it.toString(), WoolworthsApplication.getClickAndCollect()?.maxNumberOfItemsAllowed
-                        ?: "")
-            }
+        WoolworthsApplication.getClickAndCollect()?.maxItemsAllowedText?.let {
+            maxItemsInfoMessage?.text = it
         }
         setDeliveryOption(deliveryType)
 

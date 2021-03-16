@@ -90,7 +90,11 @@
             android:layout_below="@+id/clickAndCollectView"
             android:layout_centerHorizontal="true"
             android:textAllCaps="true"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:textColor="@color/gray"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/sixteen_dp"
             />
 
     </RelativeLayout>
