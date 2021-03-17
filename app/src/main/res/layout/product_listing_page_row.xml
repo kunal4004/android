@@ -38,8 +38,8 @@
         android:id="@+id/marginTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/seven_dp"
-        android:textSize="@dimen/five_sp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:textSize="@dimen/six_dp"
         app:layout_constraintBottom_toBottomOf="@+id/imProductImage"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
@@ -130,10 +130,11 @@
         android:id="@+id/horizontalProductSeparator"
         android:layout_width="0dp"
         android:layout_height="@dimen/one_dp"
+        android:layout_marginBottom="@dimen/nine_dp"
         android:background="@color/recent_search_bg"
+        app:layout_constraintBottom_toBottomOf="@id/imProductImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/marginTextView" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/brandMarginTopView"
