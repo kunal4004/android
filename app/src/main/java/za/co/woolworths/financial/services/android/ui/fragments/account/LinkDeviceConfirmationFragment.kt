@@ -1,22 +1,26 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
-import za.co.woolworths.financial.services.android.models.UserManager
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -27,6 +31,17 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setFragmentResultListener("linkDevice") { requestKey, bundle ->
+            activity?.apply {
+                Utils.setLinkDeviceConfirmationShown(true)
+                val intent = Intent()
+                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                finish()
+            }
+        }
+
         arguments?.let {
             mApplyNowState = it.getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
                     ?: ApplyNowState.STORE_CARD
@@ -78,15 +93,36 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.linkDeviceConfirmToolbarRightButton -> {
-                activity?.apply {
-                    val prefs = WoolworthsApplication.getInstance()?.getSharedPreferences(Utils.SHARED_PREF, Context.MODE_PRIVATE)
-                    prefs?.edit()?.putBoolean(UserManager.LINK_DEVICE_CONFIRMATION, true)?.commit()
-                    val intent = Intent()
-                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                    setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                    finish()
+                onSkipPressed()
+            }
+        }
+    }
+
+    private fun onSkipPressed() {
+        context?.let {
+            linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
+            linkDeviceResultTitle?.text = it.getString(R.string.ok_cool)
+        }
+        linkDeviceResultLayout.visibility = View.VISIBLE
+        linkDeviceConfirmationScrollLayout.visibility = View.GONE
+
+        activity?.apply {
+            if (this is LinkDeviceConfirmationActivity) {
+                supportActionBar?.let {
+                    it.setDisplayHomeAsUpEnabled(false)
                 }
             }
+            if (this is LinkDeviceConfirmationInterface) {
+                hideToolbarButton()
+            }
+            Handler().postDelayed({
+
+                Utils.setLinkDeviceConfirmationShown(true)
+                val intent = Intent()
+                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                finish()
+            }, AppConstant.DELAY_1500_MS)
         }
     }
 }

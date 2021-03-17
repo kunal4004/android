@@ -2003,5 +2003,9 @@
     <string name="link_device_confirm_desc">Transactions, statements and balance messages will only be sent to this device and future transactions will be quicker and easier with less verification steps required.</string>
     <string name="link_device_confirm_button">Yes, This is my device</string>
     <string name="link_device_security_msg">Security verification messages will still be sent to your registered primary cell number %s.</string>
+    <string name="link_device_linking_processing">Linking Your Device</string>
+    <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
+    <string name="ok_cool">Ok, cool!</string>
+    <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your prferences.</string>
 
 </resources>

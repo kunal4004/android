@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -22,6 +25,7 @@ import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
 
@@ -50,7 +54,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         auSwitch.setOnTouchListener(this)
         linkDeviceSwitch.setOnClickListener(this)
         activity?.apply {
-            if(this is MyPreferencesInterface){
+            if (this is MyPreferencesInterface) {
                 setToolbarTitle(getString(R.string.acc_my_preferences))
             }
         }
@@ -64,6 +68,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
+
+        linkDeviceSwitch.isChecked = !TextUtils.isEmpty(Utils.getLinkedDeviceToken())
     }
 
     override fun onClick(view: View?) {
@@ -91,12 +97,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
         when (requestCode) {
             LOCK_REQUEST_CODE_TO_ENABLE -> {
-                setUserAuthentication(if (resultCode == Activity.RESULT_OK) true else false)
+                setUserAuthentication(resultCode == Activity.RESULT_OK)
                 if (resultCode == Activity.RESULT_OK) {
                     AuthenticateUtils.getInstance(activity).enableBiometricForCurrentSession(false)
                 }
             }
-            LOCK_REQUEST_CODE_TO_DISABLE -> setUserAuthentication(if (resultCode == Activity.RESULT_OK) false else true)
+            LOCK_REQUEST_CODE_TO_DISABLE -> setUserAuthentication(resultCode != Activity.RESULT_OK)
             SECURITY_SETTING_REQUEST_CODE -> if (AuthenticateUtils.getInstance(activity).isDeviceSecure) {
                 startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE)
             } else {
@@ -163,7 +169,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         editLocation.visibility = View.VISIBLE
         deliverLocationIcon.setBackgroundResource(R.drawable.tick_cli_active)
         shoppingDeliveryLocation?.let {
-            setDeliveryAddressView(activity, shoppingDeliveryLocation!!, tvDeliveringTo, tvDeliveryLocation, null)
+            setDeliveryAddressView(activity, shoppingDeliveryLocation, tvDeliveringTo, tvDeliveryLocation, null)
         }
     }
 

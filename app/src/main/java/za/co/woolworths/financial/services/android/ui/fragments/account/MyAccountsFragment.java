@@ -980,9 +980,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 setAccountResponse(activity, mAccountResponse);
 
                                 if (WoolworthsApplication.getInstance() != null) {
-                                    SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-                                    boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
-                                    if (!isShown) {
+
+                                    if (!Utils.isLinkDeviceConfirmationShown()) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
                                         hideView(retryStoreCardLinearLayout);
@@ -1020,9 +1019,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else {
             if (WoolworthsApplication.getInstance() != null) {
-                SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-                boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
-                if (!isShown) {
+                if (!Utils.isLinkDeviceConfirmationShown()) {
                     navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                 } else {
                     redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
@@ -1059,17 +1056,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (WoolworthsApplication.getInstance() != null) {
-                                    SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-                                    boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
-                                    if (!isShown) {
-                                        navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
-                                    } else {
-                                        hideView(retryPersonalLoanLinearLayout);
-                                        showPersonalLoanContent(account);
-                                        //set  Firebase user property when retried for specific product
-                                        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
-                                    }
+                                if (!Utils.isLinkDeviceConfirmationShown()) {
+                                    navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
+                                } else {
+                                    hideView(retryPersonalLoanLinearLayout);
+                                    showPersonalLoanContent(account);
+                                    //set  Firebase user property when retried for specific product
+                                    FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
                                 }
                             }
                             break;
@@ -1098,14 +1091,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (WoolworthsApplication.getInstance() != null) {
-                SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-                boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
-                if (!isShown) {
-                    navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
-                } else {
-                    redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
-                }
+            if (!Utils.isLinkDeviceConfirmationShown()) {
+                navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
+            } else {
+                redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
             }
         }
     }
@@ -1128,17 +1117,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (WoolworthsApplication.getInstance() != null) {
-                                    SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-                                    boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
-                                    if (!isShown) {
-                                        navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
-                                    } else {
-                                        hideView(retryCreditCardLinearLayout);
-                                        showCreditCardContent(account);
-                                        //set  Firebase user property when retried for specific product
-                                        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
-                                    }
+                                if (!Utils.isLinkDeviceConfirmationShown()) {
+                                    navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
+                                } else {
+                                    hideView(retryCreditCardLinearLayout);
+                                    showCreditCardContent(account);
+                                    //set  Firebase user property when retried for specific product
+                                    FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
                                 }
                             }
                             break;
@@ -1168,14 +1153,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (WoolworthsApplication.getInstance() != null) {
-                SharedPreferences prefs = WoolworthsApplication.getInstance().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-                boolean isShown = prefs.getBoolean(UserManager.LINK_DEVICE_CONFIRMATION, false);
-                if (!isShown) {
-                    navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
-                } else {
-                    redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
-                }
+            if (!Utils.isLinkDeviceConfirmationShown()) {
+                navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
+            } else {
+                redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
             }
         }
     }
@@ -1454,23 +1435,23 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 isActivityInForeground = true;
                 showFeatureWalkthroughPrompts();
             }
-        } else if(resultCode == RESULT_CODE_LINK_DEVICE) {
-                Serializable intentResult =  data.getSerializableExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE);
-                if(!(intentResult instanceof ApplyNowState)) {
-                    return;
-                }
-                ApplyNowState state = (ApplyNowState) intentResult;
-                switch (state) {
-                    case STORE_CARD:
-                        navigateToLinkedStoreCard();
-                        break;
-                    case PERSONAL_LOAN:
-                        navigateToLinkedPersonalLoan();
-                        break;
-                    case SILVER_CREDIT_CARD:
-                        navigateToLinkedCreditCard();
-                        break;
-                }
+        } else if (resultCode == RESULT_CODE_LINK_DEVICE) {
+            Serializable intentResult = data.getSerializableExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE);
+            if (!(intentResult instanceof ApplyNowState)) {
+                return;
+            }
+            ApplyNowState state = (ApplyNowState) intentResult;
+            switch (state) {
+                case STORE_CARD:
+                    navigateToLinkedStoreCard();
+                    break;
+                case PERSONAL_LOAN:
+                    navigateToLinkedPersonalLoan();
+                    break;
+                case SILVER_CREDIT_CARD:
+                    navigateToLinkedCreditCard();
+                    break;
+            }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             initialize();
             //One time biometricsWalkthrough

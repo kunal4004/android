@@ -10,6 +10,9 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -410,7 +413,17 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getAccountsByProductOfferingId(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId)
     }
 
+    fun validateLinkDeviceOtp(otpBody: LinkDeviceValidateBody): Call<RetrieveOTPResponse> {
+        return mApiInterface.validateLinkDeviceOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpBody)
+    }
+
     fun getLinkDeviceOtp(otpMethod: String): Call<RetrieveOTPResponse> {
         return mApiInterface.getLinkDeviceOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethod)
+    }
+
+    fun linkDeviceApi(deviceName: String, appInstanceId: String, location: String, primaryDevice: Boolean, firebaseToken: String): Call<LinkedDeviceResponse> {
+        val body = LinkDeviceBody(appInstanceId, "", true, firebaseToken)
+
+        return mApiInterface.linkDeviceApi(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceName, body)
     }
 }

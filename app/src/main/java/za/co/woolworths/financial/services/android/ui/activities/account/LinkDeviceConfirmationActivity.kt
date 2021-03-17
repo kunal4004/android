@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -52,6 +53,15 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
             finishActivity()
         }
         else -> super.onBackPressed()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val navHostFragment = supportFragmentManager.fragments[0] as NavHostFragment
+        val childFragments = navHostFragment.childFragmentManager.fragments
+        for (fragment in childFragments) {
+            fragment.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     private fun finishActivity() {

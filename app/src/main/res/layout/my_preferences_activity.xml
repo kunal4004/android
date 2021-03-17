@@ -14,12 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
-        android:background="@drawable/appbar_background"
+        android:background="@color/white"
         android:gravity="center"
-        android:minHeight="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:popupTheme="@style/StoreSearch"
-        app:theme="@style/StoreSearch">
+        app:layout_scrollFlags="scroll|enterAlways">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/toolbarText"
