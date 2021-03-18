@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -9,10 +10,7 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -21,6 +19,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_link_device_otp.*
@@ -39,6 +38,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
+import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
@@ -51,55 +51,44 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     private var otpNumber: String? = null
     private var otpMethod: String? = null
 
-    private val mTextWatcher: TextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        }
-
-        override fun afterTextChanged(s: Editable?) {
+    private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
+        if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
-                linkDeviceOTPEdtTxt5.isFocused -> {
-                    if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text)) {
-                        disableNextButton()
-                        linkDeviceOTPEdtTxt4.requestFocus()
-                    } else {
-                        enableNextButton()
-                    }
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt1?.text) -> {
+                    linkDeviceOTPEdtTxt1?.setSelection(linkDeviceOTPEdtTxt1?.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt1?.requestFocus(View.FOCUS_DOWN)
                 }
-                linkDeviceOTPEdtTxt4.isFocused -> {
-                    if (TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text)) {
-                        linkDeviceOTPEdtTxt3.requestFocus()
-                    } else {
-                        linkDeviceOTPEdtTxt5.requestFocus()
-                    }
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt2?.text) -> {
+                    linkDeviceOTPEdtTxt1?.setSelection(linkDeviceOTPEdtTxt1?.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt1?.requestFocus(View.FOCUS_DOWN)
                 }
-                linkDeviceOTPEdtTxt3.isFocused -> {
-                    if (TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text)) {
-                        linkDeviceOTPEdtTxt2.requestFocus()
-                    } else {
-                        linkDeviceOTPEdtTxt4.requestFocus()
-
-                    }
-
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt3?.text) -> {
+                    linkDeviceOTPEdtTxt2?.setSelection(linkDeviceOTPEdtTxt2?.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt2?.requestFocus(View.FOCUS_DOWN)
                 }
-                linkDeviceOTPEdtTxt2.isFocused -> {
-                    if (TextUtils.isEmpty(linkDeviceOTPEdtTxt2.text)) {
-                        linkDeviceOTPEdtTxt1.requestFocus()
-                    } else {
-                        linkDeviceOTPEdtTxt3.requestFocus()
-                    }
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt4?.text) -> {
+                    linkDeviceOTPEdtTxt3?.setSelection(linkDeviceOTPEdtTxt3?.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt3?.requestFocus(View.FOCUS_DOWN)
                 }
-                linkDeviceOTPEdtTxt1.isFocused -> {
-                    if (!TextUtils.isEmpty(linkDeviceOTPEdtTxt1?.text)) {
-                        linkDeviceOTPEdtTxt2.requestFocus()
-                    }
+                TextUtils.isEmpty(linkDeviceOTPEdtTxt5?.text) -> {
+                    linkDeviceOTPEdtTxt4?.setSelection(linkDeviceOTPEdtTxt4?.text?.length ?: 0)
+                    linkDeviceOTPEdtTxt4?.requestFocus(View.FOCUS_DOWN)
                 }
             }
+            true
         }
+        false
     }
 
+    private fun validateNextButton() {
+        if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) || TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text)
+                || TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) || TextUtils.isEmpty(linkDeviceOTPEdtTxt2.text)
+                || TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text)) {
+            disableNextButton()
+        } else {
+            enableNextButton()
+        }
+    }
 
     private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
     private var mValidateLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
@@ -146,11 +135,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
-        linkDeviceOTPEdtTxt1.addTextChangedListener(mTextWatcher)
-        linkDeviceOTPEdtTxt2.addTextChangedListener(mTextWatcher)
-        linkDeviceOTPEdtTxt3.addTextChangedListener(mTextWatcher)
-        linkDeviceOTPEdtTxt4.addTextChangedListener(mTextWatcher)
-        linkDeviceOTPEdtTxt5.addTextChangedListener(mTextWatcher)
+        linkDeviceOTPEdtTxt1.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) {validateNextButton()})
+        linkDeviceOTPEdtTxt2.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) {validateNextButton()})
+        linkDeviceOTPEdtTxt3.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) {validateNextButton()})
+        linkDeviceOTPEdtTxt4.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5) {validateNextButton()})
+        linkDeviceOTPEdtTxt5.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5, linkDeviceOTPEdtTxt5) {validateNextButton()})
+
+        linkDeviceOTPEdtTxt1.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt2.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt3.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt4.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt5.setOnKeyListener(mKeyListener)
+
 
         buttonNext.setOnClickListener(this)
 
@@ -210,6 +206,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
+
+                if (linkDeviceOTPErrorTxt?.visibility == View.VISIBLE) {
+                    setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+                }
 
                 callValidatingOTPAPI(otpNumber)
             }
@@ -278,11 +278,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 sendinOTPLayout?.visibility = View.GONE
                 when (retrieveOTPResponse?.httpCode) {
                     200 -> {
-                        if ("success".equals(retrieveOTPResponse.response?.desc, true)) {
-                            callLinkingDeviceAPI()
-                        } else {
-                            linkDeviceOTPScreen?.visibility = View.VISIBLE
-                        }
+                        callLinkingDeviceAPI()
                     }
                     440 ->
                         activity?.apply {
@@ -291,15 +287,45 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
-                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                        showValidateOTPError(desc)
                     }
                 }
             }
 
             override fun onFailure(error: Throwable?) {
-                linkDeviceOTPScreen?.visibility = View.VISIBLE
+                context?.apply {
+                    showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                }
             }
         }, RetrieveOTPResponse::class.java))
+    }
+
+    private fun showValidateOTPError(msg: String) {
+        setOtpErrorBackground(R.drawable.otp_box_error_background)
+        linkDeviceOTPErrorTxt?.text = msg
+        linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
+        linkDeviceOTPScreen?.visibility = View.VISIBLE
+
+    }
+
+    fun setOtpErrorBackground(drawableId: Int) {
+        context?.let { context ->
+            ContextCompat.getDrawable(context, drawableId)?.apply {
+                linkDeviceOTPEdtTxt1?.setBackgroundResource(drawableId)
+                linkDeviceOTPEdtTxt2?.setBackgroundResource(drawableId)
+                linkDeviceOTPEdtTxt3?.setBackgroundResource(drawableId)
+                linkDeviceOTPEdtTxt4?.setBackgroundResource(drawableId)
+                linkDeviceOTPEdtTxt5?.setBackgroundResource(drawableId)
+            }
+        }
+    }
+
+    fun clearOTP() {
+        linkDeviceOTPEdtTxt1?.text?.clear()
+        linkDeviceOTPEdtTxt2?.text?.clear()
+        linkDeviceOTPEdtTxt3?.text?.clear()
+        linkDeviceOTPEdtTxt4?.text?.clear()
+        linkDeviceOTPEdtTxt5?.text?.clear()
     }
 
     private fun callLinkingDeviceAPI() {
@@ -349,7 +375,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         }, LinkedDeviceResponse::class.java))
-
     }
 
     private fun showDeviceLinked() {
@@ -405,6 +430,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
+            clearOTP()
             linkDeviceOTPScreen?.visibility = View.VISIBLE
             Utils.setLinkDeviceConfirmationShown(true)
         }
@@ -412,7 +438,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
             when (resultCode) {
                 ErrorHandlerActivity.RESULT_RETRY -> {
-                    callGetOTPAPI(otpMethod)
+                    callLinkingDeviceAPI()
                 }
                 ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                     Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
