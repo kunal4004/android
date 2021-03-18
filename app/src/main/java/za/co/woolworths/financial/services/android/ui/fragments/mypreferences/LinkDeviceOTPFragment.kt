@@ -435,6 +435,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
         if (resultCode == Activity.RESULT_CANCELED) {
             resetOTPView()
+            linkDeviceOTPScreen?.visibility = View.VISIBLE
             Utils.setLinkDeviceConfirmationShown(true)
         }
 
