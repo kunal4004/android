@@ -28,11 +28,11 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setProductImage(this)
             setPromotionalImage(promotionImages)
             setProductName(this)
-            setPromotionalText(this)
-            setProductVariant(this)
             setBrandText(this, nextProduct, previousProduct)
+            setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
+            setProductVariant(this)
             quickShopAddToCartSwitch(this)
             setOnClickListener(navigator, this)
         }
