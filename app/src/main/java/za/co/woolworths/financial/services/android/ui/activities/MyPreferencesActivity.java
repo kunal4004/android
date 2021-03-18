@@ -60,7 +60,8 @@ public class MyPreferencesActivity extends AppCompatActivity implements MyPrefer
         }
         NavGraph graph = navigationHost.getGraph();
         graph.setStartDestination(R.id.myPreferencesFragment);
-        navigationHost.setGraph(graph, null);
+
+        navigationHost.setGraph(graph, getIntent() != null ? getIntent().getExtras() : null);
     }
 
     @Override

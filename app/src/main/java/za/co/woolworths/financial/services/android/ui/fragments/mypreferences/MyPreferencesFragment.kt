@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
@@ -13,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
@@ -29,14 +28,20 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
 
+    private var isNonWFSUser : Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+        arguments?.apply {
+            isNonWFSUser = getBoolean(IS_NON_WFS_USER)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        setFragmentResultListener("linkDevice") { requestKey, bundle ->
+            Utils.setLinkDeviceConfirmationShown(true)
+        }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_preferences, container, false)
     }
@@ -69,7 +74,21 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        linkDeviceSwitch.isChecked = !TextUtils.isEmpty(Utils.getLinkedDeviceToken())
+        when(isNonWFSUser) {
+            true -> {
+                linkDeviceLayout?.visibility = View.GONE
+            }
+            else -> {
+                linkDeviceSwitch.isChecked = !TextUtils.isEmpty(Utils.getLinkedDeviceToken())
+                if (!TextUtils.isEmpty(Utils.getLinkedDeviceToken())) {
+                    linkDeviceSwitch.isEnabled = TextUtils.isEmpty(Utils.getLinkedDeviceToken())
+                    context?.apply {
+                        tvLinkedDevices?.text = getString(R.string.my_preferences_my_linked_devices)
+                        tvLinkedDevicesDesc?.text = getString(R.string.my_preferences_linked_devices_desc_updated)
+                    }
+                }
+            }
+        }
     }
 
     override fun onClick(view: View?) {
@@ -188,5 +207,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         const val SECURITY_SETTING_REQUEST_DIALOG = 234
         const val SECURITY_INFO_REQUEST_DIALOG = 235
         const val REQUEST_SUBURB_CHANGE = 143
+        const val IS_NON_WFS_USER = "isNonWFSUser"
     }
 }

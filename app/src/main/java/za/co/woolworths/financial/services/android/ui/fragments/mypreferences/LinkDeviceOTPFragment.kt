@@ -113,6 +113,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                     callGetOTPAPI(OTPMethodType.SMS.name)
                 }
                 result.equals(OTPMethodType.EMAIL.name, true) -> {
+                    resetOTPView()
                     callGetOTPAPI(OTPMethodType.EMAIL.name)
                 }
                 result.equals(OTP_CALL_CENTER, true) -> {
@@ -125,6 +126,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_link_device_otp, container, false)
+    }
+
+    private fun resetOTPView() {
+        clearOTP()
+        if (linkDeviceOTPErrorTxt?.visibility == View.VISIBLE) {
+            linkDeviceOTPErrorTxt?.visibility = View.GONE
+            setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,7 +155,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         linkDeviceOTPEdtTxt3.setOnKeyListener(mKeyListener)
         linkDeviceOTPEdtTxt4.setOnKeyListener(mKeyListener)
         linkDeviceOTPEdtTxt5.setOnKeyListener(mKeyListener)
-
 
         buttonNext.setOnClickListener(this)
 
@@ -206,10 +214,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
-
-                if (linkDeviceOTPErrorTxt?.visibility == View.VISIBLE) {
-                    setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
-                }
 
                 callValidatingOTPAPI(otpNumber)
             }

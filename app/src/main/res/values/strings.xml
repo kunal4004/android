@@ -2007,5 +2007,7 @@
     <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
     <string name="ok_cool">Ok, cool!</string>
     <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your prferences.</string>
+    <string name="my_preferences_my_linked_devices">My Linked Devices</string>
+    <string name="my_preferences_linked_devices_desc_updated">Transactions, statements and balance messages will only be sent to your primary device.</string>
 
 </resources>

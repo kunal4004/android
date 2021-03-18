@@ -116,6 +116,7 @@ import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenTy
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
+import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
@@ -930,7 +931,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 }
                 break;
             case R.id.rlMyPreferences:
-                startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
+                Intent myPreferences = new Intent(getActivity(), MyPreferencesActivity.class);
+                myPreferences.putExtra(IS_NON_WFS_USER, unavailableAccounts != null && unavailableAccounts.size() == 3);
+                startActivity(myPreferences);
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.imRefreshAccount:
