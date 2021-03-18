@@ -374,54 +374,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
         switch (groupCode) {
             case STORE_CARD:
-                navigateToStoreCard();
+                onDeepLinkedProductTap(linkedStoreCardView, applyStoreCardView);
                 break;
             case CREDIT_CARD:
-                navigateToCreditCard();
+                onDeepLinkedProductTap(linkedCreditCardView, applyCreditCardView);
                 break;
             case PERSONAL_LOAN:
-                navigateToPersonalLoan();
+                onDeepLinkedProductTap(linkedPersonalCardView, applyStoreCardView);
                 break;
         }
         setArguments(null);
         deepLinkParams = null;
-    }
-
-    private void navigateToPersonalLoan() {
-        if (applyPersonalCardView.getVisibility() != View.VISIBLE) {
-            redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
-        } else {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
-            redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
-        }
-    }
-
-    private void navigateToCreditCard() {
-        if (applyCreditCardView.getVisibility() != View.VISIBLE) {
-            redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
-        } else {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
-            if (mCreditCardAccount == null) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
-                return;
-            }
-            if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.SILVER_CREDIT_CARD);
-            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
-            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
-            }
-        }
-    }
-
-    private void navigateToStoreCard() {
-        if (applyStoreCardView.getVisibility() != View.VISIBLE) {
-            redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
-        } else {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
-            redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD);
-        }
     }
 
     private void parseDeepLinkData() {
@@ -1148,7 +1111,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(true);
         else
             showProgressBar();
-        
+
         mUpdateMyAccount.make(forceNetworkUpdate, accountsHashMap -> {
             if (activity == null) return null;
             mAccountResponse = mUpdateMyAccount.mAccountResponse;
@@ -1393,7 +1356,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             ScreenManager.presentBiometricWalkthrough(getActivity());
         } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             Activity activity = getActivity();
-            if (activity == null)return;
+            if (activity == null) return;
             setAccountResponse(activity, null);
             onSignOut();
             initialize();
@@ -1843,6 +1806,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void onGetCreditCArdTokenSuccess(@NotNull CreditCardTokenResponse creditCardTokenResponse) {
 
+    }
+
+    private void onDeepLinkedProductTap(RelativeLayout linkedLayout, RelativeLayout applyNowLayout) {
+        if (linkedStoreCardView == null || applyNowLayout == null) return;
+        if (linkedStoreCardView.getVisibility() == View.VISIBLE)
+            linkedLayout.performClick();
+        else
+            applyNowLayout.performClick();
     }
 
 }
