@@ -23,29 +23,40 @@ open class BaseProductUtils {
 
 
             if (wasPrice.isNullOrEmpty()) {
-                tvPrice.text = if (price!!.isEmpty()) "" else getMassPrice(price, priceType, kilogramPrice)
-                tvPrice.setTextColor(android.graphics.Color.BLACK)
-                tvWasPrice.text = ""
-                tvWasPrice.visibility = GONE
+                tvPrice?.apply {
+                    text = if (price!!.isEmpty()) "" else getMassPrice(price, priceType, kilogramPrice)
+                    setTextColor(android.graphics.Color.BLACK)
+                }
+                tvWasPrice?.apply {
+                    text = ""
+                    visibility = GONE
+                }
 
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
-                    tvPrice.text = if (price!!.isEmpty())CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice) else getMassPrice(price, priceType, kilogramPrice)
-                    tvPrice.setTextColor(android.graphics.Color.BLACK)
-                    tvWasPrice.text = ""
-                    tvWasPrice.visibility = GONE
+                    tvPrice?.apply {
+                        text = if (price!!.isEmpty()) CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice) else getMassPrice(price, priceType, kilogramPrice)
+                        setTextColor(android.graphics.Color.BLACK)
+                    }
+                    tvWasPrice?.apply {
+                        text = ""
+                        visibility = GONE
+                    }
                 } else {
                     if (!priceType.isNullOrEmpty() && priceType.contains("Each", true)) {
-                        tvPrice.text = price?.let { getMassPrice(it, priceType, kilogramPrice) }
-                        tvWasPrice.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice)
+                        tvPrice?.text = price?.let { getMassPrice(it, priceType, kilogramPrice) }
+                        tvWasPrice?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(wasPrice)
                     } else {
-                        tvPrice.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
-                        tvWasPrice.text = wasPrice?.let { getMassPrice(it, priceType, kilogramPrice) }
+                        tvPrice?.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(price)
+                        tvWasPrice?.text = wasPrice?.let { getMassPrice(it, priceType, kilogramPrice) }
                     }
-                    tvPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
-                    tvWasPrice.paintFlags = tvWasPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                    tvWasPrice.setTextColor(android.graphics.Color.BLACK)
-                    tvWasPrice.visibility = VISIBLE
+
+                    tvPrice?.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
+                    tvWasPrice?.apply {
+                        paintFlags = tvWasPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        setTextColor(android.graphics.Color.BLACK)
+                        visibility = VISIBLE
+                    }
 
                 }
             }
