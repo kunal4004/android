@@ -247,6 +247,7 @@
                 android:layout_height="@dimen/seventy_dp">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/linkThisDevice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

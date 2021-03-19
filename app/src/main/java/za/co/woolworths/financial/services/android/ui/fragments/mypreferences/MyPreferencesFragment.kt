@@ -81,10 +81,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             else -> {
                 linkDeviceSwitch.isChecked = !TextUtils.isEmpty(Utils.getLinkedDeviceToken())
                 if (!TextUtils.isEmpty(Utils.getLinkedDeviceToken())) {
+                    linkDeviceSwitch.visibility = View.GONE
                     linkDeviceSwitch.isEnabled = TextUtils.isEmpty(Utils.getLinkedDeviceToken())
                     context?.apply {
-                        tvLinkedDevices?.text = getString(R.string.my_preferences_my_linked_devices)
-                        tvLinkedDevicesDesc?.text = getString(R.string.my_preferences_linked_devices_desc_updated)
+                        linkThisDevice?.text = getString(R.string.link_device_this_is_linked)
                     }
                 }
             }
