@@ -2007,6 +2007,6 @@
     <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
     <string name="ok_cool">Ok, cool!</string>
     <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your prferences.</string>
-    <string name="link_device_this_is_linked">Link this device</string>
+    <string name="link_device_this_is_linked">This device is linked</string>
 
 </resources>
