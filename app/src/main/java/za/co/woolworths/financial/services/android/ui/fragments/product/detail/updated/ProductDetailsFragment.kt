@@ -541,16 +541,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     when (i) {
                         0 -> {
-                            onlinePromotionalTextView1.visibility = View.VISIBLE
-                            onlinePromotionalTextView1.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView1?.visibility = View.VISIBLE
+                            onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                         }
                         1 -> {
-                            onlinePromotionalTextView2.visibility = View.VISIBLE
-                            onlinePromotionalTextView2.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView2?.visibility = View.VISIBLE
+                            onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
                         }
                         2 -> {
-                            onlinePromotionalTextView3.visibility = View.VISIBLE
-                            onlinePromotionalTextView3.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView3?.visibility = View.VISIBLE
+                            onlinePromotionalTextView3?.text = Html.fromHtml(editedPromotionalText)
                         }
                     }
                 }

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.text.Html
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -64,6 +65,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                             onlinePromotionalTextView1?.maxLines = 2
                         onlinePromotionalTextView1?.visibility = VISIBLE
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
+                        if (productList?.promotionsList.size == 1)
+                            onlinePromotionalTextView2?.text = ""
                     }
                     1 -> {
                         onlinePromotionalTextView2?.ellipsize = TextUtils.TruncateAt.END
@@ -73,6 +76,9 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                     }
                 }
             }
+        } else {
+            onlinePromotionalTextView1?.text = ""
+            onlinePromotionalTextView2?.text = ""
         }
     }
 
