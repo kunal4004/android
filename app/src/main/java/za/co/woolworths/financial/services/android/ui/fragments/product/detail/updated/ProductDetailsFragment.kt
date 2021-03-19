@@ -98,6 +98,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var mFreeGiftPromotionalImage: String? = null
     private var EDIT_LOCATION_LOGIN_REQUEST = 2020
     private var HTTP_EXPECTATION_FAILED_417: String = "417"
+    private var isOutOfStock_502 = false
 
 
     companion object {
@@ -106,6 +107,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val INDEX_ADD_TO_SHOPPING_LIST = 3
         const val INDEX_SEARCH_FROM_LIST = 4
         const val RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002
+        const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
     }
 
@@ -337,9 +339,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun onProductDetailedFailed(response: Response) {
-        if (isAdded)
+    override fun onProductDetailedFailed(response: Response, httpCode: Int) {
+        if (httpCode == HTTP_CODE_502) {
+            isOutOfStock_502 = true
+            val message = getString(R.string.out_of_stock_502)
+            OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
+        } else if (isAdded) {
+            isOutOfStock_502 = false
             showErrorWhileLoadingProductDetails()
+        }
     }
 
     override fun onFailureResponse(error: String) {
@@ -1321,7 +1329,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onOutOfStockDialogDismiss() {
-        if (productDetails?.otherSkus.isNullOrEmpty())
+        if (isOutOfStock_502) {
+            isOutOfStock_502 = false
+            if (childFragmentManager.backStackEntryCount > 0) {
+                childFragmentManager.popBackStack()
+            } else
+                activity?.finish()
+        } else if (productDetails?.otherSkus.isNullOrEmpty())
             activity?.onBackPressed()
     }
 

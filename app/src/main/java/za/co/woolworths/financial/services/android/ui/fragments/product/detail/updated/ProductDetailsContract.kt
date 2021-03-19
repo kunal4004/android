@@ -13,7 +13,7 @@ interface ProductDetailsContract {
         fun hideProgressBar()
         fun onSessionTokenExpired()
         fun onProductDetailsSuccess(productDetails: ProductDetails)
-        fun onProductDetailedFailed(response: Response)
+        fun onProductDetailedFailed(response: Response, httpCode: Int)
         fun onFailureResponse(error: String)
         fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean)
         fun getImageByWidth(imageUrl: String?, context: Context): String
