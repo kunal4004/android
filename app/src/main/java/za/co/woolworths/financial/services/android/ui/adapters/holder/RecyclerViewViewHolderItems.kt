@@ -57,19 +57,19 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 }
                 when (i) {
                     0 -> {
-                        onlinePromotionalTextView1.ellipsize = TextUtils.TruncateAt.END
+                        onlinePromotionalTextView1?.ellipsize = TextUtils.TruncateAt.END
                         if (productList?.promotionsList.size >= 2)
-                            onlinePromotionalTextView1.maxLines = 1
+                            onlinePromotionalTextView1?.maxLines = 1
                         else
-                            onlinePromotionalTextView1.maxLines = 2
-                        onlinePromotionalTextView1.visibility = VISIBLE
-                        onlinePromotionalTextView1.text = Html.fromHtml(editedPromotionalText)
+                            onlinePromotionalTextView1?.maxLines = 2
+                        onlinePromotionalTextView1?.visibility = VISIBLE
+                        onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
                     }
                     1 -> {
-                        onlinePromotionalTextView2.ellipsize = TextUtils.TruncateAt.END
-                        onlinePromotionalTextView2.maxLines = 1
-                        onlinePromotionalTextView2.visibility = VISIBLE
-                        onlinePromotionalTextView2.text = Html.fromHtml(editedPromotionalText)
+                        onlinePromotionalTextView2?.ellipsize = TextUtils.TruncateAt.END
+                        onlinePromotionalTextView2?.maxLines = 1
+                        onlinePromotionalTextView2?.visibility = VISIBLE
+                        onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
                     }
                 }
             }
