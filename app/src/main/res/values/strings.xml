@@ -518,6 +518,9 @@
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
     <string name="promotional_text">You saved </string>
+    <string name="labelPromotionOne">labelPromotionOne</string>
+    <string name="labelPromotionTwo">labelPromotionTwo</string>
+    <string name="labelPromotionThree">labelPromotionThree</string>
     <string name="enter_list_name">Enter list name</string>
     <string name="select_all">SELECT ALL</string>
     <string name="deselect_all">DESELECT ALL</string>
@@ -1929,7 +1932,7 @@
     <string name="privacy_policy_note_2">Privacy Policy</string>
     <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
     <string name="credit_report_title_details">Get your Free Credit score powered by TransUnion, a registered Credit Bureau in SA.</string>
-    <string name="credit_report_desc">For FREE access to the Transunion Credit View Tool, you’ll need to create a profile using your personal information.
+    <string name="credit_report_desc">For FREE access to the TransUnion Credit View Tool, you’ll need to create an account using your personal information.
         \n\nYour credit score today is a snapshot reflecting how you have handled your credit accounts in the past. It’s a great way to manage and protect your personal information and credit profile.  </string>
     <string name="please_note_title">Please Note</string>
     <string name="bullet_point_unicode">\u2022</string>
@@ -1983,4 +1986,5 @@
     <string name="cli_marital_status_with_colon_txt">Marital Status:</string>
     <string name="cli_married_in_community_agreement">I confirm that I have written consent from my spouse to enter into a credit agreement.</string>
     <string name="please_select">Please Select</string>
+    <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
 </resources>

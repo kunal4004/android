@@ -72,7 +72,7 @@
         android:lineSpacingExtra="0dp"
         android:lineSpacingMultiplier="1.29"
         android:maxLines="3"
-        android:minLines="3"
+        android:minLines="1"
         android:text="Original Free Range Venison Droëwors Nibbles 25g"
         android:textColor="@color/black"
         android:textSize="@dimen/fourteen_sp"
@@ -81,6 +81,34 @@
         app:layout_constraintTop_toBottomOf="@+id/brandName"
         tools:ignore="HardcodedText"
         tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/onlinePromotionalTextView1"
+        style="@style/futura_medium"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/labelPromotionOne"
+        android:paddingTop="@dimen/five_dp"
+        android:textAllCaps="true"
+        android:textColor="@color/two_line_promo_text_color_plp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+
+    <TextView
+        android:id="@+id/onlinePromotionalTextView2"
+        style="@style/futura_medium"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp"
+        android:contentDescription="@string/labelPromotionTwo"
+        android:textAllCaps="true"
+        android:textColor="@color/two_line_promo_text_color_plp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1" />
 
     <TextView
         android:id="@+id/brandNameFakeView"
@@ -93,7 +121,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
 
     <TextView
         android:id="@+id/tvSaveText"
@@ -109,10 +137,10 @@
         android:lineSpacingMultiplier="1.10"
         android:maxLines="2"
         android:minLines="2"
-        android:text="BUY 6 AND SAVE 10% ONLINE ONLY UY 6"
         android:textAllCaps="true"
         android:textColor="@color/promo_text_color"
         android:textSize="@dimen/ten_sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
