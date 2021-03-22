@@ -1359,7 +1359,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
 			fadeCheckoutButton(false);
-			if (voucherDetails != null)
+			if (voucherDetails != null && isAdded())
 				showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
 		}
 
@@ -1466,7 +1466,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onPromptDismiss() {
 		isMaterialPopUpClosed = true;
-		if (voucherDetails != null)
+		if (voucherDetails != null && isAdded())
 			showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
 	}
 
@@ -1530,13 +1530,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void showVouchersOrPromoCodeAppliedToast(String message) {
-		mToastUtils.setActivity(getActivity());
-		mToastUtils.setCurrentState(TAG);
-		mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
-		mToastUtils.setView(btnCheckOut);
-		mToastUtils.setMessage(message);
-		mToastUtils.setViewState(false);
-		mToastUtils.buildCustomToast();
+		if (isAdded()) {
+			mToastUtils.setActivity(getActivity());
+			mToastUtils.setCurrentState(TAG);
+			mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
+			mToastUtils.setView(btnCheckOut);
+			mToastUtils.setMessage(message);
+			mToastUtils.setViewState(false);
+			mToastUtils.buildCustomToast();
+		}
 	}
 
 	@Override
