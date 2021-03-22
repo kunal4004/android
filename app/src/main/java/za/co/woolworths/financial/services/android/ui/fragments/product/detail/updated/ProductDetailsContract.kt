@@ -19,7 +19,6 @@ interface ProductDetailsContract {
         fun getImageByWidth(imageUrl: String?, context: Context): String
         fun updateDefaultUI(isInventoryCalled: Boolean)
         fun updateAuxiliaryImages(imagesList: List<String>)
-        fun setPromotionalText(promotionValue: String)
         fun onSizeSelection(selectedSku: OtherSkus)
         fun onColorSelection(selectedColor: String?)
         fun setSelectedSku(selectedSku: OtherSkus?)

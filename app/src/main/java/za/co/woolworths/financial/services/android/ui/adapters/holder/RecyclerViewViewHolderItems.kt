@@ -1,12 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.text.Html
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
@@ -14,8 +17,6 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
-import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
-import za.co.woolworths.financial.services.android.ui.extension.getFuturaSemiBoldFont
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -28,11 +29,11 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setProductImage(this)
             setPromotionalImage(promotionImages)
             setProductName(this)
-            setProductVariant(this)
-            setSaveText(this, nextProduct, previousProduct)
             setBrandText(this, nextProduct, previousProduct)
+            setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
+            setProductVariant(this)
             quickShopAddToCartSwitch(this)
             setOnClickListener(navigator, this)
         }
@@ -46,18 +47,43 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         tvProductName?.text = productList?.productName ?: ""
     }
 
-    private fun setProductVariant(productList: ProductList?) = with(itemView) {
-        productVariant?.text = productList?.productVariants ?: ""
+    private fun setPromotionalText(productList: ProductList?) = with(itemView) {
+        if (productList?.promotionsList?.isEmpty() == false) {
+            productList?.promotionsList.forEachIndexed { i, it ->
+                var editedPromotionalText: String? = it.promotionalText
+                if (it.promotionalText?.contains(":") == true) {
+                    val beforeColon: String? = it.promotionalText?.substringBefore(":")
+                    val afterColon: String? = it.promotionalText?.substringAfter(":")
+                    editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                }
+                when (i) {
+                    0 -> {
+                        onlinePromotionalTextView1?.ellipsize = TextUtils.TruncateAt.END
+                        if (productList?.promotionsList.size >= 2)
+                            onlinePromotionalTextView1?.maxLines = 1
+                        else
+                            onlinePromotionalTextView1?.maxLines = 2
+                        onlinePromotionalTextView1?.visibility = VISIBLE
+                        onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
+                        if (productList?.promotionsList.size == 1)
+                            onlinePromotionalTextView2?.text = ""
+                    }
+                    1 -> {
+                        onlinePromotionalTextView2?.ellipsize = TextUtils.TruncateAt.END
+                        onlinePromotionalTextView2?.maxLines = 1
+                        onlinePromotionalTextView2?.visibility = VISIBLE
+                        onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
+                    }
+                }
+            }
+        } else {
+            onlinePromotionalTextView1?.text = ""
+            onlinePromotionalTextView2?.text = ""
+        }
     }
 
-    private fun setSaveText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
-        tvSaveText?.text = productList?.saveText ?: ""
-        previousProduct?.let {
-            tvSaveText.visibility = if (productList?.saveText.isNullOrEmpty() && it.saveText.isNullOrEmpty()) GONE else VISIBLE
-        }
-        nextProduct?.let {
-            tvSaveText.visibility = if (productList?.saveText.isNullOrEmpty() && it.saveText.isNullOrEmpty()) GONE else VISIBLE
-        }
+    private fun setProductVariant(productList: ProductList?) = with(itemView) {
+        productVariant?.text = productList?.productVariants ?: ""
     }
 
     private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
@@ -85,8 +111,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
             measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
             val itemWidth = itemView.measuredWidth
-            imReducedImage?.layoutParams?.width = (itemWidth / 2) -  Utils.dp2px(8f)
-            imSave?.layoutParams?.width =  (itemWidth / 4) -  Utils.dp2px(16f)
+            imReducedImage?.layoutParams?.width = (itemWidth / 2) - Utils.dp2px(8f)
+            imSave?.layoutParams?.width = (itemWidth / 4) - Utils.dp2px(16f)
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")
