@@ -518,6 +518,9 @@
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
     <string name="promotional_text">You saved </string>
+    <string name="labelPromotionOne">labelPromotionOne</string>
+    <string name="labelPromotionTwo">labelPromotionTwo</string>
+    <string name="labelPromotionThree">labelPromotionThree</string>
     <string name="enter_list_name">Enter list name</string>
     <string name="select_all">SELECT ALL</string>
     <string name="deselect_all">DESELECT ALL</string>
@@ -1983,4 +1986,5 @@
     <string name="cli_marital_status_with_colon_txt">Marital Status:</string>
     <string name="cli_married_in_community_agreement">I confirm that I have written consent from my spouse to enter into a credit agreement.</string>
     <string name="please_select">Please Select</string>
+    <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
 </resources>
