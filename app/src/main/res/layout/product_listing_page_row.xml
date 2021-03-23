@@ -61,7 +61,6 @@
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
         android:lineSpacingMultiplier="1.29"
-        android:maxLines="3"
         android:text="Original Free Range Venison Droëwors Nibbles 25g"
         android:textColor="@color/black"
         android:textSize="@dimen/fourteen_sp"
@@ -74,6 +73,7 @@
     <TextView
         android:id="@+id/onlinePromotionalTextView1"
         style="@style/futura_medium"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/labelPromotionOne"
         android:ellipsize="end"
@@ -91,6 +91,7 @@
     <TextView
         android:id="@+id/onlinePromotionalTextView2"
         style="@style/futura_medium"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/five_dp"
         android:contentDescription="@string/labelPromotionTwo"
