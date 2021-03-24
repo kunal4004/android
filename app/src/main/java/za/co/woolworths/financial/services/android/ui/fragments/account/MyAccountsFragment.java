@@ -380,7 +380,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 onDeepLinkedProductTap(linkedCreditCardView, applyCreditCardView);
                 break;
             case PERSONAL_LOAN:
-                onDeepLinkedProductTap(linkedPersonalCardView, applyStoreCardView);
+                onDeepLinkedProductTap(linkedPersonalCardView, applyPersonalCardView);
                 break;
         }
         setArguments(null);
@@ -1808,12 +1808,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     }
 
-    private void onDeepLinkedProductTap(RelativeLayout linkedLayout, RelativeLayout applyNowLayout) {
-        if (linkedStoreCardView == null || applyNowLayout == null) return;
-        if (linkedStoreCardView.getVisibility() == View.VISIBLE)
-            linkedLayout.performClick();
+    private void onDeepLinkedProductTap(RelativeLayout linkedRelativeLayout, RelativeLayout applyNowRelativeLayout) {
+        if (!isAdded() || linkedRelativeLayout == null || applyNowRelativeLayout == null) return;
+        if (linkedRelativeLayout.getVisibility() == View.VISIBLE)
+            linkedRelativeLayout.performClick();
         else
-            applyNowLayout.performClick();
+            applyNowRelativeLayout.performClick();
     }
 
 }
