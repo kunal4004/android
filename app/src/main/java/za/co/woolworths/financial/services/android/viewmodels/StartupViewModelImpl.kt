@@ -99,12 +99,14 @@ class StartupViewModelImpl(private val mContext: Context) : StartupViewModel {
         //productSearchViewModel.getTypeAndTerm(urlString = appLinkData.toString())
         //1. check URL
         //2. navigate to facet that URL corresponds to
-        if(appLinkData is Uri){
-
-            val bundle =  bundleOf(
-                    "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
-                    "parameters" to "{\"url\": \"${appLinkData}\"}"
-            )
+        if (appLinkData is Uri) {
+            var bundle = Bundle()
+            bundle.putString("parameters", "{\"url\": \"${appLinkData}\"}")
+            if (appLinkData.toString().contains("A-")) {
+                bundle.putString("feature", AppConstant.DP_LINKING_PRODUCT_DETAILS)
+            } else if (appLinkData.toString().contains("N-")) {
+                bundle.putString("feature", AppConstant.DP_LINKING_PRODUCT_LISTING)
+            }
             ScreenManager.presentMain(mContext as Activity, bundle)
         } else {
             ScreenManager.presentMain(mContext as Activity, appLinkData as Bundle)

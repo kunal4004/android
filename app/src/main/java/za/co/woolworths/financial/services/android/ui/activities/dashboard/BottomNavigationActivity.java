@@ -310,8 +310,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             String deepLinkType = mBundle.get("feature").toString();
 
             switch (deepLinkType) {
-                case AppConstant.DP_LINKING_PRODUCT_LISTING:
-                    if(appLinkData.get("url") == null){
+                case AppConstant.DP_LINKING_PRODUCT_LISTING: {
+                    if (appLinkData.get("url") == null) {
                         return;
                     }
 
@@ -323,6 +323,29 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+                    }
+                    break;
+                }
+                case AppConstant.DP_LINKING_PRODUCT_DETAILS:
+                    if(appLinkData.get("url") == null){
+                        return;
+                    }
+
+                    Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
+                    ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(linkData.toString());
+                    if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
+                        /*Map<String, String> arguments = new HashMap<>();
+                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
+                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);*/
+                        //pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+
+                        //runOnUiThread{}
+                        //retrieveProduct()
+                        ProductList productList = new ProductList();
+                        productList.productId = productSearchTypeAndSearchTerm.getSearchTerm().substring(2);
+                        productList.sku = productSearchTypeAndSearchTerm.getSearchTerm().substring(2);
+                        openProductDetailFragment("kunal", productList);
                     }
                     break;
 

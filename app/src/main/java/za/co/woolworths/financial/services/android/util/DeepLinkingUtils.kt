@@ -32,6 +32,10 @@ class DeepLinkingUtils {
                                     productSearchTypeAndTerm.searchTerm = uri.pathSegments?.find { it.startsWith("N-") }!!
                                     productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
                                 }
+                                !uri.pathSegments?.find { it.startsWith("A-") }.isNullOrEmpty() -> {
+                                    productSearchTypeAndTerm.searchTerm = uri.pathSegments?.find { it.startsWith("A-") }!!
+                                    productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                                }
                                 else -> {
                                     productSearchTypeAndTerm.searchTerm = WHITE_LISTED_DOMAIN
                                 }
