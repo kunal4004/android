@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -118,7 +119,7 @@ import static za.co.woolworths.financial.services.android.util.FuseLocationAPISi
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer, ProductDetailsExtension.ProgressBarListner {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;
     public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -148,6 +149,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
+    ProgressBar progressBar;
 
     @Override
     public int getLayoutId() {
@@ -296,6 +298,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void renderUI() {
+        progressBar = findViewById(R.id.progressBar);
         getToolbar();
         setActionBar();
         bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
@@ -340,12 +343,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);*/
                         //pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
 
-                        //runOnUiThread{}
-                        //retrieveProduct()
-                        ProductList productList = new ProductList();
-                        productList.productId = productSearchTypeAndSearchTerm.getSearchTerm().substring(2);
-                        productList.sku = productSearchTypeAndSearchTerm.getSearchTerm().substring(2);
-                        openProductDetailFragment("kunal", productList);
+
+                        String productId = productSearchTypeAndSearchTerm.getSearchTerm().substring(2);
+
+                        ProductDetailsExtension.retrieveProduct(productId, productId, this, this);
                     }
                     break;
 
@@ -1392,5 +1393,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void onSignedOut() {
         clearBadgeCount();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
+    }
+
+    @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
     }
 }
