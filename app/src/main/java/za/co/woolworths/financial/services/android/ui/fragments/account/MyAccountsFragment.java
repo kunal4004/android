@@ -545,6 +545,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void showPersonalLoanContent(Account account) {
+        Activity activity = getActivity();
+        if (!isAdded() || activity == null || getContext() == null) return;
         showView(linkedPersonalCardView);
         hideView(applyPersonalCardView);
         if (account == null) {
@@ -559,12 +561,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(pl_available_funds);
             hideView(retryPersonalLoanLinearLayout);
             imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-            pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            pl_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
             pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
         }
     }
 
     private void showCreditCardContent(Account account) {
+        Activity activity = getActivity();
+        if (!isAdded() || activity == null || getContext() == null) return;
         showView(linkedCreditCardView);
         hideView(applyCreditCardView);
         if (account == null) {
@@ -587,13 +591,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
                 imgCreditCard.setBackgroundResource(R.drawable.small_3);
             }
+
             imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-            cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            cc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
             cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+
         }
     }
 
     private void showStoreCardContent(Account account) {
+        Activity activity = getActivity();
+        if (!isAdded() || activity == null || getContext() == null) return;
         showView(linkedStoreCardView);
         hideView(applyStoreCardView);
         if (account == null) {
@@ -609,7 +617,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideView(retryStoreCardLinearLayout);
             imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
             sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
-            sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            sc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
         }
     }
 
