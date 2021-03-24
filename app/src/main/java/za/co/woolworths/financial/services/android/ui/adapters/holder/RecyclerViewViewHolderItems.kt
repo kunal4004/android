@@ -85,6 +85,9 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         if (!TextUtils.isEmpty(productVarientName)) {
             productVariantTextView?.visibility = VISIBLE
             productVariantTextView?.text = productVarientName
+        } else {
+            productVariantTextView?.visibility = GONE
+            productVariantTextView?.text = ""
         }
     }
 
