@@ -593,7 +593,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
 
             imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-            cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            cc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
             cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
 
         }
