@@ -81,7 +81,11 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setProductVariant(productList: ProductList?) = with(itemView) {
-        productVariant?.text = productList?.productVariants ?: ""
+        val productVarientName = productList?.productVariants ?: ""
+        if (!TextUtils.isEmpty(productVarientName)) {
+            productVariantTextView?.visibility = VISIBLE
+            productVariantTextView?.text = productVarientName
+        }
     }
 
     private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
