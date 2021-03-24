@@ -381,7 +381,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                                 }
                                 return@postDelayed
                             }
-                    
+
                             view?.findNavController()?.navigateUp()
                         }, AppConstant.DELAY_1500_MS)
 
