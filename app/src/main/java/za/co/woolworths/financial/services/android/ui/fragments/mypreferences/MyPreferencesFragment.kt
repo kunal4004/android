@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
 
-    private var isNonWFSUser : Boolean = true
+    private var isNonWFSUser: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,17 +74,17 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        when(isNonWFSUser) {
+        when (isNonWFSUser) {
             true -> {
                 linkDeviceLayout?.visibility = View.GONE
             }
             else -> {
                 linkDeviceSwitch.isChecked = !TextUtils.isEmpty(Utils.getLinkedDeviceToken())
                 if (!TextUtils.isEmpty(Utils.getLinkedDeviceToken())) {
-//                    linkDeviceSwitch.visibility = View.GONE
+                    linkDeviceSwitch.visibility = View.GONE
                     linkDeviceSwitch.isEnabled = TextUtils.isEmpty(Utils.getLinkedDeviceToken())
                     context?.apply {
-//                        linkThisDevice?.text = getString(R.string.link_device_this_is_linked)
+                        linkThisDeviceTextView?.text = getString(R.string.link_device_this_is_linked)
                     }
                 }
             }
