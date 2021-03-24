@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
@@ -37,7 +38,10 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FirebaseManager
@@ -48,6 +52,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
+    private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
     private var otpMethod: String? = null
 
@@ -97,6 +102,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            mApplyNowState = it.getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
+                    ?: ApplyNowState.STORE_CARD
         }
     }
 
@@ -144,11 +151,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
-        linkDeviceOTPEdtTxt1.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) {validateNextButton()})
-        linkDeviceOTPEdtTxt2.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) {validateNextButton()})
-        linkDeviceOTPEdtTxt3.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) {validateNextButton()})
-        linkDeviceOTPEdtTxt4.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5) {validateNextButton()})
-        linkDeviceOTPEdtTxt5.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5, linkDeviceOTPEdtTxt5) {validateNextButton()})
+        linkDeviceOTPEdtTxt1.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) { validateNextButton() })
+        linkDeviceOTPEdtTxt2.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) { validateNextButton() })
+        linkDeviceOTPEdtTxt3.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) { validateNextButton() })
+        linkDeviceOTPEdtTxt4.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5) { validateNextButton() })
+        linkDeviceOTPEdtTxt5.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5, linkDeviceOTPEdtTxt5) { validateNextButton() })
 
         linkDeviceOTPEdtTxt1.setOnKeyListener(mKeyListener)
         linkDeviceOTPEdtTxt2.setOnKeyListener(mKeyListener)
@@ -206,6 +213,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             }
             R.id.buttonNext -> {
 
+                activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
                 activity?.apply {
                     hideKeyboard(this)
                 }
@@ -355,12 +363,28 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                     "201" -> {
                         showDeviceLinked()
                         Utils.saveLinkedDeviceId(linkedDeviceResponse.deviceIdentityToken)
+                        setFragmentResult("linkDevice", bundleOf(
+                                "isLinked" to true
+                        ))
                         Handler().postDelayed({
-                            setFragmentResult("linkDevice", bundleOf(
-                                    "isLinked" to true
-                            ))
+
+                            // This will execute only when linking comes from account products.
+                            mApplyNowState?.let {
+                                activity?.apply {
+                                    if (this is LinkDeviceConfirmationActivity) {
+                                        Utils.setLinkDeviceConfirmationShown(true)
+                                        val intent = Intent()
+                                        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                                        setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                                        finish()
+                                    }
+                                }
+                                return@postDelayed
+                            }
+                    
                             view?.findNavController()?.navigateUp()
                         }, AppConstant.DELAY_1500_MS)
+
                     }
                     "440" ->
                         activity?.apply {

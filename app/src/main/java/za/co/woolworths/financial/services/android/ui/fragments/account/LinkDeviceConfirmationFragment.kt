@@ -7,12 +7,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
@@ -32,16 +35,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setFragmentResultListener("linkDevice") { requestKey, bundle ->
-            activity?.apply {
-                Utils.setLinkDeviceConfirmationShown(true)
-                val intent = Intent()
-                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                finish()
-            }
-        }
-
         arguments?.let {
             mApplyNowState = it.getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
                     ?: ApplyNowState.STORE_CARD
@@ -50,6 +43,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_link_device_from_account_prod, container, false)
     }
@@ -65,7 +59,10 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         skipButton.setOnClickListener(this)
         val navController = Navigation.findNavController(view)
         linkDeviceConfirmationButton.setOnClickListener {
-            navController.navigate(R.id.action_linkDeviceConfirmationFragment_to_otp_navigation)
+
+            navController.navigate(R.id.action_linkDeviceConfirmationFragment_to_otp_navigation, bundleOf(
+                    AccountSignedInPresenterImpl.APPLY_NOW_STATE to mApplyNowState
+            ))
         }
 
     }

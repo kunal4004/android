@@ -999,8 +999,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (activity == null) return;
         Intent intent = new Intent(activity, LinkDeviceConfirmationActivity.class);
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
-//        intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-        activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
+        activity.startActivityForResult(intent, RESULT_CODE_LINK_DEVICE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
 
