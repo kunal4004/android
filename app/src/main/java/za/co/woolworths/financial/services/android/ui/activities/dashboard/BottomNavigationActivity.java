@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -119,7 +118,7 @@ import static za.co.woolworths.financial.services.android.util.FuseLocationAPISi
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer, ProductDetailsExtension.ProgressBarListner {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;
     public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -149,7 +148,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
-    ProgressBar progressBar;
 
     @Override
     public int getLayoutId() {
@@ -298,7 +296,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void renderUI() {
-        progressBar = findViewById(R.id.progressBar);
         getToolbar();
         setActionBar();
         bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
@@ -313,7 +310,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             String deepLinkType = mBundle.get("feature").toString();
 
             switch (deepLinkType) {
-                case AppConstant.DP_LINKING_PRODUCT_LISTING: {
+                case AppConstant.DP_LINKING_PRODUCT_LISTING:
                     if (appLinkData.get("url") == null) {
                         return;
                     }
@@ -326,27 +323,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
-                    }
-                    break;
-                }
-                case AppConstant.DP_LINKING_PRODUCT_DETAILS:
-                    if(appLinkData.get("url") == null){
-                        return;
-                    }
-
-                    Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
-                    ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(linkData.toString());
-                    if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
-                        /*Map<String, String> arguments = new HashMap<>();
-                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
-                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);*/
-                        //pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
-
-
-                        String productId = productSearchTypeAndSearchTerm.getSearchTerm().substring(2);
-
-                        ProductDetailsExtension.retrieveProduct(productId, productId, this, this);
                     }
                     break;
 
@@ -929,7 +905,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         // Open Shopping List Detail Fragment From MyList and Add item to cart
                         String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                         ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                        int itemsCount = data.getIntExtra("ItemsCount",0);
+                        int itemsCount = data.getIntExtra("ItemsCount", 0);
                         if (itemAddToCartMessage != null) {
                             setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                         }
@@ -953,19 +929,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestCode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE){
-            switch (resultCode){
-                case  OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE:
-                if (getBottomNavigationById() == null) return;
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                Fragment fragment = mNavController.getCurrentFrag();
-                if (fragment instanceof ShopFragment) {
-                    ShopFragment shopFragment = (ShopFragment) fragment;
-                    shopFragment.refreshViewPagerFragment(false);
-                    shopFragment.navigateToMyListFragment();
-                    return;
-                }
-                break;
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+            switch (resultCode) {
+                case OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE:
+                    if (getBottomNavigationById() == null) return;
+                    getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                    Fragment fragment = mNavController.getCurrentFrag();
+                    if (fragment instanceof ShopFragment) {
+                        ShopFragment shopFragment = (ShopFragment) fragment;
+                        shopFragment.refreshViewPagerFragment(false);
+                        shopFragment.navigateToMyListFragment();
+                        return;
+                    }
+                    break;
                 case RESULT_CODE_MY_ACCOUNT_FRAGMENT:
                     navigateToDepartmentFragment();
                     break;
@@ -997,7 +973,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (resultCode == RESULT_OK) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                 ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                int itemsCount = data.getIntExtra("ItemsCount",0);
+                int itemsCount = data.getIntExtra("ItemsCount", 0);
                 if (itemAddToCartMessage != null) {
                     setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                 }
@@ -1080,7 +1056,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                 ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                int itemsCount = data.getIntExtra("ItemsCount",0);
+                int itemsCount = data.getIntExtra("ItemsCount", 0);
                 if (itemAddToCartMessage != null) {
                     setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                 }
@@ -1393,15 +1369,5 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void onSignedOut() {
         clearBadgeCount();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
-    }
-
-    @Override
-    public void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
     }
 }

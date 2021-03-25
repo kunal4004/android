@@ -26,14 +26,12 @@ class ProductDetailsExtension : Fragment() {
         const val TAG: String = "BottomNavigationActivity"
 
         @JvmStatic
-        fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProgressBarListner) {
-            listner.showProgressBar()
+        fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProductDetailsStatusListner) {
             mGetProductDetail = OneAppService.productDetail(productId, skuId).apply {
                 enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
                     override fun onSuccess(response: ProductDetailResponse?) {
                         if (!WoolworthsApplication.isApplicationInForeground())
                             return
-                        listner.hideProgressBar()
                         activity?.apply {
                             when (response?.httpCode) {
                                 200 -> activity?.apply {
@@ -42,7 +40,7 @@ class ProductDetailsExtension : Fragment() {
                                     bundle.putString("strProductCategory", response.product?.productName)
                                     bundle.putString("productResponse", Gson().toJson(response))
                                     bundle.putBoolean("fetchFromJson", true)
-                                    ScreenManager.presentProductDetails(activity, bundle)
+                                    listner.onSuccess(bundle)
                                 }
                                 else -> {
                                     Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(this, R.string.statement_send_email_false_desc))
@@ -58,7 +56,7 @@ class ProductDetailsExtension : Fragment() {
                     override fun onFailure(error: Throwable?) {
                         if (!WoolworthsApplication.isApplicationInForeground())
                             return
-                        listner.hideProgressBar()
+                        listner.onFailure()
                         activity?.apply { runOnUiThread { ErrorHandlerView(this).showToast() } }
                     }
 
@@ -69,8 +67,8 @@ class ProductDetailsExtension : Fragment() {
         var mGetProductDetail: Call<ProductDetailResponse>? = null
     }
 
-    interface ProgressBarListner {
-        fun showProgressBar()
-        fun hideProgressBar()
+    interface ProductDetailsStatusListner {
+        fun onSuccess(bundle:Bundle)
+        fun onFailure()
     }
 }
