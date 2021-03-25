@@ -62,6 +62,7 @@ class FirebaseManagerAnalyticsProperties {
         const val ACTION_DIETARY_INFORMATION = "Selects Accordion to view Dietary Information"
         const val SHOP_PRODUCTDETAIL_SIZE_GUIDE: String = "shop_pdp_sg"
         const val ACTION_SIZE_GUIDE = "Product id for product that customer has selected the size guide for"
+        const val ACTION_PDP_DEEPLINK = "product_id of the item that was viewed in PDP"
 
 
         const val CRASH_CAUTION: String = "crash_caution"
@@ -202,6 +203,7 @@ class FirebaseManagerAnalyticsProperties {
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
 
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
+        const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
     }
