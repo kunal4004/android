@@ -66,7 +66,10 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                         if (promotionsListCount == 1) {
                             onlinePromotionalTextView1?.maxLines = 2
                             onlinePromotionalTextView2?.text = ""
+                            onlinePromotionalTextView2?.visibility = GONE
                         }
+                        else
+                            onlinePromotionalTextView1?.maxLines = 1
                     }
                     1 -> {
                         onlinePromotionalTextView2?.visibility = VISIBLE
