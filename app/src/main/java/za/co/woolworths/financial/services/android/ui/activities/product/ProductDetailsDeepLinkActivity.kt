@@ -60,7 +60,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     private fun goToProductDetailsActivity(bundle: Bundle?) {
         val intent = Intent(this, ProductDetailsActivity::class.java)
         intent.putExtras(bundle!!)
-        startActivityForResult(intent,DEEP_LINK_REQUEST_CODE)
+        startActivityForResult(intent, DEEP_LINK_REQUEST_CODE)
         overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
 
@@ -69,6 +69,14 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     }
 
     override fun onFailure() {
+        stopProgressBar()
+    }
+
+    override fun startProgressBar() {
+        TODO("Not yet implemented")
+    }
+
+    override fun stopProgressBar() {
         TODO("Not yet implemented")
     }
 

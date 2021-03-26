@@ -60,7 +60,8 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
         }
         val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
         val taskList = mngr!!.getRunningTasks(10)
-        if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName) {
+        if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
+                && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name) {
             restartApp()
         } else {
             setResult(DEEP_LINK_REQUEST_CODE)

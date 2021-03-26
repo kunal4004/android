@@ -14,9 +14,8 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.HashMap
+import java.util.*
 
 /**
  * Created by Kunal Uttarwar on 24/3/21.
@@ -27,11 +26,13 @@ class ProductDetailsExtension : Fragment() {
 
         @JvmStatic
         fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProductDetailsStatusListner) {
+            listner.startProgressBar()
             mGetProductDetail = OneAppService.productDetail(productId, skuId).apply {
                 enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
                     override fun onSuccess(response: ProductDetailResponse?) {
                         if (!WoolworthsApplication.isApplicationInForeground())
                             return
+                        listner.stopProgressBar()
                         activity?.apply {
                             when (response?.httpCode) {
                                 200 -> activity?.apply {
@@ -70,5 +71,7 @@ class ProductDetailsExtension : Fragment() {
     interface ProductDetailsStatusListner {
         fun onSuccess(bundle:Bundle)
         fun onFailure()
+        fun startProgressBar()
+        fun stopProgressBar()
     }
 }
