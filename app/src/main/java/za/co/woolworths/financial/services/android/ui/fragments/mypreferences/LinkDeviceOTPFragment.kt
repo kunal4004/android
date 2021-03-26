@@ -1,18 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.app.Activity
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
-import android.text.Editable
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -43,11 +42,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.LinkDev
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.FirebaseManager
-import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.*
 
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
@@ -117,6 +112,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             // Do something with the result
             when {
                 result.equals(OTPMethodType.SMS.name, true) -> {
+                    resetOTPView()
                     callGetOTPAPI(OTPMethodType.SMS.name)
                 }
                 result.equals(OTPMethodType.EMAIL.name, true) -> {
@@ -124,6 +120,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                     callGetOTPAPI(OTPMethodType.EMAIL.name)
                 }
                 result.equals(OTP_CALL_CENTER, true) -> {
+                    resetOTPView()
                     Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
                 }
                 else -> {
@@ -212,11 +209,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 ))
             }
             R.id.buttonNext -> {
+                val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
 
-                activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
-                activity?.apply {
-                    hideKeyboard(this)
-                }
                 val otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
@@ -242,6 +237,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 sendinOTPLayout?.visibility = View.GONE
                 when (retrieveOTPResponse?.httpCode) {
                     200 -> {
+
+                        if (!isAdded) {
+                            return
+                        }
                         linkDeviceOTPScreen?.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
@@ -249,8 +248,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                             enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
                             Handler().postDelayed({
-                                linkDeviceOTPEdtTxt1.requestFocus()
-                            }, AppConstant.DELAY_100_MS)
+                                linkDeviceOTPEdtTxt1?.requestFocus()
+                                val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                                imm?.showSoftInput(linkDeviceOTPEdtTxt1, InputMethodManager.SHOW_IMPLICIT)
+                            }, AppConstant.DELAY_200_MS)
                         }
                     }
                     440 ->
@@ -290,6 +291,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 sendinOTPLayout?.visibility = View.GONE
                 when (retrieveOTPResponse?.httpCode) {
                     200 -> {
+                        if (!isAdded) {
+                            return
+                        }
                         callLinkingDeviceAPI()
                     }
                     440 ->
@@ -342,16 +346,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
     private fun callLinkingDeviceAPI() {
         linkDeviceOTPScreen?.visibility = View.GONE
-        var deviceName = ""
-        activity?.apply {
-            try {
-                if (TextUtils.isEmpty(deviceName)) {
-                    deviceName = Settings.Secure.getString(contentResolver, "bluetooth_name")
-                }
-            } catch (e: Exception) {
-            }
-        }
-        mlinkDeviceReq = OneAppService.linkDeviceApi(deviceName, Utils.getUniqueDeviceID(context), "", true, Utils.getToken())
+
+        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), "", true, Utils.getToken())
 
         showLinkingDeviceProcessing()
         linkDeviceOTPScreen?.visibility = View.GONE
@@ -361,8 +357,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 sendinOTPLayout?.visibility = View.GONE
                 when (linkedDeviceResponse?.httpCode) {
                     "201" -> {
+                        if (!isAdded) {
+                            return
+                        }
                         showDeviceLinked()
-                        Utils.saveLinkedDeviceId(linkedDeviceResponse.deviceIdentityToken)
+                        Utils.saveLinkedDeviceId(linkedDeviceResponse.deviceIdentityToken, linkedDeviceResponse.deviceIdentityId)
                         setFragmentResult("linkDevice", bundleOf(
                                 "isLinked" to true
                         ))

@@ -15,12 +15,19 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_my_preferences.*
+import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
 import za.co.woolworths.financial.services.android.util.Utils
@@ -29,6 +36,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchListener {
 
     private var isNonWFSUser: Boolean = true
+    private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +59,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         super.onViewCreated(view, savedInstanceState)
 
         init()
+        callLinkedDevicesAPI()
         bindDataWithUI()
     }
+
 
     private fun init() {
         auSwitch.setOnClickListener(this)
@@ -74,21 +85,74 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
+    }
+
+    private fun callLinkedDevicesAPI() {
+        mViewAllLinkedDevices = OneAppService.getAllLinkedDevices()
+        mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+
+            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                when (response?.httpCode) {
+                    200 -> {
+                        if(!isAdded){
+                            return
+                        }
+                        val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
+                        updateLinkedDeviceView(isDeviceIdentityIdPresent)
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+            }
+
+        }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun updateLinkedDeviceView(deviceIdentityIdPresent: Boolean) {
         when (isNonWFSUser) {
             true -> {
                 linkDeviceLayout?.visibility = View.GONE
             }
             else -> {
-                linkDeviceSwitch.isChecked = !TextUtils.isEmpty(Utils.getLinkedDeviceToken())
-                if (!TextUtils.isEmpty(Utils.getLinkedDeviceToken())) {
+                linkDeviceLayout?.visibility = View.VISIBLE
+                linkDeviceSwitch.isChecked = deviceIdentityIdPresent
+                if (deviceIdentityIdPresent) {
                     linkDeviceSwitch.visibility = View.GONE
-                    linkDeviceSwitch.isEnabled = TextUtils.isEmpty(Utils.getLinkedDeviceToken())
+                    linkDeviceSwitch.isEnabled = false
                     context?.apply {
                         linkThisDeviceTextView?.text = getString(R.string.link_device_this_is_linked)
+                    }
+                } else {
+                    linkDeviceSwitch.visibility = View.VISIBLE
+                    linkDeviceSwitch.isEnabled = true
+                    context?.apply {
+                        linkThisDeviceTextView?.text = getString(R.string.my_preferences_link_this_device)
                     }
                 }
             }
         }
+    }
+
+    private fun verifyDeviceIdentityId(userDevices: ArrayList<UserDevice>?): Boolean {
+        var isPresent = false
+        when {
+            userDevices != null && userDevices.isNotEmpty() -> {
+                val appInstanceId = Utils.getUniqueDeviceID(context)
+                userDevices.forEach {
+                    if (appInstanceId == it?.appInstanceId) {
+                        isPresent = true
+                        return@forEach
+                    }
+                }
+            }
+            else -> {
+                isPresent = false
+            }
+        }
+        return isPresent
     }
 
     override fun onClick(view: View?) {
@@ -102,10 +166,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             } else openDeviceSecuritySettings()
             R.id.locationSelectedLayout -> locationSelectionClicked()
             R.id.linkDeviceSwitch -> if (linkDeviceSwitch!!.isChecked) {
-                Log.e(TAG, "checked")
                 Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_navigation)
             } else {
-                Log.e(TAG, "unchecked")
                 Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment)
             }
         }

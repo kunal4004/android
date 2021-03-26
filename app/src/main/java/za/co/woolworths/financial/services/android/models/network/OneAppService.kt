@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPRequest
@@ -425,5 +426,9 @@ object OneAppService : RetrofitConfig() {
         val body = LinkDeviceBody(appInstanceId, "", true, firebaseToken)
 
         return mApiInterface.linkDeviceApi(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceName, body)
+    }
+
+    fun getAllLinkedDevices(): Call<ViewAllLinkedDeviceResponse> {
+        return mApiInterface.getAllLinkedDevices(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 }

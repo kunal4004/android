@@ -553,5 +553,18 @@ class KotlinUtils {
                 setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, null)
             }
         }
+
+        fun getUserDefinedDeviceName(activity: Activity?): String {
+            var deviceName = ""
+            activity?.apply {
+                try {
+                    if (TextUtils.isEmpty(deviceName)) {
+                        deviceName = Settings.Secure.getString(contentResolver, "bluetooth_name")
+                    }
+                } catch (e: Exception) {
+                }
+            }
+            return deviceName
+        }
     }
 }
