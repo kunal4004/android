@@ -26,7 +26,6 @@ class ProductDetailsExtension : Fragment() {
 
         @JvmStatic
         fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProductDetailsStatusListner) {
-            listner.startProgressBar()
             mGetProductDetail = OneAppService.productDetail(productId, skuId).apply {
                 enqueue(CompletionHandler(object : IResponseListener<ProductDetailResponse> {
                     override fun onSuccess(response: ProductDetailResponse?) {

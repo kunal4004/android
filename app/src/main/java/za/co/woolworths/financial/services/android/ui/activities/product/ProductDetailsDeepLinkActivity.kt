@@ -3,8 +3,11 @@ package za.co.woolworths.financial.services.android.ui.activities.product
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
@@ -19,7 +22,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setContentView(R.layout.activity_deeplink_pdp)
+        startProgressBar()
         var bundle: Any? = intent?.data
         if (bundle == null && intent?.extras != null) {
             bundle = intent!!.extras!!
@@ -58,6 +62,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     }
 
     private fun goToProductDetailsActivity(bundle: Bundle?) {
+        if (productDetailsprogressBar.isVisible)
+            productDetailsprogressBar.visibility = View.GONE
         val intent = Intent(this, ProductDetailsActivity::class.java)
         intent.putExtras(bundle!!)
         startActivityForResult(intent, DEEP_LINK_REQUEST_CODE)
@@ -73,11 +79,13 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     }
 
     override fun startProgressBar() {
-        TODO("Not yet implemented")
+        if (!productDetailsprogressBar.isVisible)
+            productDetailsprogressBar.visibility = View.VISIBLE
     }
 
     override fun stopProgressBar() {
-        TODO("Not yet implemented")
+        if (productDetailsprogressBar.isVisible)
+            productDetailsprogressBar.visibility = View.GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
