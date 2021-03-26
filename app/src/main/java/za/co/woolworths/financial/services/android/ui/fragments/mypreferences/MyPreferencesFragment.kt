@@ -69,6 +69,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         locationSelectedLayout.setOnClickListener(this)
         auSwitch.setOnTouchListener(this)
         linkDeviceSwitch.setOnClickListener(this)
+        retryLinkDeviceLinearLayout?.setOnClickListener(this)
+
         activity?.apply {
             if (this is MyPreferencesInterface) {
                 setToolbarTitle(getString(R.string.acc_my_preferences))
@@ -88,27 +90,45 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun callLinkedDevicesAPI() {
+        val spinningAnimation = KotlinUtils.rotateViewAnimation()
+        retryLinkDeviceImageView?.startAnimation(spinningAnimation)
+        retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
+        retryLinkDeviceTextView?.visibility = View.GONE
+
         mViewAllLinkedDevices = OneAppService.getAllLinkedDevices()
         mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 when (response?.httpCode) {
                     200 -> {
-                        if(!isAdded){
+                        if (!isAdded) {
                             return
                         }
+                        spinningAnimation.cancel()
+                        retryLinkDeviceLinearLayout?.visibility = View.GONE
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                     }
                     else -> {
+                        spinningAnimation.cancel()
+                        showLinkDeviceRetryView()
                     }
                 }
             }
 
             override fun onFailure(error: Throwable?) {
+                spinningAnimation.cancel()
+                showLinkDeviceRetryView()
             }
 
         }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun showLinkDeviceRetryView() {
+        retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
+        retryLinkDeviceTextView?.visibility = View.VISIBLE
+        linkDeviceSwitch?.visibility = View.GONE
     }
 
     private fun updateLinkedDeviceView(deviceIdentityIdPresent: Boolean) {
@@ -165,11 +185,17 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 }
             } else openDeviceSecuritySettings()
             R.id.locationSelectedLayout -> locationSelectionClicked()
-            R.id.linkDeviceSwitch -> if (linkDeviceSwitch!!.isChecked) {
-                Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_navigation)
-            } else {
-                Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment)
+            R.id.linkDeviceSwitch -> {
+                if (linkDeviceSwitch!!.isChecked) {
+                    Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_navigation)
+                } else {
+                    Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment)
+                }
             }
+            R.id.retryLinkDeviceLinearLayout -> {
+                callLinkedDevicesAPI()
+            }
+
         }
     }
 

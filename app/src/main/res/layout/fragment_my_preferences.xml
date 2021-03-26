@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -269,6 +270,24 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/sixteen_dp"
                     android:theme="@style/SwitchTheme" />
+
+                <LinearLayout
+                    android:paddingEnd="@dimen/twenty_five_dp"
+                    tools:visibility="visible"
+                    android:id="@+id/retryLinkDeviceLinearLayout"
+                    style="@style/retryAccountLandingStyle">
+
+                    <TextView
+                        android:id="@+id/retryLinkDeviceTextView"
+                        style="@style/retryAccountLandingTextViewStyle"
+                        android:text="@string/retry" />
+
+                    <ImageView
+                        android:id="@+id/retryLinkDeviceImageView"
+                        style="@style/retryImageViewStyle"
+                        app:srcCompat="@drawable/refresh_account_drawable_icon" />
+
+                </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
 
