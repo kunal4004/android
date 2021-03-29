@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment.Companion.REQUEST_PERMISSION_LOCATION
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -88,9 +89,6 @@ class GetReplacementCardFragment : MyCardExtension() {
                 FuseLocationAPISingleton.stopLocationUpdate()
                 navigateToParticipatingStores(location)
             }
-
-            override fun onPopUpLocationDialogMethod() {
-            }
         })
     }
 
@@ -113,7 +111,7 @@ class GetReplacementCardFragment : MyCardExtension() {
             }
 
             // If location services enabled, extract latitude and longitude request v4/user/locations
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), ProductListingFindInStoreNoQuantityFragment.REQUEST_PERMISSION_LOCATION)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
         }
     }
 
@@ -171,7 +169,7 @@ class GetReplacementCardFragment : MyCardExtension() {
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
         when (requestCode) {
-            ProductListingFindInStoreNoQuantityFragment.REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startLocationUpdate()
             } else {
                KotlinUtils.openApplicationSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)

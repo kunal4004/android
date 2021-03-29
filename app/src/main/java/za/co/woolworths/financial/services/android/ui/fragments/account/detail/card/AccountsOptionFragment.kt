@@ -57,11 +57,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
-    companion object {
-        private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
-    }
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
@@ -165,6 +162,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
         myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
         manageCardGroup?.visibility = GONE
+        manageLinkNewCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.startShimmer()
         myCardTextViewShimmerFrameLayout?.startShimmer()
@@ -179,6 +177,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
         loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         manageCardGroup?.visibility = VISIBLE
+        manageLinkNewCardGroup?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.stopShimmer()
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
         myCardTextViewShimmerFrameLayout?.stopShimmer()
