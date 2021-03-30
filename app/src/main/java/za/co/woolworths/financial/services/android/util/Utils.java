@@ -123,9 +123,6 @@ import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.LINKED_DEVICE_IDENTITY_ID;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.LINKED_DEVICE_IDENTITY_TOKEN;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.LINK_DEVICE_CONFIRMATION;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 
 public class Utils {
@@ -1610,29 +1607,5 @@ public class Utils {
         }
 
         return token;
-    }
-
-    public static void saveLinkedDeviceId(String deviceIdentityToken, String deviceIdentityId) {
-        try {
-            Utils.sessionDaoSave(LINKED_DEVICE_IDENTITY_ID, deviceIdentityId);
-            Utils.sessionDaoSave(LINKED_DEVICE_IDENTITY_TOKEN, deviceIdentityToken);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static String getLinkedDeviceToken() {
-        try {
-            return Utils.getSessionDaoValue(LINKED_DEVICE_IDENTITY_TOKEN);
-        } catch (NullPointerException ignored) {
-        }
-        return "";
-    }
-
-    public static String getLinkedDeviceId() {
-        try {
-            return Utils.getSessionDaoValue(LINKED_DEVICE_IDENTITY_ID);
-        } catch (NullPointerException ignored) {
-        }
-        return "";
     }
 }
