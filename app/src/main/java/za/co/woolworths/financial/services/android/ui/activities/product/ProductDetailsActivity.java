@@ -41,7 +41,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
         productDetailsFragmentNew.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, productDetailsFragmentNew).commit();
+                .replace(R.id.content_frame, productDetailsFragmentNew, "ProductDetailsFragment").commit();
     }
 
     @Override

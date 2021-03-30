@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
@@ -21,6 +22,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -554,6 +556,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                 }
+            } else {
+                onlinePromotionalTextView1?.text = ""
+                onlinePromotionalTextView2?.text = ""
+                onlinePromotionalTextView3?.text = ""
+                onlinePromotionalTextView1?.visibility = View.GONE
+                onlinePromotionalTextView2?.visibility = View.GONE
+                onlinePromotionalTextView3?.visibility = View.GONE
             }
         }
 
@@ -925,6 +934,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 clearStockAvailability()
                                 showProductUnavailable()
                                 showProductNotAvailableForCollection()
+                                reloadFragment()
                                 return
                             }
                         }
@@ -933,11 +943,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             storeIdForInventory = ""
                             clearStockAvailability()
                             showProductUnavailable()
+                            reloadFragment()
                             return
                         }
 
                         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
                             updateStockAvailability(true)
+                            reloadFragment()
                         }
                     }
                 }
@@ -1370,6 +1382,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productDetailsInformation?.contentDescription = getString(R.string.pdp_productDetailsInformationLayout)
             nutritionalInformation?.contentDescription = getString(R.string.pdp_productIngredientsInformationLayout)
             productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
+        }
+    }
+
+    private fun reloadFragment() {
+        val currentFragment = activity?.supportFragmentManager?.findFragmentByTag("ProductDetailsFragment")
+        val fragmentTransaction: FragmentTransaction? = activity?.supportFragmentManager?.beginTransaction()
+        if (fragmentTransaction != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                fragmentTransaction?.detach(currentFragment!!).commitNow()
+                fragmentTransaction?.attach(currentFragment!!).commitNow()
+            } else
+                fragmentTransaction.detach(this).attach(this).commit()
         }
     }
 
