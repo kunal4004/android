@@ -947,7 +947,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                                 if (WoolworthsApplication.getInstance() != null) {
 
-                                    if (!Utils.isLinkDeviceConfirmationShown()) {
+                                    if (!Utils.getLinkDeviceConfirmationShown()) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
                                         hideView(retryStoreCardLinearLayout);
@@ -984,12 +984,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (WoolworthsApplication.getInstance() != null) {
-                if (!Utils.isLinkDeviceConfirmationShown()) {
-                    navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
-                } else {
-                    redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
-                }
+            if (!Utils.getLinkDeviceConfirmationShown()) {
+                navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
+            } else {
+                redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
             }
         }
     }
@@ -1021,7 +1019,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (!Utils.isLinkDeviceConfirmationShown()) {
+                                if (!Utils.getLinkDeviceConfirmationShown()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
                                 } else {
                                     hideView(retryPersonalLoanLinearLayout);
@@ -1056,7 +1054,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.isLinkDeviceConfirmationShown()) {
+            if (!Utils.getLinkDeviceConfirmationShown()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
@@ -1082,7 +1080,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (!Utils.isLinkDeviceConfirmationShown()) {
+                                if (!Utils.getLinkDeviceConfirmationShown()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
                                 } else {
                                     hideView(retryCreditCardLinearLayout);
@@ -1118,7 +1116,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.isLinkDeviceConfirmationShown()) {
+            if (!Utils.getLinkDeviceConfirmationShown()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);

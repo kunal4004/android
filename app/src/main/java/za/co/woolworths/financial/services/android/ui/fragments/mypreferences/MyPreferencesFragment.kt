@@ -49,7 +49,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setFragmentResultListener("linkDevice") { requestKey, bundle ->
-            Utils.setLinkDeviceConfirmationShown(true)
+            Utils.setLinkConfirmationShown(true)
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_preferences, container, false)

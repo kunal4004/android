@@ -1357,6 +1357,17 @@ public class Utils {
         return currentUserObject.kmsi;
     }
 
+    public static void setLinkConfirmationShown(Boolean isShown) {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        currentUserObject.isLinkConfirmationScreenShown = isShown;
+        currentUserObject.save();
+    }
+
+    public static Boolean getLinkDeviceConfirmationShown() {
+        AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+        return currentUserObject.isLinkConfirmationScreenShown;
+    }
+
     public static String getAbsaUniqueDeviceID() {
 
         AbsaSecureCredentials absaSecureCredentials = new AbsaSecureCredentials();
@@ -1579,21 +1590,6 @@ public class Utils {
         dayNumber.add("08");
         dayNumber.add("09");
         return dayNumber;
-    }
-
-    public static boolean isLinkDeviceConfirmationShown() {
-        String firstTime = Utils.getSessionDaoValue(LINK_DEVICE_CONFIRMATION);
-        return (firstTime != null);
-    }
-
-    public static void setLinkDeviceConfirmationShown(boolean isShown) {
-        try {
-            String firstTime = Utils.getSessionDaoValue(LINK_DEVICE_CONFIRMATION);
-            if (firstTime == null) {
-                Utils.sessionDaoSave(LINK_DEVICE_CONFIRMATION, String.valueOf(isShown));
-            }
-        } catch (NullPointerException ignored) {
-        }
     }
 
     public static void setToken(String value) {

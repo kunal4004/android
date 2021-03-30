@@ -114,7 +114,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             }
             Handler().postDelayed({
 
-                Utils.setLinkDeviceConfirmationShown(true)
+                Utils.setLinkConfirmationShown(true)
                 val intent = Intent()
                 intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                 setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)

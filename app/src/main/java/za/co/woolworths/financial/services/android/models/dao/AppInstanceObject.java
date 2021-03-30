@@ -83,6 +83,7 @@ public class AppInstanceObject {
         public String absaDeviceID;
         public boolean isVirtualTemporaryStoreCardPopupShown;
         public boolean didShowDeliverySelectionModal;
+        public boolean isLinkConfirmationScreenShown;
 
         public User() {
             id = AppInstanceObject.getCurrentUsersID();
