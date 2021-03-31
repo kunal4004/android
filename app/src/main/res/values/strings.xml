@@ -897,8 +897,8 @@
     <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not on-line purchases.</string>
     <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card</string>
     <string name="temp_card_how_to_use4">Unfortunately, you will not be able to pay your account in-store using a virtual card. Online payments, like EFT, are available.</string>
-    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
-    <string name="temp_card_how_to_use6">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
+    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in selected Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="temp_card_how_to_use6">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
     <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
@@ -924,8 +924,9 @@
     <string name="product_information">Product Information</string>
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
-    <string name="get_temp_sc_title">Your Woolies Store Card is on it\'s on way. Start shopping today with your temporary store card.</string>
-    <string name="get_temp_sc_description">To shop with your temporary card in store, bring along your ID. Your temporary card is valid for 30 days.</string>
+    <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
+    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+    <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
@@ -1988,5 +1989,11 @@
     <string name="please_select">Please Select</string>
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
     <string name="link_new_card">Link New Card</string>
+
+
+    <string name="replacement_card_label">Get Replacement Card</string>
+    <string name="temp_card">TEMP CARD</string>
+    <string name="inactive">INACTIVE</string>
+    <string name="how_it_works_label">How it Works</string>
 
 </resources>

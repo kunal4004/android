@@ -89,7 +89,8 @@
         android:id="@+id/tempFreezeTextViewShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/topGuide">
 
         <TextView
@@ -118,16 +119,24 @@
             android:text="@string/label_card_details"
             android:textAllCaps="true"
             android:textColor="@color/permanent_card_block_desc_color"
-            android:textSize="12sp"
+            android:textSize="@dimen/twelve_sp"
             android:visibility="visible"
             tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/storeCardTagTextView"
+            style="@style/tag_badge_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/cardDetailImageShimmerFrameLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="8dp"
         android:adjustViewBounds="true"
         android:transitionName="accountCardImageViewTransition"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
@@ -142,6 +151,7 @@
             android:adjustViewBounds="true"
             app:srcCompat="@drawable/w_black_credit_card"
             tools:ignore="ContentDescription" />
+
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <View
@@ -239,7 +249,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="linkNewCardDividerView,includeManageMyCard" />
+        app:constraint_referenced_ids="linkNewCardDividerView,includeLinkNewCard" />
 
     <View
         android:id="@+id/linkNewCardDividerView"

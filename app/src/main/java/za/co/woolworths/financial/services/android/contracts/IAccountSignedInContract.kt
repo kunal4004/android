@@ -37,8 +37,10 @@ interface IAccountSignedInContract {
         fun bottomSheetBehaviourHeight(): Int
         fun bottomSheetBehaviourPeekHeight(): Int
         fun isAccountInArrearsState(): Boolean?
+        fun isAccountInDelinquencyMoreThan6Months(): Boolean
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
+        
     }
 
     interface MyAccountModel {

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -25,11 +26,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
-import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.util.*
-import kotlin.collections.HashMap
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
 
@@ -211,7 +210,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToTemporaryStoreCard() {
-        when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
+        when (isVirtualCardEnabled()) {
             true -> navigateToGetTemporaryStoreCardPopupActivity()
             false -> navigateToMyCardDetailActivity()
         }
@@ -290,5 +289,26 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun isProductCodeStoreCard(): Boolean {
         return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true)
+    }
+
+    override fun isVirtualCardEnabled(): Boolean {
+        return getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
+    }
+
+    // Determine if card is blocked: if blockCode is not null, card is blocked.
+    override fun isPermanentTemporaryCardEnabled(): Boolean {
+        val storeCardResponse = getStoreCardResponse()
+        val storeCardsData = storeCardResponse?.storeCardsData
+        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
+            return false
+        }
+        val primaryCard = storeCardsData.primaryCards?.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
+        val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
+        val virtualCard = storeCardsData?.virtualCard
+        // Determine if card is blocked: if blockCode is not null, card is blocked.
+        return (virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+                || shouldDisplayStoreCardDetail
+                && blockType != TemporaryFreezeStoreCard.PERMANENT
     }
 }

@@ -82,6 +82,8 @@ interface IAccountCardDetailsContract {
         fun navigateToPayMyAccountActivity()
         fun getStoreCardBlockType(): Boolean
         fun isProductCodeStoreCard():Boolean
+        fun isVirtualCardEnabled(): Boolean
+        fun isPermanentTemporaryCardEnabled():Boolean
     }
 
     interface AccountCardDetailModel {

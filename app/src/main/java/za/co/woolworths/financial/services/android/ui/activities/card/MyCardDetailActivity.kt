@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtens
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.RESULT_CODE_BLOCK_CODE_SUCCESS
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
+import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 import java.util.*
 
 
@@ -33,10 +34,12 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
+        const val STORE_CARD_VIEW_TYPE = "STORE_CARD_VIEW_TYPE"
         const val CARD_NUMBER = "CARD_NUMBER"
         const val TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE = 3212
     }
 
+    private var mStoreCardScreenType: StoreCardViewType? = StoreCardViewType.DEFAULT
     var shouldActivateUnblockCardOnLanding: Boolean  = false
     var shouldNotifyStateChanged = false
     private var mStoreCardDetail: String? = null
@@ -49,6 +52,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
         intent?.extras?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
+            mStoreCardScreenType = getSerializable(STORE_CARD_VIEW_TYPE) as? StoreCardViewType ?: StoreCardViewType.DEFAULT
             shouldActivateUnblockCardOnLanding = getBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, false)
         }
         addCardDetailFragment()
@@ -77,10 +81,20 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
                         containerViewId = R.id.flMyCard)
             }
             else -> {
-                addFragment(
-                        fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
-                        tag = MyCardBlockedFragment::class.java.simpleName,
-                        containerViewId = R.id.flMyCard)
+                when (mStoreCardScreenType){
+                    StoreCardViewType.GET_REPLACEMENT_CARD -> {
+                        addFragment(
+                                fragment = GetReplacementCardFragment.newInstance(),
+                                tag = MyCardBlockedFragment::class.java.simpleName,
+                                containerViewId = R.id.flMyCard)
+                    }
+                    StoreCardViewType.DEFAULT -> {
+                        addFragment(
+                                fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
+                                tag = MyCardBlockedFragment::class.java.simpleName,
+                                containerViewId = R.id.flMyCard)
+                    }
+                }
             }
         }
     }

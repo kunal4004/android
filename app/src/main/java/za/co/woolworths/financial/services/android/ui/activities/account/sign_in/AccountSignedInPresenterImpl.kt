@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -144,6 +143,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
         //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
         return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != AccountsProductGroupCode.CREDIT_CARD.groupCode.toUpperCase()
+    }
+
+    override fun isAccountInDelinquencyMoreThan6Months(): Boolean {
+        val accounts = getAccount()
+        val productOfferingStatus = accounts?.productOfferingStatus
+        val productOfferingGoodStanding = accounts?.productOfferingGoodStanding
+        return productOfferingGoodStanding == false && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
     }
 
     override fun chatWithCollectionAgent() {
