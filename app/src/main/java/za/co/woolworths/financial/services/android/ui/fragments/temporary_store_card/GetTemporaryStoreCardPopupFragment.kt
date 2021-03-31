@@ -128,8 +128,8 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
 
     private fun showTempStoreCardProgressBar(state: Int) {
         activity?.apply {
-            getTempStoreCardProgressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
-            getTempStoreCardProgressBar.visibility = state
+            getTempStoreCardProgressBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
+            getTempStoreCardProgressBar?.visibility = state
         }
     }
 

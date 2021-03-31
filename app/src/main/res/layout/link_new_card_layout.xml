@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/icon_basket"
+        android:src="@drawable/link_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
