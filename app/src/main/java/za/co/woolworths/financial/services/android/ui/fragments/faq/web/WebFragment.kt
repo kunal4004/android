@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 
 class WebFragment : Fragment() {
-    private var mUrl: String? = null
+    private var mUrl: String = ""
     private var mBottomNavigator: BottomNavigator? = null
 
     override fun onAttach(context: Context) {

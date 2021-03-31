@@ -43,7 +43,7 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                             200 -> mainView?.onProductDetailsSuccess(this.product)
                             else -> this.response?.let {
                                 mainView?.apply {
-                                    onProductDetailedFailed(it)
+                                    onProductDetailedFailed(it, httpCode)
                                     hideProgressBar()
                                 }
                             }
@@ -56,7 +56,7 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                             200 -> mainView?.onStockAvailabilitySuccess(this, isDefaultRequest)
                             else -> this.response?.let {
                                 mainView?.apply {
-                                    onProductDetailedFailed(it)
+                                    onProductDetailedFailed(it, httpCode)
                                     hideProgressBar()
                                 }
                             }

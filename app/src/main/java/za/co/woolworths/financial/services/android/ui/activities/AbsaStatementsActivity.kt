@@ -158,7 +158,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item?.itemId) {
             android.R.id.home -> {

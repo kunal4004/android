@@ -22,7 +22,7 @@ abstract class WTodayExtension : Fragment() {
     companion object {
         const val SCROLL_UP_ANIM_DURATION: Long = 300
         const val TAG: String = "WTodayFragment"
-        var wTodayUrl: String? = WoolworthsApplication.getWwTodayURI() ?: ""
+        var wTodayUrl: String = WoolworthsApplication.getWwTodayURI() ?: ""
     }
 
     abstract fun progressBarVisibility(isDisplayed: Boolean)
