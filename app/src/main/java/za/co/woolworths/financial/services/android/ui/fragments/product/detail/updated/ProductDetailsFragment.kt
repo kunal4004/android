@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.TAG
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
@@ -1386,9 +1387,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun reloadFragment() {
-        val currentFragment = activity?.supportFragmentManager?.findFragmentByTag("ProductDetailsFragment")
+        val currentFragment = activity?.supportFragmentManager?.findFragmentByTag(TAG)
         val fragmentTransaction: FragmentTransaction? = activity?.supportFragmentManager?.beginTransaction()
-        if (fragmentTransaction != null) {
+        if (fragmentTransaction != null && currentFragment != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 fragmentTransaction?.detach(currentFragment!!).commitNow()
                 fragmentTransaction?.attach(currentFragment!!).commitNow()

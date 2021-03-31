@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -28,6 +30,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
     ProductDetailsFragment productDetailsFragmentNew;
     public static WMaterialShowcaseView walkThroughPromtView = null;
     private FrameLayout flContentFrame;
+    public static final String TAG = "ProductDetailsFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
         productDetailsFragmentNew.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, productDetailsFragmentNew, "ProductDetailsFragment").commit();
+                .replace(R.id.content_frame, productDetailsFragmentNew, TAG).commit();
     }
 
     @Override
@@ -49,9 +52,9 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE
                 && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-                ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
-                return;
-            }
+            ToastFactory.Companion.buildShoppingListToast(this, flContentFrame, true, data, this);
+            return;
+        }
 
         if (productDetailsFragmentNew != null)
             productDetailsFragmentNew.onActivityResult(requestCode, resultCode, data);
