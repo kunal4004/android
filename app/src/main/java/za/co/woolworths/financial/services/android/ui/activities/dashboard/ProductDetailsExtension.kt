@@ -23,6 +23,8 @@ import java.util.*
 class ProductDetailsExtension : Fragment() {
     companion object {
         const val TAG: String = "BottomNavigationActivity"
+        const val HTTP_OK: Int = 200
+        const val PRODUCT_NOT_FOUND: Int = 502
 
         @JvmStatic
         fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProductDetailsStatusListner) {
@@ -34,7 +36,7 @@ class ProductDetailsExtension : Fragment() {
                         listner.stopProgressBar()
                         activity?.apply {
                             when (response?.httpCode) {
-                                200 -> activity?.apply {
+                                HTTP_OK -> activity?.apply {
                                     val bundle = Bundle()
                                     bundle.putString("strProductList", Gson().toJson(response.product))
                                     bundle.putString("strProductCategory", response.product?.productName)
@@ -42,12 +44,14 @@ class ProductDetailsExtension : Fragment() {
                                     bundle.putBoolean("fetchFromJson", true)
                                     listner.onSuccess(bundle)
                                 }
+                                PRODUCT_NOT_FOUND -> activity.apply {
+                                    listner.onProductNotFound()
+                                }
                                 else -> {
-                                    Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(this, R.string.statement_send_email_false_desc))
-                                    val arguments = HashMap<String, String>()
-                                    arguments[skuId] = "NO PRICE INFO"
-                                    arguments[skuId] = "From BottomNavigation Promotions"
-                                    Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments)
+                                    if (!WoolworthsApplication.isApplicationInForeground())
+                                        return
+                                    listner.onFailure()
+                                    finish()
                                 }
                             }
                         }
@@ -68,8 +72,9 @@ class ProductDetailsExtension : Fragment() {
     }
 
     interface ProductDetailsStatusListner {
-        fun onSuccess(bundle:Bundle)
+        fun onSuccess(bundle: Bundle)
         fun onFailure()
+        fun onProductNotFound()
         fun startProgressBar()
         fun stopProgressBar()
     }

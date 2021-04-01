@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.product
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -76,6 +77,18 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
 
     override fun onFailure() {
         stopProgressBar()
+    }
+
+    override fun onProductNotFound() {
+        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        val taskList = mngr!!.getRunningTasks(10)
+        if (taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
+                && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name) {
+            restartApp()
+        } else {
+            finish()
+            //overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        }
     }
 
     override fun startProgressBar() {
