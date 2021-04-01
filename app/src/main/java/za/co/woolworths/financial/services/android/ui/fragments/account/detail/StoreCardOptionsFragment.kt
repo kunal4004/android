@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -142,7 +143,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
             // Get replacement card
-            mCardPresenterImpl?.isPermanentTemporaryCardEnabled() != true -> {
+            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() != true -> {
                 storeCardTagTextView?.text = bindString(R.string.inactive)
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
@@ -152,7 +153,24 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
             // Temporary card
-            mCardPresenterImpl?.isPermanentTemporaryCardEnabled() == true -> {
+            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() == true -> {
+                //when virtual card is disabled on mobile config server
+                if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == false) {
+                    storeCardTagTextView?.visibility = GONE
+                    myCardDetailTextView?.visibility = VISIBLE
+                    manageLinkNewCardGroup?.visibility = GONE
+                    manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
+                    cardDetailImageView?.alpha = 1.0f
+                    return
+                }
+                if (mCardPresenterImpl?.isVirtualCardEnabled() == false) {
+                    storeCardTagTextView?.visibility = GONE
+                    myCardDetailTextView?.visibility = VISIBLE
+                    manageLinkNewCardGroup?.visibility = GONE
+                    manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
+                    cardDetailImageView?.alpha = 1.0f
+                    return
+                }
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE

@@ -296,7 +296,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     // Determine if card is blocked: if blockCode is not null, card is blocked.
-    override fun isPermanentTemporaryCardEnabled(): Boolean {
+    override fun isReplacementCardAndVirtualCardViewEnabled(): Boolean {
         val storeCardResponse = getStoreCardResponse()
         val storeCardsData = storeCardResponse?.storeCardsData
         if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
@@ -306,7 +306,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
         val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
         val virtualCard = storeCardsData?.virtualCard
-        // Determine if card is blocked: if blockCode is not null, card is blocked.
         return (virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
                 || shouldDisplayStoreCardDetail
                 && blockType != TemporaryFreezeStoreCard.PERMANENT

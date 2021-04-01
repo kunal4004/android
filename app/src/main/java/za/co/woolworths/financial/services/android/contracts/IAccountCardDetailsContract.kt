@@ -83,7 +83,7 @@ interface IAccountCardDetailsContract {
         fun getStoreCardBlockType(): Boolean
         fun isProductCodeStoreCard():Boolean
         fun isVirtualCardEnabled(): Boolean
-        fun isPermanentTemporaryCardEnabled():Boolean
+        fun isReplacementCardAndVirtualCardViewEnabled():Boolean
     }
 
     interface AccountCardDetailModel {

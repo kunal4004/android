@@ -162,6 +162,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         cardDetailImageShimmerFrameLayout?.startShimmer()
         myCardTextViewShimmerFrameLayout?.startShimmer()
         tempFreezeTextViewShimmerFrameLayout?.startShimmer()
+        storeCardTagTextView?.visibility = GONE
         storeCardLoaderView?.visibility = VISIBLE
         includeManageMyCard?.isEnabled = false
         cardImageRootView?.isEnabled = false
@@ -264,15 +265,15 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean) {
-        MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity,storeCardResponse,requestUnblockStoreCardCall)
+        MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, storeCardResponse, requestUnblockStoreCardCall)
     }
 
     override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
-        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity,debitOrder)
+        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
     }
 
     override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
-        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity,accountInfo,mCardPresenterImpl?.getAccount())
+        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount())
     }
 
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
@@ -459,24 +460,24 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
-            with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
-                when {
-                    isNullOrEmpty() -> {
-                        when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
-                            CARD_NOT_RECEIVED -> {
-                                with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus){
-                                    displayColour = "#bad110"
-                                    displayTitle = CreditCardActivationState.AVAILABLE.value
-                                }
-                                showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
+        with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
+            when {
+                isNullOrEmpty() -> {
+                    when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
+                        CARD_NOT_RECEIVED -> {
+                            with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus) {
+                                displayColour = "#bad110"
+                                displayTitle = CreditCardActivationState.AVAILABLE.value
                             }
-                            else -> onGetCreditCardDeliveryStatusFailure()
+                            showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
                         }
-                    }
-                    else -> {
-                        creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                        else -> onGetCreditCardDeliveryStatusFailure()
                     }
                 }
+                else -> {
+                    creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                }
+            }
         }
     }
 
