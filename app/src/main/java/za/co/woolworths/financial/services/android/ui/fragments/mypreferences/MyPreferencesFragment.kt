@@ -47,6 +47,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         super.onCreate(savedInstanceState)
         arguments?.apply {
             isNonWFSUser = getBoolean(IS_NON_WFS_USER)
+            val list = getSerializable(DEVICE_LIST)
+            if (list is ArrayList<*> && list.isNotEmpty()) {
+                deviceList = list as ArrayList<UserDevice>
+            }
         }
     }
 
@@ -95,15 +99,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        arguments?.getSerializable(DEVICE_LIST)?.apply {
-            if(this is ArrayList<*> && isNotEmpty()){
-                deviceList = this as ArrayList<UserDevice>
-                val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
-                updateLinkedDeviceView(isDeviceIdentityIdPresent)
-            } else {
-                updateLinkedDeviceView(false)
-            }
-        }
+        val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
+        updateLinkedDeviceView(isDeviceIdentityIdPresent)
     }
 
     private fun callLinkedDevicesAPI() {
@@ -216,9 +213,9 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             }
             R.id.viewAllLinkedDevicesRelativeLayout -> {
                 Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
-                bundleOf(
-                        ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
-                ))
+                        bundleOf(
+                                ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
+                        ))
             }
 
         }

@@ -40,10 +40,10 @@
 
     <include
         android:id="@+id/linkDeviceOTPScreen"
-        android:visibility="visible"
         layout="@layout/layout_link_device_validate_otp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
@@ -53,15 +53,48 @@
 
     <include
         android:id="@+id/linkDeviceResultScreen"
-        android:visibility="gone"
         layout="@layout/layout_link_device_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
         app:layout_constraintEnd_toEndOf="@id/end_guideline"
         app:layout_constraintStart_toStartOf="@id/start_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/buttonNext"
+        android:layout_width="@dimen/store_card_next_button_size_48_dp"
+        android:layout_height="@dimen/store_card_next_button_size_48_dp"
+        android:contentDescription="@string/placeholder"
+        android:src="@drawable/next_button_inactive"
+        android:layout_marginBottom="@dimen/twenty_five_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline" />
+
+    <TextView
+        android:id="@+id/didNotReceiveOTPTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="start|center"
+        android:letterSpacing="0.015"
+        android:text="@string/did_not_receive_title"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/store_card_text_size_15_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/buttonNext"
+        app:layout_constraintEnd_toStartOf="@id/buttonNext"
+        app:layout_constraintStart_toStartOf="@id/start_guideline"
+        app:layout_constraintTop_toTopOf="@id/buttonNext"
+        tools:ignore="UnusedAttribute"
+        tools:text="@string/did_not_receive_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

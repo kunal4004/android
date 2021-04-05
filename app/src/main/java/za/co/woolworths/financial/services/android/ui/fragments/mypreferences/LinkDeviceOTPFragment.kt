@@ -231,7 +231,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         this.otpMethod = otpMethod
 
         showSendingOTPProcessing()
-        linkDeviceOTPScreen?.visibility = View.GONE
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
@@ -321,6 +320,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         linkDeviceOTPErrorTxt?.text = msg
         linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
         linkDeviceOTPScreen?.visibility = View.VISIBLE
+        buttonNext?.visibility = View.VISIBLE
+        didNotReceiveOTPTextView?.visibility = View.VISIBLE
 
     }
 
@@ -426,6 +427,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     private fun showSendingOTPProcessing() {
         sendOTPTitle?.visibility = View.VISIBLE
         sendOTPSubtitle?.visibility = View.VISIBLE
+        linkDeviceOTPScreen?.visibility = View.GONE
 
         context?.let {
             sendOTPProcessingReq.text = it.getString(R.string.link_device_sending_otp_processing)
@@ -436,6 +438,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     private fun showValidatingProcessing() {
         sendOTPTitle?.visibility = View.GONE
         sendOTPSubtitle?.visibility = View.GONE
+        buttonNext?.visibility = View.GONE
+        didNotReceiveOTPTextView?.visibility = View.GONE
 
         context?.let {
             sendOTPProcessingReq.text = it.getString(R.string.validating_otp)
