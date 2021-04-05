@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.awfs.coordination.R
@@ -79,7 +80,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         stopProgressBar()
     }
 
-    override fun onProductNotFound() {
+    override fun onProductNotFound(message: String) {
         val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
         val taskList = mngr!!.getRunningTasks(10)
         if (taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
@@ -87,7 +88,10 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
             restartApp()
         } else {
             finish()
-            //overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        }
+        runOnUiThread {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
 

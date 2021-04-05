@@ -45,7 +45,7 @@ class ProductDetailsExtension : Fragment() {
                                     listner.onSuccess(bundle)
                                 }
                                 PRODUCT_NOT_FOUND -> activity.apply {
-                                    listner.onProductNotFound()
+                                    listner.onProductNotFound(response.response.desc)
                                 }
                                 else -> {
                                     if (!WoolworthsApplication.isApplicationInForeground())
@@ -74,7 +74,7 @@ class ProductDetailsExtension : Fragment() {
     interface ProductDetailsStatusListner {
         fun onSuccess(bundle: Bundle)
         fun onFailure()
-        fun onProductNotFound()
+        fun onProductNotFound(message: String)
         fun startProgressBar()
         fun stopProgressBar()
     }
