@@ -98,5 +98,10 @@
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment"
         android:label="AccountInArrearsDialogFragment"
         tools:layout="@layout/account_in_arrears_alert_dialog_fragment" />
+    <dialog
+        android:id="@+id/creditCardAccountInArrearsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.CreditCardAccountInArrearsBottomSheetDialogFragment"
+        android:label="AccountInArrearsDialogFragment"
+        tools:layout="@layout/account_in_arrears_fragment_dialog" />
 
 </navigation>
