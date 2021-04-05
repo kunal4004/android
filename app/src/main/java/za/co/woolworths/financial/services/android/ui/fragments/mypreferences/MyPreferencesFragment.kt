@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment.RESULT_CODE_DEVICE_LINKED
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment.Companion.DEVICE_LIST
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -53,6 +54,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                               savedInstanceState: Bundle?): View? {
         setFragmentResultListener("linkDevice") { requestKey, bundle ->
             Utils.setLinkConfirmationShown(true)
+            callLinkedDevicesAPI()
+            activity?.apply {
+                setResult(RESULT_CODE_DEVICE_LINKED)
+            }
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_preferences, container, false)
@@ -62,7 +67,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        callLinkedDevicesAPI()
         bindDataWithUI()
     }
 
@@ -91,6 +95,15 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
+        arguments?.getSerializable(DEVICE_LIST)?.apply {
+            if(this is ArrayList<*> && isNotEmpty()){
+                deviceList = this as ArrayList<UserDevice>
+                val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
+                updateLinkedDeviceView(isDeviceIdentityIdPresent)
+            } else {
+                updateLinkedDeviceView(false)
+            }
+        }
     }
 
     private fun callLinkedDevicesAPI() {
@@ -101,7 +114,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
         mViewAllLinkedDevices = OneAppService.getAllLinkedDevices()
         mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 when (response?.httpCode) {
@@ -141,6 +153,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             true -> {
                 linkDeviceLayout?.visibility = View.GONE
             }
+//            cvBABqoOTDGrGyPDt0_b18
+
             else -> {
                 linkDeviceLayout?.visibility = View.VISIBLE
                 linkDeviceSwitch.isChecked = deviceIdentityIdPresent
@@ -307,5 +321,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         const val SECURITY_INFO_REQUEST_DIALOG = 235
         const val REQUEST_SUBURB_CHANGE = 143
         const val IS_NON_WFS_USER = "isNonWFSUser"
+        const val DEVICE_LIST = "deviceList"
     }
 }
