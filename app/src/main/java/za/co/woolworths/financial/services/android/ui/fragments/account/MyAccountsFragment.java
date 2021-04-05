@@ -371,13 +371,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideToolbar();
             setToolbarBackgroundColor(R.color.white);
             messageCounterRequest();
+        } else {
+            callLinkedDevicesAPI();
         }
 
         uniqueIdentifiersForAccount();
 
         parseDeepLinkData();
-
-        callLinkedDevicesAPI();
     }
 
     private void callLinkedDevicesAPI() {
@@ -1433,8 +1433,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (mUpdateMyAccount != null)
                 mUpdateMyAccount.swipeToRefreshAccount(false);
         }
-
-        callLinkedDevicesAPI();
     }
 
 
