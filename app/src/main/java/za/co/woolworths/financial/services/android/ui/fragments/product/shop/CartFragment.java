@@ -179,6 +179,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private RelativeLayout orderTotalLayout;
     private NestedScrollView nestedScrollView;
     public static final int APPLY_PROMO_CODE_REQUEST_CODE = 1989;
+    private static final int CART_BACK_PRESSED_CODE = 9;
     public ProductCountMap productCountMap;
     public ConstraintLayout itemLimitsBanner;
     public TextView itemLimitsMessage;
@@ -1123,6 +1124,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             } else {
                 getActivity().onBackPressed();
             }
+        }
+        else if (requestCode == CART_BACK_PRESSED_CODE){
+            reloadFragment();
+            return;
         }
 
         if (resultCode == RESULT_OK) {
