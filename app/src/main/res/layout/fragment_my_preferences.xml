@@ -289,6 +289,40 @@
 
                 </LinearLayout>
             </RelativeLayout>
+
+            <View
+                style="@style/bottom_line"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp" />
+
+            <RelativeLayout
+                android:id="@+id/viewAllLinkedDevicesRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/seventy_dp">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/twenty_four_dp"
+                    android:drawableLeft="@drawable/ic_device_link"
+                    android:drawablePadding="@dimen/sixteen_dp"
+                    android:gravity="center_vertical"
+                    android:lineSpacingExtra="0.4sp"
+                    android:text="@string/my_preferences_linked_devices"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp"
+                    app:WTextView_font="myriadpro_regular" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/twenty_dp"
+                    android:src="@drawable/ic_caret_black" />
+
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

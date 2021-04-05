@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment.Companion.DEVICE_LIST
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
@@ -37,6 +39,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     private var isNonWFSUser: Boolean = true
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
+    private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +73,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         auSwitch.setOnTouchListener(this)
         linkDeviceSwitch.setOnClickListener(this)
         retryLinkDeviceLinearLayout?.setOnClickListener(this)
+        viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this)
 
         activity?.apply {
             if (this is MyPreferencesInterface) {
@@ -108,6 +112,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         spinningAnimation.cancel()
                         retryLinkDeviceLinearLayout?.visibility = View.GONE
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
+                        deviceList = response?.userDevices
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                     }
                     else -> {
@@ -194,6 +199,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             }
             R.id.retryLinkDeviceLinearLayout -> {
                 callLinkedDevicesAPI()
+            }
+            R.id.viewAllLinkedDevicesRelativeLayout -> {
+                Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
+                bundleOf(
+                        ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
+                ))
             }
 
         }
