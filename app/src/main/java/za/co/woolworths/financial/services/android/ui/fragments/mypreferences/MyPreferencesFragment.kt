@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -56,6 +53,9 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
+
         setFragmentResultListener("linkDevice") { requestKey, bundle ->
             Utils.setLinkConfirmationShown(true)
             callLinkedDevicesAPI()
@@ -150,8 +150,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             true -> {
                 linkDeviceLayout?.visibility = View.GONE
             }
-//            cvBABqoOTDGrGyPDt0_b18
-
             else -> {
                 linkDeviceLayout?.visibility = View.VISIBLE
                 linkDeviceSwitch.isChecked = deviceIdentityIdPresent
@@ -319,5 +317,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         const val REQUEST_SUBURB_CHANGE = 143
         const val IS_NON_WFS_USER = "isNonWFSUser"
         const val DEVICE_LIST = "deviceList"
+    }
+
+    override fun onDestroy() {
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
+        super.onDestroy()
     }
 }

@@ -44,6 +44,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_link_device_from_account_prod, container, false)
     }
@@ -121,5 +122,10 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                 finish()
             }, AppConstant.DELAY_1500_MS)
         }
+    }
+
+    override fun onDestroy() {
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
+        super.onDestroy()
     }
 }
