@@ -1987,4 +1987,5 @@
     <string name="cli_married_in_community_agreement">I confirm that I have written consent from my spouse to enter into a credit agreement.</string>
     <string name="please_select">Please Select</string>
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
+    <string name="payment_options_label">Payment Options</string>
 </resources>
