@@ -19,4 +19,9 @@ class WebViewJavascriptInterface(private val jsListener: IWTodayInterface) {
     fun showProduct(productId: String, skuId: String) {
         jsListener.onShowProductDetail(productId, skuId)
     }
+
+    @JavascriptInterface
+    fun sendEventToFirebase(eventName: String, parameter: String) {
+        jsListener.sendEventToFirebase(eventName, parameter)
+    }
 }
