@@ -36,6 +36,9 @@ public class ProductDetails {
 	@SerializedName("otherSkus")
 	@Expose
 	public ArrayList<OtherSkus> otherSkus = null;
+	@SerializedName("promotions")
+	@Expose
+	public ArrayList<Promotions> promotionsList = null;
 	@SerializedName("checkOutLink")
 	@Expose
 	public String checkOutLink;
@@ -99,6 +102,4 @@ public class ProductDetails {
 	@SerializedName("colourSizeVariants")
 	@Expose
 	public String colourSizeVariants;
-
-
 }

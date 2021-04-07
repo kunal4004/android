@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 public class CreateOfferRequest {
 
+	private int maritalStatusId;
 	private String channel = "WWOneApp";
 	private boolean maxCreditRequested = true;
 	private int productOfferingId;
@@ -14,7 +15,7 @@ public class CreateOfferRequest {
 	private int totalCreditExpenseAmount;
 	private int otherExpenseAmount;
 
-	public CreateOfferRequest(int productOfferingId, int grossMonthlyIncome, int netMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
+	public CreateOfferRequest(int productOfferingId, int grossMonthlyIncome, int netMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount, int maritalStatusId) {
 		super();
 		this.productOfferingId = productOfferingId;
 		this.grossMonthlyIncome = grossMonthlyIncome;
@@ -25,5 +26,6 @@ public class CreateOfferRequest {
 		this.maintenanceExpenseAmount = maintenanceExpenseAmount;
 		this.totalCreditExpenseAmount = totalCreditExpenseAmount;
 		this.otherExpenseAmount = otherExpenseAmount;
+		this.maritalStatusId = maritalStatusId;
 	}
 }

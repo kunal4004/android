@@ -8,32 +8,41 @@
 
     <ImageView
         android:id="@+id/imProductImage"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/two_hundred_and_twenty_dp"
-        android:layout_gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/plp_productImageLayout"
-        android:gravity="center"
-        android:paddingStart="@dimen/twenty_four_dp"
-        android:paddingTop="@dimen/forty_four_dp"
-        android:paddingEnd="@dimen/seventeen_dp"
-        android:paddingBottom="@dimen/seventeen_dp"
+        android:scaleType="fitXY"
+        app:layout_constraintDimensionRatio="5:7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/productVariant"
+        android:id="@+id/productVariantTextView"
         style="@style/futura_semi_bold_black"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/transperant_options_button"
         android:gravity="center"
         android:includeFontPadding="false"
         android:lineSpacingMultiplier="1"
-        android:paddingBottom="@dimen/five_dp"
+        android:padding="@dimen/five_dp"
         android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/marginTextView"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
-        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/imProductImage" />
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
+
+    <TextView
+        android:id="@+id/marginTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:textSize="@dimen/six_dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imProductImage"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline" />
 
     <TextView
         android:id="@+id/brandName"
@@ -42,7 +51,6 @@
         android:includeFontPadding="false"
         android:lineSpacingMultiplier="1.09"
         android:maxLines="2"
-        android:minLines="2"
         android:text="@string/brands"
         android:textAllCaps="true"
         android:textSize="@dimen/eleven_sp"
@@ -62,8 +70,6 @@
         android:includeFontPadding="false"
         android:lineSpacingExtra="0dp"
         android:lineSpacingMultiplier="1.29"
-        android:maxLines="3"
-        android:minLines="3"
         android:text="Original Free Range Venison Droëwors Nibbles 25g"
         android:textColor="@color/black"
         android:textSize="@dimen/fourteen_sp"
@@ -74,17 +80,52 @@
         tools:targetApi="lollipop" />
 
     <TextView
+        android:id="@+id/onlinePromotionalTextView1"
+        style="@style/futura_medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/labelPromotionOne"
+        android:ellipsize="end"
+        android:gravity="top|start"
+        android:maxLines="1"
+        android:paddingTop="@dimen/five_dp"
+        android:textAllCaps="true"
+        android:textColor="@color/two_line_promo_text_color_plp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+
+    <TextView
+        android:id="@+id/onlinePromotionalTextView2"
+        style="@style/futura_medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_dp"
+        android:contentDescription="@string/labelPromotionTwo"
+        android:ellipsize="end"
+        android:gravity="top|start"
+        android:maxLines="1"
+        android:textAllCaps="true"
+        android:textColor="@color/two_line_promo_text_color_plp"
+        android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView1" />
+
+    <TextView
         android:id="@+id/brandNameFakeView"
         style="@style/futura_semi_bold_black_12_text_style"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:maxLines="2"
-        android:minLines="2"
         android:textAllCaps="true"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
+        app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
 
     <TextView
         android:id="@+id/tvSaveText"
@@ -92,18 +133,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/two_dp"
         android:layout_marginBottom="@dimen/one_dp"
-        android:contentDescription="@string/plp_textViewPromotion"
-        android:ellipsize="end"
         android:fontFamily="@font/futura_medium"
-        android:gravity="center|start"
         android:includeFontPadding="false"
-        android:lineSpacingMultiplier="1.10"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text="BUY 6 AND SAVE 10% ONLINE ONLY UY 6"
-        android:textAllCaps="true"
         android:textColor="@color/promo_text_color"
         android:textSize="@dimen/ten_sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/includeProductListingPriceLayout"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
@@ -122,9 +156,9 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/one_dp"
         android:background="@color/recent_search_bg"
+        app:layout_constraintBottom_toBottomOf="@id/imProductImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/productVariant" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/brandMarginTopView"
@@ -156,12 +190,6 @@
         app:layout_constraintGuide_end="@dimen/sixteen_dp" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/three_dp" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/promotionalImageTopGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -174,7 +202,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/eight_dp"
-        android:layout_marginEnd="@dimen/nine_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
         android:layout_marginBottom="@dimen/five_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

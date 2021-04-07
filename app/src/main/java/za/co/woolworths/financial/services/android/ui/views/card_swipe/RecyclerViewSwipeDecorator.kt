@@ -197,7 +197,7 @@ class RecyclerViewSwipeDecorator private constructor() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(this.javaClass.name, e.message)
+            Log.e(this.javaClass.name, e.message!!)
         }
     }
 

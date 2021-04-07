@@ -109,7 +109,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, e.message)
+                    Log.e(TAG, e.message!!)
                 }
                 return false
             }

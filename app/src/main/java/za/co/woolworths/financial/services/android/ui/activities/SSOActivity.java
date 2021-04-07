@@ -119,6 +119,15 @@ public class SSOActivity extends WebViewActivity {
 			KotlinUtils.Companion.convertActivityToTranslucent(this);
 		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
+		showProfileProgressBar();
+	}
+
+	// Display progress bar as soon as user land on profile
+	private void showProfileProgressBar() {
+		if (SSOActivity.this.path!=null && SSOActivity.this.path==Path.UPDATE_PROFILE
+				&& NetworkManager.getInstance().isConnectedToNetwork(this)){
+			showProgressBar();
+		}
 	}
 
 	private void instantiateWebView() {
