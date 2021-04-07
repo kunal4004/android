@@ -9,6 +9,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.Utils
 
 class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
@@ -25,7 +27,8 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incPayMyAccountButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
 
-        navigateToDeepLinkView()
+        navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT,incViewStatementButton)
+
     }
 
     override fun onClick(view: View?) {

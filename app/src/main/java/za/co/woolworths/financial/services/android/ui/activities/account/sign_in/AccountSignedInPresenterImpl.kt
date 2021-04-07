@@ -154,6 +154,11 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return Gson().fromJson(mDeepLinkingData, JsonObject::class.java)
     }
 
+    override fun deleteDeepLinkData() {
+        mDeepLinkingData = null
+    }
+
+
     private fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }
     }
