@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
+import android.text.Html
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
@@ -58,6 +60,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.d
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -95,6 +98,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var mFreeGiftPromotionalImage: String? = null
     private var EDIT_LOCATION_LOGIN_REQUEST = 2020
     private var HTTP_EXPECTATION_FAILED_417: String = "417"
+    private var isOutOfStock_502 = false
 
 
     companion object {
@@ -103,6 +107,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val INDEX_ADD_TO_SHOPPING_LIST = 3
         const val INDEX_SEARCH_FROM_LIST = 4
         const val RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002
+        const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
     }
 
@@ -197,7 +202,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
-            it.saveText?.apply { setPromotionalText(this) }
         }
 
         mFreeGiftPromotionalImage = productDetails?.promotionImages?.freeGift
@@ -258,7 +262,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
-                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name  + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
                 }
             }
             activity?.apply {
@@ -335,9 +339,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun onProductDetailedFailed(response: Response) {
-        if (isAdded)
+    override fun onProductDetailedFailed(response: Response, httpCode: Int) {
+        if (httpCode == HTTP_CODE_502) {
+            isOutOfStock_502 = true
+            val message = getString(R.string.out_of_stock_502)
+            OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
+        } else if (isAdded) {
+            isOutOfStock_502 = false
             showErrorWhileLoadingProductDetails()
+        }
     }
 
     override fun onFailureResponse(error: String) {
@@ -404,7 +414,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (hasSize)
             showSize()
 
-        if(productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants,productDetails?.sizeGuideId) == true) {
+        if (productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants, productDetails?.sizeGuideId) == true) {
             sizeGuide?.apply {
                 underline()
                 visibility = View.VISIBLE
@@ -451,18 +461,40 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
+
+        val variant = ColourSizeVariants.find(productDetails?.colourSizeVariants ?: "")
+        when (variant) {
+            ColourSizeVariants.DEFAULT, ColourSizeVariants.NO_VARIANT -> {
+                hasColor = false
+                hasSize = false
+            }
+            ColourSizeVariants.COLOUR_VARIANT -> {
+                hasColor = true
+                hasSize = false
+            }
+            ColourSizeVariants.SIZE_VARIANT, ColourSizeVariants.COLOUR_SIZE_VARIANT -> {
+                hasColor = true
+                hasSize = true
+            }
+            ColourSizeVariants.NO_COLOUR_SIZE_VARIANT -> {
+                hasColor = false
+                hasSize = true
+            }
+        }
+
         for (otherSkuObj in otherSKUsList) {
             var groupKey = ""
-            if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
-                groupKey = otherSkuObj.size.trim()
+            groupKey = if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                otherSkuObj.size.trim()
             } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                this.hasColor = !otherSkuObj.colour.equals("N/A", ignoreCase = true)
-                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
-                groupKey = otherSkuObj.colour.trim()
+                otherSkuObj.colour.trim()
             } else {
-                this.hasColor = true
-                groupKey = otherSkuObj.colour.trim()
+                otherSkuObj.colour.trim()
+            }
+
+            if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
+                otherSkuObj.apply { size = colour }
+                groupKey = "N/A"
             }
 
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
@@ -488,7 +520,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
 
         productDetails?.let {
-            it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             brandName.apply {
                 if (!it.brandText.isNullOrEmpty()) {
@@ -499,6 +530,30 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+            }
+            if (productDetails?.promotionsList?.isEmpty() == false) {
+                productDetails?.promotionsList?.forEachIndexed { i, it ->
+                    var editedPromotionalText: String? = it.promotionalText
+                    if (it.promotionalText?.contains(":") == true) {
+                        val beforeColon: String? = it.promotionalText?.substringBefore(":")
+                        val afterColon: String? = it.promotionalText?.substringAfter(":")
+                        editedPromotionalText = "<b>" + beforeColon + ":" + "</b>" + afterColon
+                    }
+                    when (i) {
+                        0 -> {
+                            onlinePromotionalTextView1?.visibility = View.VISIBLE
+                            onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
+                        }
+                        1 -> {
+                            onlinePromotionalTextView2?.visibility = View.VISIBLE
+                            onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
+                        }
+                        2 -> {
+                            onlinePromotionalTextView3?.visibility = View.VISIBLE
+                            onlinePromotionalTextView3?.text = Html.fromHtml(editedPromotionalText)
+                        }
+                    }
+                }
             }
         }
 
@@ -537,15 +592,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     pager.adapter = this
                     productImagesViewPagerIndicator.setViewPager(pager)
                 }
-            }
-        }
-    }
-
-    override fun setPromotionalText(promotionValue: String) {
-        if (promotionValue.isNotEmpty()) {
-            promotionText.apply {
-                text = promotionValue
-                visibility = View.VISIBLE
             }
         }
     }
@@ -1283,7 +1329,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onOutOfStockDialogDismiss() {
-        if (productDetails?.otherSkus.isNullOrEmpty())
+        if (isOutOfStock_502) {
+            isOutOfStock_502 = false
+            if (childFragmentManager.backStackEntryCount > 0) {
+                childFragmentManager.popBackStack()
+            } else
+                activity?.finish()
+        } else if (productDetails?.otherSkus.isNullOrEmpty())
             activity?.onBackPressed()
     }
 

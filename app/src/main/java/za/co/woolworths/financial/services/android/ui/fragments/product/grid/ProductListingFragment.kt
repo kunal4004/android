@@ -383,7 +383,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         try {
             hideFooterView()
         } catch (ex: Exception) {
-            Log.e("containFooter", ex.message)
+            Log.e("containFooter", ex.message!!)
         }
 
         mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)

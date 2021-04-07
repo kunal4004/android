@@ -261,7 +261,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								if (!TextUtils.isEmpty(cartState.getState())) {
 									//setDeliveryLocation(cartState.getState());
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
-									mQuantity = cartState.getQuantity();
+									mChangeQuantity.quantity = cartState.getQuantity();
 									queryServiceChangeQuantity();
 								}
 							} else if (object instanceof ProductState) {
@@ -302,7 +302,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	 */
 
 	private void queryServiceChangeQuantity() {
-		mChangeQuantity.setQuantity(mQuantity);
 		mChangeQuantityList.add(mChangeQuantity);
 		changeQuantityAPI(mChangeQuantityList.get(0));
 		mChangeQuantityList.remove(0);
@@ -380,7 +379,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onChangeQuantity(CommerceItem commerceId) {
 		mCommerceItem = commerceId;
-		mChangeQuantity.setCommerceId(commerceId.commerceItemInfo.getCommerceId());
+		mChangeQuantity.commerceId = commerceId.commerceItemInfo.getCommerceId();
 		if (mWoolWorthsApplication != null) {
 			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
 			if (wGlobalState != null) {
@@ -574,7 +573,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void changeQuantity(CartResponse cartResponse, ChangeQuantity changeQuantity) {
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-			CommerceItem updatedCommerceItem = getUpdatedCommerceItem(cartResponse.cartItems, changeQuantity.getCommerceId());
+			CommerceItem updatedCommerceItem = getUpdatedCommerceItem(cartResponse.cartItems, changeQuantity.commerceId);
 			//update list instead of using the new list to handle inventory data
 			for (CartItemGroup cartItemGroupUpdated : cartResponse.cartItems) {
 				boolean isGroup = false;
@@ -634,7 +633,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				ArrayList<CartItemGroup> currentCartItemGroup = cartProductAdapter.getCartItems();
 				for (CartItemGroup cartItemGroup : currentCartItemGroup) {
 					for (CommerceItem currentItem : cartItemGroup.commerceItems) {
-						if (currentItem.commerceItemInfo.commerceId.equalsIgnoreCase(changeQuantity.getCommerceId())) {
+						if (currentItem.commerceItemInfo.commerceId.equalsIgnoreCase(changeQuantity.commerceId)) {
 							cartItemGroup.commerceItems.remove(currentItem);
 							if (cartItemGroup.commerceItems.size() == 0) {
 								currentCartItemGroup.remove(cartItemGroup);
@@ -1350,8 +1349,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				} else if (commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock) {
 					isAnyItemNeedsQuantityUpdate = true;
 					mCommerceItem = commerceItem;
-					mChangeQuantity.setCommerceId(commerceItem.commerceItemInfo.getCommerceId());
-					mChangeQuantity.setQuantity(commerceItem.quantityInStock);
+					mChangeQuantity.commerceId = commerceItem.commerceItemInfo.getCommerceId();
+					mChangeQuantity.quantity = commerceItem.quantityInStock;
 					mCommerceItem.setQuantityUploading(true);
 					queryServiceChangeQuantity();
 				}
@@ -1359,7 +1358,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate) {
 			fadeCheckoutButton(false);
-			if (voucherDetails != null)
+			if (voucherDetails != null && isAdded())
 				showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
 		}
 
@@ -1466,7 +1465,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onPromptDismiss() {
 		isMaterialPopUpClosed = true;
-		if (voucherDetails != null)
+		if (voucherDetails != null && isAdded())
 			showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());
 	}
 
@@ -1530,13 +1529,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void showVouchersOrPromoCodeAppliedToast(String message) {
-		mToastUtils.setActivity(getActivity());
-		mToastUtils.setCurrentState(TAG);
-		mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
-		mToastUtils.setView(btnCheckOut);
-		mToastUtils.setMessage(message);
-		mToastUtils.setViewState(false);
-		mToastUtils.buildCustomToast();
+		if (isAdded()) {
+			mToastUtils.setActivity(getActivity());
+			mToastUtils.setCurrentState(TAG);
+			mToastUtils.setPixel((int) (btnCheckOut.getHeight() * 2.5));
+			mToastUtils.setView(btnCheckOut);
+			mToastUtils.setMessage(message);
+			mToastUtils.setViewState(false);
+			mToastUtils.buildCustomToast();
+		}
 	}
 
 	@Override
