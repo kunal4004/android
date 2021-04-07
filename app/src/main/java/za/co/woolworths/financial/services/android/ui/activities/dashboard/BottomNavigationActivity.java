@@ -327,6 +327,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
 
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS:
                     BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);

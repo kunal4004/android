@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
@@ -361,9 +362,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                 val deepLinkingObject = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.getDeepLinkData()
                 when (deepLinkingObject?.get("feature")?.asString) {
-                    DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
-                        incViewStatementButton?.performClick()
-                    }
+                    DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> incViewStatementButton?.performClick()
+                    DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT -> incPayMyAccountButton?.performClick()
                 }
             }
         }
