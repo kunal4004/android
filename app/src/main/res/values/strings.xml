@@ -1929,7 +1929,7 @@
     <string name="understand_your_credit_score_changes">Understand your credit score changes</string>
     <string name="transunion_personal_info_note">To use this service, TransUnion will require some of your personal information.</string>
     <string name="privacy_policy_note_1">You can view the\u0020</string>
-    <string name="privacy_policy_note_2">Privacy Policy</string>
+    <string name="privacy_policy_note_2">TransUnion Privacy Policy</string>
     <string name="privacy_policy_note_3">\u0020to find out more about how we use and protect your personal information.</string>
     <string name="credit_report_title_details">Get your Free Credit score powered by TransUnion, a registered Credit Bureau in SA.</string>
     <string name="credit_report_desc">For FREE access to the TransUnion Credit View Tool, you’ll need to create an account using your personal information.
@@ -2020,4 +2020,5 @@
     <string name="view_all_primary_device_title">Primary Device</string>
     <string name="view_all_other_device_title">Other Linked Devices</string>
     <string name="view_all_device_linked_on">Linked %s</string>
+    <string name="payment_options_label">Payment Options</string>
 </resources>

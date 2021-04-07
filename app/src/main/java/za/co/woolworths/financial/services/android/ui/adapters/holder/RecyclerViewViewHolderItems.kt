@@ -44,6 +44,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setProductName(productList: ProductList?) = with(itemView) {
+        tvProductName.maxLines = 3
+        tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
     }
 
@@ -58,19 +60,18 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 }
                 when (i) {
                     0 -> {
-                        onlinePromotionalTextView1?.ellipsize = TextUtils.TruncateAt.END
-                        if (productList?.promotionsList.size >= 2)
-                            onlinePromotionalTextView1?.maxLines = 1
-                        else
-                            onlinePromotionalTextView1?.maxLines = 2
                         onlinePromotionalTextView1?.visibility = VISIBLE
+                        val promotionsListCount = productList?.promotionsList.size
                         onlinePromotionalTextView1?.text = Html.fromHtml(editedPromotionalText)
-                        if (productList?.promotionsList.size == 1)
+                        if (promotionsListCount == 1) {
+                            onlinePromotionalTextView1?.maxLines = 2
                             onlinePromotionalTextView2?.text = ""
+                            onlinePromotionalTextView2?.visibility = GONE
+                        }
+                        else
+                            onlinePromotionalTextView1?.maxLines = 1
                     }
                     1 -> {
-                        onlinePromotionalTextView2?.ellipsize = TextUtils.TruncateAt.END
-                        onlinePromotionalTextView2?.maxLines = 1
                         onlinePromotionalTextView2?.visibility = VISIBLE
                         onlinePromotionalTextView2?.text = Html.fromHtml(editedPromotionalText)
                     }
@@ -83,7 +84,14 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setProductVariant(productList: ProductList?) = with(itemView) {
-        productVariant?.text = productList?.productVariants ?: ""
+        val productVarientName = productList?.productVariants ?: ""
+        if (!TextUtils.isEmpty(productVarientName)) {
+            productVariantTextView?.visibility = VISIBLE
+            productVariantTextView?.text = productVarientName
+        } else {
+            productVariantTextView?.visibility = GONE
+            productVariantTextView?.text = ""
+        }
     }
 
     private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
