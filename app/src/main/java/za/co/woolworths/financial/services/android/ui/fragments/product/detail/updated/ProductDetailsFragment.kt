@@ -102,6 +102,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var EDIT_LOCATION_LOGIN_REQUEST = 2020
     private var HTTP_EXPECTATION_FAILED_417: String = "417"
     private var isOutOfStock_502 = false
+    private var isOutOfStockFragmentAdded = false
 
 
     companion object {
@@ -148,6 +149,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         closePage.setOnClickListener { activity?.onBackPressed() }
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
+        isOutOfStockFragmentAdded = false
         configureDefaultUI()
     }
 
@@ -1321,16 +1323,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductOutOfStock() {
-        activity?.apply {
-            getDeliveryLocation().let {
-                val suburbName = when (it) {
-                    is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
-                    is QuickShopDefaultValues -> it.suburb.name
-                    else -> ""
+        if (!isOutOfStockFragmentAdded) {
+            isOutOfStockFragmentAdded = true
+            activity?.apply {
+                getDeliveryLocation().let {
+                    val suburbName = when (it) {
+                        is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
+                        is QuickShopDefaultValues -> it.suburb.name
+                        else -> ""
+                    }
+                    val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
+                    OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
+                    updateAddToCartButtonForSelectedSKU()
                 }
-                val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
-                OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
-                updateAddToCartButtonForSelectedSKU()
             }
         }
     }
