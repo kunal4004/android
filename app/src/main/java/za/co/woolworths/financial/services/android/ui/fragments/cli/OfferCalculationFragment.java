@@ -123,10 +123,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			view = inflater.inflate(R.layout.offer_calculation_fragment, container, false);
 			latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		}
-		if(getArguments() != null && getArguments().getSerializable(CLIPhase2Activity.MARITAL_STATUS) != null &&
-		getArguments().getSerializable(CLIPhase2Activity.MARITAL_STATUS) instanceof  MaritalStatus) {
-			maritalStatus = (MaritalStatus) getArguments().getSerializable(CLIPhase2Activity.MARITAL_STATUS);
-		}
 		return view;
 	}
 
@@ -134,6 +130,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		if (savedInstanceState == null && !mAlreadyLoaded) {
+			Activity activity = getActivity();
+			if (activity != null)
+				maritalStatus = ((CLIPhase2Activity) activity).getMaritalStatus();
 			mAlreadyLoaded = true;
 			loadState = new LoadState();
 			try {
@@ -143,6 +142,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 			woolworthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 			mGlobalState = woolworthsApplication.getWGlobalState();
+
 			init(view);
 			seekBar();
 			Bundle bundle = this.getArguments();
@@ -162,7 +162,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				}
 				if (expenseDetail != null) {
 					mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
-					Activity activity = getActivity();
 					if (activity instanceof CLIPhase2Activity) {
 						mEventStatus = ((CLIPhase2Activity) activity).getEventStatus();
 						if (mEventStatus == null) {
