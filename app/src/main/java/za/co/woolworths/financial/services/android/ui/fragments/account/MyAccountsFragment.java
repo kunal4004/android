@@ -504,8 +504,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         }
 
-        FirebaseAnalyticsUserProperty.setUserPropertiesForCardProductOfferings(accounts);
-        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCode(accounts);
+        FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
+        FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode(accounts);
 
         //hide content for unavailable products
         boolean sc = true, cc = true, pl = true;
@@ -945,7 +945,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 hideView(retryStoreCardLinearLayout);
                                 showStoreCardContent(account);
                                 //set  Firebase user property when retried for specific product
-                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
 
                             }
                             break;
@@ -999,7 +1001,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 hideView(retryPersonalLoanLinearLayout);
                                 showPersonalLoanContent(account);
                                 //set  Firebase user property when retried for specific product
-                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
                             }
                             break;
 
@@ -1051,7 +1055,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 hideView(retryCreditCardLinearLayout);
                                 showCreditCardContent(account);
                                 //set  Firebase user property when retried for specific product
-                                FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
                             }
                             break;
 
@@ -1127,6 +1133,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 case HTTP_EXPECTATION_FAILED_502:
                 case HTTP_OK:
                     mAccountsHashMap = accountsHashMap;
+                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
+                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
                     if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {

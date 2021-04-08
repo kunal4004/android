@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
-class FirebaseManagerAnalyticsProperties {
+open class FirebaseManagerAnalyticsProperties {
     companion object {
 
         const val WTODAYMENU = "wtodaymenu"
@@ -250,7 +250,12 @@ class FirebaseManagerAnalyticsProperties {
             const val SC_ACCOUNT_STATE = "sc_account_dc_state"
             const val CC_ACCOUNT_STATE = "cc_account_dc_state"
             const val PL_ACCOUNT_STATE = "pl_account_dc_state"
-
+            const val SC_PAYMENT_DUE_DATE = "sc_payment_due_date"
+            const val CC_PAYMENT_DUE_DATE = "cc_payment_due_date"
+            const val PL_PAYMENT_DUE_DATE = "pl_payment_due_date"
+            const val SC_DEBIT_ORDER = "sc_debit_order"
+            const val CC_DEBIT_ORDER = "cc_debit_order"
+            const val PL_DEBIT_ORDER = "pl_debit_order"
         }
     }
 
