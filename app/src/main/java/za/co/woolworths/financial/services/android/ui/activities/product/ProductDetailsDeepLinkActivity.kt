@@ -91,7 +91,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
         runOnUiThread {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
     }
 
