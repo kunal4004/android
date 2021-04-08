@@ -54,8 +54,8 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
         setMaritalStatusPicker(0)
 
         //Set Listeners
-        cli_marital_status_next.setOnClickListener(this)
-        cli_marital_status_agreement_check.setOnClickListener(this)
+        cli_marital_status_next?.setOnClickListener(this)
+        cli_marital_status_agreement_check?.setOnClickListener(this)
         cli_marital_status_selection?.setOnClickListener(this)
         cli_marital_status_picker_done?.setOnClickListener(this)
         cli_marital_status_picker?.onItemSelectedListener = this
@@ -108,9 +108,9 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
 
                 val slideDownAnimation: Animation = AnimationUtils.loadAnimation(context,
                         R.anim.slide_down_anim)
-                cli_marital_status_picker_container.startAnimation(slideDownAnimation)
+                cli_marital_status_picker_container?.startAnimation(slideDownAnimation)
 
-                cli_marital_status_picker_container.visibility = View.GONE
+                cli_marital_status_picker_container?.visibility = View.GONE
 
                 cli_marital_status_agreement_container?.visibility = if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
                 cli_marital_status_agreement_container?.visibility = if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
