@@ -518,7 +518,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         if (addresses.isNotEmpty()) {
             location = addresses[0].locality + ", " + addresses[0].countryName
         }
-        Log.e(TAG, "address >> $addresses")
         return location
     }
 
