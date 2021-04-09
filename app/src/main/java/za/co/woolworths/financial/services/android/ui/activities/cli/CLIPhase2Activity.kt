@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.cli.SupplyIncomeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.cli.*
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface
@@ -334,5 +335,9 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
 
     override fun setMaritalStatus(maritalStatus: MaritalStatus) {
         this.maritalStatus = maritalStatus
+    }
+
+    override fun getMaritalStatus(): MaritalStatus {
+        return maritalStatus ?: MaritalStatus(0,bindString(R.string.please_select))
     }
 }
