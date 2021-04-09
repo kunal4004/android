@@ -464,7 +464,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             return
                         }
                         showDeviceLinked()
-                        Utils.saveLinkedDeviceId(linkedDeviceResponse.deviceIdentityToken, linkedDeviceResponse.deviceIdentityId)
+//                        Utils.saveLinkedDeviceId(linkedDeviceResponse.deviceIdentityToken, linkedDeviceResponse.deviceIdentityId)
                         setFragmentResult("linkDevice", bundleOf(
                                 "isLinked" to true
                         ))

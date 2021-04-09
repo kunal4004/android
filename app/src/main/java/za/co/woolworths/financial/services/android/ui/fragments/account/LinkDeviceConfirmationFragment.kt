@@ -69,7 +69,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     companion object {
-        private const val TAG = "LinkDeviceConfirmationF"
+        private const val TAG = "LinkDeviceConfirmationFragment"
     }
 
     override fun onResume() {
