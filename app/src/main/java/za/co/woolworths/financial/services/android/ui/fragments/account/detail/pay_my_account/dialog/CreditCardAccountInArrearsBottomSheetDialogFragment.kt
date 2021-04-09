@@ -37,7 +37,7 @@ class CreditCardAccountInArrearsBottomSheetDialogFragment : WBottomSheetDialogFr
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue -> bindString(R.string.payment_options_desc, Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))) }
+        accountInArrearsDescriptionTextView?.text = payMyAccountViewModel.getCardDetail()?.account?.second?.totalAmountDue?.let { totalAmountDue -> bindString(R.string.payment_options_desc, Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue))) }
         paymentOptionButton?.apply {
             setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
