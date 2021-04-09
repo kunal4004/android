@@ -147,7 +147,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
 
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tvDescription"
                 style="@style/take_photo_document_desc_style"
                 android:text="@string/biometrics_description"

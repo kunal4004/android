@@ -251,38 +251,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-/*
-    private fun checkLocationSettings() {
-        activity?.apply {
-            locationRequest?.let {
-                val builder = LocationSettingsRequest.Builder()
-                        .addLocationRequest(it)
-                val client: SettingsClient = LocationServices.getSettingsClient(this)
-                val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-                task.addOnSuccessListener {
-                    // All location settings are satisfied. The client can initialize
-                    // location requests here.
-                    // ...
-                    startLocationUpdates()
-                }
-
-                task.addOnFailureListener { exception ->
-                    if (exception is ResolvableApiException) {
-                        // Location settings are not satisfied, but this can be fixed
-                        // by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            exception.startResolutionForResult(this,
-                                    REQUEST_CHECK_SETTINGS)
-                        } catch (sendEx: IntentSender.SendIntentException) {
-                            // Ignore the error.
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 
     fun createLocationRequest(): LocationRequest? {
         return LocationRequest.create().apply {
@@ -328,7 +296,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
                 when (retrieveOTPResponse?.httpCode) {
-                    200 -> {
+                    AppConstant.HTTP_OK -> {
 
                         if (!isAdded) {
                             return
@@ -346,7 +314,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }, AppConstant.DELAY_200_MS)
                         }
                     }
-                    440 ->
+                    AppConstant.HTTP_SESSION_TIMEOUT_440 ->
                         activity?.apply {
                             if (!isFinishing) {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, retrieveOTPResponse.response?.stsParams, this)
@@ -383,14 +351,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
                 when (retrieveOTPResponse?.httpCode) {
-                    200 -> {
+                    AppConstant.HTTP_OK -> {
                         if (!isAdded) {
                             return
                         }
                         isOTPValidated = true
                         callLinkingDeviceAPI()
                     }
-                    440 ->
+                    AppConstant.HTTP_SESSION_TIMEOUT_440 ->
                         activity?.apply {
                             if (!isFinishing) {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, retrieveOTPResponse.response?.stsParams, this)
@@ -460,7 +428,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             override fun onSuccess(linkedDeviceResponse: LinkedDeviceResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
                 when (linkedDeviceResponse?.httpCode) {
-                    "201" -> {
+                    AppConstant.HTTP_OK_201.toString() -> {
                         if (!isAdded) {
                             return
                         }
@@ -489,7 +457,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         }, AppConstant.DELAY_1500_MS)
 
                     }
-                    "440" ->
+                    AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
                         activity?.apply {
                             if (!isFinishing) {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, linkedDeviceResponse.response.stsParams, this)
@@ -580,25 +548,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
         }
     }
-
-    //Not asking for Location permission so commenting the code if needed.
-   /* override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == REQUEST_CODE_FINE_GPS) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.isNotEmpty()
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                when (requestCode) {
-                    REQUEST_CODE_FINE_GPS -> {
-                        Log.e(TAG, "onRequestPermissionsResult >> Permission granted")
-                        callLinkingDeviceAPI()
-                    }
-                }
-            } else {
-                Log.e(TAG, "onRequestPermissionsResult >> Permission denied")
-                callLinkingDeviceAPI()
-            }
-        }
-    }*/
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

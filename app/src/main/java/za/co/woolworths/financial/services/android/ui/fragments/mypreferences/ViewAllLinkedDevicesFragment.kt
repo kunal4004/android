@@ -62,13 +62,6 @@ class ViewAllLinkedDevicesFragment : Fragment() {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() =
-                ViewAllLinkedDevicesFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
-
         const val DEVICE_LIST = "deviceList"
     }
 }

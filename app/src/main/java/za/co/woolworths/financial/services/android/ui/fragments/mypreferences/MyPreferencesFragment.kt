@@ -301,12 +301,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() =
-                MyPreferencesFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
 
         private const val TAG = "MyPreferencesFragment"
         const val LOCK_REQUEST_CODE_TO_ENABLE = 222
