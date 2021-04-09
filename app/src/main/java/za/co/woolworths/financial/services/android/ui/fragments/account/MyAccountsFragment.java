@@ -953,16 +953,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (WoolworthsApplication.getInstance() != null) {
-
-                                    if (!Utils.getLinkDeviceConfirmationShown()) {
-                                        navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
-                                    } else {
-                                        hideView(retryStoreCardLinearLayout);
-                                        showStoreCardContent(account);
-                                        //set  Firebase user property when retried for specific product
-                                        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
-                                    }
+                                if (!Utils.getLinkDeviceConfirmationShown()) {
+                                    navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
+                                } else {
+                                    hideView(retryStoreCardLinearLayout);
+                                    showStoreCardContent(account);
+                                    //set  Firebase user property when retried for specific product
+                                    FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
                                 }
                             }
                             break;

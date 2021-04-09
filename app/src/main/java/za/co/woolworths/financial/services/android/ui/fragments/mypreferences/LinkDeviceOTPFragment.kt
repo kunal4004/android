@@ -190,13 +190,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() =
-                LinkDeviceOTPFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
-
         private const val TAG = "LinkDeviceOTPFragment"
         private const val OTP_CALL_CENTER = "CALL CENTER"
     }

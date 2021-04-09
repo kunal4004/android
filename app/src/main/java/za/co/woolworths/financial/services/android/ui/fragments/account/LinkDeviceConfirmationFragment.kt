@@ -68,13 +68,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() =
-                LinkDeviceConfirmationFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
-
         private const val TAG = "LinkDeviceConfirmationF"
     }
 

@@ -14,11 +14,6 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class UnlinkDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -33,15 +28,6 @@ class UnlinkDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnCli
             AnimationUtilExtension.animateViewPushDown(it)
         }
         unlinkDeviceContinue.setOnClickListener(this)
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-                UnlinkDeviceBottomSheetFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
     }
 
     override fun onClick(v: View?) {
