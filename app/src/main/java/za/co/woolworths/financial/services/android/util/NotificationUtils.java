@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
@@ -100,6 +101,7 @@ public class NotificationUtils {
         device.appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().getApplicationContext());
         Utils.setToken(token);
         device.pushNotificationToken = token;
+        device.deviceIdentityId = AppInstanceObject.get().getCurrentUserObject().linkedDeviceIdentityId;
 
         //Don't update token if pushNotificationToken or appInstanceID NULL
         if(device.appInstanceId == null || device.pushNotificationToken==null)

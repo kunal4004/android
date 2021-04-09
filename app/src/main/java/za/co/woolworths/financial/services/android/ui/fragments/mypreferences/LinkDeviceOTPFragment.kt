@@ -39,6 +39,7 @@ import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
@@ -464,7 +465,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             return
                         }
                         showDeviceLinked()
-//                        Utils.saveLinkedDeviceId(linkedDeviceResponse.deviceIdentityToken, linkedDeviceResponse.deviceIdentityId)
+                        linkedDeviceResponse.deviceIdentityId?.let { saveDeviceId(it) }
                         setFragmentResult("linkDevice", bundleOf(
                                 "isLinked" to true
                         ))
@@ -519,6 +520,13 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             location = addresses[0].locality + ", " + addresses[0].countryName
         }
         return location
+    }
+
+    private fun saveDeviceId(deviceIdentityId: Long) {
+        if (deviceIdentityId < 0) return
+        val currentUserObject = AppInstanceObject.get().currentUserObject
+        currentUserObject.linkedDeviceIdentityId = deviceIdentityId
+        currentUserObject.save()
     }
 
     private fun showDeviceLinked() {
