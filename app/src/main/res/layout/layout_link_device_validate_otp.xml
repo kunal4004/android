@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/enterOTPTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,12 +14,11 @@
         android:text="@string/enter_otp_title"
         android:textColor="@color/color_222222"
         android:textSize="@dimen/twenty_sp"
-        app:WTextView_font="medium_bold"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/enterOTPSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +28,6 @@
         android:paddingEnd="@dimen/thirty_two_dp"
         android:textColor="@color/color_7f7f7f"
         android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constrainedWidth="true"
         app:layout_constraintTop_toBottomOf="@id/enterOTPTitle" />
 
@@ -131,36 +129,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewOTPBackground"
         tools:text="@string/icr_wrong_otp_error" />
-
-    <ImageView
-        android:id="@+id/buttonNext"
-        android:layout_width="@dimen/store_card_next_button_size_48_dp"
-        android:layout_height="@dimen/store_card_next_button_size_48_dp"
-        android:contentDescription="@string/placeholder"
-        android:src="@drawable/next_button_inactive"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/didNotReceiveOTPTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="start|center"
-        android:letterSpacing="0.015"
-        android:text="@string/did_not_receive_title"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/store_card_text_size_15_sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@id/buttonNext"
-        app:layout_constraintEnd_toStartOf="@id/buttonNext"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/buttonNext"
-        tools:ignore="UnusedAttribute"
-        tools:text="@string/did_not_receive_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

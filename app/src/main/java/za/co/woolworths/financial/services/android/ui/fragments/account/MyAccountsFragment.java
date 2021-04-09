@@ -46,7 +46,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract;
@@ -72,6 +74,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.CreditCard
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus;
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
@@ -93,6 +97,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.c
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.SetUpDeliveryNowDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -154,6 +159,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private FrameLayout imgPersonalLoanCardContainer;
     private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
     public static final int RESULT_CODE_LINK_DEVICE = 5432;
+    public static final int RESULT_CODE_DEVICE_LINKED = 5431;
 
     private final List<String> unavailableAccounts;
     private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
@@ -203,6 +209,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryStoreCardLinearLayout;
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
+    private ArrayList<UserDevice> deviceList;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -364,11 +371,38 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideToolbar();
             setToolbarBackgroundColor(R.color.white);
             messageCounterRequest();
+        } else {
+            callLinkedDevicesAPI();
         }
 
         uniqueIdentifiersForAccount();
 
         parseDeepLinkData();
+    }
+
+    private void callLinkedDevicesAPI() {
+        Activity activity = getActivity();
+        if (activity instanceof BottomNavigationActivity) {
+            BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+            Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
+            if ((bottomNavigationActivity.getCurrentSection() == R.id.navigate_to_account)
+                    && (currentFragment instanceof MyAccountsFragment)) {
+                if (SessionUtilities.getInstance().isUserAuthenticated()) {
+                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices();
+                    mViewAllLinkedDevices.enqueue(new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
+                        @Override
+                        public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+                            //Do Nothing
+                        }
+
+                        @Override
+                        public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
+                            deviceList = response.getUserDevices();
+                        }
+                    }, ViewAllLinkedDeviceResponse.class));
+                }
+            }
+        }
     }
 
     private void validateDeepLinkData() {
@@ -418,6 +452,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         this.mAccountResponse = null;
+        this.deviceList = new ArrayList(0);
         this.hideAllLayers();
         this.mAccountsHashMap.clear();
         this.unavailableAccounts.clear();
@@ -435,6 +470,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             } else {
                 this.configureSignInNoC2ID();
             }
+            callLinkedDevicesAPI();
         } else {
             if (getActivity() == null) return;
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
@@ -904,7 +940,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             case R.id.rlMyPreferences:
                 Intent myPreferences = new Intent(getActivity(), MyPreferencesActivity.class);
                 myPreferences.putExtra(IS_NON_WFS_USER, unavailableAccounts != null && unavailableAccounts.size() == 3);
-                startActivity(myPreferences);
+                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, deviceList);
+                activity.startActivityForResult(myPreferences, RESULT_CODE_DEVICE_LINKED);
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.imRefreshAccount:
@@ -955,7 +992,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                                 if (WoolworthsApplication.getInstance() != null) {
 
-                                    if (!Utils.getLinkDeviceConfirmationShown()) {
+                                    if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
                                         hideView(retryStoreCardLinearLayout);
@@ -992,12 +1029,23 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
             }
         }
+    }
+
+    private boolean verifyAppInstanceId() {
+        boolean isLinked = false;
+        for (UserDevice device : deviceList) {
+            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID(getContext()))) {
+                isLinked = true;
+                break;
+            }
+        }
+        return isLinked;
     }
 
     private void navigateToLinkDeviceConfirmation(ApplyNowState applyNowState) {
@@ -1027,7 +1075,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (!Utils.getLinkDeviceConfirmationShown()) {
+                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
                                 } else {
                                     hideView(retryPersonalLoanLinearLayout);
@@ -1062,7 +1110,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
@@ -1088,7 +1136,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
-                                if (!Utils.getLinkDeviceConfirmationShown()) {
+                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
                                 } else {
                                     hideView(retryCreditCardLinearLayout);
@@ -1124,7 +1172,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
@@ -1423,6 +1471,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     navigateToLinkedCreditCard();
                     break;
             }
+        } else if (resultCode == RESULT_CODE_DEVICE_LINKED) {
+            callLinkedDevicesAPI();
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             initialize();
             //One time biometricsWalkthrough

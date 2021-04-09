@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
@@ -26,6 +24,8 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment.RESULT_CODE_DEVICE_LINKED
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment.Companion.DEVICE_LIST
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
@@ -37,19 +37,31 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     private var isNonWFSUser: Boolean = true
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
+    private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
             isNonWFSUser = getBoolean(IS_NON_WFS_USER)
+            val list = getSerializable(DEVICE_LIST)
+            if (list is ArrayList<*> && list.isNotEmpty()) {
+                deviceList = list as ArrayList<UserDevice>
+            }
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
+        activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
+
         setFragmentResultListener("linkDevice") { requestKey, bundle ->
             Utils.setLinkConfirmationShown(true)
+            callLinkedDevicesAPI()
+            activity?.apply {
+                setResult(RESULT_CODE_DEVICE_LINKED)
+            }
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_preferences, container, false)
@@ -59,7 +71,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        callLinkedDevicesAPI()
         bindDataWithUI()
     }
 
@@ -70,6 +81,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         auSwitch.setOnTouchListener(this)
         linkDeviceSwitch.setOnClickListener(this)
         retryLinkDeviceLinearLayout?.setOnClickListener(this)
+        viewAllLinkedDevicesRelativeLayout?.setOnClickListener(this)
 
         activity?.apply {
             if (this is MyPreferencesInterface) {
@@ -87,6 +99,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
+        val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
+        updateLinkedDeviceView(isDeviceIdentityIdPresent)
     }
 
     private fun callLinkedDevicesAPI() {
@@ -98,7 +112,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         mViewAllLinkedDevices = OneAppService.getAllLinkedDevices()
         mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
 
-
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 when (response?.httpCode) {
                     200 -> {
@@ -108,6 +121,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         spinningAnimation.cancel()
                         retryLinkDeviceLinearLayout?.visibility = View.GONE
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
+                        deviceList = response?.userDevices
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                     }
                     else -> {
@@ -194,6 +208,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             }
             R.id.retryLinkDeviceLinearLayout -> {
                 callLinkedDevicesAPI()
+            }
+            R.id.viewAllLinkedDevicesRelativeLayout -> {
+                Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
+                        bundleOf(
+                                ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
+                        ))
             }
 
         }
@@ -296,5 +316,11 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         const val SECURITY_INFO_REQUEST_DIALOG = 235
         const val REQUEST_SUBURB_CHANGE = 143
         const val IS_NON_WFS_USER = "isNonWFSUser"
+        const val DEVICE_LIST = "deviceList"
+    }
+
+    override fun onDestroy() {
+        activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
+        super.onDestroy()
     }
 }

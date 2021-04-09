@@ -1988,7 +1988,7 @@
     <string name="please_select">Please Select</string>
 
     <!--  My Preferences - Link Devices -->
-    <string name="my_preferences_linked_devices">Linked Devices</string>
+    <string name="my_preferences_linked_devices">My linked devices</string>
     <string name="my_preferences_linked_devices_desc">Transactions, statements and balance messages will only be sent to your primary device.</string>
     <string name="my_preferences_link_this_device">Link this device</string>
     <string name="unlink_device_title">Are you sure you want to unlink this device from your profile?</string>
@@ -2013,5 +2013,12 @@
     <string name="link_device_this_is_linked">This device is linked</string>
 
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
+
+    <!-- View All Linked Devices -->
+    <string name="view_all_device_title">My Linked Devices</string>
+    <string name="view_all_device_location_n_a">Location N/A</string>
+    <string name="view_all_primary_device_title">Primary Device</string>
+    <string name="view_all_other_device_title">Other Linked Devices</string>
+    <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
 </resources>
