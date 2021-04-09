@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/sendOTPTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,11 +13,10 @@
         android:text="@string/link_device_sending_otp"
         android:textColor="@color/color_222222"
         android:textSize="@dimen/twenty_sp"
-        app:WTextView_font="medium_bold"
         app:layout_constrainedWidth="true"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/sendOTPSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +27,6 @@
         android:text="@string/link_device_sending_otp_desc"
         android:textColor="@color/color_7f7f7f"
         android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constrainedWidth="true"
         app:layout_constraintTop_toBottomOf="@id/sendOTPTitle" />
 
@@ -44,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/sendOTPProcessingReq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,13 +51,12 @@
         android:text="@string/link_device_sending_otp_processing"
         android:textColor="@color/color_222222"
         android:textSize="@dimen/twenty_sp"
-        app:WTextView_font="medium_bold"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linkDeviceProgressBarCircular" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/sendOTPProcessingReqDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,7 +67,6 @@
         android:textAlignment="center"
         android:textColor="@color/color_7f7f7f"
         android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
