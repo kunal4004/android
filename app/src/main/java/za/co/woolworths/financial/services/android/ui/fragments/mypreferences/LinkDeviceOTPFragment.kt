@@ -1,23 +1,35 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Paint
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
@@ -43,6 +55,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
+import java.util.*
 
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
@@ -50,6 +64,21 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
     private var otpMethod: String? = null
+    private var currentLocation: Location? = null
+    private var isOTPValidated: Boolean = false
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val locationRequest = createLocationRequest()
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult?) {
+            locationResult ?: return
+            for (location in locationResult.locations) {
+                this@LinkDeviceOTPFragment.currentLocation = location
+                stopLocationUpdates()
+                callLinkingDeviceAPI()
+                break
+            }
+        }
+    }
 
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
@@ -145,6 +174,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
         setToolbar()
 
+        activity?.apply {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        }
+
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
@@ -190,15 +223,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance() =
-                LinkDeviceOTPFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
-
         private const val TAG = "LinkDeviceOTPFragment"
         private const val OTP_CALL_CENTER = "CALL CENTER"
+//        const val REQUEST_CODE_FINE_GPS = 2938
     }
 
     override fun onClick(v: View?) {
@@ -209,6 +236,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 ))
             }
             R.id.buttonNext -> {
+
                 val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
 
@@ -221,6 +249,70 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 callValidatingOTPAPI(otpNumber)
             }
         }
+    }
+/*
+    private fun checkLocationSettings() {
+        activity?.apply {
+            locationRequest?.let {
+                val builder = LocationSettingsRequest.Builder()
+                        .addLocationRequest(it)
+                val client: SettingsClient = LocationServices.getSettingsClient(this)
+                val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+                task.addOnSuccessListener {
+                    // All location settings are satisfied. The client can initialize
+                    // location requests here.
+                    // ...
+                    startLocationUpdates()
+                }
+
+                task.addOnFailureListener { exception ->
+                    if (exception is ResolvableApiException) {
+                        // Location settings are not satisfied, but this can be fixed
+                        // by showing the user a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            exception.startResolutionForResult(this,
+                                    REQUEST_CHECK_SETTINGS)
+                        } catch (sendEx: IntentSender.SendIntentException) {
+                            // Ignore the error.
+                        }
+                    }
+                }
+            }
+        }
+    }*/
+
+    fun createLocationRequest(): LocationRequest? {
+        return LocationRequest.create().apply {
+            interval = 100
+            fastestInterval = 1000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+    }
+
+    private fun startLocationUpdates() {
+        context?.apply {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
+            fusedLocationClient.requestLocationUpdates(locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper())
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun checkLocationPermission(): Boolean {
+        activity?.apply {
+            return ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+        return false
+    }
+
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
@@ -286,6 +378,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
         showValidatingProcessing()
         linkDeviceOTPScreen?.visibility = View.GONE
+        isOTPValidated = false
         mValidateLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
@@ -294,6 +387,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         if (!isAdded) {
                             return
                         }
+                        isOTPValidated = true
                         callLinkingDeviceAPI()
                     }
                     440 ->
@@ -347,11 +441,19 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     private fun callLinkingDeviceAPI() {
         linkDeviceOTPScreen?.visibility = View.GONE
 
-        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), "", true, Utils.getToken())
-
+        if(!isOTPValidated){
+            return
+        }
         showLinkingDeviceProcessing()
-        linkDeviceOTPScreen?.visibility = View.GONE
+        //Location permission granted but no current location found.
+        if(checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null){
+            startLocationUpdates()
+            return
+        }
 
+        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), getLocationAddress(currentLocation?.latitude, currentLocation?.longitude), true, Utils.getToken())
+
+        linkDeviceOTPScreen?.visibility = View.GONE
         mlinkDeviceReq?.enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
             override fun onSuccess(linkedDeviceResponse: LinkedDeviceResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
@@ -404,6 +506,21 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         }, LinkedDeviceResponse::class.java))
     }
 
+    private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
+
+        var location = ""
+        if (latitude == null || longitude == null) {
+            return location
+        }
+        val gcd = Geocoder(context, Locale.getDefault())
+        val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
+        if (addresses.isNotEmpty()) {
+            location = addresses[0].locality + ", " + addresses[0].countryName
+        }
+        Log.e(TAG, "address >> $addresses")
+        return location
+    }
+
     private fun showDeviceLinked() {
         sendinOTPLayout?.visibility = View.GONE
         linkDeviceOTPScreen?.visibility = View.GONE
@@ -453,6 +570,25 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    //Not asking for Location permission so commenting the code if needed.
+   /* override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_CODE_FINE_GPS) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.isNotEmpty()
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                when (requestCode) {
+                    REQUEST_CODE_FINE_GPS -> {
+                        Log.e(TAG, "onRequestPermissionsResult >> Permission granted")
+                        callLinkingDeviceAPI()
+                    }
+                }
+            } else {
+                Log.e(TAG, "onRequestPermissionsResult >> Permission denied")
+                callLinkingDeviceAPI()
+            }
+        }
+    }*/
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -462,18 +598,20 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             Utils.setLinkConfirmationShown(true)
         }
 
-        if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
-            when (resultCode) {
-                ErrorHandlerActivity.RESULT_RETRY -> {
-                    callLinkingDeviceAPI()
-                }
-                ErrorHandlerActivity.RESULT_CALL_CENTER -> {
-                    Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                    Utils.setLinkConfirmationShown(true)
-                    setFragmentResult("linkDevice", bundleOf(
-                            "isLinked" to false
-                    ))
-                    view?.findNavController()?.navigateUp()
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    ErrorHandlerActivity.RESULT_RETRY -> {
+                        callLinkingDeviceAPI()
+                    }
+                    ErrorHandlerActivity.RESULT_CALL_CENTER -> {
+                        Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
+                        Utils.setLinkConfirmationShown(true)
+                        setFragmentResult("linkDevice", bundleOf(
+                                "isLinked" to false
+                        ))
+                        view?.findNavController()?.navigateUp()
+                    }
                 }
             }
         }

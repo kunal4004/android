@@ -422,8 +422,8 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getLinkDeviceOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethod)
     }
 
-    fun linkDeviceApi(deviceName: String, appInstanceId: String, location: String, primaryDevice: Boolean, firebaseToken: String): Call<LinkedDeviceResponse> {
-        val body = LinkDeviceBody(appInstanceId, "", true, firebaseToken)
+    fun linkDeviceApi(deviceName: String, appInstanceId: String, location: String?, primaryDevice: Boolean, firebaseToken: String): Call<LinkedDeviceResponse> {
+        val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken)
 
         return mApiInterface.linkDeviceApi(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceName, body)
     }
