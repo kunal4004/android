@@ -54,10 +54,9 @@
             <RelativeLayout
                 android:id="@+id/locationSelectedLayout"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:paddingLeft="24dp"
-                android:paddingRight="16dp"
-                android:visibility="visible">
+                android:layout_height="@dimen/seventy_dp"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingRight="@dimen/sixteen_dp">
 
                 <ImageView
                     android:id="@+id/deliverLocationIcon"
@@ -70,7 +69,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="@dimen/sixteen_dp"
                     android:layout_toLeftOf="@+id/editLocation"
                     android:layout_toRightOf="@+id/deliverLocationIcon"
                     android:gravity="center_vertical"
@@ -81,7 +80,7 @@
                         style="@style/style_cart_delivery_to_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
+                        android:layout_marginRight="@dimen/four_dp"
                         android:gravity="center_vertical"
                         android:text="@string/delivery_or_collection" />
 
@@ -90,7 +89,7 @@
                         style="@style/style_cart_delivery_selected"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="16dp"
+                        android:drawablePadding="@dimen/sixteen_dp"
                         android:ellipsize="end"
                         android:gravity="center_vertical"
                         android:singleLine="true"
@@ -103,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="@dimen/twenty_dp"
                     android:src="@drawable/ic_caret_black" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -112,11 +111,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="@dimen/twenty_dp"
                     android:letterSpacing="0.1"
                     android:text="@string/edit"
                     android:textColor="@color/black"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/twelve_sp"
                     android:visibility="invisible"
                     app:WTextView_font="bold" />
             </RelativeLayout>
@@ -126,7 +125,7 @@
             android:id="@+id/biometricsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/sixteen_dp"
             android:background="@color/white"
             android:orientation="vertical">
 
@@ -176,14 +175,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="24dp"
+                    android:layout_marginLeft="@dimen/twenty_four_dp"
                     android:drawableLeft="@drawable/ic_touch_id"
-                    android:drawablePadding="16dp"
+                    android:drawablePadding="@dimen/sixteen_dp"
                     android:gravity="center_vertical"
                     android:lineSpacingExtra="0.4sp"
                     android:text="@string/authenticate_with_touch_id"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/fifteen_sp"
                     app:WTextView_font="myriadpro_regular" />
 
                 <Switch
@@ -192,7 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginRight="@dimen/sixteen_dp"
                     android:theme="@style/SwitchTheme" />
             </RelativeLayout>
         </LinearLayout>
