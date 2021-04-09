@@ -10,9 +10,7 @@ class AppConstant {
 
     companion object {
 
-
         const val WOOLWOORTH_CALL_CENTER_NUMBER: String = "0861 50 20 20"
-
 
         //Delays
         const val DELAY_100_MS: Long = 100

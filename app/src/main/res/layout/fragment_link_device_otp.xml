@@ -40,7 +40,6 @@
 
     <include
         android:id="@+id/linkDeviceOTPScreen"
-        android:visibility="visible"
         layout="@layout/layout_link_device_validate_otp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
