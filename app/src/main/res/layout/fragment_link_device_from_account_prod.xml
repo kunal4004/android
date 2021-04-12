@@ -1,0 +1,123 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/linkDeviceConfirmationScrollLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/thirty_dp"
+            tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.LinkDeviceConfirmationFragment">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/start_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+            <ImageView
+                android:id="@+id/linkDeviceConfirmationHeaderIcon"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/two_hundred_and_fifty_dp"
+                android:scaleType="fitXY"
+                android:layout_marginTop="@dimen/twenty_five_dp"
+                android:src="@drawable/icon_confirmation_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/linkDeviceConfirmationTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/thirty_two_dp"
+                android:fontFamily="@font/futura_semi_bold"
+                android:lineSpacingExtra="@dimen/five_dp"
+                android:paddingEnd="@dimen/thirty_two_dp"
+                android:text="@string/link_device_confirm_title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twenty_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                app:layout_constraintTop_toBottomOf="@id/linkDeviceConfirmationHeaderIcon" />
+
+            <TextView
+                android:id="@+id/linkDeviceConfirmationDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:lineSpacingExtra="@dimen/six_dp"
+                android:paddingEnd="@dimen/thirty_two_dp"
+                android:text="@string/link_device_confirm_desc"
+                android:textColor="@color/color_7f7f7f"
+                android:textSize="@dimen/sixteen_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                app:layout_constraintTop_toBottomOf="@id/linkDeviceConfirmationTitle" />
+
+            <TextView
+                android:id="@+id/linkDeviceConfirmationButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/thirty_dp"
+                android:background="@color/black"
+                android:fontFamily="@font/futura_semi_bold"
+                android:gravity="center"
+                android:letterSpacing="@integer/point_two"
+                android:minHeight="@dimen/fifty_dp"
+                android:text="@string/link_device_confirm_button"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                app:layout_constraintTop_toBottomOf="@id/linkDeviceConfirmationDesc" />
+
+            <TextView
+                android:id="@+id/linkDeviceConfirmationSecurityMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/thirty_two_dp"
+                android:height="@dimen/fourty_dp"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/five_dp"
+                android:paddingHorizontal="@dimen/twenty_dp"
+                android:text="@string/link_device_security_msg"
+                android:textAlignment="center"
+                android:textColor="@color/color_7f7f7f"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline"
+                app:layout_constraintTop_toBottomOf="@id/linkDeviceConfirmationButton" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/linkDeviceResultLayout"
+        layout="@layout/layout_link_device_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+</androidx.constraintlayout.widget.ConstraintLayout>

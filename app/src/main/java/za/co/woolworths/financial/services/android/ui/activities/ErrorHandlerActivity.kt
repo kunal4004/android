@@ -22,10 +22,12 @@ class ErrorHandlerActivity : AppCompatActivity() {
         const val ATM_PIN_LOCKED: Int = 1
         const val PASSCODE_LOCKED: Int = 2
         const val WITH_NO_ACTION: Int = 3
+        const val LINK_DEVICE_FAILED: Int = 4
 
         //RESULT_CODES
         const val RESULT_RETRY: Int = 153
         const val RESULT_RESET_PASSCODE: Int = 155
+        const val RESULT_CALL_CENTER: Int = 156
         //REQUEST_CODES
         const val ERROR_PAGE_REQUEST_CODE: Int = 190
     }
