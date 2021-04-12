@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAccountTransactionHistory
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRe
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.getListOfTransaction
@@ -97,23 +99,33 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     private fun transactionAsyncAPI(productOfferingId: String?) {
         mExecuteTransactionRequest = productOfferingId?.let { id -> getAccountTransactionHistory(id) }
         mExecuteTransactionRequest?.enqueue(CompletionHandler(object : IResponseListener<TransactionHistoryResponse> {
-            override fun onSuccess(transactionHistoryResponse: TransactionHistoryResponse?) {
+            override fun onSuccess(response: TransactionHistoryResponse?) {
                 dismissProgress()
                 if (this@WTransactionsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    when (transactionHistoryResponse?.httpCode) {
+                    when (response?.httpCode) {
                         200 -> {
-                            if (transactionHistoryResponse.transactions.size > 0) {
+                            if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
+                                FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                            }
+
+                            if (response.transactions.size > 0) {
                                 mErrorHandlerView?.hideEmpyState()
-                                setupTransactionRecyclerview(transactionHistoryResponse)
+                                setupTransactionRecyclerview(response)
                             } else {
                                 transactionRecyclerview?.visibility = View.GONE
                                 mErrorHandlerView?.showEmptyState(3)
                             }
                         }
                         440 -> if (!this@WTransactionsActivity.isFinishing) {
-                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, transactionHistoryResponse.response.stsParams, this@WTransactionsActivity)
+                            if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
+                                FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                            }
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams, this@WTransactionsActivity)
                         }
-                        else -> transactionHistoryResponse?.response?.desc?.let { desc ->
+                        else -> response?.response?.desc?.let { desc ->
+                            if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
+                                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                            }
                             try {
                                 val accountsErrorHandlerFragment = AccountsErrorHandlerFragment.newInstance(desc)
                                 accountsErrorHandlerFragment.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName)
@@ -127,6 +139,9 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onFailure(error: Throwable?) {
                 if (this@WTransactionsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
+                        FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                    }
                     error?.message?.let { errorMessage -> networkFailureHandler(errorMessage) }
                 }
             }
