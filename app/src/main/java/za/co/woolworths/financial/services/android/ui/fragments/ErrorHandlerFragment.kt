@@ -90,13 +90,27 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorDescription.text = getString(R.string.absa_common_error_message)
                 actionsLayout.visibility = View.INVISIBLE
             }
+            ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                errorLogo.setImageResource(R.drawable.ic_error_icon)
+                errorTitle.text = getString(R.string.link_device_error_title)
+                errorDescription?.text = getString(R.string.link_device_error_desc)
+                actionButton.text = getString(R.string.retry)
+                cancelButton.text = getString(R.string.need_help_call_the_center)
+            }
         }
     }
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.cancelButton -> {
-                setResultBAck(Activity.RESULT_CANCELED)
+                when (errorType) {
+                    ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                        setResultBAck(ErrorHandlerActivity.RESULT_CALL_CENTER)
+                    }
+                    else -> {
+                        setResultBAck(Activity.RESULT_CANCELED)
+                    }
+                }
             }
             R.id.actionButton -> {
                 when (errorType) {
@@ -109,7 +123,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     ErrorHandlerActivity.COMMON -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
-
+                    ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                        setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
+                    }
                 }
             }
         }
