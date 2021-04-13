@@ -12,7 +12,7 @@ android {
     def major = "7"
     def minor = "9"
     def fix = "0"
-    def jobNumber = 3132
+    def jobNumber = 3133
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -254,7 +254,9 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
-
+    // huawei
+    implementation 'com.huawei.hms:location:4.0.3.301'
+    
     // Power Mockito
     testImplementation "org.powermock:powermock-api-mockito2:2.0.0-beta.5"
     testImplementation "org.powermock:powermock-module-junit4:2.0.0-beta.5"

@@ -319,7 +319,7 @@ object OneAppService : RetrofitConfig() {
 
     fun getStoreCards(storeCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse> {
         val lastSavedLocation = Utils.getLastSavedLocation()
-        return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),lastSavedLocation.latitude, lastSavedLocation.longitude, storeCardsRequestBody)
+        return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),lastSavedLocation?.latitude, lastSavedLocation?.longitude, storeCardsRequestBody)
     }
 
     fun getLinkNewCardOTP(otpMethodType: OTPMethodType): Call<LinkNewCardOTP> {

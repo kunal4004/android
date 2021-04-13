@@ -1,25 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 
-import android.Manifest
 import android.annotation.TargetApi
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.annotation.NonNull
-import androidx.lifecycle.lifecycleScope
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -32,14 +25,15 @@ import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRe
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment.Companion.REQUEST_PERMISSION_LOCATION
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.location.*
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     private var accountStoreCardCallWasCompleted = false
+    private lateinit var locator: Locator
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,7 +51,39 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
         listeners()
 
+        locator = Locator(activity as AppCompatActivity)
     }
+
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
+            }
+        }
+    }
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        when (permissionEvent.event) {
+            EventType.LOCATION_PERMISSION_GRANTED -> {
+                Logger.logDebug("Permission granted")
+            }
+            EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
+                Logger.logDebug("Permission NOT granted")
+                Utils.saveLastLocation(null, activity)
+                navigateToGetStoreCards()
+            }
+            EventType.LOCATION_DISABLED_ON_DEVICE -> {
+                Logger.logDebug("Permission NOT granted permanently")
+            }
+        }
+    }
+
+    private fun handleLocationEvent(locationEvent: Event.Location) {
+        Utils.saveLastLocation(locationEvent.locationData, context)
+        navigateToGetStoreCards()
+    }
+
 
     private fun listeners() {
         includeManageMyCard?.apply {
@@ -92,17 +118,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     private fun navigateToGetStoreCard() {
         if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInDelinquencyMoreThan6Months() == true) return
-        lifecycleScope.launch {
-            delay(100L)
-            FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
-                override fun onLocationChange(location: Location?) {
-                    activity?.let { context -> Utils.saveLastLocation(location, context) }
-                    FuseLocationAPISingleton.stopLocationUpdate()
-                    navigateToGetStoreCards()
-                }
-            })
-
-        }
         checkForLocationPermission()
     }
 
@@ -225,23 +240,12 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE) {
-            navigateToGetStoreCard()
+            checkForLocationPermission()
         }
         if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
             activity?.runOnUiThread {
-                checkForLocationPermission()
+                startLocationDiscoveryProcess()
             }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                FuseLocationAPISingleton.startLocationUpdate()
-            } else {
-                KotlinUtils.openApplicationSettings(EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE, activity)
-            }
-            else -> return
         }
     }
 
@@ -251,13 +255,13 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
             if (!Utils.isLocationEnabled(this)) {
-                val enableLocationSettingsFragment: EnableLocationSettingsFragment? = EnableLocationSettingsFragment()
+                val enableLocationSettingsFragment = EnableLocationSettingsFragment()
                 enableLocationSettingsFragment?.show(supportFragmentManager, EnableLocationSettingsFragment::class.java.simpleName)
                 return@apply
             }
 
             // If location services enabled, extract latitude and longitude
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
+            startLocationDiscoveryProcess()
         }
     }
 

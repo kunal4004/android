@@ -168,11 +168,15 @@ public class Utils {
 
 		try {
 			JSONObject locationJson = new JSONObject();
+			String location = null;
 
-			locationJson.put("lat", loc.getLatitude());
-			locationJson.put("lon", loc.getLongitude());
+			if (loc !=null) {
+				locationJson.put("lat", loc.getLatitude());
+				locationJson.put("lon", loc.getLongitude());
+				location = locationJson.toString();
+			}
 
-			sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
+			sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, location);
 		} catch (JSONException e) {
 		}
 

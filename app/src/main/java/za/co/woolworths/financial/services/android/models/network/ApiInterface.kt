@@ -1078,8 +1078,8 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Header("latitude") latitude: Double,
-            @Header("longitude") longitude: Double,
+            @Header("latitude") latitude: Double?,
+            @Header("longitude") longitude: Double?,
             @Body getStoreCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
