@@ -120,10 +120,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
         //Disable shimmer for non store card
         if (mCardPresenterImpl?.isProductCodeStoreCard() != true) {
-            cardDetailImageShimmerFrameLayout?.setShimmer(null)
-            myCardTextViewShimmerFrameLayout?.setShimmer(null)
-            tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+            disableShimmer()
         }
+    }
+
+    fun disableShimmer() {
+        cardDetailImageShimmerFrameLayout?.setShimmer(null)
+        myCardTextViewShimmerFrameLayout?.setShimmer(null)
+        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
     }
 
     private fun autoConnectToNetwork() {
@@ -149,8 +153,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showStoreCardProgress() {
-        loadStoreCardProgressBar?.visibility = VISIBLE
-
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
         myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
@@ -170,7 +172,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     @SuppressLint("DefaultLocale")
     override fun hideStoreCardProgress() {
-        loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         manageCardGroup?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.stopShimmer()

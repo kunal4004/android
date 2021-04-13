@@ -39,6 +39,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         super.onViewCreated(view, savedInstanceState)
         cardDetailImageView?.setImageResource(R.drawable.w_store_card)
 
+        disableShimmer()
         autoConnectListener()
 
         if (mCardPresenterImpl?.isDebitOrderActive() == VISIBLE) {
@@ -270,7 +271,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         mCardPresenterImpl?.apply {
             when (v?.id) {
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
-                    if (loadStoreCardProgressBar?.visibility == VISIBLE) return
+                    if (cardDetailImageShimmerFrameLayout?.isShimmerStarted == true) return
                     cancelRetrofitRequest(mOfferActiveCall)
 
                     when (manageMyCardTextView?.text?.toString()) {
