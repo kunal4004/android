@@ -20,6 +20,7 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
@@ -27,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsA
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.NONCE
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.Utils
@@ -131,6 +133,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         }
 
                         override fun onFailure(errorMessage: String) {
+                            FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                             displayLoginProgress(false)
                             failureHandler(errorMessage)
                         }
@@ -138,7 +141,12 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         override fun onFatalError(error: VolleyError?) {
                             displayLoginProgress(false)
                             clearPin()
-                            if (error is NoConnectionError) ErrorHandlerView(activity).showToast() else showErrorScreen(ErrorHandlerActivity.COMMON)
+                            if (error is NoConnectionError){
+                                ErrorHandlerView(activity).showToast()
+                                FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+                            }else{
+                                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+                                showErrorScreen(ErrorHandlerActivity.COMMON)}
                         }
                     })
         }
@@ -167,12 +175,15 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         // message?.let { tapAndNavigateBackErrorDialog(it) }
         when {
             message?.trim()?.contains("authentication failed", true)!! -> {
+                FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
             }
             message.trim().contains("credential revoked", true) -> {
+                FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
             }
             else -> {
+                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 showErrorScreen(ErrorHandlerActivity.COMMON, message)
             }
         }
