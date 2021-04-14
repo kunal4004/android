@@ -431,4 +431,10 @@ object OneAppService : RetrofitConfig() {
     fun getAllLinkedDevices(): Call<ViewAllLinkedDeviceResponse> {
         return mApiInterface.getAllLinkedDevices(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
+
+    fun deleteOrUnlinkDevice(deviceIdentityId: String): Call<DeleteMessageResponse> {
+        return mApiInterface.deleteOrUnlinkDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceIdentityId)
+    }
+
+
 }
