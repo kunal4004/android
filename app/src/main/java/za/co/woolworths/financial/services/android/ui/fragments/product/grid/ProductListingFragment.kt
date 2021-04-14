@@ -91,7 +91,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
-    private var localSuburbId: String? = null
     private var navigationState = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -866,6 +865,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     companion object {
+        private var localSuburbId: String? = null
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
