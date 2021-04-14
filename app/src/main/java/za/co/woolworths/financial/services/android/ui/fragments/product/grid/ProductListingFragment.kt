@@ -129,6 +129,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             startProductRequest()
             setUniqueIds()
             localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+            localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
         }
     }
 
@@ -143,7 +144,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         super.onResume()
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
         val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-        if (!(localSuburbId.equals(currentSuburbId))) {
+        val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+        if (currentSuburbId == null && localSuburbId ==null && !(currentStoreId?.equals(localStoreId))!!){
+            localStoreId = currentStoreId
+            updateProductRequestBodyForRefinement(navigationState)
+            reloadProductsWithSortAndFilter()
+        }
+        else if (!(localSuburbId.equals(currentSuburbId))) {
             localSuburbId = currentSuburbId
             updateProductRequestBodyForRefinement(navigationState)
             reloadProductsWithSortAndFilter()
@@ -866,6 +873,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     companion object {
         private var localSuburbId: String? = null
+        private var localStoreId: String? = null
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
