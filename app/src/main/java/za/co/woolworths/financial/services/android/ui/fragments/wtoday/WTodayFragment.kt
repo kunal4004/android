@@ -149,9 +149,8 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
 
     override fun sendEventToFirebase(eventName: String, parameter: String) {
         val parameterName = eventName.replace("wtoday_", "")
-        //Log.i("Firebase Event" ,parameterName +"-----"+parameter)
         val arguments = HashMap<String, String>()
-        arguments.put(parameter, parameterName)
+        arguments.put(parameterName, parameter)
         Utils.triggerFireBaseEvents(eventName, arguments)
     }
 
