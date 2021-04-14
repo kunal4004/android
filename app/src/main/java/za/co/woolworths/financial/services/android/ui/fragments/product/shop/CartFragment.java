@@ -1102,6 +1102,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                     setDeliveryLocation(lastDeliveryLocation);
                                     //Utils.sendBus(new CartState(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name));
                                 }
+                                loadShoppingCart(false);
                                 loadShoppingCartAndSetDeliveryLocation();
                             }
 
@@ -1110,23 +1111,28 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 Activity activity = getActivity();
                                 if (activity == null || error.getMessage() == null) return;
 
-                                activity.runOnUiThread(() -> loadShoppingCartAndSetDeliveryLocation());
+                                activity.runOnUiThread(() -> {
+                                            loadShoppingCart(false);
+                                            loadShoppingCartAndSetDeliveryLocation();
+                                        }
+                                );
 
                             }
                         }, SetDeliveryLocationSuburbResponse.class));
                     } else {
                         // Fallback if there is no cached location
+                        loadShoppingCart(false);
                         loadShoppingCartAndSetDeliveryLocation();
                     }
                 } else {
                     // Checkout was cancelled
+                    loadShoppingCart(false);
                     loadShoppingCartAndSetDeliveryLocation();
                 }
             } else {
                 getActivity().onBackPressed();
             }
-        }
-        else if (requestCode == CART_BACK_PRESSED_CODE || requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE){
+        } else if (requestCode == CART_BACK_PRESSED_CODE || requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE) {
             reloadFragment();
             return;
         }
@@ -1136,6 +1142,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 case PDP_REQUEST_CODE:
                     Activity activity = getActivity();
                     if (activity == null) return;
+                    loadShoppingCart(false);
                     loadShoppingCartAndSetDeliveryLocation();
                     ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
                     int itemsCount = data.getIntExtra("ItemsCount", 0);
@@ -1166,7 +1173,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void loadShoppingCartAndSetDeliveryLocation() {
-        loadShoppingCart(false);
         ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
         if (lastDeliveryLocation != null) {
             setDeliveryLocation(lastDeliveryLocation);
