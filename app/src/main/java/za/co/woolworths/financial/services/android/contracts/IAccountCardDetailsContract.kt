@@ -33,7 +33,7 @@ interface IAccountCardDetailsContract {
         fun navigateToLoanWithdrawalActivity()
         fun navigateToPaymentOptionActivity()
         fun navigateToPayMyAccountActivity()
-        fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse){}
+        fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse) {}
         fun onGetCreditCardTokenFailure()
         fun showGetCreditCardActivationStatus(status: CreditCardActivationState)
         fun executeCreditCardTokenService()
@@ -78,18 +78,19 @@ interface IAccountCardDetailsContract {
         fun getCreditCardToken()
         fun getCardWithPLCState(cards: ArrayList<Card>?): Card?
         fun getCreditCardDeliveryStatus(envelopeNumber: String?)
-        fun isCreditCardSection():Boolean
+        fun isCreditCardSection(): Boolean
         fun navigateToPayMyAccountActivity()
         fun getStoreCardBlockType(): Boolean
-        fun isProductCodeStoreCard():Boolean
+        fun isProductCodeStoreCard(): Boolean
         fun isVirtualCardEnabled(): Boolean
-        fun isReplacementCardAndVirtualCardViewEnabled():Boolean
+        fun isVirtualCardObjectNotNull(): Boolean
+        fun isReplacementCardAndVirtualCardViewEnabled(): Boolean
     }
 
     interface AccountCardDetailModel {
         fun queryServiceGetAccountStoreCardCards(storeCardsRequestBody: StoreCardsRequestBody?, requestListener: IGenericAPILoaderView<Any>): Call<StoreCardsResponse>?
         fun queryServiceGetUserCLIOfferActive(productOfferingId: String, requestListener: IGenericAPILoaderView<Any>): Call<OfferActive>?
-        fun queryServiceGetCreditCartToken(requestListener: IGenericAPILoaderView<Any>):Call<CreditCardTokenResponse>?
+        fun queryServiceGetCreditCartToken(requestListener: IGenericAPILoaderView<Any>): Call<CreditCardTokenResponse>?
         fun queryServiceGetCreditCardDeliveryStatus(productOfferingId: String, envelopeReference: String, requestListener: IGenericAPILoaderView<Any>): Call<CreditCardDeliveryStatusResponse>?
     }
 }

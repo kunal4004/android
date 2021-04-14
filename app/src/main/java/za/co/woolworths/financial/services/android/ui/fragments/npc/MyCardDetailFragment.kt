@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_VALUE
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
@@ -120,25 +122,25 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initListener()
-        populateView()
-        uniqueIdsForCardDetails()
+            initListener()
+            populateView()
+            uniqueIdsForCardDetails()
 
-        initTemporaryFreezeCard()
+            initTemporaryFreezeCard()
 
-        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if (compoundButton.isPressed){
-                when (isChecked) {
-                    true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-                    false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+            temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (compoundButton.isPressed) {
+                    when (isChecked) {
+                        true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+                        false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+                    }
                 }
             }
-        }
 
-        // call to unblock/unfreeze store Card
-        if (mShouldActivateBlockCardOnLanding) {
-            temporaryFreezeCard?.unblockStoreCardRequest()
-        }
+            // call to unblock/unfreeze store Card
+            if (mShouldActivateBlockCardOnLanding) {
+                temporaryFreezeCard?.unblockStoreCardRequest()
+            }
     }
 
     private fun initTemporaryFreezeCard() {
@@ -293,29 +295,32 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun populateView() {
-        mStoreCard?.apply {
-            tvCardHolderHeader?.text = this.embossedName
-            maskedCardNumberWithSpaces(number).also {
-                textViewCardNumber?.text = it
-                tvCardNumberHeader?.text = it
-            }
+        GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            mStoreCard?.apply {
+                tvCardHolderHeader?.text = this.embossedName
+                maskedCardNumberWithSpaces(number).also {
+                    textViewCardNumber?.text = it
+                    tvCardNumberHeader?.text = it
+                }
 
-            toTitleCase(cardName()).also {
-                textViewCardHolderName?.text = it
+                toTitleCase(cardName()).also {
+                    textViewCardHolderName?.text = it
+                }
             }
-        }
-        when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
-            true -> {
-                manageView?.visibility = GONE
-                blockCard?.visibility = GONE
-                cardNumberLayout?.visibility = GONE
-                tvCardNumberHeader?.visibility = INVISIBLE
-                cardStatus?.text = getString(R.string.store_card_status_temporay)
-                cardExpireDate?.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
-            }
-            false -> {
-                virtualCardViews?.visibility = GONE
-                cardStatus?.text = getString(R.string.active)
+            when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
+                true -> {
+                    manageView?.visibility = GONE
+                    temporaryCardFreezeRelativeLayout?.visibility = GONE
+                    blockCard?.visibility = GONE
+                    cardNumberLayout?.visibility = GONE
+                    tvCardNumberHeader?.visibility = INVISIBLE
+                    cardStatus?.text = getString(R.string.store_card_status_temporary)
+                    cardExpireDate?.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
+                }
+                false -> {
+                    virtualCardViews?.visibility = GONE
+                    cardStatus?.text = getString(R.string.active)
+                }
             }
         }
     }

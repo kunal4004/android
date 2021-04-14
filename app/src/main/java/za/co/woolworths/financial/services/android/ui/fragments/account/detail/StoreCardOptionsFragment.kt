@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
@@ -135,7 +137,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         when (storeCardResponse.httpCode) {
             200 -> {
                 onFreezeUnfreezeStoreCard()
-                setStoreCardTag()
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) { setStoreCardTag() }
             }
             440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, storeCardResponse.response?.stsParams, it) }
 
@@ -149,7 +151,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     private fun setStoreCardTag() {
         when {
             // Temporary card
-            (mCardPresenterImpl?.isVirtualCardEnabled() == true) -> {
+            (mCardPresenterImpl?.isVirtualCardObjectNotNull() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
@@ -158,6 +160,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                 cardDetailImageView?.alpha = 0.3f
             }
+
             // Get replacement card
             mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() != true -> {
                 storeCardTagTextView?.text = bindString(R.string.inactive)
