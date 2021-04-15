@@ -30,15 +30,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.getSerializable(DEVICE_LIST)?.let { list ->
-            if (list is ArrayList<*> && list?.get(0) is UserDevice) {
-                deviceList = list as ArrayList<UserDevice>
-            }
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setFragmentResultListener(DELETE_DEVICE) { requestKey, bundle ->
@@ -75,14 +66,16 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun callRetrieveDevices() {
-
+        progressLoadDevices.visibility = View.VISIBLE
         val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices()
         mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
             override fun onFailure(error: Throwable?) {
                 //Do Nothing
+                progressLoadDevices.visibility = View.GONE
             }
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                progressLoadDevices.visibility = View.GONE
                 deviceList = ArrayList(0)
                 deviceList = response?.userDevices
                 initRecyclerView()
@@ -94,6 +87,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
+        callRetrieveDevices()
         if (viewAllDevicesAdapter == null) {
             initRecyclerView()
         }
