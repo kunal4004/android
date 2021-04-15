@@ -21,6 +21,8 @@ import android.util.Pair
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
@@ -551,6 +554,30 @@ class KotlinUtils {
                 setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, null)
                 setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, null)
             }
+        }
+
+        fun getUserDefinedDeviceName(activity: Activity?): String {
+            var deviceName = ""
+            activity?.apply {
+                try {
+                    if (TextUtils.isEmpty(deviceName)) {
+                        deviceName = Settings.Secure.getString(contentResolver, "bluetooth_name")
+                    }
+                } catch (e: Exception) {
+                }
+            }
+            return deviceName
+        }
+
+        fun rotateViewAnimation(): RotateAnimation {
+            val animation = RotateAnimation(0f, 360f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            with(animation) {
+                duration = AppConstant.DURATION_1000_MS
+                repeatCount = 45
+                repeatCount = Animation.INFINITE
+            }
+            return animation
         }
     }
 }

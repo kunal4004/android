@@ -207,5 +207,7 @@
     <dimen name="four_hundred_dp">400dp</dimen>
     <dimen name="hundred_and_sixty_four_dp">164dp</dimen>
     <dimen name="thirty_five_dp">35dp</dimen>
+    <dimen name="seventeen_sp">17sp</dimen>
+    <dimen name="three_hundred_dp">300dp</dimen>
 </resources>
 
