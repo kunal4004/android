@@ -59,7 +59,7 @@ object ChatAWSAmplify {
             FirebaseManager.logException(ex)
         }
     }
-    
+
     fun signIn(result: (Conversation?) -> Unit, error: (Any) -> Unit) {
         val networkConfig = NetworkConfig()
         val username = networkConfig.getApiId()
@@ -186,4 +186,7 @@ object ChatAWSAmplify {
                 { response -> result(response.data) }, { }
         )
     }
+
+    fun init() {}
+
 }

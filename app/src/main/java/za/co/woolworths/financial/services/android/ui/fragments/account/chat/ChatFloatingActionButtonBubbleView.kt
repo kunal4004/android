@@ -29,6 +29,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.SESSION_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
@@ -149,18 +151,23 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
         }
     }
 
-    fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
-        activity?.apply {
-            val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
-            val intent = Intent(this, WChatActivity::class.java)
-            intent.putExtra(PRODUCT_OFFERING_ID, initChatDetails?.first)
-            intent.putExtra(ACCOUNT_NUMBER, initChatDetails?.second)
-            intent.putExtra(SESSION_TYPE, chatBubbleVisibility?.getSessionType())
-            intent.putExtra(FROM_ACTIVITY, this::class.java.simpleName)
-            intent.putExtra(ACCOUNTS, Gson().toJson(chatAccountProductLandingPage))
-            intent.putExtra(CHAT_TO_COLLECTION_AGENT, true)
-            startActivity(intent)
-        }
+    fun navigateToChatActivity(activity: Activity?, account: Account?) {
+
+        val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
+        val liveChatDBRepository = LiveChatDBRepository()
+        val liveChatParams = liveChatDBRepository.getLiveChatParams()
+
+        liveChatDBRepository.saveLiveChatParams(LiveChatExtraParams(
+                initChatDetails?.first,
+                initChatDetails?.second,
+                chatBubbleVisibility?.getSessionType(),
+                this::class.java.simpleName,
+                Gson().toJson(account),
+                true,
+                liveChatParams?.userShouldSignIn ?: true,
+                liveChatParams?.conversation))
+
+        activity?.let { act -> act.startActivity(Intent(act, WChatActivity::class.java)) }
     }
 
     fun build() {

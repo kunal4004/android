@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
@@ -63,7 +62,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         initUI()
 
         with(chatViewModel) {
-            isCustomerSignOut.observe(this@WChatActivity, Observer { isSignOut ->
+            isCustomerSignOut.observe(this@WChatActivity, { isSignOut ->
                 when (currentFragment) {
                     is ChatFragment -> {
                         when (isSignOut) {
@@ -117,7 +116,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         when (chatScreenType) {
             ChatType.AGENT_COLLECT -> {
                 chatScreenType = ChatType.AGENT_COLLECT
-                if (chatViewModel.isOperatingHoursForInAppChat() == true) {
+                if (chatViewModel.isOperatingHoursForInAppChat()) {
                     chatNavGraph?.startDestination = R.id.chatFragment
                 } else {
                     bundle.putString(FEATURE_NAME, FEATURE_WHATSAPP)
