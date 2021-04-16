@@ -306,10 +306,13 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
         this.otpMethod = otpMethod
 
+        context?.let { didNotReceiveOTPTextView.setTextColor( ContextCompat.getColor(it, R.color.button_disable))}
         showSendingOTPProcessing()
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
+                context?.let { didNotReceiveOTPTextView.setTextColor( ContextCompat.getColor(it, R.color.black))}
+
                 when (retrieveOTPResponse?.httpCode) {
                     AppConstant.HTTP_OK -> {
 
@@ -343,6 +346,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             }
 
             override fun onFailure(error: Throwable?) {
+                context?.let { didNotReceiveOTPTextView.setTextColor( ContextCompat.getColor(it, R.color.black))}
                 linkDeviceOTPScreen?.visibility = View.VISIBLE
             }
         }, RetrieveOTPResponse::class.java))
@@ -378,6 +382,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
                         showValidateOTPError(desc)
+                        Handler().postDelayed({
+                            linkDeviceOTPEdtTxt5.requestFocus()
+                            val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                            imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                        }, AppConstant.DELAY_200_MS)
                     }
                 }
             }
@@ -385,6 +394,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             override fun onFailure(error: Throwable?) {
                 context?.apply {
                     showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                    Handler().postDelayed({
+                        linkDeviceOTPEdtTxt5.requestFocus()
+                        val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                        imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                    }, AppConstant.DELAY_200_MS)
                 }
             }
         }, RetrieveOTPResponse::class.java))
