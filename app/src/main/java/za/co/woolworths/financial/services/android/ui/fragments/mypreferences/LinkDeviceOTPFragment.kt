@@ -118,6 +118,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         } else {
             enableNextButton()
         }
+
+        if (TextUtils.isEmpty(linkDeviceOTPEdtTxt5.text) && TextUtils.isEmpty(linkDeviceOTPEdtTxt4.text)
+                && TextUtils.isEmpty(linkDeviceOTPEdtTxt3.text) && TextUtils.isEmpty(linkDeviceOTPEdtTxt2.text)
+                && TextUtils.isEmpty(linkDeviceOTPEdtTxt1.text)) {
+            clearErrorMessage()
+        }
     }
 
     private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
@@ -164,6 +170,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
     private fun resetOTPView() {
         clearOTP()
+        clearErrorMessage()
+    }
+
+    private fun clearErrorMessage() {
         if (linkDeviceOTPErrorTxt?.visibility == View.VISIBLE) {
             linkDeviceOTPErrorTxt?.visibility = View.GONE
             setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
@@ -208,6 +218,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 is LinkDeviceConfirmationInterface -> {
                     setToolbarTitle("")
                     hideToolbarButton()
+                    showBackButton()
                 }
             }
         }
@@ -232,9 +243,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.didNotReceiveOTPTextView -> {
-                view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
-                        ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
-                ))
+                if (!isRetrieveOTPCallInProgress()) {
+                    view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
+                            ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
+                    ))
+                }
             }
             R.id.buttonNext -> {
 
@@ -251,6 +264,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
+    private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout.visibility == View.VISIBLE
 
     fun createLocationRequest(): LocationRequest? {
         return LocationRequest.create().apply {
@@ -314,6 +329,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }, AppConstant.DELAY_200_MS)
                         }
                     }
+
                     AppConstant.HTTP_SESSION_TIMEOUT_440 ->
                         activity?.apply {
                             if (!isFinishing) {
@@ -321,11 +337,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
-                        try {
-                            linkDeviceOTPScreen?.visibility = View.GONE
-                        } catch (ex: IllegalStateException) {
-                            FirebaseManager.logException(ex)
-                        }
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
                     }
                 }
             }
@@ -411,12 +423,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     private fun callLinkingDeviceAPI() {
         linkDeviceOTPScreen?.visibility = View.GONE
 
-        if(!isOTPValidated){
+        if (!isOTPValidated) {
             return
         }
         showLinkingDeviceProcessing()
         //Location permission granted but no current location found.
-        if(checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null){
+        if (checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null) {
             startLocationUpdates()
             return
         }

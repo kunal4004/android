@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.android.gms.common.util.ArrayUtils
 import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.Companion.DEVICE_LIST
 
 class ViewAllLinkedDevicesFragment : Fragment() {
     private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
@@ -20,7 +22,12 @@ class ViewAllLinkedDevicesFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments
+
+        arguments?.getSerializable(DEVICE_LIST)?.let { list ->
+            if (list is ArrayList<*> && list?.get(0) is UserDevice) {
+                deviceList = list as ArrayList<UserDevice>
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +40,9 @@ class ViewAllLinkedDevicesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
-        initRecyclerView()
+        if (viewAllDevicesAdapter == null) {
+            initRecyclerView()
+        }
     }
 
     private fun setupToolbar() {
@@ -49,16 +58,16 @@ class ViewAllLinkedDevicesFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
+
+        if(deviceList == null || deviceList?.isEmpty() == true){
+            return
+        }
         context?.let {
             viewAllLinkedDevicesRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it)
-            arguments?.getSerializable(DEVICE_LIST)?.let { list ->
-                if (list is ArrayList<*> && list?.get(0) is UserDevice) {
-                    viewAllDevicesAdapter?.setDeviceList(list as ArrayList<UserDevice>)
-                }
-            }
-            viewAllLinkedDevicesRecyclerView.adapter = viewAllDevicesAdapter
+            viewAllDevicesAdapter?.setDeviceList(deviceList)
         }
+        viewAllLinkedDevicesRecyclerView.adapter = viewAllDevicesAdapter
     }
 
     companion object {
