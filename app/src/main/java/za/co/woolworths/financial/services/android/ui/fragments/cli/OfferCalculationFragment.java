@@ -52,7 +52,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;

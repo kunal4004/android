@@ -158,7 +158,7 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600")
     @GET("mobileconfigs")
-    fun getConfig(
+    suspend fun getConfig(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -168,7 +168,7 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("appVersion") appVersion: String
-    ): Call<ConfigResponse>
+    ):ConfigResponse
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/locations")
