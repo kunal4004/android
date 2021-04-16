@@ -13,7 +13,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.awfs.coordination.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
