@@ -69,7 +69,6 @@ class ViewAllLinkedDevicesAdapter(val context: Context) : RecyclerView.Adapter<R
                 viewAllDeviceNameTextView?.text = primaryDevice?.deviceName
                 viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)
-
             }
         }
     }
