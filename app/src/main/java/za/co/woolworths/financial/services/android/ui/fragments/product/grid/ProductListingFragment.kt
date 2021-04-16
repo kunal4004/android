@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
+import kotlin.collections.ArrayList
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, IOnConfirmDeliveryLocationActionListener {
 
@@ -91,7 +92,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
-    private var navigationState = ""
+    private var navigationStackTitleList: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,14 +146,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
         val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
         val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-        if (currentSuburbId == null && localSuburbId ==null && !(currentStoreId?.equals(localStoreId))!!){
+        if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
+            getCategoryNameAndSetTitle(false)
             localStoreId = currentStoreId
-            updateProductRequestBodyForRefinement(navigationState)
+            localSuburbId = null
+            updateProductRequestBodyForRefinement(localNavigationState)
             reloadProductsWithSortAndFilter()
-        }
-        else if (!(localSuburbId.equals(currentSuburbId))) {
+        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+            getCategoryNameAndSetTitle(false)
             localSuburbId = currentSuburbId
-            updateProductRequestBodyForRefinement(navigationState)
+            localStoreId = null
+            updateProductRequestBodyForRefinement(localNavigationState)
             reloadProductsWithSortAndFilter()
         }
     }
@@ -194,21 +198,35 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         ?: false)
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
-                productView?.history?.apply {
-                    if (categoryDimensions.isNotEmpty()) {
-                        mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
-                    } else if (searchCrumbs.isNotEmpty()) {
-                        mSubCategoryName = searchCrumbs.let { it[it.size - 1].terms }
-                    }
-                    if (!mSubCategoryName.isNullOrEmpty())
-                        setTitle()
-                }
+                getCategoryNameAndSetTitle(false)
                 if (!Utils.isDeliverySelectionModalShown()) {
                     showDeliveryOptionDialog()
                 }
             } else {
                 loadMoreData(productLists)
             }
+        }
+    }
+
+    private fun getCategoryNameAndSetTitle(backPressed: Boolean) {
+        val title = (activity as? BottomNavigationActivity)?.toolBarTitle
+        navigationStackTitleList.add(title!!)
+        val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+        val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+        productView?.history?.apply {
+            if (categoryDimensions.isNotEmpty()) {
+                mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
+            } else if (searchCrumbs.isNotEmpty()) {
+                mSubCategoryName = searchCrumbs.let { it[it.size - 1].terms }
+            } else if (!mSubCategoryName.isNullOrEmpty() &&
+                    (localSuburbId != currentSuburbId || localStoreId != currentStoreId) &&
+                    !mSubCategoryName.equals(title)) {
+                mSubCategoryName = title
+            } else if (!(mSubCategoryName.equals(navigationStackTitleList.get(0))) && backPressed) {
+                mSubCategoryName = navigationStackTitleList.get(0)
+            }
+            if (!mSubCategoryName.isNullOrEmpty())
+                setTitle()
         }
     }
 
@@ -490,7 +508,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showToolbar()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    setTitle()
+                    getCategoryNameAndSetTitle(true)
                     if (productView?.navigation?.isNullOrEmpty() != true)
                         unLockDrawerFragment()
                 }
@@ -851,7 +869,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
         if (isMultiSelectCategoryRefined) {
-            this.navigationState = navigationState
+            localNavigationState = navigationState
             updateProductRequestBodyForRefinement(navigationState)
             reloadProductsWithSortAndFilter()
         } else {
@@ -865,13 +883,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (pushedFragmentCount > 1)
             (activity as? BottomNavigationActivity)?.popFragment()
         else {
-            navigationState = ""
+            localNavigationState = ""
             updateProductRequestBodyForRefinement("")
             reloadProductsWithSortAndFilter()
         }
     }
 
     companion object {
+        private var localNavigationState = ""
         private var localSuburbId: String? = null
         private var localStoreId: String? = null
         const val REFINEMENT_DATA = "REFINEMENT_DATA"

@@ -107,6 +107,12 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		getToolbarTitle().setTextColor(ContextCompat.getColor(BaseActivity.this, R.color.black));
 	}
 
+	public String getToolBarText() {
+		if (getToolbarTitle() != null)
+			return getToolbarTitle().getText().toString();
+		return "";
+	}
+
 	public void setToolbarTitle(String title, int color) {
 		getToolbarTitle().setText(title);
 		getToolbarTitle().setTextColor(ContextCompat.getColor(BaseActivity.this, color));
