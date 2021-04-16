@@ -5,5 +5,5 @@ import java.io.Serializable
 data class CreditLimitIncrease(
         val eligibilityQuestions: EligibilityQuestions? = null,
         val permissions: Permissions? = null,
-        val maritalStatus: List<String>? = null
+        var maritalStatus: ArrayList<MaritalStatus>? = null
 ) : Serializable

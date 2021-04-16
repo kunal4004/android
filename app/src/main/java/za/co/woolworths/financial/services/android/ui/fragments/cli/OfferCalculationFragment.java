@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
+import za.co.woolworths.financial.services.android.models.dto.MaritalStatus;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -75,6 +76,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private static final int INCREASE_PROGRESS_BY = 100;
 	private static final int SLIDE_ANIM_DURATION = 1500;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
+	private MaritalStatus maritalStatus;
 	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime, tvSlideToEditSeekInfo, tvSlideToEditAmount;
 	private ProgressBar cpCurrentCreditLimit, cpAdditionalCreditLimit, cpNewCreditAmount;
 	private LinearLayout llSlideToEditContainer, llNextButtonLayout;
@@ -128,6 +130,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		if (savedInstanceState == null && !mAlreadyLoaded) {
+			Activity activity = getActivity();
+			if (activity != null)
+				maritalStatus = ((CLIPhase2Activity) activity).getMaritalStatus();
 			mAlreadyLoaded = true;
 			loadState = new LoadState();
 			try {
@@ -137,6 +142,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 			woolworthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 			mGlobalState = woolworthsApplication.getWGlobalState();
+
 			init(view);
 			seekBar();
 			Bundle bundle = this.getArguments();
@@ -156,7 +162,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				}
 				if (expenseDetail != null) {
 					mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
-					Activity activity = getActivity();
 					if (activity instanceof CLIPhase2Activity) {
 						mEventStatus = ((CLIPhase2Activity) activity).getEventStatus();
 						if (mEventStatus == null) {
@@ -633,7 +638,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public CreateOfferRequest createOffer
-			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
+			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail, MaritalStatus maritalStatus) {
 		return new CreateOfferRequest(
 				WoolworthsApplication.getProductOfferingId(),
 				roundOffCentValues(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
@@ -643,7 +648,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				roundOffCentValues(hashExpenseDetail.get("RENTAL_PAYMENTS")),
 				roundOffCentValues(hashExpenseDetail.get("MAINTENANCE_EXPENSES")),
 				roundOffCentValues(hashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES")),
-				roundOffCentValues(hashExpenseDetail.get("OTHER_EXPENSES")));
+				roundOffCentValues(hashExpenseDetail.get("OTHER_EXPENSES")),
+				maritalStatus.getStatusId());
 	}
 
 	public void displayApplication(OfferActive mObjOffer) {
@@ -815,11 +821,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void cliApplicationRequest(EventStatus eventStatus) {
 		switch (eventStatus) {
 			case CREATE_APPLICATION:
-				cliCreateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+				cliCreateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail, maritalStatus));
 				break;
 
 			case UPDATE_APPLICATION:
-				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mCLiId));
+				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail, maritalStatus), String.valueOf(mCLiId));
 				break;
 			default:
 				displayApplication(mObjOffer);

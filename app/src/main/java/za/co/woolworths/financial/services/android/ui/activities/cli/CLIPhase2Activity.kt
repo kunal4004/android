@@ -18,10 +18,13 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cli_phase2_activity.*
 import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease
 import za.co.woolworths.financial.services.android.contracts.IEditAmountSlider
+import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.cli.SupplyIncomeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.cli.*
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface
@@ -31,14 +34,19 @@ import za.co.woolworths.financial.services.android.util.controller.CLIStepIndica
 import za.co.woolworths.financial.services.android.util.controller.EventStatus
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController
 
-class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface, IEditAmountSlider {
+class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface, IEditAmountSlider, MaritalStatusListener {
 
+    private var maritalStatus: MaritalStatus? = null
     private var mCLICreateOfferResponse: OfferActive? = null
     private var mOfferActivePayload: String? = null
     private var mOfferActive = false
     private var mCloseButtonEnabled = false
     private var mNextStep: String? = null
     var eventStatus = EventStatus.NONE
+
+    companion object {
+        const val MARITAL_STATUS = "MARITAL_STATUS"
+    }
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -131,6 +139,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             val expenseHashMap = increaseLimitController.expenseHashMap(mCLICreateOfferResponse)
             offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, icomeHashMap)
             offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap)
+            offerBundle.putSerializable(MARITAL_STATUS, maritalStatus)
             val offerCalculationFragment = OfferCalculationFragment()
             offerCalculationFragment.setStepIndicatorListener(cliStepIndicatorListener)
             offerCalculationFragment.arguments = offerBundle
@@ -322,5 +331,13 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     override fun slideAmount(amount: Int?, drawnDownAmount: Int?) {
         supportFragmentManager.popBackStack(EditSlideAmountFragment::class.java.simpleName, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         (application as? WoolworthsApplication)?.bus()?.send(amount?.let { amt -> drawnDownAmount?.let { drawnAmount -> BusStation(amt, drawnAmount) } })
+    }
+
+    override fun setMaritalStatus(maritalStatus: MaritalStatus) {
+        this.maritalStatus = maritalStatus
+    }
+
+    override fun getMaritalStatus(): MaritalStatus {
+        return maritalStatus ?: MaritalStatus(0,bindString(R.string.please_select))
     }
 }

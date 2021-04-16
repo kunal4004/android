@@ -374,54 +374,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
         switch (groupCode) {
             case STORE_CARD:
-                navigateToStoreCard();
+                onDeepLinkedProductTap(linkedStoreCardView, applyStoreCardView);
                 break;
             case CREDIT_CARD:
-                navigateToCreditCard();
+                onDeepLinkedProductTap(linkedCreditCardView, applyCreditCardView);
                 break;
             case PERSONAL_LOAN:
-                navigateToPersonalLoan();
+                onDeepLinkedProductTap(linkedPersonalCardView, applyPersonalCardView);
                 break;
         }
         setArguments(null);
         deepLinkParams = null;
-    }
-
-    private void navigateToPersonalLoan() {
-        if (applyPersonalCardView.getVisibility() != View.VISIBLE) {
-            redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
-        } else {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
-            redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
-        }
-    }
-
-    private void navigateToCreditCard() {
-        if (applyCreditCardView.getVisibility() != View.VISIBLE) {
-            redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
-        } else {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
-            if (mCreditCardAccount == null) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
-                return;
-            }
-            if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.SILVER_CREDIT_CARD);
-            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.GOLD_CREDIT_CARD);
-            } else if (mCreditCardAccount.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
-                redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
-            }
-        }
-    }
-
-    private void navigateToStoreCard() {
-        if (applyStoreCardView.getVisibility() != View.VISIBLE) {
-            redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
-        } else {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
-            redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD);
-        }
     }
 
     private void parseDeepLinkData() {
@@ -582,6 +545,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void showPersonalLoanContent(Account account) {
+        Activity activity = getActivity();
+        if (!isAdded() || activity == null || getContext() == null) return;
         showView(linkedPersonalCardView);
         hideView(applyPersonalCardView);
         if (account == null) {
@@ -596,12 +561,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(pl_available_funds);
             hideView(retryPersonalLoanLinearLayout);
             imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-            pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            pl_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
             pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
         }
     }
 
     private void showCreditCardContent(Account account) {
+        Activity activity = getActivity();
+        if (!isAdded() || activity == null || getContext() == null) return;
         showView(linkedCreditCardView);
         hideView(applyCreditCardView);
         if (account == null) {
@@ -624,13 +591,17 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
                 imgCreditCard.setBackgroundResource(R.drawable.small_3);
             }
+
             imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-            cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            cc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
             cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+
         }
     }
 
     private void showStoreCardContent(Account account) {
+        Activity activity = getActivity();
+        if (!isAdded() || activity == null || getContext() == null) return;
         showView(linkedStoreCardView);
         hideView(applyStoreCardView);
         if (account == null) {
@@ -646,7 +617,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideView(retryStoreCardLinearLayout);
             imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
             sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
-            sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+            sc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
         }
     }
 
@@ -1148,7 +1119,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(true);
         else
             showProgressBar();
-        
+
         mUpdateMyAccount.make(forceNetworkUpdate, accountsHashMap -> {
             if (activity == null) return null;
             mAccountResponse = mUpdateMyAccount.mAccountResponse;
@@ -1393,7 +1364,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             ScreenManager.presentBiometricWalkthrough(getActivity());
         } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             Activity activity = getActivity();
-            if (activity == null)return;
+            if (activity == null) return;
             setAccountResponse(activity, null);
             onSignOut();
             initialize();
@@ -1843,6 +1814,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void onGetCreditCArdTokenSuccess(@NotNull CreditCardTokenResponse creditCardTokenResponse) {
 
+    }
+
+    private void onDeepLinkedProductTap(RelativeLayout linkedRelativeLayout, RelativeLayout applyNowRelativeLayout) {
+        if (!isAdded() || linkedRelativeLayout == null || applyNowRelativeLayout == null) return;
+        if (linkedRelativeLayout.getVisibility() == View.VISIBLE)
+            linkedRelativeLayout.performClick();
+        else
+            applyNowRelativeLayout.performClick();
     }
 
 }

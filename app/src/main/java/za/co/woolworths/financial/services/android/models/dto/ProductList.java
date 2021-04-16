@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
@@ -35,6 +36,9 @@ public class ProductList {
     @SerializedName("otherSkus")
     @Expose
     public List<OtherSkus> otherSkus = null;
+    @SerializedName("promotions")
+    @Expose
+    public ArrayList<Promotions> promotionsList = null;
     @SerializedName("saveText")
     @Expose
     public String saveText;

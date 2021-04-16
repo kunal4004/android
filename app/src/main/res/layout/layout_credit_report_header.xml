@@ -14,6 +14,7 @@
         android:layout_marginTop="@dimen/fifteen_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:gravity="center"
+        android:paddingHorizontal="@dimen/twenty_four_dp"
         android:lineSpacingExtra="@dimen/three_dp"
         android:text="@string/credit_report_title_details"
         android:textColor="@color/black"

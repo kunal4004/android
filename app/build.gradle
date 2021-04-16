@@ -10,9 +10,9 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 android {
 
     def major = "7"
-    def minor = "8"
-    def fix = "1"
-    def jobNumber = 482
+    def minor = "9"
+    def fix = "0"
+    def jobNumber = 492
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -59,8 +59,8 @@ android {
         applicationId "com.awfs.coordination"
         manifestPlaceholders = [appLabel: "Woolworths", app_links_host: "www.woolworths.co.za"]
         minSdkVersion 22 //Lollipop 5.1
-        targetSdkVersion 29
-        compileSdkVersion 29
+        targetSdkVersion 30
+        compileSdkVersion 30
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
@@ -81,15 +81,15 @@ android {
 
         String env = ""
 
-        if (host.contains("-qa") || host.contains("-staging")){
+        if (host.contains("-qa") || host.contains("-staging")) {
             defaultConfig.applicationIdSuffix = ".qa"
             defaultConfig.manifestPlaceholders = [appLabel: "Woolworths Q", app_links_host: "www-win-qa.woolworths.co.za"]
             env = "QA"
-        } else if (host.contains("-staging")){
+        } else if (host.contains("-staging")) {
             jobNumber = 1
-        } else{
+        } else {
             //assume prod
-            jobNumber = 156
+            jobNumber = 159
         }
 
         defaultConfig {
@@ -111,7 +111,7 @@ android {
         def productionKeystoreProperties = new Properties()
         file("ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
 
-        defaultConfig{
+        defaultConfig {
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
         }
 
@@ -134,16 +134,16 @@ android {
             qa {
                 applicationIdSuffix ".qa"
                 manifestPlaceholders = [appLabel: "Woolworths Q"]
-                buildConfigField("String", "HOST", '"' +  secureProps['URL_QA_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' +  secureProps['HASH_QA_' + apiKey] + '"')
+                buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '"QA"')
                 manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
                 signingConfig signingConfigs.woneappQa
             }
 
             production {
-                buildConfigField("String", "HOST", '"' +  secureProps['URL_PROD_' + apiKey] + '"')
-                buildConfigField("String", "SHA1", '"' +  secureProps['HASH_PROD_' + apiKey] + '"')
+                buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
                 buildConfigField("String", "ENV", '""')
                 manifestPlaceholders = [app_links_host: "www.woolworths.co.za"]
                 signingConfig signingConfigs.woolworths
@@ -174,27 +174,19 @@ repositories {
 
 dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'com.google.android.gms:play-services-tagmanager:17.0.0'
     implementation 'com.google.android.gms:play-services-analytics:17.0.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
-    implementation 'com.google.firebase:firebase-core:17.5.0'
-    implementation 'com.google.firebase:firebase-config:19.2.0'
-    implementation 'com.google.firebase:firebase-invites:17.0.0'
-    implementation 'com.google.firebase:firebase-perf:19.0.8'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.0'
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
 
     //noinspection GradleCompatible
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.3.0-alpha03'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.3.0-beta01'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -216,14 +208,14 @@ dependencies {
 
     api 'com.google.zxing:android-core:3.3.0'
     //noinspection LifecycleAnnotationProcessorWithJava8
-    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.3.0'
     implementation 'me.relex:circleindicator:2.1.0@aar'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.okhttp3:okhttp:4.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
     implementation "com.github.skydoves:balloon:1.0.4"
     implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -232,16 +224,25 @@ dependencies {
     implementation 'com.daasuu:BubbleLayout:1.2.0'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+    implementation platform('com.google.firebase:firebase-bom:26.6.0')
+
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-invites:17.0.0'
+    implementation 'com.google.firebase:firebase-perf-ktx'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation 'com.android.volley:volley:1.1.1'
-    implementation "com.google.android.gms:play-services-auth-api-phone:17.4.0"
+    implementation "com.google.android.gms:play-services-auth-api-phone:17.5.0"
     implementation 'androidx.core:core-ktx:1.3.2'
-
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.1"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.fragment:fragment-ktx:1.3.0-rc01'
+    implementation 'androidx.fragment:fragment-ktx:1.3.0'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     // Amplify core dependency
@@ -251,24 +252,24 @@ dependencies {
     implementation 'com.amplifyframework:aws-auth-cognito:1.3.2'
     implementation 'com.amplifyframework:core:1.3.2'
 
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
 
-    testImplementation 'junit:junit:4.13.1'
+    // Power Mockito
+    testImplementation "org.powermock:powermock-api-mockito2:2.0.0-beta.5"
+    testImplementation "org.powermock:powermock-module-junit4:2.0.0-beta.5"
+
+    testImplementation 'junit:junit:4.13'
     testImplementation "org.mockito:mockito-core:3.4.6"
     testImplementation "org.mockito:mockito-inline:2.21.0"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     testImplementation 'android.arch.core:core-testing:1.1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
 
-    // Optional -- UI testing with Espresso
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    // Optional -- UI testing with UI Automator
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    androidTestImplementation('com.microsoft.appcenter:espresso-test-extension:1.3')
+    //UI testing with Espresso
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
 }
 
 apply plugin: 'com.google.gms.google-services'
