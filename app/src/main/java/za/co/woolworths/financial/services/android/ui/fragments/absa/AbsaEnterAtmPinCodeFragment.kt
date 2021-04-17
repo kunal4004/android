@@ -20,12 +20,14 @@ import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -191,12 +193,15 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         clearPin()
         when {
             responseMessage.trim().contains("card number and pin validation failed!", true) -> {
+                FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
             }
             responseMessage.trim().contains("218-invalid card status.", true) -> {
+                FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
             }
             else -> {
+                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 showErrorScreen(ErrorHandlerActivity.COMMON, responseMessage)
             }
         }
