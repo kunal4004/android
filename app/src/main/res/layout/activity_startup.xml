@@ -1,44 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainFrameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/mToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <RelativeLayout
         android:id="@+id/videoViewLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_grey"
-        android:paddingBottom="0dp"
         android:paddingLeft="0dp"
-        android:paddingRight="0dp"
         android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp"
         android:visibility="gone"
-        tools:context="za.co.woolworths.financial.services.android.ui.activities.StartupActivity">
+        tools:context="za.co.woolworths.financial.services.android.startup.view.StartupActivity">
 
         <za.co.woolworths.financial.services.android.ui.views.WVideoView
             android:id="@+id/activity_wsplash_screen_videoview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 
     <include
-        android:visibility="gone"
         android:id="@+id/splashNoVideoView"
-        layout="@layout/activity_startup_without_video"/>
+        layout="@layout/activity_startup_without_video"
+        android:visibility="gone" />
 
     <include
-        android:visibility="gone"
         android:id="@+id/splashServerMessageView"
-        layout="@layout/activity_startup_with_message"/>
+        layout="@layout/activity_startup_with_message"
+        android:visibility="gone" />
 </FrameLayout>
