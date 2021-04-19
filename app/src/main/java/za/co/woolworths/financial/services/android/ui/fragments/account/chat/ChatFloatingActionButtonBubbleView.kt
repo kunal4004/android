@@ -15,7 +15,6 @@ import android.widget.TextView
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -23,19 +22,15 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNT_NUMBER
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.FROM_ACTIVITY
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.PRODUCT_OFFERING_ID
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.SESSION_TYPE
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.FloatingActionButtonBadgeCounter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                                          var chatBubbleVisibility: ChatBubbleVisibility? = null,
-                                         var floatingActionButton: FloatingActionButton? = null,
+                                         var floatingActionButton: FloatingActionButtonBadgeCounter? = null,
                                          var applyNowState: ApplyNowState,
                                          var scrollableView: Any? = null) {
 
@@ -117,7 +112,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
                             floatingActionButton?.hide()
-                            if(chatBubbleToolTip?.isShowing == true)
+                            if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
                             floatingActionButton?.show()
@@ -152,16 +147,17 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
     }
 
     fun navigateToChatActivity(activity: Activity?, account: Account?) {
-
+        activity ?: return
         val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
         val liveChatDBRepository = LiveChatDBRepository()
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
+
 
         liveChatDBRepository.saveLiveChatParams(LiveChatExtraParams(
                 initChatDetails?.first,
                 initChatDetails?.second,
                 chatBubbleVisibility?.getSessionType(),
-                this::class.java.simpleName,
+                activity::class.java.simpleName,
                 Gson().toJson(account),
                 true,
                 liveChatParams?.userShouldSignIn ?: true,

@@ -11,18 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
-import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNT_NUMBER
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.FROM_ACTIVITY
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
@@ -33,13 +27,10 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
-    private var fromActivity: String? = null
+    private var isChatToCollectionAgent: Boolean = false
     private var sessionType: SessionType? = null
-    private var chatAccountProductLandingPage: String? = null
     private var chatNavHostController: NavController? = null
     private var chatToCollectionAgent: Boolean = false
-    private var accountNumber: String? = null
-    private var productOfferingId: String? = null
     private var chatScreenType: ChatType = ChatType.DEFAULT
     private var appScreen: String? = null
     val bundle = Bundle()
@@ -82,19 +73,14 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     private fun getArguments() {
         chatViewModel.initAmplify()
         intent?.extras?.apply {
-            productOfferingId = getString(PRODUCT_OFFERING_ID)
-            accountNumber = getString(ACCOUNT_NUMBER)
             appScreen = getString(APP_SCREEN)
-            fromActivity = getString(FROM_ACTIVITY)
             sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
-            chatAccountProductLandingPage = getString(ACCOUNTS)
-            chatViewModel.isChatToCollectionAgent.value = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
+            isChatToCollectionAgent = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
             chatViewModel.setSessionType(sessionType ?: SessionType.Collections)
             chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
         }
 
-        chatViewModel.setScreenType(fromActivity)
-        chatViewModel.setAccount(Gson().fromJson(chatAccountProductLandingPage, Account::class.java))
+        chatViewModel.setScreenType()
         chatViewModel.triggerFirebaseOnlineOfflineChatEvent()
         chatViewModel.postChatEventInitiateSession()
     }
@@ -105,14 +91,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         val chatNavGraph = chatNavHostController?.graph
         // add featureName app string
         with(bundle) {
-            putString(PRODUCT_OFFERING_ID, productOfferingId)
-            putString(ACCOUNT_NUMBER, accountNumber)
             putBoolean(CHAT_TO_COLLECTION_AGENT, chatToCollectionAgent)
             putString(FEATURE_NAME, FEATURE_WHATSAPP)
             putString(APP_SCREEN, appScreen)
         }
-
-        chatScreenType = ChatType.AGENT_COLLECT
         when (chatScreenType) {
             ChatType.AGENT_COLLECT -> {
                 chatScreenType = ChatType.AGENT_COLLECT

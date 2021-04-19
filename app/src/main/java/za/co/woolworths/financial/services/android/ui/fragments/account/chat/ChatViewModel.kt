@@ -9,7 +9,6 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -28,8 +27,8 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -41,7 +40,6 @@ class ChatViewModel : ViewModel() {
     private var creditCardTokenAPI: Call<CreditCardTokenResponse>? = null
     private var awsAmplify: ChatAWSAmplify? = null
     private var conversation: Conversation? = null
-    private var mAccount: MutableLiveData<Account?> = MutableLiveData()
 
     private var sessionStateType: MutableLiveData<SessionStateType?> = MutableLiveData()
     private var sessionType: MutableLiveData<SessionType?> = MutableLiveData()
@@ -49,36 +47,18 @@ class ChatViewModel : ViewModel() {
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
     var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
 
-    var mAbsaCard: MutableLiveData<MutableList<Card>?> = MutableLiveData()
     private var activityType: ActivityType? = null
 
     private var trackFirebaseEvent: ChatTrackFirebaseEvent = ChatTrackFirebaseEvent()
     private var chatTrackPostEvent: ChatTrackPostEvent = ChatTrackPostEvent()
 
-    init {
-        mAbsaCard.value = getAccount()?.cards
-        isChatToCollectionAgent.value = false
-        isCustomerSignOut.value = false
-        setSessionStateType(SessionStateType.DISCONNECT)
-        setSessionType(SessionType.Collections)
-    }
+    var liveChatDBRepository = LiveChatDBRepository()
 
     fun initAmplify() {
         this.awsAmplify = ChatAWSAmplify
     }
 
-    fun setAccount(account: Account?) {
-        mAccount.value = account
-    }
-
-    fun getAccount(): Account? {
-        return mAccount.value
-    }
-
-    @SuppressLint("DefaultLocale")
-    fun isCreditCardAccount(): Boolean {
-        return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
-    }
+    fun isCreditCardAccount(): Boolean = liveChatDBRepository.isCreditCardAccount()
 
     fun getServiceUnavailableMessage(): Pair<SendEmailIntentInfo, String> {
         val inAppChatMessage = WoolworthsApplication.getInAppChat()
@@ -118,7 +98,7 @@ class ChatViewModel : ViewModel() {
     }
 
     private fun getSessionType(): SessionType {
-        return sessionType.value ?: SessionType.Collections
+        return liveChatDBRepository.getSessionType()
     }
 
     fun signIn(result: () -> Unit, failure: (Any) -> Unit) {
@@ -129,6 +109,7 @@ class ChatViewModel : ViewModel() {
                     logExceptionToFirebase("subscribeToMessageByConversationId")
                     failure(failure)
                 } else {
+                    liveChatDBRepository.saveCreateConversationModel(conversation)
                     result()
                 }
             }, { failure -> failure(failure) })
@@ -145,13 +126,14 @@ class ChatViewModel : ViewModel() {
         awsAmplify?.subscribeToMessageByConversationId(
                 conversationId,
                 getSessionType(),
-                getSessionVars(),
+                liveChatDBRepository.getSessionVars(),
                 getCustomerInfo().getCustomerFamilyName(),
                 getCustomerInfo().getCustomerEmail(),
                 { data -> result(data) }, { failure(failure) })
     }
 
-    private fun getConversationMessageId(): String = conversation?.id ?: ""
+    private fun getConversationMessageId(): String = liveChatDBRepository.getLiveChatParams()?.conversation?.id
+            ?: ""
 
     override fun onCleared() {
         awsAmplify?.cancelSubscribeMessageByConversationId()
@@ -174,7 +156,7 @@ class ChatViewModel : ViewModel() {
                 getSessionType(),
                 getSessionStateType(),
                 content,
-                getSessionVars(),
+                liveChatDBRepository.getSessionVars(),
                 getCustomerInfo().getCustomerFamilyName(),
                 getCustomerInfo().getCustomerEmail())
     }
@@ -190,7 +172,7 @@ class ChatViewModel : ViewModel() {
                 getSessionType(),
                 SessionStateType.DISCONNECT,
                 "",
-                getSessionVars(),
+                liveChatDBRepository.getSessionVars(),
                 getCustomerInfo().getCustomerFamilyName(),
                 getCustomerInfo().getCustomerEmail(),
                 { result() }, { result() })
@@ -280,40 +262,6 @@ class ChatViewModel : ViewModel() {
         })
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun getSessionVars(): String {
-
-        val account = getAccount()
-
-        val prsAccountNumber = account?.accountNumber ?: ""
-        val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
-        val isCreditCard = productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
-        val prsCardNumber = if (isCreditCard) getABSACardToken() ?: "" else "0"
-        val prsC2id = getCustomerInfo().getCustomerC2ID()
-        val prsFirstname = getCustomerInfo().getCustomerUsername()
-        val prsSurname = getCustomerInfo().getCustomerFamilyName()
-        val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
-        val prsProductOfferingDescription = when (productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
-            AccountsProductGroupCode.STORE_CARD -> "StoreCard"
-            AccountsProductGroupCode.PERSONAL_LOAN -> "PersonalLoan"
-            AccountsProductGroupCode.CREDIT_CARD -> "CreditCard"
-            else -> ""
-        }
-
-        return bindString(R.string.chat_send_message_session_var_params,
-                prsAccountNumber,
-                prsCardNumber,
-                prsC2id,
-                prsFirstname,
-                prsSurname,
-                prsProductOfferingId,
-                prsProductOfferingDescription)
-
-    }
-
-    fun getABSACardToken(): String? = getAccount()?.cards?.get(0)?.absaCardToken
-            ?: mAbsaCard.value?.get(0)?.absaCardToken
-
     fun getCustomerInfo() = ChatCustomerInfo
 
     fun getMessagesListByConversation(result: ((MutableList<ChatMessage>?) -> Unit)) {
@@ -347,24 +295,24 @@ class ChatViewModel : ViewModel() {
     }
 
     @Throws(RuntimeException::class)
-    fun setScreenType(fromActivity: String?) {
-        activityType = when (fromActivity) {
+    fun setScreenType() {
+        activityType = when (liveChatDBRepository.getLiveChatParams()?.fromActivity) {
             BottomNavigationActivity::class.java.simpleName -> ActivityType.ACCOUNT_LANDING
             AccountSignedInActivity::class.java.simpleName -> ActivityType.PRODUCT_LANDING
             PayMyAccountActivity::class.java.simpleName -> ActivityType.PAYMENT_OPTIONS
             WTransactionsActivity::class.java.simpleName -> ActivityType.TRANSACTION
             StatementActivity::class.java.simpleName -> ActivityType.STATEMENT
             AbsaStatementsActivity::class.java.simpleName -> ActivityType.ABSA_STATEMENT
-            else -> throw RuntimeException("$fromActivity value not supported")
+            else -> throw RuntimeException("${liveChatDBRepository.getLiveChatParams()?.fromActivity} value not supported")
         }
     }
 
     @SuppressLint("DefaultLocale")
     fun getApplyNowState(): ApplyNowState {
-        return when (getAccount()?.productGroupCode?.toLowerCase()?.let { AccountsProductGroupCode.getEnum(it) }) {
+        return when (liveChatDBRepository.getAccount()?.productGroupCode?.toLowerCase()?.let { AccountsProductGroupCode.getEnum(it) }) {
             AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
             AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
-            AccountsProductGroupCode.CREDIT_CARD -> when (getAccount()?.accountNumberBin) {
+            AccountsProductGroupCode.CREDIT_CARD -> when (liveChatDBRepository.getAccount()?.accountNumberBin) {
                 Utils.SILVER_CARD -> ApplyNowState.SILVER_CREDIT_CARD
                 Utils.BLACK_CARD -> ApplyNowState.BLACK_CREDIT_CARD
                 Utils.GOLD_CARD -> ApplyNowState.GOLD_CREDIT_CARD

@@ -92,6 +92,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.FloatingActionButtonBadgeCounter;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
@@ -188,7 +189,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private Call<MessageResponse> messageRequestCall;
     private Account mCreditCardAccount;
     private View linkedAccountBottomDivider;
-    private FloatingActionButton chatWithAgentFloatingButton;
+    private FloatingActionButtonBadgeCounter chatWithAgentFloatingButton;
     private ImageView creditReportIcon;
     private RelativeLayout creditReportView;
     private HashMap<Products, Account> mAccountsHashMap;

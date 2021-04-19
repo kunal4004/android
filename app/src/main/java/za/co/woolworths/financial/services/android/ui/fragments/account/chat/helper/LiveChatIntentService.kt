@@ -18,29 +18,30 @@ class LiveChatIntentService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         signIn({
+            subscribeToMessageByConversationId({
 
-            subscribeToMessageByConversationId({}, {})
+            }, {
+
+            })
 
         }, {
 
         })
-
         return START_STICKY
     }
 
 
-    private fun signIn(result: () -> Unit, failure: (Any) -> Unit) {
+    private fun signIn(result: () -> Unit, fails: (Any) -> Unit) {
         ChatAWSAmplify.signIn({ conversation ->
             liveChatDBRepository.saveCreateConversationModel(conversation)
             if (conversation == null) {
                 logExceptionToFirebase("subscribeToMessageByConversationId")
-                failure(failure)
+                fails("logExceptionToFirebase")
             } else {
                 result()
             }
-        }, { failure -> failure(failure) })
+        }, { error -> fails(error) })
     }
 
     private fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
@@ -52,7 +53,7 @@ class LiveChatIntentService : Service() {
         }
         with(liveChatDBRepository) {
             ChatAWSAmplify.subscribeToMessageByConversationId(
-                    conversationId,
+                    getConversationMessageId(),
                     getSessionType(),
                     getSessionVars(),
                     ChatCustomerInfo.getCustomerFamilyName(),
