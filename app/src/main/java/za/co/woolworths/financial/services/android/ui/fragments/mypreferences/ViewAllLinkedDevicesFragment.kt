@@ -61,7 +61,7 @@ class ViewAllLinkedDevicesFragment : Fragment() {
 
     private fun initRecyclerView() {
 
-        if(deviceList == null || deviceList?.isEmpty() == true){
+        if(deviceList.isNullOrEmpty()){
             return
         }
         context?.let {
