@@ -545,6 +545,10 @@
             android:name="za.co.woolworths.financial.services.android.util.location.LocationPermissionActivity"
             android:launchMode="singleTask"
             android:theme="@style/LocationPermissionActivityTheme" />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity"
+            android:theme="@style/FaqStyle"
+            />
     </application>
 
 </manifest>
