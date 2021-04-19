@@ -5,6 +5,8 @@ import android.view.View
 interface LinkDeviceConfirmationInterface {
     fun setToolbarTitle(title: String)
     fun hideToolbarButton()
+    fun hideBackButton()
+    fun showBackButton()
     fun showToolbarButton()
     fun getToolbar(): View
 }

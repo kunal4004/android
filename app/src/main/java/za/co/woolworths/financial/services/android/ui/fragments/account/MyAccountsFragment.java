@@ -388,7 +388,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if ((bottomNavigationActivity.getCurrentSection() == R.id.navigate_to_account)
                     && (currentFragment instanceof MyAccountsFragment)) {
                 if (SessionUtilities.getInstance().isUserAuthenticated()) {
-                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices();
+                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices(false);
                     mViewAllLinkedDevices.enqueue(new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
                         @Override
                         public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {

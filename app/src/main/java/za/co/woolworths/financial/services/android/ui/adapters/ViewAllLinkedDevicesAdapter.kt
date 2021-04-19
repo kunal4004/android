@@ -50,10 +50,10 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
     }
 
     // Two items Primary device and other devices
-    override fun getItemCount(): Int = if(deviceList == null || deviceList?.isEmpty() == true) 0 else if (getPrimaryDevice() == null) 1 else 2
+    override fun getItemCount(): Int = if(deviceList.isNullOrEmpty()) 0 else if (getPrimaryDevice() == null) 1 else 2
 
     override fun getItemViewType(position: Int): Int =
-            if (deviceList?.get(position)?.primarydDevice == true) DeviceListViewType.PRIMARY_DEVICE.value else DeviceListViewType.OTHER_DEVICE.value
+            if (position != deviceList?.size && deviceList?.get(position)?.primarydDevice == true) DeviceListViewType.PRIMARY_DEVICE.value else DeviceListViewType.OTHER_DEVICE.value
 
     fun setDeviceList(data: ArrayList<UserDevice>?) {
         deviceList = ArrayList(0)
@@ -67,8 +67,9 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                 val primaryDevice = getPrimaryDevice()
                 viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_primary_device_title)
                 viewAllDeviceNameTextView?.text = primaryDevice?.deviceName
-                viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
+                viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)
+
                 viewAllDeviceDeleteImageView?.setTag(R.id.viewAllDeviceDeleteImageView, primaryDevice)
                 viewAllDeviceDeleteImageView?.setOnClickListener(onClickListener)
             }

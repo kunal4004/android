@@ -34,17 +34,6 @@ object OneAppService : RetrofitConfig() {
 
     var forceNetworkUpdate: Boolean = false
 
-    fun getConfig(): Call<ConfigResponse> = mApiInterface.getConfig(
-            WoolworthsApplication.getApiId(),
-            getSha1Password(),
-            getDeviceManufacturer(),
-            getDeviceModel(),
-            getNetworkCarrier(),
-            getOS(),
-            getOsVersion(),
-            getSessionToken(),
-            WoolworthsApplication.getAppVersionName())
-
     fun login(loginRequest: LoginRequest): Call<LoginResponse> {
         return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), loginRequest)
     }
@@ -428,8 +417,12 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.linkDeviceApi(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceName, body)
     }
 
-    fun getAllLinkedDevices(): Call<ViewAllLinkedDeviceResponse> {
-        return mApiInterface.getAllLinkedDevices(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+    fun getAllLinkedDevices(isForced: Boolean): Call<ViewAllLinkedDeviceResponse> {
+        return if (isForced) {
+            mApiInterface.getAllLinkedDevicesForced(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+        } else {
+            mApiInterface.getAllLinkedDevices(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+        }
     }
 
     fun deleteOrUnlinkDevice(deviceIdentityId: String): Call<DeleteMessageResponse> {
