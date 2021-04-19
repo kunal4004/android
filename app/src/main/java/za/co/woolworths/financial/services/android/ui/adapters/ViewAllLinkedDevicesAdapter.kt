@@ -51,10 +51,10 @@ class ViewAllLinkedDevicesAdapter(val context: Context) : RecyclerView.Adapter<R
     }
 
     // Two items Primary device and other devices
-    override fun getItemCount(): Int = if (getPrimaryDevice() == null) 1 else 2
+    override fun getItemCount(): Int = if (deviceList?.size == 1) 1 else if (getPrimaryDevice() == null) 1 else 2
 
     override fun getItemViewType(position: Int): Int =
-            if (deviceList?.get(position)?.primarydDevice == true) DeviceListViewType.PRIMARY_DEVICE.value else DeviceListViewType.OTHER_DEVICE.value
+            if (position != deviceList?.size && deviceList?.get(position)?.primarydDevice == true) DeviceListViewType.PRIMARY_DEVICE.value else DeviceListViewType.OTHER_DEVICE.value
 
     fun setDeviceList(data: ArrayList<UserDevice>?) {
         deviceList = data ?: ArrayList(0)
@@ -67,9 +67,8 @@ class ViewAllLinkedDevicesAdapter(val context: Context) : RecyclerView.Adapter<R
                 val primaryDevice = getPrimaryDevice()
                 viewAllDevicesTitleTextView?.text = context?.getString(R.string.view_all_primary_device_title)
                 viewAllDeviceNameTextView?.text = primaryDevice?.deviceName
-                viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
+                viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)
-
             }
         }
     }
@@ -100,7 +99,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context) : RecyclerView.Adapter<R
                         }
                         listItem.viewAllDeviceNameTextView?.text = it.deviceName
                         listItem.viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, it.linkedDate)
-                        listItem.viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(it.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else it.locationLinked
+                        listItem.viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(it.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else it.locationLinked
                         itemView.viewAllOtherDevicesContainer.addView(listItem)
                     }
                 }
