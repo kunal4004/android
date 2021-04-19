@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +52,7 @@ class ViewAllLinkedDevicesFragment : Fragment() {
                 is MyPreferencesInterface -> {
                     context?.let {
                         setToolbarTitle(it.getString(R.string.view_all_device_title))
+                        setToolbarTitleGravity(Gravity.CENTER_HORIZONTAL)
                     }
                 }
             }

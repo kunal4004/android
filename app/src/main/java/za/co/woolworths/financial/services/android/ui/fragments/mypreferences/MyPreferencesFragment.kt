@@ -39,7 +39,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -86,6 +85,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         activity?.apply {
             if (this is MyPreferencesInterface) {
                 setToolbarTitle(getString(R.string.acc_my_preferences))
+                setToolbarTitleGravity(Gravity.START)
             }
         }
     }
