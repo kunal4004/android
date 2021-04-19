@@ -52,7 +52,7 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
-        val participatingStoreDescription = KotlinUtils.highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "0861 50 20 20")
+        val participatingStoreDescription = KotlinUtils.highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "here")
         tvStoreContactInfo?.apply {
             text = participatingStoreDescription
             movementMethod = LinkMovementMethod.getInstance()

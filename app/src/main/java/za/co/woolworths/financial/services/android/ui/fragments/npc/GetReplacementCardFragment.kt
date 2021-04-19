@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.Manifest
 import android.annotation.TargetApi
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
@@ -15,12 +14,11 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.annotation.NonNull
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.replace_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
@@ -34,15 +32,18 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment.Companion.REQUEST_PERMISSION_LOCATION
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.location.Event
+import za.co.woolworths.financial.services.android.util.location.EventType
+import za.co.woolworths.financial.services.android.util.location.Locator
+import za.co.woolworths.financial.services.android.util.location.Logger
 
 class GetReplacementCardFragment : MyCardExtension() {
+
+    private lateinit var locator: Locator
 
     companion object {
         fun newInstance() = GetReplacementCardFragment()
@@ -58,7 +59,8 @@ class GetReplacementCardFragment : MyCardExtension() {
         updateToolbarBg()
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
-        requestGPSLocation()
+        locator = Locator(activity as AppCompatActivity)
+
 
         AnimationUtilExtension.animateViewPushDown(btnParticipatingStores)
         AnimationUtilExtension.animateViewPushDown(tvAlreadyHaveCard)
@@ -69,7 +71,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                 navigateToLinkNewCardActivity(this, storeCardResponse)
             }
         }
-        btnParticipatingStores?.setOnClickListener { checkForLocationPermission() }
+        btnParticipatingStores?.setOnClickListener { startLocationDiscoveryProcess() }
 
         uniqueIdsForReplacementCard()
     }
@@ -80,16 +82,6 @@ class GetReplacementCardFragment : MyCardExtension() {
         tvPermanentBlockDescPart1?.contentDescription = bindString(R.string.label_getICRCardDescription)
         btnParticipatingStores?.contentDescription = bindString(R.string.button_getParticipantsStores)
         tvAlreadyHaveCard?.contentDescription = bindString(R.string.link_alreadyHaveCard)
-    }
-
-    private fun requestGPSLocation() {
-        FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
-            override fun onLocationChange(location: Location?) {
-                activity?.let { activity -> Utils.saveLastLocation(location, activity) }
-                FuseLocationAPISingleton.stopLocationUpdate()
-                navigateToParticipatingStores(location)
-            }
-        })
     }
 
     private fun updateToolbarBg() {
@@ -167,18 +159,38 @@ class GetReplacementCardFragment : MyCardExtension() {
         hideKeyboard()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startLocationUpdate()
-            } else {
-               KotlinUtils.openApplicationSettings(ACCESS_MY_LOCATION_REQUEST_CODE, activity)
+    private fun startLocationDiscoveryProcess() {
+        locator.getCurrentLocation { locationEvent ->
+            when (locationEvent) {
+                is Event.Location -> handleLocationEvent(locationEvent)
+                is Event.Permission -> handlePermissionEvent(locationEvent)
             }
-            else -> return
         }
     }
 
-    private fun startLocationUpdate() = FuseLocationAPISingleton.startLocationUpdate()
+    private fun handleLocationEvent(locationEvent: Event.Location) {
+        locationEvent.locationData?.apply {
+            Utils.saveLastLocation(this, context)
+            navigateToParticipatingStores(this)
+        }
+    }
+
+
+    private fun handlePermissionEvent(permissionEvent: Event.Permission) {
+        when (permissionEvent.event) {
+            EventType.LOCATION_PERMISSION_GRANTED -> {
+                Logger.logDebug("Permission granted")
+            }
+            EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
+                Logger.logDebug("Permission NOT granted")
+                Utils.saveLastLocation(null, activity)
+            }
+            EventType.LOCATION_DISABLED_ON_DEVICE -> {
+                Logger.logDebug("Permission NOT granted permanently")
+            }
+        }
+    }
+
 
     private fun progressVisibility(state: Boolean) = activity?.runOnUiThread {
         pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
