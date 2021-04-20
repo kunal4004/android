@@ -25,7 +25,7 @@ class ProductDetailsExtension : Fragment() {
         const val TAG: String = "BottomNavigationActivity"
         const val HTTP_OK: Int = 200
         const val PRODUCT_NOT_FOUND: Int = 502
-        const val OUT_OF_STOCK_RESPONSE_CODE: String = "0008"
+        const val OUT_OF_STOCK_RESPONSE_CODE: String = "0813"
 
         @JvmStatic
         fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProductDetailsStatusListner) {
