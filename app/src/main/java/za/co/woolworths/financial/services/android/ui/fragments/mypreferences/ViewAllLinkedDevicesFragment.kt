@@ -1,12 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,19 +18,19 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 
 class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     private var deviceIdentityId: String = ""
-    private var unlinkOrDeleteDeviceReq: Call<DeleteMessageResponse>? = null
+    private var unlinkOrDeleteDeviceReq: Call<ViewAllLinkedDeviceResponse>? = null
     private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
@@ -49,7 +52,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             if (isUnlinkSuccess) {
                 unlinkDevice()
             }
-
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_view_all_linked_devices, container, false)
@@ -58,12 +60,20 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     private fun unlinkDevice() {
         unlinkOrDeleteDeviceReq = OneAppService.deleteOrUnlinkDevice(deviceIdentityId)
         unlinkOrDeleteDeviceReq?.enqueue(CompletionHandler(
-                object : IResponseListener<DeleteMessageResponse> {
-                    override fun onSuccess(response: DeleteMessageResponse?) {
+                object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                    override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
 
                         when (response?.httpCode) {
                             AppConstant.HTTP_OK -> {
-                                callRetrieveDevices()
+                                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf())
+
+                                deviceList = response?.userDevices
+                                if (deviceList.isNullOrEmpty()) {
+                                    view?.findNavController()?.navigateUp()
+                                    return
+                                }
+
+                                initRecyclerView()
                             }
                         }
                     }
@@ -71,9 +81,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                     override fun onFailure(error: Throwable?) {
                         super.onFailure(error)
                     }
-                }, DeleteMessageResponse::
+                }, ViewAllLinkedDeviceResponse::
         class.java))
-
     }
 
     private fun callRetrieveDevices() {

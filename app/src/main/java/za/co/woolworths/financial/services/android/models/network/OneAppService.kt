@@ -418,14 +418,12 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getAllLinkedDevices(isForced: Boolean): Call<ViewAllLinkedDeviceResponse> {
-        return if (isForced) {
-            mApiInterface.getAllLinkedDevicesForced(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
-        } else {
-            mApiInterface.getAllLinkedDevices(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
-        }
+       forceNetworkUpdate = isForced
+       return mApiInterface.getAllLinkedDevices(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+
     }
 
-    fun deleteOrUnlinkDevice(deviceIdentityId: String): Call<DeleteMessageResponse> {
+    fun deleteOrUnlinkDevice(deviceIdentityId: String): Call<ViewAllLinkedDeviceResponse> {
         return mApiInterface.deleteOrUnlinkDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceIdentityId)
     }
 
