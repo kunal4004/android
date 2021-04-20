@@ -50,7 +50,7 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
     }
 
     // Two items Primary device and other devices
-    override fun getItemCount(): Int = if(deviceList.isNullOrEmpty()) 0 else if (getPrimaryDevice() == null) 1 else 2
+    override fun getItemCount(): Int = if(deviceList.isNullOrEmpty()) 0 else if (getPrimaryDevice() == null || deviceList?.size == 1) 1 else 2
 
     override fun getItemViewType(position: Int): Int =
             if (position != deviceList?.size && deviceList?.get(position)?.primarydDevice == true) DeviceListViewType.PRIMARY_DEVICE.value else DeviceListViewType.OTHER_DEVICE.value
