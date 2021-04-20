@@ -1220,7 +1220,7 @@
 
     <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
     <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
-    <string name="blackCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
+    <string name="blackCreditCardQualify_row_3">Earn in excess of R41,666 per month</string>
 
     <string name="blackCreditCardCollection_row_1">A valid RSA ID number</string>
     <string name="blackCreditCardCollection_row_2">Latest three payslips or the last three months\' bank statements</string>
