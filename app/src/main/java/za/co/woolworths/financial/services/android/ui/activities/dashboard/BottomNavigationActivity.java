@@ -906,7 +906,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         // Open Shopping List Detail Fragment From MyList and Add item to cart
                         String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                         ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                        int itemsCount = data.getIntExtra("ItemsCount",0);
+                        int itemsCount = data.getIntExtra("ItemsCount", 0);
                         if (itemAddToCartMessage != null) {
                             setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                         }
@@ -930,19 +930,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestCode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE){
-            switch (resultCode){
-                case  OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE:
-                if (getBottomNavigationById() == null) return;
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                Fragment fragment = mNavController.getCurrentFrag();
-                if (fragment instanceof ShopFragment) {
-                    ShopFragment shopFragment = (ShopFragment) fragment;
-                    shopFragment.refreshViewPagerFragment(false);
-                    shopFragment.navigateToMyListFragment();
-                    return;
-                }
-                break;
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+            switch (resultCode) {
+                case OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE:
+                    if (getBottomNavigationById() == null) return;
+                    getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                    Fragment fragment = mNavController.getCurrentFrag();
+                    if (fragment instanceof ShopFragment) {
+                        ShopFragment shopFragment = (ShopFragment) fragment;
+                        shopFragment.refreshViewPagerFragment(false);
+                        shopFragment.navigateToMyListFragment();
+                        return;
+                    }
+                    break;
                 case RESULT_CODE_MY_ACCOUNT_FRAGMENT:
                     navigateToDepartmentFragment();
                     break;
@@ -974,7 +974,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (resultCode == RESULT_OK) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                 ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                int itemsCount = data.getIntExtra("ItemsCount",0);
+                int itemsCount = data.getIntExtra("ItemsCount", 0);
                 if (itemAddToCartMessage != null) {
                     setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                 }
@@ -1057,7 +1057,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                 ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
-                int itemsCount = data.getIntExtra("ItemsCount",0);
+                int itemsCount = data.getIntExtra("ItemsCount", 0);
                 if (itemAddToCartMessage != null) {
                     setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                 }
