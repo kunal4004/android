@@ -5,12 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -24,6 +27,7 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.StartupView
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.NotificationUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -35,6 +39,7 @@ import java.util.*
 class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtension.ProductDetailsStatusListner {
 
     private lateinit var startupViewModel: StartupViewModel
+    private lateinit var jsonLinkData: JsonObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,9 +57,25 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         }
     }
 
+    private fun parseDeepLinkData(bundle: Bundle) {
+        val deepLinkData: String = bundle?.getString("parameters", "").replace("\\", "")
+        jsonLinkData = Utils.strToJson(deepLinkData, JsonObject::class.java) as JsonObject
+    }
+
     private fun handleAppLink(appLinkData: Any?) {
-        if (appLinkData != null && appLinkData is Uri) {
-            val productSearchTerm = appLinkData.pathSegments?.find { it.startsWith("A-") }!!
+        var bundle: Bundle
+        if (appLinkData is Uri) {
+            bundle = bundleOf(
+                    "feature" to AppConstant.DP_LINKING_PRODUCT_DETAIL,
+                    "parameters" to "{\"url\": \"${appLinkData}\"}"
+            )
+        } else
+            bundle = appLinkData as Bundle
+        parseDeepLinkData(bundle)
+
+        if (bundle != null && bundle.get("feature") != null && !TextUtils.isEmpty(bundle.get("feature").toString()) && jsonLinkData?.get("url") != null) {
+            val linkData = Uri.parse(jsonLinkData.get("url").asString)
+            val productSearchTerm = linkData.pathSegments?.find { it.startsWith("A-") }!!
             if (productSearchTerm == null || productSearchTerm.isEmpty()) {
                 restartApp()
             }
