@@ -68,15 +68,12 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
     }
 
-    companion object {
-        private const val TAG = "LinkDeviceConfirmationFragment"
-    }
-
     override fun onResume() {
         super.onResume()
         activity?.let {
             if (it is LinkDeviceConfirmationInterface) {
                 it.showToolbarButton()
+                it.hideBackButton()
             }
         }
     }
