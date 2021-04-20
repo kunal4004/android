@@ -1472,7 +1472,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     break;
             }
         } else if (resultCode == RESULT_CODE_DEVICE_LINKED) {
-            callLinkedDevicesAPI(true);
+            callLinkedDevicesAPI(false);
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             initialize();
             //One time biometricsWalkthrough

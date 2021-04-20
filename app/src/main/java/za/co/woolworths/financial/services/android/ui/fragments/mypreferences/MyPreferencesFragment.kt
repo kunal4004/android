@@ -108,7 +108,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
         retryLinkDeviceTextView?.visibility = View.GONE
 
-        mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(true)
+        mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(isUpdateAccountCache)
         mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
@@ -122,13 +122,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
                         deviceList = response?.userDevices
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
-                        if (isUpdateAccountCache) {
-                            activity?.apply {
-                                val data = Intent()
-                                data.putExtra("deviceList", deviceList)
-                                setResult(RESULT_CODE_DEVICE_LINKED, data)
-                            }
-                        }
                     }
                     else -> {
                         spinningAnimation.cancel()
@@ -315,6 +308,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     companion object {
 
+        const val RESULT_LISTENER_DELETE_DEVICE: String = "deleteDevice"
         const val RESULT_LISTENER_LINK_DEVICE = "linkDevice"
         const val LOCK_REQUEST_CODE_TO_ENABLE = 222
         const val LOCK_REQUEST_CODE_TO_DISABLE = 333
