@@ -10,8 +10,8 @@ import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.navigateToShoppingListOnToastClicked

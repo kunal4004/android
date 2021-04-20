@@ -3,17 +3,29 @@ package za.co.woolworths.financial.services.android.ui.activities.product
 import android.app.ActivityManager
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
+import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
+import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
+import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.NotificationUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -21,6 +33,8 @@ import java.util.*
  * Created by Kunal Uttarwar on 26/3/21.
  */
 class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtension.ProductDetailsStatusListner {
+
+    private lateinit var startupViewModel: StartupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +65,56 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK, arguments)
 
-            ProductDetailsExtension.retrieveProduct(productId, productId, this, this)
+            setupViewModel()
+            init()
+            val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
+            if (defaultLocation == null)
+                getConfig(productId)
+            else
+                ProductDetailsExtension.retrieveProduct(productId, productId, this, this)
         } else {
             finish()
         }
+    }
+
+    private fun setupViewModel() {
+        startupViewModel = ViewModelProviders.of(
+                this,
+                ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
+        ).get(StartupViewModel::class.java)
+    }
+
+    private fun init() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationUtils.createNotificationChannelIfNeeded(this)
+        }
+        // Disable first time launch splash video screen, remove to enable video on startup
+        startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
+        startupViewModel.setUpEnvironment(this@ProductDetailsDeepLinkActivity)
+        if (startupViewModel.isConnectedToInternet(this@ProductDetailsDeepLinkActivity)) {
+            startupViewModel.setUpFirebaseEvents()
+        }
+        //Remove old usage of SharedPreferences data.
+        startupViewModel.clearSharedPreference(this@ProductDetailsDeepLinkActivity)
+        AuthenticateUtils.getInstance(this@ProductDetailsDeepLinkActivity).enableBiometricForCurrentSession(true)
+    }
+
+    private fun getConfig(productId: String) {
+        startupViewModel.queryServiceGetConfig().observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    stopProgressBar()
+                    ConfigResource.persistGlobalConfig(it.data, startupViewModel)
+                    ProductDetailsExtension.retrieveProduct(productId, productId, this, this)
+                }
+                ResponseStatus.LOADING -> {
+                    startProgressBar()
+                }
+                ResponseStatus.ERROR -> {
+                    stopProgressBar()
+                }
+            }
+        })
     }
 
     private fun restartApp() {
@@ -69,7 +129,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         val intent = Intent(this, ProductDetailsActivity::class.java)
         intent.putExtras(bundle!!)
         startActivityForResult(intent, DEEP_LINK_REQUEST_CODE)
-        overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
     }
 
     override fun onSuccess(bundle: Bundle) {

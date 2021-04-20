@@ -25,6 +25,7 @@ class ProductDetailsExtension : Fragment() {
         const val TAG: String = "BottomNavigationActivity"
         const val HTTP_OK: Int = 200
         const val PRODUCT_NOT_FOUND: Int = 502
+        const val OUT_OF_STOCK_RESPONSE_CODE: String = "0008"
 
         @JvmStatic
         fun retrieveProduct(productId: String, skuId: String, activity: Activity, listner: ProductDetailsStatusListner) {
@@ -45,7 +46,10 @@ class ProductDetailsExtension : Fragment() {
                                     listner.onSuccess(bundle)
                                 }
                                 PRODUCT_NOT_FOUND -> activity.apply {
-                                    listner.onProductNotFound(response.response.desc)
+                                    if (response?.response?.code.equals(OUT_OF_STOCK_RESPONSE_CODE)) {
+                                        listner.onProductNotFound(getString(R.string.out_of_stock_502))
+                                    } else
+                                        listner.onProductNotFound(getString(R.string.unable_to_process_502))
                                 }
                                 else -> {
                                     if (!WoolworthsApplication.isApplicationInForeground())
