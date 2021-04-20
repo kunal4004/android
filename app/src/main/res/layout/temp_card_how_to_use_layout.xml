@@ -25,42 +25,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:layout_scrollFlags="snap">
-
-                <TextView
-                    android:id="@+id/toolbarText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/futura_semi_bold_ttf"
-                    android:letterSpacing="0.2"
-                    android:text="@string/how_to_use"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp" />
-
-            </androidx.appcompat.widget.Toolbar>
+                app:layout_scrollFlags="snap"/>
         </com.google.android.material.appbar.AppBarLayout>
-
-        <ImageView
-            android:id="@+id/imTempCard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fourty_nine_dp"
-            android:contentDescription="@string/placeholder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appbar"
-            app:srcCompat="@drawable/store_card_temp" />
 
         <CheckBox
             android:id="@+id/howToUse"
             style="@style/how_to_pay_text_style"
-            android:layout_marginTop="@dimen/sixty_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
             android:text="@string/how_to_use0"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/imTempCard" />
+            app:layout_constraintTop_toBottomOf="@+id/howItWorksTitleTextView" />
 
         <CheckBox
             android:id="@+id/howToUse1"
@@ -117,22 +92,13 @@
             app:layout_constraintTop_toBottomOf="@+id/howToUse5" />
 
         <CheckBox
-            android:id="@+id/howToUse7"
-            style="@style/how_to_pay_text_style"
-            android:layout_marginTop="@dimen/twenty_four_dp"
-            android:text="@string/temp_card_how_to_use7"
-            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/howToUse6" />
-
-        <CheckBox
             android:id="@+id/howToUse8"
             style="@style/how_to_pay_text_style"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:text="@string/temp_card_how_to_use8"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/howToUse7" />
+            app:layout_constraintTop_toBottomOf="@+id/howToUse6" />
 
         <CheckBox
             android:id="@+id/howToUse9"
@@ -173,6 +139,19 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+        <TextView
+            android:id="@+id/howItWorksTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:letterSpacing="0.029"
+            android:text="@string/how_it_works"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/appbar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
