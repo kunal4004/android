@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.net.UrlQuerySanitizer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
@@ -433,24 +434,19 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun constructPayUPayResultCallback(url: String?, stopLoading: () -> Unit, result: () -> Unit) {
-        val merchantSiteUrl = getMerchantSiteAndMerchantUrl().first
 
-        if (merchantSiteUrl?.let { url?.contains(it) } == true) {
+        if (getMerchantSiteAndMerchantUrl().first?.let { url?.contains(it) } == true) {
             stopLoading()
-            val siteUrl = url?.substring(url.indexOf("?"), url.length)
 
-            val splitSiteUrlList = siteUrl?.split("&")
-            val customer = splitSiteUrlList?.get(0)
-            val paymentId = splitSiteUrlList?.get(1)
-            val chargeId = splitSiteUrlList?.get(2)
-            val status = splitSiteUrlList?.get(3)
+            val merchantSiteURI = url?.let { UrlQuerySanitizer(it) }
+            val customer = merchantSiteURI?.getValue("customer") ?: ""
+            val paymentId = merchantSiteURI?.getValue("payment_id") ?: ""
+            val chargeId = merchantSiteURI?.getValue("charge_id") ?: ""
+            val status = merchantSiteURI?.getValue("status") ?: ""
+            val productOfferingId = getProductOfferingIdInStringFormat() ?: ""
 
-            payUPayResultRequest.value =  PayUPayResultRequest(
-                    customer?.substring(customer.indexOf("=").plus(1), customer.length) ?: "",
-                    paymentId?.substring(paymentId.indexOf("=").plus(1), paymentId.length) ?: "",
-                    chargeId?.substring(chargeId.indexOf("=").plus(1), chargeId.length) ?: "",
-                    status?.substring(status.indexOf("=").plus(1), status.length) ?: "",
-                    getProductOfferingIdInStringFormat() ?: "")
+            val output = PayUPayResultRequest(customer, paymentId, chargeId, status, productOfferingId)
+            payUPayResultRequest.value = output
             result()
         }
     }

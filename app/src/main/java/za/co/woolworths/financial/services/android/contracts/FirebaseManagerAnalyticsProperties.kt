@@ -70,7 +70,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOPMYORDERS: String = "shop_myorders"
         const val BLOCK_CARD_CONFIRM: String = "myaccounts_blockcard_confirm"
         const val BLOCK_CARD_CANCEL: String = "myaccounts_blockcard_cancel"
-        const val ABSA_CC_SET_UP_PASSOCDE: String = "absa_cc_setup_passcode"
+        const val ABSA_CC_SET_UP_PASSCODE: String = "absa_cc_setup_passcode"
         const val ABSA_CC_COMPLETE_SETUP: String = "absa_cc_complete_setup"
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "cc_login_with_new_passcode"
         const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statements"
@@ -250,12 +250,23 @@ open class FirebaseManagerAnalyticsProperties {
             const val SC_ACCOUNT_STATE = "sc_account_dc_state"
             const val CC_ACCOUNT_STATE = "cc_account_dc_state"
             const val PL_ACCOUNT_STATE = "pl_account_dc_state"
+
             const val SC_PAYMENT_DUE_DATE = "sc_payment_due_date"
             const val CC_PAYMENT_DUE_DATE = "cc_payment_due_date"
             const val PL_PAYMENT_DUE_DATE = "pl_payment_due_date"
             const val SC_DEBIT_ORDER = "sc_debit_order"
             const val CC_DEBIT_ORDER = "cc_debit_order"
             const val PL_DEBIT_ORDER = "pl_debit_order"
+
+            const val TAPPED: String = "tapped"
+            const val PASSCODE: String = "passcode"
+            const val NETWORK: String = "network"
+            const val OTHER_HTTP_CODE: String = "other http code"
+            const val PIN: String = "pin"
+            const val TIMEOUT:String = "timeout"
+            const val UNDEFINED: String = "undefined"
+            const val FAILED: String = "failed"
+            const val SUCCESSFUL: String = "successful"
         }
     }
 

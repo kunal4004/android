@@ -8,15 +8,14 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <!-- Barcode scanner -->
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -143,7 +142,7 @@
         <!-- ./Firebase Notifications -->
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.StartupActivity"
+            android:name="za.co.woolworths.financial.services.android.startup.view.StartupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -301,6 +300,12 @@
             android:theme="@style/CLI"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -333,7 +338,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle" />
+            android:theme="@style/FaqStyle"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
             android:screenOrientation="portrait"
