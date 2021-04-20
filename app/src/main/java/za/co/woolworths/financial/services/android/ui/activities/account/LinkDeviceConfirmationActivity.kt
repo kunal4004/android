@@ -49,6 +49,10 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
     }
 
     override fun onBackPressed() = when (linkDeviceNavHost?.currentDestination?.id) {
+        R.id.linkDeviceConfirmationFragment -> {
+            Utils.setLinkConfirmationShown(true)
+            finishActivity()
+        }
         linkDeviceNavHost?.graph?.startDestination -> {
             finishActivity()
         }
@@ -86,6 +90,23 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
 
     override fun showToolbarButton() {
         linkDeviceConfirmToolbarRightButton?.visibility = View.VISIBLE
+    }
+
+    override fun hideBackButton() {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+        }
+    }
+
+    override fun showBackButton() {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
     }
 
      override fun getToolbar(): Toolbar {

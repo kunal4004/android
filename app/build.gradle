@@ -9,8 +9,8 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
 android {
 
-    def major = "7"
-    def minor = "9"
+    def major = "8"
+    def minor = "0"
     def fix = "0"
     def jobNumber = 10519
 

@@ -39,7 +39,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
@@ -86,6 +85,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         activity?.apply {
             if (this is MyPreferencesInterface) {
                 setToolbarTitle(getString(R.string.acc_my_preferences))
+                setToolbarTitleGravity(Gravity.START)
             }
         }
     }
@@ -98,6 +98,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         }
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
+
 
         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
         updateLinkedDeviceView(isDeviceIdentityIdPresent)
@@ -153,6 +154,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             else -> {
                 linkDeviceLayout?.visibility = View.VISIBLE
                 linkDeviceSwitch.isChecked = deviceIdentityIdPresent
+                if (deviceList == null || deviceList?.isEmpty() == true){
+                    viewAllLinkedDevicesRelativeLayout.visibility = View.GONE
+                } else {
+                    viewAllLinkedDevicesRelativeLayout.visibility = View.VISIBLE
+                }
+
                 if (deviceIdentityIdPresent) {
                     linkDeviceSwitch.visibility = View.GONE
                     linkDeviceSwitch.isEnabled = false
@@ -210,12 +217,13 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 callLinkedDevicesAPI()
             }
             R.id.viewAllLinkedDevicesRelativeLayout -> {
-                Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
-                        bundleOf(
-                                ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
-                        ))
+                if(deviceList != null && deviceList!!.isNotEmpty()) {
+                    Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
+                            bundleOf(
+                                    ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
+                            ))
+                }
             }
-
         }
     }
 
