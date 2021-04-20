@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
+import android.util.Log
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.ApiOperation
 import com.amplifyframework.api.aws.AWSApiPlugin
@@ -15,17 +16,22 @@ import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.*
 
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.util.Assets
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 object ChatAWSAmplify {
 
     private var subscription: ApiOperation<*>? = null
+    var sendMessageMutableList: MutableList<ChatMessage?>? = mutableListOf()
+    var isUserSubscriptionActive: Boolean = false
 
     init {
         try {
@@ -188,5 +194,91 @@ object ChatAWSAmplify {
     }
 
     fun init() {}
+
+    fun signInAndSubscribe(result: (SendMessageResponse?) -> Unit, onFailure: (Any) -> Unit) {
+        signIn({ conversation ->
+            val liveChatDBRepository = LiveChatDBRepository()
+            liveChatDBRepository.saveConversation(conversation)
+            subscribeToMessageByConversationId({ message ->
+                sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content
+                        ?: ""))
+                isUserSubscriptionActive = true
+                Log.e("subscribeToMessage", "1 $message")
+                result(message)
+            }, { error ->
+                isUserSubscriptionActive = false
+                Log.e("subscribeToMessage", "2 $error")
+                onFailure(error)
+            })
+
+        }, { failure ->
+            isUserSubscriptionActive = false
+            Log.e("subscribeToMessage", "3 $failure")
+            onFailure(failure)
+        })
+    }
+
+    private fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
+        val liveChatDBRepository = LiveChatDBRepository()
+        val conversationId = liveChatDBRepository.getConversationMessageId()
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("subscribeToMessageByConversationId")
+            failure(failure)
+            return
+        }
+        with(liveChatDBRepository) {
+            subscribeToMessageByConversationId(
+                    getConversationMessageId(),
+                    getSessionType(),
+                    getSessionVars(),
+                    ChatCustomerInfo.getCustomerFamilyName(),
+                    ChatCustomerInfo.getCustomerEmail(),
+                    { data -> result(data) }, { failure(failure) })
+        }
+    }
+
+    fun logExceptionToFirebase(value: String?) = FirebaseManager.logException(value.plus(" ${Utils.toJson(LiveChatDBRepository().getConversation())}"))
+
+    fun sendMessage(content: String) {
+        val liveChatDBRepository = LiveChatDBRepository()
+        val conversationId = liveChatDBRepository.getConversationMessageId()
+
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("sendMessage conversationId")
+            return
+        }
+
+        sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.SENT, content))
+        with(liveChatDBRepository) {
+            sendMessage(
+                    conversationId,
+                    getSessionType(),
+                    SessionStateType.ONLINE,
+                    content,
+                    liveChatDBRepository.getSessionVars(),
+                    ChatCustomerInfo.getCustomerFamilyName(),
+                    ChatCustomerInfo.getCustomerEmail())
+        }
+    }
+
+    fun signOut(result: () -> Unit) {
+        val liveChatDBRepository = LiveChatDBRepository()
+        val conversationId = liveChatDBRepository.getConversationMessageId()
+        if (conversationId.isEmpty()) {
+            logExceptionToFirebase("signOut conversationId")
+            return
+        }
+        with(liveChatDBRepository) {
+            queryServiceSignOut(
+                    conversationId,
+                    getSessionType(),
+                    SessionStateType.DISCONNECT,
+                    "",
+                    liveChatDBRepository.getSessionVars(),
+                    ChatCustomerInfo.getCustomerFamilyName(),
+                    ChatCustomerInfo.getCustomerEmail(),
+                    { result() }, { result() })
+        }
+    }
 
 }

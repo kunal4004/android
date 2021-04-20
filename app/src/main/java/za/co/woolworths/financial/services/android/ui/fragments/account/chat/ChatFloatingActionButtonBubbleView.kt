@@ -3,7 +3,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.View.GONE
@@ -13,6 +16,7 @@ import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.widget.NestedScrollView
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -30,16 +34,17 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                                          var chatBubbleVisibility: ChatBubbleVisibility? = null,
-                                         var floatingActionButton: FloatingActionButtonBadgeCounter? = null,
+                                         var floatingActionButtonBadgeCounter: FloatingActionButtonBadgeCounter? = null,
                                          var applyNowState: ApplyNowState,
                                          var scrollableView: Any? = null) {
 
+    private var mUnReadMessageCountReceiver: BroadcastReceiver? = null
     private var chatBubbleToolTip: Dialog? = null
     private var isLiveChatEnabled = false
 
     init {
         isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
-        floatingActionButton?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
+        floatingActionButtonBadgeCounter?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
     }
 
     @SuppressLint("InflateParams")
@@ -111,11 +116,11 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
-                            floatingActionButton?.hide()
+                            floatingActionButtonBadgeCounter?.hide()
                             if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
-                            floatingActionButton?.show()
+                            floatingActionButtonBadgeCounter?.show()
                         }
                     }
                 }
@@ -124,11 +129,11 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
             is RecyclerView -> {
                 (scrollableView as? RecyclerView)?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) floatingActionButton?.hide()
+                        if (dy > 0 || dy < 0 && floatingActionButtonBadgeCounter?.isShown == true) floatingActionButtonBadgeCounter?.hide()
                     }
 
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) floatingActionButton?.show()
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) floatingActionButtonBadgeCounter?.show()
                         super.onScrollStateChanged(recyclerView, newState)
                     }
                 })
@@ -139,8 +144,16 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
     private fun floatingButtonListener() {
         activity?.apply {
             val chatAccountProductLandingPage: Account? = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
-            AnimationUtilExtension.animateViewPushDown(floatingActionButton)
-            floatingActionButton?.setOnClickListener {
+            AnimationUtilExtension.animateViewPushDown(floatingActionButtonBadgeCounter)
+
+            mUnReadMessageCountReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent) {
+                    val liveChatDBRepository = LiveChatDBRepository()
+                    floatingActionButtonBadgeCounter?.count = liveChatDBRepository.getUnReadMessageCount()
+                }
+            }
+            //startLiveChatMessageCountReceiver(this)
+            floatingActionButtonBadgeCounter?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
         }
@@ -163,7 +176,7 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                 liveChatParams?.userShouldSignIn ?: true,
                 liveChatParams?.conversation))
 
-        activity?.let { act -> act.startActivity(Intent(act, WChatActivity::class.java)) }
+        activity.startActivity(Intent(activity, WChatActivity::class.java))
     }
 
     fun build() {
@@ -174,4 +187,28 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
             floatingButtonListener()
         }
     }
+
+    private fun startLiveChatMessageCountReceiver(activity: Activity?) {
+        activity ?: return
+        // handler for received Intents for the "UnreadMessageCount" event
+        mUnReadMessageCountReceiver?.let { receiver ->
+            LocalBroadcastManager.getInstance(activity).registerReceiver(receiver,
+                    IntentFilter(UNREAD_MESSAGE_COUNT))
+        }
+    }
+
+    fun endChatMessageCountEnd(activity: Activity?) {
+        activity ?: return
+        // Unregister since the activity is not visible
+        mUnReadMessageCountReceiver?.let { receiver ->
+            LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver)
+        }
+    }
+
+    companion object {
+        const val UNREAD_MESSAGE_COUNT = "UNREAD_MESSAGE_COUNT"
+        const val LIVE_CHAT_SUBSCRIPTION_RESULT = "LIVE_CHAT_SUBSCRIPTION_RESULT"
+        const val LIVE_CHAT_PACKAGE= "live.chat.subscription.result.SUBSCRIBE.DATA"
+    }
+
 }

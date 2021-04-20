@@ -41,11 +41,7 @@ class ChatViewModel : ViewModel() {
     private var awsAmplify: ChatAWSAmplify? = null
     private var conversation: Conversation? = null
 
-    private var sessionStateType: MutableLiveData<SessionStateType?> = MutableLiveData()
-    private var sessionType: MutableLiveData<SessionType?> = MutableLiveData()
-
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
-    var isChatToCollectionAgent: MutableLiveData<Boolean> = MutableLiveData()
 
     private var activityType: ActivityType? = null
 
@@ -85,17 +81,6 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun setSessionStateType(type: SessionStateType) {
-        sessionStateType.value = type
-    }
-
-    private fun getSessionStateType(): SessionStateType {
-        return sessionStateType.value ?: SessionStateType.ONLINE
-    }
-
-    fun setSessionType(type: SessionType) {
-        sessionType.value = type
-    }
 
     private fun getSessionType(): SessionType {
         return liveChatDBRepository.getSessionType()
@@ -109,7 +94,7 @@ class ChatViewModel : ViewModel() {
                     logExceptionToFirebase("subscribeToMessageByConversationId")
                     failure(failure)
                 } else {
-                    liveChatDBRepository.saveCreateConversationModel(conversation)
+                    liveChatDBRepository.saveConversation(conversation)
                     result()
                 }
             }, { failure -> failure(failure) })
@@ -154,7 +139,7 @@ class ChatViewModel : ViewModel() {
         awsAmplify?.sendMessage(
                 conversationId,
                 getSessionType(),
-                getSessionStateType(),
+                SessionStateType.ONLINE,
                 content,
                 liveChatDBRepository.getSessionVars(),
                 getCustomerInfo().getCustomerFamilyName(),
@@ -167,15 +152,9 @@ class ChatViewModel : ViewModel() {
             logExceptionToFirebase("signOut conversationId")
             return
         }
-        awsAmplify?.queryServiceSignOut(
-                conversationId,
-                getSessionType(),
-                SessionStateType.DISCONNECT,
-                "",
-                liveChatDBRepository.getSessionVars(),
-                getCustomerInfo().getCustomerFamilyName(),
-                getCustomerInfo().getCustomerEmail(),
-                { result() }, { result() })
+        ChatAWSAmplify.signOut {
+            onCleared()
+            result() }
     }
 
 

@@ -6,7 +6,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
@@ -18,6 +17,7 @@ import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
@@ -47,11 +47,8 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
-
         initView()
     }
 
@@ -59,8 +56,8 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         setupRecyclerview()
         isChatButtonEnabled(false)
         onClickListener()
-        autoConnectToNetwork()
-        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
+        //autoConnectToNetwork()
+        //  setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
         detectKeyboardVisibilityState()
     }
 
@@ -76,78 +73,81 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     }
 
     private fun onClickListener() {
-        button_send?.setOnClickListener(this)
+        sendMessageButton?.setOnClickListener(this)
     }
 
-    private fun getUserTokenAndSignIn() {
-        with(chatViewModel) {
-            val absaCardToken = liveChatDBRepository.getABSACardToken()
-            if (absaCardToken.isEmpty()) {
-                // show retrieve ABSA card token retry screen
-                chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
-            } else {
-                amplifyListener()
+//    private fun getUserTokenAndSignIn() {
+//        with(chatViewModel) {
+//            val absaCardToken = liveChatDBRepository.getABSACardToken()
+//            if (absaCardToken.isEmpty()) {
+//                // show retrieve ABSA card token retry screen
+//                chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
+//            } else {
+//              //  amplifyListener()
+//            }
+//        }
+//    }
+
+//    private fun amplifyListener() {
+//        chatLoaderProgressBar?.visibility = VISIBLE
+//        with(chatViewModel) {
+//            signIn({
+//                subscribeToMessageByConversationId({ result ->
+//                    subscribeResult(result)
+//                }, {
+//                    chatLoaderProgressBar?.visibility = GONE
+//                })
+//            }, {
+//                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+//                    val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
+//                    showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
+//                    chatLoaderProgressBar?.visibility = GONE
+//                }
+//            })
+//        }
+//    }
+
+    fun subscribeResult(result: SendMessageResponse?) {
+        activity?.runOnUiThread {
+            when (result?.sessionState) {
+
+                SessionStateType.CONNECT -> {
+                    chatLoaderProgressBar?.visibility = GONE
+                    showAgentsMessage(result.content)
+                    isChatButtonEnabled(false)
+                    isUserOnline(true)
+                }
+
+                SessionStateType.ONLINE -> {
+                    chatLoaderProgressBar?.visibility = GONE
+                    showAgentsMessage(result.content)
+                    isChatButtonEnabled(true)
+                    isUserOnline(true)
+                }
+
+                SessionStateType.QUEUEING -> {
+                    chatLoaderProgressBar?.visibility = GONE
+                    showAgentsMessage(result.content)
+                    isChatButtonEnabled(false)
+                    isUserOnline(true)
+                }
+
+                SessionStateType.DISCONNECT -> {
+                    chatLoaderProgressBar?.visibility = GONE
+                    showAgentsMessage(result.content)
+                    isChatButtonEnabled(false)
+                    isUserOnline(true)
+                }
+
+                else -> {
+                    chatLoaderProgressBar?.visibility = GONE
+                }
             }
         }
     }
 
-    private fun amplifyListener() {
-        chatLoaderProgressBar?.visibility = VISIBLE
-        with(chatViewModel) {
-            signIn({
-                subscribeToMessageByConversationId({ result ->
-
-                    activity?.runOnUiThread {
-                        when (result?.sessionState) {
-
-                            SessionStateType.CONNECT -> {
-                                chatLoaderProgressBar?.visibility = GONE
-                                showAgentsMessage(result.content)
-                                isChatButtonEnabled(false)
-                                isUserOnline(true)
-                            }
-
-                            SessionStateType.ONLINE -> {
-                                chatLoaderProgressBar?.visibility = GONE
-                                showAgentsMessage(result.content)
-                                isChatButtonEnabled(true)
-                                isUserOnline(true)
-                            }
-
-                            SessionStateType.QUEUEING -> {
-                                chatLoaderProgressBar?.visibility = GONE
-                                showAgentsMessage(result.content)
-                                isChatButtonEnabled(false)
-                                isUserOnline(true)
-                            }
-
-                            SessionStateType.DISCONNECT -> {
-                                chatLoaderProgressBar?.visibility = GONE
-                                showAgentsMessage(result.content)
-                                isChatButtonEnabled(false)
-                                isUserOnline(true)
-                            }
-
-                            else -> {
-                                chatLoaderProgressBar?.visibility = GONE
-                            }
-                        }
-                    }
-                }, {
-                    chatLoaderProgressBar?.visibility = GONE
-                })
-            }, {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                    val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
-                    showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
-                    chatLoaderProgressBar?.visibility = GONE
-                }
-            })
-        }
-    }
-
     private fun isChatButtonEnabled(isEnabled: Boolean) {
-        button_send?.isEnabled = isEnabled
+        sendMessageButton?.isEnabled = isEnabled
     }
 
     private fun isUserOnline(isVisible: Boolean) {
@@ -165,14 +165,12 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.button_send -> {
+            R.id.sendMessageButton -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     val message = edittext_chatbox?.text?.toString() ?: ""
                     if (TextUtils.isEmpty(message)) return
-                    val chatMessage = ChatMessage(ChatMessage.Type.SENT, message)
-                    updateMessageList(chatMessage)
-                    chatViewModel.setSessionStateType(SessionStateType.ONLINE)
-                    chatViewModel.sendMessage(message)
+                    updateMessageList(ChatMessage(ChatMessage.Type.SENT, message))
+                    ChatAWSAmplify.sendMessage(message)
                     edittext_chatbox?.setText("")
                     try {
                         val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -187,45 +185,53 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         }
     }
 
-    private fun setAgentAvailableState(isOnline: Boolean) {
-        activity?.apply {
-            when (isOnline) {
-                true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
-                else -> {
-                    val bundle = Bundle()
-                    bundle.putString(WhatsAppChatToUsVisibility.FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
-                    bundle.putString(APP_SCREEN, appScreen)
-                    chatNavController?.navigate(R.id.chatToCollectionAgentOfflineFragment, bundle)
-                }
-            }
-        }
-    }
+//    private fun setAgentAvailableState(isOnline: Boolean) {
+//        activity?.apply {
+//            when (isOnline) {
+//                true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
+//                else -> {
+//                    val bundle = Bundle()
+//                    bundle.putString(WhatsAppChatToUsVisibility.FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
+//                    bundle.putString(APP_SCREEN, appScreen)
+//                    chatNavController?.navigate(R.id.chatToCollectionAgentOfflineFragment, bundle)
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun autoConnectToNetwork() {
+//        activity?.let { activity ->
+//            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
+//                override fun onConnectionChanged(hasConnection: Boolean) {
+//                    if (hasConnection) {
+//                        chatViewModel.getMessagesListByConversation { messagesByConversationList ->
+//                            if (messagesByConversationList?.size ?: 0 > 0) {
+//                                val messagesListFromAdapter = mChatAdapter?.getMessageList()
+//
+//                                /**
+//                                 * filter messageByConversation List and list of message from adapter, and remove duplicates
+//                                 * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
+//                                 */
+//
+//                                val updatedList: List<ChatMessage>? = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }?.entries?.map { it.value }?.flatten()?.distinctBy { it.message }
+//
+//                                if (updatedList?.size ?: 0 > 0) {
+//                                    mChatAdapter?.clear()
+//                                    updatedList?.forEach { chat -> updateMessageList(chat) }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            })
+//        }
+//    }
 
-    private fun autoConnectToNetwork() {
-        activity?.let { activity ->
-            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
-                override fun onConnectionChanged(hasConnection: Boolean) {
-                    if (hasConnection) {
-                        chatViewModel.getMessagesListByConversation { messagesByConversationList ->
-                            if (messagesByConversationList?.size ?: 0 > 0) {
-                                val messagesListFromAdapter = mChatAdapter?.getMessageList()
-
-                                /**
-                                 * filter messageByConversation List and list of message from adapter, and remove duplicates
-                                 * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
-                                 */
-
-                                val updatedList: List<ChatMessage>? = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }?.entries?.map { it.value }?.flatten()?.distinctBy { it.message }
-
-                                if (updatedList?.size ?: 0 > 0) {
-                                    mChatAdapter?.clear()
-                                    updatedList?.forEach { chat -> updateMessageList(chat) }
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+    fun subscribeErrorResponse() {
+        GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
+            showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
+            chatLoaderProgressBar?.visibility = GONE
         }
     }
 }

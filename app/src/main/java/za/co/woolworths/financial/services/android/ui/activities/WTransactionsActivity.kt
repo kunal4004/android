@@ -191,7 +191,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         ChatFloatingActionButtonBubbleView(
                 activity = this@WTransactionsActivity,
                 chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
-                floatingActionButton = chatBubbleFloatingButton,
+                floatingActionButtonBadgeCounter = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
                 scrollableView = paymentOptionScrollView)
                 .build()

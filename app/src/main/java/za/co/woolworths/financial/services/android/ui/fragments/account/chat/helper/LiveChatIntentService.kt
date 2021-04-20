@@ -34,7 +34,7 @@ class LiveChatIntentService : Service() {
 
     private fun signIn(result: () -> Unit, fails: (Any) -> Unit) {
         ChatAWSAmplify.signIn({ conversation ->
-            liveChatDBRepository.saveCreateConversationModel(conversation)
+            liveChatDBRepository.saveConversation(conversation)
             if (conversation == null) {
                 logExceptionToFirebase("subscribeToMessageByConversationId")
                 fails("logExceptionToFirebase")
@@ -64,8 +64,6 @@ class LiveChatIntentService : Service() {
 
     private fun logExceptionToFirebase(value: String?) = FirebaseManager.logException(value.plus(" ${Utils.toJson(liveChatDBRepository.getLiveChatParams()?.conversation)}"))
 
-    private fun getConversationMessageId(): String = liveChatDBRepository.getLiveChatParams()?.conversation?.id
-            ?: ""
-
+    private fun getConversationMessageId(): String = liveChatDBRepository.getLiveChatParams()?.conversation?.id ?: ""
 
 }

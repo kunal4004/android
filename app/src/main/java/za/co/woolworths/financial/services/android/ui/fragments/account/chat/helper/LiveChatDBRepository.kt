@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -25,7 +23,7 @@ class LiveChatDBRepository : DatabaseManager() {
 
     fun saveLiveChatParams(liveChatExtraParams: LiveChatExtraParams?) = saveToDB(KEY_LIVE_CHAT_DB, liveChatExtraParams)
 
-    fun saveCreateConversationModel(conversation: Conversation?) {
+    fun saveConversation(conversation: Conversation?) {
         val liveChatParams = getLiveChatParams()
         liveChatParams?.conversation = conversation
         saveLiveChatParams(liveChatParams)
@@ -39,16 +37,15 @@ class LiveChatDBRepository : DatabaseManager() {
 
     fun saveChatUnReadMessageCount(count: Int) {
         val liveChatParams = getLiveChatParams()
-       val messageCounter : LiveData<Int>  = MutableLiveData()
         liveChatParams?.unReadMessageCount = count
         saveLiveChatParams(liveChatParams)
     }
 
-//    fun getUnReadMessageCount(): LiveData<Int> {
-//        val liveChatParams = getLiveChatParams()
-//        return liveChatParams?.unReadMessageCount ?: 0
-//
-//    }
+    fun getUnReadMessageCount(): Int {
+        val liveChatParams = getLiveChatParams()
+        return liveChatParams?.unReadMessageCount ?: 0
+
+    }
 
     fun getLiveChatParams() = getDataFromDB(KEY_LIVE_CHAT_DB, LiveChatExtraParams::class.java)
 
@@ -104,5 +101,11 @@ class LiveChatDBRepository : DatabaseManager() {
         liveChatParams = null
         saveLiveChatParams(liveChatParams)
     }
+
+
+    fun getConversationMessageId(): String = getConversation()?.id ?: ""
+
+    fun getConversation() = getLiveChatParams()?.conversation
+
 
 }

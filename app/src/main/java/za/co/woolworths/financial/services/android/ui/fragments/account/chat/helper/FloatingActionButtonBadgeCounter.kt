@@ -33,7 +33,7 @@ private const val MINI_MAX_COUNT_TEXT = "9+"
 
 private const val TEXT_SIZE_DP = 11
 private const val TEXT_PADDING_DP = 2
-private val MASK_COLOR = Color.parseColor("#33000000") // Translucent black as mask color
+private val MASK_COLOR = Color.parseColor("#A5B52B") // Translucent black as mask color
 private val ANIMATION_INTERPOLATOR = OvershootInterpolator()
 private const val RIGHT_TOP_POSITION = 0
 private const val LEFT_BOTTOM_POSITION = 1
@@ -112,7 +112,7 @@ open class FloatingActionButtonBadgeCounter @JvmOverloads constructor(
         )
         textPaint.color = styledAttributes.getColor(R.styleable.FloatingActionButtonBadgeCounter_badgeTextColor, Color.WHITE)
         circlePaint.color = styledAttributes.getColor(R.styleable.FloatingActionButtonBadgeCounter_badgeBackgroundColor, getDefaultBadgeColor())
-        badgePosition = styledAttributes.getInt(R.styleable.FloatingActionButtonBadgeCounter_badgePosition, RIGHT_TOP_POSITION)
+        badgePosition = styledAttributes.getInt(R.styleable.FloatingActionButtonBadgeCounter_badgePosition, LEFT_TOP_POSITION)
         styledAttributes.recycle()
 
         updateCountText()
@@ -192,14 +192,15 @@ open class FloatingActionButtonBadgeCounter @JvmOverloads constructor(
     }
 
     private fun calculateCircleBounds() {
-        val circleRadius = max(textBounds.width(), textBounds.height()) / 2f + textPadding
-        val circleEnd = (circleRadius * 2).toInt()
+        val circle = 1.5
+        val circleRadius = max(textBounds.width(), textBounds.height()) / 1.5f + textPadding
+        val circleEnd = (circleRadius * circle).toInt()
         if (isSizeMini) {
-            val circleStart = (circleRadius / 2).toInt()
+            val circleStart = (circleRadius / circle).toInt()
             circleBounds.set(circleStart, circleStart, circleEnd, circleEnd)
         } else {
             val circleStart = 0
-            circleBounds.set(circleStart, circleStart, (circleRadius * 2).toInt(), (circleRadius * 2).toInt())
+            circleBounds.set(circleStart, circleStart, (circleRadius * circle).toInt(), (circleRadius * circle).toInt())
         }
     }
 

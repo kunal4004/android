@@ -1,5 +1,9 @@
 package za.co.woolworths.financial.services.android.models.dto.chat.amplify
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class SendMessageResponse(
         val caption: String,
         val content: String,
@@ -14,4 +18,4 @@ data class SendMessageResponse(
         val sessionState: SessionStateType,
         val timestamp: String,
         val updatedAt: String
-)
+) : Parcelable

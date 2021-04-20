@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +72,9 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
+
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView.LIVE_CHAT_PACKAGE;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView.LIVE_CHAT_SUBSCRIPTION_RESULT;
 
 
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
@@ -305,7 +310,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         getTracker();
         bus = new RxBus();
     }
-    
+
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {
         String passphrase = BuildConfig.VERSION_NAME + ", " + BuildConfig.SHA1;
@@ -345,6 +350,21 @@ public class WoolworthsApplication extends Application implements Application.Ac
         if (activity.getClass().equals(BottomNavigationActivity.class)) {
             if (ChatAWSAmplify.INSTANCE == null)
                 ChatAWSAmplify.INSTANCE.init();
+        }
+
+        if (activity.getClass().equals(WChatActivity.class)) {
+            ChatAWSAmplify.INSTANCE.signInAndSubscribe(result -> {
+                        Intent intent = new Intent(LIVE_CHAT_PACKAGE);
+                        intent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, new Gson().toJson(result));
+                        activity.sendBroadcast(intent);
+                        return null;
+                    }, failure -> {
+                        Intent intent = new Intent(LIVE_CHAT_PACKAGE);
+                        intent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, "");
+                        activity.sendBroadcast(intent);
+                        return null;
+                    }
+            );
         }
     }
 
@@ -667,4 +687,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public void setCreditLimitsIncrease(CreditLimitIncrease creditLimitIncrease) {
         this.creditLimitIncrease = creditLimitIncrease;
     }
+
+
 }

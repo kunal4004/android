@@ -1,5 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -11,12 +15,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
@@ -25,8 +33,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
+    private var mSubscribeToMessageReceiver: BroadcastReceiver? = null
     private var isChatToCollectionAgent: Boolean = false
     private var sessionType: SessionType? = null
     private var chatNavHostController: NavController? = null
@@ -36,6 +46,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     val bundle = Bundle()
     var shouldDismissChatNavigationModel = false
     var shouldAnimateChatMessage = true
+
     enum class ChatType { AGENT_COLLECT, WHATSAPP_ONBOARDING, DEFAULT }
 
     private val chatViewModel: ChatViewModel by viewModels()
@@ -68,6 +79,29 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                 }
             })
         }
+
+        mSubscribeToMessageReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent) {
+                val extras = intent.extras ?: return
+                val result: String? = extras.getString(LIVE_CHAT_SUBSCRIPTION_RESULT)
+                val sendMessage: SendMessageResponse? = Gson().fromJson(result, SendMessageResponse::class.java)
+                when (currentFragment) {
+                    is ChatFragment -> {
+                        (currentFragment as? ChatFragment)?.apply {
+                            if (sendMessage == null) {
+                                subscribeErrorResponse()
+                            } else {
+                                subscribeResult(sendMessage)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        mSubscribeToMessageReceiver?.let { receiver ->
+            registerReceiver(receiver, IntentFilter(LIVE_CHAT_PACKAGE))
+        }
     }
 
     private fun getArguments() {
@@ -76,7 +110,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
             appScreen = getString(APP_SCREEN)
             sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
             isChatToCollectionAgent = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
-            chatViewModel.setSessionType(sessionType ?: SessionType.Collections)
             chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
         }
 
@@ -160,17 +193,15 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         when (currentFragment) {
             is WhatsAppChatToUsFragment -> chatNavHostController?.popBackStack()
 
-            is ChatOfflineFragment -> {
-                finish()
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-            }
+            is ChatOfflineFragment -> finishActivity()
+
 
             is ChatRetrieveABSACardTokenFragment -> endSessionPopup()
 
             else -> {
                 when (chatNavHostController?.graph?.startDestination) {
 
-                    R.id.chatFragment -> endSessionPopup()
+                    R.id.chatFragment -> finishActivity()
 
                     else -> chatNavHostController?.popBackStack()
                 }
@@ -201,6 +232,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     private fun closeChat() {
+        finishActivity()
+    }
+
+    private fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
@@ -216,4 +251,11 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         chatNavGraph?.startDestination = startDestination
         chatNavGraph?.let { chatNavHostController?.setGraph(it, bundle) }
     }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mSubscribeToMessageReceiver?.let { unregisterReceiver(it) }
+    }
+
 }
