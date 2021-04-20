@@ -151,7 +151,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                             if (!isAdded) return@queryServicePayUPaymentMethod
                             stopProgress()
                             payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-                            navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
+                            navigateToDeepLinkView()
 
                         }, { onSessionExpired ->
                     if (!isAdded) return@queryServicePayUPaymentMethod
@@ -359,13 +359,14 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         }
     }
 
-    fun navigateToDeepLinkView(deep_linking_key: String, view: View?) {
+    fun navigateToDeepLinkView() {
         if (activity is AccountSignedInActivity) {
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                 (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
                     val deepLinkingObject = getDeepLinkData()
                     when (deepLinkingObject?.get("feature")?.asString) {
-                        deep_linking_key -> view?.performClick()
+                        DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT ->  incViewStatementButton?.performClick()
+                        DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT -> incPayMyAccountButton?.performClick()
                     }
                     deleteDeepLinkData()
                 }

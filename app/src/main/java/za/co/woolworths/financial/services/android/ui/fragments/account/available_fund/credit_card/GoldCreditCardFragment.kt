@@ -27,7 +27,7 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incPayMyAccountButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
 
-        navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT,incViewStatementButton)
+        navigateToDeepLinkView()
 
     }
 
