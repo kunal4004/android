@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -129,7 +131,16 @@ public class MyPreferencesActivity extends AppCompatActivity implements MyPrefer
         if (mPrefsToolbar == null) {
             return;
         }
-        WTextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
+        TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
         title.setText(titleTxt);
+    }
+
+    @Override
+    public void setToolbarTitleGravity(int gravity) {
+        if (mPrefsToolbar == null) {
+            return;
+        }
+        TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
+        title.setGravity(gravity);
     }
 }
