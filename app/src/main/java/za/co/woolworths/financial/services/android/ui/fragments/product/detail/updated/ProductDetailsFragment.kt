@@ -177,7 +177,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             getSelectedSku()?.quantity?.let {
                 if (it > 0) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY)
                     QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment).show(this, QuantitySelectorFragment::class.java.simpleName)
                 }
             }
@@ -731,6 +730,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onQuantitySelection(quantity: Int) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY)
         setSelectedQuantity(quantity)
         quantityText.text = quantity.toString()
     }
