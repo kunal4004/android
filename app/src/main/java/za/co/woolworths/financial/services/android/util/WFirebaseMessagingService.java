@@ -25,6 +25,7 @@ import java.util.Map;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -49,7 +50,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             NotificationUtils.createNotificationChannelIfNeeded(this);
         }
 
-        if (!WoolworthsApplication.isApplicationInForeground()){
+        if (WoolworthsApplication.isApplicationInForeground()){
             Log.i(TAG, remoteMessage.getData().toString());
             sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
 
@@ -81,6 +82,15 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
             intent = new Intent(this, StartupActivity.class);
+            intent.setData(Uri.parse(parameters.get("url").getAsString()));
+            intent.setAction(Intent.ACTION_VIEW);
+        }
+        else if (payload.get("feature").equals("Product Detail")){
+            String json = payload.get("parameters").replaceAll("\\\\", "");
+            Log.d(TAG, String.format("About to parse JSON: %s", json));
+            JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+
+            intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
             intent.setData(Uri.parse(parameters.get("url").getAsString()));
             intent.setAction(Intent.ACTION_VIEW);
         }
