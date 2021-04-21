@@ -169,6 +169,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun onDestroy() {
         mainView = null
+        deleteDeepLinkData()
     }
 
     private fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {
