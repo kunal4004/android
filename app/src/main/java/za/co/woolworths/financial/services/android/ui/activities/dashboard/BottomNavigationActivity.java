@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -60,6 +61,7 @@ import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActi
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -326,6 +328,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     }
                     break;
 
+                case AppConstant.DP_LINKING_PRODUCT_DETAIL:
+                    Intent intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
+                    intent.putExtra("feature", AppConstant.DP_LINKING_PRODUCT_DETAIL);
+                    intent.putExtra("parameters", appLinkData.toString());
+                    startActivity(intent);
+                    break;
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS:

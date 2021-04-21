@@ -46,7 +46,12 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         setContentView(R.layout.activity_deeplink_pdp)
         startProgressBar()
         var bundle: Any? = intent?.data
-        if (bundle == null && intent?.extras != null) {
+        if (intent.hasExtra("parameters")) {
+            val parameter = intent?.getStringExtra("parameters")
+            jsonLinkData = Utils.strToJson(parameter, JsonObject::class.java) as JsonObject
+            bundle = Uri.parse(jsonLinkData.get("url").asString)
+            intent?.action = Intent.ACTION_VIEW
+        } else if (bundle == null && intent?.extras != null) {
             bundle = intent!!.extras!!
             intent?.action = Intent.ACTION_VIEW
         }
