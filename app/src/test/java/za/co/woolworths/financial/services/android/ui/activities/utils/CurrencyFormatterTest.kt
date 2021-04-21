@@ -49,7 +49,7 @@ class CurrencyFormatterTest {
     @Test
     fun verify_space_between_currency_symbol_and_amount_value() {
 
-        val amountMap = mapOf<Any, String>(Pair("-111", "-R 1.11"),Pair("-1", "-R 0.10"), Pair("1", "R 0.10"), Pair("2", "R 0.02"), Pair("-2002", "-R 20.02"), Pair("-101", "-R 1.01"), Pair("12000", "R 120.00"), Pair("30000", "R 300.00"), Pair("200", "R 2.00"),
+        val amountMap = mapOf<Any, String>(Pair("-111", "-R 1.11"),Pair("-1", "-R 0.01"), Pair("1", "R 0.01"), Pair("2", "R 0.02"), Pair("-2002", "-R 20.02"), Pair("-101", "-R 1.01"), Pair("12000", "R 120.00"), Pair("30000", "R 300.00"), Pair("200", "R 2.00"),
                 Pair("221", "R 2.21"), Pair("101", "R 1.01"), Pair("4022", "R 40.22"), Pair("-120332", "-R 1 203.32"), Pair("5003", "R 50.03"), Pair("2102", "R 21.02"), Pair("30", "R 0.30"))
 
         conversionResult(amountMap, ::formatAmountWithSpacingFunc)
