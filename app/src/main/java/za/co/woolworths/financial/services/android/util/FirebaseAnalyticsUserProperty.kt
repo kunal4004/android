@@ -92,11 +92,7 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
                 account?.apply {
                     val paymentDueDate = paymentDueDate?.toString() ?: "N/A"
                     val debitOrderActive = debitOrder?.debitOrderActive ?: false
-                    val paymentDueDateKey = when (productGroupCode.toUpperCase()) {
-                        AccountsProductGroupCode.STORE_CARD.groupCode -> SC_PAYMENT_DUE_DATE
-                        AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_PAYMENT_DUE_DATE
-                        else -> PL_PAYMENT_DUE_DATE
-                    }
+                    val paymentDueDateKey = propertyKey(productGroupCode, mutableListOf(SC_PAYMENT_DUE_DATE, CC_PAYMENT_DUE_DATE, PL_PAYMENT_DUE_DATE))
 
                     if (totalAmountDue > 0 && !debitOrderActive) {
                         firebaseInstance.setUserProperty(paymentDueDateKey, paymentDueDate)
@@ -110,11 +106,8 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
             account?.apply {
                 val paymentDueDate = paymentDueDate?.toString() ?: "N/A"
                 val debitOrderActive = debitOrder?.debitOrderActive ?: false
-                val paymentDueDateKey = when (productCode?.toUpperCase()) {
-                    AccountsProductGroupCode.STORE_CARD.groupCode -> SC_PAYMENT_DUE_DATE
-                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_PAYMENT_DUE_DATE
-                    else -> PL_PAYMENT_DUE_DATE
-                }
+                val paymentDueDateKey = propertyKey(productCode, mutableListOf(SC_PAYMENT_DUE_DATE, CC_PAYMENT_DUE_DATE, PL_PAYMENT_DUE_DATE))
+
                 if (totalAmountDue > 0 && !debitOrderActive) {
                     firebaseInstance.setUserProperty(paymentDueDateKey, paymentDueDate)
                 }
@@ -125,32 +118,30 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         /***
          * WOP-10667 - As a Collections manager I would like to identify app users with an active debit order (user property)
          */
-        @SuppressLint("DefaultLocale")
         fun setUserPropertiesPreDelinquencyForDebitOrder(accountsMap: HashMap<Products, Account?>?) {
             accountsMap?.forEach { (_, account) ->
                 account?.apply {
                     val debitOrderActive = debitOrder?.debitOrderActive?.toString() ?: "false"
-                    val debitOrderKey = when (productGroupCode?.toUpperCase()) {
-                        AccountsProductGroupCode.STORE_CARD.groupCode -> SC_DEBIT_ORDER
-                        AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_DEBIT_ORDER
-                        else -> PL_DEBIT_ORDER
-                    }
+                    val debitOrderKey = propertyKey(productGroupCode, mutableListOf(SC_DEBIT_ORDER, CC_DEBIT_ORDER, PL_DEBIT_ORDER))
                     firebaseInstance.setUserProperty(debitOrderKey, debitOrderActive)
                 }
             }
         }
 
-        @SuppressLint("DefaultLocale")
         fun setUserPropertiesOnRetryPreDelinquencyDebitOrder(productCode: String?, account: Account?) {
             account?.apply {
                 val debitOrderActive = debitOrder?.debitOrderActive?.toString() ?: "false"
-                val debitOrderKey = when (productCode?.toUpperCase()) {
-                    AccountsProductGroupCode.STORE_CARD.groupCode -> SC_DEBIT_ORDER
-                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_DEBIT_ORDER
-                    else -> PL_DEBIT_ORDER
-                }
-
+                val debitOrderKey = propertyKey(productCode, mutableListOf(SC_DEBIT_ORDER, CC_DEBIT_ORDER, PL_DEBIT_ORDER))
                 firebaseInstance.setUserProperty(debitOrderKey, debitOrderActive)
+            }
+        }
+
+        @SuppressLint("DefaultLocale")
+        fun propertyKey(productGroupCode: String?, mutableList: MutableList<String> = mutableListOf()): String {
+            return when (productGroupCode?.toUpperCase()) {
+                AccountsProductGroupCode.STORE_CARD.groupCode -> mutableList[0]
+                AccountsProductGroupCode.CREDIT_CARD.groupCode -> mutableList[1]
+                else -> mutableList[2]
             }
         }
     }
