@@ -15,12 +15,10 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         private const val CREDIT_CARD_PRODUCT_GROUP_CODE = "CC"
         private const val STORE_CARD_PRODUCT_GROUP_CODE = "SC"
         private const val PERSONAL_LOAN_PRODUCT_GROUP_CODE = "PL"
-        private const val SC_PAYMENT_DUE_DATE = PropertyNames.SC_PAYMENT_DUE_DATE
-        private const val CC_PAYMENT_DUE_DATE = PropertyNames.CC_PAYMENT_DUE_DATE
-        private const val PL_PAYMENT_DUE_DATE = PropertyNames.PL_PAYMENT_DUE_DATE
-        private const val SC_DEBIT_ORDER = PropertyNames.SC_DEBIT_ORDER
-        private const val CC_DEBIT_ORDER = PropertyNames.CC_DEBIT_ORDER
-        private const val PL_DEBIT_ORDER = PropertyNames.PL_DEBIT_ORDER
+
+        private val accountDebitOrderActivePropertyList = listOf(PropertyNames.SC_DEBIT_ORDER, PropertyNames.CC_DEBIT_ORDER, PropertyNames.PL_DEBIT_ORDER)
+        private val accountPaymentDueDatePropertyList = listOf(PropertyNames.SC_PAYMENT_DUE_DATE, PropertyNames.CC_PAYMENT_DUE_DATE, PropertyNames.PL_PAYMENT_DUE_DATE)
+
         private val firebaseInstance = FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
 
         fun setUserPropertiesForCardProductOfferings(accountsMap: Map<String, Account?>) {
@@ -92,7 +90,7 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
                 account?.apply {
                     val paymentDueDate = paymentDueDate?.toString() ?: "N/A"
                     val debitOrderActive = debitOrder?.debitOrderActive ?: false
-                    val paymentDueDateKey = propertyKey(productGroupCode, listOf(SC_PAYMENT_DUE_DATE, CC_PAYMENT_DUE_DATE, PL_PAYMENT_DUE_DATE))
+                    val paymentDueDateKey = propertyKey(productGroupCode, accountPaymentDueDatePropertyList)
 
                     if (totalAmountDue > 0 && !debitOrderActive) {
                         firebaseInstance.setUserProperty(paymentDueDateKey, paymentDueDate)
@@ -102,11 +100,11 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         }
 
         @SuppressLint("DefaultLocale")
-        fun setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(productCode: String?, account: Account?) {
+        fun setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(productGroupCode: String?, account: Account?) {
             account?.apply {
                 val paymentDueDate = paymentDueDate?.toString() ?: "N/A"
                 val debitOrderActive = debitOrder?.debitOrderActive ?: false
-                val paymentDueDateKey = propertyKey(productCode, listOf(SC_PAYMENT_DUE_DATE, CC_PAYMENT_DUE_DATE, PL_PAYMENT_DUE_DATE))
+                val paymentDueDateKey = propertyKey(productGroupCode, accountPaymentDueDatePropertyList)
 
                 if (totalAmountDue > 0 && !debitOrderActive) {
                     firebaseInstance.setUserProperty(paymentDueDateKey, paymentDueDate)
@@ -122,16 +120,16 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
             accountsMap?.forEach { (_, account) ->
                 account?.apply {
                     val debitOrderActive = debitOrder?.debitOrderActive?.toString() ?: "false"
-                    val debitOrderKey = propertyKey(productGroupCode, listOf(SC_DEBIT_ORDER, CC_DEBIT_ORDER, PL_DEBIT_ORDER))
+                    val debitOrderKey = propertyKey(productGroupCode, accountDebitOrderActivePropertyList)
                     firebaseInstance.setUserProperty(debitOrderKey, debitOrderActive)
                 }
             }
         }
 
-        fun setUserPropertiesOnRetryPreDelinquencyDebitOrder(productCode: String?, account: Account?) {
+        fun setUserPropertiesOnRetryPreDelinquencyDebitOrder(productGroupCode: String?, account: Account?) {
             account?.apply {
                 val debitOrderActive = debitOrder?.debitOrderActive?.toString() ?: "false"
-                val debitOrderKey = propertyKey(productCode, listOf(SC_DEBIT_ORDER, CC_DEBIT_ORDER, PL_DEBIT_ORDER))
+                val debitOrderKey = propertyKey(productGroupCode, accountDebitOrderActivePropertyList)
                 firebaseInstance.setUserProperty(debitOrderKey, debitOrderActive)
             }
         }
