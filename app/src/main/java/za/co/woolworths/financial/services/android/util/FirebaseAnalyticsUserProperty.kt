@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
+import android.annotation.SuppressLint
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -85,36 +86,37 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
          * My Accounts -> Total Due > 0 && Debit order active == false -> set the {{productGroupCode}}PaymentDueDate = ‘payment due date from my accounts’
          */
 
+        @SuppressLint("DefaultLocale")
         fun setUserPropertiesPreDelinquencyPaymentDueDate(accountsMap: HashMap<Products, Account?>?) {
-            accountsMap?.forEach { (product, account) ->
-
+            accountsMap?.forEach { (_, account) ->
                 account?.apply {
-                    when {
-                        product.productGroupCode == STORE_CARD_PRODUCT_GROUP_CODE && (totalAmountDue > 0 && account.debitOrder?.debitOrderActive == false) ->
-                            firebaseInstance.setUserProperty(SC_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
+                    val paymentDueDate = paymentDueDate?.toString() ?: "N/A"
+                    val debitOrderActive = debitOrder?.debitOrderActive ?: false
+                    val paymentDueDateKey = when (productGroupCode.toUpperCase()) {
+                        AccountsProductGroupCode.STORE_CARD.groupCode -> SC_PAYMENT_DUE_DATE
+                        AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_PAYMENT_DUE_DATE
+                        else -> PL_PAYMENT_DUE_DATE
+                    }
 
-                        product.productGroupCode == CREDIT_CARD_PRODUCT_GROUP_CODE && (totalAmountDue > 0 && account.debitOrder?.debitOrderActive == false) ->
-                            firebaseInstance.setUserProperty(CC_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
-
-                        product.productGroupCode == PERSONAL_LOAN_PRODUCT_GROUP_CODE && (totalAmountDue > 0 && account.debitOrder?.debitOrderActive == false) ->
-                            firebaseInstance.setUserProperty(PL_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
+                    if (totalAmountDue > 0 && !debitOrderActive) {
+                        firebaseInstance.setUserProperty(paymentDueDateKey, paymentDueDate)
                     }
                 }
             }
         }
 
-        fun setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(productCode: String, account: Account?) {
+        @SuppressLint("DefaultLocale")
+        fun setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(productCode: String?, account: Account?) {
             account?.apply {
-                when {
-                    productCode == AccountsProductGroupCode.STORE_CARD.groupCode && totalAmountDue > 0 && debitOrder?.debitOrderActive == false -> {
-                        firebaseInstance.setUserProperty(SC_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
-                    }
-                    productCode == AccountsProductGroupCode.CREDIT_CARD.groupCode && totalAmountDue > 0 && debitOrder?.debitOrderActive == false -> {
-                        firebaseInstance.setUserProperty(CC_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
-                    }
-                    productCode == AccountsProductGroupCode.PERSONAL_LOAN.groupCode && totalAmountDue > 0 && debitOrder?.debitOrderActive == false -> {
-                        firebaseInstance.setUserProperty(PL_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
-                    }
+                val paymentDueDate = paymentDueDate?.toString() ?: "N/A"
+                val debitOrderActive = debitOrder?.debitOrderActive ?: false
+                val paymentDueDateKey = when (productCode?.toUpperCase()) {
+                    AccountsProductGroupCode.STORE_CARD.groupCode -> SC_PAYMENT_DUE_DATE
+                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_PAYMENT_DUE_DATE
+                    else -> PL_PAYMENT_DUE_DATE
+                }
+                if (totalAmountDue > 0 && !debitOrderActive) {
+                    firebaseInstance.setUserProperty(paymentDueDateKey, paymentDueDate)
                 }
             }
         }
@@ -123,39 +125,33 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         /***
          * WOP-10667 - As a Collections manager I would like to identify app users with an active debit order (user property)
          */
+        @SuppressLint("DefaultLocale")
         fun setUserPropertiesPreDelinquencyForDebitOrder(accountsMap: HashMap<Products, Account?>?) {
-            accountsMap?.forEach { (product, account) ->
-               account?.apply {
-                    when (product.productGroupCode) {
-                        STORE_CARD_PRODUCT_GROUP_CODE ->
-                            firebaseInstance.setUserProperty(SC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
-                                    ?: "false")
-                        CREDIT_CARD_PRODUCT_GROUP_CODE ->
-                            firebaseInstance.setUserProperty(CC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
-                                    ?: "false")
-                        PERSONAL_LOAN_PRODUCT_GROUP_CODE ->
-                            firebaseInstance.setUserProperty(PL_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
-                                    ?: "false")
+            accountsMap?.forEach { (_, account) ->
+                account?.apply {
+                    val debitOrderActive = debitOrder?.debitOrderActive?.toString() ?: "false"
+                    val debitOrderKey = when (productGroupCode?.toUpperCase()) {
+                        AccountsProductGroupCode.STORE_CARD.groupCode -> SC_DEBIT_ORDER
+                        AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_DEBIT_ORDER
+                        else -> PL_DEBIT_ORDER
                     }
+                    firebaseInstance.setUserProperty(debitOrderKey, debitOrderActive)
                 }
             }
         }
 
-        fun setUserPropertiesOnRetryPreDelinquencyDebitOrder(productCode: String, account: Account?) {
+        @SuppressLint("DefaultLocale")
+        fun setUserPropertiesOnRetryPreDelinquencyDebitOrder(productCode: String?, account: Account?) {
             account?.apply {
-                when (productCode) {
-                    AccountsProductGroupCode.STORE_CARD.groupCode ->
-                        firebaseInstance.setUserProperty(SC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
-                                ?: "false")
-                    AccountsProductGroupCode.CREDIT_CARD.groupCode ->
-                        firebaseInstance.setUserProperty(CC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
-                                ?: "false")
-                    AccountsProductGroupCode.PERSONAL_LOAN.groupCode ->
-                        firebaseInstance.setUserProperty(PL_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
-                                ?: "false")
+                val debitOrderActive = debitOrder?.debitOrderActive?.toString() ?: "false"
+                val debitOrderKey = when (productCode?.toUpperCase()) {
+                    AccountsProductGroupCode.STORE_CARD.groupCode -> SC_DEBIT_ORDER
+                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> CC_DEBIT_ORDER
+                    else -> PL_DEBIT_ORDER
                 }
-            }
 
+                firebaseInstance.setUserProperty(debitOrderKey, debitOrderActive)
+            }
         }
     }
 }
