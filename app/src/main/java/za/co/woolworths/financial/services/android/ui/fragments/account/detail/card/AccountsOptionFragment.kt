@@ -215,7 +215,11 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
+                    onStartCreditLimitIncreaseFirebaseEvent()
+                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                }
+
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
@@ -502,24 +506,24 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
-            with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
-                when {
-                    isNullOrEmpty() -> {
-                        when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
-                            CARD_NOT_RECEIVED -> {
-                                with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus){
-                                    displayColour = "#bad110"
-                                    displayTitle = CreditCardActivationState.AVAILABLE.value
-                                }
-                                showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
+        with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
+            when {
+                isNullOrEmpty() -> {
+                    when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
+                        CARD_NOT_RECEIVED -> {
+                            with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus) {
+                                displayColour = "#bad110"
+                                displayTitle = CreditCardActivationState.AVAILABLE.value
                             }
-                            else -> onGetCreditCardDeliveryStatusFailure()
+                            showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
                         }
-                    }
-                    else -> {
-                        creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                        else -> onGetCreditCardDeliveryStatusFailure()
                     }
                 }
+                else -> {
+                    creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                }
+            }
         }
     }
 
