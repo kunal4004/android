@@ -134,7 +134,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService"
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -150,8 +152,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter android:order="1"
-                android:autoVerify="true">
+            <intent-filter
+                android:autoVerify="true"
+                android:order="1">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -239,8 +242,7 @@
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
-            android:theme="@style/SSOActivity"
-            />
+            android:theme="@style/SSOActivity" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
             android:screenOrientation="portrait"
@@ -340,7 +342,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
             android:screenOrientation="portrait"
@@ -391,8 +393,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle"
-            />
+            android:theme="@style/ShoppingListDetailActivityStyle" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
@@ -477,7 +478,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension" android:screenOrientation="portrait"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity"
@@ -493,7 +496,8 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity"
             android:theme="@style/salesPageMainStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
         <activity
@@ -501,11 +505,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/salesPageMainStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
-            android:windowSoftInputMode="adjustResize"
-            />
+            android:windowSoftInputMode="adjustResize" />
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatFollowMeService"
+            android:enabled="true"
+            android:label="liveChatFollowMeService" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity"
@@ -523,16 +532,17 @@
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity"
-            android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AccountBaseTheme" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AccountBaseTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart"
             android:screenOrientation="portrait"

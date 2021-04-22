@@ -353,18 +353,18 @@ public class WoolworthsApplication extends Application implements Application.Ac
         }
 
         if (activity.getClass().equals(WChatActivity.class)) {
-            ChatAWSAmplify.INSTANCE.signInAndSubscribe(result -> {
-                        Intent intent = new Intent(LIVE_CHAT_PACKAGE);
-                        intent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, new Gson().toJson(result));
-                        activity.sendBroadcast(intent);
-                        return null;
-                    }, failure -> {
-                        Intent intent = new Intent(LIVE_CHAT_PACKAGE);
-                        intent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, "");
-                        activity.sendBroadcast(intent);
-                        return null;
-                    }
-            );
+//            ChatAWSAmplify.INSTANCE.signInAndSubscribe(result -> {
+//                        Intent intent = new Intent(LIVE_CHAT_PACKAGE);
+//                        intent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, new Gson().toJson(result));
+//                        activity.sendBroadcast(intent);
+//                        return null;
+//                    }, failure -> {
+//                        Intent intent = new Intent(LIVE_CHAT_PACKAGE);
+//                        intent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, "");
+//                        activity.sendBroadcast(intent);
+//                        return null;
+//                    }
+//            );
         }
     }
 

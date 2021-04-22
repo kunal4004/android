@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatFollowMeService
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
 
@@ -32,7 +34,6 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     private var appScreen: String? = ChatFragment::class.java.simpleName
 
     private val chatViewModel: ChatViewModel by activityViewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        context?.startService(Intent(context, ChatFollowMeService::class.java))
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()

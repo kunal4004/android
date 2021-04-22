@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatFollowMeService
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -68,7 +69,12 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                 when (currentFragment) {
                     is ChatFragment -> {
                         when (isSignOut) {
-                            true -> signOut { GlobalScope.doAfterDelay(DELAY) { closeChat() } }
+                            true -> signOut {
+                                GlobalScope.doAfterDelay(DELAY) {
+                                    stopService(Intent(this@WChatActivity, ChatFollowMeService::class.java))
+                                    closeChat()
+                                }
+                            }
                         }
                     }
                     is ChatRetrieveABSACardTokenFragment -> {

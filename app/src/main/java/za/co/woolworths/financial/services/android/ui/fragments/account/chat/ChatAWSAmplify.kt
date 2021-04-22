@@ -200,8 +200,7 @@ object ChatAWSAmplify {
             val liveChatDBRepository = LiveChatDBRepository()
             liveChatDBRepository.saveConversation(conversation)
             subscribeToMessageByConversationId({ message ->
-                sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content
-                        ?: ""))
+                sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content ?: ""))
                 isUserSubscriptionActive = true
                 Log.e("subscribeToMessage", "1 $message")
                 result(message)
