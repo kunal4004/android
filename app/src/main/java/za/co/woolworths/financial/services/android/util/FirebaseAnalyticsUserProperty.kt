@@ -35,7 +35,7 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
             for (key in userPropertiesForDelinquentCodes.keys) {
                 if (accountsMap.containsKey(key)) {
                     userPropertiesForDelinquentCodes[key]?.let {
-                        firebaseInstance.setUserProperty(it, accountsMap[key]?.delinquencyCycle.toString()
+                        firebaseInstance.setUserProperty(it, accountsMap[key]?.delinquencyCycle?.toString()
                                 ?: "N/A")
                     }
                 } else {
@@ -50,7 +50,7 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
             for (key in userPropertiesForDelinquentCodes.keys) {
                 if (key.equals(productCode, ignoreCase = true)) {
                     userPropertiesForDelinquentCodes[key]?.let {
-                        firebaseInstance.setUserProperty(it, account?.delinquencyCycle.toString()
+                        firebaseInstance.setUserProperty(it, account?.delinquencyCycle?.toString()
                                 ?: "N/A")
                     }
                     break
@@ -85,10 +85,10 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
          * My Accounts -> Total Due > 0 && Debit order active == false -> set the {{productGroupCode}}PaymentDueDate = ‘payment due date from my accounts’
          */
 
-        fun setUserPropertiesPreDelinquencyPaymentDueDate(accountsMap: HashMap<Products, Account>?) {
+        fun setUserPropertiesPreDelinquencyPaymentDueDate(accountsMap: HashMap<Products, Account?>?) {
             accountsMap?.forEach { (product, account) ->
 
-                with(account) {
+                account?.apply {
                     when {
                         product.productGroupCode == STORE_CARD_PRODUCT_GROUP_CODE && (totalAmountDue > 0 && account.debitOrder?.debitOrderActive == false) ->
                             firebaseInstance.setUserProperty(SC_PAYMENT_DUE_DATE, account.paymentDueDate?.toString())
@@ -123,9 +123,9 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         /***
          * WOP-10667 - As a Collections manager I would like to identify app users with an active debit order (user property)
          */
-        fun setUserPropertiesPreDelinquencyForDebitOrder(accountsMap: HashMap<Products, Account>?) {
+        fun setUserPropertiesPreDelinquencyForDebitOrder(accountsMap: HashMap<Products, Account?>?) {
             accountsMap?.forEach { (product, account) ->
-                with(account) {
+               account?.apply {
                     when (product.productGroupCode) {
                         STORE_CARD_PRODUCT_GROUP_CODE ->
                             firebaseInstance.setUserProperty(SC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
