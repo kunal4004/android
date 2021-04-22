@@ -372,13 +372,16 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         }
     }
 
-    fun navigateToDeepLinkView(destination: String, view: View?) {
+    private fun navigateToDeepLinkView(destination: String, view: View?) {
         if (activity is AccountSignedInActivity) {
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                 (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
                     val deepLinkingObject = getDeepLinkData()
                     when (deepLinkingObject?.get("feature")?.asString) {
-                        destination -> view?.performClick()
+                        destination -> {
+                            if (!isAccountInArrearsState())
+                                view?.performClick()
+                        }
                     }
                 }
             }
