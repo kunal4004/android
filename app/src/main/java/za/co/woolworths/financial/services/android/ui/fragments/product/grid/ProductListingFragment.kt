@@ -68,6 +68,8 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashSet
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, IOnConfirmDeliveryLocationActionListener {
 
@@ -92,7 +94,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
-    private var navigationStackTitleList: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,6 +106,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mNavigationState = getString(NAVIGATION_STATE, "")
                 mSortOption = getString(SORT_OPTION, "")
             }
+            var localBody: HashMap<String, Any> = HashMap()
+            localBody.put("subCategory", mSubCategoryName!!)
+            localBody.put("searchType", mSearchType!!)
+            localBody.put("searchTerm", mSearchTerm!!)
+            localBody.put("navigationState", mNavigationState!!)
+            localBody.put("sortOption", mSortOption)
+
+            localProductBody.add(localBody)
             setProductBody()
         }
     }
@@ -150,15 +159,30 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             getCategoryNameAndSetTitle(false)
             localStoreId = currentStoreId
             localSuburbId = null
-            updateProductRequestBodyForRefinement(localNavigationState)
-            reloadProductsWithSortAndFilter()
+            updateRequestAndReload()
         } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
             getCategoryNameAndSetTitle(false)
             localSuburbId = currentSuburbId
             localStoreId = null
-            updateProductRequestBodyForRefinement(localNavigationState)
-            reloadProductsWithSortAndFilter()
+            updateRequestAndReload()
         }
+    }
+
+    private fun updateRequestAndReload() {
+        if (!localProductBody.isEmpty()) {
+            val list: HashMap<String, Any> = (localProductBody.get(localProductBody.lastIndex) as HashMap<String, Any>)
+            mSubCategoryName = list.get("subCategory") as String?
+            mSearchType = list.get("searchType") as ProductsRequestParams.SearchType?
+            mSearchTerm = list.get("searchTerm") as String?
+            mNavigationState = list.get("navigationState") as String?
+            mSortOption = list.get("sortOption") as String
+            setProductRequestBody(mSearchType,
+                    mSearchTerm,
+                    mNavigationState,
+                    mSortOption)
+        }
+        updateProductRequestBodyForRefinement(mNavigationState)
+        reloadProductsWithSortAndFilter()
     }
 
     private fun setTitle() {
@@ -199,6 +223,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
                 getCategoryNameAndSetTitle(false)
+                /*if (navigationStackTitleList.isNotEmpty() && mSubCategoryName.equals(navigationStackTitleList.elementAt(navigationStackTitleList.size-1)) && isLocationChanged){
+                    onHiddenChanged(false)
+                }*/
                 if (!Utils.isDeliverySelectionModalShown()) {
                     showDeliveryOptionDialog()
                 }
@@ -220,10 +247,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mSubCategoryName = searchCrumbs.let { it[it.size - 1].terms }
             } else if (!mSubCategoryName.isNullOrEmpty() &&
                     (localSuburbId != currentSuburbId || localStoreId != currentStoreId) &&
-                    !mSubCategoryName.equals(title)) {
-                mSubCategoryName = title
-            } else if (!(mSubCategoryName.equals(navigationStackTitleList.get(0))) && backPressed) {
-                mSubCategoryName = navigationStackTitleList.get(0)
+                    navigationStackTitleList.isNotEmpty() &&
+                    !mSubCategoryName.equals(navigationStackTitleList.last())) {
+                mSubCategoryName = navigationStackTitleList.last()
+            } else if (navigationStackTitleList.isNotEmpty() &&
+                    !(mSubCategoryName.equals(navigationStackTitleList.elementAt(0))) &&
+                    backPressed) {
+                mSubCategoryName = navigationStackTitleList.elementAt(0)
             }
             if (!mSubCategoryName.isNullOrEmpty())
                 setTitle()
@@ -508,7 +538,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showToolbar()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    getCategoryNameAndSetTitle(true)
+                    //getCategoryNameAndSetTitle(true)
+                    if (navigationStackTitleList.isNotEmpty())
+                        navigationStackTitleList.remove(navigationStackTitleList.size - 1)
+                    if (!localProductBody.isEmpty())
+                        localProductBody.removeLast()
+                    updateRequestAndReload()
                     if (productView?.navigation?.isNullOrEmpty() != true)
                         unLockDrawerFragment()
                 }
@@ -868,8 +903,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
+        productView?.history?.apply {
+            if (categoryDimensions.isNotEmpty()) {
+                navigationStackTitleList.add(categoryDimensions.let { it[it.size - 1].label })
+            } else if (searchCrumbs.isNotEmpty()) {
+                navigationStackTitleList.add(searchCrumbs.let { it[it.size - 1].terms })
+            }
+        }
+
         if (isMultiSelectCategoryRefined) {
-            localNavigationState = navigationState
             updateProductRequestBodyForRefinement(navigationState)
             reloadProductsWithSortAndFilter()
         } else {
@@ -883,14 +925,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (pushedFragmentCount > 1)
             (activity as? BottomNavigationActivity)?.popFragment()
         else {
-            localNavigationState = ""
             updateProductRequestBodyForRefinement("")
             reloadProductsWithSortAndFilter()
         }
     }
 
     companion object {
-        private var localNavigationState = ""
+        private var localProductBody: ArrayList<Any> = ArrayList()
+        private var navigationStackTitleList: LinkedHashSet<String> = LinkedHashSet()
         private var localSuburbId: String? = null
         private var localStoreId: String? = null
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
