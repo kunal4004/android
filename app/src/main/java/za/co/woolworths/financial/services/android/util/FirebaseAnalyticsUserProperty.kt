@@ -145,13 +145,13 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
             account?.apply {
                 when (productCode) {
                     AccountsProductGroupCode.STORE_CARD.groupCode ->
-                        firebaseInstance.setUserProperty(SC_PAYMENT_DUE_DATE, debitOrder?.debitOrderActive?.toString()
+                        firebaseInstance.setUserProperty(SC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
                                 ?: "false")
                     AccountsProductGroupCode.CREDIT_CARD.groupCode ->
-                        firebaseInstance.setUserProperty(CC_PAYMENT_DUE_DATE, debitOrder?.debitOrderActive?.toString()
+                        firebaseInstance.setUserProperty(CC_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
                                 ?: "false")
                     AccountsProductGroupCode.PERSONAL_LOAN.groupCode ->
-                        firebaseInstance.setUserProperty(PL_PAYMENT_DUE_DATE, debitOrder?.debitOrderActive?.toString()
+                        firebaseInstance.setUserProperty(PL_DEBIT_ORDER, debitOrder?.debitOrderActive?.toString()
                                 ?: "false")
                 }
             }
