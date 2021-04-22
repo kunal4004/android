@@ -1737,6 +1737,7 @@
     <string name="card_number_label">Card Number:</string>
     <string name="payment_successful_title">Payment Successful</string>
     <string name="ccv_number_label">Enter your CVV Number:</string>
+    <string name="pma_payment_delay_label">* Payments may take up to 5 business days to reflect.</string>
     <string name="confirm_payment">CONFIRM PAYMENT</string>
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
