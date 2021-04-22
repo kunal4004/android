@@ -379,6 +379,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun navigateToLoanWithdrawalActivity() {
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownStart)
             val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
             intentWithdrawalActivity.putExtra("account_info", Gson().toJson(mCardPresenterImpl?.getAccount()))
             startActivityForResult(intentWithdrawalActivity, 0)
