@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-class LiveChatIntentService : Service() {
+class ChatFollowMeService : Service() {
 
     private val liveChatDBRepository: LiveChatDBRepository = LiveChatDBRepository()
 
