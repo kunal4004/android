@@ -137,11 +137,11 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         }
 
         @SuppressLint("DefaultLocale")
-        fun propertyKey(productGroupCode: String?, mutableList: List<String> = listOf()): String {
+        fun propertyKey(productGroupCode: String?, list: List<String> = listOf()): String {
             return when (productGroupCode?.toUpperCase()) {
-                AccountsProductGroupCode.STORE_CARD.groupCode -> mutableList[0]
-                AccountsProductGroupCode.CREDIT_CARD.groupCode -> mutableList[1]
-                else -> mutableList[2]
+                AccountsProductGroupCode.STORE_CARD.groupCode -> list[0]
+                AccountsProductGroupCode.CREDIT_CARD.groupCode -> list[1]
+                else -> list[2]
             }
         }
     }
