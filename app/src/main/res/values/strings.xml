@@ -2023,4 +2023,5 @@
     <string name="view_all_other_device_title">Other Linked Devices</string>
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
+    <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
 </resources>
