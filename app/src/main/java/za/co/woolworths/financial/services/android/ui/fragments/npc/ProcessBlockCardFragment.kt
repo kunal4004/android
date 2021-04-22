@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -22,16 +21,10 @@ import za.co.woolworths.financial.services.android.contracts.IProgressAnimationS
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
-import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.PERMANENT
 import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 
 class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimationState {
 
@@ -70,7 +63,12 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 containerViewId = R.id.flProgressIndicator
         )
 
-        okGotItButton?.setOnClickListener { navigateToMyCardActivity(false) }
+        okGotItButton?.setOnClickListener {
+            (activity as? AppCompatActivity)?.let {
+                              it.setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                                it.finish()
+                            }
+        }
         hideToolbarIcon()
 
         if (!mCardWasBlocked)
@@ -142,13 +140,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     activity?.apply {
-                        val storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()
-                        storeCard?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)?.blockType = PERMANENT
-                        PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
-                        val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
-                        displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCard))
-                        startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
-                        setResult(RESULT_CODE_BLOCK_CODE_SUCCESS)
+                        setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                         finish()
                     }
