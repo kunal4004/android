@@ -1457,7 +1457,7 @@ interface ApiInterface {
             @Header("deviceName") deviceName: String,
             @Body linkDeviceValidateBody: LinkDeviceBody): Call<LinkedDeviceResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
     @GET("user/device")
     fun getAllLinkedDevices(
             @Header("apiId") apiId: String,
@@ -1470,5 +1470,21 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String
+    ): Call<ViewAllLinkedDeviceResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("user/device/{deviceIdentityId}")
+    fun deleteOrUnlinkDevice(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("deviceIdentityId") deviceIdentityId: String
     ): Call<ViewAllLinkedDeviceResponse>
 }
