@@ -223,9 +223,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 bindRecyclerViewWithUI(productLists)
                 showFeatureWalkThrough()
                 getCategoryNameAndSetTitle(false)
-                /*if (navigationStackTitleList.isNotEmpty() && mSubCategoryName.equals(navigationStackTitleList.elementAt(navigationStackTitleList.size-1)) && isLocationChanged){
-                    onHiddenChanged(false)
-                }*/
                 if (!Utils.isDeliverySelectionModalShown()) {
                     showDeliveryOptionDialog()
                 }
@@ -241,15 +238,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
         val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
         productView?.history?.apply {
-            if (categoryDimensions.isNotEmpty()) {
-                mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
-            } else if (searchCrumbs.isNotEmpty()) {
-                mSubCategoryName = searchCrumbs.let { it[it.size - 1].terms }
-            } else if (!mSubCategoryName.isNullOrEmpty() &&
+            if (!mSubCategoryName.isNullOrEmpty() &&
                     (localSuburbId != currentSuburbId || localStoreId != currentStoreId) &&
                     navigationStackTitleList.isNotEmpty() &&
                     !mSubCategoryName.equals(navigationStackTitleList.last())) {
                 mSubCategoryName = navigationStackTitleList.last()
+            } else if (categoryDimensions.isNotEmpty()) {
+                mSubCategoryName = categoryDimensions.let { it[it.size - 1].label }
+            } else if (searchCrumbs.isNotEmpty()) {
+                mSubCategoryName = searchCrumbs.let { it[it.size - 1].terms }
             } else if (navigationStackTitleList.isNotEmpty() &&
                     !(mSubCategoryName.equals(navigationStackTitleList.elementAt(0))) &&
                     backPressed) {
@@ -540,7 +537,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showToolbar()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    //getCategoryNameAndSetTitle(true)
                     if (navigationStackTitleList.isNotEmpty())
                         navigationStackTitleList.remove(navigationStackTitleList.size - 1)
                     if (!localProductBody.isEmpty())
