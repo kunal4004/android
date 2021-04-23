@@ -299,7 +299,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
-        this.mProductList = productLists
+        mProductList?.clear()
+        mProductList = productLists
         if (!listContainHeader()) {
             val headerProduct = ProductList()
             headerProduct.rowType = ProductListingViewType.HEADER
@@ -307,7 +308,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mProductList?.add(0, headerProduct)
         }
 
-        mProductAdapter = ProductListingAdapter(this, mProductList)
+        mProductAdapter = ProductListingAdapter(this@ProductListingFragment, mProductList)
 
         activity?.let { activity -> mRecyclerViewLayoutManager = GridLayoutManager(activity, 2) }
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
@@ -338,6 +339,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             layoutManager = mRecyclerViewLayoutManager
             adapter = mProductAdapter
+            adapter?.notifyDataSetChanged()
 
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
