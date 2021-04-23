@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
-class FirebaseManagerAnalyticsProperties {
+open class FirebaseManagerAnalyticsProperties {
     companion object {
 
         const val WTODAYMENU = "wtodaymenu"
@@ -18,6 +18,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYCARTDELIVERY: String = "mycart_delivery"
         const val SHOPADDTOLIST: String = "shop_addtolist"
         const val SHOPNEWLIST: String = "shop_new_list"
+        const val SHOP_PDP_SELECT_QUANTITY = "shop_pdp_select_quantity"
+        const val SHOP_PDP_ADD_TO_CART = "shop_pdp_add_to_cart"
+        const val SHOP_MY_LIST_ADD_TO_CART = "shop_my_list_add_to_cart"
+        const val SHOP_MY_LIST_NEW_LIST = "shop_my_list_new_list"
 
         const val MYACCOUNTSSHOPPINGLIST: String = "myaccounts_shoppinglist"
         const val MYCARTADDTOLIST: String = "mycart_add_to_list"
@@ -253,6 +257,13 @@ class FirebaseManagerAnalyticsProperties {
             const val CC_ACCOUNT_STATE = "cc_account_dc_state"
             const val PL_ACCOUNT_STATE = "pl_account_dc_state"
 
+            const val SC_PAYMENT_DUE_DATE = "sc_payment_due_date"
+            const val CC_PAYMENT_DUE_DATE = "cc_payment_due_date"
+            const val PL_PAYMENT_DUE_DATE = "pl_payment_due_date"
+            const val SC_DEBIT_ORDER = "sc_debit_order"
+            const val CC_DEBIT_ORDER = "cc_debit_order"
+            const val PL_DEBIT_ORDER = "pl_debit_order"
+
             const val TAPPED: String = "tapped"
             const val PASSCODE: String = "passcode"
             const val NETWORK: String = "network"
@@ -262,7 +273,6 @@ class FirebaseManagerAnalyticsProperties {
             const val UNDEFINED: String = "undefined"
             const val FAILED: String = "failed"
             const val SUCCESSFUL: String = "successful"
-
         }
     }
 

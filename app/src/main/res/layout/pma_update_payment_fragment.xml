@@ -115,7 +115,7 @@
         android:maxLength="3"
         android:textCursorDrawable="@drawable/cursor_custom_color"
         android:textSize="@dimen/twelve_sp"
-        app:layout_constraintBottom_toTopOf="@+id/pmaConfirmPaymentButton"
+        app:layout_constraintBottom_toTopOf="@+id/pmaProcessDelayNoteTextView"
         app:layout_constraintEnd_toEndOf="@+id/pmaConfirmPaymentButton" />
 
     <ImageView
@@ -148,6 +148,32 @@
         app:layout_constraintEnd_toStartOf="@+id/ccvIconImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ccvIconImageView" />
+
+    <TextView
+        android:id="@+id/pmaProcessDelayNoteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_nine_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:includeFontPadding="false"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/one_dp"
+        android:text="@string/pma_payment_delay_label"
+        android:textColor="@color/color_808080"
+        android:background="@color/color_f1f1f1"
+        android:textSize="@dimen/fourteen_sp"
+        android:paddingVertical="@dimen/seven_dp"
+        app:autoSizeMaxTextSize="@dimen/sixteen_sp"
+        app:autoSizeMinTextSize="@dimen/thirteen_sp"
+        app:autoSizeStepGranularity="@dimen/one_sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@id/pmaConfirmPaymentButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ccvIconImageView" />
 
     <View
         android:id="@+id/horizontalDividerView"
@@ -182,21 +208,21 @@
         app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem"
         app:srcCompat="@drawable/card_visa" />
 
-        <TextView
-            app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem"
-            android:id="@+id/changeTextView"
-            android:layout_marginEnd="@dimen/twenty_four_dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:gravity="center"
-            android:letterSpacing="0.12"
-            android:text="@string/change_label"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/twelve_sp" />
+    <TextView
+        android:id="@+id/changeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
+        android:letterSpacing="0.12"
+        android:text="@string/change_label"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/manageDebitCreditCardItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/manageDebitCreditCardItem" />
 
     <TextView
         android:id="@+id/cardNumberItemTextView"

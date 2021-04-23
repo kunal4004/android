@@ -174,8 +174,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 return
             }
             getSelectedSku()?.quantity?.let {
-                if (it > 0)
+                if (it > 0) {
                     QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment).show(this, QuantitySelectorFragment::class.java.simpleName)
+                }
             }
         }
     }
@@ -283,6 +284,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
         if (listOfItems.isNotEmpty()) {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_ADD_TO_CART)
             productDetailsPresenter?.postAddItemToCart(listOfItems)
         }
     }
@@ -726,6 +728,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onQuantitySelection(quantity: Int) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY)
         setSelectedQuantity(quantity)
         quantityText.text = quantity.toString()
     }
