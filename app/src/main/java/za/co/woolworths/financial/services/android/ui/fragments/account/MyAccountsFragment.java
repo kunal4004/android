@@ -372,7 +372,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             setToolbarBackgroundColor(R.color.white);
             messageCounterRequest();
         } else {
-            callLinkedDevicesAPI();
+            callLinkedDevicesAPI(false);
         }
 
         uniqueIdentifiersForAccount();
@@ -380,7 +380,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         parseDeepLinkData();
     }
 
-    private void callLinkedDevicesAPI() {
+    private void callLinkedDevicesAPI(Boolean isForced) {
         Activity activity = getActivity();
         if (activity instanceof BottomNavigationActivity) {
             BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
@@ -388,7 +388,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if ((bottomNavigationActivity.getCurrentSection() == R.id.navigate_to_account)
                     && (currentFragment instanceof MyAccountsFragment)) {
                 if (SessionUtilities.getInstance().isUserAuthenticated()) {
-                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices();
+                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices(isForced);
                     mViewAllLinkedDevices.enqueue(new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
                         @Override
                         public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
@@ -470,7 +470,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             } else {
                 this.configureSignInNoC2ID();
             }
-            callLinkedDevicesAPI();
+            callLinkedDevicesAPI(false);
         } else {
             if (getActivity() == null) return;
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
@@ -1493,7 +1493,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     break;
             }
         } else if (resultCode == RESULT_CODE_DEVICE_LINKED) {
-            callLinkedDevicesAPI();
+            callLinkedDevicesAPI(false);
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             initialize();
             //One time biometricsWalkthrough
