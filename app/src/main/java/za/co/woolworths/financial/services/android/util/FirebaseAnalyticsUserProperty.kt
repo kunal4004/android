@@ -16,8 +16,8 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         private const val STORE_CARD_PRODUCT_GROUP_CODE = "SC"
         private const val PERSONAL_LOAN_PRODUCT_GROUP_CODE = "PL"
 
-        private val accountDebitOrderActivePropertyList = listOf(PropertyNames.SC_DEBIT_ORDER, PropertyNames.CC_DEBIT_ORDER, PropertyNames.PL_DEBIT_ORDER)
-        private val accountPaymentDueDatePropertyList = listOf(PropertyNames.SC_PAYMENT_DUE_DATE, PropertyNames.CC_PAYMENT_DUE_DATE, PropertyNames.PL_PAYMENT_DUE_DATE)
+        private val accountDebitOrderActivePropertyList = Triple(PropertyNames.SC_DEBIT_ORDER, PropertyNames.CC_DEBIT_ORDER, PropertyNames.PL_DEBIT_ORDER)
+        private val accountPaymentDueDatePropertyList = Triple(PropertyNames.SC_PAYMENT_DUE_DATE, PropertyNames.CC_PAYMENT_DUE_DATE, PropertyNames.PL_PAYMENT_DUE_DATE)
 
         private val firebaseInstance = FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
 
@@ -135,11 +135,11 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         }
 
         @SuppressLint("DefaultLocale")
-        fun propertyKey(productGroupCode: String?, list: List<String> = listOf()): String {
+        fun propertyKey(productGroupCode: String?, keys: Triple<String, String, String>): String {
             return when (productGroupCode?.toUpperCase()) {
-                AccountsProductGroupCode.STORE_CARD.groupCode -> list[0]
-                AccountsProductGroupCode.CREDIT_CARD.groupCode -> list[1]
-                else -> list[2]
+                AccountsProductGroupCode.STORE_CARD.groupCode -> keys.first
+                AccountsProductGroupCode.CREDIT_CARD.groupCode -> keys.second
+                else -> keys.third
             }
         }
     }
