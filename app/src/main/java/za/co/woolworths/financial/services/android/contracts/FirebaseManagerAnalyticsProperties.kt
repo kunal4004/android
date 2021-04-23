@@ -18,6 +18,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYCARTDELIVERY: String = "mycart_delivery"
         const val SHOPADDTOLIST: String = "shop_addtolist"
         const val SHOPNEWLIST: String = "shop_new_list"
+        const val SHOP_PDP_SELECT_QUANTITY = "shop_pdp_select_quantity"
+        const val SHOP_PDP_ADD_TO_CART = "shop_pdp_add_to_cart"
+        const val SHOP_MY_LIST_ADD_TO_CART = "shop_my_list_add_to_cart"
+        const val SHOP_MY_LIST_NEW_LIST = "shop_my_list_new_list"
 
         const val MYACCOUNTSSHOPPINGLIST: String = "myaccounts_shoppinglist"
         const val MYCARTADDTOLIST: String = "mycart_add_to_list"

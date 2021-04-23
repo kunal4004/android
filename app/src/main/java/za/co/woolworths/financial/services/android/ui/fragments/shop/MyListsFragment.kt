@@ -178,7 +178,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             }
 
             R.id.rlCreateAList -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPNEWLIST)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_NEW_LIST)
                 navigateToCreateListFragment(mutableListOf())
             }
         }
