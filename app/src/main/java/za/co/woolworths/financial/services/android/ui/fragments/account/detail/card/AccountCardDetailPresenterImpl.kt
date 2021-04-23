@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseAnalyticsCreditLimitIncreaseEvent
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
@@ -295,14 +296,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun onStartCreditLimitIncreaseFirebaseEvent() {
-        val eventName: String? = when (mApplyNowAccountKeyPair?.first) {
-            ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.storeCardCreditLimitIncreaseStart
-            ApplyNowState.PERSONAL_LOAN -> FirebaseManagerAnalyticsProperties.personalLoanCreditLimitIncreaseStart
-            ApplyNowState.BLACK_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.blackCreditCardCreditLimitIncreaseStart
-            ApplyNowState.GOLD_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.goldCreditCardCreditLimitIncreaseStart
-            ApplyNowState.SILVER_CREDIT_CARD -> FirebaseManagerAnalyticsProperties.silverCreditCardCreditLimitIncreaseStart
-            else -> null
-        }
-        eventName?.let { event -> Utils.triggerFireBaseEvents(event) }
+        FirebaseAnalyticsCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first).cliStart()
     }
 }

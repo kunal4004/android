@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Random;
 
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.FirebaseAnalyticsCreditLimitIncreaseEvent;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -431,13 +432,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onClick(View view) {
 		MultiClickPreventer.preventMultiClick(view);
+		Activity activity = getActivity();
+		if (activity==null) return;
 		switch (view.getId()) {
 			case R.id.yesPOIFromBank:
+				FirebaseAnalyticsCreditLimitIncreaseEvent firebaseEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
+				if (firebaseEvent != null)
+					firebaseEvent.deaOptin();
 				submitType = SubmitType.ACCOUNT_NUMBER;
-				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
-				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
-				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
-				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.transparent));
+				noPOIFromBank.setTextColor(ContextCompat.getColor(activity, R.color.cli_yes_no_button_color));
+				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(activity, R.color.black));
+				yesPOIFromBank.setTextColor(ContextCompat.getColor(activity, R.color.white));
 				hideView(poiDocumentSubmitTypeLayout);
 				hideView(rlSubmitCli);
 				if (documentSubmitTypeAdapter != null)
@@ -446,10 +452,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 			case R.id.noPOIFromBank:
 				submitType = SubmitType.LATER;
-				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
-				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
-				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
-				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.transparent));
+				yesPOIFromBank.setTextColor(ContextCompat.getColor(activity, R.color.cli_yes_no_button_color));
+				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(activity, R.color.black));
+				noPOIFromBank.setTextColor(ContextCompat.getColor(activity, R.color.white));
 				resetAccountNumberView();
 				hideView(accountTypeLayout);
 				hideView(accountNumberLayout);
@@ -458,7 +464,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				scrollUpDocumentSubmitTypeLayout();
 				break;
 			case R.id.llAccountNumberLayout:
-				IncreaseLimitController.populateExpenseField(etAccountNumber, getActivity());
+				IncreaseLimitController.populateExpenseField(etAccountNumber,activity);
 				break;
 			case R.id.btnSubmit:
 				onSubmitClick(submitType);
@@ -468,7 +474,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 
 			case R.id.btnRetry:
-				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
 					mErrorHandlerView.hideErrorHandler();
 					switch (getNetworkFailureRequest()) {
 						case DEA_BANK:
