@@ -217,7 +217,8 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
                     onStartCreditLimitIncreaseFirebaseEvent()
-                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                    val applyNowState = mApplyNowAccountKeyPair?.first
+                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
                 }
 
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
