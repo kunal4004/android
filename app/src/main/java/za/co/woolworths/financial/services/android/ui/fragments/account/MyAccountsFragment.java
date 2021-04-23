@@ -1661,9 +1661,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     @Override
     public void onPromptDismiss() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-            showSetUpDeliveryPopUp();
-            showInAppChat(getActivity());
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+            try {
+                showSetUpDeliveryPopUp();
+                showInAppChat(getActivity());
+            } catch (IndexOutOfBoundsException ex) {
+                FirebaseManager.Companion.logException(ex);
+            }
         }
     }
 
