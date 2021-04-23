@@ -61,6 +61,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         val navController = Navigation.findNavController(view)
         linkDeviceConfirmationButton.setOnClickListener {
 
+            Utils.setLinkConfirmationShown(true)
             navController.navigate(R.id.action_linkDeviceConfirmationFragment_to_otp_navigation, bundleOf(
                     AccountSignedInPresenterImpl.APPLY_NOW_STATE to mApplyNowState
             ))
