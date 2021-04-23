@@ -22,8 +22,8 @@ class CurrencyFormatterTest {
     @Test
     fun check_if_amount_is_formatted_using_string_variable_without_dot() {
 
-        val amountMap = mapOf<Any, String>(Pair("-R.1", "-0.01"),Pair("-R.0", "0.00"), Pair("-12000", "-120.00"), Pair("-30000", "-300.00"), Pair("200", "2.00"),
-                Pair("221", "2.21"), Pair("101", "1.01"), Pair("4022", "40.22"), Pair("-120332", "-1 203.32"), Pair("5003", "50.03"), Pair("2102", "21.02"), Pair("30", "0.30"))
+        val amountMap = mapOf<Any, String>(Pair(".1","0.10"),Pair("0.01","0.01"),Pair("1.10","1.10"),Pair("51.1","51.10"),Pair("-R.1", "-0.10"),Pair("-R.0", "0.00"), Pair("-12000", "-120.00"), Pair("-30000", "-300.00"), Pair("200", "2.00"),
+                Pair("51.1","51.10"),Pair("221", "2.21"), Pair("101", "1.01"), Pair("4022", "40.22"), Pair("-120332", "-1 203.32"), Pair("5003", "50.03"), Pair("2102", "21.02"), Pair("30", "0.30"))
 
         conversionResult(amountMap, ::formatAmountFunc)
     }
@@ -32,7 +32,7 @@ class CurrencyFormatterTest {
     fun check_if_amount_is_formatted_using_double_variable() {
 
         val amountMap = mapOf<Any, String>(Pair(130000.0, "130 000.00"), Pair(1200.0, "1 200.00"), Pair(300.00, "300.00"), Pair(20.0, "20.00"),
-                Pair(22.1, "22.01"), Pair(10.1, "10.01"), Pair(40.22, "40.22"), Pair(-1203.32, "-1 203.32"), Pair(50.03, "50.03"), Pair(21.02, "21.02"))
+                Pair("51.1","51.10"),Pair(22.1, "22.10"), Pair(10.1, "10.10"), Pair(40.22, "40.22"), Pair(-1203.32, "-1 203.32"), Pair(50.03, "50.03"), Pair(21.02, "21.02"))
 
         conversionResult(amountMap, ::formatAmountFunc)
     }
@@ -41,7 +41,7 @@ class CurrencyFormatterTest {
     fun check_if_amount_is_formatted_using_Int_variable() {
 
         val amountMap = mapOf<Any, String>(Pair(130000, "1 300.00"), Pair(12000, "120.00"), Pair(200, "2.00"), Pair(221, "2.21"),
-                Pair(101, "1.01"), Pair(4022, "40.22"), Pair(-120332, "-1 203.32"), Pair(5003, "50.03"), Pair(2102, "21.02"), Pair(30, "0.30"))
+                Pair("51.1","51.10"),Pair(101, "1.01"), Pair(4022, "40.22"), Pair(-120332, "-1 203.32"), Pair(5003, "50.03"), Pair(2102, "21.02"), Pair(30, "0.30"))
 
         conversionResult(amountMap, ::formatAmountFunc)
     }

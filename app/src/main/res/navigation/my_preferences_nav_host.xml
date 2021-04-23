@@ -32,5 +32,9 @@
         android:id="@+id/viewAllLinkedDevicesFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment"
         android:label="fragment_view_all_linked_devices"
-        tools:layout="@layout/fragment_view_all_linked_devices" />
+        tools:layout="@layout/fragment_view_all_linked_devices" >
+        <action
+            android:id="@+id/action_viewAllLinkedDevicesFragment_to_unlinkDeviceBottomSheetFragment"
+            app:destination="@id/unlinkDeviceBottomSheetFragment" />
+    </fragment>
 </navigation>

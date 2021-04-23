@@ -38,6 +38,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     private var isNonWFSUser: Boolean = true
     private var mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse>? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
+    private var isUpdateAccountCache: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +56,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
         activity?.runOnUiThread { activity?.window?.addFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
 
-        setFragmentResultListener("linkDevice") { requestKey, bundle ->
+        setFragmentResultListener(RESULT_LISTENER_LINK_DEVICE) { requestKey, bundle ->
             Utils.setLinkConfirmationShown(true)
+            isUpdateAccountCache = true
             callLinkedDevicesAPI()
-            activity?.apply {
-                setResult(RESULT_CODE_DEVICE_LINKED)
-            }
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_preferences, container, false)
@@ -99,7 +98,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-
         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
         updateLinkedDeviceView(isDeviceIdentityIdPresent)
     }
@@ -110,7 +108,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         retryLinkDeviceLinearLayout?.visibility = View.VISIBLE
         retryLinkDeviceTextView?.visibility = View.GONE
 
-        mViewAllLinkedDevices = OneAppService.getAllLinkedDevices()
+        mViewAllLinkedDevices = OneAppService.getAllLinkedDevices(isUpdateAccountCache)
         mViewAllLinkedDevices?.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
@@ -154,7 +152,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             else -> {
                 linkDeviceLayout?.visibility = View.VISIBLE
                 linkDeviceSwitch.isChecked = deviceIdentityIdPresent
-                if (deviceList == null || deviceList?.isEmpty() == true){
+                if (deviceList == null || deviceList?.isEmpty() == true) {
                     viewAllLinkedDevicesRelativeLayout.visibility = View.GONE
                 } else {
                     viewAllLinkedDevicesRelativeLayout.visibility = View.VISIBLE
@@ -217,7 +215,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 callLinkedDevicesAPI()
             }
             R.id.viewAllLinkedDevicesRelativeLayout -> {
-                if(deviceList != null && deviceList!!.isNotEmpty()) {
+                if (deviceList != null && deviceList!!.isNotEmpty()) {
                     Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
                             bundleOf(
                                     ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
@@ -310,7 +308,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     companion object {
 
-        private const val TAG = "MyPreferencesFragment"
+        const val RESULT_LISTENER_DELETE_DEVICE: String = "deleteDevice"
+        const val RESULT_LISTENER_LINK_DEVICE = "linkDevice"
         const val LOCK_REQUEST_CODE_TO_ENABLE = 222
         const val LOCK_REQUEST_CODE_TO_DISABLE = 333
         const val SECURITY_SETTING_REQUEST_CODE = 232

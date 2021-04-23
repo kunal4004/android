@@ -20,7 +20,6 @@ public class UserManager {
 	private static final String W_REWARDS = "w_rewards";
 	private static final String ACCOUNT_CACHE_TIME = "account_cache_time";
 	private static final String W_REWARDS_CACHE_TIME = "w_rewards_cache_time";
-	public static final String LINK_DEVICE_CONFIRMATION = "link_device_confirmation";
 	private final Context mContext;
 
 	UserManager(Context context) {
