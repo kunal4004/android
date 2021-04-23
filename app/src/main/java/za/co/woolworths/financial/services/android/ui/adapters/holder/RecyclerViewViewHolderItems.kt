@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
 import android.util.Log
@@ -133,6 +134,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setProductImage(productList: ProductList) {
         val productImageUrl = productList.externalImageRef ?: ""
+        itemView.imProductImage.setBackgroundColor(Color.rgb(245, 245, 245))
         ImageManager.setPicture(itemView.imProductImage, productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
     }
 
