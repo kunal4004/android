@@ -5,13 +5,12 @@
     android:layout_height="match_parent"
     android:background="@color/default_background"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment">
-
-
+    
     <ProgressBar
         android:id="@+id/progressLoadDevices"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
         android:layout_centerVertical="true"
         android:elevation="@dimen/two_dp"
         android:indeterminateTint="@color/black"
