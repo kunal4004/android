@@ -10,10 +10,10 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -56,12 +56,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 payMyAccountViewModel.resetAmountEnteredToDefault()
 
                 navigateToPayMyAccount {
-                    try {
-                        if (navController.currentDestination?.id == R.id.personalLoanFragment)
-                            navController.navigate(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
-                    } catch (ex: IllegalStateException) {
-                        logException(ex)
-                    }
+                    safeNavigateFromNavController(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
                 }
             }
 
