@@ -36,6 +36,7 @@ class AppConstant {
         const val KEY_DASH_WOOLIES_DOWNLOAD_LINK: String = "download_link"
 
         const val DP_LINKING_PRODUCT_LISTING = "Product Listing"
+        const val DP_LINKING_PRODUCT_DETAIL = "Product Detail"
         const val DP_LINKING_MY_ACCOUNTS = "Accounts Landing"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT = "Accounts Product"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
