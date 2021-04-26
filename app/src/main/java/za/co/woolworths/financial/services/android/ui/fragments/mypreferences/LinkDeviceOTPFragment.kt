@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -453,6 +454,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 sendinOTPLayout?.visibility = View.GONE
                 when (linkedDeviceResponse?.httpCode) {
                     AppConstant.HTTP_OK_201.toString() -> {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)))
+
                         if (!isAdded) {
                             return
                         }
@@ -470,6 +473,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                                         Utils.setLinkConfirmationShown(true)
                                         val intent = Intent()
                                         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                                        intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
                                         setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
                                         finish()
                                     }

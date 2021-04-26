@@ -210,6 +210,12 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
+        const val DEVICESECURITY_LINK_START = "devicesecurity_link_start"
+        const val DEVICESECURITY_LINK_SKIP = "devicesecurity_link_skip"
+        const val DEVICESECURITY_LINK_CONFIRMED = "devicesecurity_OTP"
+        const val DEVICESECURITY_VIEW_LIST = "devicesecurity_view_list"
+        const val DEVICESECURITY_DELETE = "devicesecurity_delete"
+
     }
 
     class PropertyNames {
@@ -273,6 +279,14 @@ open class FirebaseManagerAnalyticsProperties {
             const val UNDEFINED: String = "undefined"
             const val FAILED: String = "failed"
             const val SUCCESSFUL: String = "successful"
+
+            const val linkDeviceInitiated = "Link device initiated"
+            const val linkDeviceSkipped = "Link device request skipped or canceled"
+            const val linkDeviceConfirmed = "OTP entered and confirmed to link device"
+            const val linkDeviceViewList = "View linked devices"
+            const val linkDeviceDelete = "Device unlinked / deleted"
+
+
         }
     }
 

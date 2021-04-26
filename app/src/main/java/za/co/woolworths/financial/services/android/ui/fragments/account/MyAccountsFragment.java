@@ -1494,6 +1494,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     navigateToLinkedCreditCard();
                     break;
             }
+            if (data.getBooleanExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, false)) {
+                callLinkedDevicesAPI(true);
+            }
         } else if (resultCode == RESULT_CODE_DEVICE_LINKED) {
             callLinkedDevicesAPI(false);
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
