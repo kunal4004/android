@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.Utils
 
 class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
@@ -65,6 +67,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
                         when (response?.httpCode) {
                             AppConstant.HTTP_OK -> {
+                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)))
+
                                 setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                                         "isUpdate" to true
                                 ))

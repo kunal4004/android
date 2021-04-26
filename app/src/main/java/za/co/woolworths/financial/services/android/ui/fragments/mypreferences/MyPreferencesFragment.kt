@@ -206,6 +206,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             R.id.locationSelectedLayout -> locationSelectionClicked()
             R.id.linkDeviceSwitch -> {
                 if (linkDeviceSwitch!!.isChecked) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated)))
                     Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_navigation)
                 } else {
                     Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment)
@@ -216,6 +217,8 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             }
             R.id.viewAllLinkedDevicesRelativeLayout -> {
                 if (deviceList != null && deviceList!!.isNotEmpty()) {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_VIEW_LIST, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceViewList)))
+
                     Navigation.findNavController(view).navigate(R.id.action_myPreferencesFragment_to_viewAllLinkedDevicesFragment,
                             bundleOf(
                                     ViewAllLinkedDevicesFragment.DEVICE_LIST to deviceList
