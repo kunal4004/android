@@ -155,7 +155,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
         val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
         val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-        if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
+        if(currentStoreId == null && currentSuburbId == null){
+            //Fresh install with no location selection.
+        }
+        else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
             getCategoryNameAndSetTitle(false)
             localStoreId = currentStoreId
             localSuburbId = null
