@@ -28,8 +28,10 @@ import androidx.navigation.fragment.NavHostFragment
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 
@@ -360,3 +362,10 @@ fun TextView.underline() {
     paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 }
 
+fun Fragment.safeNavigateFromNavController(directions: NavDirections) {
+    val navController = findNavController()
+    val destination = navController.currentDestination as? FragmentNavigator.Destination
+    if (javaClass.name == destination?.className) {
+        navController.navigate(directions)
+    }
+}

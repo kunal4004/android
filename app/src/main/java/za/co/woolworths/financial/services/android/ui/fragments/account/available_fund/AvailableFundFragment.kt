@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
@@ -150,7 +151,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                             if (!isAdded) return@queryServicePayUPaymentMethod
                             stopProgress()
                             payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-
+                            navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
                         }, { onSessionExpired ->
                     if (!isAdded) return@queryServicePayUPaymentMethod
                     activity?.let {
@@ -360,10 +361,29 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     fun navigateToDeepLinkView() {
         if (activity is AccountSignedInActivity) {
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                val deepLinkingObject = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.getDeepLinkData()
-                when (deepLinkingObject?.get("feature")?.asString) {
-                    DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
-                        incViewStatementButton?.performClick()
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
+                            deleteDeepLinkData()
+                            incViewStatementButton?.performClick()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToDeepLinkView(destination: String, view: View?) {
+        if (activity is AccountSignedInActivity) {
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        destination -> {
+                                deleteDeepLinkData()
+                                view?.performClick()
+                        }
                     }
                 }
             }

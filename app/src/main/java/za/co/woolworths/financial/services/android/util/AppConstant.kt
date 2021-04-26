@@ -40,6 +40,7 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS = "Accounts Landing"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT = "Accounts Product"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
+        const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
 
     }
 
