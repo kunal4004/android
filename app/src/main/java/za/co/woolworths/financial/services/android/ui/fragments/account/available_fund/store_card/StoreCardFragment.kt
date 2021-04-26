@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
@@ -57,12 +58,24 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
 
                 if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
-                    navController?.navigate(R.id.payMyAccountRetryErrorFragment)
+                    try {
+                        if (navController.currentDestination?.id == R.id.storeCardFragment) {
+                            navController.navigate(R.id.payMyAccountRetryErrorFragment)
+                        }
+                    } catch (ex: IllegalStateException) {
+                        FirebaseManager.logException(ex)
+                    }
                     return
                 }
 
                 navigateToPayMyAccount {
-                    navController?.navigate(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
+                    try {
+                        if (navController.currentDestination?.id == R.id.storeCardFragment) {
+                            navController.navigate(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
+                        }
+                    } catch (ex: IllegalStateException) {
+                        FirebaseManager.logException(ex)
+                    }
                 }
             }
         }
