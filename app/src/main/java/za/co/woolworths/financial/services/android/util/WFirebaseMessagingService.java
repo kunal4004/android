@@ -78,7 +78,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = null;
         if (payload.get("feature").equals("Product Listing")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
-            Log.d(TAG, String.format("About to parse JSON: %s", json));
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
             intent = new Intent(this, StartupActivity.class);
@@ -87,7 +86,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         }
         else if (payload.get("feature").equals("Product Detail")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
-            Log.d(TAG, String.format("About to parse JSON: %s", json));
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
             intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
