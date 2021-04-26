@@ -470,6 +470,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                                         Utils.setLinkConfirmationShown(true)
                                         val intent = Intent()
                                         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                                        intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
                                         setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
                                         finish()
                                     }
