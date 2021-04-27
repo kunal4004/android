@@ -80,7 +80,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSubCategoryName: String? = null
     private var mProductAdapter: ProductListingAdapter? = null
     private var mProductList: MutableList<ProductList>? = null
-    private var mRecyclerViewLayoutManager: GridLayoutManager? = null
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
     private var productView: ProductView? = null
@@ -155,10 +154,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
         val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
         val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-        if(currentStoreId == null && currentSuburbId == null){
+        if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
-        }
-        else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
+        } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
             getCategoryNameAndSetTitle(false)
             localStoreId = currentStoreId
             localSuburbId = null
@@ -179,10 +177,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mSearchTerm = list.get("searchTerm") as String?
             mNavigationState = list.get("navigationState") as String?
             mSortOption = list.get("sortOption") as String
-            setProductRequestBody(mSearchType,
-                    mSearchTerm,
-                    mNavigationState,
-                    mSortOption)
+            setProductBody()
         }
         updateProductRequestBodyForRefinement(mNavigationState)
         reloadProductsWithSortAndFilter()
@@ -219,7 +214,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             this.productView = response
             hideFooterView()
             if (!loadMoreData) {
-                sortAndRefineLayout?.visibility = View.VISIBLE
+                sortAndRefineLayout?.visibility = VISIBLE
                 (activity as? BottomNavigationActivity)?.setUpDrawerFragment(productView, productRequestBody)
                 setRefinementViewState(productView?.navigation?.let { nav -> getRefinementViewState(nav) }
                         ?: false)
@@ -300,6 +295,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
         mProductList?.clear()
+        mProductList = ArrayList()
         mProductList = productLists
         if (!listContainHeader()) {
             val headerProduct = ProductList()
@@ -307,9 +303,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             headerProduct.numberOfItems = numItemsInTotal
             mProductList?.add(0, headerProduct)
         }
-
-        mProductAdapter = ProductListingAdapter(this@ProductListingFragment, mProductList)
-
+        var mRecyclerViewLayoutManager: GridLayoutManager? = null
         activity?.let { activity -> mRecyclerViewLayoutManager = GridLayoutManager(activity, 2) }
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
         mRecyclerViewLayoutManager?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -332,15 +326,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 return if (isHeader || isFooter) 2 else 1
             }
         }
+        mProductAdapter = null
+        mProductAdapter = ProductListingAdapter(this@ProductListingFragment, mProductList)
 
-        productList?.apply {
+        productsRecyclerView?.apply {
             if (visibility == View.INVISIBLE)
-                visibility = View.VISIBLE
+                visibility = VISIBLE
 
             layoutManager = mRecyclerViewLayoutManager
             adapter = mProductAdapter
-            adapter?.notifyDataSetChanged()
-
+            mProductAdapter?.notifyDataSetChanged()
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -359,7 +354,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             //the results from the previous listed data. This of course may be different in sizes
             //and therefor we can most likely expect a IndexOutOfBoundsExeption
             if (visibility == View.INVISIBLE)
-                visibility = View.VISIBLE
+                visibility = VISIBLE
         }
     }
 
@@ -615,7 +610,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun reloadProductsWithSortAndFilter() {
-        productList?.visibility = View.INVISIBLE
+        productsRecyclerView?.visibility = View.INVISIBLE
         sortAndRefineLayout?.visibility = View.GONE
         startProductRequest()
     }
@@ -800,7 +795,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                                 }
                             }
                             if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
-                                addItemToCartResponse.data[0]?.productCountMap?.let { addItemToCart?.quantity?.let { it1 -> ToastFactory.showItemsLimitToastOnAddToCart(productList, it, this, it1) } }
+                                addItemToCartResponse.data[0]?.productCountMap?.let { addItemToCart?.quantity?.let { it1 -> ToastFactory.showItemsLimitToastOnAddToCart(productsRecyclerView, it, this, it1) } }
                             } else {
                                 val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
                                 val bottomView = (activity as? BottomNavigationActivity)?.bottomNavigationById
@@ -968,7 +963,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         resources.apply {
             refineProducts?.contentDescription = getString(R.string.plp_buttonRefine)
             sortProducts?.contentDescription = getString(R.string.plp_buttonSort)
-            productList?.contentDescription = getString(R.string.plp_productListLayout)
+            productsRecyclerView?.contentDescription = getString(R.string.plp_productListLayout)
         }
     }
 
