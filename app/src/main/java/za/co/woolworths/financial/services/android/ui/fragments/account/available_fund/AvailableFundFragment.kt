@@ -381,7 +381,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                     val deepLinkingObject = getDeepLinkData()
                     when (deepLinkingObject?.get("feature")?.asString) {
                         destination -> {
-                                deleteDeepLinkData()
+                            deleteDeepLinkData()
+                            if (isProductInGoodStanding())
                                 view?.performClick()
                         }
                     }
