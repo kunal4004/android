@@ -50,7 +50,6 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
 
     override fun onBackPressed() = when (linkDeviceNavHost?.currentDestination?.id) {
         R.id.linkDeviceConfirmationFragment -> {
-            Utils.setLinkConfirmationShown(true)
             finishActivity()
         }
         linkDeviceNavHost?.graph?.startDestination -> {
