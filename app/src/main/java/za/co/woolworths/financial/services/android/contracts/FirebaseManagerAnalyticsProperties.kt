@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
-class FirebaseManagerAnalyticsProperties {
+open class FirebaseManagerAnalyticsProperties {
     companion object {
 
         const val WTODAYMENU = "wtodaymenu"
@@ -18,6 +18,10 @@ class FirebaseManagerAnalyticsProperties {
         const val MYCARTDELIVERY: String = "mycart_delivery"
         const val SHOPADDTOLIST: String = "shop_addtolist"
         const val SHOPNEWLIST: String = "shop_new_list"
+        const val SHOP_PDP_SELECT_QUANTITY = "shop_pdp_select_quantity"
+        const val SHOP_PDP_ADD_TO_CART = "shop_pdp_add_to_cart"
+        const val SHOP_MY_LIST_ADD_TO_CART = "shop_my_list_add_to_cart"
+        const val SHOP_MY_LIST_NEW_LIST = "shop_my_list_new_list"
 
         const val MYACCOUNTSSHOPPINGLIST: String = "myaccounts_shoppinglist"
         const val MYCARTADDTOLIST: String = "mycart_add_to_list"
@@ -62,6 +66,7 @@ class FirebaseManagerAnalyticsProperties {
         const val ACTION_DIETARY_INFORMATION = "Selects Accordion to view Dietary Information"
         const val SHOP_PRODUCTDETAIL_SIZE_GUIDE: String = "shop_pdp_sg"
         const val ACTION_SIZE_GUIDE = "Product id for product that customer has selected the size guide for"
+        const val ACTION_PDP_DEEPLINK = "product_id of the item that was viewed in PDP"
 
 
         const val CRASH_CAUTION: String = "crash_caution"
@@ -202,7 +207,14 @@ class FirebaseManagerAnalyticsProperties {
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
 
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
+        const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
+
+        const val DEVICESECURITY_LINK_START = "devicesecurity_link_start"
+        const val DEVICESECURITY_LINK_SKIP = "devicesecurity_link_skip"
+        const val DEVICESECURITY_LINK_CONFIRMED = "devicesecurity_OTP"
+        const val DEVICESECURITY_VIEW_LIST = "devicesecurity_view_list"
+        const val DEVICESECURITY_DELETE = "devicesecurity_delete"
 
     }
 
@@ -251,6 +263,13 @@ class FirebaseManagerAnalyticsProperties {
             const val CC_ACCOUNT_STATE = "cc_account_dc_state"
             const val PL_ACCOUNT_STATE = "pl_account_dc_state"
 
+            const val SC_PAYMENT_DUE_DATE = "sc_payment_due_date"
+            const val CC_PAYMENT_DUE_DATE = "cc_payment_due_date"
+            const val PL_PAYMENT_DUE_DATE = "pl_payment_due_date"
+            const val SC_DEBIT_ORDER = "sc_debit_order"
+            const val CC_DEBIT_ORDER = "cc_debit_order"
+            const val PL_DEBIT_ORDER = "pl_debit_order"
+
             const val TAPPED: String = "tapped"
             const val PASSCODE: String = "passcode"
             const val NETWORK: String = "network"
@@ -260,6 +279,13 @@ class FirebaseManagerAnalyticsProperties {
             const val UNDEFINED: String = "undefined"
             const val FAILED: String = "failed"
             const val SUCCESSFUL: String = "successful"
+
+            const val linkDeviceInitiated = "Link device initiated"
+            const val linkDeviceSkipped = "Link device request skipped or canceled"
+            const val linkDeviceConfirmed = "OTP entered and confirmed to link device"
+            const val linkDeviceViewList = "View linked devices"
+            const val linkDeviceDelete = "Device unlinked / deleted"
+
 
         }
     }

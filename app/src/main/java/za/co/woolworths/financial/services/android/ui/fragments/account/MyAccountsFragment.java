@@ -126,7 +126,6 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
-import static za.co.woolworths.financial.services.android.util.Utils.SHARED_PREF;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
 public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener, IAccountCardDetailsContract.AccountCardDetailView {
@@ -328,6 +327,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             myOrdersRelativeLayout.setOnClickListener(this);
             creditReportView.setOnClickListener(this);
 
+            parseDeepLinkData();
+
             NavController onBoardingNavigationGraph = Navigation.findNavController(view.findViewById(R.id.on_boarding_navigation_graph));
             KotlinUtils.Companion.setAccountNavigationGraph(onBoardingNavigationGraph, OnBoardingScreenType.ACCOUNT);
 
@@ -372,15 +373,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             setToolbarBackgroundColor(R.color.white);
             messageCounterRequest();
         } else {
-            callLinkedDevicesAPI();
+            callLinkedDevicesAPI(false);
         }
 
         uniqueIdentifiersForAccount();
-
-        parseDeepLinkData();
     }
 
-    private void callLinkedDevicesAPI() {
+    private void callLinkedDevicesAPI(Boolean isForced) {
         Activity activity = getActivity();
         if (activity instanceof BottomNavigationActivity) {
             BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
@@ -388,7 +387,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if ((bottomNavigationActivity.getCurrentSection() == R.id.navigate_to_account)
                     && (currentFragment instanceof MyAccountsFragment)) {
                 if (SessionUtilities.getInstance().isUserAuthenticated()) {
-                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices();
+                    Call<ViewAllLinkedDeviceResponse> mViewAllLinkedDevices = OneAppService.INSTANCE.getAllLinkedDevices(isForced);
                     mViewAllLinkedDevices.enqueue(new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
                         @Override
                         public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
@@ -470,7 +469,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             } else {
                 this.configureSignInNoC2ID();
             }
-            callLinkedDevicesAPI();
+            callLinkedDevicesAPI(false);
         } else {
             if (getActivity() == null) return;
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
@@ -548,8 +547,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         }
 
-        FirebaseAnalyticsUserProperty.setUserPropertiesForCardProductOfferings(accounts);
-        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCode(accounts);
+        FirebaseAnalyticsUserProperty.Companion.setUserPropertiesForCardProductOfferings(accounts);
+        FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCode(accounts);
 
         //hide content for unavailable products
         boolean sc = true, cc = true, pl = true;
@@ -990,15 +989,22 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
 
+                                hideView(retryStoreCardLinearLayout);
+                                showStoreCardContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+
                                 if (WoolworthsApplication.getInstance() != null) {
 
-                                    if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
+                                    if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
                                         hideView(retryStoreCardLinearLayout);
                                         showStoreCardContent(account);
                                         //set  Firebase user property when retried for specific product
-                                        FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
+                                        FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.STORE_CARD.getGroupCode(), account);
                                     }
                                 }
                             }
@@ -1029,7 +1035,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
@@ -1053,8 +1059,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (activity == null) return;
         Intent intent = new Intent(activity, LinkDeviceConfirmationActivity.class);
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
+        if (deepLinkParams != null)
+            intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
         activity.startActivityForResult(intent, RESULT_CODE_LINK_DEVICE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        deepLinkParams = null;
     }
 
     private void navigateToLinkedPersonalLoan() {
@@ -1074,14 +1083,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 Account account = accountsResponse.accountList.get(0);
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
+                                hideView(retryPersonalLoanLinearLayout);
+                                showPersonalLoanContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
 
-                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
+                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
                                 } else {
                                     hideView(retryPersonalLoanLinearLayout);
                                     showPersonalLoanContent(account);
                                     //set  Firebase user property when retried for specific product
-                                    FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
+                                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
                                 }
                             }
                             break;
@@ -1110,7 +1125,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.PERSONAL_LOAN);
@@ -1135,14 +1150,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 Account account = accountsResponse.accountList.get(0);
                                 mAccountResponse.accountList.add(account);
                                 setAccountResponse(activity, mAccountResponse);
+                                hideView(retryCreditCardLinearLayout);
+                                showCreditCardContent(account);
+                                //set  Firebase user property when retried for specific product
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyPaymentDueDate(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
+                                FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
 
-                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
+                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()&& deepLinkParams == null) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
                                 } else {
                                     hideView(retryCreditCardLinearLayout);
                                     showCreditCardContent(account);
                                     //set  Firebase user property when retried for specific product
-                                    FirebaseAnalyticsUserProperty.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
+                                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
                                 }
                             }
                             break;
@@ -1172,7 +1193,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.SILVER_CREDIT_CARD);
@@ -1223,6 +1244,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 case HTTP_EXPECTATION_FAILED_502:
                 case HTTP_OK:
                     mAccountsHashMap = accountsHashMap;
+                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
+                    FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
                     if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {
@@ -1471,8 +1494,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     navigateToLinkedCreditCard();
                     break;
             }
+            if (data.getBooleanExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, false)) {
+                callLinkedDevicesAPI(true);
+            }
         } else if (resultCode == RESULT_CODE_DEVICE_LINKED) {
-            callLinkedDevicesAPI();
+            callLinkedDevicesAPI(false);
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             initialize();
             //One time biometricsWalkthrough
@@ -1659,9 +1685,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     @Override
     public void onPromptDismiss() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
-            showSetUpDeliveryPopUp();
-            showInAppChat(getActivity());
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+            try {
+                showSetUpDeliveryPopUp();
+                showInAppChat(getActivity());
+            } catch (IndexOutOfBoundsException ex) {
+                FirebaseManager.Companion.logException(ex);
+            }
         }
     }
 

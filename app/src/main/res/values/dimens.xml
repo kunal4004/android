@@ -20,6 +20,7 @@
     <dimen name="acc_thirteen_sp">13sp</dimen>
     <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
+    <dimen name="thirty_six_dp">36dp</dimen>
 
     <dimen name="LoadingDots_dots_size_default">3dp</dimen>
     <dimen name="LoadingDots_dots_space_default">6dp</dimen>
@@ -109,6 +110,7 @@
     <dimen name="hundred_dp">100dp</dimen>
     <dimen name="hundred_and_thirty_dp">130dp</dimen>
     <dimen name="hundred_and_fifty_dp">150dp</dimen>
+    <dimen name="hundred_and_fifty_six_dp">156dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="five_sp">5sp</dimen>
     <dimen name="six_dp">6dp</dimen>
@@ -135,6 +137,7 @@
     <dimen name="chat_bubble_text_line_spacing">1.31dp</dimen>
     <dimen name="chat_bubble_text_size">16sp</dimen>
     <dimen name="sixty_four_dp">64dp</dimen>
+    <dimen name="sixty_five_dp">65dp</dimen>
     <dimen name="one_dp">1dp</dimen>
     <dimen name="store_card_enter_otp_title_top_margin_32dp">32dp</dimen>
     <dimen name="store_card_enter_otp_title_top_margin_16dp">16dp</dimen>
@@ -149,6 +152,7 @@
     <dimen name="store_card_next_button_size_48_dp">48sp</dimen>
     <dimen name="twenty_four_sp">24sp</dimen>
     <dimen name="eleven_sp">11sp</dimen>
+    <dimen name="four_sp">4sp</dimen>
     <dimen name="available_fund_transaction_button_height" >100dp</dimen>
     <dimen name="account_thirteen_sp">13sp</dimen>
     <dimen name="available_fund_40dp_margin">40dp</dimen>

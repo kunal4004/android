@@ -48,12 +48,7 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
         return false
     }
 
-    override fun onBackPressed() = when (linkDeviceNavHost?.currentDestination?.id) {
-        linkDeviceNavHost?.graph?.startDestination -> {
-            finishActivity()
-        }
-        else -> super.onBackPressed()
-    }
+    override fun onBackPressed() = finishActivity()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -70,10 +65,10 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
     }
 
     private fun setNavHostStartDestination() {
-            val graph = linkDeviceNavHost?.graph
-            graph?.startDestination = R.id.linkDeviceConfirmationFragment
+        val graph = linkDeviceNavHost?.graph
+        graph?.startDestination = R.id.linkDeviceConfirmationFragment
 
-            graph?.let { linkDeviceNavHost?.setGraph(it, intent.extras) }
+        graph?.let { linkDeviceNavHost?.setGraph(it, intent.extras) }
     }
 
     override fun setToolbarTitle(title: String) {
@@ -88,7 +83,24 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
         linkDeviceConfirmToolbarRightButton?.visibility = View.VISIBLE
     }
 
-     override fun getToolbar(): Toolbar {
-         return linkDeviceConfirmToolbar
+    override fun hideBackButton() {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+        }
+    }
+
+    override fun showBackButton() {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
+    override fun getToolbar(): Toolbar {
+        return linkDeviceConfirmToolbar
     }
 }
