@@ -48,16 +48,7 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
         return false
     }
 
-    override fun onBackPressed() = when (linkDeviceNavHost?.currentDestination?.id) {
-        R.id.linkDeviceConfirmationFragment -> {
-            Utils.setLinkConfirmationShown(true)
-            finishActivity()
-        }
-        linkDeviceNavHost?.graph?.startDestination -> {
-            finishActivity()
-        }
-        else -> super.onBackPressed()
-    }
+    override fun onBackPressed() = finishActivity()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -74,10 +65,10 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
     }
 
     private fun setNavHostStartDestination() {
-            val graph = linkDeviceNavHost?.graph
-            graph?.startDestination = R.id.linkDeviceConfirmationFragment
+        val graph = linkDeviceNavHost?.graph
+        graph?.startDestination = R.id.linkDeviceConfirmationFragment
 
-            graph?.let { linkDeviceNavHost?.setGraph(it, intent.extras) }
+        graph?.let { linkDeviceNavHost?.setGraph(it, intent.extras) }
     }
 
     override fun setToolbarTitle(title: String) {
@@ -109,7 +100,7 @@ class LinkDeviceConfirmationActivity : AppCompatActivity(), LinkDeviceConfirmati
         }
     }
 
-     override fun getToolbar(): Toolbar {
-         return linkDeviceConfirmToolbar
+    override fun getToolbar(): Toolbar {
+        return linkDeviceConfirmToolbar
     }
 }

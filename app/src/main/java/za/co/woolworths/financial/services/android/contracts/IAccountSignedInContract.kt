@@ -40,6 +40,7 @@ interface IAccountSignedInContract {
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
         fun deleteDeepLinkData()
+        fun isProductInGoodStanding():Boolean
     }
 
     interface MyAccountModel {
