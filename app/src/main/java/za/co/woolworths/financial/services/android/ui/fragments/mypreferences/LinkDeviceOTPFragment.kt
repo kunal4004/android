@@ -257,7 +257,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                     return
                 }
 
-                val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
                 imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
 
                 callValidatingOTPAPI(otpNumber)
