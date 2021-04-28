@@ -6,77 +6,75 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class FirebaseCreditLimitIncreaseEvent(private var applyNowState: ApplyNowState?) : FirebaseManagerAnalyticsProperties() {
 
-    fun forCLIStart() {
-        val eventName = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseStart
-            ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseStart
-            ApplyNowState.BLACK_CREDIT_CARD -> blackCreditCardCreditLimitIncreaseStart
-            ApplyNowState.GOLD_CREDIT_CARD -> goldCreditCardCreditLimitIncreaseStart
-            ApplyNowState.SILVER_CREDIT_CARD -> silverCreditCardCreditLimitIncreaseStart
+    //Customer selects MyAccounts/ Credit Card / Increase My Limit
+    private val cLIStart = mutableListOf(
+            storeCardCreditLimitIncreaseStart,
+            personalLoanCreditLimitIncreaseStart,
+            blackCreditCardCreditLimitIncreaseStart,
+            goldCreditCardCreditLimitIncreaseStart,
+            silverCreditCardCreditLimitIncreaseStart)
+
+    //Customer started Credit Card limit increase and confirmed marital status
+    private val cliMaritialStatus = mutableListOf(
+            storeCardCreditLimitIncreaseMaritalstatus,
+            personalLoanCreditLimitIncreaseMaritalstatus,
+            blackCreditCardCreditLimitIncreaseMaritalstatus,
+            goldCreditCardCreditLimitIncreaseMaritalstatus,
+            silverCreditCardCreditLimitIncreaseMaritalstatus)
+
+    //Customer confirmed marital status and provided income / expenses
+    private val incomeExpense = mutableListOf(
+            storeCardCreditLimitIncreaseIncomeExpense,
+            personalLoanCreditLimitIncreaseIncomeExpense,
+            blackCreditCardCreditLimitIncreaseIncomeExpense,
+            goldCreditCardCreditLimitIncreaseIncomeExpense,
+            silverCreditCardCreditLimitIncreaseIncomeExpense)
+
+    //Store Card Customer received offer and accepted
+    private val acceptOffer = mutableListOf(
+            storeCardCreditLimitIncreaseAcceptOffer,
+            personalLoanCreditLimitIncreaseAcceptOffer,
+            blackCreditCardCreditLimitIncreaseAcceptOffer,
+            goldCreditCardCreditLimitIncreaseAcceptOffer,
+            silverCreditCardCreditLimitIncreaseAcceptOffer)
+
+    //Store Card Customer accepted and Opt-is for DEA
+    private val deaOptin = mutableListOf(
+            storeCardCreditLimitIncreaseDeaOption,
+            personalLoanCreditLimitIncreaseDeaOption,
+            blackCreditCardCreditLimitIncreaseDeaOption,
+            goldCreditCardCreditLimitIncreaseDeaOption,
+            silverCreditCardCreditLimitIncreaseDeaOption)
+
+    //Store Card Customer accepted and selected POI
+    private val poiConfirm = mutableListOf(
+            storeCardCreditLimitIncreasePoiConfirm,
+            personalLoanCreditLimitIncreasePoiConfirm,
+            blackCreditCardCreditLimitIncreasePoiConfirm,
+            goldCreditCardCreditLimitIncreasePoiConfirm,
+            silverCreditCardCreditLimitIncreasePoiConfirm)
+
+    fun forCLIStart() = sendEvent(cLIStart)
+
+    fun forMaritialStatus() = sendEvent(cliMaritialStatus)
+
+    fun forIncomeExpense() = sendEvent(incomeExpense)
+
+    fun forAcceptOffer() = sendEvent(acceptOffer)
+
+    fun forDeaOptin() = sendEvent(deaOptin)
+
+    fun forPOIConfirm() = sendEvent(poiConfirm)
+
+    private fun sendEvent(eventName: MutableList<String>?) {
+        val name = when (applyNowState) {
+            ApplyNowState.STORE_CARD -> eventName?.get(0)
+            ApplyNowState.PERSONAL_LOAN -> eventName?.get(1)
+            ApplyNowState.BLACK_CREDIT_CARD -> eventName?.get(2)
+            ApplyNowState.GOLD_CREDIT_CARD -> eventName?.get(3)
+            ApplyNowState.SILVER_CREDIT_CARD -> eventName?.get(4)
             else -> null
         }
-        eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
-    }
-
-
-    fun forMaritialStatus() {
-        val eventName = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseMaritalstatus
-            ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseMaritalstatus
-            ApplyNowState.BLACK_CREDIT_CARD -> blackCreditCardCreditLimitIncreaseMaritalstatus
-            ApplyNowState.GOLD_CREDIT_CARD -> goldCreditCardCreditLimitIncreaseMaritalstatus
-            ApplyNowState.SILVER_CREDIT_CARD -> silverCreditCardCreditLimitIncreaseMaritalstatus
-            else -> null
-        }
-        eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
-    }
-
-
-    fun forIncomeExpense() {
-        val eventName = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseIncomeExpense
-            ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseIncomeExpense
-            ApplyNowState.BLACK_CREDIT_CARD -> blackCreditCardCreditLimitIncreaseIncomeExpense
-            ApplyNowState.GOLD_CREDIT_CARD -> goldCreditCardCreditLimitIncreaseIncomeExpense
-            ApplyNowState.SILVER_CREDIT_CARD -> silverCreditCardCreditLimitIncreaseIncomeExpense
-            else -> null
-        }
-        eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
-    }
-
-    fun forAcceptOffer() {
-        val eventName = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseAcceptOffer
-            ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseAcceptOffer
-            ApplyNowState.BLACK_CREDIT_CARD -> blackCreditCardCreditLimitIncreaseAcceptOffer
-            ApplyNowState.GOLD_CREDIT_CARD -> goldCreditCardCreditLimitIncreaseAcceptOffer
-            ApplyNowState.SILVER_CREDIT_CARD -> silverCreditCardCreditLimitIncreaseAcceptOffer
-            else -> null
-        }
-        eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
-    }
-
-    fun forDeaOptin() {
-        val eventName = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseDeaOption
-            ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseDeaOption
-            ApplyNowState.BLACK_CREDIT_CARD -> blackCreditCardCreditLimitIncreaseDeaOption
-            ApplyNowState.GOLD_CREDIT_CARD -> goldCreditCardCreditLimitIncreaseDeaOption
-            ApplyNowState.SILVER_CREDIT_CARD -> silverCreditCardCreditLimitIncreaseDeaOption
-            else -> null
-        }
-        eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
-    }
-
-    fun forPOIConfirm() {
-        val eventName = when (applyNowState) {
-            ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreasePoiConfirm
-            ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreasePoiConfirm
-            ApplyNowState.BLACK_CREDIT_CARD -> blackCreditCardCreditLimitIncreasePoiConfirm
-            ApplyNowState.GOLD_CREDIT_CARD -> goldCreditCardCreditLimitIncreasePoiConfirm
-            ApplyNowState.SILVER_CREDIT_CARD -> silverCreditCardCreditLimitIncreasePoiConfirm
-            else -> null
-        }
-        eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
+        name?.let { n -> Utils.triggerFireBaseEvents(n) }
     }
 }
