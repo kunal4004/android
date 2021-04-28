@@ -3,21 +3,26 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
+import kotlinx.coroutines.GlobalScope
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.util.FirebaseManager
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
+import za.co.woolworths.financial.services.android.util.*
 
 class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
@@ -37,6 +42,19 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         incPayMyAccountButton?.setOnClickListener(this)
 
         navigateToDeepLinkView()
+
+
+        setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                when (bundle.getString(AccountInArrearsDialogFragment::class.java.simpleName, "N/A")) {
+                    ARREARS_PAY_NOW_BUTTON -> onStoreCardButtonTap()
+                    ARREARS_CHAT_TO_US_BUTTON -> {
+                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState -> ChatFloatingActionButtonBubbleView(activity = activity, applyNowState = applyNowState) }
+                        chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
+                    }
+                }
+            }
+        }
     }
 
     override fun onClick(view: View?) {
@@ -50,33 +68,34 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
                 navigateToStatementActivity()
             }
-            R.id.incPayMyAccountButton -> {
-                if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+            R.id.incPayMyAccountButton -> onStoreCardButtonTap()
+        }
+    }
 
-                payMyAccountViewModel.resetAmountEnteredToDefault()
+    private fun onStoreCardButtonTap() {
+        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
+        payMyAccountViewModel.resetAmountEnteredToDefault()
 
-                if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
-                    try {
-                        if (navController.currentDestination?.id == R.id.storeCardFragment) {
-                            navController.navigate(R.id.payMyAccountRetryErrorFragment)
-                        }
-                    } catch (ex: IllegalStateException) {
-                        FirebaseManager.logException(ex)
-                    }
-                    return
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
+
+        if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
+            try {
+                if (navController.currentDestination?.id == R.id.storeCardFragment) {
+                    navController.navigate(R.id.payMyAccountRetryErrorFragment)
                 }
+            } catch (ex: IllegalStateException) {
+                FirebaseManager.logException(ex)
+            }
+            return
+        }
 
-                navigateToPayMyAccount {
-                    try {
-                        if (navController.currentDestination?.id == R.id.storeCardFragment) {
-                            navController.navigate(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
-                        }
-                    } catch (ex: IllegalStateException) {
-                        FirebaseManager.logException(ex)
-                    }
-                }
+        navigateToPayMyAccount {
+            try {
+                safeNavigateFromNavController(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
+
+            } catch (ex: IllegalStateException) {
+                FirebaseManager.logException(ex)
             }
         }
     }

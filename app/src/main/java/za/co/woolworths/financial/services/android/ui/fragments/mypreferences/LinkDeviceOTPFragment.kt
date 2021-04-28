@@ -247,14 +247,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             }
             R.id.buttonNext -> {
 
-                val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
-
                 val otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
                         .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
+
+                if(TextUtils.isEmpty(otpNumber) || otpNumber.length < 5){
+                    return
+                }
+
+                val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
+                imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
 
                 callValidatingOTPAPI(otpNumber)
             }
@@ -470,7 +474,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             mApplyNowState?.let {
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
-                                        Utils.setLinkConfirmationShown(true)
                                         val intent = Intent()
                                         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                                         intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
@@ -584,7 +587,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         if (resultCode == Activity.RESULT_CANCELED) {
             resetOTPView()
             linkDeviceOTPScreen?.visibility = View.VISIBLE
-            Utils.setLinkConfirmationShown(true)
         }
 
         when (requestCode) {
@@ -595,7 +597,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                        Utils.setLinkConfirmationShown(true)
                         setFragmentResult("linkDevice", bundleOf(
                                 "isLinked" to false
                         ))

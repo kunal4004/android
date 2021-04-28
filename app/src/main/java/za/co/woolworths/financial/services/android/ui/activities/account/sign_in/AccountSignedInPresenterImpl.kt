@@ -132,8 +132,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-
-
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
         return (height.div(100)).times(if (isAccountInArrearsState()) 14 else 23)
@@ -158,6 +156,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     override fun deleteDeepLinkData() {
         mDeepLinkingData = null
     }
+
+    override fun isProductInGoodStanding(): Boolean  = getAccount()?.productOfferingGoodStanding == true
 
 
     private fun getAccount(): Account? {
