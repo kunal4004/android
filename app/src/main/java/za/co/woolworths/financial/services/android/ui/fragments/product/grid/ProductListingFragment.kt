@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.TAG
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -161,11 +162,19 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             localStoreId = currentStoreId
             localSuburbId = null
             updateRequestAndReload()
+            (activity as? BottomNavigationActivity)?.apply {
+                popFragmentNoAnim()
+                pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, mNavigationState, productRequestBody.sortOption))
+            }
         } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
             getCategoryNameAndSetTitle(false)
             localSuburbId = currentSuburbId
             localStoreId = null
             updateRequestAndReload()
+            (activity as? BottomNavigationActivity)?.apply {
+                popFragmentNoAnim()
+                pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, mNavigationState, productRequestBody.sortOption))
+            }
         }
     }
 
@@ -180,7 +189,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setProductBody()
         }
         updateProductRequestBodyForRefinement(mNavigationState)
-        reloadProductsWithSortAndFilter()
     }
 
     private fun setTitle() {
@@ -192,7 +200,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
-        if (mProductList?.isNullOrEmpty() == true)
             mProductList = ArrayList()
 
         if (productLists?.isEmpty() == true) {
@@ -211,6 +218,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
 
         } else {
+            this.productView = null
             this.productView = response
             hideFooterView()
             if (!loadMoreData) {
@@ -228,6 +236,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 loadMoreData(productLists)
             }
         }
+        mProductAdapter?.notifyDataSetChanged()
     }
 
     private fun getCategoryNameAndSetTitle(backPressed: Boolean) {
@@ -303,8 +312,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             headerProduct.numberOfItems = numItemsInTotal
             mProductList?.add(0, headerProduct)
         }
-        var mRecyclerViewLayoutManager: GridLayoutManager? = null
-        activity?.let { activity -> mRecyclerViewLayoutManager = GridLayoutManager(activity, 2) }
+        var mRecyclerViewLayoutManager: GridLayoutManager?
+        mRecyclerViewLayoutManager = GridLayoutManager(activity, 2)
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
         mRecyclerViewLayoutManager?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -328,14 +337,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
         mProductAdapter = null
         mProductAdapter = ProductListingAdapter(this@ProductListingFragment, mProductList)
-
         productsRecyclerView?.apply {
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
-
             layoutManager = mRecyclerViewLayoutManager
             adapter = mProductAdapter
-            mProductAdapter?.notifyDataSetChanged()
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -540,6 +546,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     if (!localProductBody.isEmpty())
                         localProductBody.removeLast()
                     updateRequestAndReload()
+                    reloadProductsWithSortAndFilter()
                     if (productView?.navigation?.isNullOrEmpty() != true)
                         unLockDrawerFragment()
                 }
