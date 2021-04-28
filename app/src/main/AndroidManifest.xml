@@ -340,11 +340,11 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter
                 android:autoVerify="true"
@@ -359,6 +359,10 @@
                 <data android:pathPattern="/prod.*" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />

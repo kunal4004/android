@@ -158,7 +158,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
         } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-            getCategoryNameAndSetTitle(false)
             localStoreId = currentStoreId
             localSuburbId = null
             updateRequestAndReload()
@@ -167,7 +166,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 pushFragment(newInstance(mSearchType, mSubCategoryName, mSearchTerm, mNavigationState, productRequestBody.sortOption))
             }
         } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-            getCategoryNameAndSetTitle(false)
             localSuburbId = currentSuburbId
             localStoreId = null
             updateRequestAndReload()
