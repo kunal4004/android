@@ -2015,6 +2015,7 @@
     <string name="link_device_this_is_linked">This device is linked</string>
 
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
+    <string name="unable_to_process_502">We are unable to process your request at the moment. Please Try Again Later.</string>
 
     <!-- View All Linked Devices -->
     <string name="view_all_device_title">My Linked Devices</string>

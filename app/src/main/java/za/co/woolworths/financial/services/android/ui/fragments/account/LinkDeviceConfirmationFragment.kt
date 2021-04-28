@@ -19,6 +19,7 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
@@ -56,12 +57,14 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                 toolbar = it.getToolbar() as Toolbar
             }
         }
+        Utils.setLinkConfirmationShown(true)
         val skipButton: TextView = toolbar?.findViewById(R.id.linkDeviceConfirmToolbarRightButton) as TextView
         skipButton.setOnClickListener(this)
         val navController = Navigation.findNavController(view)
         linkDeviceConfirmationButton.setOnClickListener {
 
-            Utils.setLinkConfirmationShown(true)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated)))
+
             navController.navigate(R.id.action_linkDeviceConfirmationFragment_to_otp_navigation, bundleOf(
                     AccountSignedInPresenterImpl.APPLY_NOW_STATE to mApplyNowState
             ))
@@ -88,6 +91,8 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSkipPressed() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_SKIP, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceSkipped)))
+
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
             linkDeviceResultTitle?.text = it.getString(R.string.ok_cool)
@@ -106,7 +111,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             }
             Handler().postDelayed({
 
-                Utils.setLinkConfirmationShown(true)
                 val intent = Intent()
                 intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                 setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)

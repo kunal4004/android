@@ -66,6 +66,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val ACTION_DIETARY_INFORMATION = "Selects Accordion to view Dietary Information"
         const val SHOP_PRODUCTDETAIL_SIZE_GUIDE: String = "shop_pdp_sg"
         const val ACTION_SIZE_GUIDE = "Product id for product that customer has selected the size guide for"
+        const val ACTION_PDP_DEEPLINK = "product_id of the item that was viewed in PDP"
 
 
         const val CRASH_CAUTION: String = "crash_caution"
@@ -84,19 +85,19 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOPQS_ADD_TO_CART = "shopqs_add_to_cart"
         const val SHOP_SCAN_CODE = "shop_scan_code"
 
-        const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
-        const val MY_ACCOUNTS_VTC_PAY = "MYACCOUNTS_VTC_PAY"
-        const val MY_ACCOUNTS_VTC_HOW_TO = "MYACCOUNTS_VTC_HOWTO"
+        const val MY_ACCOUNTS_VTC_GET = "myaccounts_vtc_get"
+        const val MY_ACCOUNTS_VTC_PAY = "myaccounts_vtc_pay"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "my_accounts_vtc_howto"
 
-        const val MYACCOUNTS_ICR_GET_CARD = "MYACCOUNTS_ICR_GET_CARD"
-        const val MYACCOUNTS_ICR_STORES = "MYACCOUNTS_ICR_STORES"
-        const val MYACCOUNTS_ICR_LINK_START = "MYACCOUNTS_ICR_LINK_START"
-        const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
-        const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
-        const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
-        const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
-        const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
-        const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
+        const val MYACCOUNTS_ICR_GET_CARD = "myaccounts_icr_get_card"
+        const val MYACCOUNTS_ICR_STORES = "myaccounts_icr_stores"
+        const val MYACCOUNTS_ICR_LINK_START = "myaccounts_icr_link_start"
+        const val MYACCOUNTS_ICR_LINK_CARD = "myaccounts_icr_link_card"
+        const val MYACCOUNTS_ICR_LINK_CONFIRM = "myaccounts_icr_link_confirm"
+        const val SHOP_MY_ORDERS_CANCEL_ORDER = "shop_my_orders_cancel_order"
+        const val WHATSAPP_PAYMENT_OPTION = "whatsapp_payment_option"
+        const val WHATSAPP_CONTACT_US = "whatsapp_contact_us"
+        const val WHATSAPP_CHAT_WITH_US = "whattsapp_chat_with_us"
 
         const val SHOP_SEARCH = "SHOP_Search"
 
@@ -202,6 +203,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val PL_STATEMENTS_CHAT_END = "pl_statements_chat_end"
 
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
+        const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
         //PLDD
@@ -280,6 +282,13 @@ open class FirebaseManagerAnalyticsProperties {
         const val blackCreditCardCreditLimitIncreasePoiConfirm = "blkcc_cli_poi_confirm"
         const val goldCreditCardCreditLimitIncreasePoiConfirm = "goldcc_cli_poi_confirm"
         const val silverCreditCardCreditLimitIncreasePoiConfirm = "slvrcc_cli_poi_confirm"
+
+        const val DEVICESECURITY_LINK_START = "devicesecurity_link_start"
+        const val DEVICESECURITY_LINK_SKIP = "devicesecurity_link_skip"
+        const val DEVICESECURITY_LINK_CONFIRMED = "devicesecurity_OTP"
+        const val DEVICESECURITY_VIEW_LIST = "devicesecurity_view_list"
+        const val DEVICESECURITY_DELETE = "devicesecurity_delete"
+
     }
 
     class PropertyNames {
@@ -343,6 +352,14 @@ open class FirebaseManagerAnalyticsProperties {
             const val UNDEFINED: String = "undefined"
             const val FAILED: String = "failed"
             const val SUCCESSFUL: String = "successful"
+
+            const val linkDeviceInitiated = "Link device initiated"
+            const val linkDeviceSkipped = "Link device request skipped or canceled"
+            const val linkDeviceConfirmed = "OTP entered and confirmed to link device"
+            const val linkDeviceViewList = "View linked devices"
+            const val linkDeviceDelete = "Device unlinked / deleted"
+
+
         }
     }
 

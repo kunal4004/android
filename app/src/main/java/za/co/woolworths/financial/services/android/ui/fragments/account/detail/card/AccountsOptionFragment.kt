@@ -457,7 +457,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
 
     override fun stopCardActivationShimmer() {
-        creditCardActivationPlaceHolder.apply {
+        creditCardActivationPlaceHolder?.apply {
             stopShimmer()
             visibility = GONE
         }

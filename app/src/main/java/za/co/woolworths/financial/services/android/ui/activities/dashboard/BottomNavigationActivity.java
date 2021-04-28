@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -60,6 +61,7 @@ import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActi
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
@@ -111,6 +113,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.OrderDet
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -311,7 +314,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
             switch (deepLinkType) {
                 case AppConstant.DP_LINKING_PRODUCT_LISTING:
-                    if(appLinkData.get("url") == null){
+                    if (appLinkData.get("url") == null) {
                         return;
                     }
 
@@ -326,7 +329,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     }
                     break;
 
+                case AppConstant.DP_LINKING_PRODUCT_DETAIL:
+                    Intent intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
+                    intent.putExtra("feature", AppConstant.DP_LINKING_PRODUCT_DETAIL);
+                    intent.putExtra("parameters", appLinkData.toString());
+                    startActivityForResult(intent, DEEP_LINK_REQUEST_CODE);
+                    break;
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS:
                     BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
@@ -915,6 +925,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
             case REQUEST_CHECK_SETTINGS:
                 getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+                break;
+
+            case DEEP_LINK_REQUEST_CODE:
+                finish();
                 break;
 
             default:
