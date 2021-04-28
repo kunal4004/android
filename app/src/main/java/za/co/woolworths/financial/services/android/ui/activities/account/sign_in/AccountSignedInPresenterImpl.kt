@@ -35,8 +35,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?>? {
-        mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState
-                ?: ApplyNowState.STORE_CARD
+        mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
         val accountResponseString = bundle?.getString(MY_ACCOUNT_RESPONSE, "")
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
@@ -135,11 +134,11 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
-        return (height.div(100)).times(if (isAccountInArrearsState() == true) 14 else 23)
+        return (height.div(100)).times(if (isAccountInArrearsState()) 14 else 23)
     }
 
     @SuppressLint("DefaultLocale")
-    override fun isAccountInArrearsState(): Boolean? {
+    override fun isAccountInArrearsState(): Boolean {
         val account = getAccount()
         val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
         //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
@@ -154,6 +153,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return Gson().fromJson(mDeepLinkingData, JsonObject::class.java)
     }
 
+    override fun deleteDeepLinkData() {
+        mDeepLinkingData = null
+    }
+
+    override fun isProductInGoodStanding(): Boolean  = getAccount()?.productOfferingGoodStanding == true
+
+
     private fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }
     }
@@ -164,6 +170,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun onDestroy() {
         mainView = null
+        deleteDeepLinkData()
     }
 
     private fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {

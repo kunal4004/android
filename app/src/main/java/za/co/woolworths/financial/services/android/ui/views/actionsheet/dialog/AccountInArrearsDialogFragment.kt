@@ -6,15 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_in_arrears_alert_dialog_fragment.*
 import kotlinx.android.synthetic.main.account_in_arrears_fragment_dialog.accountInArrearsDescriptionTextView
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -23,6 +23,13 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
+    private val mClassName = AccountInArrearsDialogFragment::class.java.simpleName
+
+    companion object {
+        const val ARREARS_PAY_NOW_BUTTON = "payNowButton"
+        const val ARREARS_CHAT_TO_US_BUTTON = "chatToUsButton"
+
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -66,15 +73,13 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
         when (v?.id) {
 
             R.id.payNowButton -> {
-                val cardDetail = payMyAccountViewModel.getCardDetail()
-                ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardDetail)
                 dismiss()
+                setFragmentResult(mClassName, bundleOf(mClassName to ARREARS_PAY_NOW_BUTTON))
             }
 
             R.id.chatToUsButton -> {
-                val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState -> ChatFloatingActionButtonBubbleView(activity = activity, applyNowState = applyNowState) }
-                chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
                 dismiss()
+                setFragmentResult(mClassName, bundleOf(mClassName to ARREARS_CHAT_TO_US_BUTTON))
             }
 
             R.id.closeIconImageButton -> dismiss()
