@@ -1771,8 +1771,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
-    private void redirectToCreditCardActivity(CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY);
+    private void redirectToCreditCardActivity(CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse, ApplyNowState applyNowState) {
         Account account = mAccountResponse.accountList.get(0);
         Intent intent = new Intent(getContext(), CreditCardDeliveryActivity.class);
         Bundle mBundle = new Bundle();
@@ -1781,6 +1780,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse.getStatusResponse()));
         mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
         mBundle.putBoolean("setUpDeliveryNowClicked", true);
+        if (applyNowState != null)
+            mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
         intent.putExtra("bundle", mBundle);
         startActivity(intent);
     }
@@ -1907,9 +1908,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     @Override
     public void onGetCreditCardDeliveryStatusSuccess(@NotNull CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
         if (creditCardDeliveryStatusResponse.getStatusResponse().getDeliveryStatus().getStatusDescription().equalsIgnoreCase(CreditCardDeliveryStatus.CARD_RECEIVED.name())) {
-            mSetUpDeliveryListner = () -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse);
+            ApplyNowState applyNowState;
+            String accountNumberBin = mCreditCardAccount.accountNumberBin;
+            if (accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                applyNowState = ApplyNowState.GOLD_CREDIT_CARD;
+            } else if (accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                applyNowState = ApplyNowState.BLACK_CREDIT_CARD;
+            } else if (accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                applyNowState = ApplyNowState.SILVER_CREDIT_CARD;
+            } else {
+                applyNowState = null;
+            }
+            mSetUpDeliveryListner = (ApplyNowState) -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse, applyNowState);
             Bundle bundle = new Bundle();
-            bundle.putString("accountBinNumber", mCreditCardAccount.accountNumberBin);
+            bundle.putString("accountBinNumber", accountNumberBin);
             SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
             Activity activity = getActivity();
             if (activity == null)

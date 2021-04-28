@@ -134,7 +134,7 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
             }
 
             R.id.cli_marital_status_next -> {
-                (activity as? CLIPhase2Activity)?.getFirebaseEvent()?.maritialStatus()
+                (activity as? CLIPhase2Activity)?.getFirebaseEvent()?.forMaritialStatus()
                 val fragmentUtils = FragmentUtils()
                 fragmentUtils.nextFragment(parentFragmentManager, CLIAllStepsContainerFragment(), R.id.cliMainFrame)
             }

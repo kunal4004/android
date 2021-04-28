@@ -94,10 +94,6 @@ open class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
         const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
-        const val MYACCOUNTS_BLK_CC_DELIVERY = "MyAcc_Blk_CC_Delivery"
-        const val MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM = "MyAcc_Blk_CC_Delivery_Confirm"
-        const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY = "MyAcc_Blk_CC_Manage_Delivery"
-        const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL = "MyAcc_Blk_CC_Manage_Delivery_Cancel"
         const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
         const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
         const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
@@ -208,13 +204,21 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE = "shop_pdp_nat_shar"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
-
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
         const val personalLoanDrawdownComplete = "pldd_complete"
         const val personalLoanDrawdownAmountLow = "pldd_amountlow"
         const val personalLoanDrawdownAmountHigh = "pldd_amounthigh"
         const val personalLoanDrawdownAmountNoFunds = "pldd_nofunds"
+
+        //Black Credit Card Delivery
+        const val loginBlackCreditCardDelivery = "login_blk_cc_delivery"
+        const val loginBlackCreditCardDeliveryLater = "login_blk_cc_delivery_later"
+        const val myAccountBlackCreditCardDelivery = "myacc_blk_cc_delivery"
+        const val blackCreditCardDeliveryConfirm = "myacc_blk_cc_delivery_confirm"
+        const val blackCreditCardDeliveryScheduled = "blk_cc_delivery_scheduled"
+        const val blackCreditCardManageDelivery = "myacc_blk_cc_manage_delivery"
+        const val blackCreditCardDeliveryCancel = "blk_cc_manage_delivery_cancel"
 
         //Gold Credit Card Delivery
         const val loginGoldCreditCardDelivery = "login_gold_cc_delivery"

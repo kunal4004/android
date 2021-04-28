@@ -1,11 +1,12 @@
-package za.co.woolworths.financial.services.android.contracts
+package za.co.woolworths.financial.services.android.analytic
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.Utils
 
-class FirebaseAnalyticsCreditLimitIncreaseEvent(private var applyNowState: ApplyNowState?) : FirebaseManagerAnalyticsProperties() {
+class FirebaseCreditLimitIncreaseEvent(private var applyNowState: ApplyNowState?) : FirebaseManagerAnalyticsProperties() {
 
-    fun cliStart() {
+    fun forCLIStart() {
         val eventName = when (applyNowState) {
             ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseStart
             ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseStart
@@ -18,7 +19,7 @@ class FirebaseAnalyticsCreditLimitIncreaseEvent(private var applyNowState: Apply
     }
 
 
-    fun maritialStatus() {
+    fun forMaritialStatus() {
         val eventName = when (applyNowState) {
             ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseMaritalstatus
             ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseMaritalstatus
@@ -31,7 +32,7 @@ class FirebaseAnalyticsCreditLimitIncreaseEvent(private var applyNowState: Apply
     }
 
 
-    fun incomeExpense() {
+    fun forIncomeExpense() {
         val eventName = when (applyNowState) {
             ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseIncomeExpense
             ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseIncomeExpense
@@ -43,7 +44,7 @@ class FirebaseAnalyticsCreditLimitIncreaseEvent(private var applyNowState: Apply
         eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
     }
 
-    fun acceptOffer() {
+    fun forAcceptOffer() {
         val eventName = when (applyNowState) {
             ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseAcceptOffer
             ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseAcceptOffer
@@ -55,7 +56,7 @@ class FirebaseAnalyticsCreditLimitIncreaseEvent(private var applyNowState: Apply
         eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
     }
 
-    fun deaOptin() {
+    fun forDeaOptin() {
         val eventName = when (applyNowState) {
             ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreaseDeaOption
             ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreaseDeaOption
@@ -67,7 +68,7 @@ class FirebaseAnalyticsCreditLimitIncreaseEvent(private var applyNowState: Apply
         eventName?.let { name -> Utils.triggerFireBaseEvents(name) }
     }
 
-    fun poiConfirm() {
+    fun forPOIConfirm() {
         val eventName = when (applyNowState) {
             ApplyNowState.STORE_CARD -> storeCardCreditLimitIncreasePoiConfirm
             ApplyNowState.PERSONAL_LOAN -> personalLoanCreditLimitIncreasePoiConfirm

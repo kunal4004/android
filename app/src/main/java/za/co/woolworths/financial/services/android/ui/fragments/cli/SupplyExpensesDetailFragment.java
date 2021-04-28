@@ -27,7 +27,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import za.co.woolworths.financial.services.android.contracts.FirebaseAnalyticsCreditLimitIncreaseEvent;
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -185,9 +185,9 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			case R.id.btnContinue:
 				Activity activity = getActivity();
 				if (activity != null) {
-					FirebaseAnalyticsCreditLimitIncreaseEvent firebaseEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
+					FirebaseCreditLimitIncreaseEvent firebaseEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
 					if (firebaseEvent != null)
-						firebaseEvent.incomeExpense();
+						firebaseEvent.forIncomeExpense();
 				}
                 IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
                 HashMap<String, String> hmExpenseMap = increaseLimitController.expenseHashMap(etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses);

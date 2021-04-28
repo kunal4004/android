@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CreditCardActiv
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
@@ -57,7 +58,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     companion object {
         private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
@@ -236,14 +237,13 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     activity?.apply {
-                        if (creditCardDeliveryStatusResponse?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT) == CARD_RECEIVED)
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY)
                         val intent = Intent(this, CreditCardDeliveryActivity::class.java)
                         val mBundle = Bundle()
                         mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
                         mBundle.putString("accountBinNumber", mCardPresenterImpl?.getAccount()?.accountNumberBin)
                         mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse))
                         mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+                        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mCardPresenterImpl?.mApplyNowAccountKeyPair?.first)
                         intent.putExtra("bundle", mBundle)
                         startActivity(intent)
                     }
