@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CreditCardActiv
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
@@ -57,7 +58,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     companion object {
         private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
@@ -215,7 +216,12 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
-                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString())
+                R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
+                    onStartCreditLimitIncreaseFirebaseEvent()
+                    val applyNowState = mApplyNowAccountKeyPair?.first
+                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                }
+
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
                     cancelRequest()
                     navigateToLoanWithdrawalActivity()
@@ -231,14 +237,13 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     activity?.apply {
-                        if (creditCardDeliveryStatusResponse?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT) == CARD_RECEIVED)
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY)
                         val intent = Intent(this, CreditCardDeliveryActivity::class.java)
                         val mBundle = Bundle()
                         mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
                         mBundle.putString("accountBinNumber", mCardPresenterImpl?.getAccount()?.accountNumberBin)
                         mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse))
                         mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+                        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mCardPresenterImpl?.mApplyNowAccountKeyPair?.first)
                         intent.putExtra("bundle", mBundle)
                         startActivity(intent)
                     }
@@ -379,6 +384,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun navigateToLoanWithdrawalActivity() {
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownStart)
             val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
             intentWithdrawalActivity.putExtra("account_info", Gson().toJson(mCardPresenterImpl?.getAccount()))
             startActivityForResult(intentWithdrawalActivity, 0)
@@ -501,24 +507,24 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
 
     override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
-            with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
-                when {
-                    isNullOrEmpty() -> {
-                        when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
-                            CARD_NOT_RECEIVED -> {
-                                with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus){
-                                    displayColour = "#bad110"
-                                    displayTitle = CreditCardActivationState.AVAILABLE.value
-                                }
-                                showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
+        with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
+            when {
+                isNullOrEmpty() -> {
+                    when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
+                        CARD_NOT_RECEIVED -> {
+                            with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus) {
+                                displayColour = "#bad110"
+                                displayTitle = CreditCardActivationState.AVAILABLE.value
                             }
-                            else -> onGetCreditCardDeliveryStatusFailure()
+                            showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
                         }
-                    }
-                    else -> {
-                        creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                        else -> onGetCreditCardDeliveryStatusFailure()
                     }
                 }
+                else -> {
+                    creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
+                }
+            }
         }
     }
 

@@ -9,8 +9,11 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_activity.*
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditCardDeliveryEvent
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.Utils
@@ -21,6 +24,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
     var accountBinNumber: String? = null
     var statusResponse: StatusResponse? = null
     var setUpDeliveryNowClicked: Boolean = false;
+    var mFirebaseCreditCardDeliveryEvent: FirebaseCreditCardDeliveryEvent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +35,9 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
             statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
             accountBinNumber = getString("accountBinNumber")
             setUpDeliveryNowClicked = getBoolean("setUpDeliveryNowClicked", false);
+            val applyNowState: ApplyNowState? = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
+            if (applyNowState != null)
+                mFirebaseCreditCardDeliveryEvent = FirebaseCreditCardDeliveryEvent(applyNowState = applyNowState)
         }
         actionBar()
         loadNavHostFragment()
