@@ -63,7 +63,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
         super.onViewCreated(view, savedInstanceState);
         mIncreaseLimitController = new IncreaseLimitController(getActivity());
         Bundle b = this.getArguments();
-        if (b.getSerializable(IncreaseLimitController.INCOME_DETAILS) != null) {
+        if (b != null && b.getSerializable(IncreaseLimitController.INCOME_DETAILS) != null) {
             mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
             mHashExpenseDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
         }
