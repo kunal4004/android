@@ -36,6 +36,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -538,6 +539,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.btnContinue:
+				Activity activity = getActivity();
+				if (activity != null) {
+					FirebaseCreditLimitIncreaseEvent firebaseEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
+					if (firebaseEvent != null)
+						firebaseEvent.forAcceptOffer();
+				}
 				onAcceptOfferLoad();
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
