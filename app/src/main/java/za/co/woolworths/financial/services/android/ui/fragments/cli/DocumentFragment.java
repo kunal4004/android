@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmit
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -205,7 +206,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
             @Override
             public void onSuccess(DeaBanks deaBanks) {
                 switch (deaBanks.httpCode) {
-                    case 200:
+                    case AppConstant.HTTP_OK:
                         deaBankList = deaBanks;
                         mDeaBankList = deaBanks.banks;
                         if (mDeaBankList != null) {
@@ -216,7 +217,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
                         selectBankLayoutManager(mDeaBankList);
 
                         break;
-                    case 440:
+                    case AppConstant.HTTP_SESSION_TIMEOUT_440:
                         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, deaBankList.response.stsParams, getActivity());
                         break;
 
@@ -260,11 +261,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
             @Override
             public void onSuccess(BankAccountTypes bankAccountTypes) {
                 switch (bankAccountTypes.httpCode) {
-                    case 200:
+                    case AppConstant.HTTP_OK:
                         bankAccountTypesList = bankAccountTypes.bankAccountTypes;
                         loadBankAccountTypesView(bankAccountTypesList);
                         break;
-                    case 440:
+                    case AppConstant.HTTP_SESSION_TIMEOUT_440:
                         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, bankAccountTypes.response.stsParams, getActivity());
                         break;
                     default:
@@ -684,7 +685,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
         cliSendEmail.enqueue(new CompletionHandler<>(new IResponseListener<CLIEmailResponse>() {
             @Override
             public void onSuccess(CLIEmailResponse cliEmailResponse) {
-                if (cliEmailResponse.httpCode == 200) {
+                if (cliEmailResponse.httpCode == AppConstant.HTTP_OK) {
                     Activity activity = getActivity();
                     if (activity == null || !isAdded()) return;
                     FirebaseCreditLimitIncreaseEvent firebaseCreditCardDeliveryEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
