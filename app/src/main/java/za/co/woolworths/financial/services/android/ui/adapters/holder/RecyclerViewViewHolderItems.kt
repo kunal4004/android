@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
 import android.util.Log
