@@ -43,11 +43,11 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS, this) }
                 navigateToRecentTransactionActivity(AccountsProductGroupCode.STORE_CARD.groupCode)
             }
             R.id.incViewStatementButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS, this) }
                 navigateToStatementActivity()
             }
             R.id.incPayMyAccountButton -> {
@@ -55,7 +55,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
                 payMyAccountViewModel.resetAmountEnteredToDefault()
 
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC, this) }
 
                 if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
                     try {

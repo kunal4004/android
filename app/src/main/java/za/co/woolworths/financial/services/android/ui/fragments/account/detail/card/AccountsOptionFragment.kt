@@ -232,7 +232,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     activity?.apply {
                         if (creditCardDeliveryStatusResponse?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT) == CARD_RECEIVED)
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY)
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY, this)
                         val intent = Intent(this, CreditCardDeliveryActivity::class.java)
                         val mBundle = Bundle()
                         mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
@@ -309,7 +309,7 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
                 else -> null
             }
 
-            productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
+            productGroupCode?.let { Utils.triggerFireBaseEvents(it, this) }
             val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
             navigateToBalanceProtectionInsurance.putExtra("account_info", accountInfo)
             startActivity(navigateToBalanceProtectionInsurance)
@@ -458,8 +458,8 @@ open class AccountsOptionFragment : Fragment(), View.OnClickListener, IAccountCa
     }
 
     private fun navigateToCreditCardActivation() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)))
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)), this)
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()
             mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)

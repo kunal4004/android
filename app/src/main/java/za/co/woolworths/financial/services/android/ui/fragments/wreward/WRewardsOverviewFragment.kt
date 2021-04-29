@@ -54,7 +54,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW)
+        activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, this) }
         return inflater.inflate(R.layout.wrewards_overview_fragment, container, false)
     }
 
@@ -185,7 +185,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun flipCard() {
-        triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP)
+        activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP, this) }
         mIsBackVisible = if (!mIsBackVisible) {
             mSetRightOut?.setTarget(flipCardFrontLayout)
             mSetLeftIn?.setTarget(flipCardBackLayout)

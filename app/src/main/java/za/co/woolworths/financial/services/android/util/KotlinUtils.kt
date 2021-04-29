@@ -579,5 +579,11 @@ class KotlinUtils {
             }
             return animation
         }
+
+        fun requestInAppReview(eventName: String, activity: Activity?) {
+            if (WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
+                askForReview(activity)
+            }
+        }
     }
 }

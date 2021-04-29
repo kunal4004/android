@@ -102,7 +102,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
                 finishActivity();
                 break;
             case R.id.btnClearCart:
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL, this);
                 cartFragment.removeAllCartItem(null);
                 break;
         }
@@ -151,7 +151,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
             }
         }
 
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT, this);
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
     }

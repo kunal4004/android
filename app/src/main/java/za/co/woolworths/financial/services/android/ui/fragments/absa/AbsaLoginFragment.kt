@@ -133,7 +133,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+                            activity?.apply { FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
                             displayLoginProgress(false)
                             failureHandler(errorMessage)
                         }
@@ -143,9 +143,9 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                             clearPin()
                             if (error is NoConnectionError){
                                 ErrorHandlerView(activity).showToast()
-                                FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+                                activity?.apply { FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
                             }else{
-                                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+                                activity?.apply { FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
                                 showErrorScreen(ErrorHandlerActivity.COMMON)}
                         }
                     })
@@ -173,18 +173,20 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     private fun failureHandler(message: String?) {
         cancelRequest()
         // message?.let { tapAndNavigateBackErrorDialog(it) }
-        when {
-            message?.trim()?.contains("authentication failed", true)!! -> {
-                FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
-                ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
-            }
-            message.trim().contains("credential revoked", true) -> {
-                FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
-                showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
-            }
-            else -> {
-                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
-                showErrorScreen(ErrorHandlerActivity.COMMON, message)
+        activity?.apply {
+            when {
+                message?.trim()?.contains("authentication failed", true)!! -> {
+                    FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
+                    ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
+                }
+                message.trim().contains("credential revoked", true) -> {
+                    FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
+                    showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
+                }
+                else -> {
+                    FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
+                    showErrorScreen(ErrorHandlerActivity.COMMON, message)
+                }
             }
         }
 

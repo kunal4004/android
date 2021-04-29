@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.util.*
+import kotlin.jvm.Throws
 
 open class AvailableFundsFragment : Fragment(), View.OnClickListener {
     private var mAccountPair: Pair<ApplyNowState, Account>? = null
@@ -71,7 +72,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
 
     private fun navigateToTransactionActivity() {
         (activity as? AccountSignedInActivity)?.let { activity ->
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS, activity)
             val intent = Intent(activity, WTransactionsActivity::class.java)
             intent.putExtra("productOfferingId", mAccount?.productOfferingId?.toString())
             intent.putExtra("accountNumber", mAccount?.accountNumber?.toString())
@@ -84,7 +85,7 @@ open class AvailableFundsFragment : Fragment(), View.OnClickListener {
 
     private fun navigateToStatementActivity() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS, this)
             val openStatement = Intent(this, StatementActivity::class.java)
             openStatement.putExtra(ACCOUNTS, Gson().toJson(mAccountPair))
             startActivity(openStatement)

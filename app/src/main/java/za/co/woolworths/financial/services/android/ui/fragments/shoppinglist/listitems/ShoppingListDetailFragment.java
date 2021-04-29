@@ -650,7 +650,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             if (item.isSelected && item.quantityInStock > 0)
                 selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.userQuantity));
         }
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_ADD_TO_CART);
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_MY_LIST_ADD_TO_CART, getActivity());
         mPostAddToCart = postAddItemToCart(selectedItems);
     }
 

@@ -52,4 +52,6 @@ public class Configs {
     public DashConfig dashConfig;
     @Nullable
     public CreditLimitIncrease creditLimitIncrease;
+    @Nullable
+    public InAppReview inAppReview;
 }

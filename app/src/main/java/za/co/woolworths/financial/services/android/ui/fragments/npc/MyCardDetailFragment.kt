@@ -166,7 +166,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 hideProgress()
                 when (response?.httpCode) {
                     200 -> {
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_FREEZE_CARD)
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_FREEZE_CARD, this) }
                         OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_frozen_label).toUpperCase(Locale.getDefault())).show()
                         temporaryFreezeCard?.setBlockType(TEMPORARY)
                         temporaryFreezeCard?.showActiveTemporaryFreezeCard(temporaryCardFreezeSwitch, imStoreCard, cardStatus, blockCard)
@@ -193,7 +193,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 hideProgress()
                 when (response?.httpCode) {
                     200 -> {
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_UNFREEZE_CARD)
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SC_UNFREEZE_CARD, this) }
                         temporaryFreezeCard?.setBlockType(NOW)
                         OneAppSnackbar.make(cardNestedScrollView, bindString(R.string.card_temporarily_unfrozen_label).toUpperCase(Locale.getDefault())).show()
                         temporaryCardFreezeSwitch?.isChecked = false
@@ -332,7 +332,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             R.id.howItWorks -> {
                 if (isApiCallInProgress())
                     return
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_HOW_TO, this) }
                 activity?.apply {
                     Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
                         it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_LEFT)
@@ -342,7 +342,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 }
             }
             R.id.payWithCard -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
                 initPayWithCard()
             }
             R.id.expireInfo -> {

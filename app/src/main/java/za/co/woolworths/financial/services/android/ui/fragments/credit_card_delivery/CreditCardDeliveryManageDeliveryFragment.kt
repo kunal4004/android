@@ -46,8 +46,8 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.cancelDelivery -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL)
                 activity?.apply {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL, this)
                     supportFragmentManager.apply {
                         val creditCardCancelDeliveryFragment = CancelOrToLateDeliveryDialog.newInstance(CreditCardDeliveryActivity.DeliveryStatus.CANCEL_DELIVERY)
                         creditCardCancelDeliveryFragment.show(this, CancelOrToLateDeliveryDialog::class.java.simpleName)

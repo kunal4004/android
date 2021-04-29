@@ -150,7 +150,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             }
             R.id.delivery -> setDeliveryOption(DeliveryType.DELIVERY)
             R.id.clickAndCollect -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect, this) }
                 setDeliveryOption(DeliveryType.STORE_PICKUP)
             }
         }
@@ -453,10 +453,12 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     override fun executeSetSuburb() {
         showSetSuburbProgressBar()
         presenter?.initSetSuburb(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb?.id!! else selectedStore?.id!!)
-        if (deliveryType == DeliveryType.STORE_PICKUP) {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm)
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)))
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)))
+        activity?.apply {
+            if (deliveryType == DeliveryType.STORE_PICKUP) {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, this)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)), this)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)), this)
+            }
         }
     }
 

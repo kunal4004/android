@@ -72,7 +72,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmAddress -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM, this) }
                 updateAddressDetails()
                 getAvailableTimeSlots()
             }

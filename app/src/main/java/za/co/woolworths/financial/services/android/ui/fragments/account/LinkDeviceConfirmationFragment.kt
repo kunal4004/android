@@ -63,7 +63,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         linkDeviceConfirmationButton.setOnClickListener {
 
             Utils.setLinkConfirmationShown(true)
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated)))
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated)), this) }
 
             navController.navigate(R.id.action_linkDeviceConfirmationFragment_to_otp_navigation, bundleOf(
                     AccountSignedInPresenterImpl.APPLY_NOW_STATE to mApplyNowState
@@ -91,7 +91,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSkipPressed() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_SKIP, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceSkipped)))
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_SKIP, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceSkipped)), this) }
 
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))

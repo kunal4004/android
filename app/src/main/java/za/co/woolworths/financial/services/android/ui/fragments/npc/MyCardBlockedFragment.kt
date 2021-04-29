@@ -85,7 +85,7 @@ class MyCardBlockedFragment : MyCardExtension() {
     }
 
     private fun navigateToReplacementCard() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this) }
         replaceFragment(
                 fragment = GetReplacementCardFragment.newInstance(),
                 tag = GetReplacementCardFragment::class.java.simpleName,

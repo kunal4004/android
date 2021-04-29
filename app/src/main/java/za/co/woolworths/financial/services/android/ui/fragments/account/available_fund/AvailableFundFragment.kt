@@ -268,7 +268,11 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun handleSessionTimeOut(stsParams: String) {
         if (fragmentAlreadyAdded()) return
-        (activity as? AccountSignedInActivity)?.let { accountSignedInActivity -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, accountSignedInActivity) }
+        (activity as? AccountSignedInActivity)?.let {
+            accountSignedInActivity ->
+            FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, accountSignedInActivity)
+            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, accountSignedInActivity)
+        }
     }
 
     override fun showABSAServiceGetUserCreditCardTokenProgressBar() {
@@ -320,7 +324,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun navigateToABSAStatementActivity() {
         activity?.apply {
-            FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+            FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
             if (NetworkManager().isConnectedToNetwork(this)) {
                 mAvailableFundPresenter?.queryABSAServiceGetUserCreditCardToken()
             } else {

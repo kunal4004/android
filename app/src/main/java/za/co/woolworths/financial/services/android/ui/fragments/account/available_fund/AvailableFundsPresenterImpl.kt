@@ -43,7 +43,6 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
                     when (httpCode) {
                         200 -> handleUserCreditCardToken(this)
                         440 -> {
-                           FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                             this.response?.stsParams?.let { stsParams -> mainView?.handleSessionTimeOut(stsParams) } }
                         else -> mainView?.handleUnknownHttpResponse(this.response?.desc)
                     }

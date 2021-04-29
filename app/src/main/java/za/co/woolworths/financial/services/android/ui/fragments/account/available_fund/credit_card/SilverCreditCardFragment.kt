@@ -34,12 +34,12 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
                 activity?.runOnUiThread {
-                    FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                    activity?.apply { FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS, this) }
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }
             R.id.incPayMyAccountButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
                 navigateToPayMyAccountActivity()
             }
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()

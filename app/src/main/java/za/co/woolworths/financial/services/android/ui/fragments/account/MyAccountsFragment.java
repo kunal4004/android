@@ -227,11 +227,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Trigger Firebase Tag.
-
+        Activity activity = getActivity();
+        if (activity == null) return;
         JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
         Map<String, String> arguments = new HashMap<>();
         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ACCOUNTSEVENTSAPPEARED, arguments);
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ACCOUNTSEVENTSAPPEARED, arguments, activity);
         setHasOptionsMenu(false);
         mCardPresenterImpl = new AccountCardDetailPresenterImpl(this, new AccountCardDetailModelImpl());
     }
@@ -824,8 +825,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private final OnClickListener btnSignin_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mUpdateMyAccount.accountUpdateActive()) return;
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN);
+            Activity activity = getActivity();
+            if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN, activity);
             ScreenManager.presentSSOSignin(getActivity());
         }
     };
@@ -833,9 +835,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private final OnClickListener btnRegister_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mUpdateMyAccount.accountUpdateActive())
-                return;// disable tap to next view until account response completed
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER);
+            Activity activity = getActivity();
+            if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
+            // disable tap to next view until account response completed
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER, activity);
             ScreenManager.presentSSORegister(getActivity());
         }
     };
@@ -854,18 +857,18 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
             case R.id.openMessageActivity:
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNT_INBOX);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNT_INBOX, activity);
                 Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
                 openMessageActivity.putExtra("fromNotification", false);
                 startActivity(openMessageActivity);
                 getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;
             case R.id.applyStoreCard:
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW, activity);
                 redirectToMyAccountsCardsActivity(ApplyNowState.STORE_CARD);
                 break;
             case R.id.applyCrediCard:
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW, activity);
                 if (mCreditCardAccount == null) {
                     redirectToMyAccountsCardsActivity(ApplyNowState.BLACK_CREDIT_CARD);
                     return;
@@ -873,7 +876,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 redirectToMyAccountsCardsActivity(getApplyNowState());
                 break;
             case R.id.applyPersonalLoan:
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW, activity);
                 redirectToMyAccountsCardsActivity(ApplyNowState.PERSONAL_LOAN);
                 break;
             case R.id.linkedStoreCard:
@@ -957,10 +960,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         ((MyAccountActivity) activity).replaceFragment(new MyOrdersAccountFragment());
                     }
                 }
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders, activity);
                 break;
             case R.id.creditReport:
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Myaccounts_creditview, activity);
                 startActivity(new Intent(getActivity(), CreditReportTUActivity.class));
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
@@ -1781,7 +1784,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void redirectToCreditCardActivity(CreditCardDeliveryStatusResponse creditCardDeliveryStatusResponse) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY);
+        Activity activity = getActivity();
+        if (activity == null ) return;
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY, activity);
         Account account = mAccountResponse.accountList.get(0);
         Intent intent = new Intent(getContext(), CreditCardDeliveryActivity.class);
         Bundle mBundle = new Bundle();
