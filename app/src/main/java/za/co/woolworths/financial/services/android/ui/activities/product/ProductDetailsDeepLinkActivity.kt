@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +16,11 @@ import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
@@ -25,21 +28,25 @@ import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.NotificationUtils
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
+import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
+import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
 import java.util.*
 
 /**
  * Created by Kunal Uttarwar on 26/3/21.
  */
-class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtension.ProductDetailsStatusListner {
+class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtension.ProductDetailsStatusListner, ToastInterface {
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var jsonLinkData: JsonObject
+    private var mToastUtils: ToastUtils? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -193,8 +200,58 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == DEEP_LINK_REQUEST_CODE)
-            finish()
+        if (requestCode == DEEP_LINK_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null) {
+                val itemAddToCartMessage = data.getStringExtra("addedToCartMessage")
+                val productCountMap = Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap::class.java) as ProductCountMap
+                val itemsCount = data.getIntExtra("ItemsCount", 0)
+                if (itemAddToCartMessage != null) {
+                    setToast(itemAddToCartMessage, "", productCountMap, itemsCount)
+                }
+                setResult(RESULT_OK, data)
+                GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                    finish()
+                }
+            } else {
+                finish()
+            }
+        }
+    }
 
+    fun setToast(message: String?, cartText: String?, productCountMap: ProductCountMap?, noOfItems: Int) {
+        if (productCountMap != null && isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit!!.foodLayoutColour != null) {
+            showItemsLimitToastOnAddToCart(pdpBottomNavigation, productCountMap, this, noOfItems, true)
+            return
+        }
+        mToastUtils = ToastUtils(this@ProductDetailsDeepLinkActivity)
+        mToastUtils?.apply {
+            setActivity(this@ProductDetailsDeepLinkActivity)
+            setView(pdpBottomNavigation)
+            setGravity(Gravity.BOTTOM)
+            setCurrentState(this.javaClass.simpleName)
+            setCartText(cartText)
+            setAllCapsUpperCase(false)
+            setPixel(pdpBottomNavigation.getHeight() + Utils.dp2px(10f))
+            setMessage(message)
+            setViewState(true)
+            build()
+        }
+
+    }
+
+    override fun onToastButtonClicked(currentState: String?) {
+        if (mToastUtils != null) {
+            val state: String = mToastUtils!!.getCurrentState()
+            if (currentState.equals(state, ignoreCase = true)) {
+                // do anything when popupWindow was clicked
+                if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                    ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
+                } else {
+                    val openCartActivity = Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
+                    startActivityForResult(openCartActivity, BottomNavigationActivity.OPEN_CART_REQUEST)
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                }
+            }
+        }
     }
 }
