@@ -182,7 +182,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     }
 
     override fun onProductNotFound(message: String) {
-        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        val mngr = getSystemService(ACTIVITY_SERVICE) as? ActivityManager?
         val taskList = mngr!!.getRunningTasks(10)
         if (taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
                 && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name) {
@@ -269,7 +269,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     }
 
     private fun isDeepLinkActivity(): Boolean {
-        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        val mngr = getSystemService(ACTIVITY_SERVICE) as? ActivityManager?
         val taskList = mngr!!.getRunningTasks(10)
         return (taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
                 && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name)
@@ -277,7 +277,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     }
 
     private fun isHavingBottomNavigationActivity(): Boolean {
-        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        val mngr = getSystemService(ACTIVITY_SERVICE) as? ActivityManager?
         val taskList = mngr!!.getRunningTasks(10)
         return (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
                 && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name)
