@@ -140,7 +140,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         dietaryInformation.setOnClickListener(this)
         allergensInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
-        closePage.setOnClickListener { activity?.onBackPressed() }
+        closePage.setOnClickListener {
+            activity?.apply {
+                setResult(RESULT_CANCELED)
+                onBackPressed()
+            }
+        }
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         configureDefaultUI()

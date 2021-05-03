@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.SHARE_LINK_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.util.*
@@ -47,12 +48,17 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var jsonLinkData: JsonObject
     private var mToastUtils: ToastUtils? = null
+    private var deepLinkRequestCode = DEEP_LINK_REQUEST_CODE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_deeplink_pdp)
         startProgressBar()
         var bundle: Any? = intent?.data
+        if (intent.hasExtra("deepLinkRequestCode")) {
+            deepLinkRequestCode = intent?.getIntExtra("deepLinkRequestCode", DEEP_LINK_REQUEST_CODE)!!
+        } else
+            deepLinkRequestCode = SHARE_LINK_REQUEST_CODE
         if (intent.hasExtra("parameters")) {
             val parameter = intent?.getStringExtra("parameters")
             jsonLinkData = Utils.strToJson(parameter, JsonObject::class.java) as JsonObject
@@ -81,8 +87,9 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
                     "feature" to AppConstant.DP_LINKING_PRODUCT_DETAIL,
                     "parameters" to "{\"url\": \"${appLinkData}\"}"
             )
-        } else
+        } else {
             bundle = appLinkData as Bundle
+        }
         parseDeepLinkData(bundle)
 
         if (bundle != null && bundle.get("feature") != null && !TextUtils.isEmpty(bundle.get("feature").toString()) && jsonLinkData?.get("url") != null) {
@@ -152,8 +159,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
 
     private fun restartApp() {
         val intent = Intent(this, StartupActivity::class.java)
-        this.startActivity(intent)
-        finishAffinity()
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
     private fun goToProductDetailsActivity(bundle: Bundle?) {
@@ -161,7 +168,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
             productDetailsprogressBar.visibility = View.GONE
         val intent = Intent(this, ProductDetailsActivity::class.java)
         intent.putExtras(bundle!!)
-        startActivityForResult(intent, DEEP_LINK_REQUEST_CODE)
+        startActivityForResult(intent, deepLinkRequestCode)
         overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
     }
 
@@ -201,20 +208,76 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEEP_LINK_REQUEST_CODE) {
+            val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+            val taskList = mngr!!.getRunningTasks(10)
+            if ((taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
+                            && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name)) {
+                restartApp()
+            } else if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
+                    && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name) {
+                if (resultCode == RESULT_OK && data != null) {
+                    GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                        if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                            restartApp()
+                    }
+                } else if (resultCode == RESULT_CANCELED) {
+                    restartApp()
+                } else
+                    finish()
+            }
             if (resultCode == RESULT_OK && data != null) {
-                val itemAddToCartMessage = data.getStringExtra("addedToCartMessage")
-                val productCountMap = Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap::class.java) as ProductCountMap
-                val itemsCount = data.getIntExtra("ItemsCount", 0)
-                if (itemAddToCartMessage != null) {
-                    setToast(itemAddToCartMessage, "", productCountMap, itemsCount)
-                }
+                checkAndSetToastMessage(data)
                 setResult(RESULT_OK, data)
                 GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
-                    finish()
+                    if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                        finish()
                 }
             } else {
                 finish()
             }
+        } else if (requestCode == SHARE_LINK_REQUEST_CODE) {
+            val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+            val taskList = mngr!!.getRunningTasks(10)
+            if ((taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
+                            && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name)) {
+                if (resultCode == RESULT_OK && data != null) {
+                    GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                        if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                            restartApp()
+                    }
+                } else if (resultCode == RESULT_CANCELED) {
+                    restartApp()
+                }
+            } else if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
+                    && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name) {
+                if (resultCode == RESULT_OK && data != null) {
+                } else if (resultCode == RESULT_CANCELED) {
+                    finish()
+                } else
+                    restartApp()
+            }
+
+            if (resultCode == RESULT_OK && data != null) {
+                checkAndSetToastMessage(data)
+                setResult(RESULT_OK, data)
+                GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                    if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                        finish()
+                }
+            } else {
+                finish()
+            }
+        } else if (requestCode == BottomNavigationActivity.OPEN_CART_REQUEST) {
+            restartApp()
+        }
+    }
+
+    private fun checkAndSetToastMessage(data: Intent) {
+        val itemAddToCartMessage = data.getStringExtra("addedToCartMessage")
+        val productCountMap = Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap::class.java) as ProductCountMap
+        val itemsCount = data.getIntExtra("ItemsCount", 0)
+        if (itemAddToCartMessage != null) {
+            setToast(itemAddToCartMessage, "", productCountMap, itemsCount)
         }
     }
 
@@ -243,6 +306,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         if (mToastUtils != null) {
             val state: String = mToastUtils!!.getCurrentState()
             if (currentState.equals(state, ignoreCase = true)) {
+                mToastUtils?.setButtonClicked(true)
                 // do anything when popupWindow was clicked
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
