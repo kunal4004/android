@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.StartupView
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.SHARE_LINK_REQUEST_CODE
@@ -207,78 +208,79 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == DEEP_LINK_REQUEST_CODE) {
-            val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
-            val taskList = mngr!!.getRunningTasks(10)
-            if ((taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
-                            && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name)) {
-                restartApp()
-            } else if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
-                    && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name) {
-                if (resultCode == RESULT_OK && data != null) {
-                    GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
-                        if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
-                            restartApp()
-                    }
-                } else if (resultCode == RESULT_CANCELED) {
+        when (requestCode) {
+            DEEP_LINK_REQUEST_CODE -> {
+                if (isDeepLinkActivity()) {
                     restartApp()
-                } else
-                    finish()
-            }
-            if (resultCode == RESULT_OK && data != null) {
-                checkAndSetToastMessage(data)
-                setResult(RESULT_OK, data)
-                GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
-                    if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                } else if (isHavingBottomNavigationActivity()) {
+                    if (resultCode == RESULT_OK && data != null) {
+                        GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                            if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                                restartApp()
+                        }
+                    } else if (resultCode == RESULT_CANCELED) {
+                        restartApp()
+                    } else
                         finish()
                 }
-            } else {
-                finish()
-            }
-        } else if (requestCode == SHARE_LINK_REQUEST_CODE) {
-            val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
-            val taskList = mngr!!.getRunningTasks(10)
-            if ((taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
-                            && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name)) {
-                if (resultCode == RESULT_OK && data != null) {
-                    GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
-                        if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
-                            restartApp()
-                    }
-                } else if (resultCode == RESULT_CANCELED) {
-                    restartApp()
-                }
-            } else if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
-                    && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name) {
-                if (resultCode == RESULT_OK && data != null) {
-                } else if (resultCode == RESULT_CANCELED) {
-                    finish()
-                } else
-                    restartApp()
+                data?.let { checkAndSetToastMessage(it, resultCode) }
             }
 
-            if (resultCode == RESULT_OK && data != null) {
-                checkAndSetToastMessage(data)
-                setResult(RESULT_OK, data)
-                GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
-                    if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+            SHARE_LINK_REQUEST_CODE -> {
+                if (isDeepLinkActivity()) {
+                    if (resultCode == RESULT_OK && data != null) {
+                        GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                            if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                                restartApp()
+                        }
+                    } else if (resultCode == RESULT_CANCELED) {
+                        restartApp()
+                    }
+                } else if (isHavingBottomNavigationActivity()) {
+                    if (resultCode == RESULT_OK && data != null) {
+                    } else if (resultCode == RESULT_CANCELED) {
                         finish()
+                    } else
+                        restartApp()
                 }
-            } else {
-                finish()
+                data?.let { checkAndSetToastMessage(it, resultCode) }
             }
-        } else if (requestCode == BottomNavigationActivity.OPEN_CART_REQUEST) {
-            restartApp()
+
+            OPEN_CART_REQUEST -> restartApp()
         }
     }
 
-    private fun checkAndSetToastMessage(data: Intent) {
-        val itemAddToCartMessage = data.getStringExtra("addedToCartMessage")
-        val productCountMap = Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap::class.java) as ProductCountMap
-        val itemsCount = data.getIntExtra("ItemsCount", 0)
-        if (itemAddToCartMessage != null) {
-            setToast(itemAddToCartMessage, "", productCountMap, itemsCount)
+    private fun checkAndSetToastMessage(data: Intent, resultCode: Int) {
+        if (resultCode == RESULT_OK && data != null) {
+            val itemAddToCartMessage = data.getStringExtra("addedToCartMessage")
+            val productCountMap = Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap::class.java) as ProductCountMap
+            val itemsCount = data.getIntExtra("ItemsCount", 0)
+            if (itemAddToCartMessage != null) {
+                setToast(itemAddToCartMessage, "", productCountMap, itemsCount)
+            }
+            setResult(RESULT_OK, data)
+            GlobalScope.doAfterDelay(DelayConstant.DELAY_2000_MS) {
+                if (!(mToastUtils != null && mToastUtils?.isButtonClicked == true))
+                    finish()
+            }
+        } else {
+            finish()
         }
+    }
+
+    private fun isDeepLinkActivity(): Boolean {
+        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        val taskList = mngr!!.getRunningTasks(10)
+        return (taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
+                && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name)
+
+    }
+
+    private fun isHavingBottomNavigationActivity(): Boolean {
+        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        val taskList = mngr!!.getRunningTasks(10)
+        return (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
+                && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name)
     }
 
     fun setToast(message: String?, cartText: String?, productCountMap: ProductCountMap?, noOfItems: Int) {
