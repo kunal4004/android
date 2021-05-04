@@ -51,11 +51,10 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.FloatingActionButtonBadgeCounter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
-import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;

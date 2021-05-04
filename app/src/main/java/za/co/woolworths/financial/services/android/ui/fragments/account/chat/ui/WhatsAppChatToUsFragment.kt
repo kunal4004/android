@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +14,8 @@ import kotlinx.android.synthetic.main.chat_to_us_via_whatsapp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 

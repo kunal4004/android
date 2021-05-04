@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.absa.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatExtensionFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {

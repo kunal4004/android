@@ -15,11 +15,13 @@ import com.amplifyframework.core.Amplify.Auth
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
+import com.google.gson.JsonElement
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.*
 
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.util.Assets
 import za.co.woolworths.financial.services.android.util.FirebaseManager
@@ -61,7 +63,9 @@ object ChatAWSAmplify {
             Amplify.addPlugin(AWSApiPlugin())
             Amplify.configure(awsConfiguration, context)
             DeveloperMenu.singletonInstance(context).setVisible(false)
+            Log.e("awsException", "successful")
         } catch (ex: Exception) {
+            Log.e("awsException", ex.toString())
             FirebaseManager.logException(ex)
         }
     }
@@ -71,17 +75,34 @@ object ChatAWSAmplify {
         val username = networkConfig.getApiId()
         val password = networkConfig.getSha1Password()
 
-        Auth.signIn(username, password, { createConversation({ result -> result(result) }, { failure -> error(failure) }) }, { error(it) })
+        Auth.signIn(username, password, {
+
+            createConversation({ result ->
+                //Log.e("responseDatta"," ${result.data}")
+                //result(result)
+            },
+                    { failure ->
+                        error(failure)
+                    }
+            )
+        }, {
+            error(it)
+        })
     }
 
     // Create conversation
     private fun conversationRequest(): GraphQLRequest<Conversation> {
         val createConversation: String = Assets.readAsString("graphql/create-conversation.graphql")
-        return SimpleGraphQLRequest(createConversation, HashMap<String, Any>(), Conversation::class.java, GsonVariablesSerializer())
+        return SimpleGraphQLRequest(createConversation, HashMap<String, Any>(), JsonElement::class.java, GsonVariablesSerializer())
     }
 
-    private fun createConversation(result: (Conversation?) -> Unit, failure: (ApiException) -> Unit) {
-        API.mutate(conversationRequest(), { response -> result(response.data) }, { error -> failure(error) })
+    private fun createConversation(result: (JsonElement?) -> Unit, failure: (ApiException) -> Unit) {
+        API.mutate(conversationRequest(), { response ->
+            Log.e("responseDatta", " ${response.data}")
+            //result(response.data)
+        }, { error ->
+            failure(error)
+        })
     }
 
     // Arrange a request to start a subscription.
@@ -198,9 +219,10 @@ object ChatAWSAmplify {
     fun signInAndSubscribe(result: (SendMessageResponse?) -> Unit, onFailure: (Any) -> Unit) {
         signIn({ conversation ->
             val liveChatDBRepository = LiveChatDBRepository()
-            liveChatDBRepository.saveConversation(conversation)
+            //liveChatDBRepository.saveConversation(conversation)
             subscribeToMessageByConversationId({ message ->
-                sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content ?: ""))
+                sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content
+                        ?: ""))
                 isUserSubscriptionActive = true
                 Log.e("subscribeToMessage", "1 $message")
                 result(message)

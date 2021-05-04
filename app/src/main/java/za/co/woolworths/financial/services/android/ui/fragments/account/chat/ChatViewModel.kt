@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -121,7 +122,6 @@ class ChatViewModel : ViewModel() {
             ?: ""
 
     override fun onCleared() {
-        awsAmplify?.cancelSubscribeMessageByConversationId()
         creditCardTokenAPI?.apply {
             if (!isCanceled)
                 cancel()

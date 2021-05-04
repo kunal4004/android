@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.animation.ObjectAnimator
 import android.content.Context

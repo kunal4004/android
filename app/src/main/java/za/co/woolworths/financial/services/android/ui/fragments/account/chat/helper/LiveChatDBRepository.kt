@@ -11,7 +11,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.util.db.DatabaseManager
 import java.util.*
 
@@ -23,7 +22,7 @@ class LiveChatDBRepository : DatabaseManager() {
 
     fun saveLiveChatParams(liveChatExtraParams: LiveChatExtraParams?) = saveToDB(KEY_LIVE_CHAT_DB, liveChatExtraParams)
 
-    fun saveConversation(conversation: Conversation?) {
+    fun saveConversation(conversation: Conversation) {
         val liveChatParams = getLiveChatParams()
         liveChatParams?.conversation = conversation
         saveLiveChatParams(liveChatParams)
@@ -44,7 +43,6 @@ class LiveChatDBRepository : DatabaseManager() {
     fun getUnReadMessageCount(): Int {
         val liveChatParams = getLiveChatParams()
         return liveChatParams?.unReadMessageCount ?: 0
-
     }
 
     fun getLiveChatParams() = getDataFromDB(KEY_LIVE_CHAT_DB, LiveChatExtraParams::class.java)

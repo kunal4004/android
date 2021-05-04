@@ -23,17 +23,17 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendM
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-
 
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
@@ -71,7 +71,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                         when (isSignOut) {
                             true -> signOut {
                                 GlobalScope.doAfterDelay(DELAY) {
-                                    stopService(Intent(this@WChatActivity, ChatFollowMeService::class.java))
+
+                                    ChatAWSAmplify.cancelSubscribeMessageByConversationId()
+                                    stopService(Intent(this@WChatActivity, LiveChatFollowMeService::class.java))
+
                                     closeChat()
                                 }
                             }
@@ -257,7 +260,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         chatNavGraph?.startDestination = startDestination
         chatNavGraph?.let { chatNavHostController?.setGraph(it, bundle) }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

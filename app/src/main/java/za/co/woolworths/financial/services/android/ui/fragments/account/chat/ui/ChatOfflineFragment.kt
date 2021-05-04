@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.chat_to_collection_agent_offline_fragment.
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.util.DelayConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.text.SimpleDateFormat

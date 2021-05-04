@@ -24,9 +24,9 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAccountTransactionHistory
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatExtensionFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*

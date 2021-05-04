@@ -30,9 +30,9 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatExtensionFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.util.*
 import java.net.HttpCookie

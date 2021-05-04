@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.FloatingActionButtonBadgeCounter
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension

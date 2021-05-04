@@ -512,7 +512,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
-            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatFollowMeService"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService"
             android:enabled="true"
             android:label="liveChatFollowMeService" />
 

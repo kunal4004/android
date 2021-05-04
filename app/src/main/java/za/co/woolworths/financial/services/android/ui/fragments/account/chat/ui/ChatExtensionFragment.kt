@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.chat_fragment.*
