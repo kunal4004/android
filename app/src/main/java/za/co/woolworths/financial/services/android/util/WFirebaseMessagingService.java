@@ -27,6 +27,8 @@ import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
 
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
+
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = WFirebaseMessagingService.class.getSimpleName();
@@ -84,17 +86,18 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             intent.setData(Uri.parse(parameters.get("url").getAsString()));
             intent.setAction(Intent.ACTION_VIEW);
         }
-        else if (payload.get("feature").equals("Product Detail")){
+        /*Deep link to PDP disabled*/
+        /*else if (payload.get("feature").equals("Product Detail")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
             intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
             intent.setData(Uri.parse(parameters.get("url").getAsString()));
             intent.setAction(Intent.ACTION_VIEW);
-        }
+        }*/
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, DEEP_LINK_REQUEST_CODE, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         String contentTitle = null;
