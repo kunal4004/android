@@ -307,6 +307,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
         this.otpMethod = otpMethod
 
+        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+            ErrorHandlerView(activity).showToast()
+            enterOTPSubtitle.setText(R.string.internet_waiting_subtitle)
+            return
+        }
+
         context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.button_disable))}
         showSendingOTPProcessing()
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
@@ -343,6 +349,15 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
                         context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.black)) }
+
+                        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+                            ErrorHandlerView(activity).showToast()
+                            sendOTPFailedGroup.visibility = View.GONE
+                            sendinOTPLayout?.visibility = View.GONE
+                            linkDeviceOTPScreen?.visibility = View.VISIBLE
+                            return
+                        }
+
                         sendOTPFailedGroup.visibility = View.VISIBLE
                     }
                 }
@@ -350,13 +365,28 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
             override fun onFailure(error: Throwable?) {
                 context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.black)) }
+
+                if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+                    ErrorHandlerView(activity).showToast()
+                    sendOTPFailedGroup.visibility = View.GONE
+                    sendinOTPLayout?.visibility = View.GONE
+                    linkDeviceOTPScreen?.visibility = View.VISIBLE
+                    enterOTPSubtitle.setText(R.string.internet_waiting_subtitle)
+                    return
+                }
+
                 sendOTPFailedGroup.visibility = View.VISIBLE
             }
         }, RetrieveOTPResponse::class.java))
-
     }
 
     private fun callValidatingOTPAPI(otp: String) {
+
+        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+            ErrorHandlerView(activity).showToast()
+            enterOTPSubtitle.setText(R.string.internet_waiting_subtitle)
+            return
+        }
 
         mValidateLinkDeviceOTPReq = otpMethod?.let { type ->
             OneAppService.validateLinkDeviceOtp(LinkDeviceValidateBody(otp, otpMethod
@@ -374,6 +404,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         if (!isAdded) {
                             return
                         }
+                        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+                            ErrorHandlerView(activity).showToast()
+                            enterOTPSubtitle.setText(R.string.internet_waiting_subtitle)
+                            return
+                        }
+
                         isOTPValidated = true
                         callLinkingDeviceAPI()
                     }
@@ -384,6 +420,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
+
                         showValidateOTPError(desc)
                         Handler().postDelayed({
                             linkDeviceOTPEdtTxt5.requestFocus()
@@ -408,13 +445,20 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showValidateOTPError(msg: String) {
-        setOtpErrorBackground(R.drawable.otp_box_error_background)
-        linkDeviceOTPErrorTxt?.text = msg
-        linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
+        sendinOTPLayout?.visibility = View.GONE
         linkDeviceOTPScreen?.visibility = View.VISIBLE
         buttonNext?.visibility = View.VISIBLE
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
 
+        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+            ErrorHandlerView(activity).showToast()
+            enterOTPSubtitle.setText(R.string.internet_waiting_subtitle)
+            return
+        }
+
+        setOtpErrorBackground(R.drawable.otp_box_error_background)
+        linkDeviceOTPErrorTxt?.text = msg
+        linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
     }
 
     fun setOtpErrorBackground(drawableId: Int) {
@@ -438,6 +482,15 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     }
 
     private fun callLinkingDeviceAPI() {
+
+        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+            sendinOTPLayout.visibility = View.GONE
+            linkDeviceOTPScreen.visibility = View.VISIBLE
+            enterOTPSubtitle.setText(R.string.internet_waiting_subtitle)
+            ErrorHandlerView(activity).showToast()
+            return
+        }
+
         linkDeviceOTPScreen?.visibility = View.GONE
 
         if (!isOTPValidated) {
@@ -495,6 +548,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> linkedDeviceResponse?.response?.desc?.let { desc ->
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
                         showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
                     }
                 }
@@ -573,6 +627,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
     private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
 
+        if(!NetworkManager.getInstance().isConnectedToNetwork(activity)){
+            ErrorHandlerView(activity).showToast()
+        }
+
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
@@ -611,4 +669,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         super.onDestroy()
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
     }
+
+
 }
