@@ -84,14 +84,15 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             intent.setData(Uri.parse(parameters.get("url").getAsString()));
             intent.setAction(Intent.ACTION_VIEW);
         }
-        else if (payload.get("feature").equals("Product Detail")){
+        /*Deep link to PDP disabled*/
+        /*else if (payload.get("feature").equals("Product Detail")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
             intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
             intent.setData(Uri.parse(parameters.get("url").getAsString()));
             intent.setAction(Intent.ACTION_VIEW);
-        }
+        }*/
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
