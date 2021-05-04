@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
+import za.co.woolworths.financial.services.android.util.ServiceTool
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -71,10 +72,8 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                         when (isSignOut) {
                             true -> signOut {
                                 GlobalScope.doAfterDelay(DELAY) {
-
                                     ChatAWSAmplify.cancelSubscribeMessageByConversationId()
-                                    stopService(Intent(this@WChatActivity, LiveChatFollowMeService::class.java))
-
+                                    ServiceTool.stop(this@WChatActivity, LiveChatFollowMeService::class.java)
                                     closeChat()
                                 }
                             }

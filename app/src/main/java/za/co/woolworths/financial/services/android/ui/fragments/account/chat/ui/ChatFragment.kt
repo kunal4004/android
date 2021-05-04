@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -50,7 +49,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        context?.startService(Intent(context, LiveChatFollowMeService::class.java))
+        activity?.let { act -> ServiceTool.start(act, LiveChatFollowMeService::class.java) }
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()

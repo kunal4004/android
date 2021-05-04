@@ -15,10 +15,10 @@ import java.util.*
 
 class LiveChatSubscribeImpl(private var sessionStateType: SessionStateType? = null, private var message: String? = null) : ILiveChatSubscribe {
 
-    private var subscription: ApiOperation<*>? = null
     private var messageRequest = LiveChatSendMessageImpl()
     private val liveChatDBRepository = LiveChatDBRepository()
     private val onSubscribeMessageByConversationIdDocument: String = Assets.readAsString("graphql/subscribe-event-on-message-by-conversation-id.graphql")
+    private var subscription: ApiOperation<*>? = null
 
     override fun onSubscribe(onSuccess: (SendMessageResponse?) -> Unit, onFailure: (ApiException) -> Unit) {
         subscription = API.subscribe(onSubscribeMessageByConversationId(liveChatDBRepository.getConversationMessageId()),
@@ -32,6 +32,10 @@ class LiveChatSubscribeImpl(private var sessionStateType: SessionStateType? = nu
                     onFailure(apiException)
                 }, { }
         )
+    }
+
+    override fun onCancel() {
+        subscription?.cancel()
     }
 
     // Arrange a request to start a subscription.

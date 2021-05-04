@@ -4,16 +4,26 @@ import android.app.*
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChat
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatConversationImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSubscribeImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 
 class LiveChatFollowMeService : Service() {
+
+    private val liveChat = LiveChat(LiveChatAuthImpl(),
+            LiveChatConversationImpl(),
+            LiveChatSubscribeImpl(SessionStateType.CONNECT, "Hi"),
+            LiveChatListAllAgentConversationImpl())
 
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannel"
@@ -32,50 +42,37 @@ class LiveChatFollowMeService : Service() {
     }
 
     private fun startLiveChat() {
-
-        val liveChat = LiveChat(LiveChatAuthImpl(),
-                LiveChatConversationImpl(),
-                LiveChatSubscribeImpl(),
-                LiveChatListAllAgentConversationImpl())
-
         with(liveChat) {
-            signIn({ authSignInResult ->
-                // sign in success
+            signIn({
+                //sign in success
                 conversation({
                     // conversation success
+                    onSubscribe({ message ->
+                        postResult(Gson().toJson(message))
 
-                    onSubscribe({
-
-                    }, {
-
+                    }, { apiException ->
+                        Log.e("authLogin", "apiException subscribe ${Gson().toJson(apiException)}")
                     })
 
                 }, { apiException ->
                     // conversation failure
+                    Log.e("authLogin", "apiException conversation ${Gson().toJson(apiException)}")
 
                 })
             }, { authException ->
                 //sign in failure
+                Log.e("authLogin", "authException signIn ${Gson().toJson(authException)}")
             })
         }
     }
 
-    /*
-     val postChatDataIntent = Intent()
+    private fun postResult(result: String?) {
+        val postChatDataIntent = Intent()
+        postChatDataIntent.action = LIVE_CHAT_PACKAGE
+        postChatDataIntent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, result)
+        sendBroadcast(postChatDataIntent)
+    }
 
-            signInAndSubscribe({ result: SendMessageResponse? ->
-                postChatDataIntent.action = ChatFloatingActionButtonBubbleView.LIVE_CHAT_PACKAGE
-                postChatDataIntent.putExtra(ChatFloatingActionButtonBubbleView.LIVE_CHAT_SUBSCRIPTION_RESULT, Gson().toJson(result))
-                sendBroadcast(postChatDataIntent)
-                null
-            }
-            ) {
-                postChatDataIntent.action = ChatFloatingActionButtonBubbleView.LIVE_CHAT_PACKAGE
-                postChatDataIntent.putExtra(ChatFloatingActionButtonBubbleView.LIVE_CHAT_SUBSCRIPTION_RESULT, "")
-                sendBroadcast(postChatDataIntent)
-                null
-            }
-     */
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
@@ -98,5 +95,10 @@ class LiveChatFollowMeService : Service() {
                     .setContentIntent(pendingIntent)
             startForeground(1, notification.build())
         }
+    }
+
+    override fun onDestroy() {
+        liveChat.onCancel()
+        super.onDestroy()
     }
 }

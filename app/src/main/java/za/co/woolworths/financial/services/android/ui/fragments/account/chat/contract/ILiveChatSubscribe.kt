@@ -5,4 +5,5 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendM
 
 interface ILiveChatSubscribe {
     fun onSubscribe(onSuccess: (SendMessageResponse?) -> Unit, onFailure: (ApiException) -> Unit)
+    fun onCancel()
 }

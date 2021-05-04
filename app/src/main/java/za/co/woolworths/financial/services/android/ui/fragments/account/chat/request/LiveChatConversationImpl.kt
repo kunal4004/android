@@ -16,8 +16,7 @@ class LiveChatConversationImpl : ILiveChatConversation {
 
     override fun conversation(onSuccess: () -> Unit, onFailure: (ApiException) -> Unit) {
         API.mutate(request(), { response ->
-            val conversation = response.data
-            LiveChatDBRepository().saveConversation(conversation)
+            LiveChatDBRepository().saveConversation(response.data)
             onSuccess()
         }, { apiException ->
             onFailure(apiException)

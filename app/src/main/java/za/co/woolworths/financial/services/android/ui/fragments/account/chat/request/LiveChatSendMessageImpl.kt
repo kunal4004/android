@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
+import android.util.Log
 import com.amplifyframework.api.aws.GsonVariablesSerializer
 import com.amplifyframework.api.graphql.GraphQLRequest
 import com.amplifyframework.api.graphql.SimpleGraphQLRequest
+import com.amplifyframework.core.Amplify.API
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
@@ -16,19 +18,26 @@ import java.util.*
 class LiveChatSendMessageImpl : ILiveChatSendMessage {
 
     private val messageGraphQL: String = Assets.readAsString("graphql/send-message.graphql")
+    private val liveChatDBRepository = LiveChatDBRepository()
 
-    override fun send(sessionState: SessionStateType, content: String): GraphQLRequest<String>? {
+    override fun send(sessionState: SessionStateType, content: String) {
 
-        val variables = HashMap<String, Any>()
-        val liveChatDBRepository = LiveChatDBRepository()
         val conversationId = liveChatDBRepository.getConversationMessageId()
 
         if (conversationId.isEmpty()) {
             logExceptionToFirebase("sendMessage conversationId")
-            return null
+            return
         }
-
         ChatAWSAmplify.sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.SENT, content))
+
+        API.mutate(request(sessionState, content), {}, {}
+        )
+    }
+
+    private fun request(sessionState: SessionStateType, content: String): GraphQLRequest<String> {
+
+        val variables = HashMap<String, Any>()
+        val conversationId = liveChatDBRepository.getConversationMessageId()
 
         variables["sessionId"] = conversationId
         variables["sessionType"] = liveChatDBRepository.getSessionType()

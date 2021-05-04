@@ -219,7 +219,7 @@ object ChatAWSAmplify {
     fun signInAndSubscribe(result: (SendMessageResponse?) -> Unit, onFailure: (Any) -> Unit) {
         signIn({ conversation ->
             val liveChatDBRepository = LiveChatDBRepository()
-            //liveChatDBRepository.saveConversation(conversation)
+//            liveChatDBRepository.saveConversation(conversation)
             subscribeToMessageByConversationId({ message ->
                 sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content
                         ?: ""))
