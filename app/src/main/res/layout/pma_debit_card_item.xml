@@ -82,4 +82,24 @@
         app:layout_constraintStart_toStartOf="@+id/startMargin"
         app:layout_constraintTop_toBottomOf="@+id/absaImageView" />
 
+    <TextView
+        android:layout_marginTop="@dimen/eighteen_dp"
+        android:id="@+id/debitOrCreditCardNoteTextView"
+        style="@style/debitCreditStyle"
+        android:textSize="@dimen/fourteen_sp"
+        android:text="@string/payment_delay_note_label"
+        app:layout_constraintEnd_toStartOf="@+id/endMargin"
+        android:layout_marginStart="@dimen/fifteen_dp"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toBottomOf="@+id/payByDebitCardNowButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:text="*"
+        android:textColor="@color/npc_description"
+        app:layout_constraintStart_toStartOf="@+id/startMargin"
+        app:layout_constraintTop_toTopOf="@+id/debitOrCreditCardNoteTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

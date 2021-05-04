@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -22,17 +21,14 @@ import za.co.woolworths.financial.services.android.contracts.IProgressAnimationS
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.PERMANENT
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
+
 import za.co.woolworths.financial.services.android.util.NetworkManager
-import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 
 class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimationState {
 
@@ -73,7 +69,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
 
         okGotItButton?.setOnClickListener {
             (activity as? AppCompatActivity)?.let {
-                it.setResult(ACCESS_MY_LOCATION_REQUEST_CODE)
+                it.setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
                 it.finish()
             }
         }
@@ -148,7 +144,8 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     activity?.apply {
-                        setResult(ACCESS_MY_LOCATION_REQUEST_CODE)
+                        setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                         finish()
                     }
                 }

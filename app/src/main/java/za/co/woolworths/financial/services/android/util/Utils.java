@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +28,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -63,6 +65,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -98,7 +101,6 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -120,6 +122,7 @@ import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 
 public class Utils {
@@ -152,8 +155,8 @@ public class Utils {
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 	private static final int POPUP_DELAY_MILLIS = 3000;
-	public static  final String ACCOUNT_CHARGED_OFF = "CHARGED OFF";
-	public static  final String ACCOUNT_ACTIVE = "ACTIVE";
+	public static final String ACCOUNT_CHARGED_OFF = "CHARGED OFF";
+	public static final String ACCOUNT_ACTIVE = "ACTIVE";
 
 	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
 			"application/pdf",
@@ -168,15 +171,11 @@ public class Utils {
 
 		try {
 			JSONObject locationJson = new JSONObject();
-			String location = null;
 
-			if (loc !=null) {
-				locationJson.put("lat", loc.getLatitude());
-				locationJson.put("lon", loc.getLongitude());
-				location = locationJson.toString();
-			}
+			locationJson.put("lat", loc.getLatitude());
+			locationJson.put("lon", loc.getLongitude());
 
-			sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, location);
+			sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
 		} catch (JSONException e) {
 		}
 
@@ -314,9 +313,9 @@ public class Utils {
 		}
 
 		Context context = WoolworthsApplication.getAppContext();
-		if (ShortcutBadger.isBadgeCounterSupported(context)){
+		if (ShortcutBadger.isBadgeCounterSupported(context)) {
 			ShortcutBadger.applyCount(context, badgeCount);
-		}else{
+		} else {
 			//fallback solution if ShortcutBadger is not supported
 			BadgeUtils.setBadge(context, badgeCount);
 		}
@@ -326,9 +325,9 @@ public class Utils {
 
 	public static void removeBadgeCounter() {
 		Context context = WoolworthsApplication.getAppContext();
-		if (ShortcutBadger.isBadgeCounterSupported(context)){
+		if (ShortcutBadger.isBadgeCounterSupported(context)) {
 			ShortcutBadger.removeCount(context);
-		}else{
+		} else {
 			//fallback solution if ShortcutBadger is not supported
 			BadgeUtils.clearBadge(context);
 		}
@@ -1198,9 +1197,9 @@ public class Utils {
 		return newSentence;
 	}
 
-	public static void saveFeatureWalkthoughShowcase(WMaterialShowcaseView.Feature feature){
+	public static void saveFeatureWalkthoughShowcase(WMaterialShowcaseView.Feature feature) {
 		AppInstanceObject appInstanceObject = AppInstanceObject.get();
-		switch (feature){
+		switch (feature) {
 			case BARCODE_SCAN:
 				appInstanceObject.featureWalkThrough.barcodeScan = true;
 				break;
@@ -1261,11 +1260,9 @@ public class Utils {
 	}
 
 	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
-		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
-		{
+		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 			@Override
-			public boolean onPreDraw()
-			{
+			public boolean onPreDraw() {
 				if (view.getViewTreeObserver().isAlive())
 					view.getViewTreeObserver().removeOnPreDrawListener(this);
 
@@ -1273,7 +1270,7 @@ public class Utils {
 				view.getLocationOnScreen(locations);
 				int viewYPositionOnScreen = locations[1];
 
-				if(activity != null) {
+				if (activity != null) {
 					Display display = activity.getWindowManager().getDefaultDisplay();
 					Point size = new Point();
 					display.getSize(size);
@@ -1308,12 +1305,12 @@ public class Utils {
 
 	//add negative sign before currency value
 	public static String removeNegativeSymbol(String amount) {
-		return  formatAmount(amount);
+		return formatAmount(amount);
 	}
 
 	//add negative sign before currency value
 	public static String removeNegativeSymbol(SpannableString amount) {
-		return  formatAmount(amount.toString());
+		return formatAmount(amount.toString());
 	}
 
 	@NonNull
@@ -1325,14 +1322,14 @@ public class Utils {
 		return currentAmount;
 	}
 
-    public static void displayDialogActionSheet(Activity activity, int description, int buttonText) {
-        if (activity == null) return;
-        AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
-        FragmentManager fm = appCompatActivity.getSupportFragmentManager();
-        SingleButtonDialogFragment singleButtonDialogFragment =
-                SingleButtonDialogFragment.newInstance(appCompatActivity.getString(description), appCompatActivity.getString(buttonText));
-        singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
-    }
+	public static void displayDialogActionSheet(Activity activity, int description, int buttonText) {
+		if (activity == null) return;
+		AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
+		FragmentManager fm = appCompatActivity.getSupportFragmentManager();
+		SingleButtonDialogFragment singleButtonDialogFragment =
+				SingleButtonDialogFragment.newInstance(appCompatActivity.getString(description), appCompatActivity.getString(buttonText));
+		singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
+	}
 
 	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle) {
 		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
@@ -1357,33 +1354,44 @@ public class Utils {
 		return currentUserObject.kmsi;
 	}
 
-    public static String getAbsaUniqueDeviceID() {
+	public static void setLinkConfirmationShown(Boolean isShown) {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.isLinkConfirmationScreenShown = isShown;
+		currentUserObject.save();
+	}
+
+	public static Boolean getLinkDeviceConfirmationShown() {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return currentUserObject.isLinkConfirmationScreenShown;
+	}
+
+	public static String getAbsaUniqueDeviceID() {
 
 		AbsaSecureCredentials absaSecureCredentials = new AbsaSecureCredentials();
 
-        String deviceID = absaSecureCredentials.getDeviceId();
-        if (TextUtils.isEmpty(deviceID)) {
+		String deviceID = absaSecureCredentials.getDeviceId();
+		if (TextUtils.isEmpty(deviceID)) {
 			absaSecureCredentials.setDeviceId(UUID.randomUUID().toString().replace("-", ""));
 			absaSecureCredentials.save();
-        }
+		}
 
-        return absaSecureCredentials.getDeviceId();
-    }
+		return absaSecureCredentials.getDeviceId();
+	}
 
-    public static void sessionDaoSave(SessionDao.KEY key, String value) {
-        SessionDao sessionDao = SessionDao.getByKey(key);
-        sessionDao.value = value;
-        try {
-            sessionDao.save();
-        } catch (Exception e) {
-            Log.e("TAG", e.getMessage());
-        }
-    }
+	public static void sessionDaoSave(SessionDao.KEY key, String value) {
+		SessionDao sessionDao = SessionDao.getByKey(key);
+		sessionDao.value = value;
+		try {
+			sessionDao.save();
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+	}
 
-    public static String getSessionDaoValue(SessionDao.KEY key) {
-        SessionDao sessionDao = SessionDao.getByKey(key);
-        return sessionDao.value;
-    }
+	public static String getSessionDaoValue(SessionDao.KEY key) {
+		SessionDao sessionDao = SessionDao.getByKey(key);
+		return sessionDao.value;
+	}
 
 	public static String getAccountNumber(AccountsResponse accountResponse, String productGroupCode) {
 		String accountNumber = "";
@@ -1479,29 +1487,30 @@ public class Utils {
 	}
 
 	public static Boolean isCartSummarySuburbIDEmpty(CartSummaryResponse cartSummaryResponse) {
-        if (cartSummaryResponse.data != null) {
-            List<CartSummary> cartSummaryList = cartSummaryResponse.data;
-            if (cartSummaryList.get(0) != null) {
-                CartSummary cartSummary = cartSummaryList.get(0);
-                return TextUtils.isEmpty(cartSummary.suburbId);
-            }
-        }
-        return true;
-    }
+		if (cartSummaryResponse.data != null) {
+			List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+			if (cartSummaryList.get(0) != null) {
+				CartSummary cartSummary = cartSummaryList.get(0);
+				return TextUtils.isEmpty(cartSummary.suburbId);
+			}
+		}
+		return true;
+	}
 
-	public static void showGeneralErrorDialog(FragmentManager fragmentManager,String message){
+	public static void showGeneralErrorDialog(FragmentManager fragmentManager, String message) {
 		ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
 		if (fragmentManager != null) {
 			minAmountDialog.show(fragmentManager, ErrorDialogFragment.class.getSimpleName());
 		}
 	}
 
-	public static void showGeneralErrorDialog(Activity activity,String message){
+	public static void showGeneralErrorDialog(Activity activity, String message) {
 		if (activity != null && !TextUtils.isEmpty(message)) {
 			ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
 			minAmountDialog.show(((AppCompatActivity) activity).getSupportFragmentManager(), ErrorDialogFragment.class.getSimpleName());
 		}
 	}
+
 	public static boolean isValidLuhnNumber(String ccNumber) {
 		int sum = 0;
 		boolean alternate = false;
@@ -1520,7 +1529,7 @@ public class Utils {
 	}
 
 	public static boolean isAppUpdated(Context context) {
-		if (context == null){
+		if (context == null) {
 			context = WoolworthsApplication.getAppContext();
 		}
 		String appVersionFromDB = Utils.getSessionDaoValue(SessionDao.KEY.APP_VERSION);
@@ -1580,4 +1589,23 @@ public class Utils {
 		return dayNumber;
 	}
 
+	public static void setToken(String value) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
+			if (firstTime == null) {
+				Utils.sessionDaoSave(FCM_TOKEN, value);
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
+	public static String getToken() {
+		String token = "";
+		try {
+			token = Utils.getSessionDaoValue(FCM_TOKEN);
+		} catch (NullPointerException ignored) {
+		}
+
+		return token;
+	}
 }

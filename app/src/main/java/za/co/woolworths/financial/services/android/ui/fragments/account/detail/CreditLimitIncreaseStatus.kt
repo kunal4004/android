@@ -9,6 +9,8 @@ import android.widget.TextView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.roundCornerDrawable
 import za.co.woolworths.financial.services.android.util.Utils
@@ -115,7 +117,7 @@ class CreditLimitIncreaseStatus {
                 llCommonLayer?.visibility = GONE
                 tvIncreaseLimitDescription?.visibility = GONE
                 messageSummary = getString(R.string.status_unavailable) ?: ""
-                setTagBackgroundAndTitle(messageSummary, nextStepColour,tvApplyNowIncreaseLimit)
+                setTagBackgroundAndTitle(messageSummary, nextStepColour, tvApplyNowIncreaseLimit)
             }
 
         }
@@ -145,19 +147,20 @@ class CreditLimitIncreaseStatus {
         tvIncreaseLimitDescription?.visibility = GONE
     }
 
-    private fun moveToCLIPhase(offerActive: OfferActive, productOfferingId: String) {
+    private fun moveToCLIPhase(offerActive: OfferActive, productOfferingId: String, applyNowState: ApplyNowState?) {
         val woolworthApplication = WoolworthsApplication.getInstance()
         woolworthApplication?.currentActivity?.apply {
             woolworthApplication.setProductOfferingId(Integer.valueOf(productOfferingId))
             val openCLIIncrease = Intent(this, CLIPhase2Activity::class.java)
             openCLIIncrease.putExtra("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(offerActive))
             openCLIIncrease.putExtra("OFFER_IS_ACTIVE", activeOffer)
+            openCLIIncrease.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState)
             startActivityForResult(openCLIIncrease, 0)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 
-    fun nextStep(offerActive: OfferActive?, productOfferingId: String?) {
+    fun nextStep(offerActive: OfferActive?, productOfferingId: String?, applyNowState: ApplyNowState?) {
         val cliStatus = offerActive?.cliStatus ?: ""
         if (nextStep.isEmpty() ||
                 nextStep == CreditLimitIncreaseStates.IN_PROGRESS.type ||
@@ -167,7 +170,7 @@ class CreditLimitIncreaseStatus {
                 (nextStep == CreditLimitIncreaseStates.COMPLETE.type && cliStatus != CreditLimitIncreaseStates.CLI_CONCLUDED.type)) {
             return
         } else {
-            productOfferingId?.let { pid -> offerActive?.let { offer -> moveToCLIPhase(offer, pid) } }
+            productOfferingId?.let { pid -> offerActive?.let { offer -> moveToCLIPhase(offer, pid, applyNowState) } }
         }
     }
 }

@@ -9,6 +9,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 
 class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
@@ -32,7 +34,7 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
                 activity?.runOnUiThread {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                    FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
@@ -85,6 +86,7 @@ interface IAccountCardDetailsContract {
         fun isVirtualCardEnabled(): Boolean
         fun isVirtualCardObjectNotNull(): Boolean
         fun isReplacementCardAndVirtualCardViewEnabled(): Boolean
+        fun onStartCreditLimitIncreaseFirebaseEvent()
     }
 
     interface AccountCardDetailModel {

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewAllDeviceConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/fifteen_dp"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/viewAllDevicesTitleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="@integer/point_one"
+        android:padding="@dimen/fifteen_dp"
+        android:textAllCaps="true"
+        android:textColor="@color/color_333333"
+        android:textSize="@dimen/twelve_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Primary Device" />
+
+    <View
+        android:id="@+id/viewAllDevicesTitleSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/color_separator_light_grey"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleTextView"
+        app:layout_goneMarginTop="0dp" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/viewAllDevicesTitleGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="viewAllDevicesTitleTextView, viewAllDevicesTitleSeparator" />
+
+    <TextView
+        android:id="@+id/viewAllDeviceNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:paddingStart="@dimen/fifteen_dp"
+        android:paddingTop="@dimen/twenty_dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleSeparator"
+        tools:text="Matt's iPhone" />
+
+    <TextView
+        android:id="@+id/viewAllDeviceSubtitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:paddingStart="@dimen/fifteen_dp"
+        android:paddingTop="@dimen/ten_dp"
+        android:textColor="@color/black_50"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDeviceNameTextView"
+        tools:text="Linked 12/01/2021" />
+
+    <TextView
+        android:id="@+id/viewAllDeviceLocationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:paddingStart="@dimen/fifteen_dp"
+        android:textColor="@color/black_50"
+        android:paddingTop="@dimen/three_dp"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDeviceSubtitleTextView"
+        tools:text="Linked 12/01/2021" />
+    
+    <ImageView
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_delete_grey"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleSeparator"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:id="@+id/viewAllDeviceDeleteImageView"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp" />
+
+    <View
+        android:id="@+id/viewAllDevicesTitleSeparator2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_separator_light_grey"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDeviceLocationTextView"
+        app:layout_goneMarginTop="0dp" />
+
+    <LinearLayout
+        android:id="@+id/viewAllOtherDevicesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

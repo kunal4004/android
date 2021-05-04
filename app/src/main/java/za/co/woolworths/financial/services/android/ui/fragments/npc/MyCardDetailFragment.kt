@@ -310,8 +310,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
                 true -> {
                     manageView?.visibility = GONE
-                    temporaryCardFreezeRelativeLayout?.visibility = GONE
                     blockCard?.visibility = GONE
+                    temporaryCardFreezeRelativeLayout?.visibility = GONE
                     cardNumberLayout?.visibility = GONE
                     tvCardNumberHeader?.visibility = INVISIBLE
                     cardStatus?.text = getString(R.string.store_card_status_temporary)

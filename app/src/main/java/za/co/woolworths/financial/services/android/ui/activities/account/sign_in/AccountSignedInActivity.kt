@@ -186,7 +186,11 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             payMyAccountViewModel.setPMACardInfo(PMACardPopupModel(account = mAccountSignedInPresenter?.getMyAccountCardInfo()))
         val bundle = Bundle()
         bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        mAvailableFundsNavHost?.navController?.navigate(R.id.accountInArrearsDialogFragment, bundle)
+        val accountInArrearsViewId = when (payMyAccountViewModel.getApplyNowState()) {
+            ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> R.id.creditCardAccountInArrearsFragment
+            else -> R.id.accountInArrearsDialogFragment
+        }
+        mAvailableFundsNavHost?.navController?.navigate(accountInArrearsViewId, bundle)
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {

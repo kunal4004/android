@@ -40,7 +40,8 @@ interface IAccountSignedInContract {
         fun isAccountInDelinquencyMoreThan6Months(): Boolean
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
-        
+        fun deleteDeepLinkData()
+        fun isProductInGoodStanding():Boolean
     }
 
     interface MyAccountModel {

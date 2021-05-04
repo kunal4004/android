@@ -779,7 +779,7 @@
     <string name="enter_otp_title">Enter OTP</string>
     <string name="did_not_receive_title">Did Not Receive OTP?</string>
     <string name="resend_otp_title">Resend OTP</string>
-    <string name="resend_sms_to">SMS to </string>
+    <string name="resend_sms_to">SMS to %s</string>
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
@@ -925,8 +925,8 @@
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
     <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
-    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
-    <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
+   <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+   <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
@@ -1221,7 +1221,7 @@
 
     <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
     <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
-    <string name="blackCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
+    <string name="blackCreditCardQualify_row_3">Earn in excess of R41,666 per month</string>
 
     <string name="blackCreditCardCollection_row_1">A valid RSA ID number</string>
     <string name="blackCreditCardCollection_row_2">Latest three payslips or the last three months\' bank statements</string>
@@ -1737,6 +1737,7 @@
     <string name="card_number_label">Card Number:</string>
     <string name="payment_successful_title">Payment Successful</string>
     <string name="ccv_number_label">Enter your CVV Number:</string>
+    <string name="pma_payment_delay_label">* Payments may take up to 5 business days to reflect.</string>
     <string name="confirm_payment">CONFIRM PAYMENT</string>
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
@@ -1987,13 +1988,48 @@
     <string name="cli_marital_status_with_colon_txt">Marital Status:</string>
     <string name="cli_married_in_community_agreement">I confirm that I have written consent from my spouse to enter into a credit agreement.</string>
     <string name="please_select">Please Select</string>
+
+    <!--  My Preferences - Link Devices -->
+    <string name="my_preferences_linked_devices">My linked devices</string>
+    <string name="my_preferences_linked_devices_desc">Transactions, statements and balance messages will only be sent to your primary device.</string>
+    <string name="my_preferences_link_this_device">Link this device</string>
+    <string name="unlink_device_title">Are you sure you want to unlink this device from your profile?</string>
+    <string name="unlink_device_desc">This device will not have permission to access your profile unless it is manually linked again.</string>
+    <string name="unlink_device_continue">YES, CONTINUE</string>
+    <string name="link_device_sending_otp">Sending OTP</string>
+    <string name="link_device_sending_otp_desc">An One-time PIN is being sent to you. It should arrive shortly.</string>
+    <string name="link_device_sending_otp_processing_desc">This may take a few seconds</string>
+    <string name="link_device_sending_otp_processing">Processing Request</string>
+    <string name="link_device_error_title">There was a Problem Linking Your Device.</string>
+    <string name="link_device_error_desc">Try activating your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+
+    <!--  Link Device Confirmation  -->
+    <string name="link_device_confirm_title">Please confirm this is your primary device.</string>
+    <string name="link_device_confirm_desc">Transactions, statements and balance messages will only be sent to this device and future transactions will be quicker and easier with less verification steps required.</string>
+    <string name="link_device_confirm_button">Yes, This is my device</string>
+    <string name="link_device_security_msg">Security verification messages will still be sent to your registered primary cell number.</string>
+    <string name="link_device_linking_processing">Linking Your Device</string>
+    <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
+    <string name="ok_cool">Ok, cool!</string>
+    <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your prferences.</string>
+    <string name="link_device_this_is_linked">This device is linked</string>
+
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
     <string name="link_new_card">Link New Card</string>
-
 
     <string name="replacement_card_label">Get Replacement Card</string>
     <string name="temp_card">TEMP CARD</string>
     <string name="inactive">INACTIVE</string>
     <string name="how_it_works_label">How it Works</string>
 
+    <string name="unable_to_process_502">We are unable to process your request at the moment. Please Try Again Later.</string>
+
+    <!-- View All Linked Devices -->
+    <string name="view_all_device_title">My Linked Devices</string>
+    <string name="view_all_device_location_n_a">Location N/A</string>
+    <string name="view_all_primary_device_title">Primary Device</string>
+    <string name="view_all_other_device_title">Other Linked Devices</string>
+    <string name="view_all_device_linked_on">Linked %s</string>
+    <string name="payment_options_label">Payment Options</string>
+    <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
 </resources>

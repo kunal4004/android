@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_on_boarding_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.view.inputmethod.InputMethodManager
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 
 
 class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
@@ -52,7 +49,7 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.setupPasscode -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSOCDE)
+                FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSCODE)
                 replaceFragment(
                         fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditCardNumber),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,

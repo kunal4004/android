@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -315,5 +316,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return (virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
                 || shouldDisplayStoreCardDetail
                 && blockType != TemporaryFreezeStoreCard.PERMANENT
+    }
+
+    override fun onStartCreditLimitIncreaseFirebaseEvent() {
+        FirebaseCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first).forCLIStart()
     }
 }

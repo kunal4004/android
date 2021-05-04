@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_cli_marital_status.*
 import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.util.FragmentUtils
 import za.co.woolworths.financial.services.android.util.picker.WheelView
 
@@ -54,8 +55,8 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
         setMaritalStatusPicker(0)
 
         //Set Listeners
-        cli_marital_status_next.setOnClickListener(this)
-        cli_marital_status_agreement_check.setOnClickListener(this)
+        cli_marital_status_next?.setOnClickListener(this)
+        cli_marital_status_agreement_check?.setOnClickListener(this)
         cli_marital_status_selection?.setOnClickListener(this)
         cli_marital_status_picker_done?.setOnClickListener(this)
         cli_marital_status_picker?.onItemSelectedListener = this
@@ -108,9 +109,9 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
 
                 val slideDownAnimation: Animation = AnimationUtils.loadAnimation(context,
                         R.anim.slide_down_anim)
-                cli_marital_status_picker_container.startAnimation(slideDownAnimation)
+                cli_marital_status_picker_container?.startAnimation(slideDownAnimation)
 
-                cli_marital_status_picker_container.visibility = View.GONE
+                cli_marital_status_picker_container?.visibility = View.GONE
 
                 cli_marital_status_agreement_container?.visibility = if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
                 cli_marital_status_agreement_container?.visibility = if (selectedMaritalStatus?.statusId == 6) View.VISIBLE else View.GONE
@@ -133,6 +134,7 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
             }
 
             R.id.cli_marital_status_next -> {
+                (activity as? CLIPhase2Activity)?.getFirebaseEvent()?.forMaritialStatus()
                 val fragmentUtils = FragmentUtils()
                 fragmentUtils.nextFragment(parentFragmentManager, CLIAllStepsContainerFragment(), R.id.cliMainFrame)
             }

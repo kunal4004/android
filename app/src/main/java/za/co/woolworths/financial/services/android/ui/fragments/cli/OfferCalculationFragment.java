@@ -36,6 +36,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -52,7 +53,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -123,10 +124,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			view = inflater.inflate(R.layout.offer_calculation_fragment, container, false);
 			latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		}
-		if(getArguments() != null && getArguments().getSerializable(CLIPhase2Activity.MARITAL_STATUS) != null &&
-		getArguments().getSerializable(CLIPhase2Activity.MARITAL_STATUS) instanceof  MaritalStatus) {
-			maritalStatus = (MaritalStatus) getArguments().getSerializable(CLIPhase2Activity.MARITAL_STATUS);
-		}
 		return view;
 	}
 
@@ -134,6 +131,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		if (savedInstanceState == null && !mAlreadyLoaded) {
+			Activity activity = getActivity();
+			if (activity != null)
+				maritalStatus = ((CLIPhase2Activity) activity).getMaritalStatus();
 			mAlreadyLoaded = true;
 			loadState = new LoadState();
 			try {
@@ -143,6 +143,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 			woolworthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 			mGlobalState = woolworthsApplication.getWGlobalState();
+
 			init(view);
 			seekBar();
 			Bundle bundle = this.getArguments();
@@ -162,7 +163,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				}
 				if (expenseDetail != null) {
 					mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
-					Activity activity = getActivity();
 					if (activity instanceof CLIPhase2Activity) {
 						mEventStatus = ((CLIPhase2Activity) activity).getEventStatus();
 						if (mEventStatus == null) {
@@ -539,6 +539,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.btnContinue:
+				Activity activity = getActivity();
+				if (activity != null) {
+					FirebaseCreditLimitIncreaseEvent firebaseEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
+					if (firebaseEvent != null)
+						firebaseEvent.forAcceptOffer();
+				}
 				onAcceptOfferLoad();
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
