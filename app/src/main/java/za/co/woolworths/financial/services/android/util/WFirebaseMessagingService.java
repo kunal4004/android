@@ -27,6 +27,8 @@ import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
 
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
+
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = WFirebaseMessagingService.class.getSimpleName();
@@ -95,7 +97,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         }*/
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, DEEP_LINK_REQUEST_CODE, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         String contentTitle = null;
