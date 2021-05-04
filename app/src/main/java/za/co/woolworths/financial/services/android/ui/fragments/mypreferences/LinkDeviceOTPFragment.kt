@@ -323,7 +323,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         this.otpMethod = otpMethod
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.setText(R.string.internet_waiting_subtitle)
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
             retryApiCall = RETRY_GET_OTP
             return
         }
@@ -385,7 +385,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     sendOTPFailedGroup?.visibility = View.GONE
                     sendinOTPLayout?.visibility = View.GONE
                     linkDeviceOTPScreen?.visibility = View.VISIBLE
-                    enterOTPSubtitle?.setText(R.string.internet_waiting_subtitle)
+                    enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                     retryApiCall = RETRY_GET_OTP
                     return
                 }
@@ -398,7 +398,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun callValidatingOTPAPI(otp: String) {
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.setText(R.string.internet_waiting_subtitle)
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
             return
         }
 
@@ -419,7 +419,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             return
                         }
                         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                            enterOTPSubtitle?.setText(R.string.internet_waiting_subtitle)
+                            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                             return
                         }
 
@@ -464,7 +464,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.setText(R.string.internet_waiting_subtitle)
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
             retryApiCall = RETRY_VALIDATE
             return
         }
@@ -499,7 +499,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
             sendinOTPLayout?.visibility = View.GONE
             linkDeviceOTPScreen?.visibility = View.VISIBLE
-            enterOTPSubtitle?.setText(R.string.internet_waiting_subtitle)
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
             retryApiCall = RETRY_LINK_DEVICE
             return
         }
