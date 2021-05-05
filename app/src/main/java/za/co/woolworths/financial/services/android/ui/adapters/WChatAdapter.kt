@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.received_message_item.view.*
 import kotlinx.android.synthetic.main.sent_message_item.view.*
-import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
+
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 
@@ -24,20 +27,24 @@ private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 private const val VIEW_TYPE_SENT_MESSAGE = 2
 
 class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
-    private val messages: MutableList<ChatMessage> = mutableListOf()
+    private val chatMessageList: MutableList<ChatMessage> = mutableListOf()
 
-    fun getMessageList() = messages
+    fun getMessageList() = chatMessageList
 
     fun addMessage(message: ChatMessage) {
-        messages.add(message)
+        chatMessageList.add(message)
         //Display 1 woolies icon per message received
-        var messagesSize = messages.size
+        var messagesSize = chatMessageList.size
         if (messagesSize > 1) {
             messagesSize -= 1
             for (i in 1..messagesSize) {
-                if (messages[i].type == messages[i - 1].type) {
-                    messages[i].isWoolworthIconVisible = false
+                val chatMessage: ChatMessage = chatMessageList[i]
+                if (chatMessage is SendMessageResponse) {
+                    if (chatMessage?.javaClass == chatMessageList[i - 1]?.javaClass) {
+                        chatMessage.isWoolworthIconVisible = false
+                    }
                 }
+
             }
         }
         notifyDataSetChanged()
@@ -52,33 +59,34 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return messages.size
+        return chatMessageList.size
     }
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(messages[position])
+        holder.bind(chatMessageList[position])
     }
 
 
     override fun getItemViewType(position: Int): Int {
-        return when (messages[position].type) {
-            ChatMessage.Type.RECEIVED -> VIEW_TYPE_RECEIVED_MESSAGE
-            ChatMessage.Type.SENT -> VIEW_TYPE_SENT_MESSAGE
+        return when (chatMessageList[position]) {
+            is SendMessageResponse-> VIEW_TYPE_RECEIVED_MESSAGE
+            is UserMessage  -> VIEW_TYPE_SENT_MESSAGE
         }
     }
 
     fun clear() {
-        messages.clear()
+        chatMessageList.clear()
     }
 
     inner class ReceivedMessageViewHolder(view: View) : MessageViewHolder(view) {
 
-        override fun bind(message: ChatMessage) {
-            val sendEmail = message.sendEmailIntentInfo
+        override fun bind(chatMessage: ChatMessage) {
+            val agentMessage = chatMessage as? SendMessageResponse
+            val sendEmail = agentMessage?.sendEmailIntentInfo
             val emailAddress = sendEmail?.emailAddress ?: ""
             when (emailAddress.isNotEmpty()) {
                 true -> {
-                    val spannableMessage = SpannableString(message.message)
+                    val spannableMessage = SpannableString(agentMessage?.content)
                     val clickableSpan: ClickableSpan = object : ClickableSpan() {
                         override fun onClick(textView: View) {
                             (itemView.context as? Activity)?.let { activity -> KotlinUtils.sendEmail(activity, emailAddress, sendEmail?.subjectLine, "") }
@@ -97,16 +105,15 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
                         highlightColor = Color.GRAY
                     }
 
-
-                    itemView.image_message_profile?.visibility = if (message.isWoolworthIconVisible) VISIBLE else INVISIBLE
+                    itemView.image_message_profile?.visibility = if (agentMessage?.isWoolworthIconVisible == true) VISIBLE else INVISIBLE
                 }
                 false -> {
                     itemView.received_message_text?.apply {
-                        text = message.message
+                        text = agentMessage?.content
                         movementMethod = null
                         highlightColor = Color.WHITE
                     }
-                    itemView.image_message_profile?.visibility = if (message.isWoolworthIconVisible) VISIBLE else INVISIBLE
+                    itemView.image_message_profile?.visibility = if (agentMessage?.isWoolworthIconVisible == true) VISIBLE else INVISIBLE
 
                 }
             }
@@ -116,8 +123,9 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
     inner class SentMessageViewHolder(view: View) : MessageViewHolder(view) {
 
-        override fun bind(message: ChatMessage) {
-            itemView.sent_message_text?.text = message.message
+        override fun bind(chatMessage: ChatMessage) {
+            val userMessage = chatMessage as? UserMessage
+            itemView.sent_message_text?.text = userMessage?.message
         }
     }
 }

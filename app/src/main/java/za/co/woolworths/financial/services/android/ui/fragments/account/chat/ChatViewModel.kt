@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
@@ -16,9 +17,6 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
@@ -28,19 +26,19 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.request
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
-import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ServiceTool
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.ActivityType
-import java.util.*
 
 class ChatViewModel : ViewModel() {
 
     private var creditCardTokenAPI: Call<CreditCardTokenResponse>? = null
     private var awsAmplify: ChatAWSAmplify? = null
-    private var conversation: Conversation? = null
 
     var isCustomerSignOut: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -50,6 +48,8 @@ class ChatViewModel : ViewModel() {
     private var chatTrackPostEvent: ChatTrackPostEvent = ChatTrackPostEvent()
 
     var liveChatDBRepository = LiveChatDBRepository()
+    val liveChatAuthentication = LiveChatAuthImpl()
+    val liveChatListAllAgentConversation = LiveChatListAllAgentConversationImpl()
 
     fun initAmplify() {
         this.awsAmplify = ChatAWSAmplify
@@ -64,7 +64,8 @@ class ChatViewModel : ViewModel() {
                 val collections = inAppChatMessage?.collections
                 val emailAddress = collections?.emailAddress ?: ""
                 val subjectLine = collections?.emailSubjectLine ?: ""
-                val serviceUnavailable = collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+                val serviceUnavailable =
+                    collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
                         ?: ""
 
                 Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
@@ -73,7 +74,8 @@ class ChatViewModel : ViewModel() {
                 val customerService = inAppChatMessage?.customerService
                 val emailAddress = customerService?.emailAddress ?: ""
                 val subjectLine = customerService?.emailSubjectLine ?: ""
-                val serviceUnavailable = customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
+                val serviceUnavailable =
+                    customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
                         ?: ""
 
                 Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
@@ -82,44 +84,9 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-
     private fun getSessionType(): SessionType {
         return liveChatDBRepository.getSessionType()
     }
-
-    fun signIn(result: () -> Unit, failure: (Any) -> Unit) {
-        awsAmplify?.apply {
-            signIn({ conversation ->
-                this@ChatViewModel.conversation = conversation
-                if (conversation == null) {
-                    logExceptionToFirebase("subscribeToMessageByConversationId")
-                    failure(failure)
-                } else {
-                    liveChatDBRepository.saveConversation(conversation)
-                    result()
-                }
-            }, { failure -> failure(failure) })
-        }
-    }
-
-    fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
-        val conversationId = getConversationMessageId()
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("subscribeToMessageByConversationId")
-            failure(failure)
-            return
-        }
-        awsAmplify?.subscribeToMessageByConversationId(
-                conversationId,
-                getSessionType(),
-                liveChatDBRepository.getSessionVars(),
-                getCustomerInfo().getCustomerFamilyName(),
-                getCustomerInfo().getCustomerEmail(),
-                { data -> result(data) }, { failure(failure) })
-    }
-
-    private fun getConversationMessageId(): String = liveChatDBRepository.getLiveChatParams()?.conversation?.id
-            ?: ""
 
     override fun onCleared() {
         creditCardTokenAPI?.apply {
@@ -129,34 +96,6 @@ class ChatViewModel : ViewModel() {
         }
         super.onCleared()
     }
-
-    fun sendMessage(content: String) {
-        val conversationId = getConversationMessageId()
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("sendMessage conversationId")
-            return
-        }
-        awsAmplify?.sendMessage(
-                conversationId,
-                getSessionType(),
-                SessionStateType.ONLINE,
-                content,
-                liveChatDBRepository.getSessionVars(),
-                getCustomerInfo().getCustomerFamilyName(),
-                getCustomerInfo().getCustomerEmail())
-    }
-
-    fun signOut(result: () -> Unit) {
-        val conversationId = getConversationMessageId()
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("signOut conversationId")
-            return
-        }
-        ChatAWSAmplify.signOut {
-            onCleared()
-            result() }
-    }
-
 
     private fun getTradingHours(): MutableList<TradingHours>? {
         val inAppChat = WoolworthsApplication.getInAppChat()
@@ -178,21 +117,28 @@ class ChatViewModel : ViewModel() {
                 val collections = inAppChat.collections
                 val emailAddress = collections.emailAddress
 
-                var offlineMessageTemplate = collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
-                offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                var offlineMessageTemplate =
+                    collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                offlineMessageTemplate =
+                    offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
                 val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
-                spannableOfflineMessageTemplate.setSpan(object : ClickableSpan() {
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.color = Color.WHITE
-                        ds.isUnderlineText = true
-                    }
+                spannableOfflineMessageTemplate.setSpan(
+                    object : ClickableSpan() {
+                        override fun updateDrawState(ds: TextPaint) {
+                            ds.color = Color.WHITE
+                            ds.isUnderlineText = true
+                        }
 
-                    override fun onClick(textView: View) {
-                        val emailSubjectLine = collections.emailSubjectLine
-                        val emailMessage = collections.emailMessage
-                        onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
-                    }
-                }, spannableOfflineMessageTemplate.indexOf(emailAddress), spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        override fun onClick(textView: View) {
+                            val emailSubjectLine = collections.emailSubjectLine
+                            val emailMessage = collections.emailMessage
+                            onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
+                        }
+                    },
+                    spannableOfflineMessageTemplate.indexOf(emailAddress),
+                    spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
 
                 return spannableOfflineMessageTemplate
@@ -202,75 +148,54 @@ class ChatViewModel : ViewModel() {
                 val customerService = inAppChat.customerService
                 val emailAddress = customerService.emailAddress
 
-                var offlineMessageTemplate = customerService.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
-                offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                var offlineMessageTemplate =
+                    customerService.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                offlineMessageTemplate =
+                    offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
                 val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
-                spannableOfflineMessageTemplate.setSpan(object : ClickableSpan() {
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.color = Color.WHITE
-                        ds.isUnderlineText = true
-                    }
+                spannableOfflineMessageTemplate.setSpan(
+                    object : ClickableSpan() {
+                        override fun updateDrawState(ds: TextPaint) {
+                            ds.color = Color.WHITE
+                            ds.isUnderlineText = true
+                        }
 
-                    override fun onClick(textView: View) {
-                        val emailSubjectLine = customerService.emailSubjectLine
-                        val emailMessage = customerService.emailMessage
-                        onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
-                    }
-                }, spannableOfflineMessageTemplate.indexOf(emailAddress), spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        override fun onClick(textView: View) {
+                            val emailSubjectLine = customerService.emailSubjectLine
+                            val emailMessage = customerService.emailMessage
+                            onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
+                        }
+                    },
+                    spannableOfflineMessageTemplate.indexOf(emailAddress),
+                    spannableOfflineMessageTemplate.indexOf(emailAddress) + emailAddress.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
                 return spannableOfflineMessageTemplate
             }
         }
     }
 
-    fun getCreditCardToken(result: (CreditCardTokenResponse?) -> Unit, error: (Throwable?) -> Unit) {
-        creditCardTokenAPI = request(OneAppService.getCreditCardToken(), object : IGenericAPILoaderView<Any> {
+    fun getCreditCardToken(
+        result: (CreditCardTokenResponse?) -> Unit,
+        error: (Throwable?) -> Unit
+    ) {
+        creditCardTokenAPI =
+            request(OneAppService.getCreditCardToken(), object : IGenericAPILoaderView<Any> {
 
-            override fun onSuccess(response: Any?) {
+                override fun onSuccess(response: Any?) {
 
-                (response as? CreditCardTokenResponse)?.apply {
-                    cards?.apply { initAmplify() }
-                    result(this)
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                super.onFailure(error)
-                error(error)
-            }
-        })
-    }
-
-    fun getCustomerInfo() = ChatCustomerInfo
-
-    fun getMessagesListByConversation(result: ((MutableList<ChatMessage>?) -> Unit)) {
-
-        val conversationId = getConversationMessageId()
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("getMessagesListByConversation conversationId")
-            return
-        }
-
-        awsAmplify?.getMessagesListByConversation(conversationId) { message ->
-
-            val messageList: MutableList<ChatMessage> = mutableListOf()
-            message?.items?.forEach { item ->
-                val chatMessage = ChatMessage(if (item.sender == "AGENT") ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, item.content)
-                messageList.add(chatMessage)
-            }
-
-            var messagesSize = messageList.size
-            if (messagesSize > 1) {
-                messagesSize -= 1
-                for (i in 1..messagesSize) {
-                    if (messageList[i].type == messageList[i - 1].type) {
-                        messageList[i].isWoolworthIconVisible = false
+                    (response as? CreditCardTokenResponse)?.apply {
+                        cards?.apply { initAmplify() }
+                        result(this)
                     }
                 }
-            }
 
-            result(messageList)
-        }
+                override fun onFailure(error: Throwable?) {
+                    super.onFailure(error)
+                    error(error)
+                }
+            })
     }
 
     @Throws(RuntimeException::class)
@@ -288,7 +213,8 @@ class ChatViewModel : ViewModel() {
 
     @SuppressLint("DefaultLocale")
     fun getApplyNowState(): ApplyNowState {
-        return when (liveChatDBRepository.getAccount()?.productGroupCode?.toLowerCase()?.let { AccountsProductGroupCode.getEnum(it) }) {
+        return when (liveChatDBRepository.getAccount()?.productGroupCode?.toLowerCase()
+            ?.let { AccountsProductGroupCode.getEnum(it) }) {
             AccountsProductGroupCode.STORE_CARD -> ApplyNowState.STORE_CARD
             AccountsProductGroupCode.PERSONAL_LOAN -> ApplyNowState.PERSONAL_LOAN
             AccountsProductGroupCode.CREDIT_CARD -> when (liveChatDBRepository.getAccount()?.accountNumberBin) {
@@ -301,7 +227,8 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun postEventChatOffline() = chatTrackPostEvent.onChatOffline(applyNowState = getApplyNowState())
+    fun postEventChatOffline() =
+        chatTrackPostEvent.onChatOffline(applyNowState = getApplyNowState())
 
     fun postChatEventInitiateSession() {
         if (!isOperatingHoursForInAppChat()) return
@@ -310,7 +237,9 @@ class ChatViewModel : ViewModel() {
             when (getSessionType()) {
                 SessionType.Collections -> {
                     when (activityType) {
-                        ActivityType.ACCOUNT_LANDING -> onChatCollectionsLandingInitiateSession(applyNowState)
+                        ActivityType.ACCOUNT_LANDING -> onChatCollectionsLandingInitiateSession(
+                            applyNowState
+                        )
                         ActivityType.PAYMENT_OPTIONS -> onPayOptionsInitiateSession(applyNowState)
                         else -> return
                     }
@@ -353,6 +282,11 @@ class ChatViewModel : ViewModel() {
         trackFirebaseEvent.chatEnd(getApplyNowState(), activityType)
     }
 
-    private fun logExceptionToFirebase(value: String?) = FirebaseManager.logException(value.plus(" ${Utils.toJson(conversation)}"))
-
+    fun isChatServiceRunning(activity: Activity?): Boolean {
+        activity ?: return false
+        return ServiceTool.checkServiceRunning(
+            activity,
+            LiveChatFollowMeService::class.java
+        )
+    }
 }

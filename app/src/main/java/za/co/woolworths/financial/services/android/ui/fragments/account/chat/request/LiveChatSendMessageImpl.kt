@@ -1,18 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
-import android.util.Log
 import com.amplifyframework.api.aws.GsonVariablesSerializer
 import com.amplifyframework.api.graphql.GraphQLRequest
 import com.amplifyframework.api.graphql.SimpleGraphQLRequest
 import com.amplifyframework.core.Amplify.API
-import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify.logExceptionToFirebase
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.ILiveChatSendMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.Assets
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import java.util.*
 
 class LiveChatSendMessageImpl : ILiveChatSendMessage {
@@ -25,13 +24,12 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
         val conversationId = liveChatDBRepository.getConversationMessageId()
 
         if (conversationId.isEmpty()) {
-            logExceptionToFirebase("sendMessage conversationId")
+            FirebaseManager.logException("${LiveChatSendMessageImpl::class.java.simpleName} conversationId not found")
             return
         }
-        ChatAWSAmplify.sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.SENT, content))
-
-        API.mutate(request(sessionState, content), {}, {}
-        )
+        API.mutate(request(sessionState, content), {
+            ChatAWSAmplify.sendMessageMutableList?.add(UserMessage(content))
+        }, {})
     }
 
     private fun request(sessionState: SessionStateType, content: String): GraphQLRequest<String> {
@@ -49,6 +47,11 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
         variables["name"] = ChatCustomerInfo.getCustomerFamilyName()
         variables["email"] = ChatCustomerInfo.getCustomerEmail()
 
-        return SimpleGraphQLRequest(messageGraphQL, variables, String::class.java, GsonVariablesSerializer())
+        return SimpleGraphQLRequest(
+            messageGraphQL,
+            variables,
+            String::class.java,
+            GsonVariablesSerializer()
+        )
     }
 }

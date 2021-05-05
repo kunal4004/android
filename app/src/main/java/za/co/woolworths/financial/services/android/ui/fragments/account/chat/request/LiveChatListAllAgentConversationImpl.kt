@@ -13,23 +13,32 @@ import java.util.HashMap
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
-    private val listMessageByConversation: String = Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
+    private val listMessageByConversation: String =
+        Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
     private val liveChatDBRepository = LiveChatDBRepository()
 
     // Arrange a request to start a subscription.
     private fun request(conversationMessagesId: String): GraphQLRequest<GetMessagesByConversation> {
         val variables = HashMap<String, Any>()
         variables["conversationMessagesId"] = conversationMessagesId
-        return SimpleGraphQLRequest(listMessageByConversation, variables, GetMessagesByConversation::class.java, GsonVariablesSerializer())
+        return SimpleGraphQLRequest(
+            listMessageByConversation,
+            variables,
+            GetMessagesByConversation::class.java,
+            GsonVariablesSerializer()
+        )
     }
 
-    override fun list(onSuccess: (GetMessagesByConversation?) -> Unit, onFailure: (ApiException) -> Unit) {
+    override fun list(
+        onSuccess: (GetMessagesByConversation?) -> Unit,
+        onFailure: (ApiException) -> Unit
+    ) {
         val conversationId = liveChatDBRepository.getConversationMessageId()
         API.query(
-                request(conversationId),
-                { response -> onSuccess(response.data) },
-                { apiException ->
-                    onFailure(apiException)
-                })
+            request(conversationId),
+            { response -> onSuccess(response.data) },
+            { apiException ->
+                onFailure(apiException)
+            })
     }
 }

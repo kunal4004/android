@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -16,8 +17,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
-import za.co.woolworths.financial.services.android.models.dto.ChatMessage
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
@@ -26,13 +25,28 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendEmailIntentInfo
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSendMessageImpl
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
 
-class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListener {
+class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
+    companion object {
+        const val ACCOUNTS: String = "accounts"
+        const val CARD: String = "CARD"
+        const val SESSION_TYPE = "SESSION_TYPE"
+    }
+
+    var mChatAdapter: WChatAdapter? = null
+    var productOfferingId: String? = null
+    var accountNumber: String? = null
     private var chatNavController: NavController? = null
     private var appScreen: String? = ChatFragment::class.java.simpleName
+    private var sendMessageImpl = LiveChatSendMessageImpl()
 
     private val chatViewModel: ChatViewModel by activityViewModels()
 
@@ -43,23 +57,43 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.chat_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.let { act -> ServiceTool.start(act, LiveChatFollowMeService::class.java) }
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
+        chatNavController =
+            (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()
+        onChatStart()
+    }
+
+    private fun onChatStart() {
+        with(chatViewModel) {
+            if (!isChatServiceRunning(activity)) {
+                activity?.let { act -> ServiceTool.start(act, LiveChatFollowMeService::class.java) }
+                return@with
+            }
+
+            liveChatListAllAgentConversation.list({
+
+            }, {
+
+            })
+        }
     }
 
     private fun initView() {
         setupRecyclerview()
         isChatButtonEnabled(false)
         onClickListener()
-        //autoConnectToNetwork()
+        autoConnectToNetwork()
         //  setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
         detectKeyboardVisibilityState()
     }
@@ -67,11 +101,12 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
     private fun detectKeyboardVisibilityState() {
         activity?.let { activity ->
             SoftKeyboardObserver(activity)
-                    .listen { isKeyboardVisible ->
-                        if (isKeyboardVisible) {
-                            mChatAdapter?.itemCount?.minus(1)?.let { messageListRecyclerView?.scrollToPosition(it) }
-                        }
+                .listen { isKeyboardVisible ->
+                    if (isKeyboardVisible) {
+                        mChatAdapter?.itemCount?.minus(1)
+                            ?.let { messageListRecyclerView?.scrollToPosition(it) }
                     }
+                }
         }
     }
 
@@ -116,30 +151,33 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 
                 SessionStateType.CONNECT -> {
                     chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result.content)
+                    showAgentsMessage(result)
                     isChatButtonEnabled(false)
                     isUserOnline(true)
                 }
 
                 SessionStateType.ONLINE -> {
                     chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result.content)
+                    showAgentsMessage(result)
                     isChatButtonEnabled(true)
                     isUserOnline(true)
+                    ChatAWSAmplify.sendMessageMutableList?.add(result)
                 }
 
                 SessionStateType.QUEUEING -> {
                     chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result.content)
+                    showAgentsMessage(result)
                     isChatButtonEnabled(false)
                     isUserOnline(true)
+                    ChatAWSAmplify.sendMessageMutableList?.add(result)
                 }
 
                 SessionStateType.DISCONNECT -> {
                     chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result.content)
+                    showAgentsMessage(result)
                     isChatButtonEnabled(false)
                     isUserOnline(true)
+                    ChatAWSAmplify.sendMessageMutableList?.add(result)
                 }
 
                 else -> {
@@ -172,11 +210,12 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     val message = edittext_chatbox?.text?.toString() ?: ""
                     if (TextUtils.isEmpty(message)) return
-                    updateMessageList(ChatMessage(ChatMessage.Type.SENT, message))
-                    ChatAWSAmplify.sendMessage(message)
+                    updateMessageList(UserMessage(message))
+                    sendMessageImpl.send(SessionStateType.ONLINE, message)
                     edittext_chatbox?.setText("")
                     try {
-                        val imm: InputMethodManager? = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        val imm: InputMethodManager? =
+                            activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
                         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
                     } catch (ex: Exception) {
                         FirebaseManager.logException(ex)
@@ -188,7 +227,7 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
         }
     }
 
-//    private fun setAgentAvailableState(isOnline: Boolean) {
+    //    private fun setAgentAvailableState(isOnline: Boolean) {
 //        activity?.apply {
 //            when (isOnline) {
 //                true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
@@ -202,39 +241,58 @@ class ChatFragment : ChatExtensionFragment(), IDialogListener, View.OnClickListe
 //        }
 //    }
 //
-//    private fun autoConnectToNetwork() {
-//        activity?.let { activity ->
-//            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
-//                override fun onConnectionChanged(hasConnection: Boolean) {
-//                    if (hasConnection) {
-//                        chatViewModel.getMessagesListByConversation { messagesByConversationList ->
-//                            if (messagesByConversationList?.size ?: 0 > 0) {
-//                                val messagesListFromAdapter = mChatAdapter?.getMessageList()
-//
-//                                /**
-//                                 * filter messageByConversation List and list of message from adapter, and remove duplicates
-//                                 * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
-//                                 */
-//
-//                                val updatedList: List<ChatMessage>? = messagesByConversationList?.let { messagesListFromAdapter?.plus(it)?.groupBy { item -> item.message } }?.entries?.map { it.value }?.flatten()?.distinctBy { it.message }
-//
-//                                if (updatedList?.size ?: 0 > 0) {
-//                                    mChatAdapter?.clear()
-//                                    updatedList?.forEach { chat -> updateMessageList(chat) }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            })
-//        }
-//    }
+    private fun autoConnectToNetwork() {
+        activity?.let { activity ->
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
+                activity,
+                this,
+                object : ConnectionBroadcastReceiver() {
+                    override fun onConnectionChanged(hasConnection: Boolean) {
+                        if (hasConnection) {
+                            with(chatViewModel) {
+                                liveChatListAllAgentConversation.list({ messagesByConversation ->
+
+
+                                }, { apiException ->
+
+                                })
+                            }
+
+                            // ----
+
+                        }
+                    }
+                })
+        }
+    }
 
     fun subscribeErrorResponse() {
         GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
             val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
-            showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
+            //showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
             chatLoaderProgressBar?.visibility = GONE
         }
+    }
+
+    private fun updateMessageList(message: ChatMessage) {
+        activity?.runOnUiThread {
+            mChatAdapter?.let {
+                it.addMessage(message)
+                messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
+            }
+        }
+    }
+
+    private fun showAgentsMessage(agentDefaultMessage: ChatMessage) {
+        updateMessageList(agentDefaultMessage)
+    }
+
+    fun showAgentsMessage(agentDefaultMessage: String, emailIntentInfo: SendEmailIntentInfo) {
+        updateMessageList(
+            SendMessageResponse(
+                content = agentDefaultMessage,
+                sendEmailIntentInfo = emailIntentInfo
+            )
+        )
     }
 }

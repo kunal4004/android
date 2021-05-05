@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -20,10 +19,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 
 class LiveChatFollowMeService : Service() {
 
-    private val liveChat = LiveChat(LiveChatAuthImpl(),
-            LiveChatConversationImpl(),
-            LiveChatSubscribeImpl(SessionStateType.CONNECT, "Hi"),
-            LiveChatListAllAgentConversationImpl())
+    private val liveChat = LiveChat(
+        LiveChatAuthImpl(),
+        LiveChatConversationImpl(),
+        LiveChatSubscribeImpl(SessionStateType.CONNECT, "Hi"),
+        LiveChatListAllAgentConversationImpl()
+    )
 
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannel"
@@ -48,6 +49,7 @@ class LiveChatFollowMeService : Service() {
                 conversation({
                     // conversation success
                     onSubscribe({ message ->
+                        Log.e("authLogin", "message ${Gson().toJson(message)}")
                         postResult(Gson().toJson(message))
 
                     }, { apiException ->
@@ -76,9 +78,9 @@ class LiveChatFollowMeService : Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
+                CHANNEL_ID,
+                "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_LOW
             )
             serviceChannel.enableVibration(false)
             val manager = getSystemService(NotificationManager::class.java)
@@ -86,10 +88,11 @@ class LiveChatFollowMeService : Service() {
 
             val notificationIntent = Intent(this, WChatActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
-            val notification: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("OneApp")
-                    .setContentText("Woolworth's Service")
-                    .setSmallIcon(R.drawable.method_woolworths)
+            val notification: NotificationCompat.Builder =
+                NotificationCompat.Builder(this, CHANNEL_ID)
+                    // .setContentTitle("")
+                    // .setContentText("Woolworth's Service")
+                    // .setSmallIcon(R.drawable.appicon)
                     .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
                     .setVibrate(null) // Passing null here silently fails
                     .setContentIntent(pendingIntent)

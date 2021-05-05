@@ -14,7 +14,7 @@ class ServiceTool {
          * @param serviceClass the class of the Service
          * @return true if the service is running otherwise false
          */
-        private fun checkServiceRunning(activity: Activity?, serviceClass: Class<*>): Boolean {
+         fun checkServiceRunning(activity: Activity?, serviceClass: Class<*>): Boolean {
             val manager = activity?.getSystemService(ACTIVITY_SERVICE) as? ActivityManager
             val runningService = manager?.getRunningServices(Int.MAX_VALUE)
             if (runningService != null) {
@@ -28,17 +28,15 @@ class ServiceTool {
         }
 
         fun start(activity: Activity?, serviceClass: Class<*>) {
-            activity?.apply {
-                if (!checkServiceRunning(activity, serviceClass))
-                    startService(Intent(activity, serviceClass))
-            }
+            activity ?: return
+            if (!checkServiceRunning(activity, serviceClass))
+                activity.startService(Intent(activity, serviceClass))
         }
 
         fun stop(activity: Activity?, serviceClass: Class<*>) {
-            activity?.apply {
-                if (checkServiceRunning(activity, serviceClass))
-                    startService(Intent(activity, serviceClass))
-            }
+            activity ?: return
+            if (checkServiceRunning(activity, serviceClass))
+                activity.stopService(Intent(activity, serviceClass))
         }
     }
 }

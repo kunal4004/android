@@ -9,10 +9,11 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/sent_message_text"
         style="@style/chat_text_style"
         android:background="@drawable/sent_message_bubble_bg"
+        android:fontFamily="@font/myriad_pro_regular_otf"
         android:paddingStart="12dp"
         android:paddingTop="10dp"
         android:paddingEnd="12dp"

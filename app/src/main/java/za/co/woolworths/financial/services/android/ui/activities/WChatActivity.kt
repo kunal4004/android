@@ -19,7 +19,6 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SendMessageResponse
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
@@ -31,6 +30,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
 import za.co.woolworths.financial.services.android.util.ServiceTool
 import za.co.woolworths.financial.services.android.util.Utils
@@ -70,13 +70,17 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                 when (currentFragment) {
                     is ChatFragment -> {
                         when (isSignOut) {
-                            true -> signOut {
+                            true ->
+
                                 GlobalScope.doAfterDelay(DELAY) {
-                                    ChatAWSAmplify.cancelSubscribeMessageByConversationId()
-                                    ServiceTool.stop(this@WChatActivity, LiveChatFollowMeService::class.java)
-                                    closeChat()
+                                    liveChatAuthentication.signOut {
+                                        ServiceTool.stop(
+                                            this@WChatActivity,
+                                            LiveChatFollowMeService::class.java
+                                        )
+                                        closeChat()
+                                    }
                                 }
-                            }
                         }
                     }
                     is ChatRetrieveABSACardTokenFragment -> {
@@ -92,7 +96,8 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
             override fun onReceive(context: Context?, intent: Intent) {
                 val extras = intent.extras ?: return
                 val result: String? = extras.getString(LIVE_CHAT_SUBSCRIPTION_RESULT)
-                val sendMessage: SendMessageResponse? = Gson().fromJson(result, SendMessageResponse::class.java)
+                val sendMessage: SendMessageResponse? =
+                    Gson().fromJson(result, SendMessageResponse::class.java)
                 when (currentFragment) {
                     is ChatFragment -> {
                         (currentFragment as? ChatFragment)?.apply {
@@ -116,7 +121,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         chatViewModel.initAmplify()
         intent?.extras?.apply {
             appScreen = getString(APP_SCREEN)
-            sessionType = getSerializable(ChatExtensionFragment.SESSION_TYPE) as? SessionType
+            sessionType = getSerializable(ChatFragment.SESSION_TYPE) as? SessionType
             isChatToCollectionAgent = getBoolean(CHAT_TO_COLLECTION_AGENT, false)
             chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
         }
@@ -127,7 +132,8 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     private fun initUI() {
-        val chatNavHost = supportFragmentManager.findFragmentById(R.id.chatNavHost) as? NavHostFragment
+        val chatNavHost =
+            supportFragmentManager.findFragmentById(R.id.chatNavHost) as? NavHostFragment
         chatNavHostController = chatNavHost?.navController
         val chatNavGraph = chatNavHostController?.graph
         // add featureName app string
@@ -203,7 +209,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
             is ChatOfflineFragment -> finishActivity()
 
-
             is ChatRetrieveABSACardTokenFragment -> endSessionPopup()
 
             else -> {
@@ -227,7 +232,9 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     val currentFragment: Fragment?
-        get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.chatNavHost)
+        get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(
+            R.id.chatNavHost
+        )
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {

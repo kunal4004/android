@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsA
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.E_SESSION_ID
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.NONCE
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatExtensionFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView

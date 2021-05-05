@@ -5,5 +5,5 @@ import com.amplifyframework.auth.result.AuthSignInResult
 
 interface ILiveChatAuth {
     fun signIn(onSuccess: (AuthSignInResult) -> Unit, onFailure: (AuthException) -> Unit)
-    fun signOut(onSuccess: () -> Unit,onFailure: (AuthException) -> Unit)
+    fun signOut(result: () -> Unit)
 }

@@ -1,60 +1,46 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
 import android.util.Log
-import com.amplifyframework.api.ApiException
-import com.amplifyframework.api.ApiOperation
 import com.amplifyframework.api.aws.AWSApiPlugin
-import com.amplifyframework.api.aws.GsonVariablesSerializer
-import com.amplifyframework.api.graphql.GraphQLRequest
-import com.amplifyframework.api.graphql.SimpleGraphQLRequest
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
-import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.core.Amplify
-import com.amplifyframework.core.Amplify.API
-import com.amplifyframework.core.Amplify.Auth
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
-import com.google.gson.JsonElement
+import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.ChatMessage
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.*
-
-import za.co.woolworths.financial.services.android.models.network.NetworkConfig
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
-import za.co.woolworths.financial.services.android.util.Assets
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.EncryptChat
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 object ChatAWSAmplify {
 
-    private var subscription: ApiOperation<*>? = null
     var sendMessageMutableList: MutableList<ChatMessage?>? = mutableListOf()
     var isUserSubscriptionActive: Boolean = false
 
     init {
         try {
             val context = WoolworthsApplication.getAppContext()
-            val awsConfigurationJSONObject = KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
+            val awsConfigurationJSONObject =
+                KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
             val inAppChat = WoolworthsApplication.getInAppChat()
             val auth = awsConfigurationJSONObject
-                    .getJSONObject("auth")
-                    .getJSONObject("plugins")
-                    .getJSONObject("awsCognitoAuthPlugin")
-                    .getJSONObject("CognitoUserPool")
-                    .getJSONObject("Default")
+                .getJSONObject("auth")
+                .getJSONObject("plugins")
+                .getJSONObject("awsCognitoAuthPlugin")
+                .getJSONObject("CognitoUserPool")
+                .getJSONObject("Default")
 
             auth.put("PoolId", inAppChat.userPoolId)
             auth.put("AppClientId", inAppChat.userPoolWebClientId)
 
             val api = awsConfigurationJSONObject
-                    .getJSONObject("api")
-                    .getJSONObject("plugins")
-                    .getJSONObject("awsAPIPlugin")
-                    .getJSONObject("api")
+                .getJSONObject("api")
+                .getJSONObject("plugins")
+                .getJSONObject("awsAPIPlugin")
+                .getJSONObject("api")
 
             api.put("endpoint", inAppChat.apiURI)
 
@@ -70,236 +56,17 @@ object ChatAWSAmplify {
         }
     }
 
-    fun signIn(result: (Conversation?) -> Unit, error: (Any) -> Unit) {
-        val networkConfig = NetworkConfig()
-        val username = networkConfig.getApiId()
-        val password = networkConfig.getSha1Password()
-
-        Auth.signIn(username, password, {
-
-            createConversation({ result ->
-                //Log.e("responseDatta"," ${result.data}")
-                //result(result)
-            },
-                    { failure ->
-                        error(failure)
-                    }
-            )
-        }, {
-            error(it)
-        })
-    }
-
-    // Create conversation
-    private fun conversationRequest(): GraphQLRequest<Conversation> {
-        val createConversation: String = Assets.readAsString("graphql/create-conversation.graphql")
-        return SimpleGraphQLRequest(createConversation, HashMap<String, Any>(), JsonElement::class.java, GsonVariablesSerializer())
-    }
-
-    private fun createConversation(result: (JsonElement?) -> Unit, failure: (ApiException) -> Unit) {
-        API.mutate(conversationRequest(), { response ->
-            Log.e("responseDatta", " ${response.data}")
-            //result(response.data)
-        }, { error ->
-            failure(error)
-        })
-    }
-
-    // Arrange a request to start a subscription.
-    private fun onSubscribeMessageByConversationId(conversationMessagesId: String): GraphQLRequest<SendMessageResponse> {
-        val onSubscribeMessageByConversationIdDocument: String = Assets.readAsString("graphql/subscribe-event-on-message-by-conversation-id.graphql")
-        val serializer = GsonVariablesSerializer()
-        val variables = Collections.singletonMap<String, Any>("conversationMessagesId", conversationMessagesId)
-        return SimpleGraphQLRequest(onSubscribeMessageByConversationIdDocument, variables, SendMessageResponse::class.java, serializer)
-    }
-
-    fun subscribeToMessageByConversationId(conversationMessagesId: String,
-                                           sessionType: SessionType,
-                                           sessionVars: String,
-                                           name: String,
-                                           email: String,
-                                           result: (SendMessageResponse?) -> Unit, failure: (ApiException) -> Unit) {
-        subscription = API.subscribe(onSubscribeMessageByConversationId(conversationMessagesId),
-                {
-                    sendMessage(conversationMessagesId,
-                            sessionType,
-                            SessionStateType.CONNECT,
-                            "hi",
-                            sessionVars,
-                            name,
-                            email)
-                },
-                { data -> result(data.data) },
-                { onFailure ->
-                    failure(onFailure)
-                }, { }
-        )
-    }
-
-    fun cancelSubscribeMessageByConversationId() {
-        subscription?.cancel()
-    }
-
-    fun queryServiceSignOut(conversationMessagesId: String,
-                            sessionType: SessionType,
-                            sessionState: SessionStateType,
-                            content: String,
-                            sessionVars: String,
-                            name: String,
-                            email: String, onResult: () -> Unit, onError: () -> Unit) {
-
-        sendMessage(conversationMessagesId, sessionType, sessionState, content, sessionVars, name, email)
-        // Ensure sign out from all device
-        Auth.signOut(AuthSignOutOptions.builder().globalSignOut(true).build(), { onResult() }, { onError() })
-    }
-
-    private fun sendMessageRequest(sessionId: String,
-                                   sessionType: SessionType,
-                                   sessionState: SessionStateType,
-                                   content: String,
-                                   sessionVars: String,
-                                   name: String,
-                                   email: String): GraphQLRequest<String> {
-
-        val messageGraphQL: String = Assets.readAsString("graphql/send-message.graphql")
-        val serializer = GsonVariablesSerializer()
-        val variables = HashMap<String, Any>()
-
-        variables["sessionId"] = sessionId
-        variables["sessionType"] = sessionType
-        variables["sessionState"] = sessionState
-        variables["content"] = content
-        variables["contentType"] = "text"
-        variables["relatedMessageId"] = ""
-        variables["sessionVars"] = sessionVars
-        variables["name"] = name
-        variables["email"] = email
-
-        return SimpleGraphQLRequest(messageGraphQL, variables, String::class.java, serializer)
-    }
-
-    fun sendMessage(sessionId: String,
-                    sessionType: SessionType,
-                    sessionState: SessionStateType,
-                    content: String,
-                    sessionVars: String,
-                    name: String,
-                    email: String) {
-
-        API.mutate(sendMessageRequest(sessionId,
-                sessionType,
-                sessionState,
-                content,
-                sessionVars,
-                name,
-                email),
-                { },
-                { }
-        )
-    }
-
-    // Arrange a request to start a subscription.
-    private fun listMessages(conversationMessagesId: String): GraphQLRequest<GetMessagesByConversation> {
-        val listMessageByConversation: String = Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
-        val serializer = GsonVariablesSerializer()
-        val variables = HashMap<String, Any>()
-        variables["conversationMessagesId"] = conversationMessagesId
-        return SimpleGraphQLRequest(listMessageByConversation, variables, GetMessagesByConversation::class.java, serializer)
-    }
-
-    fun getMessagesListByConversation(conversationMessagesId: String, result: (GetMessagesByConversation?) -> Unit) {
-        API.query(
-                listMessages(conversationMessagesId),
-                { response -> result(response.data) }, { }
-        )
-    }
-
     fun init() {}
 
-    fun signInAndSubscribe(result: (SendMessageResponse?) -> Unit, onFailure: (Any) -> Unit) {
-        signIn({ conversation ->
-            val liveChatDBRepository = LiveChatDBRepository()
-//            liveChatDBRepository.saveConversation(conversation)
-            subscribeToMessageByConversationId({ message ->
-                sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.RECEIVED, message?.content
-                        ?: ""))
-                isUserSubscriptionActive = true
-                Log.e("subscribeToMessage", "1 $message")
-                result(message)
-            }, { error ->
-                isUserSubscriptionActive = false
-                Log.e("subscribeToMessage", "2 $error")
-                onFailure(error)
-            })
-
-        }, { failure ->
-            isUserSubscriptionActive = false
-            Log.e("subscribeToMessage", "3 $failure")
-            onFailure(failure)
-        })
+    fun addChatMessageToList(chatMessage: ChatMessage) {
+        sendMessageMutableList?.add(
+            EncryptChat(
+                Utils.aes256EncryptStringAsBase64String(
+                    Gson().toJson(
+                        chatMessage
+                    )
+                )
+            )
+        )
     }
-
-    private fun subscribeToMessageByConversationId(result: (SendMessageResponse?) -> Unit, failure: (Any) -> Unit) {
-        val liveChatDBRepository = LiveChatDBRepository()
-        val conversationId = liveChatDBRepository.getConversationMessageId()
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("subscribeToMessageByConversationId")
-            failure(failure)
-            return
-        }
-        with(liveChatDBRepository) {
-            subscribeToMessageByConversationId(
-                    getConversationMessageId(),
-                    getSessionType(),
-                    getSessionVars(),
-                    ChatCustomerInfo.getCustomerFamilyName(),
-                    ChatCustomerInfo.getCustomerEmail(),
-                    { data -> result(data) }, { failure(failure) })
-        }
-    }
-
-    fun logExceptionToFirebase(value: String?) = FirebaseManager.logException(value.plus(" ${Utils.toJson(LiveChatDBRepository().getConversation())}"))
-
-    fun sendMessage(content: String) {
-        val liveChatDBRepository = LiveChatDBRepository()
-        val conversationId = liveChatDBRepository.getConversationMessageId()
-
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("sendMessage conversationId")
-            return
-        }
-
-        sendMessageMutableList?.add(ChatMessage(ChatMessage.Type.SENT, content))
-        with(liveChatDBRepository) {
-            sendMessage(
-                    conversationId,
-                    getSessionType(),
-                    SessionStateType.ONLINE,
-                    content,
-                    liveChatDBRepository.getSessionVars(),
-                    ChatCustomerInfo.getCustomerFamilyName(),
-                    ChatCustomerInfo.getCustomerEmail())
-        }
-    }
-
-    fun signOut(result: () -> Unit) {
-        val liveChatDBRepository = LiveChatDBRepository()
-        val conversationId = liveChatDBRepository.getConversationMessageId()
-        if (conversationId.isEmpty()) {
-            logExceptionToFirebase("signOut conversationId")
-            return
-        }
-        with(liveChatDBRepository) {
-            queryServiceSignOut(
-                    conversationId,
-                    getSessionType(),
-                    SessionStateType.DISCONNECT,
-                    "",
-                    liveChatDBRepository.getSessionVars(),
-                    ChatCustomerInfo.getCustomerFamilyName(),
-                    ChatCustomerInfo.getCustomerEmail(),
-                    { result() }, { result() })
-        }
-    }
-
 }

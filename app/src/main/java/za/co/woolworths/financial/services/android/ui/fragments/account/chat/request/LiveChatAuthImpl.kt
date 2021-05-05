@@ -24,12 +24,11 @@ class LiveChatAuthImpl : ILiveChatAuth {
         })
     }
 
-    override fun signOut(onSuccess: () -> Unit, onFailure: (AuthException) -> Unit) {
+    override fun signOut(result: () -> Unit) {
         sendMessage.send(SessionStateType.DISCONNECT, "")
-        Auth.signOut(AuthSignOutOptions.builder().globalSignOut(true).build(), {
-            onSuccess()
-        }, { authException ->
-            onFailure(authException)
-        })
+        Auth.signOut(
+            AuthSignOutOptions.builder().globalSignOut(true).build(),
+            { result() },
+            { result() })
     }
 }

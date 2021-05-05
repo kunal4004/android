@@ -13,11 +13,11 @@ import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.util.DelayConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class ChatOfflineFragment : Fragment() {
 
@@ -29,8 +29,16 @@ class ChatOfflineFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.chat_to_collection_agent_offline_fragment, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(
+            R.layout.chat_to_collection_agent_offline_fragment,
+            container,
+            false
+        )
     }
 
     @SuppressLint("SetTextI18n")
@@ -42,14 +50,15 @@ class ChatOfflineFragment : Fragment() {
             setChatState(false)
         }
 
-        hiClientTextView?.text = "Hi ${chatViewModel.getCustomerInfo().getUsername()},"
+        hiClientTextView?.text = "Hi ${ChatCustomerInfo.getUsername()},"
 
         chatCollectionDescriptionTextView?.text = chatViewModel.offlineMessageTemplate { result ->
             KotlinUtils.sendEmail(activity, result.first, result.second, result.third)
             (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
         }
 
-        val currentTime: String? = SimpleDateFormat("hh : mm a", Locale.getDefault()).format(Calendar.getInstance().time)
+        val currentTime: String? =
+            SimpleDateFormat("hh : mm a", Locale.getDefault()).format(Calendar.getInstance().time)
         timeTextView?.text = currentTime
 
 
@@ -60,7 +69,7 @@ class ChatOfflineFragment : Fragment() {
 
         if ((activity as? WChatActivity)?.shouldAnimateChatMessage == true) {
 
-            GlobalScope.doAfterDelay(DELAY_300_MS){
+            GlobalScope.doAfterDelay(DELAY_300_MS) {
                 chatCollectionDescriptionTextView?.visibility = VISIBLE
             }
 
