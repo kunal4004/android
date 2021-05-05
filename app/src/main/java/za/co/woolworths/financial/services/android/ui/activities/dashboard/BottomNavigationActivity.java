@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -332,12 +331,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     }
                     break;
 
-                case AppConstant.DP_LINKING_PRODUCT_DETAIL:
+                    /*Deep link to PDP disabled*/
+                /*case AppConstant.DP_LINKING_PRODUCT_DETAIL:
                     Intent intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
                     intent.putExtra("feature", AppConstant.DP_LINKING_PRODUCT_DETAIL);
                     intent.putExtra("parameters", appLinkData.toString());
+                    intent.putExtra("deepLinkRequestCode", DEEP_LINK_REQUEST_CODE);
                     startActivityForResult(intent, DEEP_LINK_REQUEST_CODE);
-                    break;
+                    break;*/
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
